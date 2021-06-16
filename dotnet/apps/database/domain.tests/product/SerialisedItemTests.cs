@@ -29,7 +29,7 @@ namespace Allors.Database.Domain.Tests
             var newItem = new SerialisedItemBuilder(this.Transaction).WithSerialNumber(serialNumber).Build();
             good.AddSerialisedItem(newItem);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SameSerialNumber));
         }
 
@@ -136,11 +136,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedAcquisitionYearThrowValidation()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithAcquiredDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.AcquisitionYear = 2020;
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SerialisedItem.AcquiredDate,
@@ -152,11 +152,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedAcquiredDateThrowValidation()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithAcquisitionYear(2020).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.AcquiredDate = this.Transaction.Now();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SerialisedItem.AcquiredDate,
@@ -169,10 +169,10 @@ namespace Allors.Database.Domain.Tests
         {
             var part = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).WithName("partname").Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             part.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal("partname", serialisedItem.Name);
         }
@@ -182,10 +182,10 @@ namespace Allors.Database.Domain.Tests
         {
             var supplier = new OrganisationBuilder(this.Transaction).Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.AssignedSuppliedBy = supplier;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(supplier, serialisedItem.SuppliedBy);
         }
@@ -198,10 +198,10 @@ namespace Allors.Database.Domain.Tests
             new SupplierOfferingBuilder(this.Transaction).WithPart(part).WithSupplier(supplier).Build(); 
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             part.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(supplier, serialisedItem.SuppliedBy);
         }
@@ -214,10 +214,10 @@ namespace Allors.Database.Domain.Tests
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             part.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new SupplierOfferingBuilder(this.Transaction).WithPart(part).WithSupplier(supplier).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(supplier, serialisedItem.SuppliedBy);
         }
@@ -227,10 +227,10 @@ namespace Allors.Database.Domain.Tests
         {
             var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.AssignedSuppliedBy = supplier;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal("supplier", serialisedItem.SuppliedByPartyName);
         }
@@ -240,10 +240,10 @@ namespace Allors.Database.Domain.Tests
         {
             var owner = new OrganisationBuilder(this.Transaction).WithName("owner").Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.OwnedBy = owner;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal("owner", serialisedItem.OwnedByPartyName);
         }
@@ -253,10 +253,10 @@ namespace Allors.Database.Domain.Tests
         {
             var rentner = new OrganisationBuilder(this.Transaction).WithName("rentner").Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.RentedBy = rentner;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal("rentner", serialisedItem.RentedByPartyName);
         }
@@ -266,10 +266,10 @@ namespace Allors.Database.Domain.Tests
         {
             var own = new Ownerships(this.Transaction).Own;
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.Ownership = own;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(own.Name, serialisedItem.OwnershipByOwnershipName);
         }
@@ -279,10 +279,10 @@ namespace Allors.Database.Domain.Tests
         {
             var availability = new SerialisedItemAvailabilities(this.Transaction).Available;
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.SerialisedItemAvailability = availability;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(availability.Name, serialisedItem.SerialisedItemAvailabilityName);
         }
@@ -295,11 +295,11 @@ namespace Allors.Database.Domain.Tests
             var serialisedItem2 = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("2").Build();
             part.AddSerialisedItem(serialisedItem1);
             part.AddSerialisedItem(serialisedItem2);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem2.SerialNumber = "1";
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SameSerialNumber));
         }
 
@@ -307,10 +307,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedQuoteItemSerialisedItemDeriveOnQuote()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new QuoteItemBuilder(this.Transaction).WithSerialisedItem(serialisedItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(serialisedItem.OnQuote);
         }
@@ -319,15 +319,15 @@ namespace Allors.Database.Domain.Tests
         public void ChangedQuoteItemQuoteItemStateDeriveOnQuote()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithSerialisedItem(serialisedItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(serialisedItem.OnQuote);
 
             quoteItem.QuoteItemState = new QuoteItemStates(this.Transaction).Cancelled;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(serialisedItem.OnQuote);
         }
@@ -336,10 +336,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSalesOrderItemSerialisedItemDeriveOnSalesOrder()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new SalesOrderItemBuilder(this.Transaction).WithSerialisedItem(serialisedItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(serialisedItem.OnSalesOrder);
         }
@@ -348,15 +348,15 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSalesOrderItemSalesOrderItemStateDeriveOnSalesOrder()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesOrderItem = new SalesOrderItemBuilder(this.Transaction).WithSerialisedItem(serialisedItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(serialisedItem.OnSalesOrder);
 
             salesOrderItem.SalesOrderItemState = new SalesOrderItemStates(this.Transaction).Cancelled;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(serialisedItem.OnSalesOrder);
         }
@@ -367,10 +367,10 @@ namespace Allors.Database.Domain.Tests
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new WorkEffortFixedAssetAssignmentBuilder(this.Transaction).WithAssignment(workEffort).WithFixedAsset(serialisedItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(serialisedItem.OnWorkEffort);
         }
@@ -381,15 +381,15 @@ namespace Allors.Database.Domain.Tests
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new WorkEffortFixedAssetAssignmentBuilder(this.Transaction).WithAssignment(workEffort).WithFixedAsset(serialisedItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(serialisedItem.OnWorkEffort);
 
             workEffort.WorkEffortState = new WorkEffortStates(this.Transaction).Cancelled;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(serialisedItem.OnWorkEffort);
         }
@@ -400,19 +400,19 @@ namespace Allors.Database.Domain.Tests
             var productType = new ProductTypeBuilder(this.Transaction).Build();
             var characteristicType = new SerialisedItemCharacteristicTypeBuilder(this.Transaction).Build();
             productType.AddSerialisedItemCharacteristicType(characteristicType);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var part = new NonUnifiedPartBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             part.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Empty(serialisedItem.SerialisedItemCharacteristics);
 
             part.ProductType = productType;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(characteristicType, serialisedItem.SerialisedItemCharacteristics.First.SerialisedItemCharacteristicType);
         }
@@ -423,17 +423,17 @@ namespace Allors.Database.Domain.Tests
             var productType = new ProductTypeBuilder(this.Transaction).Build();
 
             var part = new NonUnifiedPartBuilder(this.Transaction).WithProductType(productType).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             part.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Empty(serialisedItem.SerialisedItemCharacteristics);
 
             var characteristicType = new SerialisedItemCharacteristicTypeBuilder(this.Transaction).Build();
             productType.AddSerialisedItemCharacteristicType(characteristicType);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(characteristicType, serialisedItem.SerialisedItemCharacteristics.First.SerialisedItemCharacteristicType);
         }
@@ -442,10 +442,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedNameDeriveSearchString()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.Name = "name";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("name", serialisedItem.SearchString);
         }
@@ -454,10 +454,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSerialNumberDeriveSearchString()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.SerialNumber = "number";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("number", serialisedItem.SearchString);
         }
@@ -466,7 +466,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedItemNumberDeriveSearchString()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(serialisedItem.ItemNumber, serialisedItem.SearchString);
         }
@@ -476,10 +476,10 @@ namespace Allors.Database.Domain.Tests
         {
             var owner = new OrganisationBuilder(this.Transaction).WithName("owner").Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.OwnedBy = owner;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("owner", serialisedItem.SearchString);
         }
@@ -489,10 +489,10 @@ namespace Allors.Database.Domain.Tests
         {
             var buyer = new OrganisationBuilder(this.Transaction).WithName("buyer").Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.Buyer = buyer;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("buyer", serialisedItem.SearchString);
         }
@@ -502,10 +502,10 @@ namespace Allors.Database.Domain.Tests
         {
             var seller = new OrganisationBuilder(this.Transaction).WithName("seller").Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.Seller = seller;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("seller", serialisedItem.SearchString);
         }
@@ -516,10 +516,10 @@ namespace Allors.Database.Domain.Tests
             var part = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).WithName("partname").Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             part.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             part.Brand = new BrandBuilder(this.Transaction).WithName("brand").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("brand", serialisedItem.SearchString);
         }
@@ -531,10 +531,10 @@ namespace Allors.Database.Domain.Tests
             var part = new UnifiedGoodBuilder(this.Transaction).WithBrand(brand).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).WithName("partname").Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             part.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             brand.Name = "changedBrandName";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("changedBrandName", serialisedItem.SearchString);
         }
@@ -545,10 +545,10 @@ namespace Allors.Database.Domain.Tests
             var part = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).WithName("partname").Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             part.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             part.Model = new ModelBuilder(this.Transaction).WithName("model").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("model", serialisedItem.SearchString);
         }
@@ -560,10 +560,10 @@ namespace Allors.Database.Domain.Tests
             var part = new UnifiedGoodBuilder(this.Transaction).WithModel(model).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).WithName("partname").Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             part.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             model.Name = "changedModelName";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("changedModelName", serialisedItem.SearchString);
         }
@@ -579,10 +579,10 @@ namespace Allors.Database.Domain.Tests
             var part = new UnifiedGoodBuilder(this.Transaction).Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             part.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new ProductCategoryBuilder(this.Transaction).WithName("catname").WithProduct(part).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("catname", serialisedItem.DisplayProductCategories);
         }
@@ -600,17 +600,17 @@ namespace Allors.Database.Domain.Tests
 
             var shipToParty = new PersonBuilder(this.Transaction).Build();
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(shipToParty).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction)
                 .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(this.Transaction).Sold)
                 .WithSerialisedItem(serialisedItem)
                 .Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.ShipmentState = new ShipmentStates(this.Transaction).Shipped;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(shipToParty, serialisedItem.OwnedBy);
         }
@@ -623,17 +623,17 @@ namespace Allors.Database.Domain.Tests
 
             var shipToParty = new PersonBuilder(this.Transaction).Build();
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(shipToParty).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction)
                 .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(this.Transaction).Sold)
                 .WithSerialisedItem(serialisedItem)
                 .Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.ShipmentState = new ShipmentStates(this.Transaction).Shipped;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new Ownerships(this.Transaction).ThirdParty, serialisedItem.Ownership);
         }
@@ -646,16 +646,16 @@ namespace Allors.Database.Domain.Tests
 
             var shipToParty = new PersonBuilder(this.Transaction).Build();
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(shipToParty).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction)
                 .WithSerialisedItem(serialisedItem)
                 .Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.ShipmentState = new ShipmentStates(this.Transaction).Shipped;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(serialisedItem.AvailableForSale);
         }
@@ -669,7 +669,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseInvoicePurchaseInvoiceStateDerivePurchaseInvoice()
         {
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction)
@@ -677,13 +677,13 @@ namespace Allors.Database.Domain.Tests
                 .WithSerialisedItem(serialisedItem)
                 .Build();
             invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Confirm();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Approve();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(invoice, serialisedItem.PurchaseInvoice);
         }
@@ -692,7 +692,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseInvoiceValidInvoiceItemsDerivePurchaseInvoice()
         {
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction)
@@ -700,18 +700,18 @@ namespace Allors.Database.Domain.Tests
                 .WithSerialisedItem(serialisedItem)
                 .Build();
             invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Confirm();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Approve();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(invoice, serialisedItem.PurchaseInvoice);
 
             invoiceItem.CancelFromInvoice();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(serialisedItem.ExistPurchaseInvoice);
         }
@@ -725,7 +725,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseInvoiceDerivePurchasePrice()
         {
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction)
@@ -734,13 +734,13 @@ namespace Allors.Database.Domain.Tests
                 .WithAssignedUnitPrice(1)
                 .Build();
             invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Confirm();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Approve();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, serialisedItem.PurchasePrice);
         }
@@ -754,7 +754,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderPurchaseOrderStateDerivePurchaseOrder()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
@@ -762,13 +762,13 @@ namespace Allors.Database.Domain.Tests
                 .WithSerialisedItem(serialisedItem)
                 .Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             order.SetReadyForProcessing();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             order.Send();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(order, serialisedItem.PurchaseOrder);
         }
@@ -777,7 +777,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderValidOrderItemsDerivePurchaseOrder()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
@@ -785,18 +785,18 @@ namespace Allors.Database.Domain.Tests
                 .WithSerialisedItem(serialisedItem)
                 .Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             order.SetReadyForProcessing();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             order.Send();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(order, serialisedItem.PurchaseOrder);
 
             orderItem.Cancel();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(serialisedItem.ExistPurchaseOrder);
         }
@@ -815,7 +815,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSerialisedItemDeriveDeletePermission()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, serialisedItem.DeniedPermissions);
         }
@@ -824,13 +824,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeInventoryItemTransactionSerialisedItemDeriveDeletePermission()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             inventoryItemTransaction.SerialisedItem = serialisedItem;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
         }
@@ -839,13 +839,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangePurchaseInvoiceItemSerialisedItemDeriveDeletePermission()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseInvoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             purchaseInvoiceItem.SerialisedItem = serialisedItem;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
         }
@@ -854,13 +854,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangePurchaseOrderItemSerialisedItemDeriveDeletePermission()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             purchaseOrderItem.SerialisedItem = serialisedItem;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
         }
@@ -869,13 +869,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeQuoteItemSerialisedItemDeriveDeletePermission()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quoteItem.SerialisedItem = serialisedItem;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
         }
@@ -884,13 +884,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSalesInvoiceItemSerialisedItemDeriveDeletePermission()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesInvoiceItem.SerialisedItem = serialisedItem;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
         }
@@ -899,13 +899,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSalesOrderItemSerialisedItemDeriveDeletePermission()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesOrderItem = new SalesOrderItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesOrderItem.SerialisedItem = serialisedItem;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
         }
@@ -914,13 +914,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSerialisedInventoryItemSerialisedItemDeriveDeletePermission()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var serialisedInventoryItem = new SerialisedInventoryItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedInventoryItem.SerialisedItem = serialisedItem;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
         }
@@ -929,13 +929,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeShipmentItemSerialisedItemDeriveDeletePermission()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithSerialisedItem(serialisedItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentItem.SerialisedItem = serialisedItem;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
         }

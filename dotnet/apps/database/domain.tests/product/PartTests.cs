@@ -48,7 +48,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.GetSingleton().Settings.UsePartNumberCounter = true;
 
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Single(nonUnifiedPart.ProductIdentifications);
         }
@@ -62,10 +62,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedNameDeriveDisplayName()
         {
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             nonUnifiedPart.Name = "anotherName";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal("anotherName", nonUnifiedPart.DisplayName);
         }
@@ -74,11 +74,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedUnitOfMeasureDeriveNonSerialisedInventoryItemWherePart()
         {
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var piece = new UnitsOfMeasure(this.Transaction).Piece;
             nonUnifiedPart.UnitOfMeasure = piece;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotNull(nonUnifiedPart.InventoryItemsWherePart.Single(v => v.UnitOfMeasure.Equals(piece)));
         }
@@ -87,11 +87,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedDefaultFacilityDeriveNonSerialisedInventoryItemWherePart()
         {
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var facility = new FacilityBuilder(this.Transaction).Build();
             nonUnifiedPart.DefaultFacility = facility;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotNull(nonUnifiedPart.InventoryItemsWherePart.Single(v => v.Facility.Equals(facility)));
         }
@@ -102,15 +102,15 @@ namespace Allors.Database.Domain.Tests
             var productType = new ProductTypeBuilder(this.Transaction).Build();
             var characteristicType = new SerialisedItemCharacteristicTypeBuilder(this.Transaction).Build();
             productType.AddSerialisedItemCharacteristicType(characteristicType);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Empty(nonUnifiedPart.SerialisedItemCharacteristics);
 
             nonUnifiedPart.ProductType = productType;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(characteristicType, nonUnifiedPart.SerialisedItemCharacteristics.First.SerialisedItemCharacteristicType);
         }
@@ -121,14 +121,14 @@ namespace Allors.Database.Domain.Tests
             var productType = new ProductTypeBuilder(this.Transaction).Build();
 
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithProductType(productType).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Empty(nonUnifiedPart.SerialisedItemCharacteristics);
 
             var characteristicType = new SerialisedItemCharacteristicTypeBuilder(this.Transaction).Build();
             productType.AddSerialisedItemCharacteristicType(characteristicType);
-            this.Transaction.Derive(false);
-            this.Transaction.Derive(false);
+            this.Derive();
+            this.Derive();
 
             Assert.Equal(characteristicType, nonUnifiedPart.SerialisedItemCharacteristics.First.SerialisedItemCharacteristicType);
         }
@@ -142,10 +142,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedNonSerialisedInventoryItemQuantityOnHandDeriveQuantityOnHand()
         {
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             ((NonSerialisedInventoryItem)nonUnifiedPart.InventoryItemsWherePart.First).QuantityOnHand = 1;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, nonUnifiedPart.QuantityOnHand);
         }
@@ -156,14 +156,14 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             nonUnifiedPart.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithSerialisedItem(serialisedItem)
                 .WithQuantity(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, nonUnifiedPart.QuantityOnHand);
         }
@@ -172,10 +172,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedNonSerialisedInventoryItemAvailableToPromiseDeriveAvailableToPromise()
         {
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             ((NonSerialisedInventoryItem)nonUnifiedPart.InventoryItemsWherePart.First).AvailableToPromise = 1;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, nonUnifiedPart.AvailableToPromise);
         }
@@ -186,7 +186,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             nonUnifiedPart.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
@@ -194,7 +194,7 @@ namespace Allors.Database.Domain.Tests
                 .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(this.Transaction).Good)
                 .WithQuantity(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, nonUnifiedPart.AvailableToPromise);
         }
@@ -205,7 +205,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             nonUnifiedPart.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
@@ -213,12 +213,12 @@ namespace Allors.Database.Domain.Tests
                 .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(this.Transaction).Scrap)
                 .WithQuantity(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0, nonUnifiedPart.AvailableToPromise);
 
             serialisedItem.SerialisedInventoryItemsWhereSerialisedItem.First.SerialisedInventoryItemState = new SerialisedInventoryItemStates(this.Transaction).Good;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, nonUnifiedPart.AvailableToPromise);
         }
@@ -227,10 +227,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedNonSerialisedInventoryItemQuantityCommittedOutDeriveQuantityCommittedOut()
         {
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             ((NonSerialisedInventoryItem)nonUnifiedPart.InventoryItemsWherePart.First).QuantityCommittedOut = 1;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, nonUnifiedPart.QuantityCommittedOut);
         }
@@ -239,10 +239,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedNonSerialisedInventoryItemQuantityExpectedInDeriveQuantityExpectedIn()
         {
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             ((NonSerialisedInventoryItem)nonUnifiedPart.InventoryItemsWherePart.First).QuantityExpectedIn = 1;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, nonUnifiedPart.QuantityExpectedIn);
         }
@@ -256,10 +256,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSupplierOfferingPartDeriveSuppliedBy()
         {
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new SupplierOfferingBuilder(this.Transaction).WithPart(nonUnifiedPart).WithSupplier(new OrganisationBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Single(nonUnifiedPart.SuppliedBy);
         }
@@ -268,10 +268,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSupplierOfferingPartDeriveSuppliedBy_2()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new SupplierOfferingBuilder(this.Transaction).WithPart(unifiedGood).WithSupplier(new OrganisationBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Single(unifiedGood.SuppliedBy);
         }
@@ -280,7 +280,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSupplierOfferingAllVersionsDeriveSuppliedBy()
         {
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var supplier = new OrganisationBuilder(this.Transaction).Build();
             var supplierOffering = new SupplierOfferingBuilder(this.Transaction)
@@ -288,12 +288,12 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(nonUnifiedPart)
                 .WithSupplier(supplier)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Single(nonUnifiedPart.SuppliedBy);
 
             supplierOffering.Part = new NonUnifiedPartBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(supplier, nonUnifiedPart.SuppliedBy);
         }
@@ -302,7 +302,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSupplierOfferingAllVersionsDeriveSuppliedBy_2()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var supplier = new OrganisationBuilder(this.Transaction).Build();
             var supplierOffering = new SupplierOfferingBuilder(this.Transaction)
@@ -310,12 +310,12 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(unifiedGood)
                 .WithSupplier(supplier)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Single(unifiedGood.SuppliedBy);
 
             supplierOffering.Part = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(supplier, unifiedGood.SuppliedBy);
         }
@@ -324,19 +324,19 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSupplierOfferingFromDateDeriveSuppliedBy()
         {
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var supplierOffering = new SupplierOfferingBuilder(this.Transaction)
                 .WithFromDate(this.Transaction.Now().AddDays(1))
                 .WithPart(nonUnifiedPart)
                 .WithSupplier(new OrganisationBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Empty(nonUnifiedPart.SuppliedBy);
 
             supplierOffering.FromDate = this.Transaction.Now().AddDays(-1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Single(nonUnifiedPart.SuppliedBy);
         }
@@ -345,19 +345,19 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSupplierOfferingThroughDateDeriveSuppliedBy()
         {
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var supplierOffering = new SupplierOfferingBuilder(this.Transaction)
                 .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .WithPart(nonUnifiedPart)
                 .WithSupplier(new OrganisationBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Single(nonUnifiedPart.SuppliedBy);
 
             supplierOffering.ThroughDate = this.Transaction.Now().AddDays(-1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Empty(nonUnifiedPart.SuppliedBy);
         }

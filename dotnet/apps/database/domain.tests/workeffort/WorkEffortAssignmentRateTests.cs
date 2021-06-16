@@ -37,7 +37,7 @@ namespace Allors.Database.Domain.Tests
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             new WorkEffortAssignmentRateBuilder(this.Transaction)
                 .WithWorkEffort(workOrder)
@@ -45,7 +45,7 @@ namespace Allors.Database.Domain.Tests
                 .WithRateType(new RateTypes(this.Transaction).OvertimeRate)
                 .Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             var assignmentRate = new WorkEffortAssignmentRateBuilder(this.Transaction)
                 .WithWorkEffort(workOrder)
@@ -53,7 +53,7 @@ namespace Allors.Database.Domain.Tests
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.WorkEffortRateError));
         }
     }
@@ -66,11 +66,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedWorkEffortPartyAssignmentDeriveWorkEffort()
         {
             var workEffortAssignmentRate = new WorkEffortAssignmentRateBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
             workEffortAssignmentRate.WorkEffortPartyAssignment = new WorkEffortPartyAssignmentBuilder(this.Transaction).WithAssignment(workTask).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(workTask, workEffortAssignmentRate.WorkEffort);
         }
@@ -80,13 +80,13 @@ namespace Allors.Database.Domain.Tests
         {
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
             var workEffortAssignmentRate = new WorkEffortAssignmentRateBuilder(this.Transaction).WithWorkEffort(workTask).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workEffortAssignmentRate.WorkEffortPartyAssignment = new WorkEffortPartyAssignmentBuilder(this.Transaction).WithAssignment(workTask).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workEffortAssignmentRate.RemoveWorkEffort();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(workTask, workEffortAssignmentRate.WorkEffort);
         }
@@ -97,14 +97,14 @@ namespace Allors.Database.Domain.Tests
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
             var workEffortAssignmentRate1 = new WorkEffortAssignmentRateBuilder(this.Transaction).WithWorkEffort(workTask).WithRateType(new RateTypes(this.Transaction).StandardRate).Build();
             var workEffortAssignmentRate2 = new WorkEffortAssignmentRateBuilder(this.Transaction).WithWorkEffort(workTask).WithRateType(new RateTypes(this.Transaction).OvertimeRate).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.DoesNotContain(errors, e => e.Message.Contains(ErrorMessages.WorkEffortRateError));
 
             workEffortAssignmentRate2.RateType = new RateTypes(this.Transaction).StandardRate;
 
-            errors = this.Transaction.Derive(false).Errors.ToList();
+            errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.WorkEffortRateError));
         }
     }

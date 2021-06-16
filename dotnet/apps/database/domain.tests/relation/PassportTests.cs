@@ -21,11 +21,11 @@ namespace Allors.Database.Domain.Tests
         public void GivenPartyWithOpenOrders_WhenDeriving_ThenOpenOrderAmountIsUpdated()
         {
             new PassportBuilder(this.Transaction).WithNumber("1").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new PassportBuilder(this.Transaction).WithNumber("1").Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Equals("Passport.Number is not unique"));
         }
     }

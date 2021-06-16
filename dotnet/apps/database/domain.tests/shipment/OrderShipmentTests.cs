@@ -21,24 +21,24 @@ namespace Allors.Database.Domain.Tests
         public void ChangedQuantityDeriveshipmentItemQuantity()
         {
             var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
             salesOrder.AddSalesOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(10).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderShipment = new OrderShipmentBuilder(this.Transaction).WithQuantity(10).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             orderShipment.Quantity = 9;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(9, shipmentItem.Quantity);
         }
@@ -47,16 +47,16 @@ namespace Allors.Database.Domain.Tests
         public void ChangedQuantityDeriveSalesOrderItemQuantityRequestsShipping()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new SalesOrderItemBuilder(this.Transaction).WithQuantityRequestsShipping(3).Build();
 
             new OrderShipmentBuilder(this.Transaction).WithQuantity(1).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(2, orderItem.QuantityRequestsShipping);
         }
@@ -66,7 +66,7 @@ namespace Allors.Database.Domain.Tests
         {
             var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
             order.PartiallyShip = true;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
             new InventoryItemTransactionBuilder(this.Transaction)
@@ -74,18 +74,18 @@ namespace Allors.Database.Domain.Tests
                 .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
                 .WithPart(orderItem.Part)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new OrderShipmentBuilder(this.Transaction).WithQuantity(orderItem.QuantityOrdered + 1).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SalesOrderItemQuantityToShipNowNotAvailable));
         }
     }

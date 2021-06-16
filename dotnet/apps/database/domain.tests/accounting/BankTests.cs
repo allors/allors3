@@ -24,28 +24,28 @@ namespace Allors.Database.Domain.Tests
             var builder = new BankBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithCountry(netherlands);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithBic("RABONL2U");
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithName("Rabo");
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -55,11 +55,11 @@ namespace Allors.Database.Domain.Tests
 
             var bank = new BankBuilder(this.Transaction).WithCountry(netherlands).WithName("RABOBANK GROEP").WithBic("RABONL2U").Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             bank.Bic = "RAB1NL2U";
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -69,11 +69,11 @@ namespace Allors.Database.Domain.Tests
 
             var bank = new BankBuilder(this.Transaction).WithCountry(netherlands).WithName("RABOBANK GROEP").WithBic("RABONL2U").Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             bank.Bic = "RABONN2U";
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -83,15 +83,15 @@ namespace Allors.Database.Domain.Tests
 
             var bank = new BankBuilder(this.Transaction).WithCountry(netherlands).WithName("RABOBANK GROEP").WithBic("RABONL2").Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             bank.Bic = "RABONL2UAAAA";
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             bank.Bic = "RABONL2UAAA";
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
     }
 
@@ -104,7 +104,7 @@ namespace Allors.Database.Domain.Tests
         {
             new BankBuilder(this.Transaction).WithBic("invalid").Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.NotAValidBic));
         }
     }

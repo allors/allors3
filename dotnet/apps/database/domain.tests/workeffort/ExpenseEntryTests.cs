@@ -20,7 +20,7 @@ namespace Allors.Database.Domain.Tests
         {
             var basePrice = new ExpenseEntryBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("ExpenseEntry.WorkEffort, ExpenseEntry.EngagementItem at least one"));
         }
     }

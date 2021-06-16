@@ -25,21 +25,21 @@ namespace Allors.Database.Domain.Tests
             var builder = new ProductQuoteBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithReceiver(party);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithFullfillContactMechanism(new WebAddressBuilder(this.Transaction).WithElectronicAddressString("test").Build());
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -52,21 +52,21 @@ namespace Allors.Database.Domain.Tests
             var builder = new ProposalBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithReceiver(party);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithFullfillContactMechanism(new WebAddressBuilder(this.Transaction).WithElectronicAddressString("test").Build());
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -79,21 +79,21 @@ namespace Allors.Database.Domain.Tests
             var builder = new StatementOfWorkBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithReceiver(party);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithFullfillContactMechanism(new WebAddressBuilder(this.Transaction).WithElectronicAddressString("test").Build());
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -186,18 +186,18 @@ namespace Allors.Database.Domain.Tests
         public void ChangedIssuerThrowValidationError()
         {
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.Issuer = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
 
-            Assert.Contains(ErrorMessages.InternalOrganisationChanged, this.Transaction.Derive(false).Errors[0].Message);
+            Assert.Contains(ErrorMessages.InternalOrganisationChanged, this.Derive().Errors[0].Message);
         }
 
         [Fact]
         public void ChangedIssuerDeriveWorkItemDescription()
         {
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var expected = $"ProductQuote: {quote.QuoteNumber} [{quote.Issuer?.PartyName}]";
             Assert.Equal(expected, quote.WorkItemDescription);
@@ -212,10 +212,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedQuoteStateCreateApprovalTask()
         {
             var quote = this.InternalOrganisation.CreateB2BProductQuoteWithSerialisedItem(this.Transaction.Faker());
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.QuoteState = new QuoteStates(this.Transaction).AwaitingApproval;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(quote.ExistProductQuoteApprovalsWhereProductQuote);
         }
@@ -239,7 +239,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedProductQuoteValidQuoteItemsDeriveSetReadyPermissionAllowed()
         {
             var productQuote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction)
                     .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Transaction).Build())
@@ -247,7 +247,7 @@ namespace Allors.Database.Domain.Tests
                     .Build();
             productQuote.AddQuoteItem(quoteItem);
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.setReadyPermission, productQuote.DeniedPermissions);
         }
@@ -256,17 +256,17 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedProductQuoteValidQuoteItemsDeriveSetReadyPermissionDenied()
         {
             var productQuote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction)
                     .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Transaction).Build())
                     .WithAssignedUnitPrice(1)
                     .Build();
             productQuote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quoteItem.Cancel();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.setReadyPermission, productQuote.DeniedPermissions);
         }
@@ -275,10 +275,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedProductQuoteStateNotCreatedDeriveSetReadyPermission()
         {
             var productQuote = this.InternalOrganisation.CreateB2BProductQuoteWithSerialisedItem(this.Transaction.Faker());
-            this.Transaction.Derive(false);
+            this.Derive();
 
             productQuote.Send();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(productQuote.QuoteState.IsAwaitingAcceptance);
             Assert.Contains(this.setReadyPermission, productQuote.DeniedPermissions);
@@ -288,7 +288,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
         {
             var productQuote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, productQuote.DeniedPermissions);
         }
@@ -297,10 +297,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionDenied()
         {
             var productQuote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             productQuote.QuoteState = new QuoteStates(this.Transaction).Accepted;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, productQuote.DeniedPermissions);
         }
@@ -309,10 +309,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedRequestDeriveDeletePermissionDenied()
         {
             var productQuote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             productQuote.Request = new RequestForQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, productQuote.DeniedPermissions);
         }
@@ -321,13 +321,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedRequestDeriveDeletePermissionDeniedAllowed()
         {
             var productQuote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             productQuote.Request = new RequestForQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             productQuote.RemoveRequest();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, productQuote.DeniedPermissions);
         }
@@ -338,10 +338,10 @@ namespace Allors.Database.Domain.Tests
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
 
             var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesOrder.Quote = quote;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, quote.DeniedPermissions);
         }
@@ -352,13 +352,13 @@ namespace Allors.Database.Domain.Tests
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
 
             var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesOrder.Quote = quote;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesOrder.RemoveQuote();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, quote.DeniedPermissions);
         }

@@ -53,7 +53,7 @@ namespace Allors.Database.Domain.Tests
 
             receipt.AddPaymentApplication(paymentApplication);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentAmountIsToSmall)));
         }
 
@@ -63,7 +63,7 @@ namespace Allors.Database.Domain.Tests
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
             var invoiceItem = salesInvoice.InvoiceItems.First();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             var partialAmount = invoiceItem.TotalIncVat - 1;
             new PaymentApplicationBuilder(this.Transaction)
@@ -72,7 +72,7 @@ namespace Allors.Database.Domain.Tests
                                         .WithAmountApplied(partialAmount)
                                         .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>().ToList();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtLeastOne>().ToList();
             Assert.Contains(this.M.PaymentApplication.AmountApplied, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.InvoiceItem.AmountPaid, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -83,7 +83,7 @@ namespace Allors.Database.Domain.Tests
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
             var invoiceItem = salesInvoice.InvoiceItems.First();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             var partialAmount = invoiceItem.TotalIncVat - 1;
             new PaymentApplicationBuilder(this.Transaction)
@@ -91,7 +91,7 @@ namespace Allors.Database.Domain.Tests
                                         .Build();
 
             // TODO: Shouldn't this be Required?
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtLeastOne>();
             Assert.Contains(this.M.PaymentApplication.AmountApplied, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
@@ -100,7 +100,7 @@ namespace Allors.Database.Domain.Tests
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             var fullAmount = salesInvoice.TotalIncVat - 1;
             var extraAmount = salesInvoice.TotalIncVat + 1;
@@ -112,7 +112,7 @@ namespace Allors.Database.Domain.Tests
                 .WithEffectiveDate(this.Transaction.Now())
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentApplicationNotLargerThanPaymentAmount)));
         }
 
@@ -121,7 +121,7 @@ namespace Allors.Database.Domain.Tests
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             var fullAmount = salesInvoice.TotalIncVat;
             var extraAmount = salesInvoice.TotalIncVat + 1;
@@ -133,7 +133,7 @@ namespace Allors.Database.Domain.Tests
                 .WithEffectiveDate(this.Transaction.Now())
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentApplicationNotLargerThanInvoiceAmount)));
         }
     }

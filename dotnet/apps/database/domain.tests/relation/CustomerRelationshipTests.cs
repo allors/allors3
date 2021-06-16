@@ -164,12 +164,12 @@ namespace Allors.Database.Domain.Tests
                 .WithFromDate(this.Transaction.Now())
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyFinancial = customer2.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, customerRelationship2.InternalOrganisation));
             partyFinancial.SubAccountNumber = 19;
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -303,11 +303,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedCustomerDeriveParties()
         {
             var customerRelationship = new CustomerRelationshipBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var customer = new PersonBuilder(this.Transaction).Build();
             customerRelationship.Customer = customer;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(customer, customerRelationship.Parties);
         }
@@ -316,11 +316,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedInternalOrganisationDeriveParties()
         {
             var customerRelationship = new CustomerRelationshipBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
             customerRelationship.InternalOrganisation = internalOrganisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(internalOrganisation, customerRelationship.Parties);
         }

@@ -31,21 +31,21 @@ namespace Allors.Database.Domain.Tests
             var builder = new EngagementBuilder(this.Transaction);
             var customEngagementItem = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithDescription("Engagement");
             customEngagementItem = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithBillToParty(customer);
             customEngagementItem = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
     }
 
@@ -65,13 +65,13 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             billToParty.AddPartyContactMechanism(partyContactMechanism);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var engagement = new EngagementBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             engagement.BillToParty = billToParty;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(partyContactMechanism.ContactMechanism, engagement.BillToContactMechanism);
         }
@@ -88,13 +88,13 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             placingParty.AddPartyContactMechanism(partyContactMechanism);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var engagement = new EngagementBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             engagement.PlacingParty = placingParty;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(partyContactMechanism.ContactMechanism, engagement.PlacingContactMechanism);
         }

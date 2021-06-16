@@ -35,7 +35,7 @@ namespace Allors.Database.Domain.Tests
             builder.Build();
 
             // Act
-            var derivation = this.Transaction.Derive(false);
+            var derivation = this.Derive();
 
             // Assert
             Assert.True(derivation.HasErrors);
@@ -47,7 +47,7 @@ namespace Allors.Database.Domain.Tests
             builder.Build();
 
             // Act
-            derivation = this.Transaction.Derive(false);
+            derivation = this.Derive();
 
             // Assert
             Assert.False(derivation.HasErrors);
@@ -191,7 +191,7 @@ namespace Allors.Database.Domain.Tests
         public void DeriveNonSerialisedInventoryItemState()
         {
             var inventoryItem = new SerialisedInventoryItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new SerialisedInventoryItemStates(this.Transaction).Good, inventoryItem.SerialisedInventoryItemState);
         }
@@ -205,10 +205,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartDeriveName()
         {
             var inventoryItem = new SerialisedInventoryItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             inventoryItem.Part = new UnifiedGoodBuilder(this.Transaction).WithName("partname").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal("partname at  with state In good order", inventoryItem.Name);
         }
@@ -217,10 +217,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedFacilityDeriveName()
         {
             var inventoryItem = new SerialisedInventoryItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             inventoryItem.Facility = new FacilityBuilder(this.Transaction).WithName("facilityname").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(" at facilityname with state In good order", inventoryItem.Name);
         }
@@ -248,7 +248,7 @@ namespace Allors.Database.Domain.Tests
                 .WithSerialisedItem(serialisedItem)
                 .WithQuantity(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             // InventoryItemState is excluded from InventoryStrategy
             Assert.Equal(0, ((SerialisedInventoryItem)inventoryItemTransaction.InventoryItem).Quantity);
@@ -271,7 +271,7 @@ namespace Allors.Database.Domain.Tests
                 .WithSerialisedItem(serialisedItem)
                 .WithQuantity(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, ((SerialisedInventoryItem)inventoryItemTransaction.InventoryItem).Quantity);
         }
@@ -293,12 +293,12 @@ namespace Allors.Database.Domain.Tests
                 .WithSerialisedItem(serialisedItem)
                 .WithQuantity(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var picklist = new PickListBuilder(this.Transaction)
                 .WithPickListState(new PickListStates(this.Transaction).Picked)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var picklistItem = new PickListItemBuilder(this.Transaction)
                 .WithInventoryItem(inventoryItemTransaction.InventoryItem)
@@ -310,7 +310,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPickListItem(picklistItem)
                 .WithShipmentItem(new ShipmentItemBuilder(this.Transaction).WithShipmentItemState(new ShipmentItemStates(this.Transaction).Created).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0, ((SerialisedInventoryItem)inventoryItemTransaction.InventoryItem).Quantity);
         }
@@ -333,7 +333,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(2)
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains("Invalid transaction"));
         }
     }

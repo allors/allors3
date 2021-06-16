@@ -22,11 +22,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedRecipientDeriveValidationError()
         {
             var request = new RequestForInformationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             request.Recipient = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InternalOrganisationChanged));
         }
 
@@ -34,11 +34,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedRequestItemsDeriveRequestItemsSyncedRequest()
         {
             var request = new RequestForInformationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var requestItem = new RequestItemBuilder(this.Transaction).Build();
             request.AddRequestItem(requestItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(request, requestItem.SyncedRequest);
         }
@@ -57,7 +57,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionDenied()
         {
             var request = new RequestForInformationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, request.DeniedPermissions);
         }
@@ -66,10 +66,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
         {
             var request = new RequestForInformationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             request.RequestState = new RequestStates(this.Transaction).Submitted;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, request.DeniedPermissions);
         }
@@ -78,13 +78,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedQuoteRequestDeriveDeletePermission()
         {
             var request = new RequestForInformationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.Request = request;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, request.DeniedPermissions);
         }
@@ -95,16 +95,16 @@ namespace Allors.Database.Domain.Tests
             var request = new RequestForInformationBuilder(this.Transaction)
                 .WithRequestState(new RequestStates(this.Transaction).Submitted)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var requestItem = new RequestItemBuilder(this.Transaction).Build();
             request.AddRequestItem(requestItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, request.DeniedPermissions);
 
             requestItem.RequestItemState = new RequestItemStates(this.Transaction).Quoted;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, request.DeniedPermissions);
         }

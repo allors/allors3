@@ -19,7 +19,7 @@ namespace Allors.Database.Domain.Tests
         public void DeriveTransactionDate()
         {
             var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(inventoryItemTransaction.ExistTransactionDate);
         }
@@ -37,7 +37,7 @@ namespace Allors.Database.Domain.Tests
             part.AddSerialisedItem(serialisedItem);
 
             var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction).WithSerialisedItem(serialisedItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(part, inventoryItemTransaction.Part);
         }
@@ -49,7 +49,7 @@ namespace Allors.Database.Domain.Tests
             var part = new NonUnifiedPartBuilder(this.Transaction).WithDefaultFacility(facility).Build();
 
             var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction).WithPart(part).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(facility, inventoryItemTransaction.Facility);
         }
@@ -61,7 +61,7 @@ namespace Allors.Database.Domain.Tests
             var part = new NonUnifiedPartBuilder(this.Transaction).WithUnitOfMeasure(uom).Build();
 
             var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction).WithPart(part).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(uom, inventoryItemTransaction.UnitOfMeasure);
         }
@@ -77,7 +77,7 @@ namespace Allors.Database.Domain.Tests
                 .WithReason(new InventoryTransactionReasons(this.Transaction).Theft)
                 .WithSerialisedItem(serialisedItem)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new InventoryTransactionReasons(this.Transaction).Theft.DefaultSerialisedInventoryItemState, inventoryItemTransaction.SerialisedInventoryItemState);
         }
@@ -91,7 +91,7 @@ namespace Allors.Database.Domain.Tests
                 .WithReason(new InventoryTransactionReasons(this.Transaction).Theft)
                 .WithPart(part)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new InventoryTransactionReasons(this.Transaction).Theft.DefaultNonSerialisedInventoryItemState, inventoryItemTransaction.NonSerialisedInventoryItemState);
         }
@@ -109,7 +109,7 @@ namespace Allors.Database.Domain.Tests
                 .WithSerialisedItem(serialisedItem)
                 .WithQuantity(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(part.InventoryItemsWherePart.First, inventoryItemTransaction.InventoryItem);
         }
@@ -125,7 +125,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(part)
                 .WithQuantity(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(part.InventoryItemsWherePart.First, inventoryItemTransaction.InventoryItem);
         }
@@ -149,7 +149,7 @@ namespace Allors.Database.Domain.Tests
                 .WithSerialisedItem(serialisedItem)
                 .WithQuantity(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(part.InventoryItemsWherePart.Count == 1);
             Assert.Equal(part.InventoryItemsWherePart.First, inventoryItemTransaction.InventoryItem);
@@ -171,7 +171,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(part)
                 .WithQuantity(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(part.InventoryItemsWherePart.Count == 1);
             Assert.Equal(part.InventoryItemsWherePart.First, inventoryItemTransaction.InventoryItem);
@@ -188,7 +188,7 @@ namespace Allors.Database.Domain.Tests
                 .WithReason(new InventoryTransactionReasons(this.Transaction).Theft)
                 .WithSerialisedItem(serialisedItem)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new InventoryTransactionReasons(this.Transaction).Theft.DefaultSerialisedInventoryItemState, ((SerialisedInventoryItem)inventoryItemTransaction.InventoryItem).SerialisedInventoryItemState);
         }
@@ -202,7 +202,7 @@ namespace Allors.Database.Domain.Tests
                 .WithReason(new InventoryTransactionReasons(this.Transaction).Theft)
                 .WithPart(part)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new InventoryTransactionReasons(this.Transaction).Theft.DefaultNonSerialisedInventoryItemState, ((NonSerialisedInventoryItem)inventoryItemTransaction.InventoryItem).NonSerialisedInventoryItemState);
         }
@@ -218,7 +218,7 @@ namespace Allors.Database.Domain.Tests
             var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             part.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction)
                 .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
@@ -226,7 +226,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(2)
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains("Serialised Inventory Items only accept Quantities of -1, 0, and 1."));
         }
 
@@ -236,7 +236,7 @@ namespace Allors.Database.Domain.Tests
             var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             part.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction)
                 .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
@@ -244,7 +244,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(1)
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains("The Serial Number is required for Inventory Item Transactions involving Serialised Inventory Items."));
         }
 
@@ -254,7 +254,7 @@ namespace Allors.Database.Domain.Tests
             var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             part.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction)
                 .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
@@ -262,7 +262,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(2)
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains("Invalid transaction"));
         }
 
@@ -272,7 +272,7 @@ namespace Allors.Database.Domain.Tests
             var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             part.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction)
                 .WithReason(new InventoryTransactionReasons(this.Transaction).OutgoingShipment)
@@ -280,7 +280,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(2)
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains("Invalid transaction"));
         }
 
@@ -290,14 +290,14 @@ namespace Allors.Database.Domain.Tests
             var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             part.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithSerialisedItem(serialisedItem)
                 .WithQuantity(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction)
                 .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
@@ -306,7 +306,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var expectedMessage = $"{inventoryItemTransaction} { this.M.InventoryItemTransaction.SerialisedItem} ";
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
         }
     }

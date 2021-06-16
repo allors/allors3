@@ -18,10 +18,10 @@ namespace Allors.Database.Domain.Tests
             var locales = this.Transaction.GetSingleton().AdditionalLocales;
 
             var characteristic = new SerialisedItemCharacteristicBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             characteristic.SerialisedItemCharacteristicType = new SerialisedItemCharacteristicTypeBuilder(this.Transaction).WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Kilogram).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             foreach(Locale locale in locales)
             {
@@ -36,10 +36,10 @@ namespace Allors.Database.Domain.Tests
 
             var characteristicType = new SerialisedItemCharacteristicTypeBuilder(this.Transaction).Build();
             var characteristic = new SerialisedItemCharacteristicBuilder(this.Transaction).WithSerialisedItemCharacteristicType(characteristicType).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             characteristicType.UnitOfMeasure = new UnitsOfMeasure(this.Transaction).Kilogram;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             foreach (Locale locale in locales)
             {
@@ -55,10 +55,10 @@ namespace Allors.Database.Domain.Tests
             var characteristic = new SerialisedItemCharacteristicBuilder(this.Transaction)
                 .WithSerialisedItemCharacteristicType(new SerialisedItemCharacteristicTypeBuilder(this.Transaction).WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Kilogram).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             characteristic.Value = "value";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             foreach (Locale locale in locales)
             {

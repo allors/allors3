@@ -19,11 +19,11 @@ namespace Allors.Database.Domain.Tests
         {
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
             var relationship = new ProfessionalServicesRelationshipBuilder(this.Transaction).WithProfessionalServicesProvider(internalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var professional = new PersonBuilder(this.Transaction).Build();
             relationship.Professional = professional;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(professional, relationship.Parties);
         }
@@ -33,11 +33,11 @@ namespace Allors.Database.Domain.Tests
         {
             var professional = new PersonBuilder(this.Transaction).Build();
             var relationship = new ProfessionalServicesRelationshipBuilder(this.Transaction).WithProfessional(professional).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
             relationship.ProfessionalServicesProvider = internalOrganisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(internalOrganisation, relationship.Parties);
         }

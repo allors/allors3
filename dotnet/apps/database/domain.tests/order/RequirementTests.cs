@@ -39,14 +39,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new RequirementBuilder(this.Transaction);
             var customerRequirement = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithDescription("CustomerRequirement");
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
     }
 }

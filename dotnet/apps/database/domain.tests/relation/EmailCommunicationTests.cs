@@ -35,7 +35,7 @@ namespace Allors.Database.Domain.Tests
                 .WithToEmail(addresseeEmail)
                 .Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             Assert.Equal(communication.CommunicationEventState, new CommunicationEventStates(this.Transaction).Scheduled);
             Assert.Equal(communication.CommunicationEventState, communication.LastCommunicationEventState);
@@ -125,10 +125,10 @@ namespace Allors.Database.Domain.Tests
                 .WithEmailTemplate(new EmailTemplateBuilder(this.Transaction).WithSubjectTemplate("subjectfromtemplate").Build())
                 .WithSubject("subject")
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             emailCommunication.RemoveSubject();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal("subjectfromtemplate", emailCommunication.Subject);
         }
@@ -138,10 +138,10 @@ namespace Allors.Database.Domain.Tests
         {
             var emailCommunication = new EmailCommunicationBuilder(this.Transaction)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             emailCommunication.EmailTemplate = new EmailTemplateBuilder(this.Transaction).WithSubjectTemplate("subjectfromtemplate").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal("subjectfromtemplate", emailCommunication.Subject);
         }
@@ -151,10 +151,10 @@ namespace Allors.Database.Domain.Tests
         {
             var emailCommunication = new EmailCommunicationBuilder(this.Transaction)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             emailCommunication.Subject = "subject";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("subject", emailCommunication.WorkItemDescription);
         }
@@ -164,11 +164,11 @@ namespace Allors.Database.Domain.Tests
         {
             var emailCommunication = new EmailCommunicationBuilder(this.Transaction)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var to = new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("email@something.com").Build();
             emailCommunication.ToEmail = to;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("email@something.com", emailCommunication.WorkItemDescription);
         }

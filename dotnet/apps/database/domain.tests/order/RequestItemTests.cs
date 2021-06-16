@@ -30,7 +30,7 @@ namespace Allors.Database.Domain.Tests
             var requestItem = new RequestItemBuilder(this.Transaction).Build();
             request.AddRequestItem(requestItem);
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtLeastOne>();
             Assert.Contains(this.M.RequestItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.RequestItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -41,11 +41,11 @@ namespace Allors.Database.Domain.Tests
             var requestItem = new RequestItemBuilder(this.Transaction)
                 .WithProductFeature(new ColourBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             requestItem.Product = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Contains(this.M.RequestItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.RequestItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -56,11 +56,11 @@ namespace Allors.Database.Domain.Tests
             var requestItem = new RequestItemBuilder(this.Transaction)
                 .WithProduct(new UnifiedGoodBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             requestItem.ProductFeature = new ColourBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Contains(this.M.RequestItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.RequestItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -71,11 +71,11 @@ namespace Allors.Database.Domain.Tests
             var requestItem = new RequestItemBuilder(this.Transaction)
                 .WithProduct(new UnifiedGoodBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             requestItem.Description = "Description";
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Contains(this.M.RequestItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.RequestItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -86,11 +86,11 @@ namespace Allors.Database.Domain.Tests
             var requestItem = new RequestItemBuilder(this.Transaction)
                 .WithProduct(new UnifiedGoodBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             requestItem.NeededSkill = new NeededSkillBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Contains(this.M.RequestItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.RequestItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -101,11 +101,11 @@ namespace Allors.Database.Domain.Tests
             var requestItem = new RequestItemBuilder(this.Transaction)
                 .WithProduct(new UnifiedGoodBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             requestItem.Deliverable = new DeliverableBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>().ToList();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>().ToList();
             Assert.Contains(this.M.RequestItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.RequestItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -116,11 +116,11 @@ namespace Allors.Database.Domain.Tests
             var requestItem = new RequestItemBuilder(this.Transaction)
                 .WithProductFeature(new ColourBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             requestItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.RequestItem.SerialisedItem,
@@ -137,12 +137,12 @@ namespace Allors.Database.Domain.Tests
 
             var requestItem = new RequestItemBuilder(this.Transaction).Build();
             request.AddRequestItem(requestItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(requestItem.RequestItemState.IsDraft);
 
             request.RequestState = new RequestStates(this.Transaction).Submitted;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(requestItem.RequestItemState.IsSubmitted);
         }
@@ -156,12 +156,12 @@ namespace Allors.Database.Domain.Tests
 
             var requestItem = new RequestItemBuilder(this.Transaction).Build();
             request.AddRequestItem(requestItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(requestItem.RequestItemState.IsDraft);
 
             request.RequestState = new RequestStates(this.Transaction).Cancelled;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(requestItem.RequestItemState.IsCancelled);
         }
@@ -175,12 +175,12 @@ namespace Allors.Database.Domain.Tests
 
             var requestItem = new RequestItemBuilder(this.Transaction).Build();
             request.AddRequestItem(requestItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(requestItem.RequestItemState.IsDraft);
 
             request.RequestState = new RequestStates(this.Transaction).Rejected;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(requestItem.RequestItemState.IsRejected);
         }
@@ -194,12 +194,12 @@ namespace Allors.Database.Domain.Tests
 
             var requestItem = new RequestItemBuilder(this.Transaction).Build();
             request.AddRequestItem(requestItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(requestItem.RequestItemState.IsDraft);
 
             request.RequestState = new RequestStates(this.Transaction).Quoted;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(requestItem.RequestItemState.IsQuoted);
         }
@@ -208,10 +208,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedUnitOfMeasureDeriveUnitOfMeasure()
         {
             var requestItem = new RequestItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             requestItem.RemoveUnitOfMeasure();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new UnitsOfMeasure(this.Transaction).Piece, requestItem.UnitOfMeasure);
         }
@@ -222,11 +222,11 @@ namespace Allors.Database.Domain.Tests
             var requestItem = new RequestItemBuilder(this.Transaction)
                 .WithSerialisedItem(new SerialisedItemBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             requestItem.Quantity = 2;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SerializedItemQuantity));
         }
     }
@@ -243,7 +243,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
         {
             var requestItem = new RequestItemBuilder(this.Transaction).WithRequestItemState(new RequestItemStates(this.Transaction).Draft).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, requestItem.DeniedPermissions);
         }
@@ -252,7 +252,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionDenied()
         {
             var requestItem = new RequestItemBuilder(this.Transaction).WithRequestItemState(new RequestItemStates(this.Transaction).Quoted).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, requestItem.DeniedPermissions);
         }

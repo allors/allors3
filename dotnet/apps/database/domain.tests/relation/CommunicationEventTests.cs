@@ -187,7 +187,7 @@ namespace Allors.Database.Domain.Tests
 
             var phoneComEvent = new PhoneCommunicationBuilder(this.Transaction).Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(employee, phoneComEvent.Owner);
         }
@@ -204,7 +204,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.SetUser(employee);
 
             var phoneComEvent = new PhoneCommunicationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(employee.OwnerSecurityToken, phoneComEvent.SecurityTokens);
         }
@@ -213,11 +213,11 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedScheduledEndThrowDerivationError()
         {
             var phoneComEvent = new PhoneCommunicationBuilder(this.Transaction).WithScheduledStart(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             phoneComEvent.ScheduledEnd = this.Transaction.Now().AddHours(-1);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("Scheduled end date before scheduled start date"));
         }
 
@@ -225,11 +225,11 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedActualEndActualStartThrowDerivationError()
         {
             var phoneComEvent = new PhoneCommunicationBuilder(this.Transaction).WithActualStart(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             phoneComEvent.ActualEnd = this.Transaction.Now().AddHours(-1);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("Actual end date before actual start date"));
         }
 
@@ -237,10 +237,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedActualStartDeriveCommunicationEventStateScheduled()
         {
             var phoneComEvent = new PhoneCommunicationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             phoneComEvent.ActualStart = this.Transaction.Now().AddHours(1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new CommunicationEventStates(this.Transaction).Scheduled, phoneComEvent.CommunicationEventState);
         }
@@ -249,10 +249,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedActualStartDeriveCommunicationEventStateInProgress()
         {
             var phoneComEvent = new PhoneCommunicationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             phoneComEvent.ActualStart = this.Transaction.Now().AddHours(-1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new CommunicationEventStates(this.Transaction).InProgress, phoneComEvent.CommunicationEventState);
         }
@@ -264,10 +264,10 @@ namespace Allors.Database.Domain.Tests
                 .WithActualStart(this.Transaction.Now().AddHours(-2))
                 .WithActualEnd(this.Transaction.Now().AddHours(-1))
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             phoneComEvent.ActualEnd = this.Transaction.Now().AddHours(1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new CommunicationEventStates(this.Transaction).InProgress, phoneComEvent.CommunicationEventState);
         }
@@ -276,10 +276,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedActualEndDeriveCommunicationEventStateCompleted()
         {
             var phoneComEvent = new PhoneCommunicationBuilder(this.Transaction).WithActualStart(this.Transaction.Now().AddHours(-2)).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             phoneComEvent.ActualEnd = this.Transaction.Now().AddHours(-1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new CommunicationEventStates(this.Transaction).Completed, phoneComEvent.CommunicationEventState);
         }
@@ -288,10 +288,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedScheduledStartDeriveInitialScheduledStart()
         {
             var phoneComEvent = new PhoneCommunicationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             phoneComEvent.ScheduledStart = this.Transaction.Now();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(phoneComEvent.ScheduledStart, phoneComEvent.InitialScheduledStart);
         }
@@ -300,13 +300,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedInitialScheduledStartDeriveInitialScheduledStart()
         {
             var phoneComEvent = new PhoneCommunicationBuilder(this.Transaction).WithInitialScheduledStart(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             phoneComEvent.ScheduledStart = this.Transaction.Now().AddDays(1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             phoneComEvent.RemoveInitialScheduledStart();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(phoneComEvent.ScheduledStart, phoneComEvent.InitialScheduledStart);
         }
@@ -315,10 +315,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedScheduledEndDeriveInitialScheduledEnd()
         {
             var phoneComEvent = new PhoneCommunicationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             phoneComEvent.ScheduledEnd = this.Transaction.Now();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(phoneComEvent.ScheduledEnd, phoneComEvent.InitialScheduledEnd);
         }
@@ -327,13 +327,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedInitialScheduledEndDeriveInitialScheduledEnd()
         {
             var phoneComEvent = new PhoneCommunicationBuilder(this.Transaction).WithInitialScheduledEnd(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             phoneComEvent.ScheduledEnd = this.Transaction.Now().AddDays(1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             phoneComEvent.RemoveInitialScheduledEnd();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(phoneComEvent.ScheduledEnd, phoneComEvent.InitialScheduledEnd);
         }
@@ -342,7 +342,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedDeriveCommunicationTask()
         {
             var phoneComEvent = new PhoneCommunicationBuilder(this.Transaction).WithScheduledStart(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Single(phoneComEvent.CommunicationTasksWhereCommunicationEvent);
         }
@@ -351,11 +351,11 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedFromPartyDeriveInvolvedParties()
         {
             var phoneComEvent = new PhoneCommunicationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var party = new PersonBuilder(this.Transaction).Build();
             phoneComEvent.FromParty = party;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(party, phoneComEvent.InvolvedParties);
         }
@@ -364,11 +364,11 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedToPartyDeriveInvolvedParties()
         {
             var phoneComEvent = new PhoneCommunicationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var party = new PersonBuilder(this.Transaction).Build();
             phoneComEvent.ToParty = party;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(party, phoneComEvent.InvolvedParties);
         }
@@ -380,7 +380,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.SetUser(employee);
 
             var phoneComEvent = new PhoneCommunicationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(employee, phoneComEvent.InvolvedParties);
         }

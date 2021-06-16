@@ -21,7 +21,7 @@ namespace Allors.Database.Domain.Tests
         {
             var basePrice = new BasePriceBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("BasePrice.Part, BasePrice.Product, BasePrice.ProductFeature at least one"));
         }
 
@@ -29,11 +29,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartThrowValidationError()
         {
             var basePrice = new BasePriceBuilder(this.Transaction).WithPart(new UnifiedGoodBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             basePrice.RemovePart();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("BasePrice.Part, BasePrice.Product, BasePrice.ProductFeature at least one"));
         }
 
@@ -41,11 +41,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedOrderQuantityBreakThrowValidationError()
         {
             var basePrice = new BasePriceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             basePrice.OrderQuantityBreak = new OrderQuantityBreakBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.BasePriceOrderQuantityBreakNotAllowed));
         }
 
@@ -53,11 +53,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedOrderValueThrowValidationError()
         {
             var basePrice = new BasePriceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             basePrice.OrderValue = new OrderValueBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.BasePriceOrderValueNotAllowed));
         }
 
@@ -65,11 +65,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedProductDeriveProductBasePrices()
         {
             var basePrice = new BasePriceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var product = new UnifiedGoodBuilder(this.Transaction).Build();
             basePrice.Product = product;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(basePrice, product.BasePrices);
         }
@@ -78,11 +78,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedProductFeatureDeriveProductBasePrices()
         {
             var basePrice = new BasePriceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productFeature = new ColourBuilder(this.Transaction).Build();
             basePrice.ProductFeature = productFeature;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(basePrice, productFeature.BasePrices);
         }

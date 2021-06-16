@@ -23,11 +23,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedDefaultCollectionMethodDeriveCollectionMethod()
         {
             var store = new StoreBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var collecionMethod = new CashBuilder(this.Transaction).Build();
             store.DefaultCollectionMethod = collecionMethod;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(collecionMethod, store.CollectionMethods);
         }
@@ -37,7 +37,7 @@ namespace Allors.Database.Domain.Tests
         {
             var collecionMethod = new CashBuilder(this.Transaction).Build();
             var store = new StoreBuilder(this.Transaction).WithCollectionMethod(collecionMethod).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(collecionMethod, store.DefaultCollectionMethod);
         }
@@ -46,7 +46,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedInternalOrganisationDeriveDefaultCollectionMethod()
         {
             var store = new StoreBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.DefaultCollectionMethod, store.DefaultCollectionMethod);
         }
@@ -55,10 +55,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedInternalOrganisationDeriveSalesInvoiceNumberCounter()
         {
             this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Transaction).EnforcedSequence;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var store = new StoreBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(store.ExistSalesInvoiceNumberCounter);
         }
@@ -67,10 +67,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedInternalOrganisationDeriveCustomerShipmentNumberCounter()
         {
             this.InternalOrganisation.CustomerShipmentSequence = new CustomerShipmentSequences(this.Transaction).EnforcedSequence;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var store = new StoreBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(store.ExistCustomerShipmentNumberCounter);
         }
@@ -79,11 +79,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedFiscalYearsStoreSequenceNumbersThrowValidationError()
         {
             var store = new StoreBuilder(this.Transaction).WithSalesInvoiceNumberCounter(new CounterBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             store.AddFiscalYearsStoreSequenceNumber(new FiscalYearStoreSequenceNumbersBuilder(this.Transaction).Build());
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.Store.FiscalYearsStoreSequenceNumbers,
@@ -95,11 +95,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSalesInvoiceNumberCounterThrowValidationError()
         {
             var store = new StoreBuilder(this.Transaction).WithFiscalYearsStoreSequenceNumber(new FiscalYearStoreSequenceNumbersBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             store.SalesInvoiceNumberCounter = new CounterBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.Store.FiscalYearsStoreSequenceNumbers,

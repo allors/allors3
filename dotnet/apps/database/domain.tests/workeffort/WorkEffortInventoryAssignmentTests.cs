@@ -510,7 +510,7 @@ namespace Allors.Database.Domain.Tests
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
             var part1 = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
             var part2 = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part1)
@@ -523,20 +523,20 @@ namespace Allors.Database.Domain.Tests
                 .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(3)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part1.InventoryItemsWherePart.First)
                 .WithQuantity(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(2, part1.QuantityOnHand);
             Assert.Equal(3, part2.QuantityOnHand);
 
             inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.First;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(3, part1.QuantityOnHand);
             Assert.Equal(2, part2.QuantityOnHand);
@@ -554,7 +554,7 @@ namespace Allors.Database.Domain.Tests
             var part1 = new NonUnifiedPartBuilder(this.Transaction)
                 .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part1)
@@ -562,14 +562,14 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(3)
                 .WithCost(10)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part1.InventoryItemsWherePart.First)
                 .WithQuantity(2)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(20, inventoryAssignment.CostOfGoodsSold);
         }
@@ -581,7 +581,7 @@ namespace Allors.Database.Domain.Tests
             var part = new NonUnifiedPartBuilder(this.Transaction)
                 .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part)
@@ -589,17 +589,17 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(3)
                 .WithCost(10)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(2)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             inventoryAssignment.Quantity = 3;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(30, inventoryAssignment.CostOfGoodsSold);
         }
@@ -613,16 +613,16 @@ namespace Allors.Database.Domain.Tests
         public void ChangedAssignedBillableQuantityDeriveDerivedBillableQuantity()
         {
             var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(2)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             inventoryAssignment.AssignedBillableQuantity = 1;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, inventoryAssignment.DerivedBillableQuantity);
         }
@@ -631,16 +631,16 @@ namespace Allors.Database.Domain.Tests
         public void ChangedQuantityDeriveDerivedBillableQuantity()
         {
             var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(2)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             inventoryAssignment.Quantity = 1;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, inventoryAssignment.DerivedBillableQuantity);
         }
@@ -657,24 +657,24 @@ namespace Allors.Database.Domain.Tests
             var part = new NonUnifiedPartBuilder(this.Transaction)
                 .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part)
                 .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(3)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .WithQuantity(2)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             inventoryAssignment.AssignedUnitSellingPrice = 11;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(11, inventoryAssignment.UnitSellingPrice);
         }
@@ -684,24 +684,24 @@ namespace Allors.Database.Domain.Tests
         {
             var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
             new BasePriceBuilder(this.Transaction).WithPart(part).WithPrice(11).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part)
                 .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(3)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithQuantity(2)
                 .WithInventoryItem(part.InventoryItemsWherePart.First)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(11, inventoryAssignment.UnitSellingPrice);
         }

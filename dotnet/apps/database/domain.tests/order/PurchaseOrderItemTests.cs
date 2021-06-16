@@ -105,7 +105,7 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddPurchaseOrderItem(item);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
 
             this.Transaction.Rollback();
@@ -118,7 +118,7 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddPurchaseOrderItem(item);
 
-            errors = this.Transaction.Derive(false).Errors.ToList();
+            errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
 
             this.Transaction.Rollback();
@@ -132,7 +132,7 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddPurchaseOrderItem(item);
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -154,7 +154,7 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddPurchaseOrderItem(item);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
 
             this.Transaction.Rollback();
@@ -168,7 +168,7 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddPurchaseOrderItem(item);
 
-            errors = this.Transaction.Derive(false).Errors.ToList();
+            errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
 
             this.Transaction.Rollback();
@@ -182,7 +182,7 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddPurchaseOrderItem(item);
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -203,7 +203,7 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddPurchaseOrderItem(item);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
 
             this.Transaction.Rollback();
@@ -216,7 +216,7 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddPurchaseOrderItem(item);
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
@@ -228,7 +228,7 @@ namespace Allors.Database.Domain.Tests
 
             this.order.AddPurchaseOrderItem(item);
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -431,7 +431,7 @@ namespace Allors.Database.Domain.Tests
         public void DerivePurchaseOrderItemState()
         {
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(orderItem.ExistPurchaseOrderItemState);
         }
@@ -440,7 +440,7 @@ namespace Allors.Database.Domain.Tests
         public void DerivePurchaseOrderItemPaymentState()
         {
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(orderItem.ExistPurchaseOrderItemPaymentState);
         }
@@ -452,7 +452,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(new UnifiedGoodBuilder(this.Transaction).Build())
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(orderItem.ExistInvoiceItemType);
         }
@@ -466,14 +466,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderItemStateDeriveDerivedDeliveryDate()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).WithDeliveryDate(this.Transaction.Now().Date).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithPurchaseOrderItemState(new PurchaseOrderItemStates(this.Transaction).Finished).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             orderItem.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Transaction).Created;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(orderItem.DerivedDeliveryDate, order.DeliveryDate);
         }
@@ -482,11 +482,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderPurchaseOrderItemsDeriveDerivedDeliveryDate()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).WithDeliveryDate(this.Transaction.Now().Date).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(orderItem.DerivedDeliveryDate, order.DeliveryDate);
         }
@@ -495,11 +495,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedAssignedDeliveryDateDeriveDerivedDeliveryDate()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithAssignedDeliveryDate(this.Transaction.Now().Date).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(orderItem.DerivedDeliveryDate, orderItem.AssignedDeliveryDate);
         }
@@ -508,14 +508,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedsalesOrderDerivedDeliveryDateDeriveDerivedDeliveryDate()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).WithDeliveryDate(this.Transaction.Now().Date).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             order.DeliveryDate = this.Transaction.Now().Date;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(orderItem.DerivedDeliveryDate, order.DeliveryDate);
         }
@@ -524,11 +524,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedAssignedVatRegimeDeriveDerivedVatRegime()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(orderItem.DerivedVatRegime, orderItem.AssignedVatRegime);
         }
@@ -537,14 +537,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedsalesOrderDerivedVatRegimeDeriveDerivedVatRegime()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             order.AssignedVatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(orderItem.DerivedVatRegime, order.AssignedVatRegime);
         }
@@ -553,14 +553,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedDerivedVatRegimeDeriveVatRate()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             order.AssignedVatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(orderItem.VatRate, order.AssignedVatRegime.VatRates[0]);
         }
@@ -569,11 +569,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedAssignedIrpfRegimeDeriveDerivedIrpfRegime()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithAssignedIrpfRegime(new IrpfRegimes(this.Transaction).Assessable15).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(orderItem.DerivedIrpfRegime, orderItem.AssignedIrpfRegime);
         }
@@ -582,14 +582,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedsalesOrderDerivedIrpfRegimeDeriveDerivedIrpfRegime()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             order.AssignedIrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(orderItem.DerivedIrpfRegime, order.AssignedIrpfRegime);
         }
@@ -598,14 +598,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedDerivedIrpfRegimeDeriveIrpfRate()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             order.AssignedIrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(orderItem.IrpfRate, order.AssignedIrpfRegime.IrpfRates[0]);
         }
@@ -615,25 +615,25 @@ namespace Allors.Database.Domain.Tests
         {
             var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
             vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
             vatRegime.AddVatRate(newVatRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var order = new PurchaseOrderBuilder(this.Transaction)
                 .WithOrderDate(this.Transaction.Now().AddDays(-1).Date)
                 .WithAssignedVatRegime(vatRegime).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(newVatRate, orderItem.VatRate);
 
             order.OrderDate = this.Transaction.Now().AddDays(1).Date;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(newVatRate, orderItem.VatRate);
         }
@@ -649,11 +649,11 @@ namespace Allors.Database.Domain.Tests
             var serialisedPart = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             orderItem.Part = serialisedPart;
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrderItem.SerialisedItem,
@@ -670,11 +670,11 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(serialisedPart)
                 .WithSerialNumber("number")
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             orderItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrderItem.SerialisedItem,
@@ -691,11 +691,11 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(serialisedPart)
                 .WithSerialisedItem(new SerialisedItemBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             orderItem.SerialNumber = "number";
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrderItem.SerialisedItem,
@@ -712,11 +712,11 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(serialisedPart)
                 .WithSerialisedItem(new SerialisedItemBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             orderItem.QuantityOrdered = 2;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
@@ -726,11 +726,11 @@ namespace Allors.Database.Domain.Tests
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithSerialisedItem(new SerialisedItemBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             orderItem.QuantityOrdered = 2;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
@@ -742,11 +742,11 @@ namespace Allors.Database.Domain.Tests
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithPart(nonSerialisedPart)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             orderItem.QuantityOrdered = 0;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
@@ -754,10 +754,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedOrderItemBillingOrderItemDeriveCanInvoice_1()
         {
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new OrderItemBillingBuilder(this.Transaction).WithOrderItem(orderItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(orderItem.CanInvoice);
         }
@@ -766,15 +766,15 @@ namespace Allors.Database.Domain.Tests
         public void ChangedOrderItemBillingOrderItemDeriveCanInvoice_2()
         {
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var billing = new OrderItemBillingBuilder(this.Transaction).WithOrderItem(orderItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(orderItem.CanInvoice);
 
             billing.Delete();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(orderItem.CanInvoice);
         }
@@ -790,10 +790,10 @@ namespace Allors.Database.Domain.Tests
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             orderItem.InvoiceItemType = new InvoiceItemTypes(this.Transaction).PartItem;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(orderItem.IsReceivable);
         }
@@ -804,10 +804,10 @@ namespace Allors.Database.Domain.Tests
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             orderItem.Part = new NonUnifiedPartBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(orderItem.IsReceivable);
         }
@@ -823,7 +823,7 @@ namespace Allors.Database.Domain.Tests
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithIsReceivable(true)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new PurchaseOrderItemShipmentStates(this.Transaction).NotReceived, orderItem.PurchaseOrderItemShipmentState);
         }
@@ -834,7 +834,7 @@ namespace Allors.Database.Domain.Tests
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithIsReceivable(false)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new PurchaseOrderItemShipmentStates(this.Transaction).Na, orderItem.PurchaseOrderItemShipmentState);
         }
@@ -843,17 +843,17 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderPurchaseOrderStateDerivePurchaseOrderItemState()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
                 .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
                 .Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).InProcess;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(order.PurchaseOrderState.IsInProcess);
             Assert.True(orderItem.PurchaseOrderItemState.IsInProcess);
@@ -863,17 +863,17 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentReceiptQuantityAcceptedDeriveQuantityReceived()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
                 .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
                 .Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new ShipmentReceiptBuilder(this.Transaction).WithOrderItem(orderItem).WithQuantityAccepted(1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, orderItem.QuantityReceived);
         }
@@ -882,7 +882,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentReceiptQuantityAcceptedDerivePurchaseOrderItemShipmentStatePartiallyReceived()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
@@ -890,10 +890,10 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantityOrdered(2)
                 .Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new ShipmentReceiptBuilder(this.Transaction).WithOrderItem(orderItem).WithQuantityAccepted(1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(orderItem.PurchaseOrderItemShipmentState.IsPartiallyReceived);
         }
@@ -902,7 +902,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentReceiptQuantityAcceptedDerivePurchaseOrderItemShipmentStateReceived()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
@@ -910,10 +910,10 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantityOrdered(1)
                 .Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new ShipmentReceiptBuilder(this.Transaction).WithOrderItem(orderItem).WithQuantityAccepted(1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(orderItem.PurchaseOrderItemShipmentState.IsReceived);
         }
@@ -922,21 +922,21 @@ namespace Allors.Database.Domain.Tests
         public void ChangedOrderItemBillingOrderItemDerivePurchaseOrderItemPaymentStateNotPaid()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).Build();
             invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new OrderItemBillingBuilder(this.Transaction).WithOrderItem(orderItem).WithInvoiceItem(invoiceItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(orderItem.PurchaseOrderItemPaymentState.IsNotPaid);
         }
@@ -945,26 +945,26 @@ namespace Allors.Database.Domain.Tests
         public void ChangedOrderItemBillingOrderItemDerivePurchaseOrderItemPaymentStatePartiallyPaid()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).WithAssignedUnitPrice(1).WithQuantity(10).Build();
             invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.PurchaseInvoiceState = new PurchaseInvoiceStates(this.Transaction).NotPaid;
 
             new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoiceItem).WithAmountApplied(1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new OrderItemBillingBuilder(this.Transaction).WithOrderItem(orderItem).WithInvoiceItem(invoiceItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(orderItem.PurchaseOrderItemPaymentState.IsPartiallyPaid);
         }
@@ -973,26 +973,26 @@ namespace Allors.Database.Domain.Tests
         public void ChangedOrderItemBillingOrderItemDerivePurchaseOrderItemPaymentStatePaid()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).WithAssignedUnitPrice(1).WithQuantity(1).Build();
             invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.PurchaseInvoiceState = new PurchaseInvoiceStates(this.Transaction).NotPaid;
 
             new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoiceItem).WithAmountApplied(1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new OrderItemBillingBuilder(this.Transaction).WithOrderItem(orderItem).WithInvoiceItem(invoiceItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(orderItem.PurchaseOrderItemPaymentState.IsPaid);
         }
@@ -1004,7 +1004,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPurchaseOrderItemState(new PurchaseOrderItemStates(this.Transaction).InProcess)
                 .WithIsReceivable(false)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new PurchaseOrderItemStates(this.Transaction).Completed, orderItem.PurchaseOrderItemState);
         }
@@ -1017,7 +1017,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPurchaseOrderItemPaymentState(new PurchaseOrderItemPaymentStates(this.Transaction).Paid)
                 .WithIsReceivable(false)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new PurchaseOrderItemStates(this.Transaction).Finished, orderItem.PurchaseOrderItemState);
         }
@@ -1531,15 +1531,15 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedOrderItemBillingOrderItemDeriveDeletePermission()
         {
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItemBilling = new OrderItemBillingBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, orderItem.DeniedPermissions);
 
             orderItemBilling.OrderItem = orderItem;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, orderItem.DeniedPermissions);
         }
@@ -1548,12 +1548,12 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedPurchaseOrderItemPurchaseOrderItemStateDeriveDeletePermission()
         {
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, orderItem.DeniedPermissions);
 
             orderItem.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Transaction).InProcess;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, orderItem.DeniedPermissions);
         }
@@ -1562,15 +1562,15 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedOrderShipmentOrderItemDeriveDeletePermission()
         {
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderShipment = new OrderShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, orderItem.DeniedPermissions);
 
             orderShipment.OrderItem = orderItem;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, orderItem.DeniedPermissions);
         }
@@ -1579,15 +1579,15 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedOrderRequirementCommitmentOrderItemDeriveDeletePermission()
         {
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var requirementCommitment = new OrderRequirementCommitmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, orderItem.DeniedPermissions);
 
             requirementCommitment.OrderItem = orderItem;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, orderItem.DeniedPermissions);
         }
@@ -1596,15 +1596,15 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedWorkEffortOrderItemFulfillmentDeriveDeletePermission()
         {
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var worktask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, orderItem.DeniedPermissions);
 
             worktask.OrderItemFulfillment = orderItem;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, orderItem.DeniedPermissions);
         }

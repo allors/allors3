@@ -20,7 +20,7 @@ namespace Allors.Database.Domain.Tests
             var timeSheet = new TimeSheetBuilder(this.Transaction).Build();
 
             // Act
-            var derivation = this.Transaction.Derive(false);
+            var derivation = this.Derive();
             var originalCount = derivation.Errors.Count();
 
             // Assert
@@ -31,7 +31,7 @@ namespace Allors.Database.Domain.Tests
             timeSheet.Worker = worker;
 
             // Act
-            derivation = this.Transaction.Derive(false);
+            derivation = this.Derive();
 
             // Assert
             Assert.False(derivation.HasErrors);

@@ -180,7 +180,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedWorkTaskDeriveInvoicePermission()
         {
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.invoicePermission, workEffort.DeniedPermissions);
         }
@@ -189,10 +189,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedWorkTaskStateCompletedDeriveInvoicePermission()
         {
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workEffort.Complete();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.invoicePermission, workEffort.DeniedPermissions);
         }
@@ -201,7 +201,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedWorkTaskDeriveCompletePermission()
         {
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.completePermission, workEffort.DeniedPermissions);
         }
@@ -210,13 +210,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedWorkTaskServiceEntriesWhereWorkEffortDeriveCompletePermission()
         {
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workEffort.Complete();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var serviceEntrie = new ExpenseEntryBuilder(this.Transaction).WithWorkEffort(workEffort).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.completePermission, workEffort.DeniedPermissions);
         }
@@ -225,10 +225,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedWorkTaskWorkEffortExistThroughDateNotInProgressStateDeriveCompletePermission()
         {
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var serviceEntrie = new ExpenseEntryBuilder(this.Transaction).WithWorkEffort(workEffort).WithThroughDate(this.Transaction.Now().AddDays(1)).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.completePermission, workEffort.DeniedPermissions);
         }
@@ -237,10 +237,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedWorkTaskWorkEffortExistThroughDateInProgressStateDeriveCompletePermission()
         {
             var workEffort = new WorkTaskBuilder(this.Transaction).WithActualStart(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var serviceEntrie = new ExpenseEntryBuilder(this.Transaction).WithWorkEffort(workEffort).WithThroughDate(this.Transaction.Now().AddDays(1)).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
             // HOW TO IN PROGRESS
 
             Assert.DoesNotContain(this.completePermission, workEffort.DeniedPermissions);

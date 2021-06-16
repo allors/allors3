@@ -1352,7 +1352,7 @@ namespace Allors.Database.Domain.Tests
         {
             new CustomerShipmentBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Equals("CustomerShipment.ShipToParty is required"));
         }
     }
@@ -1369,7 +1369,7 @@ namespace Allors.Database.Domain.Tests
             var number = this.InternalOrganisation.StoresWhereInternalOrganisation.First.CustomerShipmentNumberCounter.Value;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithStore(store).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(shipment.ShipmentNumber, (number + 1).ToString());
         }
@@ -1381,7 +1381,7 @@ namespace Allors.Database.Domain.Tests
             var number = store.CustomerShipmentNumberCounter.Value;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithStore(store).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(shipment.SortableShipmentNumber.Value, number + 1);
         }
@@ -1392,7 +1392,7 @@ namespace Allors.Database.Domain.Tests
             var shipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipToParty(this.InternalOrganisation.ActiveCustomers.First)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipToAddress);
         }
@@ -1403,10 +1403,10 @@ namespace Allors.Database.Domain.Tests
             var shipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipToParty(this.InternalOrganisation.ActiveCustomers.First)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.RemoveShipToAddress();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipToAddress);
         }
@@ -1417,7 +1417,7 @@ namespace Allors.Database.Domain.Tests
             var shipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipFromParty(this.InternalOrganisation)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipFromAddress);
         }
@@ -1428,10 +1428,10 @@ namespace Allors.Database.Domain.Tests
             var shipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipFromParty(this.InternalOrganisation)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.RemoveShipFromAddress();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipFromAddress);
         }
@@ -1443,27 +1443,27 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Transaction).BillingForShipmentItems;
 
             var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new SalesOrderItemBuilder(this.Transaction).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
             salesOrder.AddSalesOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesOrder.SalesOrderState = new SalesOrderStates(this.Transaction).OnHold;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new OrderShipmentBuilder(this.Transaction).WithQuantity(1).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.ShipmentState = new ShipmentStates(this.Transaction).Shipped;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(shipmentItem.ExistShipmentItemBillingsWhereShipmentItem);
         }
@@ -1477,11 +1477,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentItemsDeriveShipmentStateCancelled()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Cancelled, shipment.ShipmentState);
         }
@@ -1490,16 +1490,16 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentItemQuantityDeriveShipmentStateCancelled()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(new ShipmentStates(this.Transaction).Cancelled, shipment.ShipmentState);
 
             shipmentItem.Quantity = 0;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Cancelled, shipment.ShipmentState);
         }
@@ -1508,22 +1508,22 @@ namespace Allors.Database.Domain.Tests
         public void ChangedDerivationTriggerPartyDeriveShipmentStateCancelled()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var picklist = new PickListBuilder(this.Transaction).WithShipToParty(shipment.ShipToParty).WithStore(shipment.Store).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentItem.Quantity = 0;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(new ShipmentStates(this.Transaction).Cancelled, shipment.ShipmentState);
 
             picklist.Delete();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Cancelled, shipment.ShipmentState);
         }
@@ -1533,22 +1533,22 @@ namespace Allors.Database.Domain.Tests
         {
             var shipToParty = new PersonBuilder(this.Transaction).Build();
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(shipToParty).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var picklist = new PickListBuilder(this.Transaction).WithShipToParty(shipment.ShipToParty).WithStore(shipment.Store).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentItem.Quantity = 0;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(new ShipmentStates(this.Transaction).Cancelled, shipment.ShipmentState);
 
             picklist.RemoveShipToParty();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Cancelled, shipment.ShipmentState);
         }
@@ -1557,22 +1557,22 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPickListPickListStateDeriveShipmentStateCancelled()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var picklist = new PickListBuilder(this.Transaction).WithShipToParty(shipment.ShipToParty).WithStore(shipment.Store).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentItem.Quantity = 0;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(new ShipmentStates(this.Transaction).Cancelled, shipment.ShipmentState);
 
             picklist.PickListState = new PickListStates(this.Transaction).Picked;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Cancelled, shipment.ShipmentState);
         }
@@ -1581,22 +1581,22 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentStateDeriveShipmentStateCancelled()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var picklist = new PickListBuilder(this.Transaction).WithShipToParty(shipment.ShipToParty).WithStore(shipment.Store).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentItem.Quantity = 0;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(new ShipmentStates(this.Transaction).Cancelled, shipment.ShipmentState);
 
             picklist.PickListState = new PickListStates(this.Transaction).Picked;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Cancelled, shipment.ShipmentState);
         }
@@ -1608,19 +1608,19 @@ namespace Allors.Database.Domain.Tests
                 .WithShipmentState(new ShipmentStates(this.Transaction).Picking)
                 .WithShipToParty(new PersonBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var picklist = new PickListBuilder(this.Transaction).WithShipToParty(shipment.ShipToParty).WithStore(shipment.Store).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(new ShipmentStates(this.Transaction).Picked, shipment.ShipmentState);
 
             picklist.PickListState = new PickListStates(this.Transaction).Picked;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Picked, shipment.ShipmentState);
         }
@@ -1631,23 +1631,23 @@ namespace Allors.Database.Domain.Tests
             var shipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipToParty(new PersonBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var picklist = new PickListBuilder(this.Transaction)
                 .WithPickListState(new PickListStates(this.Transaction).Picked)
                 .WithShipToParty(shipment.ShipToParty)
                 .WithStore(shipment.Store)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(new ShipmentStates(this.Transaction).Picked, shipment.ShipmentState);
 
             shipment.ShipmentState = new ShipmentStates(this.Transaction).Picking;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Picked, shipment.ShipmentState);
         }
@@ -1660,26 +1660,26 @@ namespace Allors.Database.Domain.Tests
             var shipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipToParty(new PersonBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var picklist = new PickListBuilder(this.Transaction)
                 .WithPickListState(new PickListStates(this.Transaction).Picked)
                 .WithShipToParty(shipment.ShipToParty)
                 .WithStore(shipment.Store)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(new ShipmentStates(this.Transaction).Packed, shipment.ShipmentState);
 
             shipment.ShipmentState = new ShipmentStates(this.Transaction).Picked;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Packed, shipment.ShipmentState);
         }
@@ -1693,26 +1693,26 @@ namespace Allors.Database.Domain.Tests
                 .WithShipmentState(new ShipmentStates(this.Transaction).Picked)
                 .WithShipToParty(new PersonBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(2).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var picklist = new PickListBuilder(this.Transaction)
                 .WithPickListState(new PickListStates(this.Transaction).Picked)
                 .WithShipToParty(shipment.ShipToParty)
                 .WithStore(shipment.Store)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(new ShipmentStates(this.Transaction).Packed, shipment.ShipmentState);
 
             shipmentItem.Quantity = 1;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Packed, shipment.ShipmentState);
         }
@@ -1726,23 +1726,23 @@ namespace Allors.Database.Domain.Tests
                 .WithShipmentState(new ShipmentStates(this.Transaction).Picked)
                 .WithShipToParty(new PersonBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var picklist = new PickListBuilder(this.Transaction)
                 .WithPickListState(new PickListStates(this.Transaction).Picked)
                 .WithShipToParty(shipment.ShipToParty)
                 .WithStore(shipment.Store)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(new ShipmentStates(this.Transaction).Packed, shipment.ShipmentState);
 
             new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Packed, shipment.ShipmentState);
         }
@@ -1753,16 +1753,16 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 10;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipmentValue(10).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(new ShipmentStates(this.Transaction).OnHold, shipment.ShipmentState);
 
             shipment.ShipmentValue = 9;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).OnHold, shipment.ShipmentState);
         }
@@ -1773,16 +1773,16 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 10;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipmentValue(10).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(new ShipmentStates(this.Transaction).OnHold, shipment.ShipmentState);
 
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 11;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).OnHold, shipment.ShipmentState);
         }
@@ -1793,16 +1793,16 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 10;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipmentValue(9).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).OnHold, shipment.ShipmentState);
 
             shipment.ReleasedManually = true;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(new ShipmentStates(this.Transaction).OnHold, shipment.ShipmentState);
         }
@@ -1813,16 +1813,16 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 10;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipmentValue(9).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).OnHold, shipment.ShipmentState);
 
             shipment.ShipmentValue = 11;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Created, shipment.ShipmentState);
         }
@@ -1833,16 +1833,16 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 10;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipmentValue(9).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).OnHold, shipment.ShipmentState);
 
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 9;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Created, shipment.ShipmentState);
         }
@@ -1856,21 +1856,21 @@ namespace Allors.Database.Domain.Tests
         public void ChangedOrderShipmentShipmentItemDeriveShipmentValue()
         {
             var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new SalesOrderItemBuilder(this.Transaction).WithAssignedUnitPrice(1).Build();
             salesOrder.AddSalesOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new OrderShipmentBuilder(this.Transaction).WithQuantity(1).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, shipment.ShipmentValue);
         }
@@ -1879,26 +1879,26 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSalesOrderItemUnitPriceDeriveShipmentValue()
         {
             var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new SalesOrderItemBuilder(this.Transaction).WithAssignedUnitPrice(1).Build();
             salesOrder.AddSalesOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new OrderShipmentBuilder(this.Transaction).WithQuantity(1).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, shipment.ShipmentValue);
 
             orderItem.AssignedUnitPrice = 2;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(2, shipment.ShipmentValue);
         }
@@ -1907,26 +1907,26 @@ namespace Allors.Database.Domain.Tests
         public void ChangedOrderShipmentQuantityDeriveShipmentValue()
         {
             var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new SalesOrderItemBuilder(this.Transaction).WithAssignedUnitPrice(1).Build();
             salesOrder.AddSalesOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderShipment = new OrderShipmentBuilder(this.Transaction).WithQuantity(1).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, shipment.ShipmentValue);
 
             orderShipment.Quantity = 2;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(2, shipment.ShipmentValue);
         }
@@ -1942,21 +1942,21 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsAutomaticallyShipped = true;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new PickListBuilder(this.Transaction)
                 .WithPickListState(new PickListStates(this.Transaction).Picked)
                 .WithShipToParty(shipment.ShipToParty)
                 .WithStore(shipment.Store)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.ShipmentState = new ShipmentStates(this.Transaction).Packed;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Shipped, shipment.ShipmentState);
         }
@@ -1967,26 +1967,26 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsAutomaticallyShipped = true;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var picklist = new PickListBuilder(this.Transaction)
                 .WithPickListState(new PickListStates(this.Transaction).OnHold)
                 .WithShipToParty(shipment.ShipToParty)
                 .WithStore(shipment.Store)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.ShipmentState = new ShipmentStates(this.Transaction).Packed;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(new ShipmentStates(this.Transaction).Shipped, shipment.ShipmentState);
 
             picklist.PickListState = new PickListStates(this.Transaction).Picked;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Shipped, shipment.ShipmentState);
         }
@@ -1997,39 +1997,39 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsAutomaticallyShipped = true;
 
             var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new SalesOrderItemBuilder(this.Transaction).WithAssignedUnitPrice(1).Build();
             salesOrder.AddSalesOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesOrder.SalesOrderState = new SalesOrderStates(this.Transaction).OnHold;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new OrderShipmentBuilder(this.Transaction).WithQuantity(1).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var picklist = new PickListBuilder(this.Transaction)
                 .WithPickListState(new PickListStates(this.Transaction).Picked)
                 .WithShipToParty(shipment.ShipToParty)
                 .WithStore(shipment.Store)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.ShipmentState = new ShipmentStates(this.Transaction).Packed;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(new ShipmentStates(this.Transaction).Shipped, shipment.ShipmentState);
 
             salesOrder.SalesOrderState = new SalesOrderStates(this.Transaction).InProcess;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Shipped, shipment.ShipmentState);
         }

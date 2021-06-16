@@ -18,10 +18,10 @@ namespace Allors.Database.Domain.Tests
             var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
 
             var characteristicType = new SerialisedItemCharacteristicTypeBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             characteristicType.AddLocalisedName(new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultname").Build());
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal("defaultname", characteristicType.Name);
         }

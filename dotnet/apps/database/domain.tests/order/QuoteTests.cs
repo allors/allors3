@@ -21,7 +21,7 @@ namespace Allors.Database.Domain.Tests
         {
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(quote.ExistQuoteState);
         }
@@ -40,13 +40,13 @@ namespace Allors.Database.Domain.Tests
                .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithQuoteState(new QuoteStates(this.Transaction).Cancelled).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.Locale = swedishLocale;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.QuoteState = new QuoteStates(this.Transaction).Created;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(quote.DerivedLocale, swedishLocale);
         }
@@ -63,10 +63,10 @@ namespace Allors.Database.Domain.Tests
             customer.Locale = swedishLocale;
 
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.Receiver = customer;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(quote.DerivedLocale, customer.Locale);
         }
@@ -85,10 +85,10 @@ namespace Allors.Database.Domain.Tests
             customer.RemoveLocale();
 
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.Receiver = customer;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(customer.ExistLocale);
             Assert.Equal(quote.DerivedLocale, swedishLocale);
@@ -103,10 +103,10 @@ namespace Allors.Database.Domain.Tests
                .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.Locale = swedishLocale;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(quote.DerivedLocale, swedishLocale);
         }
@@ -115,10 +115,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedAssignedVatRegimeDeriveDerivedVatRegime()
         {
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.AssignedVatRegime = new VatRegimes(this.Transaction).ServiceB2B;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(quote.DerivedVatRegime, quote.AssignedVatRegime);
         }
@@ -127,10 +127,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedAssignedIrpfRegimeDeriveDerivedIrpfRegime()
         {
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.AssignedIrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(quote.DerivedIrpfRegime, quote.AssignedIrpfRegime);
         }
@@ -139,11 +139,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedAssignedCurrencyDeriveDerivedCurrency()
         {
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var swedishKrona = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "SEK");
             quote.AssignedCurrency = swedishKrona;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(quote.DerivedCurrency, quote.AssignedCurrency);
         }
@@ -154,7 +154,7 @@ namespace Allors.Database.Domain.Tests
             Assert.True(this.InternalOrganisation.ExistPreferredCurrency);
 
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(quote.DerivedCurrency, this.InternalOrganisation.PreferredCurrency);
         }
@@ -171,11 +171,11 @@ namespace Allors.Database.Domain.Tests
             var customer = this.InternalOrganisation.ActiveCustomers.First;
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithReceiver(customer).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             customer.RemovePreferredCurrency();
             customer.Locale = newLocale;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(quote.DerivedCurrency, se.Currency);
         }
@@ -188,11 +188,11 @@ namespace Allors.Database.Domain.Tests
             customer.RemovePreferredCurrency();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithReceiver(customer).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var swedishKrona = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "SEK");
             customer.PreferredCurrency = swedishKrona;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(quote.DerivedCurrency, swedishKrona);
         }
@@ -210,10 +210,10 @@ namespace Allors.Database.Domain.Tests
             customer.RemovePreferredCurrency();
 
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.Receiver = customer;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(quote.DerivedCurrency, newLocale.Country.Currency);
         }
@@ -223,21 +223,21 @@ namespace Allors.Database.Domain.Tests
         {
             var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
             vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
             vatRegime.AddVatRate(newVatRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quote = new ProductQuoteBuilder(this.Transaction)
                 .WithIssueDate(this.Transaction.Now().AddDays(-1).Date)
                 .WithAssignedVatRegime(vatRegime).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(newVatRate, quote.DerivedVatRate);
 
             quote.IssueDate = this.Transaction.Now().AddDays(1).Date;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(newVatRate, quote.DerivedVatRate);
         }
@@ -254,7 +254,7 @@ namespace Allors.Database.Domain.Tests
             var number = this.InternalOrganisation.QuoteNumberCounter.Value;
 
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(quote.QuoteNumber, (number + 1).ToString());
         }
@@ -265,7 +265,7 @@ namespace Allors.Database.Domain.Tests
             var number = this.InternalOrganisation.QuoteNumberCounter.Value;
 
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(quote.SortableQuoteNumber.Value, number + 1);
         }
@@ -274,11 +274,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedQuoteItemsDeriveValidQuoteItems()
         {
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(quoteItem, quote.ValidQuoteItems);
         }
@@ -287,14 +287,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedQuoteItemQuoteItemStateDeriveValidQuoteItems()
         {
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quoteItem.Cancel();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(quoteItem, quote.ValidQuoteItems);
         }
@@ -303,11 +303,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedQuoteItemsDeriveQuoteItemSyncedQuote()
         {
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(quoteItem.SyncedQuote, quote);
         }
@@ -329,16 +329,16 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithQuoteState(new QuoteStates(this.Transaction).Cancelled).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0, quote.TotalIncVat);
 
             quote.QuoteState = new QuoteStates(this.Transaction).Created;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
         }
@@ -371,11 +371,11 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productFeature = new ColourBuilder(this.Transaction)
                 .WithName("a colour")
@@ -388,11 +388,11 @@ namespace Allors.Database.Domain.Tests
                 .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var featureItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductFeatureItem).WithProductFeature(productFeature).WithQuantity(1).Build();
             quoteItem.AddQuotedWithFeature(featureItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1.2M, quote.TotalExVat);
         }
@@ -409,18 +409,18 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains("No BasePrice with a Price"));
 
             Assert.Equal(0, quote.TotalIncVat);
 
             basePrice.FromDate = this.Transaction.Now().AddMinutes(-1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(basePrice.Price, quote.TotalIncVat);
         }
@@ -437,11 +437,11 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
@@ -451,7 +451,7 @@ namespace Allors.Database.Domain.Tests
                 .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0.9M, quote.TotalIncVat);
         }
@@ -468,11 +468,11 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
@@ -482,7 +482,7 @@ namespace Allors.Database.Domain.Tests
                 .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1.1M, quote.TotalIncVat);
         }
@@ -493,16 +493,16 @@ namespace Allors.Database.Domain.Tests
             var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
             quoteItem.Quantity = 2;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(2, quote.TotalIncVat);
         }
@@ -513,16 +513,16 @@ namespace Allors.Database.Domain.Tests
             var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
             quoteItem.AssignedUnitPrice = 3;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(3, quote.TotalIncVat);
         }
@@ -546,16 +546,16 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product1).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
             quoteItem.Product = product2;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(2, quote.TotalIncVat);
         }
@@ -573,11 +573,11 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productFeature = new ColourBuilder(this.Transaction)
                 .WithName("a colour")
@@ -591,11 +591,11 @@ namespace Allors.Database.Domain.Tests
                 .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderFeatureItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductFeatureItem).WithProductFeature(productFeature).WithQuantity(1).Build();
             quoteItem.AddQuotedWithFeature(orderFeatureItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1.1M, quote.TotalExVat);
         }
@@ -613,7 +613,7 @@ namespace Allors.Database.Domain.Tests
             var customer2 = this.InternalOrganisation.ActiveCustomers.Last();
             customer2.AddPartyClassification(theBad);
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(customer1, customer2);
 
@@ -632,16 +632,16 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithReceiver(customer1).WithIssueDate(this.Transaction.Now()).WithAssignedVatRegime(new VatRegimes(this.Transaction).Exempt).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
             quote.Receiver = customer2;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(2, quote.TotalIncVat);
         }
@@ -658,17 +658,17 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
             var discount = new DiscountAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             quoteItem.AddDiscountAdjustment(discount);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0.9M, quote.TotalIncVat);
         }
@@ -685,22 +685,22 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
             var discount = new DiscountAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             quoteItem.AddDiscountAdjustment(discount);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0.9M, quote.TotalIncVat);
 
             discount.Percentage = 20M;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0.8M, quote.TotalIncVat);
         }
@@ -717,22 +717,22 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
             var discount = new DiscountAdjustmentBuilder(this.Transaction).WithAmount(0.5M).Build();
             quoteItem.AddDiscountAdjustment(discount);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0.5M, quote.TotalIncVat);
 
             discount.Amount = 0.4M;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0.6M, quote.TotalIncVat);
         }
@@ -749,17 +749,17 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
             var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             quoteItem.AddSurchargeAdjustment(surcharge);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1.1M, quote.TotalIncVat);
         }
@@ -776,22 +776,22 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
             var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             quoteItem.AddSurchargeAdjustment(surcharge);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1.1M, quote.TotalIncVat);
 
             surcharge.Percentage = 20M;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1.2M, quote.TotalIncVat);
         }
@@ -808,22 +808,22 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
             var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithAmount(0.5M).Build();
             quoteItem.AddSurchargeAdjustment(surcharge);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1.5M, quote.TotalIncVat);
 
             surcharge.Amount = 0.4M;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1.4M, quote.TotalIncVat);
         }
@@ -840,17 +840,17 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
             var discount = new DiscountAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             quote.AddOrderAdjustment(discount);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0.9M, quote.TotalIncVat);
         }
@@ -867,22 +867,22 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
             var discount = new DiscountAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             quote.AddOrderAdjustment(discount);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0.9M, quote.TotalIncVat);
 
             discount.Percentage = 20M;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0.8M, quote.TotalIncVat);
         }
@@ -899,22 +899,22 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
             var discount = new DiscountAdjustmentBuilder(this.Transaction).WithAmount(0.5M).Build();
             quote.AddOrderAdjustment(discount);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0.5M, quote.TotalIncVat);
 
             discount.Amount = 0.4M;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0.6M, quote.TotalIncVat);
         }
@@ -931,17 +931,17 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
             var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             quote.AddOrderAdjustment(surcharge);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1.1M, quote.TotalIncVat);
         }
@@ -958,22 +958,22 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
             var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithPercentage(10).Build();
             quote.AddOrderAdjustment(surcharge);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1.1M, quote.TotalIncVat);
 
             surcharge.Percentage = 20M;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1.2M, quote.TotalIncVat);
         }
@@ -990,22 +990,22 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithIssueDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem).WithProduct(product).WithQuantity(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.TotalIncVat);
 
             var surcharge = new SurchargeAdjustmentBuilder(this.Transaction).WithAmount(0.5M).Build();
             quote.AddOrderAdjustment(surcharge);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1.5M, quote.TotalIncVat);
 
             surcharge.Amount = 0.4M;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1.4M, quote.TotalIncVat);
         }

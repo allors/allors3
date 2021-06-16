@@ -22,7 +22,7 @@ namespace Allors.Database.Domain.Tests
         {
             var surchargeComponent = new SurchargeComponentBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("SurchargeComponent.Price, SurchargeComponent.Percentage at least one"));
         }
 
@@ -30,11 +30,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPriceThrowValidationError()
         {
             var surchargeComponent = new SurchargeComponentBuilder(this.Transaction).WithPrice(1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             surchargeComponent.RemovePrice();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("SurchargeComponent.Price, SurchargeComponent.Percentage at least one"));
         }
 
@@ -42,11 +42,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPercentageThrowValidationError()
         {
             var surchargeComponent = new SurchargeComponentBuilder(this.Transaction).WithPercentage(1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             surchargeComponent.RemovePercentage();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("SurchargeComponent.Price, SurchargeComponent.Percentage at least one"));
         }
 
@@ -54,11 +54,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPriceThrowValidationErrorAtmostOne()
         {
             var surchargeComponent = new SurchargeComponentBuilder(this.Transaction).WithPercentage(1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             surchargeComponent.Price = 1;
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SurchargeComponent.Price,
@@ -70,11 +70,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPercentageThrowValidationErrorAtmostOne()
         {
             var surchargeComponent = new SurchargeComponentBuilder(this.Transaction).WithPrice(1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             surchargeComponent.Percentage = 1;
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SurchargeComponent.Price,

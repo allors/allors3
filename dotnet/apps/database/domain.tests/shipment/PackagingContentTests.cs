@@ -70,7 +70,7 @@ namespace Allors.Database.Domain.Tests
                                             .WithQuantity(shipment.ShipmentItems[0].Quantity + 1)
                                             .Build());
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -153,18 +153,18 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPackagingContentShipmentItemThrowValidationError()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(10).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var packagingContent = new PackagingContentBuilder(this.Transaction).WithQuantity(11).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             packagingContent.ShipmentItem = shipmentItem;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PackagingContentMaximum));
         }
 
@@ -172,18 +172,18 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentItemQuantityThrowValidationError()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(10).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var packagingContent = new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentItem.Quantity = 9;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PackagingContentMaximum));
         }
 
@@ -191,18 +191,18 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentItemQuantityShippedThrowValidationError()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(10).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var packagingContent = new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentItem.QuantityShipped = 1;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PackagingContentMaximum));
         }
     }

@@ -106,7 +106,7 @@ namespace Allors.Database.Domain.Tests
                 .WithDefaultCollectionMethod(ownBankAccount)
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var supplierRelationship2 = new SupplierRelationshipBuilder(this.Transaction)
                 .WithSupplier(supplier2)
@@ -120,7 +120,7 @@ namespace Allors.Database.Domain.Tests
 
             partyFinancial2.SubAccountNumber = 19;
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -131,14 +131,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new SupplierRelationshipBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithSupplier(this.supplier);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -248,11 +248,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSupplierDeriveParties()
         {
             var relationship = new SupplierRelationshipBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var supplier = new OrganisationBuilder(this.Transaction).Build();
             relationship.Supplier = supplier;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(supplier, relationship.Parties);
         }
@@ -261,11 +261,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedInternalOrganisationDeriveParties()
         {
             var relationship = new SupplierRelationshipBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
             relationship.InternalOrganisation = internalOrganisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(internalOrganisation, relationship.Parties);
         }

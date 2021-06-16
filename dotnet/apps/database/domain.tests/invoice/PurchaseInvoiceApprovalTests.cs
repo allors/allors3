@@ -19,11 +19,11 @@ namespace Allors.Database.Domain.Tests
         {
             var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var approval = new PurchaseInvoiceApprovalBuilder(this.Transaction).WithPurchaseInvoice(purchaseInvoice).Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(approval.Title, "Approval of " + purchaseInvoice.WorkItemDescription);
         }
@@ -33,11 +33,11 @@ namespace Allors.Database.Domain.Tests
         {
             var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var approval = new PurchaseInvoiceApprovalBuilder(this.Transaction).WithPurchaseInvoice(purchaseInvoice).Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(approval.WorkItem, purchaseInvoice);
         }
@@ -47,11 +47,11 @@ namespace Allors.Database.Domain.Tests
         {
             var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var approval = new PurchaseInvoiceApprovalBuilder(this.Transaction).WithPurchaseInvoice(purchaseInvoice).Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(approval.ExistDateClosed);
         }
@@ -61,11 +61,11 @@ namespace Allors.Database.Domain.Tests
         {
             var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             purchaseInvoice.Confirm();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(purchaseInvoice.PurchaseInvoiceApprovalsWherePurchaseInvoice.First().ExistDateClosed);
         }
@@ -75,11 +75,11 @@ namespace Allors.Database.Domain.Tests
         {
             var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var approval = new PurchaseInvoiceApprovalBuilder(this.Transaction).WithPurchaseInvoice(purchaseInvoice).Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Empty(approval.Participants);
         }
@@ -89,11 +89,11 @@ namespace Allors.Database.Domain.Tests
         {
             var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             purchaseInvoice.Confirm();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEmpty(purchaseInvoice.PurchaseInvoiceApprovalsWherePurchaseInvoice.First().Participants);
         }
@@ -103,16 +103,16 @@ namespace Allors.Database.Domain.Tests
         {
             var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             purchaseInvoice.Confirm();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var approval = purchaseInvoice.PurchaseInvoiceApprovalsWherePurchaseInvoice.First();
             approval.Approve();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Empty(purchaseInvoice.PurchaseInvoiceApprovalsWherePurchaseInvoice.First().Participants);
         }

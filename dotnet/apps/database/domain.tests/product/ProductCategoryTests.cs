@@ -21,14 +21,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new ProductCategoryBuilder(this.Transaction);
             var productCategory = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithName("category");
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -972,12 +972,12 @@ namespace Allors.Database.Domain.Tests
         public void ChangedNameDeriveDisplayName()
         {
             var productCategory = new ProductCategoryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Null(productCategory.DisplayName);
 
             productCategory.Name = "name";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal("name", productCategory.DisplayName);
         }
@@ -988,12 +988,12 @@ namespace Allors.Database.Domain.Tests
             var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
 
             var productCategory = new ProductCategoryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Null(productCategory.Name);
 
             productCategory.AddLocalisedName(new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("name").Build());
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal("name", productCategory.Name);
         }
@@ -1004,12 +1004,12 @@ namespace Allors.Database.Domain.Tests
             var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
 
             var productCategory = new ProductCategoryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Null(productCategory.Description);
 
             productCategory.AddLocalisedDescription(new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("description").Build());
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal("description", productCategory.Description);
         }
@@ -1020,10 +1020,10 @@ namespace Allors.Database.Domain.Tests
             var noImageAvailableImage = this.Transaction.GetSingleton().Settings.NoImageAvailableImage;
 
             var productCategory = new ProductCategoryBuilder(this.Transaction).WithName("name").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             productCategory.RemoveCategoryImage();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(noImageAvailableImage, productCategory.CategoryImage);
         }
@@ -1032,14 +1032,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPrimaryParentValidationError()
         {
             var productCategory1 = new ProductCategoryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productCategory2 = new ProductCategoryBuilder(this.Transaction).WithPrimaryParent(productCategory1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             productCategory1.PrimaryParent = productCategory2;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains("Cycle detected in"));
         }
 
@@ -1047,12 +1047,12 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPrimaryParentDeriveDisplayName()
         {
             var productCategory1 = new ProductCategoryBuilder(this.Transaction).WithName("1").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productCategory11 = new ProductCategoryBuilder(this.Transaction).WithName("1.1").WithPrimaryParent(productCategory1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal("1/1.1", productCategory11.DisplayName);
         }
@@ -1061,10 +1061,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPrimaryParentDeriveChildren()
         {
             var productCategory1 = new ProductCategoryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productCategory11 = new ProductCategoryBuilder(this.Transaction).WithPrimaryParent(productCategory1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Single(productCategory1.Children);
             Assert.Contains(productCategory11, productCategory1.Children);
@@ -1074,13 +1074,13 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSecondaryParentDeriveChildren()
         {
             var productCategory1 = new ProductCategoryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productCategory11 = new ProductCategoryBuilder(this.Transaction).WithPrimaryParent(productCategory1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productCategory12 = new ProductCategoryBuilder(this.Transaction).WithSecondaryParent(productCategory1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(2, productCategory1.Children.Count);
             Assert.Contains(productCategory11, productCategory1.Children);
@@ -1091,17 +1091,17 @@ namespace Allors.Database.Domain.Tests
         public void ChangedChildrenDeriveDescendants()
         {
             var productCategory111 = new ProductCategoryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productCategory11 = new ProductCategoryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productCategory1 = new ProductCategoryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             productCategory11.PrimaryParent = productCategory1;
             productCategory111.PrimaryParent = productCategory11;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(2, productCategory1.Descendants.Count);
             Assert.Contains(productCategory11, productCategory1.Descendants);
@@ -1114,25 +1114,25 @@ namespace Allors.Database.Domain.Tests
             var productCategory1 = new ProductCategoryBuilder(this.Transaction)
                 .WithProduct(new NonUnifiedGoodBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productCategory11 = new ProductCategoryBuilder(this.Transaction)
                 .WithProduct(new NonUnifiedGoodBuilder(this.Transaction).Build())
                 .WithPrimaryParent(productCategory1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productCategory111 = new ProductCategoryBuilder(this.Transaction)
                 .WithProduct(new NonUnifiedGoodBuilder(this.Transaction).Build())
                 .WithPrimaryParent(productCategory11)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(3, productCategory1.AllProducts.Count);
 
             var good = new NonUnifiedGoodBuilder(this.Transaction).Build();
             productCategory111.AddProduct(good);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(4, productCategory1.AllProducts.Count);
             Assert.Contains(good, productCategory1.AllProducts);
@@ -1146,7 +1146,7 @@ namespace Allors.Database.Domain.Tests
                                 .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
                                 .Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productCategory11 = new ProductCategoryBuilder(this.Transaction)
                 .WithProduct(new NonUnifiedGoodBuilder(this.Transaction)
@@ -1154,7 +1154,7 @@ namespace Allors.Database.Domain.Tests
                                 .Build())
                 .WithPrimaryParent(productCategory1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productCategory111 = new ProductCategoryBuilder(this.Transaction)
                 .WithProduct(new NonUnifiedGoodBuilder(this.Transaction)
@@ -1162,7 +1162,7 @@ namespace Allors.Database.Domain.Tests
                                 .Build())
                 .WithPrimaryParent(productCategory11)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(3, productCategory1.AllParts.Count);
 
@@ -1170,7 +1170,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
                 .Build();
             productCategory111.AddProduct(good);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(4, productCategory1.AllParts.Count);
             Assert.Contains(good.Part, productCategory1.AllParts);
@@ -1186,7 +1186,7 @@ namespace Allors.Database.Domain.Tests
                                             .Build())
                                 .Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productCategory11 = new ProductCategoryBuilder(this.Transaction)
                 .WithProduct(new NonUnifiedGoodBuilder(this.Transaction)
@@ -1196,7 +1196,7 @@ namespace Allors.Database.Domain.Tests
                                 .Build())
                 .WithPrimaryParent(productCategory1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productCategory111 = new ProductCategoryBuilder(this.Transaction)
                 .WithProduct(new NonUnifiedGoodBuilder(this.Transaction)
@@ -1206,7 +1206,7 @@ namespace Allors.Database.Domain.Tests
                                 .Build())
                 .WithPrimaryParent(productCategory11)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(3, productCategory1.AllSerialisedItemsForSale.Count);
 
@@ -1216,7 +1216,7 @@ namespace Allors.Database.Domain.Tests
                             .Build())
                 .Build();
             productCategory111.AddProduct(good);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(4, productCategory1.AllSerialisedItemsForSale.Count);
             Assert.Contains(good.Part.SerialisedItems[0], productCategory1.AllSerialisedItemsForSale);
@@ -1232,7 +1232,7 @@ namespace Allors.Database.Domain.Tests
                                             .Build())
                                 .Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productCategory11 = new ProductCategoryBuilder(this.Transaction)
                 .WithProduct(new NonUnifiedGoodBuilder(this.Transaction)
@@ -1242,7 +1242,7 @@ namespace Allors.Database.Domain.Tests
                                 .Build())
                 .WithPrimaryParent(productCategory1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productCategory111 = new ProductCategoryBuilder(this.Transaction)
                 .WithProduct(new NonUnifiedGoodBuilder(this.Transaction)
@@ -1252,7 +1252,7 @@ namespace Allors.Database.Domain.Tests
                                 .Build())
                 .WithPrimaryParent(productCategory11)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(3, productCategory1.AllNonSerialisedInventoryItemsForSale.Count);
 
@@ -1262,7 +1262,7 @@ namespace Allors.Database.Domain.Tests
                             .Build())
                 .Build();
             productCategory111.AddProduct(good);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(4, productCategory1.AllNonSerialisedInventoryItemsForSale.Count);
             Assert.Contains(good.Part.InventoryItemsWherePart[0], productCategory1.AllNonSerialisedInventoryItemsForSale);

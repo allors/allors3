@@ -92,7 +92,7 @@ namespace Allors.Database.Domain.Tests
                 .WithUseAsDefault(true)
                 .Build();
             party.AddPartyContactMechanism(partyContactMechanism);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(partyContactMechanism.ContactMechanism, party.BillingAddress);
         }
@@ -107,10 +107,10 @@ namespace Allors.Database.Domain.Tests
                 .WithUseAsDefault(true)
                 .Build();
             party.AddPartyContactMechanism(partyContactMechanism);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyContactMechanism.AddContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(partyContactMechanism.ContactMechanism, party.BillingAddress);
         }
@@ -120,13 +120,13 @@ namespace Allors.Database.Domain.Tests
         {
             var customer = new PersonBuilder(this.Transaction).Build();
             var customerRelationship = new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithFromDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             customerRelationship.InternalOrganisation = internalOrganisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(customerRelationship, internalOrganisation.CurrentPartyRelationships);
         }
@@ -137,10 +137,10 @@ namespace Allors.Database.Domain.Tests
             var customer = new PersonBuilder(this.Transaction).Build();
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
             var customerRelationship = new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             customerRelationship.FromDate = this.Transaction.Now();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(customerRelationship, internalOrganisation.CurrentPartyRelationships);
         }
@@ -151,12 +151,12 @@ namespace Allors.Database.Domain.Tests
             var customer = new PersonBuilder(this.Transaction).Build();
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
             var customerRelationship = new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(customerRelationship, internalOrganisation.CurrentPartyRelationships);
 
             customerRelationship.ThroughDate = customerRelationship.FromDate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(customerRelationship, internalOrganisation.CurrentPartyRelationships);
         }
@@ -171,7 +171,7 @@ namespace Allors.Database.Domain.Tests
                 .WithUseAsDefault(true)
                 .Build();
             party.AddPartyContactMechanism(partyContactMechanism);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(partyContactMechanism, party.CurrentPartyContactMechanisms);
         }
@@ -187,12 +187,12 @@ namespace Allors.Database.Domain.Tests
                 .WithFromDate(this.Transaction.Now().AddDays(1))
                 .Build();
             party.AddPartyContactMechanism(partyContactMechanism);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(partyContactMechanism, party.CurrentPartyContactMechanisms);
 
             partyContactMechanism.FromDate = this.Transaction.Now();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(partyContactMechanism, party.CurrentPartyContactMechanisms);
         }
@@ -207,12 +207,12 @@ namespace Allors.Database.Domain.Tests
                 .WithUseAsDefault(true)
                 .Build();
             party.AddPartyContactMechanism(partyContactMechanism);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(partyContactMechanism, party.CurrentPartyContactMechanisms);
 
             partyContactMechanism.ThroughDate = partyContactMechanism.FromDate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(partyContactMechanism, party.CurrentPartyContactMechanisms);
         }
@@ -221,7 +221,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedDerivationTriggerCreatePartyFinancialRelationship()
         {
             var party = new PersonBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(party.ExistPartyFinancialRelationshipsWhereFinancialParty);
         }

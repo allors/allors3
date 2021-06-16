@@ -23,23 +23,23 @@ namespace Allors.Database.Domain.Tests
             var builder = new FinancialTermBuilder(this.Transaction);
             var financialTerm = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithDescription("FinancialTerm");
             financialTerm = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             builder.WithTermType(new OrderTermTypes(this.Transaction).NonReturnableSalesItem);
             financialTerm = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             financialTerm.RemoveDescription();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -48,25 +48,25 @@ namespace Allors.Database.Domain.Tests
             var builder = new IncentiveBuilder(this.Transaction);
             var incentive = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithDescription("Incentive");
             incentive = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithTermType(new OrderTermTypes(this.Transaction).NonReturnableSalesItem);
             incentive = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             incentive.RemoveDescription();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -75,23 +75,23 @@ namespace Allors.Database.Domain.Tests
             var builder = new LegalTermBuilder(this.Transaction);
             var legalTerm = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithDescription("LegalTerm");
             legalTerm = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             builder.WithTermType(new OrderTermTypes(this.Transaction).NonReturnableSalesItem);
             legalTerm = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             legalTerm.RemoveDescription();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -100,23 +100,23 @@ namespace Allors.Database.Domain.Tests
             var builder = new ThresholdBuilder(this.Transaction);
             var threshold = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithDescription("Threshold");
             threshold = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             builder.WithTermType(new OrderTermTypes(this.Transaction).NonReturnableSalesItem);
             threshold = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             threshold.RemoveDescription();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -124,7 +124,7 @@ namespace Allors.Database.Domain.Tests
         {
             new InvoiceTermBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("InvoiceTerm.TermType, InvoiceTerm.Description at least one"));
         }
     }
@@ -140,12 +140,12 @@ namespace Allors.Database.Domain.Tests
                 .WithDescription("description")
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.DoesNotContain(errors, e => e.Message.StartsWith("InvoiceTerm.TermType, InvoiceTerm.Description at least one"));
 
             agreementTerm.RemoveDescription();
 
-            errors = this.Transaction.Derive(false).Errors.ToList();
+            errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("InvoiceTerm.TermType, InvoiceTerm.Description at least one"));
         }
 
@@ -155,11 +155,11 @@ namespace Allors.Database.Domain.Tests
             var agreementTerm = new InvoiceTermBuilder(this.Transaction)
                 .WithTermType(new InvoiceTermTypes(this.Transaction).PaymentNetDays)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             agreementTerm.RemoveTermType();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.InvoiceTerm.TermType,

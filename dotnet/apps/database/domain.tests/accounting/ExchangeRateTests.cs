@@ -21,11 +21,11 @@ namespace Allors.Database.Domain.Tests
             var currency = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "EUR");
 
             var exchangeRate = new ExchangeRateBuilder(this.Transaction).WithToCurrency(currency).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             exchangeRate.FromCurrency = currency;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains("Currencies can not be same"));
         }
 
@@ -35,11 +35,11 @@ namespace Allors.Database.Domain.Tests
             var currency = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "EUR");
 
             var exchangeRate = new ExchangeRateBuilder(this.Transaction).WithFromCurrency(currency).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             exchangeRate.ToCurrency = currency;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains("Currencies can not be same"));
         }
     }

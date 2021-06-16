@@ -80,10 +80,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedOriginatorDeriveRequestState()
         {
             var request = new RequestForQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             request.Originator = this.InternalOrganisation.ActiveCustomers.First;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(request.RequestState.IsSubmitted);
         }
@@ -94,11 +94,11 @@ namespace Allors.Database.Domain.Tests
             var request = new RequestForQuoteBuilder(this.Transaction)
                 .WithEmailAddress("emailaddress")
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             request.Originator = customer;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotNull(customer.PartyContactMechanisms.Where(v => v.ContactMechanism.GetType().Name == typeof(EmailAddress).Name).FirstOrDefault(v => ((EmailAddress)v.ContactMechanism).ElectronicAddressString.Equals("emailaddress")));
         }
@@ -109,11 +109,11 @@ namespace Allors.Database.Domain.Tests
             var request = new RequestForQuoteBuilder(this.Transaction)
                 .WithTelephoneNumber("phone")
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             request.Originator = customer;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotNull(customer.PartyContactMechanisms.Where(v => v.ContactMechanism.GetType().Name == typeof(TelecommunicationsNumber).Name).FirstOrDefault(v => ((TelecommunicationsNumber)v.ContactMechanism).ContactNumber.Equals("phone")));
         }
@@ -127,10 +127,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedAssignedCurrencyDeriveDerivedCurrency()
         {
             var request = new RequestForQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             request.AssignedCurrency = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "SEK");
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(request.DerivedCurrency, request.AssignedCurrency);
         }
@@ -141,7 +141,7 @@ namespace Allors.Database.Domain.Tests
             Assert.True(this.InternalOrganisation.ExistPreferredCurrency);
 
             var request = new RequestForQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(request.DerivedCurrency, this.InternalOrganisation.PreferredCurrency);
         }
@@ -150,11 +150,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedRecipientPreferredCurrencyDeriveDerivedCurrency()
         {
             var request = new RequestForQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var swedishKrona = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "SEK");
             this.InternalOrganisation.PreferredCurrency = swedishKrona;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(request.DerivedCurrency, swedishKrona);
         }
@@ -165,13 +165,13 @@ namespace Allors.Database.Domain.Tests
             var swedishKrona = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "SEK");
             var customer = this.InternalOrganisation.ActiveCustomers.First;
             customer.PreferredCurrency = swedishKrona;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var request = new RequestForQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             request.Originator = customer;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(request.DerivedCurrency, swedishKrona);
         }
@@ -182,11 +182,11 @@ namespace Allors.Database.Domain.Tests
             var customer = this.InternalOrganisation.ActiveCustomers.First;
 
             var request = new RequestForQuoteBuilder(this.Transaction).WithOriginator(customer).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var swedishKrona = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "SEK");
             customer.PreferredCurrency = swedishKrona;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(request.DerivedCurrency, swedishKrona);
         }
@@ -198,7 +198,7 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.RemoveRequestNumberPrefix();
             var number = this.InternalOrganisation.RequestNumberCounter.Value;
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(request.RequestNumber, (number + 1).ToString());
         }
@@ -209,7 +209,7 @@ namespace Allors.Database.Domain.Tests
             var request = new RequestForQuoteBuilder(this.Transaction).Build();
             var number = this.InternalOrganisation.RequestNumberCounter.Value;
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(request.SortableRequestNumber.Value, number + 1);
         }
@@ -229,7 +229,7 @@ namespace Allors.Database.Domain.Tests
         {
             var requestForInformation = new RequestForInformationBuilder(this.Transaction)
                 .WithOriginator(this.InternalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, requestForInformation.DeniedPermissions);
         }
@@ -238,7 +238,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedRequestStateAnonymousDeriveDeletePermission()
         {
             var requestForInformation = new RequestForInformationBuilder(this.Transaction).WithEmailAddress("test@test.com").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, requestForInformation.DeniedPermissions);
         }
@@ -249,10 +249,10 @@ namespace Allors.Database.Domain.Tests
             var requestForInformation = new RequestForInformationBuilder(this.Transaction)
                 .WithOriginator(this.InternalOrganisation)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithRequest(requestForInformation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, requestForInformation.DeniedPermissions);
         }

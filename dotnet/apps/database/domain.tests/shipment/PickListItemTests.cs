@@ -20,11 +20,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedQuantityThrowValidationError()
         {
             var pickListItem = new PickListItemBuilder(this.Transaction).WithQuantityPicked(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             pickListItem.Quantity = 1;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PickListItemQuantityMoreThanAllowed));
         }
 
@@ -32,11 +32,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedQuantityPickedThrowValidationError()
         {
             var pickListItem = new PickListItemBuilder(this.Transaction).WithQuantity(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             pickListItem.QuantityPicked = 11;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PickListItemQuantityMoreThanAllowed));
         }
 
@@ -44,37 +44,37 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPickListPickListStateCreateOrderShipment()
         {
             var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
             salesOrder.AddSalesOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderShipment1 = new OrderShipmentBuilder(this.Transaction).WithQuantity(3).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderShipment2 = new OrderShipmentBuilder(this.Transaction).WithQuantity(2).WithOrderItem(orderItem).WithShipmentItem(shipmentItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickList = new PickListBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickListItem = new PickListItemBuilder(this.Transaction).WithQuantityPicked(1).Build();
             pickList.AddPickListItem(pickListItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new ItemIssuanceBuilder(this.Transaction).WithPickListItem(pickListItem).WithShipmentItem(shipmentItem).WithQuantity(5).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             pickList.PickListState = new PickListStates(this.Transaction).Picked;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0, orderShipment1.Quantity);
             Assert.Equal(1, orderShipment2.Quantity);
@@ -89,14 +89,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPickListPickListStateDeriveQuantityPicked()
         {
             var pickList = new PickListBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickListItem = new PickListItemBuilder(this.Transaction).WithQuantity(1).Build();
             pickList.AddPickListItem(pickListItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             pickList.PickListState = new PickListStates(this.Transaction).Picked;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(pickListItem.Quantity, pickListItem.QuantityPicked);
         }
@@ -110,24 +110,24 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentShipmentStateDerivePickListStateOnHold()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickList = new PickListBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickListItem = new PickListItemBuilder(this.Transaction).Build();
             pickList.AddPickListItem(pickListItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new ItemIssuanceBuilder(this.Transaction).WithPickListItem(pickListItem).WithShipmentItem(shipmentItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.ShipmentState = new ShipmentStates(this.Transaction).OnHold;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(pickList.PickListState.IsOnHold);
         }
@@ -136,29 +136,29 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentShipmentStateDerivePickListStateCreated()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickList = new PickListBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickListItem = new PickListItemBuilder(this.Transaction).Build();
             pickList.AddPickListItem(pickListItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new ItemIssuanceBuilder(this.Transaction).WithPickListItem(pickListItem).WithShipmentItem(shipmentItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.ShipmentState = new ShipmentStates(this.Transaction).OnHold;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(pickList.PickListState.IsOnHold);
 
             shipment.Continue();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(pickList.PickListState.IsCreated);
         }

@@ -55,7 +55,7 @@ namespace Allors.Database.Domain.Tests
             var variance = this.CreateInventoryTransaction(10, unknown, finishedGood, serialItem);
 
             // Act
-            var derivation = this.Transaction.Derive(false);
+            var derivation = this.Derive();
 
             // Assert
             Assert.True(derivation.HasErrors);
@@ -67,7 +67,7 @@ namespace Allors.Database.Domain.Tests
             variance.Quantity = -10;
 
             // Act
-            derivation = this.Transaction.Derive(false);
+            derivation = this.Derive();
 
             // Assert
             Assert.True(derivation.HasErrors);

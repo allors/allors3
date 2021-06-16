@@ -19,10 +19,10 @@ namespace Allors.Database.Domain.Tests
             var part = new NonUnifiedPartBuilder(this.Transaction).WithDefaultFacility(facility).Build();
 
             var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             inventoryItem.Part = part;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(facility, inventoryItem.Facility);
         }
@@ -38,10 +38,10 @@ namespace Allors.Database.Domain.Tests
             var part = new NonUnifiedPartBuilder(this.Transaction).WithSearchString("partsearch").Build();
 
             var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             inventoryItem.Part = part;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(part.SearchString, inventoryItem.SearchString);
         }
@@ -55,13 +55,13 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartDerivePartDisplayName()
         {
             var part = new NonUnifiedPartBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             inventoryItem.Part = part;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(part.DisplayName, inventoryItem.PartDisplayName);
         }

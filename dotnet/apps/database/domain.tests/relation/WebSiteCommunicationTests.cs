@@ -23,7 +23,7 @@ namespace Allors.Database.Domain.Tests
             var builder = new WebSiteCommunicationBuilder(this.Transaction).WithFromParty(person).WithToParty(person);
             var communication = builder.Build();
 
-            var validation = this.Transaction.Derive(false);
+            var validation = this.Derive();
 
             Assert.True(validation.HasErrors);
 
@@ -32,7 +32,7 @@ namespace Allors.Database.Domain.Tests
             builder.WithSubject("Website communication");
             communication = builder.Build();
 
-            validation = this.Transaction.Derive(false);
+            validation = this.Derive();
 
             Assert.False(validation.HasErrors);
 
@@ -101,10 +101,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSubjectDeriveWorkItemDescription()
         {
             var communication = new WebSiteCommunicationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             communication.Subject = "subject";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("subject", communication.WorkItemDescription);
         }
@@ -113,13 +113,13 @@ namespace Allors.Database.Domain.Tests
         public void ChangedToPartyDeriveWorkItemDescription()
         {
             var communication = new WebSiteCommunicationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var person = new PersonBuilder(this.Transaction).WithLastName("person").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             communication.ToParty = person;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("person", communication.WorkItemDescription);
         }
@@ -128,13 +128,13 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartyPartyNameDeriveWorkItemDescription()
         {
             var person = new PersonBuilder(this.Transaction).WithLastName("person").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var communication = new WebSiteCommunicationBuilder(this.Transaction).WithToParty(person).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             person.LastName = "changed";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("changed", communication.WorkItemDescription);
         }

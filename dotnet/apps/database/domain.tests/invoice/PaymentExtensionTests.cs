@@ -21,7 +21,7 @@ namespace Allors.Database.Domain.Tests
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             var fullAmount = salesInvoice.TotalIncVat;
             var extraAmount = salesInvoice.TotalIncVat + 1;
@@ -33,7 +33,7 @@ namespace Allors.Database.Domain.Tests
                 .WithEffectiveDate(this.Transaction.Now())
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentAmountIsToSmall)));
         }
     }

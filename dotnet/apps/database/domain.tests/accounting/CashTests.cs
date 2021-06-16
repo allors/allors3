@@ -45,15 +45,15 @@ namespace Allors.Database.Domain.Tests
             internalOrganisation.DoAccounting = true;
             internalOrganisation.DefaultCollectionMethod = cash;
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             cash.Journal = journal;
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             cash.RemoveGeneralLedgerAccount();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -87,16 +87,16 @@ namespace Allors.Database.Domain.Tests
             internalOrganisation.DoAccounting = true;
             internalOrganisation.AddAssignedActiveCollectionMethod(cash);
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             cash.Journal = journal;
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             cash.RemoveJournal();
             cash.GeneralLedgerAccount = internalOrganisationGlAccount;
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
     }
 
@@ -110,11 +110,11 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.DoAccounting = true;
 
             var cash = new CashBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             this.InternalOrganisation.DefaultCollectionMethod = cash;
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.Cash.GeneralLedgerAccount,
@@ -126,11 +126,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedGeneralLedgerAccountThrowValidation()
         {
             var cash = new CashBuilder(this.Transaction).WithJournal(new JournalBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             cash.GeneralLedgerAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.Cash.GeneralLedgerAccount,
@@ -142,11 +142,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedJournalThrowValidation()
         {
             var cash = new CashBuilder(this.Transaction).WithGeneralLedgerAccount(new OrganisationGlAccountBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             cash.Journal = new JournalBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.Cash.GeneralLedgerAccount,

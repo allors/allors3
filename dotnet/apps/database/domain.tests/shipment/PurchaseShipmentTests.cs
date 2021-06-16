@@ -42,21 +42,21 @@ namespace Allors.Database.Domain.Tests
             var builder = new PurchaseShipmentBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithShipFromParty(supplier);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -189,7 +189,7 @@ namespace Allors.Database.Domain.Tests
         {
             new PurchaseShipmentBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Equals("PurchaseShipment.ShipFromParty is required"));
         }
     }
@@ -205,7 +205,7 @@ namespace Allors.Database.Domain.Tests
             var number = this.InternalOrganisation.PurchaseShipmentNumberCounter.Value;
 
             var shipment = new PurchaseShipmentBuilder(this.Transaction).WithShipToParty(this.InternalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(shipment.ShipmentNumber, (number + 1).ToString());
         }
@@ -215,7 +215,7 @@ namespace Allors.Database.Domain.Tests
         {
             var number = this.InternalOrganisation.PurchaseShipmentNumberCounter.Value;
             var shipment = new PurchaseShipmentBuilder(this.Transaction).WithShipToParty(this.InternalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(shipment.SortableShipmentNumber.Value, number + 1);
         }
@@ -226,7 +226,7 @@ namespace Allors.Database.Domain.Tests
             var shipment = new PurchaseShipmentBuilder(this.Transaction)
                 .WithShipToParty(this.InternalOrganisation)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipToAddress);
         }
@@ -237,10 +237,10 @@ namespace Allors.Database.Domain.Tests
             var shipment = new PurchaseShipmentBuilder(this.Transaction)
                 .WithShipToParty(this.InternalOrganisation)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.RemoveShipToAddress();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipToAddress);
         }
@@ -251,7 +251,7 @@ namespace Allors.Database.Domain.Tests
             var shipment = new PurchaseShipmentBuilder(this.Transaction)
                 .WithShipFromParty(this.InternalOrganisation.ActiveSuppliers.First)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.ActiveSuppliers.First.ShippingAddress, shipment.ShipFromAddress);
         }
@@ -262,10 +262,10 @@ namespace Allors.Database.Domain.Tests
             var shipment = new PurchaseShipmentBuilder(this.Transaction)
                 .WithShipFromParty(this.InternalOrganisation.ActiveSuppliers.First)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.RemoveShipFromAddress();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.ActiveSuppliers.First.ShippingAddress, shipment.ShipFromAddress);
         }
@@ -279,17 +279,17 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentReceiptQuantityAcceptedDeriveShipmentState()
         {
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithQuantityOrdered(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithShipmentItemState(new ShipmentItemStates(this.Transaction).Received).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new ShipmentReceiptBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).WithQuantityAccepted(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(shipment.ShipmentState.IsReceived);
         }
@@ -298,20 +298,20 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentItemShipmentItemStateDeriveShipmentState()
         {
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithQuantityOrdered(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new ShipmentReceiptBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).WithQuantityAccepted(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Transaction).Received;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(shipment.ShipmentState.IsReceived);
         }

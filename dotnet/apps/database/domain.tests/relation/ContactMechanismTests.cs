@@ -18,21 +18,21 @@ namespace Allors.Database.Domain.Tests
             var builder = new TelecommunicationsNumberBuilder(this.Transaction);
             var contactMechanism = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithAreaCode("area");
             contactMechanism = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithContactNumber("number");
             contactMechanism = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
     }
 }

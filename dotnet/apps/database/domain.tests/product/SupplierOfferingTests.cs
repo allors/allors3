@@ -30,33 +30,33 @@ namespace Allors.Database.Domain.Tests
             var builder = new SupplierOfferingBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithPrice(1);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithSupplier(supplier);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Pack);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             builder.WithPart(part);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -285,7 +285,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             new SupplierOfferingBuilder(this.Transaction).WithPart(part).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var warehouses = this.Transaction.Extent<Facility>();
             warehouses.Filter.AddEquals(this.M.Facility.FacilityType, new FacilityTypes(this.Transaction).Warehouse);

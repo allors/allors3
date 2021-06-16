@@ -18,42 +18,42 @@ namespace Allors.Database.Domain.Tests
             var builder = new CreditCardBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithCardNumber("4012888888881881");
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithExpirationYear(2016);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithExpirationMonth(03);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithNameOnCard("Name");
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithCreditCardCompany(new CreditCardCompanyBuilder(this.Transaction).WithName("Visa").Build());
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace Allors.Database.Domain.Tests
                 .WithCreditCardCompany(new CreditCardCompanyBuilder(this.Transaction).WithName("Visa").Build())
                 .Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             new CreditCardBuilder(this.Transaction)
                 .WithCardNumber("4012888888881881")
@@ -77,7 +77,7 @@ namespace Allors.Database.Domain.Tests
                 .WithCreditCardCompany(new CreditCardCompanyBuilder(this.Transaction).WithName("Visa").Build())
                 .Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
         }
     }
 }

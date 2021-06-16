@@ -18,7 +18,7 @@ namespace Allors.Database.Domain.Tests
             var shipment = new TransferBuilder(this.Transaction)
                 .WithShipToParty(this.InternalOrganisation.ActiveCustomers.First)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipToAddress);
         }
@@ -29,10 +29,10 @@ namespace Allors.Database.Domain.Tests
             var shipment = new TransferBuilder(this.Transaction)
                 .WithShipToParty(this.InternalOrganisation.ActiveCustomers.First)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.RemoveShipToAddress();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipToAddress);
         }
@@ -43,7 +43,7 @@ namespace Allors.Database.Domain.Tests
             var shipment = new TransferBuilder(this.Transaction)
                 .WithShipFromParty(this.InternalOrganisation)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipFromAddress);
         }
@@ -54,10 +54,10 @@ namespace Allors.Database.Domain.Tests
             var shipment = new TransferBuilder(this.Transaction)
                 .WithShipFromParty(this.InternalOrganisation)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.RemoveShipFromAddress();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipFromAddress);
         }

@@ -20,14 +20,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new OrganisationBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithName("Organisation");
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -86,10 +86,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedNameDerivePartyName()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             organisation.Name = "name";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal("name", organisation.PartyName);
         }
@@ -98,7 +98,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedUniqueIdDeriveContactsUserGroup()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(organisation.ExistContactsUserGroup);
         }
@@ -108,13 +108,13 @@ namespace Allors.Database.Domain.Tests
         {
             var employee = new PersonBuilder(this.Transaction).Build();
             var employment = new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithFromDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var employer = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             employment.Employer = employer;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(employee, employer.ActiveEmployees);
         }
@@ -125,10 +125,10 @@ namespace Allors.Database.Domain.Tests
             var employee = new PersonBuilder(this.Transaction).Build();
             var employer = new OrganisationBuilder(this.Transaction).Build();
             var employment = new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(employer).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             employment.FromDate = this.Transaction.Now();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(employee, employer.ActiveEmployees);
         }
@@ -139,12 +139,12 @@ namespace Allors.Database.Domain.Tests
             var employee = new PersonBuilder(this.Transaction).Build();
             var employer = new OrganisationBuilder(this.Transaction).Build();
             var employment = new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithEmployee(employee).WithEmployer(employer).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(employee, employer.ActiveEmployees);
 
             employment.ThroughDate = employment.FromDate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(employee, employer.ActiveEmployees);
         }
@@ -154,13 +154,13 @@ namespace Allors.Database.Domain.Tests
         {
             var customer = new PersonBuilder(this.Transaction).Build();
             var customerRelationship = new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithFromDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             customerRelationship.InternalOrganisation = internalOrganisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(customer, internalOrganisation.ActiveCustomers);
         }
@@ -171,10 +171,10 @@ namespace Allors.Database.Domain.Tests
             var customer = new PersonBuilder(this.Transaction).Build();
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
             var customerRelationship = new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             customerRelationship.FromDate = this.Transaction.Now();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(customer, internalOrganisation.ActiveCustomers);
         }
@@ -185,12 +185,12 @@ namespace Allors.Database.Domain.Tests
             var customer = new PersonBuilder(this.Transaction).Build();
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
             var customerRelationship = new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(customer, internalOrganisation.ActiveCustomers);
 
             customerRelationship.ThroughDate = customerRelationship.FromDate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(customer, internalOrganisation.ActiveCustomers);
         }
@@ -200,13 +200,13 @@ namespace Allors.Database.Domain.Tests
         {
             var supplier = new OrganisationBuilder(this.Transaction).Build();
             var supplierRelationship = new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).WithFromDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             supplierRelationship.InternalOrganisation = internalOrganisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(supplier, internalOrganisation.ActiveSuppliers);
         }
@@ -217,10 +217,10 @@ namespace Allors.Database.Domain.Tests
             var supplier = new OrganisationBuilder(this.Transaction).Build();
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
             var supplierRelationship = new SupplierRelationshipBuilder(this.Transaction).WithSupplier(supplier).WithInternalOrganisation(internalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             supplierRelationship.FromDate = this.Transaction.Now();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(supplier, internalOrganisation.ActiveSuppliers);
         }
@@ -231,12 +231,12 @@ namespace Allors.Database.Domain.Tests
             var supplier = new OrganisationBuilder(this.Transaction).Build();
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
             var supplierRelationship = new SupplierRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithSupplier(supplier).WithInternalOrganisation(internalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(supplier, internalOrganisation.ActiveSuppliers);
 
             supplierRelationship.ThroughDate = supplierRelationship.FromDate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(supplier, internalOrganisation.ActiveSuppliers);
         }
@@ -246,13 +246,13 @@ namespace Allors.Database.Domain.Tests
         {
             var subContractor = new OrganisationBuilder(this.Transaction).Build();
             var subContractorRelationship = new SubContractorRelationshipBuilder(this.Transaction).WithSubContractor(subContractor).WithFromDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             subContractorRelationship.Contractor = internalOrganisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(subContractor, internalOrganisation.ActiveSubContractors);
         }
@@ -263,10 +263,10 @@ namespace Allors.Database.Domain.Tests
             var subContractor = new OrganisationBuilder(this.Transaction).Build();
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
             var subContractorRelationship = new SubContractorRelationshipBuilder(this.Transaction).WithSubContractor(subContractor).WithContractor(internalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             subContractorRelationship.FromDate = this.Transaction.Now();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(subContractor, internalOrganisation.ActiveSubContractors);
         }
@@ -277,12 +277,12 @@ namespace Allors.Database.Domain.Tests
             var subContractor = new OrganisationBuilder(this.Transaction).Build();
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
             var subContractorRelationship = new SubContractorRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithSubContractor(subContractor).WithContractor(internalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(subContractor, internalOrganisation.ActiveSubContractors);
 
             subContractorRelationship.ThroughDate = subContractorRelationship.FromDate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(subContractor, internalOrganisation.ActiveSubContractors);
         }
@@ -292,13 +292,13 @@ namespace Allors.Database.Domain.Tests
         {
             var contact = new PersonBuilder(this.Transaction).Build();
             var contactRelationship = new OrganisationContactRelationshipBuilder(this.Transaction).WithContact(contact).WithFromDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             contactRelationship.Organisation = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(contactRelationship, organisation.CurrentOrganisationContactRelationships);
         }
@@ -309,10 +309,10 @@ namespace Allors.Database.Domain.Tests
             var contact = new PersonBuilder(this.Transaction).Build();
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             var contactRelationship = new OrganisationContactRelationshipBuilder(this.Transaction).WithContact(contact).WithOrganisation(organisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             contactRelationship.FromDate = this.Transaction.Now();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(contactRelationship, organisation.CurrentOrganisationContactRelationships);
         }
@@ -323,12 +323,12 @@ namespace Allors.Database.Domain.Tests
             var contact = new PersonBuilder(this.Transaction).Build();
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             var contactRelationship = new OrganisationContactRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithContact(contact).WithOrganisation(organisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(contactRelationship, organisation.CurrentOrganisationContactRelationships);
 
             contactRelationship.ThroughDate = contactRelationship.FromDate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(contactRelationship, organisation.CurrentOrganisationContactRelationships);
         }
@@ -338,13 +338,13 @@ namespace Allors.Database.Domain.Tests
         {
             var contact = new PersonBuilder(this.Transaction).Build();
             var contactRelationship = new OrganisationContactRelationshipBuilder(this.Transaction).WithContact(contact).WithFromDate(this.Transaction.Now()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             contactRelationship.Organisation = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(contact, organisation.CurrentContacts);
         }
@@ -355,10 +355,10 @@ namespace Allors.Database.Domain.Tests
             var contact = new PersonBuilder(this.Transaction).Build();
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             var contactRelationship = new OrganisationContactRelationshipBuilder(this.Transaction).WithContact(contact).WithOrganisation(organisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             contactRelationship.FromDate = this.Transaction.Now();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(contact, organisation.CurrentContacts);
         }
@@ -369,12 +369,12 @@ namespace Allors.Database.Domain.Tests
             var contact = new PersonBuilder(this.Transaction).Build();
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             var contactRelationship = new OrganisationContactRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithContact(contact).WithOrganisation(organisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(contact, organisation.CurrentContacts);
 
             contactRelationship.ThroughDate = contactRelationship.FromDate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(contact, organisation.CurrentContacts);
         }
@@ -393,7 +393,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeOrganisationDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -402,10 +402,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeIsInternalOrganisationDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             organisation.IsInternalOrganisation = true;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -414,13 +414,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeExternalAccountingTransactionFromPartyDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var accountingTransaction = new SalesAccountingTransactionBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             accountingTransaction.FromParty = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -429,13 +429,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeExternalAccountingTransactionToPartyDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var accountingTransaction = new SalesAccountingTransactionBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             accountingTransaction.ToParty = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -444,13 +444,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeShipmentShipFromPartyDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new TransferBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.ShipFromParty = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -459,13 +459,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeShipmentShipToPartyDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new TransferBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.ShipToParty = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -474,13 +474,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangePaymentReceiverDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var payment = new ReceiptBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             payment.Receiver = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -489,13 +489,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangePaymentSenderDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var payment = new ReceiptBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             payment.Sender = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -504,13 +504,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeEmploymentEmployerDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var employment = new EmploymentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             employment.Employer = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -519,13 +519,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeEngagementBillToPartyDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var engagement = new EngagementBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             engagement.BillToParty = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -534,13 +534,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeEngagementPlacingPartyDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var engagement = new EngagementBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             engagement.PlacingParty = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -549,13 +549,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangePartManufacturedByDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var part = new NonUnifiedPartBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             part.ManufacturedBy = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -564,13 +564,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangePartSuppliedByDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var part = new NonUnifiedPartBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             part.AddSuppliedBy(organisation);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -579,13 +579,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeOrganisationGlAccountInternalOrganisationDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var organisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             organisationGlAccount.InternalOrganisation = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -594,13 +594,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeOrganisationRollUpParentDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var organisationRollUp = new OrganisationRollUpBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             organisationRollUp.Parent = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -609,13 +609,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangePartyFixedAssetAssignmentPartyDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyFixedAssetAssignment = new PartyFixedAssetAssignmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyFixedAssetAssignment.Party = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -624,13 +624,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangePickListShipToPartyDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickList = new PickListBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             pickList.ShipToParty = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -639,13 +639,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeQuoteIssuerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quote = new ProposalBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.Issuer = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -654,13 +654,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeQuoteReceiverDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quote = new ProposalBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.Receiver = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -669,13 +669,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangePurchaseInvoiceBilledToDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             purchaseInvoice.BilledTo = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -684,13 +684,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangePurchaseInvoiceBilledFromDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             purchaseInvoice.BilledFrom = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -699,13 +699,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangePurchaseInvoiceShipToCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             purchaseInvoice.ShipToCustomer = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -714,13 +714,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangePurchaseInvoiceBillToEndCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             purchaseInvoice.BillToEndCustomer = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -729,13 +729,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangePurchaseInvoiceShipToEndCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             purchaseInvoice.ShipToEndCustomer = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -744,13 +744,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangePurchaseOrderTakenViaSupplierDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             purchaseOrder.TakenViaSupplier = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -759,13 +759,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangePurchaseOrderTakenViaSubcontractorDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             purchaseOrder.TakenViaSubcontractor = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -774,13 +774,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeRequestOriginatorDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var request = new RequestForQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             request.Originator = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -789,13 +789,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeRequestRecipientDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var request = new RequestForQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             request.Recipient = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -804,13 +804,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeRequirementAuthorizerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var requirement = new RequirementBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             requirement.Authorizer = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -819,13 +819,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeRequirementNeededForDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var requirement = new RequirementBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             requirement.NeededFor = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -834,13 +834,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeRequirementOriginatorDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var requirement = new RequirementBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             requirement.Originator = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -849,13 +849,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeRequirementServicedByDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var requirement = new RequirementBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             requirement.ServicedBy = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -864,13 +864,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSalesInvoiceBilledFromDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesInvoice.BilledFrom = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -879,13 +879,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSalesInvoiceBillToCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesInvoice.BillToCustomer = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -894,13 +894,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSalesInvoiceBillToEndCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesInvoice.BillToEndCustomer = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -909,13 +909,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSalesInvoiceShipToCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesInvoice.ShipToCustomer = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -924,13 +924,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSalesInvoiceShipToEndCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesInvoice.ShipToEndCustomer = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -939,13 +939,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSalesOrderBillToCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesOrder.BillToCustomer = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -954,13 +954,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSalesOrderBillToEndCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesOrder.BillToEndCustomer = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -969,13 +969,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSalesOrderShipToCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesOrder.ShipToCustomer = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -984,13 +984,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSalesOrderShipToEndCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesOrder.ShipToEndCustomer = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -999,13 +999,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSalesOrderPlacingCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesOrder.PlacingCustomer = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -1014,13 +1014,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSalesOrderTakenByDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesOrder.TakenBy = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, this.InternalOrganisation.DeniedPermissions);
         }
@@ -1029,12 +1029,12 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSalesOrderItemAssignedShipToPartyDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesOrderItem = new SalesOrderItemBuilder(this.Transaction).Build();
 
             salesOrderItem.AssignedShipToParty = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -1043,13 +1043,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSerialisedItemSuppliedByDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.AssignedSuppliedBy = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -1058,13 +1058,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSerialisedItemOwnedByDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.OwnedBy = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -1073,13 +1073,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSerialisedItemRentedByDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.RentedBy = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -1088,13 +1088,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSerialisedItemBuyerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.Buyer = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -1103,13 +1103,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeSerialisedItemSellerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             serialisedItem.Seller = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -1118,13 +1118,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeWorkTaskCustomerDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workTask.Customer = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -1133,13 +1133,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeWorkTaskExecutedByDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workTask.ExecutedBy = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }
@@ -1148,13 +1148,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangeWorkEffortPartyAssignmentPartyDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyAssignment = new WorkEffortPartyAssignmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyAssignment.Party = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
         }

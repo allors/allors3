@@ -37,21 +37,21 @@ namespace Allors.Database.Domain.Tests
             var builder = new OrganisationContactRelationshipBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithContact(contact);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithOrganisation(new OrganisationBuilder(this.Transaction).WithName("organisation").WithLocale(this.Transaction.GetSingleton().DefaultLocale).Build());
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -139,7 +139,7 @@ namespace Allors.Database.Domain.Tests
                 .WithContact(contact)
                 .WithOrganisation(this.InternalOrganisation)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(contact, this.InternalOrganisation.ContactsUserGroup.Members);
         }
@@ -153,12 +153,12 @@ namespace Allors.Database.Domain.Tests
                 .WithContact(contact)
                 .WithOrganisation(this.InternalOrganisation)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(contact, this.InternalOrganisation.ContactsUserGroup.Members);
 
             organisationContactRelationship.ThroughDate = organisationContactRelationship.FromDate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(contact, this.InternalOrganisation.ContactsUserGroup.Members);
         }
@@ -171,10 +171,10 @@ namespace Allors.Database.Domain.Tests
             var organisationContactRelationship = new OrganisationContactRelationshipBuilder(this.Transaction)
                 .WithOrganisation(this.InternalOrganisation)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             organisationContactRelationship.Contact = contact;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(contact, this.InternalOrganisation.ContactsUserGroup.Members);
         }
@@ -192,10 +192,10 @@ namespace Allors.Database.Domain.Tests
             var contact = new PersonBuilder(this.Transaction).Build();
 
             var organisationContactRelationship = new OrganisationContactRelationshipBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             organisationContactRelationship.Contact = contact;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(contact, organisationContactRelationship.Parties);
         }
@@ -206,10 +206,10 @@ namespace Allors.Database.Domain.Tests
             var organisation = new OrganisationBuilder(this.Transaction).Build();
 
             var organisationContactRelationship = new OrganisationContactRelationshipBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             organisationContactRelationship.Organisation = organisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(organisation, organisationContactRelationship.Parties);
         }

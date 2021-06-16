@@ -61,7 +61,7 @@ namespace Allors.Database.Domain.Tests
                 .WithNextExecutionDate(this.Transaction.Now().AddDays(1))
                 .Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             var weekDay = repeatingInvoice.NextExecutionDate.DayOfWeek.ToString();
             var daysOfWeek = new DaysOfWeek(this.Transaction).Extent();
@@ -71,11 +71,11 @@ namespace Allors.Database.Domain.Tests
             repeatingInvoice.Frequency = new TimeFrequencies(this.Transaction).Week;
             repeatingInvoice.DayOfWeek = dayOfWeek;
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             repeatingInvoice.Frequency = new TimeFrequencies(this.Transaction).Day;
 
-            var validation = this.Transaction.Derive(false);
+            var validation = this.Derive();
 
             Assert.True(validation.HasErrors);
             Assert.Single(validation.Errors);
@@ -123,10 +123,10 @@ namespace Allors.Database.Domain.Tests
                 .WithNextExecutionDate(this.Transaction.Now().AddDays(1))
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
             Assert.Contains(this.M.RepeatingPurchaseInvoice.DayOfWeek, errors.SelectMany(v => v.RoleTypes).Distinct());
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             var weekDay = repeatingInvoice.NextExecutionDate.DayOfWeek.ToString();
             var daysOfWeek = new DaysOfWeek(this.Transaction).Extent();
@@ -135,7 +135,7 @@ namespace Allors.Database.Domain.Tests
 
             repeatingInvoice.DayOfWeek = dayOfWeek;
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -186,7 +186,7 @@ namespace Allors.Database.Domain.Tests
                 .WithNextExecutionDate(nextExecutionDate)
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorNotAllowed>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorNotAllowed>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.RepeatingSalesInvoice.DayOfWeek,
@@ -194,7 +194,7 @@ namespace Allors.Database.Domain.Tests
 
             repeatingInvoice.RemoveDayOfWeek();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -245,11 +245,11 @@ namespace Allors.Database.Domain.Tests
                 .WithNextExecutionDate(nextExecutionDate)
                 .Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             repeatingInvoice.NextExecutionDate = repeatingInvoice.NextExecutionDate.AddDays(1);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.DateDayOfWeek));
         }
 
@@ -301,7 +301,7 @@ namespace Allors.Database.Domain.Tests
                 .WithNextExecutionDate(mayThirteen2018.AddDays(1))
                 .Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             RepeatingSalesInvoices.Daily(this.Transaction);
 
@@ -358,7 +358,7 @@ namespace Allors.Database.Domain.Tests
                 .WithNextExecutionDate(mayFourteen2018)
                 .Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             RepeatingSalesInvoices.Daily(this.Transaction);
 
@@ -414,7 +414,7 @@ namespace Allors.Database.Domain.Tests
                 .WithNextExecutionDate(mayFourteen2018)
                 .Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             RepeatingSalesInvoices.Daily(this.Transaction);
 
@@ -472,7 +472,7 @@ namespace Allors.Database.Domain.Tests
                 .WithFinalExecutionDate(mayFourteen2018.AddDays(21))
                 .Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             RepeatingSalesInvoices.Daily(this.Transaction);
 
@@ -485,7 +485,7 @@ namespace Allors.Database.Domain.Tests
             timeShift = mayTwentyOne2018 - DateTime.UtcNow;
             this.TimeShift = timeShift;
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             RepeatingSalesInvoices.Daily(this.Transaction);
 
@@ -497,7 +497,7 @@ namespace Allors.Database.Domain.Tests
             timeShift = mayTwentyEight2018 - DateTime.UtcNow;
             this.TimeShift = timeShift;
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             RepeatingSalesInvoices.Daily(this.Transaction);
 
@@ -510,7 +510,7 @@ namespace Allors.Database.Domain.Tests
             timeShift = juneFour2018 - DateTime.UtcNow;
             this.TimeShift = timeShift;
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             RepeatingSalesInvoices.Daily(this.Transaction);
 
@@ -523,7 +523,7 @@ namespace Allors.Database.Domain.Tests
             timeShift = juneEleven2018 - DateTime.UtcNow;
             this.TimeShift = timeShift;
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             RepeatingSalesInvoices.Daily(this.Transaction);
 
@@ -545,7 +545,7 @@ namespace Allors.Database.Domain.Tests
                 .WithFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.FrequencyNotSupported));
         }
 
@@ -556,11 +556,11 @@ namespace Allors.Database.Domain.Tests
                 .WithFrequency(new TimeFrequencies(this.Transaction).Week)
                 .WithDayOfWeek(new DaysOfWeek(this.Transaction).Monday)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             repeatingInvoice.RemoveDayOfWeek();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
             Assert.Contains(this.M.RepeatingPurchaseInvoice.DayOfWeek, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
@@ -570,11 +570,11 @@ namespace Allors.Database.Domain.Tests
             var repeatingInvoice = new RepeatingSalesInvoiceBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Month)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             repeatingInvoice.DayOfWeek = new DaysOfWeek(this.Transaction).Monday;
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorNotAllowed>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorNotAllowed>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.RepeatingSalesInvoice.DayOfWeek,
@@ -588,11 +588,11 @@ namespace Allors.Database.Domain.Tests
                 .WithFrequency(new TimeFrequencies(this.Transaction).Week)
                 .WithDayOfWeek(new DaysOfWeek(this.Transaction).Monday)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             repeatingInvoice.NextExecutionDate = new DateTime(2021, 01, 06, 12, 0, 0, DateTimeKind.Utc);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.DateDayOfWeek));
         }
     }

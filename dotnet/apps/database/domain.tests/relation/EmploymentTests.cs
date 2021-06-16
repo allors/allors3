@@ -92,11 +92,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedEmployeeDeriveParties()
         {
             var employment = new EmploymentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var customer = new PersonBuilder(this.Transaction).Build();
             employment.Employee = customer;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(customer, employment.Parties);
         }
@@ -105,11 +105,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedEmployerDeriveParties()
         {
             var employment = new EmploymentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
             employment.Employer = internalOrganisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(internalOrganisation, employment.Parties);
         }

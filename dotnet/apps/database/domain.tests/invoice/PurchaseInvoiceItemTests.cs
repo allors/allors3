@@ -18,14 +18,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPaymentApplicationAmountAppliedDeriveAmountPaid()
         {
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).Build();
             invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoiceItem).WithAmountApplied(1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, invoiceItem.AmountPaid);
         }
@@ -41,11 +41,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseInvoiceValidInvoiceItemsDerivePurchaseInvoiceItemStateCreated()
         {
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).Build();
             invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(invoiceItem.PurchaseInvoiceItemState.IsCreated);
         }
@@ -54,14 +54,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseInvoicePurchaseInvoiceStateDerivePurchaseInvoiceItemStateAwaitingApproval()
         {
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).Build();
             invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Confirm();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(invoiceItem.PurchaseInvoiceItemState.IsAwaitingApproval);
         }
@@ -70,23 +70,23 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseInvoicePurchaseInvoiceStateDerivePurchaseInvoiceItemStateRevising()
         {
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).WithQuantity(1).WithAssignedUnitPrice(100).Build();
             invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Confirm();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Approve();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoiceItem).WithAmountApplied(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Revise();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(invoiceItem.PurchaseInvoiceItemState.IsRevising);
         }
@@ -95,17 +95,17 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseInvoicePurchaseInvoiceStateDerivePurchaseInvoiceItemStateNotPaid()
         {
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).Build();
             invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Confirm();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Approve();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(invoiceItem.PurchaseInvoiceItemState.IsNotPaid);
         }
@@ -114,20 +114,20 @@ namespace Allors.Database.Domain.Tests
         public void ChangedAmountPaidDerivePurchaseInvoiceItemStatePartiallyPaid()
         {
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).WithQuantity(1).WithAssignedUnitPrice(100).Build();
             invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Confirm();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Approve();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoiceItem).WithAmountApplied(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(invoiceItem.PurchaseInvoiceItemState.IsPartiallyPaid);
         }
@@ -136,20 +136,20 @@ namespace Allors.Database.Domain.Tests
         public void ChangedAmountPaidDerivePurchaseInvoiceItemStatePaid()
         {
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).WithQuantity(1).WithAssignedUnitPrice(100).Build();
             invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Confirm();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Approve();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoiceItem).WithAmountApplied(100).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(invoiceItem.PurchaseInvoiceItemState.IsPaid);
         }
@@ -158,20 +158,20 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseInvoiceAmountPaidDerivePurchaseInvoiceItemStatePartiallyPaid()
         {
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).WithQuantity(1).WithAssignedUnitPrice(100).Build();
             invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Confirm();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Approve();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new PaymentApplicationBuilder(this.Transaction).WithInvoice(invoice).WithAmountApplied(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(invoiceItem.PurchaseInvoiceItemState.IsPartiallyPaid);
         }
@@ -180,20 +180,20 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseInvoiceAmountPaidDerivePurchaseInvoiceItemStatePaid()
         {
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).WithQuantity(1).WithAssignedUnitPrice(10).Build();
             invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Confirm();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoice.Approve();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new PaymentApplicationBuilder(this.Transaction).WithInvoice(invoice).WithAmountApplied(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(invoiceItem.PurchaseInvoiceItemState.IsPaid);
         }

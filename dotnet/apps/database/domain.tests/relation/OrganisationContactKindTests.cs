@@ -20,14 +20,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new OrganisationContactKindBuilder(this.Transaction);
             var contactKind = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithDescription("contactkind");
             contactKind = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
     }
 }

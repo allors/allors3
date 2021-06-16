@@ -18,11 +18,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedIssuerThrowValidationError()
         {
             var quote = new StatementOfWorkBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.Issuer = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
 
-            Assert.Contains(ErrorMessages.InternalOrganisationChanged, this.Transaction.Derive(false).Errors.Select(v => v.Message));
+            Assert.Contains(ErrorMessages.InternalOrganisationChanged, this.Derive().Errors.Select(v => v.Message));
         }
     }
 
@@ -39,7 +39,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedStatementOfWorkTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
         {
             var quote = new StatementOfWorkBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, quote.DeniedPermissions);
         }
@@ -48,10 +48,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedStatementOfWorkStateTransitionalDeniedPermissionsDeriveDeletePermissionDenied()
         {
             var quote = new StatementOfWorkBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.QuoteState = new QuoteStates(this.Transaction).Accepted;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, quote.DeniedPermissions);
         }
@@ -60,10 +60,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedRequestDeriveDeletePermissionDenied()
         {
             var quote = new StatementOfWorkBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.Request = new RequestForQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, quote.DeniedPermissions);
         }
@@ -72,13 +72,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedRequestDeriveDeletePermissionDeniedAllowed()
         {
             var quote = new StatementOfWorkBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.Request = new RequestForQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quote.RemoveRequest();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, quote.DeniedPermissions);
         }

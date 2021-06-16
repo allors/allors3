@@ -18,11 +18,11 @@ namespace Allors.Database.Domain.Tests
             var product = new UnifiedGoodBuilder(this.Transaction).Build();
 
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem).WithPart(product).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, order.PurchaseOrderItemsByProduct.First.QuantityOrdered);
         }
@@ -33,11 +33,11 @@ namespace Allors.Database.Domain.Tests
             var product = new UnifiedGoodBuilder(this.Transaction).Build();
 
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem).WithPart(product).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, order.PurchaseOrderItemsByProduct.First.ValueOrdered);
         }
@@ -49,14 +49,14 @@ namespace Allors.Database.Domain.Tests
             var product2 = new UnifiedGoodBuilder(this.Transaction).Build();
 
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem).WithPart(product1).WithQuantityOrdered(1).WithAssignedUnitPrice(1).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             orderItem.Part = product2;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0, product1.PurchaseOrderItemByProductsWhereUnifiedProduct.First.ValueOrdered);
         }

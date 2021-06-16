@@ -40,7 +40,7 @@ namespace Allors.Database.Domain.Tests
                 .WithDefaultCollectionMethod(ownBankAccount)
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             organisation.StartNewFiscalYear();
 
@@ -77,7 +77,7 @@ namespace Allors.Database.Domain.Tests
                 .WithDefaultCollectionMethod(ownBankAccount)
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             organisation.StartNewFiscalYear();
 
@@ -130,7 +130,7 @@ namespace Allors.Database.Domain.Tests
                 .WithDefaultCollectionMethod(ownBankAccount)
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             organisation.StartNewFiscalYear();
 
@@ -196,7 +196,7 @@ namespace Allors.Database.Domain.Tests
                 .WithDoAccounting(true)
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             organisation.StartNewFiscalYear();
 
@@ -239,11 +239,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedFromDateDeriveDescription()
         {
             var accountingPeriod = new AccountingPeriodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var fromDate = this.Transaction.Now().Date;
             accountingPeriod.FromDate = fromDate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(string.Format("{0:d}", fromDate), accountingPeriod.Description);
         }
@@ -255,10 +255,10 @@ namespace Allors.Database.Domain.Tests
             var throughDate = this.Transaction.Now().Date.AddDays(1);
 
             var accountingPeriod = new AccountingPeriodBuilder(this.Transaction).WithFromDate(fromDate).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             accountingPeriod.ThroughDate = throughDate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var description = string.Format("{0:d} through {1:d}", fromDate, throughDate);
             Assert.Equal(description, accountingPeriod.Description);

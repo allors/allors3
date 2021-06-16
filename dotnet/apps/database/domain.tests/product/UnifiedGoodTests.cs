@@ -16,10 +16,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedProductIdentificationsDeriveSearchString()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             unifiedGood.AddProductIdentification(new SkuIdentificationBuilder(this.Transaction).WithIdentification("sku").WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Sku).Build());
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("sku", unifiedGood.SearchString);
         }
@@ -28,10 +28,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedProductCategoryAllProductsDeriveSearchString()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new ProductCategoryBuilder(this.Transaction).WithName("catname").WithProduct(unifiedGood).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("catname", unifiedGood.SearchString);
         }
@@ -40,12 +40,12 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSupplierOfferingsPartDeriveSearchString()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new SupplierOfferingBuilder(this.Transaction)
                 .WithSupplier(this.InternalOrganisation.ActiveSuppliers.First)
                 .WithPart(unifiedGood).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.InternalOrganisation.ActiveSuppliers.First.PartyName, unifiedGood.SearchString);
         }
@@ -54,10 +54,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSerialisedItemsDeriveSearchString()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             unifiedGood.AddSerialisedItem(new SerialisedItemBuilder(this.Transaction).WithSerialNumber("serialnumber").Build());
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("serialnumber", unifiedGood.SearchString);
         }
@@ -66,10 +66,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedProductTypeDeriveSearchString()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             unifiedGood.ProductType = new ProductTypeBuilder(this.Transaction).WithName("producttype").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("producttype", unifiedGood.SearchString);
         }
@@ -78,10 +78,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedBrandDeriveSearchString()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             unifiedGood.Brand = new BrandBuilder(this.Transaction).WithName("brand").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("brand", unifiedGood.SearchString);
         }
@@ -90,10 +90,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedModelDeriveSearchString()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             unifiedGood.Model = new ModelBuilder(this.Transaction).WithName("model").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("model", unifiedGood.SearchString);
         }
@@ -102,10 +102,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedKeywordsDeriveSearchString()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             unifiedGood.Keywords = "keywords";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("keywords", unifiedGood.SearchString);
         }
@@ -114,20 +114,20 @@ namespace Allors.Database.Domain.Tests
         public void ChangedVariantsDeriveVirtualProductPriceComponents()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pricecomponent = new BasePriceBuilder(this.Transaction)
                 .WithProduct(unifiedGood)
                 .WithPrice(1)
                 .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var variantGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             unifiedGood.AddVariant(variantGood);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(variantGood.VirtualProductPriceComponents.First, pricecomponent);
         }
@@ -136,20 +136,20 @@ namespace Allors.Database.Domain.Tests
         public void ChangedVariantsDeriveVirtualProductPriceComponents_2()
         {
             var variantGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).WithVariant(variantGood).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pricecomponent = new BasePriceBuilder(this.Transaction)
                 .WithProduct(unifiedGood)
                 .WithPrice(1)
                 .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             unifiedGood.RemoveVariant(variantGood);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Empty(variantGood.VirtualProductPriceComponents);
         }
@@ -158,20 +158,20 @@ namespace Allors.Database.Domain.Tests
         public void ChangedVariantsDeriveBasePrice()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pricecomponent = new BasePriceBuilder(this.Transaction)
                 .WithProduct(unifiedGood)
                 .WithPrice(1)
                 .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var variantGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             unifiedGood.AddVariant(variantGood);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(variantGood.BasePrices.First, pricecomponent);
         }
@@ -180,17 +180,17 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPriceComponentProductDeriveVirtualProductPriceComponents()
         {
             var variantGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).WithVariant(variantGood).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pricecomponent = new BasePriceBuilder(this.Transaction)
                 .WithProduct(unifiedGood)
                 .WithPrice(1)
                 .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(variantGood.VirtualProductPriceComponents.First, pricecomponent);
         }
@@ -209,7 +209,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedNonUnifiedGoodDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -218,13 +218,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedDeploymentProductOfferingDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var deployment = new DeploymentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             deployment.ProductOffering = unifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -233,13 +233,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedEngagementItemProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var engagementItem = new GoodOrderItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             engagementItem.Product = unifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -248,13 +248,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedGeneralLedgerAccountDerivedCostUnitsAllowedDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             generalLedgerAccount.AddAssignedCostUnitsAllowed(unifiedGood);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -263,13 +263,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedGeneralLedgerAccountDefaultCostUnitDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             generalLedgerAccount.DefaultCostUnit = unifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -278,13 +278,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedQuoteItemProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quoteItem.Product = unifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -293,13 +293,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedShipmentItemGoodDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentItem.Good = unifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -308,13 +308,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedWorkEffortGoodStandardUnifiedProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workEffortGoodStandard = new WorkEffortGoodStandardBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workEffortGoodStandard.UnifiedProduct = unifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -323,13 +323,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedMarketingPackageProductUsedInDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var marketingPackage = new MarketingPackageBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             marketingPackage.AddProductsUsedIn(unifiedGood);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -338,13 +338,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedMarketingPackageProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var marketingPackage = new MarketingPackageBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             marketingPackage.Product = unifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -353,13 +353,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedOrganisationGlAccountProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var organisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             organisationGlAccount.Product = unifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -368,13 +368,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedProductConfigurationProductUsedInDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productConfiguration = new ProductConfigurationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             productConfiguration.AddProductsUsedIn(unifiedGood);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -383,13 +383,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedProductConfigurationProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var productConfiguration = new ProductConfigurationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             productConfiguration.Product = unifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -398,13 +398,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedRequestItemProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var requestItem = new RequestItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             requestItem.Product = unifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -413,13 +413,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedSalesInvoiceItemProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesInvoiceItem.Product = unifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -428,13 +428,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedSalesOrderItemProductDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesOrderItem = new SalesOrderItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesOrderItem.Product = unifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -443,13 +443,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedWorkEffortTypeProductToProduceDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workEffortType = new WorkEffortTypeBuilder(this.Transaction).Build();          
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workEffortType.ProductToProduce = unifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -458,13 +458,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedWorkEffortInventoryProducedPartDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workEffortInventoryProduced = new WorkEffortInventoryProducedBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workEffortInventoryProduced.Part = unifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -473,13 +473,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedWorkEffortPartStandardPartDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workEffortPartStandard = new WorkEffortPartStandardBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workEffortPartStandard.Part = unifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -488,13 +488,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedPartBillOfMaterialPartDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partBillOfMaterial = new EngineeringBomBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partBillOfMaterial.Part = unifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -503,13 +503,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedPartBillOfMaterialComponentPartDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partBillOfMaterial = new EngineeringBomBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partBillOfMaterial.ComponentPart = unifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -518,10 +518,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedInventoryItemTransactionPartDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction).WithReason(new InventoryTransactionReasonBuilder(this.Transaction).Build()).WithPart(unifiedGood).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }
@@ -530,11 +530,11 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedSerialisedItemDeriveDeletePermission()
         {
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             unifiedGood.AddSerialisedItem(serialisedItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
         }

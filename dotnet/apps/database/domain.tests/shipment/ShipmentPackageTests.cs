@@ -26,13 +26,13 @@ namespace Allors.Database.Domain.Tests
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
             var package = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(package);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, package.SequenceNumber);
 
             var secondPackage = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(secondPackage);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(2, secondPackage.SequenceNumber);
         }
@@ -48,7 +48,7 @@ namespace Allors.Database.Domain.Tests
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
             var package = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(package);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(package.ExistDocuments);
         }
@@ -59,27 +59,27 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.AutoGenerateShipmentPackage = true;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickList = new PickListBuilder(this.Transaction)
                 .WithPickListState(new PickListStates(this.Transaction).Picked)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickListItem = new PickListItemBuilder(this.Transaction).Build();
             pickList.AddPickListItem(pickListItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var package = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(package);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new ItemIssuanceBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithPickListItem(pickListItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(package.ExistPackagingContents);
         }
@@ -90,28 +90,28 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.StoresWhereInternalOrganisation.First.AutoGenerateShipmentPackage = true;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickList = new PickListBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickListItem = new PickListItemBuilder(this.Transaction).Build();
             pickList.AddPickListItem(pickListItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var package = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(package);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new ItemIssuanceBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithPickListItem(pickListItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             pickList.PickListState = new PickListStates(this.Transaction).Picked;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(package.ExistPackagingContents);
         }

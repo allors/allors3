@@ -31,14 +31,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new OwnBankAccountBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithBankAccount(bankAccount);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -74,7 +74,7 @@ namespace Allors.Database.Domain.Tests
                 .WithDescription("own account")
                 .WithBankAccount(bankAccount).Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
@@ -87,7 +87,7 @@ namespace Allors.Database.Domain.Tests
                 .WithDescription("own account")
                 .WithBankAccount(bankAccount).Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -125,15 +125,15 @@ namespace Allors.Database.Domain.Tests
             internalOrganisation.DoAccounting = true;
             internalOrganisation.DefaultCollectionMethod = paymentMethod;
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             paymentMethod.Journal = journal;
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             paymentMethod.RemoveGeneralLedgerAccount();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -172,16 +172,16 @@ namespace Allors.Database.Domain.Tests
 
             internalOrganisation.AddAssignedActiveCollectionMethod(collectionMethod);
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             collectionMethod.Journal = journal;
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             collectionMethod.RemoveJournal();
             collectionMethod.GeneralLedgerAccount = internalOrganisationGlAccount;
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
     }
 
@@ -195,11 +195,11 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.DoAccounting = true;
 
             var ownBankAccount = new OwnBankAccountBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             this.InternalOrganisation.DefaultCollectionMethod = ownBankAccount;
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.OwnBankAccount.GeneralLedgerAccount,
@@ -211,11 +211,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedGeneralLedgerAccountThrowValidation()
         {
             var ownBankAccount = new OwnBankAccountBuilder(this.Transaction).WithJournal(new JournalBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             ownBankAccount.GeneralLedgerAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.Cash.GeneralLedgerAccount,
@@ -227,11 +227,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedJournalThrowValidation()
         {
             var ownBankAccount = new OwnBankAccountBuilder(this.Transaction).WithGeneralLedgerAccount(new OrganisationGlAccountBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             ownBankAccount.Journal = new JournalBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.Cash.GeneralLedgerAccount,

@@ -1964,7 +1964,7 @@ namespace Allors.Database.Domain.Tests
         {
             var invoiceitem = new SalesInvoiceItemBuilder(this.Transaction).Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new SalesInvoiceItemStates(this.Transaction).ReadyForPosting, invoiceitem.SalesInvoiceItemState);
         }
@@ -1975,7 +1975,7 @@ namespace Allors.Database.Domain.Tests
             var product = new NonUnifiedGoodBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
             var invoiceitem = new SalesInvoiceItemBuilder(this.Transaction).WithProduct(product).Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new InvoiceItemTypes(this.Transaction).ProductItem, invoiceitem.InvoiceItemType);
         }
@@ -1985,7 +1985,7 @@ namespace Allors.Database.Domain.Tests
         {
             var invoiceitem = new SalesInvoiceItemBuilder(this.Transaction).Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(invoiceitem.ExistDerivationTrigger);
         }
@@ -1999,11 +1999,11 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedSalesInvoiceSalesInvoiceItemsDeriveVatRegime()
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithAssignedVatRegime(new VatRegimes(this.Transaction).Exempt).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(invoiceItem.DerivedVatRegime, salesInvoice.DerivedVatRegime);
         }
@@ -2014,12 +2014,12 @@ namespace Allors.Database.Domain.Tests
             var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
             var part = new NonUnifiedPartBuilder(this.Transaction).Build();
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithProduct(product).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Contains(this.M.SalesInvoiceItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.SalesInvoiceItem.Part, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -2030,17 +2030,20 @@ namespace Allors.Database.Domain.Tests
             var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
             var colour = new ColourBuilder(this.Transaction).Build();
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProductFeature(colour).WithProduct(product).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.SalesInvoiceItem.Product,
-                this.M.SalesInvoiceItem.ProductFeatures,
-            }, errors.SelectMany(v => v.RoleTypes).Distinct());
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            Assert.Contains(this.M.SalesInvoiceItem.Product, errors.SelectMany(v => v.RoleTypes));
+            Assert.Contains(this.M.SalesInvoiceItem.ProductFeatures, errors.SelectMany(v => v.RoleTypes));
+            //Assert.Equal(new IRoleType[]
+            //{
+            //    this.M.SalesInvoiceItem.Product,
+            //    this.M.SalesInvoiceItem.ProductFeatures,
+            //    this.M.SalesInvoiceItem.Part,
+            //}, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -2049,12 +2052,12 @@ namespace Allors.Database.Domain.Tests
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             var colour = new ColourBuilder(this.Transaction).Build();
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProductFeature(colour).WithSerialisedItem(serialisedItem).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesInvoiceItem.SerialisedItem,
@@ -2068,12 +2071,12 @@ namespace Allors.Database.Domain.Tests
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             var part = new NonUnifiedPartBuilder(this.Transaction).Build();
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithSerialisedItem(serialisedItem).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesInvoiceItem.SerialisedItem,
@@ -2086,12 +2089,12 @@ namespace Allors.Database.Domain.Tests
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithSerialisedItem(serialisedItem).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesInvoiceItem.NextSerialisedItemAvailability,
@@ -2103,12 +2106,12 @@ namespace Allors.Database.Domain.Tests
         {
             var part = new NonUnifiedPartBuilder(this.Transaction).WithSerialisedDefaults(this.InternalOrganisation, this.Transaction.Faker()).Build();
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithQuantity(1).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.DoesNotContain(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
@@ -2117,12 +2120,12 @@ namespace Allors.Database.Domain.Tests
         {
             var part = new NonUnifiedPartBuilder(this.Transaction).WithSerialisedDefaults(this.InternalOrganisation, this.Transaction.Faker()).Build();
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithQuantity(2).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.InvalidQuantity)));
         }
 
@@ -2131,12 +2134,12 @@ namespace Allors.Database.Domain.Tests
         {
             var part = new NonUnifiedPartBuilder(this.Transaction).WithSerialisedDefaults(this.InternalOrganisation, this.Transaction.Faker()).Build();
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithQuantity(0).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.InvalidQuantity)));
         }
 
@@ -2145,12 +2148,12 @@ namespace Allors.Database.Domain.Tests
         {
             var part = new NonUnifiedPartBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithQuantity(0).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.InvalidQuantity)));
         }
 
@@ -2160,12 +2163,12 @@ namespace Allors.Database.Domain.Tests
             var service = new InvoiceItemTypes(this.Transaction).Service;
             var part = new NonUnifiedPartBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithInvoiceItemType(service).WithQuantity(service.MaxQuantity + 1).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.InvalidQuantity)));
         }
 
@@ -2175,12 +2178,12 @@ namespace Allors.Database.Domain.Tests
             var service = new InvoiceItemTypes(this.Transaction).Service;
             var part = new NonUnifiedPartBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithInvoiceItemType(service).WithQuantity(service.MaxQuantity).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.DoesNotContain(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
@@ -2189,14 +2192,14 @@ namespace Allors.Database.Domain.Tests
         {
             var assignedVatRegime = new VatRegimes(this.Transaction).SpainReduced;
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithAssignedVatRegime(new VatRegimes(this.Transaction).Exempt).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoiceItem.AssignedVatRegime = assignedVatRegime;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(assignedVatRegime, invoiceItem.DerivedVatRegime);
         }
@@ -2206,14 +2209,14 @@ namespace Allors.Database.Domain.Tests
         {
             var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesInvoice.AssignedVatRegime = vatRegime;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(vatRegime, invoiceItem.DerivedVatRegime);
         }
@@ -2223,14 +2226,14 @@ namespace Allors.Database.Domain.Tests
         {
             var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesInvoice.AssignedVatRegime = vatRegime;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(vatRegime.VatRates[0], invoiceItem.VatRate);
         }
@@ -2240,25 +2243,25 @@ namespace Allors.Database.Domain.Tests
         {
             var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
             vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
             vatRegime.AddVatRate(newVatRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction)
                 .WithInvoiceDate(this.Transaction.Now().AddDays(-1).Date)
                 .WithAssignedVatRegime(vatRegime).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEqual(newVatRate, invoiceItem.VatRate);
 
             salesInvoice.InvoiceDate = this.Transaction.Now().AddDays(1).Date;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(newVatRate, invoiceItem.VatRate);
         }
@@ -2268,14 +2271,14 @@ namespace Allors.Database.Domain.Tests
         {
             var assignedIrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithAssignedIrpfRegime(new IrpfRegimes(this.Transaction).Exempt).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoiceItem.AssignedIrpfRegime = assignedIrpfRegime;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(assignedIrpfRegime, invoiceItem.DerivedIrpfRegime);
         }
@@ -2285,14 +2288,14 @@ namespace Allors.Database.Domain.Tests
         {
             var irpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesInvoice.AssignedIrpfRegime = irpfRegime;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(irpfRegime, invoiceItem.DerivedIrpfRegime);
         }
@@ -2302,14 +2305,14 @@ namespace Allors.Database.Domain.Tests
         {
             var irpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesInvoice.AssignedIrpfRegime = irpfRegime;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(irpfRegime.IrpfRates[0], invoiceItem.IrpfRate);
         }
@@ -2318,14 +2321,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPaymentApplicationAmountAppliedDeriveAmountPaid()
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoiceItem).WithAmountApplied(1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, invoiceItem.AmountPaid);
         }
@@ -2334,14 +2337,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSalesInvoiceSalesInvoiceStateDeriveSalesInvoiceItemStateCancelled()
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesInvoice.CancelInvoice();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new SalesInvoiceItemStates(this.Transaction).CancelledByInvoice, invoiceItem.SalesInvoiceItemState);
         }
@@ -2350,14 +2353,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSalesInvoiceSalesInvoiceStateDeriveSalesInvoiceItemStateWrittenOff()
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesInvoice.WriteOff();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new SalesInvoiceItemStates(this.Transaction).WrittenOff, invoiceItem.SalesInvoiceItemState);
         }
@@ -2366,17 +2369,17 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSalesInvoiceSalesInvoiceStateDeriveSalesInvoiceItemStateReadyForPosting()
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesInvoice.CancelInvoice();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             salesInvoice.Reopen();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new SalesInvoiceItemStates(this.Transaction).ReadyForPosting, invoiceItem.SalesInvoiceItemState);
         }
@@ -2390,11 +2393,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedItemInvoiceItemTypeThrowvalidationError()
         {
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithQuantity(0).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoiceItem.InvoiceItemType = new InvoiceItemTypes(this.Transaction).PartItem;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
 
@@ -2402,11 +2405,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedQuantityThrowvalidationError()
         {
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem).WithQuantity(1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoiceItem.Quantity = 0;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
         }
     }
@@ -2424,7 +2427,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedSalesInvoiceItemStateReadyForPostingDeriveDeletePermission()
         {
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, invoiceItem.DeniedPermissions);
         }
@@ -2433,10 +2436,10 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedSalesInvoiceItemStateCancelledDeriveDeletePermission()
         {
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoiceItem.CancelFromInvoice();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, invoiceItem.DeniedPermissions);
         }

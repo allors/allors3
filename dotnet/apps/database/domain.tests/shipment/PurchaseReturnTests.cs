@@ -20,7 +20,7 @@ namespace Allors.Database.Domain.Tests
             var number = this.InternalOrganisation.StoresWhereInternalOrganisation.First.PurchaseReturnNumberCounter.Value;
 
             var shipment = new PurchaseReturnBuilder(this.Transaction).WithStore(store).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(shipment.ShipmentNumber, (number + 1).ToString());
         }
@@ -32,7 +32,7 @@ namespace Allors.Database.Domain.Tests
             var number = store.PurchaseReturnNumberCounter.Value;
 
             var shipment = new PurchaseReturnBuilder(this.Transaction).WithStore(store).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(shipment.SortableShipmentNumber.Value, number + 1);
         }
@@ -43,7 +43,7 @@ namespace Allors.Database.Domain.Tests
             var shipment = new PurchaseReturnBuilder(this.Transaction)
                 .WithShipToParty(this.InternalOrganisation.ActiveSuppliers.First)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.ActiveSuppliers.First.ShippingAddress, shipment.ShipToAddress);
         }
@@ -54,10 +54,10 @@ namespace Allors.Database.Domain.Tests
             var shipment = new PurchaseReturnBuilder(this.Transaction)
                 .WithShipToParty(this.InternalOrganisation.ActiveSuppliers.First)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.RemoveShipToAddress();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.ActiveSuppliers.First.ShippingAddress, shipment.ShipToAddress);
         }
@@ -68,7 +68,7 @@ namespace Allors.Database.Domain.Tests
             var shipment = new PurchaseReturnBuilder(this.Transaction)
                 .WithShipFromParty(this.InternalOrganisation)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipFromAddress);
         }
@@ -79,10 +79,10 @@ namespace Allors.Database.Domain.Tests
             var shipment = new PurchaseReturnBuilder(this.Transaction)
                 .WithShipFromParty(this.InternalOrganisation)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.RemoveShipFromAddress();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipFromAddress);
         }

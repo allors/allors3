@@ -22,7 +22,7 @@ namespace Allors.Database.Domain.Tests
         {
             var orderValue = new OrderValueBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Single(errors, e => e.Message == "OrderValue.FromAmount, OrderValue.ThroughAmount at least one");
         }
     }

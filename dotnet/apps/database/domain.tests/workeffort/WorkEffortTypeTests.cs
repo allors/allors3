@@ -16,13 +16,13 @@ namespace Allors.Database.Domain.Tests
         public void ChangedWorkEffortPartStandardsDeriveCurrentWorkEffortPartStandards()
         {
             var partStandard = new WorkEffortPartStandardBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workEffortType = new WorkEffortTypeBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workEffortType.AddWorkEffortPartStandard(partStandard);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(partStandard, workEffortType.CurrentWorkEffortPartStandards);
         }
@@ -31,18 +31,18 @@ namespace Allors.Database.Domain.Tests
         public void ChangedWorkEffortPartStandardFromDateDeriveCurrentWorkEffortPartStandards()
         {
             var partStandard = new WorkEffortPartStandardBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workEffortType = new WorkEffortTypeBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workEffortType.AddWorkEffortPartStandard(partStandard);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(partStandard, workEffortType.CurrentWorkEffortPartStandards);
 
             partStandard.FromDate = this.Transaction.Now().AddDays(1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(partStandard, workEffortType.CurrentWorkEffortPartStandards);
         }
@@ -51,18 +51,18 @@ namespace Allors.Database.Domain.Tests
         public void ChangedWorkEffortPartStandardThroughDateDeriveCurrentWorkEffortPartStandards()
         {
             var partStandard = new WorkEffortPartStandardBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workEffortType = new WorkEffortTypeBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workEffortType.AddWorkEffortPartStandard(partStandard);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(partStandard, workEffortType.CurrentWorkEffortPartStandards);
 
             partStandard.ThroughDate = partStandard.FromDate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(partStandard, workEffortType.CurrentWorkEffortPartStandards);
         }

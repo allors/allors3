@@ -18,14 +18,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new AgreementExhibitBuilder(this.Transaction);
             var agreementExhibit = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithDescription("AgreementExhibit");
             agreementExhibit = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -34,14 +34,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new AgreementPricingProgramBuilder(this.Transaction);
             var agreementPricingProgram = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithDescription("AgreementPricingProgram");
             agreementPricingProgram = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -50,14 +50,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new AgreementSectionBuilder(this.Transaction);
             var agreementSection = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithDescription("AgreementSection");
             agreementSection = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -66,14 +66,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new SubAgreementBuilder(this.Transaction);
             var subAgreement = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithDescription("SubAgreement");
             subAgreement = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
     }
 }

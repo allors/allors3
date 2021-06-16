@@ -24,7 +24,7 @@ namespace Allors.Database.Domain.Tests
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
             var invoiceItem = salesInvoice.InvoiceItems.First();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             var partialAmount = invoiceItem.TotalIncVat - 1;
             new PaymentApplicationBuilder(this.Transaction)
@@ -32,7 +32,7 @@ namespace Allors.Database.Domain.Tests
                                         .WithAmountApplied(partialAmount)
                                         .Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             var fullAmount = 1;
             new PaymentApplicationBuilder(this.Transaction)
@@ -40,7 +40,7 @@ namespace Allors.Database.Domain.Tests
                                         .WithAmountApplied(fullAmount)
                                         .Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             var extraAmount = 1;
             new PaymentApplicationBuilder(this.Transaction)
@@ -48,7 +48,7 @@ namespace Allors.Database.Domain.Tests
                                     .WithAmountApplied(extraAmount)
                                     .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount)));
         }
 
@@ -58,7 +58,7 @@ namespace Allors.Database.Domain.Tests
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
             var invoiceItem = salesInvoice.InvoiceItems.First();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             var partialAmount = invoiceItem.TotalIncVat - 1;
             new PaymentApplicationBuilder(this.Transaction)
@@ -66,11 +66,11 @@ namespace Allors.Database.Domain.Tests
                                         .WithAmountApplied(partialAmount)
                                         .Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             invoiceItem.AssignedUnitPrice = 0;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount)));
         }
 
@@ -80,7 +80,7 @@ namespace Allors.Database.Domain.Tests
             var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
             var invoiceItem = purchaseInvoice.InvoiceItems.First();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             var partialAmount = invoiceItem.TotalIncVat - 1;
             new PaymentApplicationBuilder(this.Transaction)
@@ -88,11 +88,11 @@ namespace Allors.Database.Domain.Tests
                                         .WithAmountApplied(partialAmount)
                                         .Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             invoiceItem.AssignedUnitPrice = 0;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount)));
         }
     }

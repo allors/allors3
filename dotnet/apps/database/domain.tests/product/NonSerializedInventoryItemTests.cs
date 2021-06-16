@@ -528,7 +528,7 @@ namespace Allors.Database.Domain.Tests
         public void DeriveNonSerialisedInventoryItemState()
         {
             var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new NonSerialisedInventoryItemStates(this.Transaction).Good, inventoryItem.NonSerialisedInventoryItemState);
         }
@@ -542,10 +542,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartDeriveName()
         {
             var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             inventoryItem.Part = new UnifiedGoodBuilder(this.Transaction).WithName("partname").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal("partname at  with state Good", inventoryItem.Name);
         }
@@ -554,10 +554,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedFacilityDeriveName()
         {
             var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             inventoryItem.Facility = new FacilityBuilder(this.Transaction).WithName("facilityname").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(" at facilityname with state Good", inventoryItem.Name);
         }
@@ -582,7 +582,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(part)
                 .WithQuantity(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             // InventoryItemState is excluded from InventoryStrategy
             Assert.Equal(0, ((NonSerialisedInventoryItem)inventoryItemTransaction.InventoryItem).QuantityOnHand);
@@ -602,7 +602,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(part)
                 .WithQuantity(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, ((NonSerialisedInventoryItem)inventoryItemTransaction.InventoryItem).QuantityOnHand);
         }
@@ -621,12 +621,12 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(part)
                 .WithQuantity(100)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var picklist = new PickListBuilder(this.Transaction)
                 .WithPickListState(new PickListStates(this.Transaction).Picked)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var picklistItem = new PickListItemBuilder(this.Transaction)
                 .WithInventoryItem(inventoryItemTransaction.InventoryItem)
@@ -638,7 +638,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPickListItem(picklistItem)
                 .WithShipmentItem(new ShipmentItemBuilder(this.Transaction).WithShipmentItemState(new ShipmentItemStates(this.Transaction).Created).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(99, ((NonSerialisedInventoryItem)inventoryItemTransaction.InventoryItem).QuantityOnHand);
         }
@@ -662,7 +662,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(part)
                 .WithQuantity(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, ((NonSerialisedInventoryItem)inventoryItemTransaction.InventoryItem).QuantityCommittedOut);
         }
@@ -681,19 +681,19 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(part)
                 .WithQuantity(100)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction)
                 .WithReason(new InventoryTransactionReasons(this.Transaction).SalesOrder)
                 .WithPart(part)
                 .WithQuantity(100)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var picklist = new PickListBuilder(this.Transaction)
                 .WithPickListState(new PickListStates(this.Transaction).Picked)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var picklistItem = new PickListItemBuilder(this.Transaction)
                 .WithInventoryItem(inventoryItemTransaction.InventoryItem)
@@ -705,7 +705,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPickListItem(picklistItem)
                 .WithShipmentItem(new ShipmentItemBuilder(this.Transaction).WithShipmentItemState(new ShipmentItemStates(this.Transaction).Created).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(99, ((NonSerialisedInventoryItem)inventoryItemTransaction.InventoryItem).QuantityCommittedOut);
         }
@@ -729,7 +729,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(part)
                 .WithQuantity(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, ((NonSerialisedInventoryItem)inventoryItemTransaction.InventoryItem).AvailableToPromise);
         }
@@ -748,14 +748,14 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(part)
                 .WithQuantity(100)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction)
                 .WithReason(new InventoryTransactionReasons(this.Transaction).SalesOrder)
                 .WithPart(part)
                 .WithQuantity(10)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(90, ((NonSerialisedInventoryItem)inventoryItemTransaction.InventoryItem).AvailableToPromise);
         }
@@ -773,10 +773,10 @@ namespace Allors.Database.Domain.Tests
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
                 .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithPurchaseOrderItemState(new PurchaseOrderItemStates(this.Transaction).InProcess)
@@ -785,7 +785,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantityOrdered(1)
                 .Build();
             purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, ((NonSerialisedInventoryItem)part.InventoryItemsWherePart.First).QuantityExpectedIn);
         }
@@ -798,10 +798,10 @@ namespace Allors.Database.Domain.Tests
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
                 .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithPurchaseOrderItemState(new PurchaseOrderItemStates(this.Transaction).InProcess)
@@ -809,10 +809,10 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantityOrdered(1)
                 .Build();
             purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             purchaseOrderItem.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Transaction).Cancelled;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0, ((NonSerialisedInventoryItem)part.InventoryItemsWherePart.First).QuantityExpectedIn);
         }
@@ -825,10 +825,10 @@ namespace Allors.Database.Domain.Tests
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
                 .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithPurchaseOrderItemState(new PurchaseOrderItemStates(this.Transaction).InProcess)
@@ -837,10 +837,10 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantityOrdered(1)
                 .Build();
             purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             purchaseOrderItem.QuantityOrdered = 2;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(2, ((NonSerialisedInventoryItem)part.InventoryItemsWherePart.First).QuantityExpectedIn);
         }

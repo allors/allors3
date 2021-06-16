@@ -18,14 +18,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new CustomEngagementItemBuilder(this.Transaction);
             var customEngagementItem = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithDescription("CustomEngagementItem");
             customEngagementItem = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -34,14 +34,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new DeliverableOrderItemBuilder(this.Transaction);
             var deliverableOrderItem = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithDescription("DeliverableOrderItem");
             deliverableOrderItem = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -50,14 +50,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new GoodOrderItemBuilder(this.Transaction);
             var goodOrderItem = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithDescription("GoodOrderItem");
             goodOrderItem = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -66,14 +66,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new ProfessionalPlacementBuilder(this.Transaction);
             var professionalPlacement = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithDescription("ProfessionalPlacement");
             professionalPlacement = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -82,14 +82,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new StandardServiceOrderItemBuilder(this.Transaction);
             var standardServiceOrderItem = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithDescription("StandardServiceOrderItem");
             standardServiceOrderItem = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
     }
 }

@@ -17,21 +17,21 @@ namespace Allors.Database.Domain.Tests
             var builder = new CountryBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithName("name");
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithIsoCode("nm");
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
     }
 
@@ -43,10 +43,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedIsoCodeDeriveEuMemberState()
         {
             var country = new CountryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             country.IsoCode = "NL";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(country.EuMemberState);
         }
@@ -55,10 +55,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedIsoCodeDeriveIbanLength()
         {
             var country = new CountryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             country.IsoCode = "NL";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(18, country.IbanLength);
         }
@@ -67,10 +67,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedIsoCodeDeriveIbanRegex()
         {
             var country = new CountryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             country.IsoCode = "NL";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(@"[A-Z]{4}\d{10}", country.IbanRegex);
         }
@@ -84,13 +84,13 @@ namespace Allors.Database.Domain.Tests
         public void ChangedVatRegimeCountryDeriveDerivedVatRegimes()
         {
             var country = new CountryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var vatRegime = new VatRegimeBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             vatRegime.Country = country;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(vatRegime, country.DerivedVatRegimes);
         }

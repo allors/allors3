@@ -33,14 +33,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithName("Organisation");
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace Allors.Database.Domain.Tests
                 .WithDefaultCollectionMethod(this.ownBankAccount)
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, internalOrganisation.SettingsForAccounting.FiscalYearStartMonth);
         }
@@ -88,7 +88,7 @@ namespace Allors.Database.Domain.Tests
                 .WithDefaultCollectionMethod(this.ownBankAccount)
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, internalOrganisation.SettingsForAccounting.FiscalYearStartDay);
         }
@@ -120,7 +120,7 @@ namespace Allors.Database.Domain.Tests
                 .WithName("Internal")
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             organisation.StartNewFiscalYear();
 
@@ -223,7 +223,7 @@ namespace Allors.Database.Domain.Tests
                 .WithName("Internal")
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             organisation.SettingsForAccounting.FiscalYearStartMonth = 5;
             organisation.SettingsForAccounting.FiscalYearStartDay = 15;
@@ -297,7 +297,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedDefaultCollectionMethodDeriveDerivedActiveCollectionMethods()
         {
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(internalOrganisation.DefaultCollectionMethod, internalOrganisation.DerivedActiveCollectionMethods);
         }
@@ -306,11 +306,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedAssignedActiveCollectionMethodsDeriveDerivedActiveCollectionMethods()
         {
             var internalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var cash = new CashBuilder(this.Transaction).Build();
             internalOrganisation.AddAssignedActiveCollectionMethod(cash);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(cash, internalOrganisation.DerivedActiveCollectionMethods);
         }
@@ -321,12 +321,12 @@ namespace Allors.Database.Domain.Tests
             var internalOrganisation = new OrganisationBuilder(this.Transaction)
                 .WithInvoiceSequence(new InvoiceSequences(this.Transaction).RestartOnFiscalYear)
                 .WithIsInternalOrganisation(true).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(internalOrganisation.ExistPurchaseInvoiceNumberCounter);
 
             internalOrganisation.InvoiceSequence = new InvoiceSequences(this.Transaction).EnforcedSequence;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(internalOrganisation.ExistPurchaseInvoiceNumberCounter);
         }
@@ -337,12 +337,12 @@ namespace Allors.Database.Domain.Tests
             var internalOrganisation = new OrganisationBuilder(this.Transaction)
                 .WithInvoiceSequence(new InvoiceSequences(this.Transaction).RestartOnFiscalYear)
                 .WithIsInternalOrganisation(true).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(internalOrganisation.ExistPurchaseOrderNumberCounter);
 
             internalOrganisation.InvoiceSequence = new InvoiceSequences(this.Transaction).EnforcedSequence;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(internalOrganisation.ExistPurchaseOrderNumberCounter);
         }
@@ -353,12 +353,12 @@ namespace Allors.Database.Domain.Tests
             var internalOrganisation = new OrganisationBuilder(this.Transaction)
                 .WithRequestSequence(new RequestSequences(this.Transaction).RestartOnFiscalYear)
                 .WithIsInternalOrganisation(true).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(internalOrganisation.ExistRequestNumberCounter);
 
             internalOrganisation.RequestSequence = new RequestSequences(this.Transaction).EnforcedSequence;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(internalOrganisation.ExistRequestNumberCounter);
         }
@@ -369,12 +369,12 @@ namespace Allors.Database.Domain.Tests
             var internalOrganisation = new OrganisationBuilder(this.Transaction)
                 .WithQuoteSequence(new QuoteSequences(this.Transaction).RestartOnFiscalYear)
                 .WithIsInternalOrganisation(true).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(internalOrganisation.ExistQuoteNumberCounter);
 
             internalOrganisation.QuoteSequence = new QuoteSequences(this.Transaction).EnforcedSequence;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(internalOrganisation.ExistQuoteNumberCounter);
         }
@@ -385,12 +385,12 @@ namespace Allors.Database.Domain.Tests
             var internalOrganisation = new OrganisationBuilder(this.Transaction)
                 .WithWorkEffortSequence(new WorkEffortSequences(this.Transaction).RestartOnFiscalYear)
                 .WithIsInternalOrganisation(true).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(internalOrganisation.ExistWorkEffortNumberCounter);
 
             internalOrganisation.WorkEffortSequence = new WorkEffortSequences(this.Transaction).EnforcedSequence;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(internalOrganisation.ExistWorkEffortNumberCounter);
         }
@@ -401,12 +401,12 @@ namespace Allors.Database.Domain.Tests
             var internalOrganisation = new OrganisationBuilder(this.Transaction)
                 .WithPurchaseShipmentSequence(new PurchaseShipmentSequences(this.Transaction).RestartOnFiscalYear)
                 .WithIsInternalOrganisation(true).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(internalOrganisation.ExistPurchaseShipmentNumberCounter);
 
             internalOrganisation.PurchaseShipmentSequence = new PurchaseShipmentSequences(this.Transaction).EnforcedSequence;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(internalOrganisation.ExistPurchaseShipmentNumberCounter);
         }

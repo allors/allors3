@@ -18,11 +18,11 @@ namespace Allors.Database.Domain.Tests
             var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.ProductQuoteItemsByProduct.First.QuantityOrdered);
         }
@@ -33,11 +33,11 @@ namespace Allors.Database.Domain.Tests
             var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).WithProduct(product).WithQuantity(1).WithAssignedUnitPrice(1).Build();
             quote.AddQuoteItem(quoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, quote.ProductQuoteItemsByProduct.First.ValueOrdered);
         }
@@ -49,14 +49,14 @@ namespace Allors.Database.Domain.Tests
             var product2 = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var QuoteItem = new QuoteItemBuilder(this.Transaction).WithProduct(product1).WithQuantity(1).WithAssignedUnitPrice(1).Build();
             quote.AddQuoteItem(QuoteItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             QuoteItem.Product = product2;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0, product1.ProductQuoteItemByProductsWhereProduct.First.ValueOrdered);
         }

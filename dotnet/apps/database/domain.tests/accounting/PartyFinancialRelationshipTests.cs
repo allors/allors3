@@ -61,23 +61,23 @@ namespace Allors.Database.Domain.Tests
         {
             var customer = new OrganisationBuilder(this.Transaction).Build();
             new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(this.InternalOrganisation).WithFromDate(this.Transaction.Now().AddDays(-32)).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(customer).WithBilledFrom(this.InternalOrganisation).WithAdvancePayment(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithQuantity(1).WithAssignedUnitPrice(100).Build();
             invoice.AddSalesInvoiceItem(invoiceItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             // we know payment must be made within 30 days
             invoice.InvoiceDate = this.Transaction.Now().AddDays(-31); //due becomes yesterday
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, invoice.BilledFrom));
 
             invoice.Store.PaymentGracePeriod = 0;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(90, partyFinancial.AmountOverDue); // invoice.TotalIncVat - invoice.AdvancePayment;
         }
@@ -86,13 +86,13 @@ namespace Allors.Database.Domain.Tests
         public void ChangedStorePaymentGracePeriodWitGraceDeriveAmountOverDue()
         {
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyFinancial = invoice.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, invoice.BilledFrom));
 
             invoice.DueDate = this.Transaction.Now().AddDays(-1);
             invoice.Store.PaymentGracePeriod = 10;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(partyFinancial.AmountOverDue == 0);
         }

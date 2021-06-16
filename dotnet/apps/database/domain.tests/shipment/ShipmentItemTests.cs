@@ -37,7 +37,7 @@ namespace Allors.Database.Domain.Tests
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithPart(good1.Part).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.ShipmentItem.UnitPurchasePrice,
@@ -53,7 +53,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedNextSerialisedItemAvailabilityThrowValidationError()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction)
                 .WithSerialisedItem(new SerialisedItemBuilder(this.Transaction).Build())
@@ -62,14 +62,14 @@ namespace Allors.Database.Domain.Tests
             shipment.AddShipmentItem(shipmentItem);
 
             {
-                var errors = this.Transaction.Derive(false).Errors;
+                var errors = this.Derive().Errors;
                 Assert.DoesNotContain(errors, e => e is DerivationErrorRequired);
             }
 
             shipmentItem.RemoveNextSerialisedItemAvailability();
 
             {
-                var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
+                var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
                 Assert.Equal(new IRoleType[]
                 {
                     this.M.ShipmentItem.NextSerialisedItemAvailability,
@@ -81,20 +81,20 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSerialisedThrowValidationError()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
 
             {
-                var errors = this.Transaction.Derive(false).Errors;
+                var errors = this.Derive().Errors;
                 Assert.DoesNotContain(errors, e => e is DerivationErrorRequired);
             }
 
             shipmentItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
             {
-                var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
+                var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
                 Assert.Equal(new IRoleType[]
                 {
                     this.M.ShipmentItem.NextSerialisedItemAvailability,
@@ -106,17 +106,17 @@ namespace Allors.Database.Domain.Tests
         public void ChangedQuantityThrowValidationError()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction)
                 .WithSerialisedItem(new SerialisedItemBuilder(this.Transaction).Build())
                 .Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentItem.Quantity = 2;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SerializedItemQuantity));
         }
 
@@ -124,15 +124,15 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSerialisedThrowValidationError_2()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(2).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SerializedItemQuantity));
         }
 
@@ -140,23 +140,23 @@ namespace Allors.Database.Domain.Tests
         public void ChangedItemIssuanceQuantityDeriveQuantityPicked()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickList = new PickListBuilder(this.Transaction)
                 .WithPickListState(new PickListStates(this.Transaction).Picked)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickListItem = new PickListItemBuilder(this.Transaction).Build();
             pickList.AddPickListItem(pickListItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new ItemIssuanceBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithPickListItem(pickListItem).WithQuantity(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, shipmentItem.QuantityPicked);
         }
@@ -165,26 +165,26 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPickListPickListStateDeriveQuantityPicked()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickList = new PickListBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickListItem = new PickListItemBuilder(this.Transaction).Build();
             pickList.AddPickListItem(pickListItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new ItemIssuanceBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithPickListItem(pickListItem).WithQuantity(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0, shipmentItem.QuantityPicked);
 
             pickList.PickListState = new PickListStates(this.Transaction).Picked;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, shipmentItem.QuantityPicked);
         }
@@ -195,21 +195,21 @@ namespace Allors.Database.Domain.Tests
             var shipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipmentState(new ShipmentStates(this.Transaction).Shipped)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickList = new PickListBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickListItem = new PickListItemBuilder(this.Transaction).Build();
             pickList.AddPickListItem(pickListItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new ItemIssuanceBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithPickListItem(pickListItem).WithQuantity(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, shipmentItem.QuantityShipped);
         }
@@ -218,26 +218,26 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentShipmentStateDeriveQuantityShipped()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickList = new PickListBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pickListItem = new PickListItemBuilder(this.Transaction).Build();
             pickList.AddPickListItem(pickListItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new ItemIssuanceBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithPickListItem(pickListItem).WithQuantity(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(0, shipmentItem.QuantityShipped);
 
             shipment.ShipmentState = new ShipmentStates(this.Transaction).Shipped;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, shipmentItem.QuantityShipped);
         }
@@ -246,14 +246,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedStoredInFacilityDeriveStoredInFacility()
         {
             var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentItem.RemoveStoredInFacility();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(shipment.ShipToFacility, shipmentItem.StoredInFacility);
         }
@@ -262,17 +262,17 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentShipToFacilityDeriveStoredInFacility()
         {
             var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.RemoveShipToFacility();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.ShipToFacility = this.InternalOrganisation.FacilitiesWhereOwner.First;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(shipment.ShipToFacility, shipmentItem.StoredInFacility);
         }
@@ -281,17 +281,17 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentReceiptQuantityAcceptedDeriveQuantity()
         {
             var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentReceipt = new ShipmentReceiptBuilder(this.Transaction).WithShipmentItem(shipmentItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentReceipt.QuantityAccepted = 2;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(2, shipmentItem.Quantity);
         }
@@ -300,17 +300,17 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentReceiptQuantityRejectedDeriveQuantity()
         {
             var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentReceipt = new ShipmentReceiptBuilder(this.Transaction).WithShipmentItem(shipmentItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentReceipt.QuantityRejected = 2;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(2, shipmentItem.Quantity);
         }
@@ -319,18 +319,18 @@ namespace Allors.Database.Domain.Tests
         public void ChangedUnitPurchasePriceThrowValidationError()
         {
             var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction)
                 .WithPart(new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build())
                 .WithUnitPurchasePrice(1)
                 .Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentItem.RemoveUnitPurchasePrice();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.ShipmentItem.UnitPurchasePrice,
@@ -341,15 +341,15 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartThrowValidationError()
         {
             var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentItem.Part = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.ShipmentItem.UnitPurchasePrice,
@@ -365,14 +365,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentShipmentStateDeriveShipmentItemStatePicked()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.ShipmentState = new ShipmentStates(this.Transaction).Picked;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(shipmentItem.ShipmentItemState.IsPicked);
         }
@@ -381,14 +381,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentShipmentStateDeriveShipmentItemStatePacked()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipment.ShipmentState = new ShipmentStates(this.Transaction).Packed;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(shipmentItem.ShipmentItemState.IsPacked);
         }

@@ -21,10 +21,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderDeriveTitle()
         {
             var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).WithDefaults(this.InternalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var approval = new PurchaseOrderApprovalLevel1Builder(this.Transaction).WithPurchaseOrder(purchaseOrder).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(approval.Title, "Approval of " + purchaseOrder.WorkItemDescription);
         }
@@ -33,10 +33,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderDeriveWorkItem()
         {
             var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).WithDefaults(this.InternalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var approval = new PurchaseOrderApprovalLevel1Builder(this.Transaction).WithPurchaseOrder(purchaseOrder).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(approval.WorkItem, purchaseOrder);
         }
@@ -45,10 +45,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderDeriveDateClosed()
         {
             var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).WithDefaults(this.InternalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var approval = new PurchaseOrderApprovalLevel1Builder(this.Transaction).WithPurchaseOrder(purchaseOrder).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(approval.ExistDateClosed);
         }
@@ -62,10 +62,10 @@ namespace Allors.Database.Domain.Tests
             supplierRelationship.NeedsApproval = true;
             supplierRelationship.ApprovalThresholdLevel1 = 1;
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             purchaseOrder.SetReadyForProcessing();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(purchaseOrder.PurchaseOrderApprovalsLevel1WherePurchaseOrder.First().ExistDateClosed);
         }
@@ -75,11 +75,11 @@ namespace Allors.Database.Domain.Tests
         {
             var purchaseOrder = new PurchaseOrderBuilder(this.Transaction).WithDefaults(this.InternalOrganisation).Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var approval = new PurchaseOrderApprovalLevel1Builder(this.Transaction).WithPurchaseOrder(purchaseOrder).Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Empty(approval.Participants);
         }
@@ -93,11 +93,11 @@ namespace Allors.Database.Domain.Tests
             supplierRelationship.NeedsApproval = true;
             supplierRelationship.ApprovalThresholdLevel1 = 1;
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             purchaseOrder.SetReadyForProcessing();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.NotEmpty(purchaseOrder.PurchaseOrderApprovalsLevel1WherePurchaseOrder.First().Participants);
         }

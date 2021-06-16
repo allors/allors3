@@ -22,7 +22,7 @@ namespace Allors.Database.Domain.Tests
         {
             var orderQuantityBreak = new OrderQuantityBreakBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Single(errors, e => e.Message == "OrderQuantityBreak.FromAmount, OrderQuantityBreak.ThroughAmount at least one");
         }
     }

@@ -16,17 +16,17 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderItemDerivePurchaseOrder()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var assignment = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             assignment.PurchaseOrderItem = orderItem;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(order, assignment.PurchaseOrder);
         }
@@ -35,17 +35,17 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderItemUnitPriceDeriveUnitPurchasePrice()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var assignment = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction).WithPurchaseOrderItem(orderItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             orderItem.AssignedUnitPrice = 1;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, assignment.UnitPurchasePrice);
         }
@@ -59,10 +59,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedAssignedUnitSellingPriceDeriveUnitSellingPrice()
         {
             var assignment = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             assignment.AssignedUnitSellingPrice = 11;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(11, assignment.UnitSellingPrice);
         }
@@ -72,23 +72,23 @@ namespace Allors.Database.Domain.Tests
         {
             var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
             new BasePriceBuilder(this.Transaction).WithPart(part).WithPrice(11).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseOrderItemAssignment = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction).WithPurchaseOrderItem(orderItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             purchaseOrderItemAssignment.Assignment = workEffort;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(11, purchaseOrderItemAssignment.UnitSellingPrice);
         }
@@ -98,31 +98,31 @@ namespace Allors.Database.Domain.Tests
         {
             var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
             new BasePriceBuilder(this.Transaction).WithPart(part).WithPrice(11).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var anotherInternalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workEffort = new WorkTaskBuilder(this.Transaction)
                 .WithTakenBy(anotherInternalOrganisation)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseOrderItemAssignment = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithPurchaseOrderItem(orderItem)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workEffort.TakenBy = this.InternalOrganisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(11, purchaseOrderItemAssignment.UnitSellingPrice);
         }
@@ -138,28 +138,28 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(part)
                 .WithPrice(11)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var order = new PurchaseOrderBuilder(this.Transaction).WithOrderedBy(this.InternalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workEffort = new WorkTaskBuilder(this.Transaction)
                 .WithTakenBy(this.InternalOrganisation)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseOrderItemAssignment = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithPurchaseOrderItem(orderItem)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             priceComponent.PricedBy = this.InternalOrganisation;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(11, purchaseOrderItemAssignment.UnitSellingPrice);
         }
@@ -174,26 +174,26 @@ namespace Allors.Database.Domain.Tests
                 .WithPrice(11)
                 .WithFromDate(this.Transaction.Now().AddDays(1))
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseOrderItemAssignment = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithPurchaseOrderItem(orderItem)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             priceComponent.FromDate = this.Transaction.Now().AddMinutes(-1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(11, purchaseOrderItemAssignment.UnitSellingPrice);
         }
@@ -209,26 +209,26 @@ namespace Allors.Database.Domain.Tests
                 .WithFromDate(this.Transaction.Now().AddHours(-1))
                 .WithThroughDate(this.Transaction.Now().AddHours(-1))
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var purchaseOrderItemAssignment = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithPurchaseOrderItem(orderItem)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             priceComponent.RemoveThroughDate();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(11, purchaseOrderItemAssignment.UnitSellingPrice);
         }

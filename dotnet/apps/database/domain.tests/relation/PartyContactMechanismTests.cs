@@ -28,14 +28,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new PartyContactMechanismBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithContactMechanism(contactMechanism);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -63,11 +63,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedUseAsDefaultThrowValidationError()
         {
             var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyContactMechanism.UseAsDefault = true;
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
             Assert.Contains(this.M.PartyContactMechanism.ContactPurposes, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
@@ -77,14 +77,14 @@ namespace Allors.Database.Domain.Tests
             var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice).WithUseAsDefault(true).Build();
 
             {
-                var errors = this.Transaction.Derive(false).Errors;
+                var errors = this.Derive().Errors;
                 Assert.DoesNotContain(errors, e => e is DerivationErrorRequired);
             }
 
             partyContactMechanism.RemoveContactPurposes();
 
             {
-                var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
+                var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
                 Assert.Equal(new IRoleType[]
                 {
                     this.M.PartyContactMechanism.ContactPurposes,
@@ -102,7 +102,7 @@ namespace Allors.Database.Domain.Tests
                 .WithUseAsDefault(true)
                 .Build();
             party.AddPartyContactMechanism(partyContactMechanism1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyContactMechanism2 = new PartyContactMechanismBuilder(this.Transaction)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice)
@@ -110,7 +110,7 @@ namespace Allors.Database.Domain.Tests
                 .WithUseAsDefault(true)
                 .Build();
             party.AddPartyContactMechanism(partyContactMechanism2);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(partyContactMechanism1.UseAsDefault);
         }

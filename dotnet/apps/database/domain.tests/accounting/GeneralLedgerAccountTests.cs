@@ -32,35 +32,35 @@ namespace Allors.Database.Domain.Tests
             var builder = new GeneralLedgerAccountBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithReferenceNumber("ReferenceNumber");
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithReferenceCode("ReferenceCode");
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithSortCode("SortCode");
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithName("GeneralLedgerAccount");
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
@@ -72,21 +72,21 @@ namespace Allors.Database.Domain.Tests
             builder.WithBalanceSide(new BalanceSides(this.Transaction).Debit);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithGeneralLedgerAccountClassification(accountGroup);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithGeneralLedgerAccountType(accountType);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -147,16 +147,16 @@ namespace Allors.Database.Domain.Tests
 
             var chart = new ChartOfAccountsBuilder(this.Transaction).WithName("name").WithGeneralLedgerAccount(glAccount0001).Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             chart.AddGeneralLedgerAccount(glAccount0001Dup);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.AccountNumberUniqueWithinChartOfAccounts));
 
             new ChartOfAccountsBuilder(this.Transaction).WithName("another Chart").WithGeneralLedgerAccount(glAccount0001Dup).Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -179,7 +179,7 @@ namespace Allors.Database.Domain.Tests
                                                             .Build())
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.NotACostCenterAccount));
         }
 
@@ -203,7 +203,7 @@ namespace Allors.Database.Domain.Tests
                                                             .Build())
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.NotACostUnitAccount));
         }
     }
@@ -216,10 +216,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedDefaultCostCenterDeriveDerivedCostCentersAllowed()
         {
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             glAccount.DefaultCostCenter = new CostCenterBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(glAccount.DefaultCostCenter, glAccount.DerivedCostCentersAllowed);
         }
@@ -231,10 +231,10 @@ namespace Allors.Database.Domain.Tests
             var allowedCostCenter = new CostCenterBuilder(this.Transaction).Build();
 
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction).WithDefaultCostCenter(defaultCostCenter).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             glAccount.AddAssignedCostCentersAllowed(allowedCostCenter);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(defaultCostCenter, glAccount.DerivedCostCentersAllowed);
             Assert.Contains(allowedCostCenter, glAccount.DerivedCostCentersAllowed);
@@ -244,10 +244,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedDefaultCostUnitDeriveDerivedCostUnitsAllowed()
         {
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             glAccount.DefaultCostUnit = new UnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(glAccount.DefaultCostUnit, glAccount.DerivedCostUnitsAllowed);
         }
@@ -259,10 +259,10 @@ namespace Allors.Database.Domain.Tests
             var allowedCostUnit = new UnifiedGoodBuilder(this.Transaction).Build();
 
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction).WithDefaultCostUnit(defaultCostUnit).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             glAccount.AddAssignedCostUnitsAllowed(allowedCostUnit);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(defaultCostUnit, glAccount.DerivedCostUnitsAllowed);
             Assert.Contains(allowedCostUnit, glAccount.DerivedCostUnitsAllowed);
@@ -274,12 +274,12 @@ namespace Allors.Database.Domain.Tests
             var chartOfAccounts = new ChartOfAccountsBuilder(this.Transaction)
                 .WithGeneralLedgerAccount(new GeneralLedgerAccountBuilder(this.Transaction).WithReferenceNumber("1").Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction).WithReferenceNumber("1").Build();
             chartOfAccounts.AddGeneralLedgerAccount(glAccount);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.AccountNumberUniqueWithinChartOfAccounts));
         }
 
@@ -289,17 +289,17 @@ namespace Allors.Database.Domain.Tests
             var chartOfAccounts = new ChartOfAccountsBuilder(this.Transaction)
                 .WithGeneralLedgerAccount(new GeneralLedgerAccountBuilder(this.Transaction).WithReferenceNumber("1").Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction).WithReferenceNumber("2").Build();
             chartOfAccounts.AddGeneralLedgerAccount(glAccount);
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.DoesNotContain(errors, e => e.Message.Contains(ErrorMessages.AccountNumberUniqueWithinChartOfAccounts));
 
             glAccount.ReferenceNumber = "1";
 
-            errors = this.Transaction.Derive(false).Errors.ToList();
+            errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.AccountNumberUniqueWithinChartOfAccounts));
         }
 
@@ -307,11 +307,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedCostCenterRequiredThrowValidationError()
         {
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             glAccount.CostCenterRequired = true;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.NotACostCenterAccount));
         }
 
@@ -319,11 +319,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedCostCenterAccountThrowValidationError()
         {
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction).WithCostCenterAccount(true).WithCostCenterRequired(true).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             glAccount.CostCenterAccount = false;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.NotACostCenterAccount));
         }
 
@@ -331,11 +331,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedCostUnitRequiredThrowValidationError()
         {
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             glAccount.CostUnitRequired = true;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.NotACostUnitAccount));
         }
 
@@ -343,11 +343,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedCostUnitAccountThrowValidationError()
         {
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction).WithCostUnitAccount(true).WithCostUnitRequired(true).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             glAccount.CostUnitAccount = false;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.NotACostUnitAccount));
         }
     }

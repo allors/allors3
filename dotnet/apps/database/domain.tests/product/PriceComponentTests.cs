@@ -34,35 +34,35 @@ namespace Allors.Database.Domain.Tests
             var builder = new BasePriceBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithPrice(1);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithProduct(good);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithProductFeature(colorFeature);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithFromDate(this.Transaction.Now());
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -129,44 +129,44 @@ namespace Allors.Database.Domain.Tests
             var builder = new DiscountComponentBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithPrice(1);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithFromDate(this.Transaction.Now());
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             builder.WithProduct(good);
             builder.Build();
 
             this.Transaction.Rollback();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             builder.WithProductFeature(colorFeature);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithPercentage(10);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -237,40 +237,40 @@ namespace Allors.Database.Domain.Tests
             var builder = new SurchargeComponentBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithPrice(1);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithFromDate(this.Transaction.Now());
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithProduct(good);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             builder.WithProductFeature(colorFeature);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithPercentage(10);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -333,10 +333,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPriceDeriveCurrency()
         {
             var basePrice = new BasePriceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             basePrice.Price = 1;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(basePrice.PricedBy.PreferredCurrency, basePrice.Currency);
         }
@@ -347,11 +347,11 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.RemovePreferredCurrency();
 
             var basePrice = new BasePriceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             basePrice.Price = 1;
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.BasePrice.Currency,
@@ -362,7 +362,7 @@ namespace Allors.Database.Domain.Tests
         public void OnCreatedDerivePricedBy()
         {
             var basePrice = new BasePriceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation, basePrice.PricedBy);
         }

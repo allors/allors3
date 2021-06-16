@@ -19,21 +19,21 @@ namespace Allors.Database.Domain.Tests
             var builder = new EstimatedLaborCostBuilder(this.Transaction);
             var laborCost = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithCost(1);
             laborCost = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithCurrency(new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR"));
             laborCost = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -42,21 +42,21 @@ namespace Allors.Database.Domain.Tests
             var builder = new EstimatedMaterialCostBuilder(this.Transaction);
             var materialCost = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithCost(1);
             materialCost = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithCurrency(new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR"));
             materialCost = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -65,21 +65,21 @@ namespace Allors.Database.Domain.Tests
             var builder = new EstimatedOtherCostBuilder(this.Transaction);
             var otherCost = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithCost(1);
             otherCost = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithCurrency(new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR"));
             otherCost = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
     }
 }

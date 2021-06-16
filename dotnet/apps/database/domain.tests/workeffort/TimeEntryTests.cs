@@ -31,7 +31,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             // Act
-            var derivation = this.Transaction.Derive(false);
+            var derivation = this.Derive();
             var originalCount = derivation.Errors.Count();
 
             // Assert
@@ -42,7 +42,7 @@ namespace Allors.Database.Domain.Tests
             timeEntry.ThroughDate = tomorrow;
 
             // Act
-            derivation = this.Transaction.Derive(false);
+            derivation = this.Derive();
 
             // Assert
             Assert.True(derivation.HasErrors);
@@ -53,7 +53,7 @@ namespace Allors.Database.Domain.Tests
             timeEntry.WorkEffort = workOrder;
 
             // Act
-            derivation = this.Transaction.Derive(false);
+            derivation = this.Derive();
 
             // Assert
             Assert.True(derivation.HasErrors);
@@ -63,12 +63,12 @@ namespace Allors.Database.Domain.Tests
             var worker = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
             new EmploymentBuilder(this.Transaction).WithEmployee(worker).WithEmployer(internalOrganisation).Build();
 
-            derivation = this.Transaction.Derive(false);
+            derivation = this.Derive();
 
             worker.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
 
             // Act
-            derivation = this.Transaction.Derive(false);
+            derivation = this.Derive();
 
             // Assert
             Assert.False(derivation.HasErrors);
@@ -200,7 +200,7 @@ namespace Allors.Database.Domain.Tests
         {
             var basePrice = new TimeEntryBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("TimeEntry.WorkEffort, TimeEntry.EngagementItem at least one"));
         }
 
@@ -209,7 +209,7 @@ namespace Allors.Database.Domain.Tests
         {
             var basePrice = new TimeEntryBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("TimeEntry.TimeSheetWhereTimeEntry is required"));
         }
 
@@ -252,7 +252,7 @@ namespace Allors.Database.Domain.Tests
 
         //    employee.TimeSheetWhereWorker.AddTimeEntry(secondTimeEntry);
 
-        //    var errors = this.Transaction.Derive(false).Errors.ToList();
+        //    var errors = this.Derive().Errors.ToList();
         //    var expectedMessage = ErrorMessages.WorkerActiveTimeEntry.Replace("{0}", secondTimeEntry.WorkEffort?.WorkEffortNumber);
         //    Assert.NotNull(errors.Find(e => e.Message.Contains(expectedMessage)));
         //}
@@ -266,14 +266,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedTimeSheetWhereTimeEntryDeriveWorker()
         {
             var timeEntry = new TimeEntryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var worker = new PersonBuilder(this.Transaction).Build();
             var timesheet = new TimeSheetBuilder(this.Transaction).WithWorker(worker).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             timesheet.AddTimeEntry(timeEntry);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(worker, timeEntry.Worker);
         }
@@ -284,13 +284,13 @@ namespace Allors.Database.Domain.Tests
             var workTask = new WorkTaskBuilder(this.Transaction)
                 .WithCustomer(new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction).WithWorkEffort(workTask).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             timeEntry.AssignedBillingRate = 10;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -299,24 +299,24 @@ namespace Allors.Database.Domain.Tests
         public void ChangedWorkEffortAssignmentRateWorkEffortDeriveBillingRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var assignmentRate = new WorkEffortAssignmentRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithRate(10)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             assignmentRate.WorkEffort = workTask;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -325,24 +325,24 @@ namespace Allors.Database.Domain.Tests
         public void ChangedWorkEffortAssignmentRateRateTypeDeriveBillingRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var assignmentRate = new WorkEffortAssignmentRateBuilder(this.Transaction)
                 .WithWorkEffort(workTask)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithRate(10)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             assignmentRate.RateType = new RateTypes(this.Transaction).StandardRate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -351,24 +351,24 @@ namespace Allors.Database.Domain.Tests
         public void ChangedWorkEffortAssignmentRateFrequencyDeriveBillingRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Day)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var assignmentRate = new WorkEffortAssignmentRateBuilder(this.Transaction)
                 .WithWorkEffort(workTask)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithRate(10)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             assignmentRate.Frequency = new TimeFrequencies(this.Transaction).Day;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -377,24 +377,24 @@ namespace Allors.Database.Domain.Tests
         public void ChangedWorkEffortAssignmentRateRateDeriveBillingRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Day)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var assignmentRate = new WorkEffortAssignmentRateBuilder(this.Transaction)
                 .WithWorkEffort(workTask)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Day)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             assignmentRate.Rate = 10;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -403,7 +403,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedWorkEffortDeriveBillingRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new WorkEffortAssignmentRateBuilder(this.Transaction)
                 .WithWorkEffort(workTask)
@@ -411,16 +411,16 @@ namespace Allors.Database.Domain.Tests
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithRate(10)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             timeEntry.WorkEffort = workTask;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -429,7 +429,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedRateTypeDeriveBillingRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new WorkEffortAssignmentRateBuilder(this.Transaction)
                 .WithWorkEffort(workTask)
@@ -437,16 +437,16 @@ namespace Allors.Database.Domain.Tests
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithRate(10)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             timeEntry.RateType = new RateTypes(this.Transaction).StandardRate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -455,7 +455,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedBillingFrequencyDeriveBillingRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new WorkEffortAssignmentRateBuilder(this.Transaction)
                 .WithWorkEffort(workTask)
@@ -463,16 +463,16 @@ namespace Allors.Database.Domain.Tests
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithRate(10)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             timeEntry.BillingFrequency = new TimeFrequencies(this.Transaction).Day;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -481,24 +481,24 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartyPartyRateDeriveBillingRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.First).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithRate(10)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             this.InternalOrganisation.ActiveCustomers.First.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -507,24 +507,24 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartyRateRateTypeDeriveBillingRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.First).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithRate(10)
                 .Build();
             this.InternalOrganisation.ActiveCustomers.First.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyRate.RateType = new RateTypes(this.Transaction).StandardRate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -533,24 +533,24 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartyRateFrequencyDeriveBillingRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.First).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithRate(10)
                 .Build();
             this.InternalOrganisation.ActiveCustomers.First.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Day)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyRate.Frequency = new TimeFrequencies(this.Transaction).Day;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -559,24 +559,24 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartyRateRateDeriveBillingRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.First).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Day)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .Build();
             this.InternalOrganisation.ActiveCustomers.First.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Day)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyRate.Rate = 10;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -585,7 +585,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartyRateFromDateDeriveBillingRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.First).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Day)
@@ -594,17 +594,17 @@ namespace Allors.Database.Domain.Tests
                 .WithRate(10)
                 .Build();
             this.InternalOrganisation.ActiveCustomers.First.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Day)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyRate.FromDate = this.Transaction.Now().AddDays(-1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -613,7 +613,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartyRateThroughDateDeriveBillingRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.First).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Day)
@@ -623,17 +623,17 @@ namespace Allors.Database.Domain.Tests
                 .WithRate(10)
                 .Build();
             this.InternalOrganisation.ActiveCustomers.First.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Day)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyRate.ThroughDate = this.Transaction.Now().AddDays(1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -642,7 +642,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedFromDateDeriveBillingRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.First).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Day)
@@ -650,7 +650,7 @@ namespace Allors.Database.Domain.Tests
                 .WithRate(10)
                 .Build();
             this.InternalOrganisation.ActiveCustomers.First.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Day)
@@ -658,10 +658,10 @@ namespace Allors.Database.Domain.Tests
                 .WithWorkEffort(workTask)
                 .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             timeEntry.FromDate = this.Transaction.Now();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -671,14 +671,14 @@ namespace Allors.Database.Domain.Tests
         {
             var worker = new PersonBuilder(this.Transaction).Build();
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithRate(10)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
@@ -686,10 +686,10 @@ namespace Allors.Database.Domain.Tests
                 .WithWorkEffort(workTask)
                 .WithWorker(worker)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             worker.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -699,14 +699,14 @@ namespace Allors.Database.Domain.Tests
         {
             var worker = new PersonBuilder(this.Transaction).Build();
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithRate(10)
                 .Build();
             worker.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
@@ -714,10 +714,10 @@ namespace Allors.Database.Domain.Tests
                 .WithWorkEffort(workTask)
                 .WithWorker(worker)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyRate.RateType = new RateTypes(this.Transaction).StandardRate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -727,14 +727,14 @@ namespace Allors.Database.Domain.Tests
         {
             var worker = new PersonBuilder(this.Transaction).Build();
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithRate(10)
                 .Build();
             worker.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Day)
@@ -742,10 +742,10 @@ namespace Allors.Database.Domain.Tests
                 .WithWorkEffort(workTask)
                 .WithWorker(worker)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyRate.Frequency = new TimeFrequencies(this.Transaction).Day;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -755,14 +755,14 @@ namespace Allors.Database.Domain.Tests
         {
             var worker = new PersonBuilder(this.Transaction).Build();
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Day)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .Build();
             worker.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Day)
@@ -770,10 +770,10 @@ namespace Allors.Database.Domain.Tests
                 .WithWorkEffort(workTask)
                 .WithWorker(worker)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyRate.Rate = 10;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -783,7 +783,7 @@ namespace Allors.Database.Domain.Tests
         {
             var worker = new PersonBuilder(this.Transaction).Build();
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Day)
@@ -792,7 +792,7 @@ namespace Allors.Database.Domain.Tests
                 .WithRate(10)
                 .Build();
             worker.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Day)
@@ -800,10 +800,10 @@ namespace Allors.Database.Domain.Tests
                 .WithWorkEffort(workTask)
                 .WithWorker(worker)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyRate.FromDate = this.Transaction.Now().AddDays(-1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -813,7 +813,7 @@ namespace Allors.Database.Domain.Tests
         {
             var worker = new PersonBuilder(this.Transaction).Build();
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Day)
@@ -823,7 +823,7 @@ namespace Allors.Database.Domain.Tests
                 .WithRate(10)
                 .Build();
             worker.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Day)
@@ -831,10 +831,10 @@ namespace Allors.Database.Domain.Tests
                 .WithWorkEffort(workTask)
                 .WithWorker(worker)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyRate.ThroughDate = this.Transaction.Now().AddDays(1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -844,7 +844,7 @@ namespace Allors.Database.Domain.Tests
         {
             var worker = new PersonBuilder(this.Transaction).Build();
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Day)
@@ -852,17 +852,17 @@ namespace Allors.Database.Domain.Tests
                 .WithRate(10)
                 .Build();
             worker.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Day)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             timeEntry.Worker = worker;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -872,7 +872,7 @@ namespace Allors.Database.Domain.Tests
         {
             var worker = new PersonBuilder(this.Transaction).Build();
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Day)
@@ -880,17 +880,17 @@ namespace Allors.Database.Domain.Tests
                 .WithRate(10)
                 .Build();
             worker.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Day)
                 .WithWorkEffort(workTask)
                 .WithWorker(worker)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             timeEntry.RateType = new RateTypes(this.Transaction).OvertimeRate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -899,24 +899,24 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartyPartyRateDeriveBillingRateFromExecutedByRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithRate(10)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             this.InternalOrganisation.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -925,24 +925,24 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartyRateRateTypeDeriveBillingRateFromExecutedByRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithRate(10)
                 .Build();
             this.InternalOrganisation.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyRate.RateType = new RateTypes(this.Transaction).StandardRate;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -951,24 +951,24 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartyRateFrequencyDeriveBillingRateFromExecutedByRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithRate(10)
                 .Build();
             this.InternalOrganisation.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Day)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyRate.Frequency = new TimeFrequencies(this.Transaction).Day;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -977,24 +977,24 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartyRateRateDeriveBillingRateFromExecutedByRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Day)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .Build();
             this.InternalOrganisation.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Day)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyRate.Rate = 10;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -1003,7 +1003,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartyRateFromDateDeriveBillingRateFromExecutedByRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Day)
@@ -1012,17 +1012,17 @@ namespace Allors.Database.Domain.Tests
                 .WithRate(10)
                 .Build();
             this.InternalOrganisation.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Day)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyRate.FromDate = this.Transaction.Now().AddDays(-1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -1031,7 +1031,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartyRateThroughDateDeriveBillingRateFromExecutedByRate()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Day)
@@ -1041,17 +1041,17 @@ namespace Allors.Database.Domain.Tests
                 .WithRate(10)
                 .Build();
             this.InternalOrganisation.AddPartyRate(partyRate);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithBillingFrequency(new TimeFrequencies(this.Transaction).Day)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithWorkEffort(workTask)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partyRate.ThroughDate = this.Transaction.Now().AddDays(1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
         }
@@ -1062,13 +1062,13 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.GetSingleton().Settings.InternalLabourSurchargePercentage = 10M;
 
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction).WithWorkEffort(workTask).WithAssignedBillingRate(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workTask.Customer = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var expectedBillingRate = Math.Round(10 * (1 + 10M / 100), 2);
 
@@ -1083,13 +1083,13 @@ namespace Allors.Database.Domain.Tests
             var workTask = new WorkTaskBuilder(this.Transaction)
                 .WithCustomer(new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction).WithWorkEffort(workTask).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             timeEntry.AssignedBillingRate = 10;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var expectedBillingRate = Math.Round(10 * (1 + 10M / 100), 2);
 
@@ -1102,13 +1102,13 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.GetSingleton().Settings.InternalLabourSurchargePercentage = 10M;
 
             var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction).WithWorkEffort(workTask).WithAssignedBillingRate(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workTask.ExecutedBy = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var expectedBillingRate = Math.Round(10 * (1 + 10M / 100), 2);
 
@@ -1119,11 +1119,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedBillingFrequencyThrowValidationError()
         {
             var timeEntry = new TimeEntryBuilder(this.Transaction).WithAssignedBillingRate(10).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             timeEntry.RemoveBillingFrequency();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.TimeEntry.BillingFrequency,
@@ -1134,10 +1134,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedFromDateDeriveAmountOfTime()
         {
             var timeEntry = new TimeEntryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             timeEntry.FromDate = this.Transaction.Now().AddHours(-1);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(1, timeEntry.AmountOfTime);
         }
@@ -1146,10 +1146,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedAssignedAmountOfTimeDeriveAmountOfTime()
         {
             var timeEntry = new TimeEntryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             timeEntry.AssignedAmountOfTime = 2;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(2, timeEntry.AmountOfTime);
         }
@@ -1158,10 +1158,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedThroughDateDeriveAmountOfTime()
         {
             var timeEntry = new TimeEntryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             timeEntry.ThroughDate = this.Transaction.Now().AddHours(3);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(3, timeEntry.AmountOfTime);
         }
@@ -1174,12 +1174,12 @@ namespace Allors.Database.Domain.Tests
                 .WithAssignedBillingRate(10)
                 .WithAssignedAmountOfTime(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(60, timeEntry.BillableAmountOfTimeInMinutes);
 
             timeEntry.BillableAmountOfTime = 2;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(120, timeEntry.BillableAmountOfTimeInMinutes);
         }
@@ -1192,12 +1192,12 @@ namespace Allors.Database.Domain.Tests
                 .WithAssignedBillingRate(10)
                 .WithAssignedAmountOfTime(1)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(10, timeEntry.BillingAmount);
 
             timeEntry.BillableAmountOfTime = 2;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(20, timeEntry.BillingAmount);
         }

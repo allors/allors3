@@ -147,15 +147,15 @@ namespace Allors.Database.Domain.Tests
                 .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.SalesInvoiceItems[0]).WithAmountApplied(50).Build())
                 .Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             receipt.AddPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.SalesInvoiceItems[0]).WithAmountApplied(50).Build());
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             receipt.AddPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.SalesInvoiceItems[0]).WithAmountApplied(1).Build());
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
 
             Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PaymentAmountIsToSmall)));
         }

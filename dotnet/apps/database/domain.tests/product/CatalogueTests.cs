@@ -16,7 +16,7 @@ namespace Allors.Database.Domain.Tests
         public void DeriveCatScope()
         {
             var catalogue = new CatalogueBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(new Scopes(this.Transaction).Public, catalogue.CatScope);
         }
@@ -25,7 +25,7 @@ namespace Allors.Database.Domain.Tests
         public void DeriveCatalogueImage()
         {
             var catalogue = new CatalogueBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(this.Transaction.GetSingleton().Settings.NoImageAvailableImage, catalogue.CatalogueImage);
         }
@@ -42,10 +42,10 @@ namespace Allors.Database.Domain.Tests
             var localisedName = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultname").Build();
 
             var catalogue = new CatalogueBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             catalogue.AddLocalisedName(localisedName);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(catalogue.Name, localisedName.Text);
         }
@@ -57,10 +57,10 @@ namespace Allors.Database.Domain.Tests
             var localisedName = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultname").Build();
 
             var catalogue = new CatalogueBuilder(this.Transaction).WithLocalisedName(localisedName).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             localisedName.Text = "changed";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(catalogue.Name, localisedName.Text);
         }
@@ -72,10 +72,10 @@ namespace Allors.Database.Domain.Tests
             var localisedDesc = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultdesc").Build();
 
             var catalogue = new CatalogueBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             catalogue.AddLocalisedDescription(localisedDesc);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(catalogue.Description, localisedDesc.Text);
         }
@@ -87,10 +87,10 @@ namespace Allors.Database.Domain.Tests
             var localisedDesc = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultdesc").Build();
 
             var catalogue = new CatalogueBuilder(this.Transaction).WithLocalisedDescription(localisedDesc).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             localisedDesc.Text = "changed";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(catalogue.Description, localisedDesc.Text);
         }
@@ -101,10 +101,10 @@ namespace Allors.Database.Domain.Tests
             var noImageAvailableImage = this.Transaction.GetSingleton().Settings.NoImageAvailableImage;
 
             var catalogue = new CatalogueBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             catalogue.RemoveCatalogueImage();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(noImageAvailableImage, catalogue.CatalogueImage);
         }

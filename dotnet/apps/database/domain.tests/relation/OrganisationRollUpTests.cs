@@ -20,10 +20,10 @@ namespace Allors.Database.Domain.Tests
             var parent = new OrganisationBuilder(this.Transaction).Build();
             var child = new OrganisationBuilder(this.Transaction).Build();
             var rollup = new OrganisationRollUpBuilder(this.Transaction).WithChild(child).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             rollup.Parent = parent;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(parent, rollup.Parties);
         }
@@ -34,10 +34,10 @@ namespace Allors.Database.Domain.Tests
             var parent = new OrganisationBuilder(this.Transaction).Build();
             var child = new OrganisationBuilder(this.Transaction).Build();
             var rollup = new OrganisationRollUpBuilder(this.Transaction).WithParent(parent).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             rollup.Child = child;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(child, rollup.Parties);
         }

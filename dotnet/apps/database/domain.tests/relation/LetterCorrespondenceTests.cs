@@ -22,7 +22,7 @@ namespace Allors.Database.Domain.Tests
                 .WithToParty(new PersonBuilder(this.Transaction).WithLastName("receiver").Build())
                 .Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             Assert.Equal(communication.CommunicationEventState, new CommunicationEventStates(this.Transaction).Scheduled);
             Assert.Equal(communication.CommunicationEventState, communication.LastCommunicationEventState);
@@ -89,10 +89,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSubjectDeriveWorkItemDescription()
         {
             var communication = new LetterCorrespondenceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             communication.Subject = "subject";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("subject", communication.WorkItemDescription);
         }
@@ -101,13 +101,13 @@ namespace Allors.Database.Domain.Tests
         public void ChangedToPartyDeriveWorkItemDescription()
         {
             var communication = new LetterCorrespondenceBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var person = new PersonBuilder(this.Transaction).WithLastName("person").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             communication.ToParty = person;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("person", communication.WorkItemDescription);
         }
@@ -116,13 +116,13 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPartyPartyNameDeriveWorkItemDescription()
         {
             var person = new PersonBuilder(this.Transaction).WithLastName("person").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var communication = new LetterCorrespondenceBuilder(this.Transaction).WithToParty(person).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             person.LastName = "changed";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("changed", communication.WorkItemDescription);
         }

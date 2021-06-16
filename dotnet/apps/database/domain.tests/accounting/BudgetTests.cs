@@ -47,14 +47,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new OperatingBudgetBuilder(this.Transaction);
             var budget = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithDescription("Budget");
             budget = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
     }
 }

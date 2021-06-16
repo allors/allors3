@@ -22,7 +22,7 @@ namespace Allors.Database.Domain.Tests
         {
             new AgreementProductApplicabilityBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("AgreementProductApplicability.Agreement, AgreementProductApplicability.AgreementItem at least one"));
         }
     }
@@ -38,12 +38,12 @@ namespace Allors.Database.Domain.Tests
                 .WithAgreement(new SalesAgreementBuilder(this.Transaction).Build())
                 .Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.DoesNotContain(errors, e => e.Message.StartsWith("AgreementProductApplicability.Agreement, AgreementProductApplicability.AgreementItem at least one"));
 
             agreementProductApplicability.RemoveAgreement();
 
-            errors = this.Transaction.Derive(false).Errors.ToList();
+            errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("AgreementProductApplicability.Agreement, AgreementProductApplicability.AgreementItem at least one"));
         }
 
@@ -53,11 +53,11 @@ namespace Allors.Database.Domain.Tests
             var agreementProductApplicability = new AgreementProductApplicabilityBuilder(this.Transaction)
                 .WithAgreement(new SalesAgreementBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             agreementProductApplicability.AgreementItem = new AgreementSectionBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
 
             Assert.Equal(new IRoleType[]
                {
@@ -72,11 +72,11 @@ namespace Allors.Database.Domain.Tests
             var agreementProductApplicability = new AgreementProductApplicabilityBuilder(this.Transaction)
                 .WithAgreementItem(new AgreementSectionBuilder(this.Transaction).Build())
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             agreementProductApplicability.Agreement = new SalesAgreementBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.AgreementProductApplicability.Agreement,

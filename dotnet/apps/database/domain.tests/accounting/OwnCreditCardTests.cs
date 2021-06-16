@@ -33,14 +33,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new OwnCreditCardBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithCreditCard(creditCard);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace Allors.Database.Domain.Tests
 
             this.InternalOrganisation.AddPaymentMethod(paymentMethod);
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(paymentMethod.IsActive);
         }
@@ -82,13 +82,13 @@ namespace Allors.Database.Domain.Tests
 
             this.InternalOrganisation.AddPaymentMethod(paymentMethod);
 
-            this.Transaction.Derive(false);
+            this.Derive();
             Assert.True(paymentMethod.IsActive);
 
             creditCard.ExpirationYear = this.Transaction.Now().Year;
             creditCard.ExpirationMonth = this.Transaction.Now().Month;
 
-            this.Transaction.Derive(false);
+            this.Derive();
             Assert.False(paymentMethod.IsActive);
         }
 
@@ -97,7 +97,7 @@ namespace Allors.Database.Domain.Tests
         {
             this.InternalOrganisation.DoAccounting = true;
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceNumber("ReferenceNumber")
@@ -134,15 +134,15 @@ namespace Allors.Database.Domain.Tests
             internalOrganisation.DoAccounting = true;
             internalOrganisation.DefaultCollectionMethod = collectionMethod;
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             collectionMethod.Journal = journal;
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             collectionMethod.RemoveGeneralLedgerAccount();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -150,7 +150,7 @@ namespace Allors.Database.Domain.Tests
         {
             this.InternalOrganisation.DoAccounting = true;
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceNumber("ReferenceNumber")
@@ -180,16 +180,16 @@ namespace Allors.Database.Domain.Tests
 
             this.InternalOrganisation.AddPaymentMethod(paymentMethod);
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             paymentMethod.Journal = journal;
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
 
             paymentMethod.RemoveJournal();
             paymentMethod.GeneralLedgerAccount = internalOrganisationGlAccount;
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
     }
 
@@ -203,11 +203,11 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.DoAccounting = true;
 
             var ownCreditCard = new OwnCreditCardBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             this.InternalOrganisation.AddPaymentMethod(ownCreditCard);
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtLeastOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.OwnBankAccount.GeneralLedgerAccount,
@@ -219,11 +219,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedGeneralLedgerAccountThrowValidation()
         {
             var ownCreditCard = new OwnCreditCardBuilder(this.Transaction).WithJournal(new JournalBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             ownCreditCard.GeneralLedgerAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.OwnCreditCard.GeneralLedgerAccount,
@@ -235,11 +235,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedJournalThrowValidation()
         {
             var ownCreditCard = new OwnCreditCardBuilder(this.Transaction).WithGeneralLedgerAccount(new OrganisationGlAccountBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             ownCreditCard.Journal = new JournalBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.OwnCreditCard.GeneralLedgerAccount,
@@ -251,10 +251,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedCreditCardDeriveIsActive()
         {
             var ownCreditCard = new OwnCreditCardBuilder(this.Transaction).WithGeneralLedgerAccount(new OrganisationGlAccountBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             ownCreditCard.CreditCard = new CreditCardBuilder(this.Transaction).WithExpirationYear(this.Transaction.Now().AddYears(-1).Year).WithExpirationMonth(this.Transaction.Now().Month).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(ownCreditCard.IsActive);
         }
@@ -263,13 +263,13 @@ namespace Allors.Database.Domain.Tests
         public void ChangedCreditCardExpirationYearDeriveIsActive()
         {
             var ownCreditCard = new OwnCreditCardBuilder(this.Transaction).WithGeneralLedgerAccount(new OrganisationGlAccountBuilder(this.Transaction).Build()).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             ownCreditCard.CreditCard = new CreditCardBuilder(this.Transaction).WithExpirationYear(this.Transaction.Now().AddYears(1).Year).WithExpirationMonth(this.Transaction.Now().Month).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             ownCreditCard.CreditCard.ExpirationYear = this.Transaction.Now().AddYears(-1).Year;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(ownCreditCard.IsActive);
         }

@@ -23,7 +23,7 @@ namespace Allors.Database.Domain.Tests
 
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Equals("NonUnifiedGood.Part is required"));
         }
     }
@@ -36,7 +36,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedProductIdentificationsDeriveSearchString()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(nonUnifiedGood.ProductIdentifications.First.Identification, nonUnifiedGood.SearchString);
         }
@@ -45,10 +45,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedProductCategoryAllProductsDeriveSearchString()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             new ProductCategoryBuilder(this.Transaction).WithName("catname").WithProduct(nonUnifiedGood).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("catname", nonUnifiedGood.SearchString);
         }
@@ -57,10 +57,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedKeywordsDeriveSearchString()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             nonUnifiedGood.Keywords = "keywords";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains("keywords", nonUnifiedGood.SearchString);
         }
@@ -69,20 +69,20 @@ namespace Allors.Database.Domain.Tests
         public void ChangedVariantsDeriveVirtualProductPriceComponents()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pricecomponent = new BasePriceBuilder(this.Transaction)
                 .WithProduct(nonUnifiedGood)
                 .WithPrice(1)
                 .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var variantGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             nonUnifiedGood.AddVariant(variantGood);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(variantGood.VirtualProductPriceComponents.First, pricecomponent);
         }
@@ -91,20 +91,20 @@ namespace Allors.Database.Domain.Tests
         public void ChangedVariantsDeriveVirtualProductPriceComponents_2()
         {
             var variantGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).WithVariant(variantGood).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pricecomponent = new BasePriceBuilder(this.Transaction)
                 .WithProduct(nonUnifiedGood)
                 .WithPrice(1)
                 .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             nonUnifiedGood.RemoveVariant(variantGood);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Empty(variantGood.VirtualProductPriceComponents);
         }
@@ -113,20 +113,20 @@ namespace Allors.Database.Domain.Tests
         public void ChangedVariantsDeriveBasePrice()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pricecomponent = new BasePriceBuilder(this.Transaction)
                 .WithProduct(nonUnifiedGood)
                 .WithPrice(1)
                 .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var variantGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             nonUnifiedGood.AddVariant(variantGood);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(variantGood.BasePrices.First, pricecomponent);
         }
@@ -135,17 +135,17 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPriceComponentProductDeriveVirtualProductPriceComponents()
         {
             var variantGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).WithVariant(variantGood).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var pricecomponent = new BasePriceBuilder(this.Transaction)
                 .WithProduct(nonUnifiedGood)
                 .WithPrice(1)
                 .WithFromDate(this.Transaction.Now().AddMinutes(-1))
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(variantGood.VirtualProductPriceComponents.First, pricecomponent);
         }
@@ -164,7 +164,7 @@ namespace Allors.Database.Domain.Tests
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -174,10 +174,10 @@ namespace Allors.Database.Domain.Tests
         {
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             nonUnifiedGood.Part = nonUnifiedPart;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -187,10 +187,10 @@ namespace Allors.Database.Domain.Tests
         {
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).WithPart(nonUnifiedPart).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             nonUnifiedGood.RemovePart();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.DoesNotContain(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -199,13 +199,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedDeploymentProductOfferingDeriveDeletePermission()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var deployment = new DeploymentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             deployment.ProductOffering = nonUnifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -214,13 +214,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedEngagementItemProductDeriveDeletePermission()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var goodOrder = new GoodOrderItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             goodOrder.Product = nonUnifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -229,13 +229,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedGeneralLedgerAccountCostUnitsAllowedDeriveDeletePermission()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var generalLedgerAccounts = new GeneralLedgerAccountBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             generalLedgerAccounts.AddAssignedCostUnitsAllowed(nonUnifiedGood);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -244,13 +244,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedGeneralLedgerAccountDefaultCostUnitDeriveDeletePermission()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var generalLedgerAccounts = new GeneralLedgerAccountBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             generalLedgerAccounts.DefaultCostUnit = nonUnifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -259,13 +259,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedQuoteItemProductDeriveDeletePermission()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var quoteItem = new QuoteItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             quoteItem.Product = nonUnifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -274,13 +274,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedShipmentItemGoodDeriveDeletePermission()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentItem.Good = nonUnifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -289,13 +289,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedWorkEffortGoodStandardUnifiedProductDeriveDeletePermission()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workEffortStandard = new WorkEffortGoodStandardBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workEffortStandard.UnifiedProduct = nonUnifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -304,13 +304,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedMarketingPackageProductsUsedInDeriveDeletePermission()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var marketingPackage = new MarketingPackageBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             marketingPackage.AddProductsUsedIn(nonUnifiedGood);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -319,13 +319,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedMarketingPackageProductDeriveDeletePermission()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var marketingPackage = new MarketingPackageBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             marketingPackage.Product = nonUnifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -334,13 +334,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedOrganisationGlAccountProductDeriveDeletePermission()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var account = new OrganisationGlAccountBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             account.Product = nonUnifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -349,13 +349,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedProductConfigurationProductsUsedInDeriveDeletePermission()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var configuration = new ProductConfigurationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             configuration.AddProductsUsedIn(nonUnifiedGood);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -364,13 +364,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedProductConfigurationProductInDeriveDeletePermission()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var configuration = new ProductConfigurationBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             configuration.Product = nonUnifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -379,13 +379,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedRequestItemProductDeriveDeletePermission()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var requestItem = new RequestItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             requestItem.Product = nonUnifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -394,13 +394,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedSalesInvoiceItemProductDeriveDeletePermission()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             invoiceItem.Product = nonUnifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -409,13 +409,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedSalesOrderItemProductDeriveDeletePermission()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new SalesOrderItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             orderItem.Product = nonUnifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }
@@ -424,13 +424,13 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedWorkEffortTypeProductToProduceDeriveDeletePermission()
         {
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var workEffortType = new WorkEffortTypeBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             workEffortType.ProductToProduce = nonUnifiedGood;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Contains(this.deletePermission, nonUnifiedGood.DeniedPermissions);
         }

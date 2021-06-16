@@ -20,7 +20,7 @@ namespace Allors.Database.Domain.Tests
         {
             var basePrice = new DeliverableTurnoverBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.StartsWith("DeliverableTurnover.WorkEffort, DeliverableTurnover.EngagementItem at least one"));
         }
     }

@@ -40,14 +40,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new ShipmentReceiptBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithInventoryItem(inventoryItem);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
@@ -58,7 +58,7 @@ namespace Allors.Database.Domain.Tests
             builder.WithShipmentItem(shipmentItem);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
@@ -253,24 +253,24 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentReceiptShipmentItemCreateOrderShipment()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var receipt = new ShipmentReceiptBuilder(this.Transaction).WithOrderItem(orderItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             receipt.ShipmentItem = shipmentItem;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(shipmentItem.ExistOrderShipmentsWhereShipmentItem);
         }
@@ -279,24 +279,24 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipmentReceiptOrderItemCreateOrderShipment()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var receipt = new ShipmentReceiptBuilder(this.Transaction).WithShipmentItem(shipmentItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             receipt.OrderItem = orderItem;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(shipmentItem.ExistOrderShipmentsWhereShipmentItem);
         }
@@ -305,24 +305,24 @@ namespace Allors.Database.Domain.Tests
         public void ChangedQuantityAcceptedDeriveOrderShipmentQuantity()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentReceipt = new ShipmentReceiptBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentReceipt.QuantityAccepted = 2;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderShipment = shipmentItem.OrderShipmentsWhereShipmentItem.First;
             Assert.Equal(2, orderShipment.Quantity);
@@ -333,24 +333,24 @@ namespace Allors.Database.Domain.Tests
         {
             var part = new UnifiedGoodBuilder(this.Transaction).WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece).Build();
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithPart(part).WithSerialisedItem(new SerialisedItemBuilder(this.Transaction).Build()).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentReceipt = new ShipmentReceiptBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentReceipt.Facility = this.InternalOrganisation.FacilitiesWhereOwner.First;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(shipmentReceipt.ExistInventoryItem);
         }
@@ -360,24 +360,24 @@ namespace Allors.Database.Domain.Tests
         {
             var part = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece).Build();
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithPart(part).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentReceipt = new ShipmentReceiptBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).WithFacility(this.InternalOrganisation.FacilitiesWhereOwner.First).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(shipmentReceipt.ExistInventoryItem);
         }
@@ -387,24 +387,24 @@ namespace Allors.Database.Domain.Tests
         {
             var part = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece).Build();
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction).Build();
             order.AddPurchaseOrderItem(orderItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipment = new PurchaseShipmentBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var shipmentReceipt = new ShipmentReceiptBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).WithFacility(this.InternalOrganisation.FacilitiesWhereOwner.First).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             shipmentItem.Part = part;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(shipmentReceipt.ExistInventoryItem);
         }

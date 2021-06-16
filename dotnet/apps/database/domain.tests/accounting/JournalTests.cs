@@ -20,7 +20,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenDeriving_ThenDescriptionMustExist()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceNumber("ReferenceNumber")
@@ -50,21 +50,21 @@ namespace Allors.Database.Domain.Tests
             builder.WithContraAccount(internalOrganisationGlAccount);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithName("description");
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
         public void GivenJournal_WhenDeriving_ThenSingletonMustExist()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceNumber("ReferenceNumber")
@@ -95,14 +95,14 @@ namespace Allors.Database.Domain.Tests
             builder.WithContraAccount(internalOrganisationGlAccount);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
         public void GivenJournal_WhenDeriving_ThenJournalTypeMustExist()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceNumber("ReferenceNumber")
@@ -132,28 +132,28 @@ namespace Allors.Database.Domain.Tests
             builder.WithContraAccount(internalOrganisationGlAccount);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithJournalType(new JournalTypes(this.Transaction).Bank);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
         public void GivenJournal_WhenDeriving_ThenContraAccountMustExist()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var builder = new JournalBuilder(this.Transaction);
             builder.WithName("description");
             builder.WithJournalType(new JournalTypes(this.Transaction).Bank);
             builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
@@ -181,14 +181,14 @@ namespace Allors.Database.Domain.Tests
             builder.WithContraAccount(internalOrganisationGlAccount);
             builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
 
         [Fact]
         public void GivenJournal_WhenBuildWithout_ThenBlockUnpaidTransactionsIsFalse()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceNumber("ReferenceNumber")
@@ -208,7 +208,7 @@ namespace Allors.Database.Domain.Tests
                 .WithName("journal")
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(journal.BlockUnpaidTransactions);
         }
@@ -217,7 +217,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenBuildWithout_ThenCloseWhenInBalanceIsFalse()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceNumber("ReferenceNumber")
@@ -237,7 +237,7 @@ namespace Allors.Database.Domain.Tests
                 .WithName("journal")
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(journal.CloseWhenInBalance);
         }
@@ -246,7 +246,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenBuildWithout_ThenUseAsDefaultIsFalse()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceNumber("ReferenceNumber")
@@ -266,7 +266,7 @@ namespace Allors.Database.Domain.Tests
                 .WithName("journal")
                 .Build();
 
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(journal.UseAsDefault);
         }
@@ -275,7 +275,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenDeriving_ThenContraAccountCanBeChangedWhenNotUsedYet()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceNumber("ReferenceNumber")
@@ -338,7 +338,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenDeriving_ThenContraAccountCanNotBeChangedWhenJournalEntriesArePresent()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceNumber("ReferenceNumber")
@@ -400,7 +400,7 @@ namespace Allors.Database.Domain.Tests
 
             journal.ContraAccount = internalOrganisationGlAccount2;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.ContraAccountChanged));
         }
 
@@ -408,7 +408,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenDeriving_ThenJournalTypeCanBeChangedWhenJournalIsNotUsedYet()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceNumber("ReferenceNumber")
@@ -450,7 +450,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenJournal_WhenDeriving_ThenJournalTypeCanNotBeChangedWhenJournalEntriesArePresent()
         {
             this.InternalOrganisation.DoAccounting = true;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var generalLedgerAccount1 = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceNumber("ReferenceNumber")
@@ -491,7 +491,7 @@ namespace Allors.Database.Domain.Tests
 
             journal.JournalType = new JournalTypes(this.Transaction).Cash;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.JournalTypeChanged));
         }
     }
@@ -507,14 +507,14 @@ namespace Allors.Database.Domain.Tests
             var journal = new JournalBuilder(this.Transaction)
                 .WithContraAccount(contraAccount)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var detail = new AccountingTransactionDetailBuilder(this.Transaction).WithOrganisationGlAccount(contraAccount).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             journal.ContraAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.ContraAccountChanged));
         }
 
@@ -526,14 +526,14 @@ namespace Allors.Database.Domain.Tests
                 .WithContraAccount(new OrganisationGlAccountBuilder(this.Transaction).Build())
                 .WithJournalType(journalType)
                 .Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var detail = new AccountingTransactionDetailBuilder(this.Transaction).WithOrganisationGlAccount(journal.ContraAccount).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             journal.JournalType = new JournalTypeBuilder(this.Transaction).Build();
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.JournalTypeChanged));
         }
     }

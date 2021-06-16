@@ -19,7 +19,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.GetSingleton().Settings.UseProductNumberCounter = true;
 
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Single(nonUnifiedGood.ProductIdentifications);
         }
@@ -36,7 +36,7 @@ namespace Allors.Database.Domain.Tests
             settings.UseProductNumberCounter = false;
 
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.False(nonUnifiedGood.ExistProductNumber);
 
@@ -45,7 +45,7 @@ namespace Allors.Database.Domain.Tests
                 .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Good).Build();
 
             nonUnifiedGood.AddProductIdentification(goodIdentification);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.True(nonUnifiedGood.ExistProductNumber);
         }
@@ -57,10 +57,10 @@ namespace Allors.Database.Domain.Tests
             var localisedName = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultname").Build();
 
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             nonUnifiedGood.AddLocalisedName(localisedName);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(nonUnifiedGood.Name, localisedName.Text);
         }
@@ -72,10 +72,10 @@ namespace Allors.Database.Domain.Tests
             var localisedName = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultname").Build();
 
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).WithLocalisedName(localisedName).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             localisedName.Text = "changed";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(nonUnifiedGood.Name, localisedName.Text);
         }
@@ -87,10 +87,10 @@ namespace Allors.Database.Domain.Tests
             var localisedDescription = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultname").Build();
 
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             nonUnifiedGood.AddLocalisedDescription(localisedDescription);
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(nonUnifiedGood.Description, localisedDescription.Text);
         }
@@ -102,10 +102,10 @@ namespace Allors.Database.Domain.Tests
             var localisedDescription = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultname").Build();
 
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).WithLocalisedDescription(localisedDescription).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             localisedDescription.Text = "changed";
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(nonUnifiedGood.Description, localisedDescription.Text);
         }

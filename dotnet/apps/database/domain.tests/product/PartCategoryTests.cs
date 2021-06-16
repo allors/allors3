@@ -21,12 +21,12 @@ namespace Allors.Database.Domain.Tests
             var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
 
             var partCategory = new PartCategoryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Null(partCategory.Name);
 
             partCategory.AddLocalisedName(new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("name").Build());
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal("name", partCategory.Name);
         }
@@ -37,12 +37,12 @@ namespace Allors.Database.Domain.Tests
             var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
 
             var partCategory = new PartCategoryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Null(partCategory.Description);
 
             partCategory.AddLocalisedDescription(new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("description").Build());
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal("description", partCategory.Description);
         }
@@ -53,10 +53,10 @@ namespace Allors.Database.Domain.Tests
             var noImageAvailableImage = this.Transaction.GetSingleton().Settings.NoImageAvailableImage;
 
             var partCategory = new PartCategoryBuilder(this.Transaction).WithName("name").Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partCategory.RemoveCategoryImage();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(noImageAvailableImage, partCategory.CategoryImage);
         }
@@ -65,14 +65,14 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPrimaryParentValidationError()
         {
             var partCategory1 = new PartCategoryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partCategory2 = new PartCategoryBuilder(this.Transaction).WithPrimaryParent(partCategory1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partCategory1.PrimaryParent = partCategory2;
 
-            var errors = this.Transaction.Derive(false).Errors.ToList();
+            var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains("Cycle detected in"));
         }
 
@@ -80,10 +80,10 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPrimaryParentDeriveChildren()
         {
             var partCategory1 = new PartCategoryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partCategory11 = new PartCategoryBuilder(this.Transaction).WithPrimaryParent(partCategory1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Single(partCategory1.Children);
             Assert.Contains(partCategory11, partCategory1.Children);
@@ -93,13 +93,13 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSecondaryParentDeriveChildren()
         {
             var partCategory1 = new PartCategoryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partCategory11 = new PartCategoryBuilder(this.Transaction).WithPrimaryParent(partCategory1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partCategory12 = new PartCategoryBuilder(this.Transaction).WithSecondaryParent(partCategory1).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(2, partCategory1.Children.Count);
             Assert.Contains(partCategory11, partCategory1.Children);
@@ -110,17 +110,17 @@ namespace Allors.Database.Domain.Tests
         public void ChangedChildrenDeriveDescendants()
         {
             var partCategory111 = new PartCategoryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partCategory11 = new PartCategoryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             var partCategory1 = new PartCategoryBuilder(this.Transaction).Build();
-            this.Transaction.Derive(false);
+            this.Derive();
 
             partCategory11.PrimaryParent = partCategory1;
             partCategory111.PrimaryParent = partCategory11;
-            this.Transaction.Derive(false);
+            this.Derive();
 
             Assert.Equal(2, partCategory1.Descendants.Count);
             Assert.Contains(partCategory11, partCategory1.Descendants);

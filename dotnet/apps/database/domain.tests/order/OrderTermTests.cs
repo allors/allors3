@@ -18,14 +18,14 @@ namespace Allors.Database.Domain.Tests
             var builder = new OrderTermBuilder(this.Transaction);
             var salesTerm = builder.Build();
 
-            Assert.True(this.Transaction.Derive(false).HasErrors);
+            Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
             builder.WithTermType(new OrderTermTypes(this.Transaction).PercentageCancellationCharge);
             salesTerm = builder.Build();
 
-            Assert.False(this.Transaction.Derive(false).HasErrors);
+            Assert.False(this.Derive().HasErrors);
         }
     }
 }
