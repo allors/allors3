@@ -13,6 +13,7 @@ namespace Allors.Workspace.Adapters.Local
     using Database.Domain;
     using Database.Meta;
     using Database.Security;
+    using Numbers;
 
     public class Push : Result, IPushResult
     {
@@ -53,28 +54,45 @@ namespace Allors.Workspace.Adapters.Local
 
         private Func<IValidation> Derive { get; }
 
+        private INumbers Numbers => this.Workspace.Numbers;
+
         internal void Execute(PushToDatabaseTracker tracker)
         {
             var metaPopulation = this.Workspace.DatabaseConnection.Database.MetaPopulation;
 
-            this.ObjectByNewId = tracker.Created?.ToDictionary(
-                k => k.Id,
-                v =>
-                {
-                    var local = (Strategy)v;
-                    var cls = (IClass)metaPopulation.FindByTag(v.Class.Tag);
-                    if (this.AllowedClasses?.Contains(cls) == true)
+            if (tracker.Created != null)
+            {
+                this.ObjectByNewId = tracker.Created.ToDictionary(
+                    k => k.Id,
+                    v =>
                     {
-                        var newObject = this.Build(cls);
-                        this.Objects.Add(newObject);
-                        this.PushRequestRoles(local, newObject);
-                        return newObject;
-                    }
+                        var local = (Strategy)v;
+                        var cls = (IClass)metaPopulation.FindByTag(v.Class.Tag);
+                        if (this.AllowedClasses?.Contains(cls) == true)
+                        {
+                            var newObject = this.Build(cls);
+                            this.Objects.Add(newObject);
+                            //this.PushRequestRoles(local, newObject);
+                            return newObject;
+                        }
 
-                    this.AddAccessError(local);
+                        this.AddAccessError(local);
 
-                    return null;
-                });
+                        return null;
+                    });
+
+
+                if (this.HasErrors)
+                {
+                    return;
+                }
+
+                foreach (var local in tracker.Created)
+                {
+                    this.PushRequestRoles((Strategy)local, this.ObjectByNewId[local.Id]);
+                }
+            }
+
 
             if (tracker.Changed != null)
             {
@@ -162,13 +180,32 @@ namespace Allors.Workspace.Adapters.Local
                         {
                             if (relationType.RoleType.IsOne)
                             {
-                                var role = this.GetRole((Strategy)roleValue);
+                                var roleId = (long)roleValue;
+                                IObject role = null;
+
+                                if (roleId < 0)
+                                {
+                                    this.ObjectByNewId.TryGetValue(roleId, out role);
+                                }
+                                else
+                                {
+                                    role = this.Transaction.Instantiate(roleId);
+                                }
+
                                 obj.Strategy.SetCompositeRole(roleType, role);
                             }
                             else
                             {
-                                var role = this.GetRoles((Strategy[])roleValue);
-                                obj.Strategy.SetCompositeRoles(roleType, role);
+                                if (this.ObjectByNewId == null)
+                                {
+                                    var roles = this.Transaction.Instantiate(this.Numbers.Enumerate(roleValue));
+                                    obj.Strategy.SetCompositeRoles(roleType, this.GetRoles(roles));
+                                }
+                                else
+                                {
+                                    obj.Strategy.SetCompositeRoles(roleType, this.GetRoles(roleValue));
+                                }
+
                             }
                         }
                     }
@@ -180,45 +217,20 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        private IObject GetRole(Strategy strategy)
+        private IEnumerable<IObject> GetRoles(object ids)
         {
-            if (this.ObjectByNewId == null || !this.ObjectByNewId.TryGetValue(strategy.Id, out var role))
+            var newIds = this.Numbers.Enumerate(ids).Where(v => v < 0);
+            foreach (var v in newIds)
             {
-                role = this.Transaction.Instantiate(strategy.Id);
-            }
+                this.ObjectByNewId.TryGetValue(v, out var role);
+                yield return role;
+            };
 
-            return role;
-        }
-
-        private IObject[] GetRoles(Strategy[] localStrategies)
-        {
-            if (this.ObjectByNewId == null)
+            var existingIds = this.Numbers.Enumerate(ids).Where(v => v > 0);
+            foreach (var role in this.Transaction.Instantiate(existingIds))
             {
-                return this.Transaction.Instantiate(localStrategies.Select(v => v.Id));
+                yield return role;
             }
-
-            var roles = new List<IObject>();
-            List<long> existingRoleIds = null;
-            foreach (var localStrategy in localStrategies)
-            {
-                if (this.ObjectByNewId.TryGetValue(localStrategy.Id, out var role))
-                {
-                    roles.Add(role);
-                }
-                else
-                {
-                    existingRoleIds ??= new List<long>();
-                    existingRoleIds.Add(localStrategy.Id);
-                }
-            }
-
-            if (existingRoleIds != null)
-            {
-                var existingRoles = this.Transaction.Instantiate(existingRoleIds);
-                roles.AddRange(existingRoles);
-            }
-
-            return roles.ToArray();
         }
     }
 }

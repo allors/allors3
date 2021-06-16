@@ -20,12 +20,13 @@ namespace Allors.Database.Domain.Derivations.Legacy.Default
 
         private Properties properties;
 
-        public LegacyDerivation(ITransaction transaction, Engine engine, int maxCycles)
+        public LegacyDerivation(ITransaction transaction, Engine engine, int maxCycles, bool continueOnError)
         {
             this.DerivationConfig = new DerivationConfig();
             this.Transaction = transaction;
             this.Engine = engine;
             this.MaxCycles = maxCycles;
+            this.ContinueOnError = continueOnError;
 
             this.Id = Guid.NewGuid();
             this.TimeStamp = this.Transaction.Now();
@@ -44,6 +45,8 @@ namespace Allors.Database.Domain.Derivations.Legacy.Default
         public Engine Engine { get; }
 
         public int MaxCycles { get; }
+
+        public bool ContinueOnError { get; }
 
         public DerivationConfig DerivationConfig { get; }
 

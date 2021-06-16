@@ -25,6 +25,8 @@ namespace Allors.Workspace.Adapters
 
         private WorkspaceRecord WorkspaceRecord { get; set; }
 
+        public long Version => this.WorkspaceRecord.Version;
+
         protected override void OnChange()
         {
             this.Strategy.Session.ChangeSetTracker.OnChanged(this);

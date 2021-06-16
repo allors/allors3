@@ -75,7 +75,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         {
             get
             {
-                if (!this.IsNew && this.version == (long)Allors.Version.None)
+                if (!this.IsNew && this.version == (long)Allors.Version.Unknown)
                 {
                     this.Transaction.AddReferenceWithoutVersionOrExistsKnown(this);
                     this.Transaction.GetVersionAndExists();
@@ -89,7 +89,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         internal bool IsNew => this.FlagIsNew;
 
-        internal bool IsUnknownVersion => this.version == (long)Allors.Version.None;
+        internal bool IsUnknownVersion => this.version == (long)Allors.Version.Unknown;
 
         internal bool Exists
         {
@@ -161,7 +161,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         {
             this.FlagExistsKnown = false;
             this.FlagIsNew = false;
-            this.version = Allors.Version.None;
+            this.version = Allors.Version.Unknown;
 
             var strategy = this.Target;
             if (strategy != null)
@@ -183,7 +183,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 this.FlagExistsKnown = false;
             }
 
-            this.version = Allors.Version.None;
+            this.version = Allors.Version.Unknown;
 
             var strategy = this.Target;
             if (strategy != null)

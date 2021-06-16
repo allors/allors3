@@ -16,7 +16,9 @@ namespace Allors.Workspace.Adapters
             this.PreviousRecord = this.DatabaseRecord;
         }
 
-        public long Version => this.DatabaseRecord.Version;
+        public long Version => this.DatabaseRecord?.Version ?? Allors.Version.Unknown;
+
+        internal bool IsVersionUnknown => this.Version == Allors.Version.Unknown.Value;
 
         protected bool ExistDatabaseRecord => this.Record != null;
 
@@ -33,8 +35,12 @@ namespace Allors.Workspace.Adapters
                 return true;
             }
 
-            var permission =
-                this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, roleType, Operations.Read);
+            if (this.IsVersionUnknown)
+            {
+                return false;
+            }
+
+            var permission = this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, roleType, Operations.Read);
             return this.DatabaseRecord.IsPermitted(permission);
         }
 
@@ -43,6 +49,11 @@ namespace Allors.Workspace.Adapters
             if (!this.ExistDatabaseRecord)
             {
                 return true;
+            }
+
+            if (this.IsVersionUnknown)
+            {
+                return false;
             }
 
             var permission =
@@ -57,11 +68,16 @@ namespace Allors.Workspace.Adapters
                 return true;
             }
 
+            if (this.IsVersionUnknown)
+            {
+                return false;
+            }
+
             var permission =
                 this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, methodType, Operations.Execute);
             return this.DatabaseRecord.IsPermitted(permission);
         }
-        
+
         public void PushResponse(DatabaseRecord newDatabaseRecord) => this.DatabaseRecord = newDatabaseRecord;
 
         protected override void OnChange()

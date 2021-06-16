@@ -35,6 +35,14 @@ namespace Allors.Workspace.Adapters
             this.WorkspaceOriginState = new WorkspaceOriginState(this, this.Session.Workspace.GetRecord(this.Id));
         }
 
+        public long Version =>
+            this.Class.Origin switch
+            {
+                Origin.Database => this.DatabaseOriginState.Version,
+                Origin.Workspace => this.WorkspaceOriginState.Version,
+                _ => Allors.Version.Initial.Value
+            };
+
         public Session Session { get; }
 
         public DatabaseOriginState DatabaseOriginState { get; protected set; }
@@ -86,7 +94,7 @@ namespace Allors.Workspace.Adapters
             {
                 Origin.Session => this.Session.GetRole(this, roleType),
                 Origin.Workspace => this.WorkspaceOriginState?.GetRole(roleType),
-                Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState?.GetRole(roleType) : null,
+                Origin.Database => this.DatabaseOriginState?.IsVersionUnknown == true ? throw new Exception() : this.CanRead(roleType) ? this.DatabaseOriginState?.GetRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
             };
 
@@ -95,7 +103,7 @@ namespace Allors.Workspace.Adapters
             {
                 Origin.Session => (long?)this.Session.GetRole(this, roleType),
                 Origin.Workspace => (long?)this.WorkspaceOriginState?.GetRole(roleType),
-                Origin.Database => this.CanRead(roleType) ? (long?)this.DatabaseOriginState?.GetRole(roleType) : null,
+                Origin.Database => this.DatabaseOriginState?.IsVersionUnknown == true ? throw new Exception() : this.CanRead(roleType) ? (long?)this.DatabaseOriginState?.GetRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
             });
 
@@ -105,7 +113,7 @@ namespace Allors.Workspace.Adapters
             {
                 Origin.Session => this.Session.GetRole(this, roleType),
                 Origin.Workspace => this.WorkspaceOriginState?.GetRole(roleType),
-                Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState?.GetRole(roleType) : null,
+                Origin.Database => this.DatabaseOriginState?.IsVersionUnknown == true ? throw new Exception() : this.CanRead(roleType) ? this.DatabaseOriginState?.GetRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
             };
 

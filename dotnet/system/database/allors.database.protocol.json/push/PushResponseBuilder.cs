@@ -153,7 +153,7 @@ namespace Allors.Database.Protocol.Json
 
             if (!pushResponse.HasErrors)
             {
-                pushResponse.NewObjects = objectByNewId?.Select(kvp => new PushResponseNewObject
+                pushResponse.n = objectByNewId?.Select(kvp => new PushResponseNewObject
                 {
                     d = kvp.Value?.Id ?? 0,
                     w = kvp.Key,
@@ -221,9 +221,9 @@ namespace Allors.Database.Protocol.Json
                             else
                             {
                                 // Add
-                                if (pushRequestRole.AddCompositesRole != null)
+                                if (pushRequestRole.a != null)
                                 {
-                                    var roleIds = pushRequestRole.AddCompositesRole;
+                                    var roleIds = pushRequestRole.a;
                                     if (roleIds.Length != 0)
                                     {
                                         var roles = this.GetRoles(roleIds, objectByNewId);
@@ -242,9 +242,9 @@ namespace Allors.Database.Protocol.Json
                                 }
 
                                 // Remove
-                                if (pushRequestRole.RemoveCompositesRole != null)
+                                if (pushRequestRole.r != null)
                                 {
-                                    var roleIds = pushRequestRole.RemoveCompositesRole;
+                                    var roleIds = pushRequestRole.r;
                                     if (roleIds.Length != 0)
                                     {
                                         var roles = this.GetRoles(roleIds, objectByNewId);

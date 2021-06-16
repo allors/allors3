@@ -16,6 +16,8 @@ namespace Allors.Workspace
 
         long Id { get; }
 
+        long Version { get; }
+
         ISession Session { get; }
 
         bool CanRead(IRoleType roleType);

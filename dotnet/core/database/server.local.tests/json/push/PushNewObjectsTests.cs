@@ -30,7 +30,7 @@ namespace Tests
 
             this.Transaction.Rollback();
 
-            var x1 = (WorkspaceXObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].d);
+            var x1 = (WorkspaceXObject1)this.Transaction.Instantiate(pushResponse.n[0].d);
 
             Assert.NotNull(x1);
         }
@@ -50,7 +50,7 @@ namespace Tests
 
             this.Transaction.Rollback();
 
-            var x1 = (WorkspaceXObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].d);
+            var x1 = (WorkspaceXObject1)this.Transaction.Instantiate(pushResponse.n[0].d);
 
             Assert.Null(x1);
         }
@@ -70,7 +70,7 @@ namespace Tests
 
             this.Transaction.Rollback();
 
-            var x1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].d);
+            var x1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.n[0].d);
 
             Assert.Null(x1);
         }
@@ -89,7 +89,7 @@ namespace Tests
 
             this.Transaction.Rollback();
 
-            var y1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].d);
+            var y1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.n[0].d);
 
             Assert.Null(y1);
         }
@@ -109,7 +109,7 @@ namespace Tests
 
             this.Transaction.Rollback();
 
-            var none1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].d);
+            var none1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.n[0].d);
 
             Assert.Null(none1);
         }
@@ -129,7 +129,7 @@ namespace Tests
 
             this.Transaction.Rollback();
 
-            var none1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].d);
+            var none1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.n[0].d);
 
             Assert.Null(none1);
         }
@@ -149,7 +149,7 @@ namespace Tests
 
             this.Transaction.Rollback();
 
-            var none1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.NewObjects[0].d);
+            var none1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.n[0].d);
 
             Assert.Null(none1);
         }

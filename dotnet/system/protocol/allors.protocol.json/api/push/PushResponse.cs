@@ -10,6 +10,6 @@ namespace Allors.Protocol.Json.Api.Push
         /// <summary>
         /// New Objects
         /// </summary>
-        public PushResponseNewObject[] NewObjects { get; set; }
+        public PushResponseNewObject[] n { get; set; }
     }
 }
