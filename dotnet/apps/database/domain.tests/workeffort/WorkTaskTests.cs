@@ -1766,7 +1766,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedCustomerDeriveRevisePermission()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).WithExecutedBy(this.InternalOrganisation).WithWorkEffortState(new WorkEffortStates(this.Transaction).Finished).Build();
-            this.Transaction.Derive(false);
+            var result = this.Derive();
 
             var revisePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Revise);
             Assert.Contains(revisePermission, workTask.DeniedPermissions);

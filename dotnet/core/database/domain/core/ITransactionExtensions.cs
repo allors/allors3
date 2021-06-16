@@ -12,10 +12,10 @@ namespace Allors.Database.Domain
 
     public static partial class ITransactionExtensions
     {
-        public static IValidation Derive(this ITransaction transaction, bool throwExceptionOnError = true)
+        public static IValidation Derive(this ITransaction transaction, bool throwExceptionOnError = true, bool continueOnError = false)
         {
             var derivationService = transaction.Database.Services().DerivationFactory;
-            var derivation = derivationService.CreateDerivation(transaction);
+            var derivation = derivationService.CreateDerivation(transaction, continueOnError);
             var validation = derivation.Derive();
             if (throwExceptionOnError && validation.HasErrors)
             {

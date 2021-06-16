@@ -14,14 +14,14 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
 
     public class DefaultDerivation : IDerivation
     {
-        public DefaultDerivation(ITransaction transaction, IValidation validation, Engine engine, int maxCycles, bool embedded)
+        public DefaultDerivation(ITransaction transaction, IValidation validation, Engine engine, int maxCycles, bool embedded, bool continueOnError)
         {
             this.Transaction = transaction;
             this.Validation = validation;
             this.Engine = engine;
             this.MaxCycles = maxCycles;
             this.Embedded = embedded;
-
+            this.ContinueOnError = continueOnError;
             this.Id = Guid.NewGuid();
             this.TimeStamp = transaction.Now();
         }
@@ -44,6 +44,7 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
         public int MaxCycles { get; }
 
         public bool Embedded { get; }
+        public bool ContinueOnError { get; }
 
         public IValidation Derive()
         {
@@ -65,7 +66,7 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
                 changeSet.Created.Any() ||
                 changeSet.Deleted.Any();
 
-            while (!this.Validation.HasErrors && HasChanges(changeSet))
+            while ((this.ContinueOnError || !this.Validation.HasErrors) && HasChanges(changeSet))
             {
                 if (++domainCycles > this.MaxCycles)
                 {

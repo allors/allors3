@@ -10,6 +10,6 @@ namespace Allors.Database.Domain
 
     public interface IDerivationFactory
     {
-        IDerivation CreateDerivation(ITransaction transaction);
+        IDerivation CreateDerivation(ITransaction transaction, bool continueOnError = false);
     }
 }

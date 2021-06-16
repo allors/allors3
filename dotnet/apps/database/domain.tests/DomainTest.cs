@@ -63,6 +63,8 @@ namespace Allors.Database.Domain.Tests
             this.Transaction = null;
         }
 
+        protected Allors.Database.Derivations.IValidation Derive() => this.Transaction.Derive(false, true);
+
         protected void Setup(IDatabase database, bool populate)
         {
             database.Init();

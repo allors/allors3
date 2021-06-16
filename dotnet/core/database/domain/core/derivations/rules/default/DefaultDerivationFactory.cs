@@ -15,6 +15,6 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
 
         public int MaxCycles { get; set; } = 100;
 
-        public IDerivation CreateDerivation(ITransaction transaction) => new DefaultDerivation(transaction, new Validation(), this.Engine, this.MaxCycles, false);
+        public IDerivation CreateDerivation(ITransaction transaction, bool continueOnError) => new DefaultDerivation(transaction, new Validation(), this.Engine, this.MaxCycles, false, continueOnError);
     }
 }
