@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj" />
-    <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters.SqlClient\Allors.Database.Adapters.Sql.SqlClient.csproj" />
+    <ProjectReference Include="..\..\..\system\database\adapters\allors.database.adapters.sql.sqlclient\Allors.Database.Adapters.Sql.SqlClient.csproj" />
     <ProjectReference Include="..\Commands\Commands.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
