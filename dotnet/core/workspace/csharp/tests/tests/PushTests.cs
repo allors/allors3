@@ -126,15 +126,15 @@ namespace Tests.Workspace
 
             var session2 = this.Workspace.CreateSession();
 
-            result = await session2.Pull(pull);
+            result = await session2.Pull(new Pull { Object = c1a });
 
-            var c1aSession2 = result.GetCollection<C1>().First(v => v.Name.Equals("c1A"));
+            var c1aSession2 = result.GetObject<C1>();
 
             Assert.Equal("X", c1aSession2.C1AllorsString);
 
-            result = await session.Pull(pull);
+            result = await session.Pull(new Pull { Object = c1a });
 
-            var c1aSession1 = result.GetCollection<C1>().First(v => v.Name.Equals("c1A"));
+            var c1aSession1 = result.GetObject<C1>();
 
             Assert.Equal("X", c1aSession1.C1AllorsString);
         }

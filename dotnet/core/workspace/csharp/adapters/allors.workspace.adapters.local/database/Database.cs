@@ -118,7 +118,7 @@ namespace Allors.Workspace.Adapters.Local
             return permission;
         }
 
-        internal DatabaseRecord OnPushed(long id, IClass @class)
+        public override Adapters.DatabaseRecord OnDatabasePushResponse(IClass @class, long id)
         {
             var record = new DatabaseRecord(@class, id);
             this.recordsById[id] = record;

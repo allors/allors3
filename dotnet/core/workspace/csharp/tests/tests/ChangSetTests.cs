@@ -47,6 +47,30 @@ namespace Tests.Workspace
 
             await session.Push();
 
+            //await session.Pull(pull);
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.AssociationsByRoleType);
+        }
+
+        [Fact]
+        public async void ChangeSetAfterPushWithPull()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Extent(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await session.Pull(pull);
+            var c1a = result.GetCollection<C1>().First();
+
+            c1a.C1AllorsString = "X";
+
+            await session.Push();
+
+            await session.Pull(pull);
+
             var changeSet = session.Checkpoint();
 
             Assert.Single(changeSet.AssociationsByRoleType);

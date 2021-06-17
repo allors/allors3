@@ -96,7 +96,11 @@ namespace Allors.Workspace.Adapters.Remote
 
             foreach (var v in pullResponse.p)
             {
-                if (!this.StrategyByWorkspaceId.ContainsKey(v.i))
+                if (this.StrategyByWorkspaceId.TryGetValue(v.i, out var strategy))
+                {
+                    ((DatabaseOriginState)strategy.DatabaseOriginState).OnPulled();
+                }
+                else
                 {
                     this.InstantiateDatabaseStrategy(v.i);
                 }
@@ -193,46 +197,34 @@ namespace Allors.Workspace.Adapters.Remote
             var pushRequest = this.PushRequest();
             var pushResponse = await this.Workspace.DatabaseConnection.Push(pushRequest);
 
-            if (!pushResponse.HasErrors)
+            if (pushResponse.HasErrors)
             {
-                if (pushResponse.n != null && pushResponse.n.Length > 0)
+                return new PushResult(this, pushResponse);
+            }
+
+            if (pushResponse.n != null)
+            {
+                foreach (var pushResponseNewObject in pushResponse.n)
                 {
-                    foreach (var pushResponseNewObject in pushResponse.n)
-                    {
-                        var workspaceId = pushResponseNewObject.w;
-                        var databaseId = pushResponseNewObject.d;
+                    var workspaceId = pushResponseNewObject.w;
+                    var databaseId = pushResponseNewObject.d;
 
-                        var strategy = this.StrategyByWorkspaceId[workspaceId];
-
-                        this.PushToDatabaseTracker.Created.Remove(strategy);
-
-                        this.RemoveStrategy(strategy);
-                        var databaseRecord = this.Workspace.DatabaseConnection.OnPushed(databaseId, strategy.Class);
-                        strategy.DatabasePushResponse(databaseRecord);
-                        this.AddStrategy(strategy);
-                    }
-                }
-
-                var objects = pushRequest.o?.Select(v => v.d).ToArray() ?? Array.Empty<long>();
-                if (pushResponse.n != null)
-                {
-                    objects = objects.Union(pushResponse.n.Select(v => v.d)).ToArray();
-                }
-
-                foreach (var id in objects)
-                {
-                    if (!this.StrategyByWorkspaceId.ContainsKey(id))
-                    {
-                        this.InstantiateDatabaseStrategy(id);
-                    }
-
-                    var strategy = this.GetStrategy(id);
-                    ((DatabaseOriginState)strategy.DatabaseOriginState).Reset();
+                    this.OnDatabasePushResponseNew(workspaceId, databaseId);
                 }
             }
 
-            var result = new PushResult(this, pushResponse);
-            return result;
+            this.PushToDatabaseTracker.Created = null;
+
+            if (pushRequest.o != null)
+            {
+                foreach (var id in pushRequest.o.Select(v => v.d))
+                {
+                    var strategy = this.GetStrategy(id);
+                    this.OnDatabasePushResponse(strategy);
+                }
+            }
+
+            return new PushResult(this, pushResponse);
         }
     }
 }
