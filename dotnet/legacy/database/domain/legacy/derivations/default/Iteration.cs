@@ -78,9 +78,9 @@ namespace Allors.Database.Domain.Derivations.Legacy.Default
         {
             try
             {
-                var domainDerive = new DefaultDerivation(this.Cycle.Derivation.Transaction, this.Cycle.Derivation.Validation, this.Cycle.Derivation.Engine, this.Cycle.Derivation.MaxCycles, true);
+                var domainDerive = new DefaultDerivation(this.Cycle.Derivation.Transaction, this.Cycle.Derivation.Validation, this.Cycle.Derivation.Engine, this.Cycle.Derivation.MaxCycles, true, this.Cycle.Derivation.ContinueOnError);
                 domainDerive.Derive();
-                
+
                 // Object Derivations
                 var config = this.Cycle.Derivation.DerivationConfig;
                 var count = 1;

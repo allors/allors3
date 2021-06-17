@@ -75,7 +75,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         {
             get
             {
-                if (!this.IsNew && this.version == (long)Allors.Version.None)
+                if (!this.IsNew && this.version == (long)Allors.Version.Unknown)
                 {
                     this.Transaction.AddReferenceWithoutVersionOrExistsKnown(this);
                     this.Transaction.GetVersionAndExists();
@@ -96,7 +96,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         {
             get
             {
-                var isUnknown = this.version == (long)Allors.Version.None;
+                var isUnknown = this.version == (long)Allors.Version.Unknown;
                 return isUnknown;
             }
         }
@@ -178,7 +178,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         {
             this.FlagExistsKnown = false;
             this.FlagIsNew = false;
-            this.version = Allors.Version.None;
+            this.version = Allors.Version.Unknown;
 
             var strategy = this.Target;
             if (strategy != null)
@@ -200,7 +200,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 this.FlagExistsKnown = false;
             }
 
-            this.version = Allors.Version.None;
+            this.version = Allors.Version.Unknown;
 
             var strategy = this.Target;
             if (strategy != null)

@@ -160,8 +160,6 @@ namespace Allors.Workspace.Adapters.Local
 
             this.PushToDatabaseTracker.Created = null;
 
-            this.Workspace.DatabaseConnection.Sync(push.Objects, push.AccessControlLists);
-
             foreach (var @object in push.Objects)
             {
                 if (!this.StrategyByWorkspaceId.ContainsKey(@object.Id))

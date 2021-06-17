@@ -25,11 +25,11 @@ namespace Allors.Protocol.Json.Api.Push
         /// <summary>
         /// Add Composites Role
         /// </summary>
-        public long[] AddCompositesRole { get; set; }
+        public long[] a { get; set; }
 
         /// <summary>
         /// Remove Composites Role
         /// </summary>
-        public long[] RemoveCompositesRole { get; set; }
+        public long[] r { get; set; }
     }
 }

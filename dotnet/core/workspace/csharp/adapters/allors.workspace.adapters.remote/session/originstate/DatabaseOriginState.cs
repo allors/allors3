@@ -60,19 +60,19 @@ namespace Allors.Workspace.Adapters.Remote
                         {
                             if (!this.ExistDatabaseRecord)
                             {
-                                pushRequestRole.AddCompositesRole = numbers.ToArray(roleValue);
+                                pushRequestRole.a = numbers.ToArray(roleValue);
                             }
                             else
                             {
                                 var databaseRole = (long[])this.DatabaseRecord.GetRole(relationType.RoleType);
                                 if (databaseRole == null)
                                 {
-                                    pushRequestRole.AddCompositesRole = numbers.ToArray(roleValue);
+                                    pushRequestRole.a = numbers.ToArray(roleValue);
                                 }
                                 else
                                 {
-                                    pushRequestRole.AddCompositesRole = numbers.ToArray(numbers.Except(roleValue, databaseRole));
-                                    pushRequestRole.RemoveCompositesRole = numbers.ToArray(numbers.Except(databaseRole, roleValue));
+                                    pushRequestRole.a = numbers.ToArray(numbers.Except(roleValue, databaseRole));
+                                    pushRequestRole.r = numbers.ToArray(numbers.Except(databaseRole, roleValue));
                                 }
                             }
                         }

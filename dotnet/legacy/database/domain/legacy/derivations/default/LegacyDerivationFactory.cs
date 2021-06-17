@@ -16,6 +16,6 @@ namespace Allors.Database.Domain.Derivations.Legacy.Default
 
         public int MaxCycles { get; set; } = 100;
 
-        public IDerivation CreateDerivation(ITransaction transaction) => new LegacyDerivation(transaction, this.Engine, this.MaxCycles);
+        public IDerivation CreateDerivation(ITransaction transaction, bool continueOnError) => new LegacyDerivation(transaction, this.Engine, this.MaxCycles, continueOnError);
     }
 }

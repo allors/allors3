@@ -195,9 +195,9 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (!pushResponse.HasErrors)
             {
-                if (pushResponse.NewObjects != null && pushResponse.NewObjects.Length > 0)
+                if (pushResponse.n != null && pushResponse.n.Length > 0)
                 {
-                    foreach (var pushResponseNewObject in pushResponse.NewObjects)
+                    foreach (var pushResponseNewObject in pushResponse.n)
                     {
                         var workspaceId = pushResponseNewObject.w;
                         var databaseId = pushResponseNewObject.d;
@@ -212,16 +212,13 @@ namespace Allors.Workspace.Adapters.Remote
                         this.AddStrategy(strategy);
                     }
                 }
-                
+
                 var objects = pushRequest.o?.Select(v => v.d).ToArray() ?? Array.Empty<long>();
-                if (pushResponse.NewObjects != null)
+                if (pushResponse.n != null)
                 {
-                    objects = objects.Union(pushResponse.NewObjects.Select(v => v.d)).ToArray();
+                    objects = objects.Union(pushResponse.n.Select(v => v.d)).ToArray();
                 }
 
-                var syncRequests = new SyncRequest { o = objects };
-                await this.Sync(syncRequests);
-                
                 foreach (var id in objects)
                 {
                     if (!this.StrategyByWorkspaceId.ContainsKey(id))

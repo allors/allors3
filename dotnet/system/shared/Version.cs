@@ -9,15 +9,15 @@ namespace Allors
 
     public readonly struct Version : IEquatable<Version>
     {
-        public static readonly Version None = new Version(0);
+        public static readonly Version Unknown = new Version(0);
 
         public static readonly Version Initial = new Version(1);
 
-        public Version(long value) => this.Value = value;
+        private Version(long value) => this.Value = value;
 
         public long Value { get; }
 
-        public bool HasValue => this != None;
+        public bool IsUnknown => this != Unknown;
 
         public bool IsInitial => this == Initial;
 
