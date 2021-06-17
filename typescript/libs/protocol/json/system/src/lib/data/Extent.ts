@@ -7,14 +7,14 @@ export interface Extent {
   k: ExtentKind;
 
   /** Operands */
-  o: Extent[];
+  o?: Extent[];
 
   /** ObjectType */
-  t: number;
+  t?: number;
 
   /** Predicate */
-  p: Predicate;
+  p?: Predicate;
 
   /** Sorting */
-  s: Sort[];
+  s?: Sort[];
 }

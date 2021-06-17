@@ -1,10 +1,56 @@
-import { Client } from "./Client";
+import { AuthenticationTokenRequest, AuthenticationTokenResponse, PullRequest, PullResponse } from '@allors/protocol/json/system';
+import { Observable } from 'rxjs';
+import { ajax, AjaxRequest } from 'rxjs/ajax';
+import { map, tap } from 'rxjs/operators';
+import { Client } from './Client';
 
 export class AjaxClient implements Client {
   userId: number;
   jwtToken: string;
 
-  constructor(args?: Pick<AjaxClient, 'userId' | 'jwtToken'>) {
-    Object.assign(this, args);
+  constructor(public baseUrl: string, public authUrl: string) {}
+
+  login(login: string, password?: string): Observable<boolean> {
+    const tokenRequest: Partial<AuthenticationTokenRequest> = {
+      l: login,
+      p: password,
+    };
+
+    const ajaxRequest: AjaxRequest = {
+      url: `${this.baseUrl}${this.authUrl}`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: tokenRequest,
+    };
+
+    return ajax(ajaxRequest).pipe(
+      map((ajaxResponse) => {
+        const authenticationResponse = ajaxResponse.response as AuthenticationTokenResponse;
+        return authenticationResponse;
+      }),
+      tap((authenticationResponse) => {
+        if (authenticationResponse.a) {
+          this.userId = authenticationResponse.u;
+          this.jwtToken = authenticationResponse.t;
+        }
+      }),
+      map((authenticationResponse) => authenticationResponse.a)
+    );
+  }
+
+  pull(pullRequest: PullRequest): Observable<PullResponse> {
+    const ajaxRequest: AjaxRequest = {
+      url: `${this.baseUrl}pull`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.jwtToken}`,
+      },
+      body: pullRequest,
+    };
+
+    return ajax(ajaxRequest).pipe(map((ajaxResponse) => ajaxResponse.response as PullResponse));
   }
 }

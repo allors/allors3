@@ -1,21 +1,22 @@
+import { Extent } from "./Extent";
 import { Result } from "./Result";
 
 export interface Pull {
   /** ExtentRef */
-  er: string;
+  er?: string;
 
   /** Extent */
-  e: string;
+  e?: Extent;
 
   /** ObjectType */
-  t: number;
+  t?: number;
 
   /** Object */
-  o: number;
+  o?: number;
 
   /** Results */
-  r: Result[];
+  r?: Result[];
 
   /** Arguments */
-  a: { [name: string]: string };
+  a?: { [name: string]: string };
 }

@@ -3,8 +3,8 @@ import { Pull } from "../../data/Pull";
 
 export interface PullRequest {
   /** List */
-  l: Pull[];
+  l?: Pull[];
 
   /** Procedure */
-  p: Procedure;
+  p?: Procedure;
 }

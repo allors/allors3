@@ -1,4 +1,4 @@
-import { Origin } from '@allors/workspace/meta/system';
+import { Origin } from '../Origin';
 import { MetaPopulation } from './MetaPopulation';
 
 export interface MetaObject {

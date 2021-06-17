@@ -34,9 +34,6 @@
     "workspace-domain-core-custom": {
       "tags": []
     },
-    "workspace-domain-core-generated": {
-      "tags": []
-    },
     "workspace-domain-core-tests": {
       "tags": []
     },
@@ -44,12 +41,6 @@
       "tags": []
     },
     "workspace-meta-core": {
-      "tags": []
-    },
-    "workspace-meta-core-generated": {
-      "tags": []
-    },
-    "workspace-meta-core-tests": {
       "tags": []
     },
     "workspace-meta-lazy-system": {

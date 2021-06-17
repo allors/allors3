@@ -2,6 +2,7 @@ export * from './lib/data/Node';
 export * from './lib/data/Select';
 export * from './lib/data/IExtent';
 export * from './lib/data/Sort';
+export * from './lib/data/SortDirection';
 export * from './lib/data/Predicate';
 export * from './lib/data/ParameterizablePredicate';
 export * from './lib/data/And';

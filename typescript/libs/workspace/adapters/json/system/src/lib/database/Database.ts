@@ -1,5 +1,5 @@
-import { PullResponse, SecurityRequest, SyncRequest, SyncResponse, SecurityResponse } from '@allors/protocol/json/system';
-import { IObject, Operations } from '@allors/workspace/domain/system';
+import { PullResponse, SecurityRequest, SyncRequest, SyncResponse, SecurityResponse, PullRequest, PushRequest, PushResponse, InvokeRequest, InvokeResponse } from '@allors/protocol/json/system';
+import { Operations } from '@allors/workspace/domain/system';
 import { Class, MetaPopulation, MethodType, OperandType, RelationType } from '@allors/workspace/meta/system';
 import { Observable } from 'rxjs';
 import { equals, properSubset } from '../collections/Numbers';
@@ -134,7 +134,7 @@ export class Database {
           return v;
         });
 
-        const permissionIdSet = permissionsIds != null ? new Set(permissionsIds) : new Set();
+        const permissionIdSet = permissionsIds != null ? new Set(permissionsIds) : new Set<number>();
 
         this.accessControlById.set(id, new AccessControl(id, version, permissionIdSet));
       }
@@ -161,29 +161,23 @@ export class Database {
   }
 
   pull(pullRequest: PullRequest): Observable<PullResponse> {
-    // var uri = new Uri("pull", UriKind.Relative);
-    // var response = await this.PostAsJsonAsync(uri, pullRequest);
-    // _ = response.EnsureSuccessStatusCode();
-    // return await this.ReadAsAsync<PullResponse>(response);
-
-    // TODO:
-    return undefined;
+    return this.client.pull(pullRequest);
   }
 
-  pull(name: string, values?: Map<string, object>, objects: Map<string, IObject>, collections: Map<string, IObject[]>): Observable<PullResponse> {
-    // const pullArgs: PullArgs = {
-    //     v: values?.ToDictionary(v => v.Key, v => v.Value),
-    //     o: objects?.ToDictionary(v => v.Key, v => v.Value.Id),
-    //     c: collections?.ToDictionary(v => v.Key, v => v.Value.Select(v => v.Id).ToArray()),
-    // };
-    // var uri = new Uri(name + "/pull", UriKind.Relative);
-    // var response = await this.PostAsJsonAsync(uri, pullArgs);
-    // _ = response.EnsureSuccessStatusCode();
-    // return await this.ReadAsAsync<PullResponse>(response);
+  // pull(name: string, values?: Map<string, object>, objects: Map<string, IObject>, collections: Map<string, IObject[]>): Observable<PullResponse> {
+  //   // const pullArgs: PullArgs = {
+  //   //     v: values?.ToDictionary(v => v.Key, v => v.Value),
+  //   //     o: objects?.ToDictionary(v => v.Key, v => v.Value.Id),
+  //   //     c: collections?.ToDictionary(v => v.Key, v => v.Value.Select(v => v.Id).ToArray()),
+  //   // };
+  //   // var uri = new Uri(name + "/pull", UriKind.Relative);
+  //   // var response = await this.PostAsJsonAsync(uri, pullArgs);
+  //   // _ = response.EnsureSuccessStatusCode();
+  //   // return await this.ReadAsAsync<PullResponse>(response);
 
-    // TODO:
-    return undefined;
-  }
+  //   // TODO:
+  //   return undefined;
+  // }
 
   sync(syncRequest: SyncRequest): Observable<SyncResponse> {
     // var uri = new Uri("sync", UriKind.Relative);
