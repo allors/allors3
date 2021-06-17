@@ -61,10 +61,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             shipment.AddShipmentItem(shipmentItem);
 
-            {
-                var errors = this.Derive().Errors;
-                Assert.DoesNotContain(errors, e => e is DerivationErrorRequired);
-            }
+            this.Derive();
 
             shipmentItem.RemoveNextSerialisedItemAvailability();
 
@@ -344,10 +341,7 @@ namespace Allors.Database.Domain.Tests
             shipmentItem.Part = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
 
             var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.ShipmentItem.UnitPurchasePrice,
-            }, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.ShipmentItem.UnitPurchasePrice, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
     }
 

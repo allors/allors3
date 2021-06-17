@@ -19,6 +19,7 @@ namespace Allors.Database.Domain
                 m.SalesOrderItem.RolePattern(v => v.SalesOrderItemState),
                 m.SalesOrderItem.RolePattern(v => v.QuantityPendingShipment),
                 m.SalesOrderItem.RolePattern(v => v.QuantityShipped),
+                m.SalesOrderItem.RolePattern(v => v.QuantityOrdered),
                 m.InventoryItem.AssociationPattern(v => v.InventoryItemTransactionsWhereInventoryItem, v => v.SalesOrderItemInventoryAssignmentsWhereInventoryItem.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment),
                 m.InventoryItem.AssociationPattern(v => v.PickListItemsWhereInventoryItem, v => v.SalesOrderItemInventoryAssignmentsWhereInventoryItem.SalesOrderItemInventoryAssignment.SalesOrderItemWhereSalesOrderItemInventoryAssignment),
             };
