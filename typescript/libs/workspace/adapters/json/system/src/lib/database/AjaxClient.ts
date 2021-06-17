@@ -1,4 +1,17 @@
-import { AuthenticationTokenRequest, AuthenticationTokenResponse, PullRequest, PullResponse } from '@allors/protocol/json/system';
+import {
+  AuthenticationTokenRequest,
+  AuthenticationTokenResponse,
+  InvokeRequest,
+  PullRequest,
+  PullResponse,
+  PushRequest,
+  PushResponse,
+  Response,
+  SecurityRequest,
+  SecurityResponse,
+  SyncRequest,
+  SyncResponse,
+} from '@allors/protocol/json/system';
 import { Observable } from 'rxjs';
 import { ajax, AjaxRequest } from 'rxjs/ajax';
 import { map, tap } from 'rxjs/operators';
@@ -41,16 +54,32 @@ export class AjaxClient implements Client {
   }
 
   pull(pullRequest: PullRequest): Observable<PullResponse> {
-    const ajaxRequest: AjaxRequest = {
-      url: `${this.baseUrl}pull`,
+    return this.post('pull', pullRequest);
+  }
+
+  sync(syncRequest: SyncRequest): Observable<SyncResponse> {
+    return this.post('sync', syncRequest);
+  }
+
+  push(pushRequest: PushRequest): Observable<PushResponse> {
+    return this.post('sync', pushRequest);
+  }
+  invoke(invokeRequest: InvokeRequest): Observable<Response> {
+    return this.post('sync', invokeRequest);
+  }
+  security(securityRequest: SecurityRequest): Observable<SecurityResponse> {
+    return this.post('sync', securityRequest);
+  }
+
+  private post<T>(relativeUrl: string, body: any) {
+    return ajax({
+      url: `${this.baseUrl}${relativeUrl}`,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${this.jwtToken}`,
       },
-      body: pullRequest,
-    };
-
-    return ajax(ajaxRequest).pipe(map((ajaxResponse) => ajaxResponse.response as PullResponse));
+      body,
+    }).pipe(map((ajaxResponse) => ajaxResponse.response as T));
   }
 }

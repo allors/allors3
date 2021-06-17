@@ -180,42 +180,18 @@ export class Database {
   // }
 
   sync(syncRequest: SyncRequest): Observable<SyncResponse> {
-    // var uri = new Uri("sync", UriKind.Relative);
-    // var response = await this.PostAsJsonAsync(uri, syncRequest);
-    // _ = response.EnsureSuccessStatusCode();
-    // return await this.ReadAsAsync<SyncResponse>(response);
-
-    // TODO:
-    return undefined;
+    return this.client.sync(syncRequest);
   }
 
   push(pushRequest: PushRequest): Observable<PushResponse> {
-    // var uri = new Uri("push", UriKind.Relative);
-    // var response = await this.PostAsJsonAsync(uri, pushRequest);
-    // _ = response.EnsureSuccessStatusCode();
-    // return await this.ReadAsAsync<PushResponse>(response);
-
-    // TODO:
-    return undefined;
+    return this.client.push(pushRequest);
   }
 
   invoke(invokeRequest: InvokeRequest): Observable<InvokeResponse> {
-    // var uri = new Uri("invoke", UriKind.Relative);
-    // var response = await this.PostAsJsonAsync(uri, invokeRequest);
-    // _ = response.EnsureSuccessStatusCode();
-    // return await this.ReadAsAsync<InvokeResponse>(response);
-
-    // TODO:
-    return undefined;
+    return this.client.invoke(invokeRequest);
   }
 
   security(securityRequest: SecurityRequest): Observable<SecurityResponse> {
-    // var uri = new Uri("security", UriKind.Relative);
-    // var response = await this.PostAsJsonAsync(uri, securityRequest);
-    // _ = response.EnsureSuccessStatusCode();
-    // return await this.ReadAsAsync<SecurityResponse>(response);
-
-    // TODO:
-    return undefined;
+    return this.client.security(securityRequest);
   }
 }
