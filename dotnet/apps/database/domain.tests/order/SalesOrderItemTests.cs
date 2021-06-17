@@ -1597,10 +1597,7 @@ namespace Allors.Database.Domain.Tests
             item.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
             var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.SalesOrderItem.NextSerialisedItemAvailability,
-            }, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.SalesOrderItem.NextSerialisedItemAvailability, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -1939,10 +1936,9 @@ namespace Allors.Database.Domain.Tests
 
             item.ReservedFromNonSerialisedInventoryItem = nonSerialisedInventoryItem;
 
-            var error = (DerivationErrorAtMostOne)this.Derive().Errors.Single();
-            Assert.Equal(2, error.RoleTypes.Length);
-            Assert.Contains(this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem, error.RoleTypes);
-            Assert.Contains(this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem, error.RoleTypes);
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            Assert.Contains(this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem, errors.SelectMany(v => v.RoleTypes));
+            Assert.Contains(this.M.SalesOrderItem.ReservedFromSerialisedInventoryItem, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]
@@ -2059,8 +2055,8 @@ namespace Allors.Database.Domain.Tests
 
             item.ReservedFromNonSerialisedInventoryItem = anotherNonSerialisedInventoryItem;
 
-            var error = this.Derive().Errors.Single();
-            Assert.Contains(ErrorMessages.ReservedFromNonSerialisedInventoryItem, error.Message);
+            var errors = this.Derive().Errors;
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.ReservedFromNonSerialisedInventoryItem));
         }
 
         [Fact]

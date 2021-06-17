@@ -2083,10 +2083,7 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
             var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.SalesInvoiceItem.NextSerialisedItemAvailability,
-            }, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.SalesInvoiceItem.NextSerialisedItemAvailability, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]

@@ -1124,10 +1124,7 @@ namespace Allors.Database.Domain.Tests
             timeEntry.RemoveBillingFrequency();
 
             var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.TimeEntry.BillingFrequency,
-            }, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.TimeEntry.BillingFrequency, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
