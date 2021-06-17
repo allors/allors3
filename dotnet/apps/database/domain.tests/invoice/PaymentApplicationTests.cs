@@ -72,9 +72,10 @@ namespace Allors.Database.Domain.Tests
                                         .WithAmountApplied(partialAmount)
                                         .Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtLeastOne>().ToList();
-            Assert.Contains(this.M.PaymentApplication.AmountApplied, errors.SelectMany(v => v.RoleTypes).Distinct());
-            Assert.Contains(this.M.InvoiceItem.AmountPaid, errors.SelectMany(v => v.RoleTypes).Distinct());
+            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>().ToList();
+            Assert.Contains(this.M.PaymentApplication.Invoice, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.PaymentApplication.InvoiceItem, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.PaymentApplication.BillingAccount, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -92,7 +93,9 @@ namespace Allors.Database.Domain.Tests
 
             // TODO: Shouldn't this be Required?
             var errors = this.Derive().Errors.OfType<DerivationErrorAtLeastOne>();
-            Assert.Contains(this.M.PaymentApplication.AmountApplied, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.PaymentApplication.Invoice, errors.SelectMany(v => v.RoleTypes));
+            Assert.Contains(this.M.PaymentApplication.InvoiceItem, errors.SelectMany(v => v.RoleTypes));
+            Assert.Contains(this.M.PaymentApplication.BillingAccount, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]

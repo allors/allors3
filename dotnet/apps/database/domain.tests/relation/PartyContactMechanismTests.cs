@@ -9,6 +9,7 @@ namespace Allors.Database.Domain.Tests
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Database.Derivations;
+    using Allors.Database.Domain.TestPopulation;
     using Derivations.Errors;
     using Meta;
     using Xunit;
@@ -74,7 +75,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedContactPurposesThrowValidationError()
         {
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice).WithUseAsDefault(true).Build();
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice)
+                .WithContactMechanism(new EmailAddressBuilder(this.Transaction).WithDefaults().Build())
+                .WithUseAsDefault(true)
+                .Build();
 
             {
                 var errors = this.Derive().Errors;
@@ -85,10 +90,7 @@ namespace Allors.Database.Domain.Tests
 
             {
                 var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
-                Assert.Equal(new IRoleType[]
-                {
-                    this.M.PartyContactMechanism.ContactPurposes,
-                }, errors.SelectMany(v => v.RoleTypes).Distinct());
+                Assert.Contains(this.M.PartyContactMechanism.ContactPurposes, errors.SelectMany(v => v.RoleTypes));
             }
         }
 

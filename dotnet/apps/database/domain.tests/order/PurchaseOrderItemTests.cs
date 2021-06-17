@@ -741,6 +741,7 @@ namespace Allors.Database.Domain.Tests
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
                 .WithPart(nonSerialisedPart)
+                .WithQuantityOrdered(1)
                 .Build();
             this.Derive();
 

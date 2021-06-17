@@ -9,6 +9,7 @@ namespace Allors.Database.Domain.Tests
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Database.Derivations;
+    using Resources;
     using Xunit;
 
     public class InventoryItemTransactionOnBuildTests : DomainTest, IClassFixture<Fixture>
@@ -227,7 +228,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var errors = this.Derive().Errors.ToList();
-            Assert.Contains(errors, e => e.Message.Contains("Serialised Inventory Items only accept Quantities of -1, 0, and 1."));
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidTransaction));
         }
 
         [Fact]
@@ -245,7 +246,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var errors = this.Derive().Errors.ToList();
-            Assert.Contains(errors, e => e.Message.Contains("The Serial Number is required for Inventory Item Transactions involving Serialised Inventory Items."));
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SerialNumberRequired));
         }
 
         [Fact]
@@ -263,7 +264,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var errors = this.Derive().Errors.ToList();
-            Assert.Contains(errors, e => e.Message.Contains("Invalid transaction"));
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidTransaction));
         }
 
         [Fact]
@@ -281,7 +282,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var errors = this.Derive().Errors.ToList();
-            Assert.Contains(errors, e => e.Message.Contains("Invalid transaction"));
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidTransaction));
         }
 
         [Fact]
@@ -305,9 +306,8 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(1)
                 .Build();
 
-            var expectedMessage = $"{inventoryItemTransaction} { this.M.InventoryItemTransaction.SerialisedItem} ";
             var errors = this.Derive().Errors.ToList();
-            Assert.Contains(errors, e => e.Message.Contains(expectedMessage));
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SerializedItemAlreadyInInventory));
         }
     }
 }

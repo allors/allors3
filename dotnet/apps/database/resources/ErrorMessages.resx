@@ -276,4 +276,16 @@
   <data name="CurrencyNotAllowed" xml:space="preserve">
     <value>Currency is missing exchange rate</value>
   </data>
+  <data name="InvalidInventoryItemQuantity" xml:space="preserve">
+    <value>Serialised Inventory Items only accept Quantities of -1, 0, and 1</value>
+  </data>
+  <data name="InvalidTransaction" xml:space="preserve">
+    <value>Invalid transaction</value>
+  </data>
+  <data name="SerializedItemAlreadyInInventory" xml:space="preserve">
+    <value>Serialised item already in inventory</value>
+  </data>
+  <data name="SerialNumberRequired" xml:space="preserve">
+    <value>The Serial Number is required for Inventory Item Transactions involving Serialised Inventory Items.</value>
+  </data>
 </root>

@@ -169,10 +169,7 @@ namespace Allors.Database.Domain.Tests
             postalAddress.RemoveLocality();
 
             var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.PostalAddress.Locality,
-            }, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.PostalAddress.Locality, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
     }
 }

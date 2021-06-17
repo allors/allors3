@@ -2038,12 +2038,6 @@ namespace Allors.Database.Domain.Tests
             var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
             Assert.Contains(this.M.SalesInvoiceItem.Product, errors.SelectMany(v => v.RoleTypes));
             Assert.Contains(this.M.SalesInvoiceItem.ProductFeatures, errors.SelectMany(v => v.RoleTypes));
-            //Assert.Equal(new IRoleType[]
-            //{
-            //    this.M.SalesInvoiceItem.Product,
-            //    this.M.SalesInvoiceItem.ProductFeatures,
-            //    this.M.SalesInvoiceItem.Part,
-            //}, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -2058,11 +2052,8 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
             var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.SalesInvoiceItem.SerialisedItem,
-                this.M.SalesInvoiceItem.ProductFeatures,
-            }, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.SalesInvoiceItem.SerialisedItem, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.SalesInvoiceItem.ProductFeatures, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -2077,11 +2068,8 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
             var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.SalesInvoiceItem.SerialisedItem,
-                this.M.SalesInvoiceItem.Part,
-            }, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.SalesInvoiceItem.SerialisedItem, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.SalesInvoiceItem.Part, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]

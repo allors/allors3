@@ -277,11 +277,29 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Serialised Inventory Items only accept Quantities of -1, 0, and 1.
+        /// </summary>
+        public static string InvalidInventoryItemQuantity {
+            get {
+                return ResourceManager.GetString("InvalidInventoryItemQuantity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Quantity is not valid.
         /// </summary>
         public static string InvalidQuantity {
             get {
                 return ResourceManager.GetString("InvalidQuantity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid transaction.
+        /// </summary>
+        public static string InvalidTransaction {
+            get {
+                return ResourceManager.GetString("InvalidTransaction", resourceCulture);
             }
         }
         
@@ -493,11 +511,29 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Serialised item already in inventory.
+        /// </summary>
+        public static string SerializedItemAlreadyInInventory {
+            get {
+                return ResourceManager.GetString("SerializedItemAlreadyInInventory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Serialized item is unique. Quantity must be equal to 1.
         /// </summary>
         public static string SerializedItemQuantity {
             get {
                 return ResourceManager.GetString("SerializedItemQuantity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Serial Number is required for Inventory Item Transactions involving Serialised Inventory Items..
+        /// </summary>
+        public static string SerialNumberRequired {
+            get {
+                return ResourceManager.GetString("SerialNumberRequired", resourceCulture);
             }
         }
         

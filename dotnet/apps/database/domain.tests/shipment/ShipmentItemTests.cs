@@ -86,19 +86,13 @@ namespace Allors.Database.Domain.Tests
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).Build();
             shipment.AddShipmentItem(shipmentItem);
 
-            {
-                var errors = this.Derive().Errors;
-                Assert.DoesNotContain(errors, e => e is DerivationErrorRequired);
-            }
+            this.Derive();
 
             shipmentItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
             {
                 var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
-                Assert.Equal(new IRoleType[]
-                {
-                    this.M.ShipmentItem.NextSerialisedItemAvailability,
-                }, errors.SelectMany(v => v.RoleTypes).Distinct());
+                Assert.Contains(this.M.ShipmentItem.NextSerialisedItemAvailability, errors.SelectMany(v => v.RoleTypes));
             }
         }
 
