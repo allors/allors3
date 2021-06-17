@@ -2,7 +2,6 @@
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
-
 namespace Allors.Database.Domain
 {
     using System;
@@ -10,6 +9,7 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Meta;
     using Derivations.Rules;
+    using Resources;
 
     public class InventoryItemTransactionRule : Rule
     {
@@ -30,37 +30,27 @@ namespace Allors.Database.Domain
                 {
                     if (@this.Quantity != 1 && @this.Quantity != -1 && @this.Quantity != 0)
                     {
-                        // TODO: Move text to Resources
-                        var message = "Serialised Inventory Items only accept Quantities of -1, 0, and 1.";
-                        validation.AddError(@this, @this.Meta.Quantity, message);
+                        validation.AddError(@this, @this.Meta.Quantity, ErrorMessages.InvalidInventoryItemQuantity);
                     }
 
                     if (!@this.ExistSerialisedItem)
                     {
-                        // TODO: Move text to Resources
-                        var message = "The Serial Number is required for Inventory Item Transactions involving Serialised Inventory Items.";
-                        validation.AddError(@this, @this.Meta.SerialisedItem, message);
+                        validation.AddError(@this, @this.Meta.SerialisedItem, ErrorMessages.SerialNumberRequired);
                     }
 
                     if (@this.Reason.IncreasesQuantityOnHand == true && (@this.Quantity < -1 || @this.Quantity > 1))
                     {
-                        // TODO: Move text to Resources
-                        var message = "Invalid transaction";
-                        validation.AddError(@this, @this.Meta.Reason, message);
+                        validation.AddError(@this, @this.Meta.Reason, ErrorMessages.InvalidTransaction);
                     }
 
                     if (@this.Reason.IncreasesQuantityOnHand == false && (@this.Quantity < -1 || @this.Quantity > 1))
                     {
-                        // TODO: Move text to Resources
-                        var message = "Invalid transaction";
-                        validation.AddError(@this, @this.Meta.Reason, message);
+                        validation.AddError(@this, @this.Meta.Reason, ErrorMessages.InvalidTransaction);
                     }
 
                     if (@this.SerialisedItem?.SerialisedInventoryItemsWhereSerialisedItem.Sum(v => v.Quantity) > 1 )
                     {
-                        // TODO: Move text to Resources
-                        var message = "Serialised item already in inventory";
-                        validation.AddError(@this, @this.Meta.SerialisedItem, message);
+                        validation.AddError(@this, @this.Meta.SerialisedItem, ErrorMessages.SerializedItemAlreadyInInventory);
                     }
                 }
             }

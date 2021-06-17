@@ -264,4 +264,16 @@
   <data name="CurrencyNotAllowed" xml:space="preserve">
     <value>Valuta heeft geen wisselkoers</value>
   </data>
+  <data name="InvalidInventoryItemQuantity" xml:space="preserve">
+    <value>Transactie op een serieel item kan alleen met aantallen -1, 0 of 1</value>
+  </data>
+  <data name="InvalidTransaction" xml:space="preserve">
+    <value>Transactie niet toegestaan</value>
+  </data>
+  <data name="SerializedItemAlreadyInInventory" xml:space="preserve">
+    <value>Serialised item is al in voorraad</value>
+  </data>
+  <data name="SerialNumberRequired" xml:space="preserve">
+    <value>Serienummer is verpicht voor transaction op een serieel item</value>
+  </data>
 </root>

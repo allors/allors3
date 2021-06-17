@@ -154,10 +154,9 @@ namespace Allors.Database.Domain.Tests
         public void GivenBankAccount_WhenValidatingIban_ThenCountryWithoutIbanRulesResultsInValidationError()
         {
             var bankAccount = new BankAccountBuilder(this.Transaction).WithIban("XX330006100519786457841326").Build();
-            var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanValidationUnavailable}";
 
             var errors = this.Derive().Errors.ToList();
-            Assert.Single(errors.FindAll(e => e.Message.Contains(expectedErrorMessage)));
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.IbanValidationUnavailable)));
         }
 
         [Fact]
@@ -215,9 +214,8 @@ namespace Allors.Database.Domain.Tests
 
             bankAccount.Iban = "TR330006100519716457841326";
 
-            var expectedErrorMessage = $"{bankAccount}, {bankAccount.Meta.Iban}, {ErrorMessages.IbanIncorrect}";
             var errors = this.Derive().Errors.ToList();
-            Assert.Single(errors.FindAll(e => e.Message.Contains(expectedErrorMessage)));
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.IbanIncorrect)));
         }
 
         [Fact]

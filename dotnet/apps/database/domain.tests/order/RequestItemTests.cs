@@ -121,11 +121,8 @@ namespace Allors.Database.Domain.Tests
             requestItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
             var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.RequestItem.SerialisedItem,
-                this.M.RequestItem.ProductFeature,
-            }, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.RequestItem.SerialisedItem, errors.SelectMany(v => v.RoleTypes));
+            Assert.Contains(this.M.RequestItem.ProductFeature, errors.SelectMany(v => v.RoleTypes));
         }
 
         [Fact]

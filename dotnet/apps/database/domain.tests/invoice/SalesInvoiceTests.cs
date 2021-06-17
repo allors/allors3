@@ -433,6 +433,8 @@ namespace Allors.Database.Domain.Tests
 
             customer.AddPartyContactMechanism(billingAddress);
 
+            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
+
             this.Transaction.Derive();
 
             var invoice = new SalesInvoiceBuilder(this.Transaction)
@@ -442,9 +444,7 @@ namespace Allors.Database.Domain.Tests
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Transaction).SalesInvoice)
                 .Build();
 
-            new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
-
-            this.Transaction.Derive();
+            this.Derive();
 
             Assert.Equal(this.InternalOrganisation.BillingAddress, invoice.DerivedBilledFromContactMechanism);
         }

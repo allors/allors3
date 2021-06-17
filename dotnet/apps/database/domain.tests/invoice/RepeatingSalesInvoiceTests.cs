@@ -124,7 +124,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
-            Assert.Contains(this.M.RepeatingPurchaseInvoice.DayOfWeek, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.RepeatingSalesInvoice.DayOfWeek, errors.SelectMany(v => v.RoleTypes).Distinct());
 
             Assert.False(this.Derive().HasErrors);
 
@@ -561,7 +561,7 @@ namespace Allors.Database.Domain.Tests
             repeatingInvoice.RemoveDayOfWeek();
 
             var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
-            Assert.Contains(this.M.RepeatingPurchaseInvoice.DayOfWeek, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.RepeatingSalesInvoice.DayOfWeek, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]

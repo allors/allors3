@@ -3279,7 +3279,7 @@ namespace Allors.Database.Domain.Tests
             order.RemoveDerivedShipToAddress();
 
             var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
-            Assert.Contains(this.M.SalesOrder.ShipToCustomer, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.SalesOrder.DerivedShipToAddress, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -3300,7 +3300,7 @@ namespace Allors.Database.Domain.Tests
             order.RemoveDerivedBillToContactMechanism();
 
             var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
-            Assert.Contains(this.M.SalesOrder.ShipToCustomer, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.SalesOrder.DerivedBillToContactMechanism, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]

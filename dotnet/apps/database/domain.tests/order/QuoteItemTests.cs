@@ -196,11 +196,9 @@ namespace Allors.Database.Domain.Tests
             quoteItem.Product = product;
 
             var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.QuoteItem.Product,
-                this.M.QuoteItem.ProductFeature,
-            }, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.QuoteItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.QuoteItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.QuoteItem.WorkEffort, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -222,11 +220,9 @@ namespace Allors.Database.Domain.Tests
             quoteItem.ProductFeature = productFeature;
 
             var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.QuoteItem.Product,
-                this.M.QuoteItem.ProductFeature,
-            }, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.QuoteItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.QuoteItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.QuoteItem.WorkEffort, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -271,11 +267,9 @@ namespace Allors.Database.Domain.Tests
             quoteItem.WorkEffort = workTask;
 
             var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.QuoteItem.Product,
-                this.M.QuoteItem.ProductFeature,
-            }, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.QuoteItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.QuoteItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.QuoteItem.WorkEffort, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
@@ -297,11 +291,10 @@ namespace Allors.Database.Domain.Tests
             quoteItem.SerialisedItem = serialisedItem;
 
             var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
-            Assert.Equal(new IRoleType[]
-            {
-                this.M.QuoteItem.SerialisedItem,
-                this.M.QuoteItem.ProductFeature,
-            }, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.QuoteItem.SerialisedItem, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.QuoteItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.QuoteItem.Deliverable, errors.SelectMany(v => v.RoleTypes).Distinct());
+            Assert.Contains(this.M.QuoteItem.WorkEffort, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
         [Fact]
