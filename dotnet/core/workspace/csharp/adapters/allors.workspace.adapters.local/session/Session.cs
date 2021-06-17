@@ -113,13 +113,13 @@ namespace Allors.Workspace.Adapters.Local
 
             foreach (var databaseObject in pull.DatabaseObjects)
             {
-                if (!this.StrategyByWorkspaceId.TryGetValue(databaseObject.Id, out var strategy))
+                if (this.StrategyByWorkspaceId.TryGetValue(databaseObject.Id, out var strategy))
                 {
-                    this.InstantiateDatabaseStrategy(databaseObject.Id);
+                    ((DatabaseOriginState)strategy.DatabaseOriginState).OnPulled();
                 }
                 else
                 {
-                    ((DatabaseOriginState)strategy.DatabaseOriginState).OnPulled();
+                    this.InstantiateDatabaseStrategy(databaseObject.Id);
                 }
             }
         }
@@ -142,33 +142,16 @@ namespace Allors.Workspace.Adapters.Local
                     var workspaceId = kvp.Key;
                     var databaseId = kvp.Value.Id;
 
-                    var strategy = this.StrategyByWorkspaceId[workspaceId];
-
-                    this.PushToDatabaseTracker.Created.Remove(strategy);
-
-                    this.RemoveStrategy(strategy);
-                    var databaseRecord = this.Workspace.DatabaseConnection.OnPushed(databaseId, strategy.Class);
-                    strategy.DatabasePushResponse(databaseRecord);
-                    this.AddStrategy(strategy);
+                    this.OnDatabasePushResponseNew(workspaceId, databaseId);
                 }
-            }
-
-            if (this.PushToDatabaseTracker.Created?.Count > 0)
-            {
-                throw new Exception("Not all new objects received ids");
             }
 
             this.PushToDatabaseTracker.Created = null;
 
             foreach (var @object in push.Objects)
             {
-                if (!this.StrategyByWorkspaceId.ContainsKey(@object.Id))
-                {
-                    this.InstantiateDatabaseStrategy(@object.Id);
-                }
-
                 var strategy = this.GetStrategy(@object.Id);
-                ((DatabaseOriginState)strategy.DatabaseOriginState).Reset();
+                this.OnDatabasePushResponse(strategy);
             }
 
             return push;

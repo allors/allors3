@@ -334,10 +334,8 @@ namespace Allors.Workspace.Adapters
             };
         }
 
-        public void DatabasePushResponse(DatabaseRecord databaseRecord)
-        {
-            this.Id = databaseRecord.Id;
-            this.DatabaseOriginState.PushResponse(databaseRecord);
-        }
+        public void OnDatabasePushNewId(long newId) => this.Id = newId;
+
+        public void OnDatabasePushResponse(DatabaseRecord databaseRecord) => this.DatabaseOriginState.PushResponse(databaseRecord);
     }
 }

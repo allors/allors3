@@ -78,7 +78,14 @@ namespace Allors.Workspace.Adapters
             return this.DatabaseRecord.IsPermitted(permission);
         }
 
-        public void PushResponse(DatabaseRecord newDatabaseRecord) => this.DatabaseRecord = newDatabaseRecord;
+        public void PushResponse(DatabaseRecord newDatabaseRecord)
+        {
+            this.DatabaseRecord = newDatabaseRecord;
+            this.ChangedRoleByRelationType = null;
+        }
+        public void OnPulled() =>
+            // TODO: check for overwrites
+            this.DatabaseRecord = this.Session.Workspace.DatabaseConnection.GetRecord(this.Id);
 
         protected override void OnChange()
         {

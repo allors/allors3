@@ -19,10 +19,22 @@
     }
   },
   "projects": {
+    "protocol-json-system": {
+      "tags": []
+    },
+    "workspace-adapters-json-system": {
+      "tags": []
+    },
+    "workspace-adapters-json-system-tests": {
+      "tags": []
+    },
     "workspace-domain-core": {
       "tags": []
     },
     "workspace-domain-core-custom": {
+      "tags": []
+    },
+    "workspace-domain-core-generated": {
       "tags": []
     },
     "workspace-domain-core-tests": {
@@ -34,25 +46,19 @@
     "workspace-meta-core": {
       "tags": []
     },
+    "workspace-meta-core-generated": {
+      "tags": []
+    },
     "workspace-meta-core-tests": {
       "tags": []
     },
     "workspace-meta-lazy-system": {
       "tags": []
     },
-    "workspace-meta-system": {
-      "tags": []
-    },
     "workspace-meta-lazy-system-tests": {
       "tags": []
     },
-    "protocol-json-system": {
-      "tags": []
-    },
-    "workspace-adapters-json-system": {
-      "tags": []
-    },
-    "workspace-adapters-json-system-tests": {
+    "workspace-meta-system": {
       "tags": []
     }
   }

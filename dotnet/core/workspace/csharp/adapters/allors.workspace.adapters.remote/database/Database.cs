@@ -200,10 +200,10 @@ namespace Allors.Workspace.Adapters.Remote
                     .Select(v => v.i).ToArray()
             };
 
-        internal DatabaseRecord OnPushed(long id, IClass @class)
+        public override Adapters.DatabaseRecord OnDatabasePushResponse(IClass @class, long id)
         {
             var record = new DatabaseRecord(this, @class, id);
-            this.recordsById[id] = record;
+            this.recordsById[record.Id] = record;
             return record;
         }
 

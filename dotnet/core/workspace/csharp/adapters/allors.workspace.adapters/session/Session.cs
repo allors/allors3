@@ -171,7 +171,7 @@ namespace Allors.Workspace.Adapters
 
             return IsNewId(id) ? this.InstantiateWorkspaceStrategy(id) : null;
         }
-        
+
         public object GetRole(Strategy association, IRoleType roleType)
         {
             var role = this.SessionOriginState.Get(association.Id, roleType);
@@ -270,6 +270,26 @@ namespace Allors.Workspace.Adapters
 
             return result;
         }
+
+        protected void OnDatabasePushResponseNew(long workspaceId, long databaseId)
+        {
+            var strategy = this.StrategyByWorkspaceId[workspaceId];
+            this.PushToDatabaseTracker.Created.Remove(strategy);
+
+            this.RemoveStrategy(strategy);
+            strategy.OnDatabasePushNewId(databaseId);
+            this.AddStrategy(strategy);
+
+            this.OnDatabasePushResponse(strategy);
+
+        }
+
+        protected void OnDatabasePushResponse(Adapters.Strategy strategy)
+        {
+            var databaseRecord = this.Workspace.DatabaseConnection.OnDatabasePushResponse(strategy.Class, strategy.Id);
+            strategy.OnDatabasePushResponse(databaseRecord);
+        }
+
 
         internal static bool IsNewId(long id) => id < 0;
 
