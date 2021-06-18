@@ -286,7 +286,7 @@ namespace Allors.Workspace.Adapters
 
         protected void OnDatabasePushResponse(Adapters.Strategy strategy)
         {
-            var databaseRecord = this.Workspace.DatabaseConnection.OnDatabasePushResponse(strategy.Class, strategy.Id);
+            var databaseRecord = this.Workspace.DatabaseConnection.OnPushResponse(strategy.Class, strategy.Id);
             strategy.OnDatabasePushResponse(databaseRecord);
         }
 

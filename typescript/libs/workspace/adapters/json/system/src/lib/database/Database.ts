@@ -1,48 +1,55 @@
 import { PullResponse, SecurityRequest, SyncRequest, SyncResponse, SecurityResponse, PullRequest, PushRequest, PushResponse, InvokeRequest, InvokeResponse } from '@allors/protocol/json/system';
-import { Operations } from '@allors/workspace/domain/system';
+import { IWorkspace, IWorkspaceServices, Operations } from '@allors/workspace/domain/system';
 import { Class, MetaPopulation, MethodType, OperandType, RelationType } from '@allors/workspace/meta/system';
 import { Observable } from 'rxjs';
 import { equals, properSubset } from '../collections/Numbers';
-import { Identities } from '../Identities';
 import { Client } from './Client';
-import { DatabaseRecord } from './DatabaseObject';
 import { AccessControl } from './Security/AccessControl';
-import { Permission } from './Security/Permission';
 import { ResponseContext } from './Security/ResponseContext';
 import { MapMap } from '../collections/MapMap';
+import { DatabaseRecord } from './DatabaseRecord';
+import { Workspace } from '../workspace/Workspace';
+
+export type ServicesBuilder = () => IWorkspaceServices;
+
+export type IdGenerator = () => number;
 
 export class Database {
-  objectsById: Map<number, DatabaseRecord>;
+  recordsById: Map<number, DatabaseRecord>;
 
   accessControlById: Map<number, AccessControl>;
-  permissionById: Map<number, Permission>;
+  permissions: Set<number>;
 
-  readPermissionByOperandTypeByClass: MapMap<Class, OperandType, Permission>;
-  writePermissionByOperandTypeByClass: MapMap<Class, OperandType, Permission>;
-  executePermissionByOperandTypeByClass: MapMap<Class, OperandType, Permission>;
+  readPermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
+  writePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
+  executePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
 
-  constructor(public metaPopulation: MetaPopulation, public client: Client, public identities: Identities) {
-    this.objectsById = new Map();
+  constructor(public metaPopulation: MetaPopulation, public client: Client, private servicesBuilder: ServicesBuilder, private idGenerator: IdGenerator) {
+    this.recordsById = new Map();
 
     this.accessControlById = new Map();
-    this.permissionById = new Map();
+    this.permissions = new Set();
 
     this.readPermissionByOperandTypeByClass = new MapMap();
     this.writePermissionByOperandTypeByClass = new MapMap();
     this.executePermissionByOperandTypeByClass = new MapMap();
   }
 
-  pushResponse(identity: number, cls: Class): DatabaseRecord {
-    const databaseObject = new DatabaseRecord(this, identity, cls);
-    this.objectsById.set(identity, databaseObject);
-    return databaseObject;
+  createWorkspace() : IWorkspace {
+    return new Workspace(this, this.servicesBuilder, this.idGenerator);
+  }
+  
+  onPushResponse(identity: number, cls: Class): DatabaseRecord {
+    const record = new DatabaseRecord(this, cls, identity, 0);
+    this.recordsById.set(identity, record);
+    return record;
   }
 
-  syncResponse(syncResponse: SyncResponse): SecurityRequest | null {
-    const ctx = new ResponseContext(this.accessControlById, this.permissionById);
+  onSyncResponse(syncResponse: SyncResponse): SecurityRequest | null {
+    const ctx = new ResponseContext(this);
     for (const syncResponseObject of syncResponse.o) {
       const databaseObjects = DatabaseRecord.fromResponse(this, ctx, syncResponseObject);
-      this.objectsById.set(databaseObjects.identity, databaseObjects);
+      this.recordsById.set(databaseObjects.id, databaseObjects);
     }
 
     if (ctx.missingAccessControlIds.size > 0 || ctx.missingPermissionIds.size > 0) {
@@ -55,46 +62,6 @@ export class Database {
     return null;
   }
 
-  diff(response: PullResponse): SyncRequest {
-    return {
-      o: response.p
-        .filter((v) => {
-          const obj = this.objectsById.get(v.i);
-
-          if (!obj) {
-            return true;
-          }
-
-          if (obj.version === v.v) {
-            return true;
-          }
-
-          if (!equals(v.a, obj.accessControlIds)) {
-            if (properSubset(v.a, obj.accessControlIds)) {
-              obj.updateAccessControlIds(v.a);
-            } else {
-              return true;
-            }
-          }
-
-          if (!equals(v.d, obj.deniedPermissionIds)) {
-            if (properSubset(v.d, obj.deniedPermissionIds)) {
-              obj.updateDeniedPermissionIds(v.d);
-            } else {
-              return true;
-            }
-          }
-
-          return false;
-        })
-        .map((v) => v.i),
-    };
-  }
-
-  get(identity: number): DatabaseRecord | undefined {
-    return this.objectsById.get(identity);
-  }
-
   securityResponse(securityResponse: SecurityResponse): SecurityRequest | undefined {
     if (securityResponse.p != null) {
       for (const syncResponsePermission of securityResponse.p) {
@@ -103,17 +70,18 @@ export class Database {
         const metaObject = this.metaPopulation.metaObjectByTag.get(syncResponsePermission[2]);
         const operandType: OperandType = (metaObject as RelationType)?.roleType ?? (metaObject as MethodType);
         const operation = syncResponsePermission[3];
-        const permission = new Permission(id, cls, operandType, operation);
-        this.permissionById.set(id, permission);
+        
+        this.permissions.add(id);
+
         switch (operation) {
           case Operations.Read:
-            this.readPermissionByOperandTypeByClass.set(cls, operandType, permission);
+            this.readPermissionByOperandTypeByClass.set(cls, operandType, id);
             break;
           case Operations.Write:
-            this.writePermissionByOperandTypeByClass.set(cls, operandType, permission);
+            this.writePermissionByOperandTypeByClass.set(cls, operandType, id);
             break;
           case Operations.Execute:
-            this.executePermissionByOperandTypeByClass.set(cls, operandType, permission);
+            this.executePermissionByOperandTypeByClass.set(cls, operandType, id);
             break;
         }
       }
@@ -125,7 +93,7 @@ export class Database {
         const id = syncResponseAccessControl.i;
         const version = syncResponseAccessControl.v;
         const permissionsIds = syncResponseAccessControl.p?.map((v) => {
-          if (this.permissionById.has(v)) {
+          if (this.permissions.has(v)) {
             return v;
           }
 
@@ -136,7 +104,7 @@ export class Database {
 
         const permissionIdSet = permissionsIds != null ? new Set(permissionsIds) : new Set<number>();
 
-        this.accessControlById.set(id, new AccessControl(id, version, permissionIdSet));
+        this.accessControlById.set(id, new AccessControl(version, permissionIdSet));
       }
     }
 
@@ -149,7 +117,37 @@ export class Database {
     return undefined;
   }
 
-  getPermission(cls: Class, operandType: OperandType, operation: Operations): Permission | undefined {
+  onPullResonse(response: PullResponse): SyncRequest {
+    return {
+      o: response.p
+        .filter((v) => {
+          const record = this.recordsById.get(v.i);
+
+          if (!record) {
+            return true;
+          }
+
+          if (record.version !== v.v) {
+            return true;
+          }
+
+          if (!equals(record.accessControlIds, v.a))
+          {
+              return true;
+          }
+
+          if (!equals(record.deniedPermissionIds, v.d))
+          {
+              return true;
+          }
+
+          return false;
+        })
+        .map((v) => v.i),
+    };
+  }
+  
+  getPermission(cls: Class, operandType: OperandType, operation: Operations): number | undefined {
     switch (operation) {
       case Operations.Read:
         return this.readPermissionByOperandTypeByClass.get(cls, operandType);
@@ -158,10 +156,6 @@ export class Database {
       default:
         return this.executePermissionByOperandTypeByClass.get(cls, operandType);
     }
-  }
-
-  pull(pullRequest: PullRequest): Observable<PullResponse> {
-    return this.client.pull(pullRequest);
   }
 
   // pull(name: string, values?: Map<string, object>, objects: Map<string, IObject>, collections: Map<string, IObject[]>): Observable<PullResponse> {
@@ -178,6 +172,14 @@ export class Database {
   //   // TODO:
   //   return undefined;
   // }
+
+  getRecord(identity: number): DatabaseRecord | undefined {
+    return this.recordsById.get(identity);
+  }
+
+  pull(pullRequest: PullRequest): Observable<PullResponse> {
+    return this.client.pull(pullRequest);
+  }
 
   sync(syncRequest: SyncRequest): Observable<SyncResponse> {
     return this.client.sync(syncRequest);

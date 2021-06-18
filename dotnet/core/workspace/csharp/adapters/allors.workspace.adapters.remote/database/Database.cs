@@ -33,17 +33,17 @@ namespace Allors.Workspace.Adapters.Remote
         protected DatabaseConnection(Adapters.Configuration configuration, Func<IWorkspaceServices> servicesBuilder, WorkspaceIdGenerator workspaceIdGenerator, INumbers numbers) : base(configuration)
         {
             this.Numbers = numbers;
-            this.AccessControlById = new Dictionary<long, AccessControl>();
-
             this.workspaceIdGenerator = workspaceIdGenerator;
             this.servicesBuilder = servicesBuilder;
+
             this.recordsById = new Dictionary<long, DatabaseRecord>();
+
+            this.AccessControlById = new Dictionary<long, AccessControl>();
+            this.Permissions = new HashSet<long>();
 
             this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, long>>();
             this.writePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, long>>();
             this.executePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, long>>();
-
-            this.Permissions = new HashSet<long>();
         }
 
         public abstract IUnitConvert UnitConvert { get; }
@@ -56,7 +56,14 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal Dictionary<long, AccessControl> AccessControlById { get; }
 
-        internal SecurityRequest SyncResponse(SyncResponse syncResponse)
+        public override Adapters.DatabaseRecord OnPushResponse(IClass @class, long id)
+        {
+            var record = new DatabaseRecord(this, @class, id);
+            this.recordsById[record.Id] = record;
+            return record;
+        }
+
+        internal SecurityRequest OnSyncResponse(SyncResponse syncResponse)
         {
             var ctx = new ResponseContext(this);
             foreach (var syncResponseObject in syncResponse.o)
@@ -88,6 +95,7 @@ namespace Allors.Workspace.Adapters.Remote
                     var metaObject = this.Configuration.MetaPopulation.FindByTag((int)syncResponsePermission[2]);
                     var operandType = (IOperandType)(metaObject as IRelationType)?.RoleType ?? (IMethodType)metaObject;
                     var operation = (Operations)syncResponsePermission[3];
+
                     this.Permissions.Add(id);
 
                     switch (operation)
@@ -167,28 +175,28 @@ namespace Allors.Workspace.Adapters.Remote
             return null;
         }
 
-        internal SyncRequest Diff(PullResponse response) =>
+        internal SyncRequest OnPullResponse(PullResponse response) =>
             new SyncRequest
             {
                 o = response.p
                     .Where(v =>
                     {
-                        if (!this.recordsById.TryGetValue(v.i, out var rec))
+                        if (!this.recordsById.TryGetValue(v.i, out var @record))
                         {
                             return true;
                         }
 
-                        if (!rec.Version.Equals(v.v))
+                        if (!@record.Version.Equals(v.v))
                         {
                             return true;
                         }
 
-                        if (!this.Numbers.AreEqual(rec.AccessControlIds, v.a))
+                        if (!this.Numbers.AreEqual(@record.AccessControlIds, v.a))
                         {
                             return true;
                         }
 
-                        if (!this.Numbers.AreEqual(rec.DeniedPermissions, v.d))
+                        if (!this.Numbers.AreEqual(@record.DeniedPermissions, v.d))
                         {
                             return true;
                         }
@@ -199,13 +207,6 @@ namespace Allors.Workspace.Adapters.Remote
                     })
                     .Select(v => v.i).ToArray()
             };
-
-        public override Adapters.DatabaseRecord OnDatabasePushResponse(IClass @class, long id)
-        {
-            var record = new DatabaseRecord(this, @class, id);
-            this.recordsById[record.Id] = record;
-            return record;
-        }
 
         public override long GetPermission(IClass @class, IOperandType operandType, Operations operation)
         {

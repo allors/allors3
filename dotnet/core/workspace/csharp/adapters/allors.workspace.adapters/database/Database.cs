@@ -41,6 +41,6 @@ namespace Allors.Workspace.Adapters
             return emptyArray;
         }
 
-        public abstract DatabaseRecord OnDatabasePushResponse(IClass @class, long id);
+        public abstract DatabaseRecord OnPushResponse(IClass @class, long id);
     }
 }

@@ -88,7 +88,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         private async Task<IPullResult> OnPull(PullResponse pullResponse)
         {
-            var syncRequest = this.Workspace.DatabaseConnection.Diff(pullResponse);
+            var syncRequest = this.Workspace.DatabaseConnection.OnPullResponse(pullResponse);
             if (syncRequest.o.Length > 0)
             {
                 await this.Sync(syncRequest);
@@ -113,7 +113,7 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var database = (DatabaseConnection)base.Workspace.DatabaseConnection;
             var syncResponse = await database.Sync(syncRequest);
-            var securityRequest = database.SyncResponse(syncResponse);
+            var securityRequest = database.OnSyncResponse(syncResponse);
 
             foreach (var databaseObject in syncResponse.o)
             {

@@ -287,7 +287,7 @@ export class Session implements ISession {
         this.newDatabaseStrategies.remove(strategy);
         this.removeStrategy(strategy);
 
-        var databaseObject = this.database.pushResponse(databaseId, strategy.Class);
+        var databaseObject = this.database.onPushResponse(databaseId, strategy.Class);
         strategy.databasePushResponse(databaseObject);
 
         this.existingDatabaseStrategies.add(strategy);
@@ -313,7 +313,7 @@ export class Session implements ISession {
   }
 
   instantiateDatabaseObject(identity: number): Strategy {
-    var databaseObject = this.database.get(identity);
+    var databaseObject = this.database.getRecord(identity);
     var strategy = new Strategy(this, databaseObject);
     this.existingDatabaseStrategies.add(strategy);
     this.addStrategy(strategy);
@@ -338,7 +338,7 @@ export class Session implements ISession {
   }
 
   onPull(pullResponse: PullResponse): Observable<IPullResult> {
-    var syncRequest = this.database.diff(pullResponse);
+    var syncRequest = this.database.onPullResonse(pullResponse);
     if (syncRequest.o.length > 0) {
       await this.sync(syncRequest);
     }
@@ -354,7 +354,7 @@ export class Session implements ISession {
 
   sync(syncRequest: SyncRequest): Observable<unknown> {
     var syncResponse = await this.database.sync(syncRequest);
-    var securityRequest = this.database.syncResponse(syncResponse);
+    var securityRequest = this.database.onSyncResponse(syncResponse);
 
     if (securityRequest != null) {
       var securityResponse = await this.database.security(securityRequest);

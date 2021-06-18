@@ -1,5 +1,5 @@
-import { Numbers } from "../../collections/Numbers";
+import { Numbers } from '../../collections/Numbers';
 
 export class AccessControl {
-  constructor(public version: number, public permissionIds: Numbers) {}
+  constructor(public version: number, public permissionIds: Set<number>) {}
 }
