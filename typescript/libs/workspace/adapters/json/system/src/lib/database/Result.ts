@@ -14,15 +14,15 @@ export abstract class Result implements IResult {
   }
 
   get versionErrors(): IObject[] {
-    return this.session.getMany<IObject>(this.response._v);
+    return this.session.getMany(this.response._v);
   }
 
   get accessErrors(): IObject[] {
-    return this.session.getMany<IObject>(this.response._a);
+    return this.session.getMany(this.response._a);
   }
 
   get missingErrors(): IObject[] {
-    return this.session.getMany<IObject>(this.response._m);
+    return this.session.getMany(this.response._m);
   }
 
   get derivationErrors(): IDerivationError[] {

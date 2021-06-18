@@ -1,37 +1,27 @@
 import { ISession, IWorkspace, IWorkspaceServices } from '@allors/workspace/domain/system';
-import { Class, MetaPopulation, RelationType } from '@allors/workspace/meta/system';
-import { Client } from '../Database/Client';
+import { Class, RelationType } from '@allors/workspace/meta/system';
 import { Database } from '../Database/Database';
 import { Session } from '../Session/Session';
-import { Identities } from '../Identities';
-import { ObjectFactory } from '../ObjectFactory';
 import { WorkspaceObject } from './WorkspaceObject';
 
 export class Workspace implements IWorkspace {
-  database: Database;
-
-  objectFactory: ObjectFactory;
-
   workspaceClassByWorkspaceId: Map<number, Class>;
 
   workspaceIdsByWorkspaceClass: Map<Class, Set<number>>;
 
   private readonly objectById: Map<number, WorkspaceObject>;
 
-  constructor(public name: string, public metaPopulation: MetaPopulation, public lifecycle: IWorkspaceServices, private client: Client) {
-    this.objectFactory = new ObjectFactory(this.metaPopulation);
-    this.database = new Database(this.metaPopulation, client, new Identities());
-
+  constructor(public database: Database, public services: IWorkspaceServices) {
     this.workspaceClassByWorkspaceId = new Map();
     this.workspaceIdsByWorkspaceClass = new Map();
 
     this.objectById = new Map();
 
-    this.lifecycle.onInit(this);
+    this.services.onInit(this);
   }
 
   createSession(): ISession {
-    return new Session(this, this.lifecycle.createSessionServices());
+    return new Session(this, this.services.createSessionServices());
   }
 
   get(identity: number): WorkspaceObject | undefined {

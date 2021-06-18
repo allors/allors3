@@ -11,8 +11,8 @@ namespace Allors.Workspace.Adapters.Remote
 
     public abstract class Result : IResult
     {
-        private readonly Response response;
         private readonly ISession session;
+        private readonly Response response;
 
         private IDerivationError[] derivationErrors;
 

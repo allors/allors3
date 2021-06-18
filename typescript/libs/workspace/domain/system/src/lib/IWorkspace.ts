@@ -1,16 +1,11 @@
-import { MetaPopulation } from "@allors/workspace/meta/system";
-import { IObjectFactory } from "./IObjectFactory";
-import { ISession } from "./ISession";
-import { IWorkspaceServices } from "./state/IWorkspaceServices";
+import { ISession } from './ISession';
+import { IWorkspaceServices } from './state/IWorkspaceServices';
 
 export interface IWorkspace {
-  name: string;
 
-  metaPopulation: MetaPopulation;
+  database: IDatabase;
 
-  objectFactory: IObjectFactory;
-
-  lifecycle: IWorkspaceServices;
+  services: IWorkspaceServices;
 
   createSession(): ISession;
 }

@@ -9,6 +9,7 @@ import { ResponseContext } from './Security/ResponseContext';
 import { MapMap } from '../collections/MapMap';
 import { DatabaseRecord } from './DatabaseRecord';
 import { Workspace } from '../workspace/Workspace';
+import { Configuration } from '../Configuration';
 
 export type ServicesBuilder = () => IWorkspaceServices;
 
@@ -24,7 +25,7 @@ export class Database {
   writePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
   executePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
 
-  constructor(public metaPopulation: MetaPopulation, public client: Client, private servicesBuilder: ServicesBuilder, private idGenerator: IdGenerator) {
+  constructor(public configuration: Configuration, public client: Client, private servicesBuilder: ServicesBuilder, private idGenerator: IdGenerator) {
     this.recordsById = new Map();
 
     this.accessControlById = new Map();
@@ -36,7 +37,7 @@ export class Database {
   }
 
   createWorkspace() : IWorkspace {
-    return new Workspace(this, this.servicesBuilder, this.idGenerator);
+    return new Workspace(this, this.servicesBuilder());
   }
   
   onPushResponse(identity: number, cls: Class): DatabaseRecord {
