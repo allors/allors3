@@ -1,7 +1,7 @@
 import { MetaPopulation } from "@allors/workspace/meta/system";
 import { IObjectFactory } from "./IObjectFactory";
 import { ISession } from "./ISession";
-import { IWorkspaceLifecycle } from "./state/IWorkspaceLifecycle";
+import { IWorkspaceServices } from "./state/IWorkspaceServices";
 
 export interface IWorkspace {
   name: string;
@@ -10,7 +10,7 @@ export interface IWorkspace {
 
   objectFactory: IObjectFactory;
 
-  lifecycle: IWorkspaceLifecycle;
+  lifecycle: IWorkspaceServices;
 
   createSession(): ISession;
 }

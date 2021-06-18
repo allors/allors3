@@ -8,6 +8,7 @@ export * from './lib/database/AjaxClient';
 
 export * from './lib/Identities';
 
+export * from './lib/workspace/Workspace';
 
 // export * from './lib/database/invoke/InvokeResult';
 // export * from './lib/database/pull/PullResult';

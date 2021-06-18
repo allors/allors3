@@ -1,5 +1,5 @@
 import { ExtentKind, PullRequest } from '@allors/protocol/json/system';
-import { Database } from '@allors/workspace/adapters/json/system';
+import { Database, Identities } from '@allors/workspace/adapters/json/system';
 import { M } from '@allors/workspace/meta/core';
 import { Fixture } from '../Fixture';
 
@@ -12,7 +12,7 @@ describe('Database', () => {
     fixture = new Fixture();
     await fixture.init();
     m = fixture.m;
-    database = fixture.database;
+    database = new Database(m, fixture.client, new Identities());
   });
 
   it('call pull', async () => {

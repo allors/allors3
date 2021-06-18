@@ -1,5 +1,5 @@
 import { PullResponse, PushRequest, PushResponse, SyncRequest } from '@allors/protocol/json/system';
-import { IChangeSet, IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, ISession, ISessionLifecycle, IStrategy, Method, Procedure, Pull } from '@allors/workspace/domain/system';
+import { IChangeSet, IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, ISession, ISessionServices, IStrategy, Method, Procedure, Pull } from '@allors/workspace/domain/system';
 import { AssociationType, Class, Composite, Origin, RoleType } from '@allors/workspace/meta/system';
 import { Database } from '../Database/Database';
 import { DatabaseState } from '../Database/DatabaseState';
@@ -24,7 +24,7 @@ export class Session implements ISession {
   private created: Set<Strategy> | undefined;
   private instantiated: Set<IStrategy> | undefined;
 
-  constructor(public workspace: Workspace, public state: ISessionLifecycle) {
+  constructor(public workspace: Workspace, public state: ISessionServices) {
     this.database = this.workspace.database;
 
     this.strategyByWorkspaceId = new Map();
@@ -113,7 +113,7 @@ export class Session implements ISession {
                 if (strategy) {
                   result.push(strategy.object);
                 } else {
-                  strategy = this.instantiateWorkspaceObject(id);
+                  strategy = this.instantiateWorkspaceStrategy(id);
                   result.push(strategy.object);
                 }
               }
@@ -221,7 +221,7 @@ export class Session implements ISession {
     if (identity > 0) {
       return this.strategyByWorkspaceId.get(identity);
     } else if (identity < 0) {
-      return this.instantiateWorkspaceObject(identity).strategy;
+      return this.instantiateWorkspaceStrategy(identity);
     } else {
       return null;
     }
@@ -322,7 +322,7 @@ export class Session implements ISession {
     return strategy;
   }
 
-  instantiateWorkspaceObject(identity: number): Strategy {
+  instantiateWorkspaceStrategy(identity: number): Strategy {
     const cls = this.workspace.workspaceClassByWorkspaceId.get(identity);
     if (!cls) {
       return null;

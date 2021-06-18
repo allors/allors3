@@ -1,4 +1,4 @@
-import { ISession, IWorkspace, IWorkspaceLifecycle } from '@allors/workspace/domain/system';
+import { ISession, IWorkspace, IWorkspaceServices } from '@allors/workspace/domain/system';
 import { Class, MetaPopulation, RelationType } from '@allors/workspace/meta/system';
 import { Client } from '../Database/Client';
 import { Database } from '../Database/Database';
@@ -18,7 +18,7 @@ export class Workspace implements IWorkspace {
 
   private readonly objectById: Map<number, WorkspaceObject>;
 
-  constructor(public name: string, public metaPopulation: MetaPopulation, public lifecycle: IWorkspaceLifecycle, private client: Client) {
+  constructor(public name: string, public metaPopulation: MetaPopulation, public lifecycle: IWorkspaceServices, private client: Client) {
     this.objectFactory = new ObjectFactory(this.metaPopulation);
     this.database = new Database(this.metaPopulation, client, new Identities());
 
@@ -31,7 +31,7 @@ export class Workspace implements IWorkspace {
   }
 
   createSession(): ISession {
-    return new Session(this, this.lifecycle.createSessionContext());
+    return new Session(this, this.lifecycle.createSessionServices());
   }
 
   get(identity: number): WorkspaceObject | undefined {

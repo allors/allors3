@@ -1,9 +1,8 @@
 import { Numbers } from '../../collections/Numbers';
-import { AccessControl } from './AccessControl';
-import { Permission } from './Permission';
+import { Database } from '../Database';
 
 export class ResponseContext {
-  constructor(private readonly accessControlById: Map<number, AccessControl>, private readonly permissionById: Map<number, Permission>) {
+  constructor(private readonly database: Database) {
     this.missingAccessControlIds = new Set();
     this.missingPermissionIds = new Set();
   }
@@ -13,10 +12,10 @@ export class ResponseContext {
   missingPermissionIds: Set<number>;
 
   checkForMissingAccessControls(value: Numbers): Numbers {
-    return value?.filter((v) => !this.accessControlById.has(v));
+    return value?.filter((v) => !this.missingAccessControlIds.has(v));
   }
 
   checkForMissingPermissions(value: Numbers): Numbers {
-    return value?.filter((v) => !this.permissionById.has(v));
+    return value?.filter((v) => !this.missingPermissionIds.has(v));
   }
 }

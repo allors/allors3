@@ -41,8 +41,8 @@ export * from './lib/derivations/IValidation';
 export * from './lib/operands/Method';
 export * from './lib/operands/Role';
 
-export * from './lib/state/ISessionLifecycle';
-export * from './lib/state/IWorkspaceLifecycle';
+export * from './lib/state/ISessionServices';
+export * from './lib/state/IWorkspaceServices';
 
 export * from './lib/IChangeSet';
 export * from './lib/IObject';

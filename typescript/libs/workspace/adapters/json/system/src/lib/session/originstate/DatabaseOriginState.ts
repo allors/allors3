@@ -5,21 +5,21 @@ import { Session } from '../session/Session';
 import { ChangeSet } from '../ChangeSet';
 import { Strategy } from '../Strategy';
 import { Database } from './Database';
-import { DatabaseObject } from './DatabaseObject';
+import { DatabaseRecord } from './DatabaseObject';
 import { Permission } from './Security/Permission';
 import { difference, Numbers } from '../collections/Numbers';
 
 export class DatabaseState {
-  databaseObject: DatabaseObject;
+  databaseObject: DatabaseRecord;
 
   private changedRoleByRelationType: Map<RelationType, any> | undefined;
 
-  private previousDatabaseObject: DatabaseObject;
+  private previousDatabaseObject: DatabaseRecord;
   private previousChangedRoleByRelationType: Map<RelationType, unknown> | undefined;
 
-  constructor(private readonly strategy: Strategy, databaseObject?: DatabaseObject) {
+  constructor(private readonly strategy: Strategy, databaseObject?: DatabaseRecord) {
     this.strategy = strategy;
-    this.databaseObject = databaseObject ?? (this.database.get(this.identity) as DatabaseObject);
+    this.databaseObject = databaseObject ?? (this.database.get(this.identity) as DatabaseRecord);
     this.previousDatabaseObject = this.databaseObject;
   }
 
@@ -176,7 +176,7 @@ export class DatabaseState {
   }
 
   reset(): void {
-    this.databaseObject = this.database.get(this.identity) as DatabaseObject;
+    this.databaseObject = this.database.get(this.identity) as DatabaseRecord;
     delete this.changedRoleByRelationType;
   }
 
@@ -238,7 +238,7 @@ export class DatabaseState {
     this.previousChangedRoleByRelationType = this.changedRoleByRelationType;
   }
 
-  pushResponse(newDatabaseObject: DatabaseObject): void {
+  pushResponse(newDatabaseObject: DatabaseRecord): void {
     this.databaseObject = newDatabaseObject;
   }
 

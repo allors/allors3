@@ -7,7 +7,7 @@ import { InvokeOptions } from './database/InvokeOptions';
 import { IInvokeResult } from './database/IInvokeResult';
 import { IPullResult } from './database/IPullResult';
 import { IPushResult } from './database/IPushResult';
-import { ISessionLifecycle } from './state/ISessionLifecycle';
+import { ISessionServices } from './state/ISessionServices';
 import { Pull } from './data/Pull';
 import { Procedure } from './data/Procedure';
 import { IChangeSet } from './IChangeSet';
@@ -15,7 +15,7 @@ import { IChangeSet } from './IChangeSet';
 export interface ISession {
   workspace: IWorkspace;
 
-  state: ISessionLifecycle;
+  state: ISessionServices;
 
   create(cls: Class): IObject;
 

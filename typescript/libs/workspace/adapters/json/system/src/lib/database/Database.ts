@@ -5,14 +5,14 @@ import { Observable } from 'rxjs';
 import { equals, properSubset } from '../collections/Numbers';
 import { Identities } from '../Identities';
 import { Client } from './Client';
-import { DatabaseObject } from './DatabaseObject';
+import { DatabaseRecord } from './DatabaseObject';
 import { AccessControl } from './Security/AccessControl';
 import { Permission } from './Security/Permission';
 import { ResponseContext } from './Security/ResponseContext';
 import { MapMap } from '../collections/MapMap';
 
 export class Database {
-  objectsById: Map<number, DatabaseObject>;
+  objectsById: Map<number, DatabaseRecord>;
 
   accessControlById: Map<number, AccessControl>;
   permissionById: Map<number, Permission>;
@@ -32,8 +32,8 @@ export class Database {
     this.executePermissionByOperandTypeByClass = new MapMap();
   }
 
-  pushResponse(identity: number, cls: Class): DatabaseObject {
-    const databaseObject = new DatabaseObject(this, identity, cls);
+  pushResponse(identity: number, cls: Class): DatabaseRecord {
+    const databaseObject = new DatabaseRecord(this, identity, cls);
     this.objectsById.set(identity, databaseObject);
     return databaseObject;
   }
@@ -41,7 +41,7 @@ export class Database {
   syncResponse(syncResponse: SyncResponse): SecurityRequest | null {
     const ctx = new ResponseContext(this.accessControlById, this.permissionById);
     for (const syncResponseObject of syncResponse.o) {
-      const databaseObjects = DatabaseObject.fromResponse(this, ctx, syncResponseObject);
+      const databaseObjects = DatabaseRecord.fromResponse(this, ctx, syncResponseObject);
       this.objectsById.set(databaseObjects.identity, databaseObjects);
     }
 
@@ -91,7 +91,7 @@ export class Database {
     };
   }
 
-  get(identity: number): DatabaseObject | undefined {
+  get(identity: number): DatabaseRecord | undefined {
     return this.objectsById.get(identity);
   }
 

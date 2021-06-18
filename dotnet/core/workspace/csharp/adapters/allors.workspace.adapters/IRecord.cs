@@ -10,6 +10,7 @@ namespace Allors.Workspace.Adapters
     public interface IRecord
     {
         long Version { get; }
+
         object GetRole(IRoleType roleType);
     }
 }

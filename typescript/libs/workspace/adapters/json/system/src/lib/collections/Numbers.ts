@@ -46,6 +46,13 @@ function assert(value: unknown): asserts value {
     throw new Error('value must be defined');
   }
 }
+export function Numbers(set?: number[]): Numbers {
+  if (Array.isArray(set)) {
+    return [...set].sort();
+  }
+
+  return undefined;
+}
 
 export function has(set: Numbers, value: number): boolean {
   assert(value);
@@ -57,14 +64,6 @@ export function has(set: Numbers, value: number): boolean {
   }
 
   return false;
-}
-
-export function Numbers(set?: number[]): Numbers {
-  if (Array.isArray(set)) {
-    return [...set].sort();
-  }
-
-  return undefined;
 }
 
 export function add(set: Numbers, value: number): Exclude<Numbers, undefined> {

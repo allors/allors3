@@ -1,5 +1,5 @@
 import { ISession } from '../ISession';
 
-export interface ISessionLifecycle {
+export interface ISessionServices {
   onInit(session: ISession): void;
 }
