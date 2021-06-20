@@ -4,311 +4,113 @@ import { Session } from './Session/Session';
 import { SessionStateChangeSet } from './Session/SessionStateChangeSet';
 import { Strategy } from './Strategy';
 
-export class ChangeSet implements IChangeSet {
-  associationsByRoleType: Map<RoleType, Set<IStrategy>>;
+export /* sealed */ class ChangeSet extends IChangeSet {
 
-  rolesByAssociationType: Map<AssociationType, Set<IStrategy>>;
-
-  constructor(public session: Session, public created: Set<IStrategy>, public instantiated: Set<IStrategy>, sessionStateChangeSet: SessionStateChangeSet) {
-    TODO:
-    this.associationsByRoleType = sessionStateChangeSet.roleByAssociationByRoleType
-        .ToDictionary(
-            v => v.Key,
-            v => (ISet<IStrategy>)new HashSet<IStrategy>(v.Value.Keys));
-    this.rolesByAssociationType = sessionStateChangeSet.AssociationByRoleByRoleType.ToDictionary(
-        v => v.Key,
-        v => (ISet<IStrategy>)new HashSet<IStrategy>(v.Value.Keys));
+  public constructor (session: Session, created: ISet<IStrategy>, instantiated: ISet<IStrategy>) {
+      this.Session = session;
+      this.Created = created;
+      this.Instantiated = instantiated;
+      this.AssociationsByRoleType = new Dictionary<RoleType, ISet<IStrategy>>();
+      this.RolesByAssociationType = new Dictionary<IAssociationType, ISet<IStrategy>>();
   }
 
-  addAssociation(relationType: RelationType, association: Strategy) {
-    const roleType = relationType.roleType;
-
-    let associations = this.associationsByRoleType.get(roleType);
-    if (!associations) {
-      associations = new Set();
-      this.associationsByRoleType.set(roleType, associations);
-    }
-
-    associations.add(association);
+  private get Session(): Session {
   }
 
-  addRole(relationType: RelationType, role: Strategy) {
-    const associationType = relationType.associationType;
-    let roles = this.rolesByAssociationType.get(associationType);
+  IChangeSet.Session: ISession;
 
-    if (!roles) {
-      roles = new Set();
-      this.rolesByAssociationType.set(associationType, roles);
-    }
-
-    roles.add(role);
+  public get Created(): ISet<IStrategy> {
   }
 
-  diffCookedWithCooked(association: Strategy, relationType: RelationType, current: unknown, previous: unknown) {
-    const roleType = relationType.roleType;
-
-    if (roleType.objectType.isUnit) {
-      if (current === previous) {
-        return;
-      }
-
-      this.addAssociation(relationType, association);
-    } else {
-      if (roleType.isOne) {
-        if (current === previous) {
-          return;
-        }
-
-        if (current != null) {
-          this.addRole(relationType, current as Strategy);
-        }
-
-        if (previous != null) {
-          this.addRole(relationType, previous as Strategy);
-        }
-
-        this.addAssociation(relationType, association);
-      } else {
-        const currentRole = current as Strategy[];
-        const previousRole = previous as Strategy[];
-
-        // TODO:
-        // if (currentRole?.length > 0 && previousRole?.length > 0)
-        // {
-        //     var addedRoles = currentRole.Except(previousRole);
-        //     var removedRoles = previousRole.Except(currentRole);
-
-        //     var hasChange = false;
-        //     foreach (var role in addedRoles.Concat(removedRoles))
-        //     {
-        //         this.AddRole(relationType, role);
-        //         hasChange = true;
-        //     }
-
-        //     if (hasChange)
-        //     {
-        //         this.AddAssociation(relationType, association);
-        //     }
-        // }
-        // else if (currentRole?.Length > 0)
-        // {
-        //     foreach (var role in currentRole)
-        //     {
-        //         this.AddRole(relationType, role);
-        //     }
-
-        //     this.AddAssociation(relationType, association);
-        // }
-        // else if (previousRole?.Length > 0)
-        // {
-        //     foreach (var role in previousRole)
-        //     {
-        //         this.AddRole(relationType, role);
-        //     }
-
-        //     this.AddAssociation(relationType, association);
-        // }
-      }
-    }
+  public get Instantiated(): ISet<IStrategy> {
   }
 
-  diffCookedWithRaw(association: Strategy, relationType: RelationType, current: unknown, previous: unknown): void {
-    const roleType = relationType.roleType;
-
-    if (roleType.objectType.isUnit) {
-      if (current !== previous) {
-        this.addAssociation(relationType, association);
-      }
-    } else {
-      if (roleType.isOne) {
-        if (current == null && previous == null) {
-          return;
-        }
-
-        const currentRole = current as Strategy;
-
-        if (current != null && previous != null) {
-          const previousRole = this.session.getStrategy(previous as number);
-          if (current === previousRole) {
-            return;
-          }
-
-          this.addRole(relationType, previousRole);
-          this.addRole(relationType, currentRole);
-          this.addAssociation(relationType, association);
-        } else if (current != null) {
-          this.addRole(relationType, currentRole);
-          this.addAssociation(relationType, association);
-        } else {
-          const previousRole = this.session.getStrategy(previous as number);
-          this.addRole(relationType, previousRole);
-          this.addAssociation(relationType, association);
-        }
-      } else {
-        if (current == null && previous == null) {
-          return;
-        }
-
-        const currentRole = current as Strategy[];
-
-        if (previous == null) {
-          for (const v of currentRole) {
-            this.addRole(relationType, v);
-          }
-
-          this.addAssociation(relationType, association);
-        } else {
-          const previousRole = (previous as number[]).map((v) => this.session.getStrategy(v));
-
-          if (currentRole == null) {
-            for (const v of previousRole) {
-              this.addRole(relationType, v);
-            }
-
-            this.addAssociation(relationType, association);
-          } else {
-            // TODO:
-            // var addedRoles = currentRole.Except(previousRole);
-            // var removedRoles = previousRole.Except(currentRole);
-            // var hasChange = false;
-            // foreach (var role in addedRoles.Concat(removedRoles))
-            // {
-            //     this.AddRole(relationType, role);
-            //     hasChange = true;
-            // }
-            // if (hasChange)
-            // {
-            //     this.AddAssociation(relationType, association);
-            // }
-          }
-        }
-      }
-    }
+  public get AssociationsByRoleType(): IDictionary<RoleType, ISet<IStrategy>> {
   }
 
-  diffRawWithRaw(association: Strategy, relationType: RelationType, current: unknown, previous: unknown): void {
-    const roleType = relationType.roleType;
-
-    if (roleType.objectType.isUnit) {
-      if (current !== previous) {
-        this.addAssociation(relationType, association);
-      }
-    } else {
-      if (roleType.isOne) {
-        if (current !== previous) {
-          if (previous != null) {
-            this.addRole(relationType, this.session.getStrategy(previous as number));
-          }
-
-          if (current != null) {
-            this.addRole(relationType, this.session.getStrategy(current as number));
-          }
-
-          this.addAssociation(relationType, association);
-        }
-      } else {
-        if (current == null && previous == null) {
-          return;
-        }
-
-        const currentRole = current as number[];
-
-        if (previous == null) {
-          for (const v of currentRole) {
-            this.addRole(relationType, this.session.getStrategy(v));
-          }
-
-          this.addAssociation(relationType, association);
-        } else {
-          const previousRole = previous as number[];
-
-          if (currentRole == null) {
-            for (const v of previousRole) {
-              this.addRole(relationType, this.session.getStrategy(v));
-            }
-
-            this.addAssociation(relationType, association);
-          } else {
-            // TODO:
-            // var addedRoles = currentRole.Except(previousRole);
-            // var removedRoles = previousRole.Except(currentRole);
-            // var hasChange = false;
-            // foreach (var v in addedRoles.Concat(removedRoles))
-            // {
-            //     this.AddRole(relationType, this.Session.GetStrategy(v));
-            //     hasChange = true;
-            // }
-            // if (hasChange)
-            // {
-            //     this.AddAssociation(relationType, association);
-            // }
-          }
-        }
-      }
-    }
+  public get RolesByAssociationType(): IDictionary<IAssociationType, ISet<IStrategy>> {
   }
 
-  diffRawWithCooked(association: Strategy, relationType: RelationType, current: unknown, previous: unknown): void {
-    const roleType = relationType.roleType;
+  public AddSessionStateChanges(sessionStateChangeSet: IDictionary<IPropertyType, IDictionary<number, Object>>) {
+      for (let kvp in sessionStateChangeSet) {
+          let ids = kvp.Value.Keys;
+          let strategies = new HashSet<IStrategy>(ids.Select(() => {  }, this.Session.GetStrategy(v)));
+          switch (kvp.Key) {
+              case IAssociationType:
+                  /* Warning! Labeled Statements are not Implemented */this.RolesByAssociationType.Add(associationType, strategies);
+                  break;
+              case RoleType:
+                  /* Warning! Labeled Statements are not Implemented */this.AssociationsByRoleType.Add(roleType, strategies);
+                  break;
+          }
 
-    if (roleType.objectType.isUnit) {
-      if (current !== previous) {
-        this.addAssociation(relationType, association);
       }
-    } else {
-      if (roleType.isOne) {
-        const previousRole = previous as Strategy;
-        if (current !== previousRole?.id) {
-          if (previous != null) {
-            this.addRole(relationType, previousRole);
+
+  }
+
+  public Diff(association: Strategy, relationType: RelationType, current: Object, previous: Object) {
+      let roleType = relationType.RoleType;
+      if (roleType.ObjectType.IsUnit) {
+          if (!Equals(current, previous)) {
+              this.AddAssociation(relationType, association);
           }
 
-          if (current != null) {
-            this.addRole(relationType, this.session.getStrategy(current as long));
-          }
-
-          this.addAssociation(relationType, association);
-        }
-      } else {
-        if (current == null && previous == null) {
-          return;
-        }
-
-        const currentRole = current as number[];
-
-        if (previous == null) {
-          for (const v of currentRole) {
-            this.addRole(relationType, this.session.getStrategy(v));
-          }
-
-          this.addAssociation(relationType, association);
-        } else {
-          const previousRole = previous as Strategy[];
-
-          if (currentRole == null) {
-            for (const v of previousRole) {
-              this.addRole(relationType, v);
-            }
-
-            this.addAssociation(relationType, association);
-          } else {
-            // TODO:
-            // var previousRoleIds = previousRole.Select(v => v.Id).ToArray();
-            // var addedRoles = currentRole.Except(previousRoleIds);
-            // var removedRoles = previousRoleIds.Except(currentRole);
-            // var hasChange = false;
-            // foreach (var v in addedRoles.Concat(removedRoles))
-            // {
-            //     this.AddRole(relationType, this.Session.GetStrategy(v));
-            //     hasChange = true;
-            // }
-            // if (hasChange)
-            // {
-            //     this.AddAssociation(relationType, association);
-            // }
-          }
-        }
       }
-    }
+      else if (roleType.IsOne) {
+          if (Equals(current, previous)) {
+              return;
+          }
+
+          if ((previous != null)) {
+              this.AddRole(relationType, this.Session.GetStrategy((<number>(previous))));
+          }
+
+          if ((current != null)) {
+              this.AddRole(relationType, this.Session.GetStrategy((<number>(current))));
+          }
+
+          this.AddAssociation(relationType, association);
+      }
+      else {
+          let numbers = this.Session.Workspace.Numbers;
+          let hasChange = false;
+          let addedRoles = numbers.Except(current, previous);
+          for (let v in numbers.Enumerate(addedRoles)) {
+              this.AddRole(relationType, this.Session.GetStrategy(v));
+              hasChange = true;
+          }
+
+          let removedRoles = numbers.Except(previous, current);
+          for (let v in numbers.Enumerate(removedRoles)) {
+              this.AddRole(relationType, this.Session.GetStrategy(v));
+              hasChange = true;
+          }
+
+          if (hasChange) {
+              this.AddAssociation(relationType, association);
+          }
+
+      }
+
+  }
+
+  private AddAssociation(relationType: RelationType, association: Strategy) {
+      let roleType = relationType.RoleType;
+      if (!this.AssociationsByRoleType.TryGetValue(roleType, /* out */var, associations)) {
+          associations = new HashSet<IStrategy>();
+          this.AssociationsByRoleType.Add(roleType, associations);
+      }
+
+      associations.Add(association);
+  }
+
+  private AddRole(relationType: RelationType, role: Strategy) {
+      let associationType = relationType.AssociationType;
+      if (!this.RolesByAssociationType.TryGetValue(associationType, /* out */var, roles)) {
+          roles = new HashSet<IStrategy>();
+          this.RolesByAssociationType.Add(associationType, roles);
+      }
+
+      roles.Add(role);
   }
 }

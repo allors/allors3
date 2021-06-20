@@ -1,3 +1,4 @@
+import { IDatabase } from './IDatabase';
 import { ISession } from './ISession';
 import { IWorkspaceServices } from './state/IWorkspaceServices';
 

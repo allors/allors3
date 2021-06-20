@@ -25,9 +25,9 @@ namespace Allors.Numbers
 
         public object? Add(object? numbers, long other);
 
-        public object? Union(object? numbers, object? other);
-
         public object? Remove(object? numbers, long value);
+
+        public object? Union(object? numbers, object? other);
 
         public object? Except(object? numbers, object? other);
     }

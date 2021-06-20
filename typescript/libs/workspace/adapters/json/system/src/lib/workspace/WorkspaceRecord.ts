@@ -1,11 +1,11 @@
 import { Class, RelationType, RoleType } from '@allors/workspace/meta/system';
-import { Database } from '../Database/Database';
-import { Strategy } from '../Strategy';
+import { IRecord } from '../IRecord';
+import { Strategy } from '../session/Strategy';
 
-export class WorkspaceObject {
-  constructor(public database: Database, public identity: number, public cls: Class, public version: number, public roleByRelationType: Map<RelationType, any>) {}
+export class WorkspaceRecord implements IRecord {
+  constructor(public cls: Class, public id: number, public version: number, public roleByRelationType: Map<RelationType, any>) {}
 
-  static fromOriginal(originalWorkspaceObject: WorkspaceObject, changedRoleByRoleType: Map<RelationType, unknown>): WorkspaceObject {
+  static fromOriginal(originalWorkspaceObject: WorkspaceRecord, changedRoleByRoleType: Map<RelationType, unknown>): WorkspaceRecord {
     const cls = originalWorkspaceObject.cls;
 
     const originalRoleByRelationType = originalWorkspaceObject.roleByRelationType;
@@ -34,7 +34,7 @@ export class WorkspaceObject {
         })
     );
 
-    return new WorkspaceObject(originalWorkspaceObject.database, originalWorkspaceObject.identity, cls, ++originalWorkspaceObject.version, roleByRelationType);
+    return new WorkspaceRecord(cls, originalWorkspaceObject.id, ++originalWorkspaceObject.version, roleByRelationType);
   }
 
   getRole(roleType: RoleType): unknown {

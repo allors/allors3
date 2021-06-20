@@ -2,20 +2,20 @@ import { ISession, IWorkspace, IWorkspaceServices } from '@allors/workspace/doma
 import { Class, RelationType } from '@allors/workspace/meta/system';
 import { Database } from '../Database/Database';
 import { Session } from '../Session/Session';
-import { WorkspaceObject } from './WorkspaceObject';
+import { WorkspaceRecord } from './WorkspaceObject';
 
 export class Workspace implements IWorkspace {
   workspaceClassByWorkspaceId: Map<number, Class>;
 
   workspaceIdsByWorkspaceClass: Map<Class, Set<number>>;
 
-  private readonly objectById: Map<number, WorkspaceObject>;
+  private readonly recordById: Map<number, WorkspaceRecord>;
 
   constructor(public database: Database, public services: IWorkspaceServices) {
     this.workspaceClassByWorkspaceId = new Map();
     this.workspaceIdsByWorkspaceClass = new Map();
 
-    this.objectById = new Map();
+    this.recordById = new Map();
 
     this.services.onInit(this);
   }
@@ -24,28 +24,16 @@ export class Workspace implements IWorkspace {
     return new Session(this, this.services.createSessionServices());
   }
 
-  get(identity: number): WorkspaceObject | undefined {
-    return this.objectById.get(identity);
+  getRecord(identity: number): WorkspaceRecord | undefined {
+    return this.recordById.get(identity);
   }
 
-  registerWorkspaceObject(cls: Class, workspaceId: number): void {
-    this.workspaceClassByWorkspaceId.set(workspaceId, cls);
-
-    let ids = this.workspaceIdsByWorkspaceClass.get(cls);
-    if (ids === undefined) {
-      ids = new Set();
-      this.workspaceIdsByWorkspaceClass.set(cls, ids);
-    }
-
-    ids.add(workspaceId);
-  }
-
-  push(identity: number, cls: Class, version: number, changedRoleByRoleType: Map<RelationType, unknown> | undefined): void {
-    const originalWorkspaceObject = this.objectById.get(identity);
+  push(id: number, cls: Class, version: number, changedRoleByRoleType: Map<RelationType, unknown> | undefined): void {
+    const originalWorkspaceObject = this.recordById.get(id);
     if (!originalWorkspaceObject) {
-      this.objectById.set(identity, new WorkspaceObject(this.database, identity, cls, ++version, changedRoleByRoleType));
+      this.recordById.set(id, new WorkspaceRecord(this.database, id, cls, ++version, changedRoleByRoleType));
     } else {
-      this.objectById.set(identity, WorkspaceObject.fromOriginal(originalWorkspaceObject, changedRoleByRoleType));
+      this.recordById.set(id, WorkspaceRecord.fromOriginal(originalWorkspaceObject, changedRoleByRoleType));
     }
   }
 }

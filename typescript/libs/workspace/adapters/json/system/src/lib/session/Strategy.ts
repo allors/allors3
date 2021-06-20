@@ -6,329 +6,302 @@ import { DatabaseState } from './Database/DatabaseState';
 import { Session } from './Session/Session';
 import { WorkspaceState } from './Workspace/WorkspaceState';
 
-export class Strategy implements IStrategy {
-  private _obj: IObject;
+export /* abstract */ class Strategy extends IStrategy {
 
-  private workspaceState: WorkspaceState;
-  private databaseState: DatabaseState;
+  private object: IObject;
 
-  // constructor(Session session, IClass @class, long identity)
-  // {
-  //     this.Session = session;
-  //     this.Id = identity;
-  //     this.Class = @class;
+  protected constructor (session: Session, class: IClass, id: number) {
+      this.Session = session;
+      this.Id = id;
+      this.Class = class;
+      if (!this.Class.HasSessionOrigin) {
+          this.WorkspaceOriginState = new WorkspaceOriginState(this, this.Session.Workspace.GetRecord(this.Id));
+      }
 
-  //     if (!this.Class.HasSessionOrigin)
-  //     {
-  //         this.workspaceState = new WorkspaceState(this);
-  //     }
-
-  //     if (this.Class.HasDatabaseOrigin)
-  //     {
-  //         this.databaseState = new DatabaseState(this);
-  //     }
-  // }
-
-  // constructor(Session session, DatabaseObject databaseObject)
-  // {
-  //     this.Session = session;
-  //     this.Id = databaseObject.Identity;
-  //     this.Class = databaseObject.Class;
-
-  //     this.workspaceState = new WorkspaceState(this);
-  //     this.databaseState = new DatabaseState(this, databaseObject);
-  // }
-
-  session: Session;
-
-  class: Class;
-
-  id: number;
-
-  get object(): IObject {
-    return (this._obj ??= this.session.workspace.objectFactory.create(this));
   }
 
-  get hasDatabaseChanges(): boolean {
-    return this.databaseState.hasDatabaseChanges;
+  protected constructor (session: Session, databaseRecord: DatabaseRecord) {
+      this.Session = session;
+      this.Id = databaseRecord.Id;
+      this.Class = databaseRecord.Class;
+      this.WorkspaceOriginState = new WorkspaceOriginState(this, this.Session.Workspace.GetRecord(this.Id));
   }
 
-  get databaseVersion(): number {
-    return this.databaseState.version;
+  public Version: number;
+
+  public Origin.Workspace: number;
+
+  public _: number;
+
+  public get Session(): Session {
   }
 
-  diff(): RelationType[] {
-    // if (this.workspaceState != null)
-    // {
-    //     foreach (var diff in this.workspaceState.Diff())
-    //     {
-    //         yield return diff;
-    //     }
-    // }
-    // if (this.databaseState == null)
-    // {
-    //     yield break;
-    // }
-    // foreach (var diff in this.databaseState.Diff())
-    // {
-    //     yield return diff;
-    // }
-
-    // TODO:
-    return undefined;
+  public get DatabaseOriginState(): DatabaseOriginState {
+  }
+  public set DatabaseOriginState(value: DatabaseOriginState)  {
   }
 
-  exist(roleType: RoleType): boolean {
-    // if (roleType.ObjectType.IsUnit)
-    // {
-    //     return this.GetUnit(roleType) != null;
-    // }
-    // if (roleType.IsOne)
-    // {
-    //     return this.GetComposite<IObject>(roleType) != null;
-    // }
-    // return this.GetComposites<IObject>(roleType).Any();
-
-    // TODO:
-    return undefined;
+  public get WorkspaceOriginState(): WorkspaceOriginState {
   }
 
-  get(roleType: RoleType): unknown {
-    // if (roleType.ObjectType.IsUnit)
-    // {
-    //     return this.GetUnit(roleType);
-    // }
-    // if (roleType.IsOne)
-    // {
-    //     return this.GetComposite<IObject>(roleType);
-    // }
-    // return this.GetComposites<IObject>(roleType);
+  IStrategy.Session: ISession;
 
-    // TODO:
-    return undefined;
+  public get Class(): IClass {
   }
 
-  getUnit(roleType: RoleType): UnitTypes {
-    // roleType.Origin switch
-    // {
-    //     Origin.Session => this.Session.GetRole(this, roleType),
-    //     Origin.Workspace => this.workspaceState?.GetRole(roleType),
-    //     Origin.Database => this.databaseState?.GetRole(roleType),
-    //     _ => throw new ArgumentException("Unsupported Origin")
-    // };
-
-    // TODO:
-    return undefined;
+  public get Id(): number {
+  }
+  public set Id(value: number)  {
   }
 
-  getComposite<T>(roleType: RoleType): T {
-    // roleType.Origin switch
-    // {
-    //     Origin.Session => (T)this.Session.GetRole(this, roleType),
-    //     Origin.Workspace => (T)this.workspaceState?.GetRole(roleType),
-    //     Origin.Database => (T)this.databaseState?.GetRole(roleType),
-    //     _ => throw new ArgumentException("Unsupported Origin")
-    // };
+  public IsNew: boolean;
 
-    // TODO:
-    return undefined;
+  public Object: IObject;
+
+  public Exist(roleType: RoleType): boolean {
+      if (roleType.ObjectType.IsUnit) {
+          return (this.GetUnit(roleType) != null);
+      }
+
+      if (roleType.IsOne) {
+          return (this.GetComposite(roleType) != null);
+      }
+
+      return this.GetComposites(roleType).Any();
   }
 
-  getComposites<T>(roleType: RoleType): T[] {
-    // var roles = roleType.Origin switch
-    // {
-    //     Origin.Session => this.Session.GetRole(this, roleType),
-    //     Origin.Workspace => this.workspaceState?.GetRole(roleType),
-    //     Origin.Database => this.databaseState?.GetRole(roleType),
-    //     _ => throw new ArgumentException("Unsupported Origin")
-    // };
-    // if (roles != null)
-    // {
-    //     foreach (var role in (IObject[])roles)
-    //     {
-    //         yield return (T)role;
-    //     }
-    // }
+  public Get(roleType: RoleType): Object {
+      if (roleType.ObjectType.IsUnit) {
+          return this.GetUnit(roleType);
+      }
 
-    // TODO:
-    return undefined;
+      if (roleType.IsOne) {
+          return this.GetComposite(roleType);
+      }
+
+      return this.GetComposites(roleType);
   }
 
-  set(roleType: RoleType, value: unknown): void {
-    // if (roleType.ObjectType.IsUnit)
-    // {
-    //     this.SetUnit(roleType, value);
-    // }
-    // else
-    // {
-    //     if (roleType.IsOne)
-    //     {
-    //         this.SetComposite(roleType, (IObject)value);
-    //     }
-    //     else
-    //     {
-    //         this.SetComposites(roleType, (IEnumerable<IObject>)value);
-    //     }
-    // }
+  public GetUnit(roleType: RoleType): Object {
+  }
+}
+Unknownfor (let role in this.Session.Workspace.Numbers.Enumerate(roles)) {
+  yield;
+  return this.Session.Get(role);
+}
+
+Unknownlet role: IEnumerable<T>;
+Unknownlet T: where;
+:IObject;
+{switch (roleType.Origin) {
+  case Origin.Session:
+      this.Session.SessionOriginState.SetCompositesRole(this.Id, roleType, roleNumbers);
+      break;
+  case Origin.Workspace:
+      this.WorkspaceOriginState?.SetCompositesRole(roleType, roleNumbers);
+      break;
+  case Origin.Database:
+      if (this.CanWrite(roleType)) {
+          this.DatabaseOriginState?.SetCompositesRole(roleType, roleNumbers);
+      }
+
+      break;
+  default:
+      throw new ArgumentException("Unsupported Origin");
+      break;
+}
+
+UnknownUnknownGreaterthisQuestiontrue;
+GreaterthisQuestiontrue;
+GreaterthisQuestionfalse;
+UnknownGreaterthis.Id = newId;
+Greaterthis.DatabaseOriginState.PushResponse(databaseRecord);
+Unknown
+
+  public GetComposite(roleType: RoleType): T {
+      (<long?>(this.Session.GetRole(this, roleType)));
+      (<long?>(this.WorkspaceOriginState?.GetRole(roleType)));
+      throw new Exception();
+      (<long?>(this.DatabaseOriginState?.GetRole(roleType)));
+      // TODO: Warning!!!, inline IF is not supported ?
+      this.CanRead(roleType);
+      null;
+      throw new ArgumentException("Unsupported Origin");
   }
 
-  setUnit(roleType: RoleType, value: UnitTypes): void {
-    // switch (roleType.Origin)
-    // {
-    //     case Origin.Session:
-    //         this.Session.SessionState.SetUnitRole(this, roleType, value);
-    //         break;
-    //     case Origin.Workspace:
-    //         this.workspaceState?.SetUnitRole(roleType, value);
-    //         break;
-    //     case Origin.Database:
-    //         this.databaseState?.SetUnitRole(roleType, value);
-    //         break;
-    //     default:
-    //         throw new ArgumentException("Unsupported Origin");
-    // }
+  public GetComposites(roleType: RoleType): IEnumerable<T> {
+      let roles = roleType.Origin;
+      this.Session.GetRole(this, roleType);
+      this.WorkspaceOriginState?.GetRole(roleType);
+      throw new Exception();
+      this.DatabaseOriginState?.GetRole(roleType);
+      // TODO: Warning!!!, inline IF is not supported ?
+      this.CanRead(roleType);
+      null;
+      throw new ArgumentException("Unsupported Origin");
   }
 
-  setComposite<T>(roleType: RoleType, value: T): void {
-    // switch (roleType.Origin)
-    // {
-    //     case Origin.Session:
-    //         this.Session.SessionState.SetCompositeRole(this, roleType, value);
-    //         break;
-    //     case Origin.Workspace:
-    //         this.workspaceState?.SetCompositeRole(roleType, value);
-    //         break;
-    //     case Origin.Database:
-    //         this.databaseState?.SetCompositeRole(roleType, value);
-    //         break;
-    //     default:
-    //         throw new ArgumentException("Unsupported Origin");
-    // }
+  public Set(roleType: RoleType, value: Object) {
+      if (roleType.ObjectType.IsUnit) {
+          this.SetUnit(roleType, value);
+      }
+      else if (roleType.IsOne) {
+          this.SetComposite(roleType, (<IObject>(value)));
+      }
+      else {
+          this.SetComposites(roleType, (<IEnumerable<IObject>>(value)));
+      }
+
   }
 
-  setComposites<T>(roleType: RoleType, value: T[]): void {
-    // switch (roleType.Origin)
-    // {
-    //     case Origin.Session:
-    //         this.Session.SessionState.SetCompositesRole(this, roleType, value);
-    //         break;
-    //     case Origin.Workspace:
-    //         this.workspaceState?.SetCompositesRole(roleType, value);
-    //         break;
-    //     case Origin.Database:
-    //         this.databaseState?.SetCompositesRole(roleType, value);
-    //         break;
-    //     default:
-    //         throw new ArgumentException("Unsupported Origin");
-    // }
+  public SetUnit(roleType: RoleType, value: Object) {
+      switch (roleType.Origin) {
+          case Origin.Session:
+              this.Session.SessionOriginState.SetUnitRole(this.Id, roleType, value);
+              break;
+          case Origin.Workspace:
+              this.WorkspaceOriginState?.SetUnitRole(roleType, value);
+              break;
+          case Origin.Database:
+              if (this.CanWrite(roleType)) {
+                  this.DatabaseOriginState?.SetUnitRole(roleType, value);
+              }
+
+              break;
+          default:
+              throw new ArgumentException("Unsupported Origin");
+              break;
+      }
+
   }
 
-  add<T>(roleType: RoleType, value: T): void {
-    //     if (!this.GetComposites<IObject>(roleType).Contains(value))
-    //     {
-    //         var roles = this.GetComposites<IObject>(roleType).Append(value).ToArray();
-    //         this.Set(roleType, roles);
-    //     }
-    //
+  public SetComposite(roleType: RoleType, value: T) {
+      switch (roleType.Origin) {
+          case Origin.Session:
+              this.Session.SessionOriginState.SetCompositeRole(this.Id, roleType, value?.Id);
+              break;
+          case Origin.Workspace:
+              this.WorkspaceOriginState?.SetCompositeRole(roleType, value?.Id);
+              break;
+          case Origin.Database:
+              if (this.CanWrite(roleType)) {
+                  this.DatabaseOriginState?.SetCompositeRole(roleType, value?.Id);
+              }
+
+              break;
+          default:
+              throw new ArgumentException("Unsupported Origin");
+              break;
+      }
+
   }
 
-  remove<T>(roleType: RoleType, value: T): void {
-    // if (!this.GetComposites<IObject>(roleType).Contains(value))
-    // {
-    //     return;
-    // }
-    // var roles = this.GetComposites<IObject>(roleType).Where(v => !v.Equals(value)).ToArray();
-    // this.Set(roleType, roles);
+  public SetComposites(roleType: RoleType) {
   }
 
-  removeAll(roleType: RoleType): void {
-    // if (roleType.ObjectType.IsUnit)
-    // {
-    //     this.SetUnit(roleType, null);
-    // }
-    // else
-    // {
-    //     if (roleType.IsOne)
-    //     {
-    //         this.SetComposite(roleType, (IObject)null);
-    //     }
-    //     else
-    //     {
-    //         this.SetComposites(roleType, (IEnumerable<IObject>)null);
-    //     }
-    // }
+  roleNumbers: var = this.Session.Workspace.Numbers.From(role?.Select(() => {  }, v.Id));
+
+  public Add(roleType: RoleType, value: T) {
+      switch (roleType.Origin) {
+          case Origin.Session:
+              this.Session.SessionOriginState.AddRole(this.Id, roleType, value.Id);
+              break;
+          case Origin.Workspace:
+              this.WorkspaceOriginState.AddCompositeRole(roleType, value.Id);
+              break;
+          case Origin.Database:
+              if (this.CanWrite(roleType)) {
+                  this.DatabaseOriginState.AddCompositeRole(roleType, value.Id);
+              }
+
+              break;
+          default:
+              throw new ArgumentException("Unsupported Origin");
+              break;
+      }
+
   }
 
-  getCompositeAssociation<T>(associationType: AssociationType): T {
-    // if (associationType.Origin != Origin.Session)
-    // {
-    //     return this.Session.GetAssociation<T>(this, associationType).FirstOrDefault();
-    // }
-    // this.Session.SessionState.GetAssociation(this, associationType, out var association);
-    // var id = (long?)association;
-    // return id != null ? this.Session.Get<T>(id) : default;
+  public Remove(roleType: RoleType, value: T) {
+      switch (roleType.Origin) {
+          case Origin.Session:
+              this.Session.SessionOriginState.AddRole(this.Id, roleType, value.Id);
+              break;
+          case Origin.Workspace:
+              this.WorkspaceOriginState.RemoveCompositeRole(roleType, value.Id);
+              break;
+          case Origin.Database:
+              if (this.CanWrite(roleType)) {
+                  this.DatabaseOriginState.RemoveCompositeRole(roleType, value.Id);
+              }
 
-    // TODO:
-    return undefined;
+              break;
+          default:
+              throw new ArgumentException("Unsupported Origin");
+              break;
+      }
+
   }
 
-  getCompositesAssociation<T>(associationType: AssociationType): T[] {
-    // if (associationType.Origin != Origin.Session)
-    // {
-    //     return this.Session.GetAssociation<T>(this, associationType);
-    // }
-    // this.Session.SessionState.GetAssociation(this, associationType, out var association);
-    // var ids = (IEnumerable<long>)association;
-    // return ids?.Select(v => this.Session.Get<T>(v)).ToArray() ?? Array.Empty<T>();
+  public Remove(roleType: RoleType) {
+      if (roleType.ObjectType.IsUnit) {
+          this.SetUnit(roleType, null);
+      }
+      else if (roleType.IsOne) {
+          this.SetComposite(roleType, (<IObject>(null)));
+      }
+      else {
+          this.SetComposites(roleType, (<IEnumerable<IObject>>(null)));
+      }
 
-    // TODO:
-    return undefined;
   }
 
-  canRead(roleType: RoleType): boolean {
-    return this.databaseState?.canRead(roleType) ?? true;
+  public GetComposite(associationType: IAssociationType): T {
+      if ((associationType.Origin != Origin.Session)) {
+          return this.Session.GetAssociation(this.Id, associationType).FirstOrDefault();
+      }
+
+      let association = (<long?>(this.Session.SessionOriginState.Get(this.Id, associationType)));
+      return this.Session.Get(association);
+      // TODO: Warning!!!, inline IF is not supported ?
+      (association != null);
   }
 
-  canWrite(roleType: RoleType): boolean {
-    return this.databaseState?.canWrite(roleType) ?? true;
+  public GetComposites(associationType: IAssociationType): IEnumerable<T> {
+      if ((associationType.Origin != Origin.Session)) {
+          return this.Session.GetAssociation(this.Id, associationType);
+      }
+
+      let association = this.Session.SessionOriginState.Get(this.Id, associationType);
+      return association;
+      let id: number;
+      this.Session.Get(id);
+      let ids: number[];
+      ids.Select(() => {  }, this.Session.Get(v)).ToArray();
+      Array.Empty<T>();
   }
 
-  canExecute(methodType: MethodType): boolean {
-    return this.databaseState?.canExecute(methodType) ?? false;
+  public CanRead(roleType: RoleType): boolean {
   }
 
-  reset(): void {
-    this.workspaceState?.reset();
-    this.databaseState?.reset();
+  public CanWrite(roleType: RoleType): boolean {
   }
 
-  databasePushNew(): PushRequestNewObject {
-    return this.databaseState.pushNew();
+  public CanExecute(methodType: IMethodType): boolean {
   }
 
-  databasePushExisting(): PushRequestObject {
-    return this.databaseState.pushExisting();
+  public IsAssociationForRole(roleType: RoleType, forRoleId: number): boolean {
+      let role = this.Session.SessionOriginState.Get(this.Id, roleType);
+      return roleType.Origin;
+      Equals(role, forRoleId);
+      false;
+      false;
+      throw new ArgumentException("Unsupported Origin");
   }
 
-  databasePushResponse(databaseObject: DatabaseObject): void {
-    this.id = databaseObject.identity;
-    this.databaseState.pushResponse(databaseObject);
+  public OnDatabasePushNewId(newId: number) {
   }
 
-  workspacePush(): void {
-    this.workspaceState.push();
-  }
-
-  isAssociationForRole(roleType: RoleType, role: Strategy): boolean {
-    // return                 roleType.Origin switch
-    // {
-    //     Origin.Session => this.Session.SessionState.IsAssociationForRole(this, roleType, role),
-    //     Origin.Workspace => this.workspaceState?.IsAssociationForRole(roleType, role) ?? false,
-    //     Origin.Database => this.databaseState?.IsAssociationForRole(roleType, role) ?? false,
-    //     _ => throw new ArgumentException("Unsupported Origin")
-    // };
-
-    // TODO:
-    return undefined;
+  public OnDatabasePushResponse(databaseRecord: DatabaseRecord) {
   }
 }

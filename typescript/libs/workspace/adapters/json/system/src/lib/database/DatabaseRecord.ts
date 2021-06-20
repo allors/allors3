@@ -4,8 +4,9 @@ import { fromString } from '@allors/workspace/domain/system';
 import { has, Numbers } from '../collections/Numbers';
 import { Database } from './Database';
 import { ResponseContext } from './Security/ResponseContext';
+import { IRecord } from '../IRecord';
 
-export class DatabaseRecord {
+export class DatabaseRecord implements IRecord {
   accessControlIds: Numbers;
   deniedPermissionIds: Numbers;
 

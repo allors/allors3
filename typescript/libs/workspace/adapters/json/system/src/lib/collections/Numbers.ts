@@ -46,12 +46,21 @@ function assert(value: unknown): asserts value {
     throw new Error('value must be defined');
   }
 }
+
 export function Numbers(set?: number[]): Numbers {
   if (Array.isArray(set)) {
     return [...set].sort();
   }
 
   return undefined;
+}
+
+export function* enumerate(set: Numbers) {
+  if (Array.isArray(set)) {
+    return yield set;
+  } else if (set != null) {
+    return yield set;
+  }
 }
 
 export function has(set: Numbers, value: number): boolean {
@@ -64,6 +73,28 @@ export function has(set: Numbers, value: number): boolean {
   }
 
   return false;
+}
+
+export function equals(self: Numbers, other: Numbers): boolean {
+  if (self === undefined) {
+    return other === undefined;
+  }
+
+  if (other === undefined) {
+    return false;
+  }
+
+  if (self.length != other.length) {
+    return false;
+  }
+
+  for (let i = 0; i < self.length; i++) {
+    if (self[i] !== other[i]) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 export function add(set: Numbers, value: number): Exclude<Numbers, undefined> {
@@ -97,28 +128,6 @@ export function difference(self: Numbers, other: Numbers): Numbers {
 
   const diff = self.filter((v) => !_has(other, v));
   return diff.length > 0 ? diff : undefined;
-}
-
-export function equals(self: Numbers, other: Numbers): boolean {
-  if (self === undefined) {
-    return other === undefined;
-  }
-
-  if (other === undefined) {
-    return false;
-  }
-
-  if(self.length != other.length){
-    return false;
-  }
-
-  for(let i=0; i<self.length; i++){
-    if(self[i] !== other[i]){
-      return false;
-    }
-  }
-
-  return true;
 }
 
 export function properSubset(self: Numbers, other: Numbers): boolean {

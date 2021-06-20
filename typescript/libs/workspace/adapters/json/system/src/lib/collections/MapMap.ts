@@ -9,6 +9,10 @@ export class MapMap<k1, k2, v> {
     return this.mapMap.keys();
   }
 
+  has(key1: k1, key2: k2): boolean {
+    return this.mapMap.get(key1)?.has(key2) ?? false;
+  }
+
   get(key1: k1, key2: k2): v | undefined {
     return this.mapMap.get(key1)?.get(key2);
   }
