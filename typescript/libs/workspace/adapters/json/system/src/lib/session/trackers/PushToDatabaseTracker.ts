@@ -1,26 +1,18 @@
-import { AssociationType, RoleType } from '@allors/workspace/meta/system';
+import { DatabaseOriginState } from '../originstate/DatabaseOriginState';
 import { Strategy } from '../Strategy';
 
-export /* sealed */ class PushToDatabaseTracker {
+export class PushToDatabaseTracker {
+  Created: Set<Strategy>;
 
-  public get Created(): ISet<Strategy> {
-  }
-  public set Created(value: ISet<Strategy>)  {
-  }
+  Changed: Set<DatabaseOriginState>;
 
-  public get Changed(): ISet<DatabaseOriginState> {
-  }
-  public set Changed(value: ISet<DatabaseOriginState>)  {
+  OnCreated(strategy: Strategy) {
+    (this.Created ??= new Set<Strategy>()).add(strategy);
   }
 
-  public OnCreated(strategy: Strategy) {
-  }
-
-  public OnChanged(state: DatabaseOriginState) {
-      if (!state.Strategy.IsNew) {
-          new HashSet<DatabaseOriginState>();
-          Add(state);
-      }
-
+  OnChanged(state: DatabaseOriginState) {
+    if (!state.Strategy.IsNew) {
+      (this.Changed ??= new Set<DatabaseOriginState>()).add(state);
+    }
   }
 }

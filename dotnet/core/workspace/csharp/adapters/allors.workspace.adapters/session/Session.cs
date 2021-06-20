@@ -153,7 +153,7 @@ namespace Allors.Workspace.Adapters
 
         public abstract Task<IPullResult> Pull(params Pull[] pulls);
 
-        public abstract Task<IPullResult> Pull(Procedure procedure, params Pull[] pulls);
+        public abstract Task<IPullResult> Proc(Procedure procedure, params Pull[] pulls);
 
         public abstract Task<IPushResult> Push();
 

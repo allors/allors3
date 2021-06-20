@@ -6,21 +6,20 @@ import { DatabaseState } from './Database/DatabaseState';
 import { Session } from './Session/Session';
 import { WorkspaceState } from './Workspace/WorkspaceState';
 
-export /* abstract */ class Strategy extends IStrategy {
+export class Strategy implements IStrategy {
 
   private object: IObject;
 
-  protected constructor (session: Session, class: IClass, id: number) {
+  constructor (session: Session, cls: Class, id: number) {
       this.Session = session;
       this.Id = id;
-      this.Class = class;
+      this.Class = cls;
       if (!this.Class.HasSessionOrigin) {
           this.WorkspaceOriginState = new WorkspaceOriginState(this, this.Session.Workspace.GetRecord(this.Id));
       }
-
   }
 
-  protected constructor (session: Session, databaseRecord: DatabaseRecord) {
+  static fromRecord(session: Session, databaseRecord: DatabaseRecord): Strategy {
       this.Session = session;
       this.Id = databaseRecord.Id;
       this.Class = databaseRecord.Class;
@@ -85,7 +84,7 @@ export /* abstract */ class Strategy extends IStrategy {
   public GetUnit(roleType: RoleType): Object {
   }
 }
-Unknownfor (let role in this.Session.Workspace.Numbers.Enumerate(roles)) {
+Unknownfor (let role of this.Session.Workspace.Numbers.Enumerate(roles)) {
   yield;
   return this.Session.Get(role);
 }

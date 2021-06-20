@@ -36,10 +36,14 @@ export class Database {
     this.executePermissionByOperandTypeByClass = new MapMap();
   }
 
-  createWorkspace() : IWorkspace {
+  createWorkspace(): IWorkspace {
     return new Workspace(this, this.servicesBuilder());
   }
-  
+
+  nextId(): number {
+    return this.idGenerator();
+  }
+
   onPushResponse(identity: number, cls: Class): DatabaseRecord {
     const record = new DatabaseRecord(this, cls, identity, 0);
     this.recordsById.set(identity, record);
@@ -71,7 +75,7 @@ export class Database {
         const metaObject = this.metaPopulation.metaObjectByTag.get(syncResponsePermission[2]);
         const operandType: OperandType = (metaObject as RelationType)?.roleType ?? (metaObject as MethodType);
         const operation = syncResponsePermission[3];
-        
+
         this.permissions.add(id);
 
         switch (operation) {
@@ -132,14 +136,12 @@ export class Database {
             return true;
           }
 
-          if (!equals(record.accessControlIds, v.a))
-          {
-              return true;
+          if (!equals(record.accessControlIds, v.a)) {
+            return true;
           }
 
-          if (!equals(record.deniedPermissionIds, v.d))
-          {
-              return true;
+          if (!equals(record.deniedPermissionIds, v.d)) {
+            return true;
           }
 
           return false;
@@ -147,7 +149,7 @@ export class Database {
         .map((v) => v.i),
     };
   }
-  
+
   getPermission(cls: Class, operandType: OperandType, operation: Operations): number | undefined {
     switch (operation) {
       case Operations.Read:

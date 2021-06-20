@@ -6,5 +6,5 @@ export interface InvokeRequest {
   l: Invocation[];
 
   /** Options */
-  o: InvokeOptions[];
+  o: InvokeOptions;
 }

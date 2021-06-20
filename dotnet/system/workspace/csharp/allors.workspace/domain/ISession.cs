@@ -48,7 +48,7 @@ namespace Allors.Workspace
 
         Task<IPullResult> Pull(params Pull[] pulls);
 
-        Task<IPullResult> Pull(Procedure procedure, params Pull[] pulls);
+        Task<IPullResult> Proc(Procedure procedure, params Pull[] pulls);
 
         Task<IPushResult> Push();
 

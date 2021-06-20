@@ -31,7 +31,7 @@ namespace Tests.Workspace
                     Values = new Dictionary<string, string> { { "step", "0" } }
                 };
 
-                await session.Pull(procedure);
+                await session.Proc(procedure);
             }
             catch (Exception)
             {

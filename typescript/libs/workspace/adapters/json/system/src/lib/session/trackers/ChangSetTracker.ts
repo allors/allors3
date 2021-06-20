@@ -1,4 +1,6 @@
-import { AssociationType, RoleType } from '@allors/workspace/meta/system';
+import { IStrategy } from '@allors/workspace/domain/system';
+import { DatabaseOriginState } from '../originstate/DatabaseOriginState';
+import { WorkspaceOriginState } from '../originstate/WorkspaceOriginState';
 import { Strategy } from '../Strategy';
 
 export /* sealed */ class ChangeSetTracker {
@@ -15,11 +17,11 @@ export /* sealed */ class ChangeSetTracker {
     (this.Instantiated ??= new Set()).add(strategy);
   }
 
-  public OnChanged(state: DatabaseOriginState) {
+  public OnDatabaseChanged(state: DatabaseOriginState) {
     (this.DatabaseOriginStates ??= new Set()).add(state);
   }
 
-  public OnChanged(state: WorkspaceOriginState) {
+  public OnWorkspaceChanged(state: WorkspaceOriginState) {
     (this.WorkspaceOriginStates ??= new Set()).add(state);
   }
 }

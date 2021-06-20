@@ -3,6 +3,12 @@ import { ObjectType } from './ObjectType';
 import { OperandType } from './OperandType';
 
 export interface PropertyType extends OperandType {
+  isRoleType: boolean;
+
+  isAssociationType: boolean;
+
+  isMethodType: boolean;
+
   origin: Origin;
 
   singularName: string;

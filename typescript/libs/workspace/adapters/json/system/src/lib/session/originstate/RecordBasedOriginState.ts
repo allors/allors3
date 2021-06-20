@@ -92,7 +92,7 @@ export abstract class RecordBasedOriginState {
 
     //  OneToMany
     const addedRoles = difference(role, previousRole);
-    for (const addedRole in enumerate(addedRoles)) {
+    for (const addedRole of enumerate(addedRoles)) {
       const previousAssociationObject = this.Session.GetAssociation(addedRole, associationType).FirstOrDefault();
       previousAssociationObject?.Strategy.Set(roleType, null);
     }

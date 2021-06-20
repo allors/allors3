@@ -68,7 +68,7 @@ namespace Allors.Workspace.Adapters
                 return;
             }
 
-            var previousRole = (long[])this.Get(association, roleType);
+            var previousRole = this.Get(association, roleType);
 
             // Use Diff (Add/Remove)
             var addedRoles = this.numbers.Except(newRole, previousRole);

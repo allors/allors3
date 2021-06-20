@@ -29,7 +29,7 @@ namespace Allors.Workspace.Adapters
 
         protected override void OnChange()
         {
-            this.Strategy.Session.ChangeSetTracker.OnChanged(this);
+            this.Strategy.Session.ChangeSetTracker.OnWorkspaceChanged(this);
             this.Strategy.Session.PushToWorkspaceTracker.OnChanged(this);
         }
 

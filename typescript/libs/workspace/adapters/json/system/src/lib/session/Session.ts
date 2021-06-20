@@ -1,103 +1,94 @@
-import { PullResponse, PushRequest, PushResponse, SyncRequest } from '@allors/protocol/json/system';
-import { IChangeSet, IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, ISession, ISessionServices, IStrategy, Method, Procedure, Pull } from '@allors/workspace/domain/system';
-import { AssociationType, Class, Composite, Origin, RoleType } from '@allors/workspace/meta/system';
-import { Database } from '../Database/Database';
-import { DatabaseState } from '../Database/DatabaseState';
-import { Strategy } from '../Strategy';
-import { Workspace } from '../Workspace/Workspace';
-import { WorkspaceState } from '../Workspace/WorkspaceState';
-import { SessionState } from './SessionState';
-import { ChangeSet } from '../ChangeSet';
-import { EMPTY, Observable } from 'rxjs';
+import { IChangeSet, IInvokeResult, InvokeOptions, IPullResult, IPushResult, ISession, ISessionServices, Method, Pull } from '@allors/workspace/domain/system';
+import { Class, Composite, Origin } from '@allors/workspace/meta/system';
+import { Workspace } from '../workspace/Workspace';
+import { SessionOriginState } from './originstate/SessionOriginState';
+import { Strategy } from './Strategy';
+import { ChangeSetTracker } from './trackers/ChangSetTracker';
+import { PushToDatabaseTracker } from './trackers/PushToDatabaseTracker';
+import { PushToWorkspaceTracker } from './trackers/PushToWorkspaceTracker';
+import { ChangeSet } from './ChangeSet';
+import { InvokeRequest, Invocation, PullRequest } from '@allors/protocol/json/system';
+import { Observable } from 'rxjs';
+import { InvokeResult } from '../database/invoke/InvokeResult';
+import { map } from 'rxjs/operators';
 
-export /* abstract */ class Session extends ISession {
 
-  private strategiesByClass: Dictionary<IClass, ISet<Strategy>>;
+export class Session implements ISession {
 
-  protected constructor (workspace: Workspace, sessionServices: ISessionServices) {
-      this.Workspace = workspace;
-      this.Services = sessionServices;
-      this.StrategyByWorkspaceId = new Dictionary<number, Strategy>();
-      this.strategiesByClass = new Dictionary<IClass, ISet<Strategy>>();
-      this.SessionOriginState = new SessionOriginState(this.Workspace.Numbers);
+  ChangeSetTracker: ChangeSetTracker;
+
+  PushToDatabaseTracker: PushToDatabaseTracker;
+
+  PushToWorkspaceTracker: PushToWorkspaceTracker;
+
+  SessionOriginState: SessionOriginState;
+
+  StrategyByWorkspaceId: Map<number, Strategy>;
+
+  private strategiesByClass: Map<Class, Set<Strategy>>;
+
+  constructor (public Workspace: Workspace, public Services: ISessionServices) {
+      this.StrategyByWorkspaceId = new Map();
+      this.strategiesByClass = new Map();
+      this.SessionOriginState = new SessionOriginState();
       this.ChangeSetTracker = new ChangeSetTracker();
       this.PushToDatabaseTracker = new PushToDatabaseTracker();
       this.PushToWorkspaceTracker = new PushToWorkspaceTracker();
-      this.Services.OnInit(this);
+      this.Services.onInit(this);
   }
 
-  public get Services(): ISessionServices {
+  public Create(cls: Class): any {
+    var workspaceId = this.Workspace.database.nextId();
+    var strategy = new Strategy(this, cls, workspaceId);
+    this.AddStrategy(strategy);
+
+    if (cls.origin !== Origin.Session)
+    {
+        this.PushToWorkspaceTracker.OnCreated(strategy);
+        if (cls.origin === Origin.Database)
+        {
+            this.PushToDatabaseTracker.OnCreated(strategy);
+        }
+    }
+
+    this.ChangeSetTracker.OnCreated(strategy);
+
+    return strategy.Object;
   }
 
-  ISession.Workspace: IWorkspace;
-
-  public get Workspace(): Workspace {
-  }
-
-  public get ChangeSetTracker(): ChangeSetTracker {
-  }
-
-  public get PushToDatabaseTracker(): PushToDatabaseTracker {
-  }
-
-  public get PushToWorkspaceTracker(): PushToWorkspaceTracker {
-  }
-
-  public get SessionOriginState(): SessionOriginState {
-  }
-
-  protected get StrategyByWorkspaceId(): Dictionary<number, Strategy> {
-  }
-
-  public Create(): T {
-      let .: number;
-      TryParse(v, /* out */var, id);
-      return id;
-  }
-
-  public GetAll(): IEnumerable<T> {
-      let objectType = (<IComposite>(this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType()));
-      return this.GetAll(objectType);
-  }
-
-  public GetAll(objectType: IComposite): IEnumerable<T> {
-      for (let class in objectType.Classes) {
-          switch (class.Origin) {
+  public *GetAll(objectType: Composite) {
+      for (let cls of objectType.classes) {
+          switch (cls.origin) {
               case Origin.Workspace:
-                  if (this.Workspace.WorkspaceIdsByWorkspaceClass.TryGetValue(class, /* out */var, ids)) {
-                      for (let id in ids) {
-                          if (this.StrategyByWorkspaceId.TryGetValue(id, /* out */var, strategy)) {
-                              yield;
-                              return (<T>(strategy.Object));
+                  if (this.Workspace.workspaceIdsByWorkspaceClass.has(cls)) {
+                    const ids = this.Workspace.workspaceIdsByWorkspaceClass.get(cls);
+                      for (let id of ids) {
+                          if (this.StrategyByWorkspaceId.has(id)) {
+                            const strategy = this.StrategyByWorkspaceId.get(id);
+                              yield strategy.Object;
+                          }                          else {
+                              const strategy = this.InstantiateWorkspaceStrategy(id);
+                              yield strategy.Object;
                           }
-                          else {
-                              strategy = this.InstantiateWorkspaceStrategy(id);
-                              yield;
-                              return (<T>(strategy.Object));
-                          }
-
                       }
-
                   }
 
                   break;
           }
-
       }
-
   }
 
   public Checkpoint(): IChangeSet {
       let changeSet = new ChangeSet(this, this.ChangeSetTracker.Created, this.ChangeSetTracker.Instantiated);
       if ((this.ChangeSetTracker.DatabaseOriginStates != null)) {
-          for (let databaseOriginState in this.ChangeSetTracker.DatabaseOriginStates) {
+          for (let databaseOriginState of this.ChangeSetTracker.DatabaseOriginStates) {
               databaseOriginState.Checkpoint(changeSet);
           }
 
       }
 
       if ((this.ChangeSetTracker.WorkspaceOriginStates != null)) {
-          for (let workspaceOriginState in this.ChangeSetTracker.WorkspaceOriginStates) {
+          for (let workspaceOriginState of this.ChangeSetTracker.WorkspaceOriginStates) {
               workspaceOriginState.Checkpoint(changeSet);
           }
 
@@ -108,18 +99,46 @@ export /* abstract */ class Session extends ISession {
       this.ChangeSetTracker.Instantiated = null;
       this.ChangeSetTracker.DatabaseOriginStates = null;
       this.ChangeSetTracker.WorkspaceOriginStates = null;
+
       return changeSet;
   }
 
-  public abstract Invoke(method: Method, options: InvokeOptions = null): Task<IInvokeResult>;
 
-  public abstract Invoke(methods: Method[], options: InvokeOptions = null): Task<IInvokeResult>;
+  public Invoke(methods: Method[], options: InvokeOptions): Observable<IInvokeResult>
+  {
+    var invokeRequest: InvokeRequest =
+    {
+        l = methods.map(v => {
+          return {
+            i = v.object.id,
+            v = (v.object.strategy as Strategy).DatabaseOriginState.Version,
+            m = v.MethodType.tag
+           }
+        }),
+        o = options != null
+            ?  {
+                c = options.continueOnError,
+                i = options.isolated
+            }
+            : null
+    };
 
-  public abstract Pull(params pulls: Pull[]): Task<IPullResult>;
+    return this.Workspace.database.invoke(invokeRequest)
+    .pipe(
+      map((v) => new InvokeResult(this, v))
+    );
+  }
 
-  public abstract Pull(procedure: Procedure, params pulls: Pull[]): Task<IPullResult>;
+  public Pull(...pulls: Pull[]): Observable<IPullResult>{
+    const pullRequest: PullRequest = { l = pulls.map(v => v.ToJson()) };
 
-  public abstract Push(): Task<IPushResult>;
+    var pullResponse = await this.Workspace.DatabaseConnection.Pull(pullRequest);
+    return await this.OnPull(pullResponse);
+  }
+
+  public Proc(procedure: Procedure, params pulls: Pull[]): Task<IPullResult>;
+
+  public Push(): Task<IPushResult>;
 
   public GetStrategy(id: number): Strategy {
       if ((id == 0)) {
@@ -154,7 +173,7 @@ export /* abstract */ class Session extends ISession {
 
   public GetAssociation(role: number, associationType: IAssociationType): IEnumerable<T> {
       let roleType = associationType.RoleType;
-      for (let association in this.Get(associationType.ObjectType)) {
+      for (let association of this.Get(associationType.ObjectType)) {
           if (!association.CanRead(roleType)) {
               // TODO: Warning!!! continue If
           }
@@ -167,8 +186,6 @@ export /* abstract */ class Session extends ISession {
       }
 
   }
-
-  public abstract Create(class: IClass): T;
 
   protected RemoveStrategy(strategy: Strategy) {
       this.StrategyByWorkspaceId.Remove(strategy.Id);
@@ -189,7 +206,7 @@ export /* abstract */ class Session extends ISession {
       }
 
       if ((this.PushToWorkspaceTracker.Changed != null)) {
-          for (let state in this.PushToWorkspaceTracker.Changed) {
+          for (let state of this.PushToWorkspaceTracker.Changed) {
               if ((this.PushToWorkspaceTracker.Created?.Contains(state.Strategy) == true)) {
                   // TODO: Warning!!! continue If
               }

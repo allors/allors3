@@ -1,4 +1,4 @@
-import { AssociationType, RoleType } from '@allors/workspace/meta/system';
+import { WorkspaceOriginState } from '../originstate/WorkspaceOriginState';
 import { Strategy } from '../Strategy';
 
 export /* sealed */ class PushToWorkspaceTracker {

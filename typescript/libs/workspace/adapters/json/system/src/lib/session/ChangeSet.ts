@@ -1,116 +1,94 @@
-import { IChangeSet, IStrategy } from '@allors/workspace/domain/system';
-import { AssociationType, RelationType, RoleType } from '@allors/workspace/meta/system';
-import { Session } from './Session/Session';
-import { SessionStateChangeSet } from './Session/SessionStateChangeSet';
+import { IChangeSet, ISession, IStrategy } from '@allors/workspace/domain/system';
+import { AssociationType, PropertyType, RelationType, RoleType } from '@allors/workspace/meta/system';
+import { Session } from './Session';
 import { Strategy } from './Strategy';
 
-export /* sealed */ class ChangeSet extends IChangeSet {
+export class ChangeSet implements IChangeSet {
+  associationsByRoleType: Map<RoleType, Set<IStrategy>>;
 
-  public constructor (session: Session, created: ISet<IStrategy>, instantiated: ISet<IStrategy>) {
-      this.Session = session;
-      this.Created = created;
-      this.Instantiated = instantiated;
-      this.AssociationsByRoleType = new Dictionary<RoleType, ISet<IStrategy>>();
-      this.RolesByAssociationType = new Dictionary<IAssociationType, ISet<IStrategy>>();
+  rolesByAssociationType: Map<AssociationType, Set<IStrategy>>;
+
+  public constructor(public Session: Session, public Created: Set<IStrategy>, public Instantiated: Set<IStrategy>) {
+    this.associationsByRoleType = new Map();
+    this.rolesByAssociationType = new Map();
   }
 
-  private get Session(): Session {
+  public AddSessionStateChanges(sessionStateChangeSet: Map<PropertyType, Map<number, any>>) {
+    sessionStateChangeSet.forEach((map, propertyType) => {
+      const ids = map.keys;
+
+      const strategies = new Set<IStrategy>(this.Session.GetStrategies(ids));
+
+      if (propertyType.isAssociationType) {
+        this.rolesByAssociationType.set(propertyType as AssociationType, strategies);
+      } else if (propertyType.isRoleType) {
+        this.associationsByRoleType.set(propertyType as RoleType, strategies);
+      }
+    });
   }
 
-  IChangeSet.Session: ISession;
-
-  public get Created(): ISet<IStrategy> {
-  }
-
-  public get Instantiated(): ISet<IStrategy> {
-  }
-
-  public get AssociationsByRoleType(): IDictionary<RoleType, ISet<IStrategy>> {
-  }
-
-  public get RolesByAssociationType(): IDictionary<IAssociationType, ISet<IStrategy>> {
-  }
-
-  public AddSessionStateChanges(sessionStateChangeSet: IDictionary<IPropertyType, IDictionary<number, Object>>) {
-      for (let kvp in sessionStateChangeSet) {
-          let ids = kvp.Value.Keys;
-          let strategies = new HashSet<IStrategy>(ids.Select(() => {  }, this.Session.GetStrategy(v)));
-          switch (kvp.Key) {
-              case IAssociationType:
-                  /* Warning! Labeled Statements are not Implemented */this.RolesByAssociationType.Add(associationType, strategies);
-                  break;
-              case RoleType:
-                  /* Warning! Labeled Statements are not Implemented */this.AssociationsByRoleType.Add(roleType, strategies);
-                  break;
-          }
-
+  public Diff(association: Strategy, relationType: RelationType, current: any, previous: any) {
+    const roleType = relationType.roleType;
+    if (roleType.objectType.isUnit) {
+      if (current !== previous) {
+        this.AddAssociation(relationType, association);
+      }
+    } else if (roleType.isOne) {
+      if (current === previous) {
+        return;
       }
 
-  }
-
-  public Diff(association: Strategy, relationType: RelationType, current: Object, previous: Object) {
-      let roleType = relationType.RoleType;
-      if (roleType.ObjectType.IsUnit) {
-          if (!Equals(current, previous)) {
-              this.AddAssociation(relationType, association);
-          }
-
-      }
-      else if (roleType.IsOne) {
-          if (Equals(current, previous)) {
-              return;
-          }
-
-          if ((previous != null)) {
-              this.AddRole(relationType, this.Session.GetStrategy((<number>(previous))));
-          }
-
-          if ((current != null)) {
-              this.AddRole(relationType, this.Session.GetStrategy((<number>(current))));
-          }
-
-          this.AddAssociation(relationType, association);
-      }
-      else {
-          let numbers = this.Session.Workspace.Numbers;
-          let hasChange = false;
-          let addedRoles = numbers.Except(current, previous);
-          for (let v in numbers.Enumerate(addedRoles)) {
-              this.AddRole(relationType, this.Session.GetStrategy(v));
-              hasChange = true;
-          }
-
-          let removedRoles = numbers.Except(previous, current);
-          for (let v in numbers.Enumerate(removedRoles)) {
-              this.AddRole(relationType, this.Session.GetStrategy(v));
-              hasChange = true;
-          }
-
-          if (hasChange) {
-              this.AddAssociation(relationType, association);
-          }
-
+      if (previous != null) {
+        this.AddRole(relationType, this.Session.GetStrategy(<number>previous));
       }
 
+      if (current != null) {
+        this.AddRole(relationType, this.Session.GetStrategy(<number>current));
+      }
+
+      this.AddAssociation(relationType, association);
+    } else {
+      const numbers = this.Session.Workspace.Numbers;
+      let hasChange = false;
+      const addedRoles = numbers.Except(current, previous);
+      for (const v in numbers.Enumerate(addedRoles)) {
+        this.AddRole(relationType, this.Session.GetStrategy(v));
+        hasChange = true;
+      }
+
+      const removedRoles = numbers.Except(previous, current);
+      for (const v in numbers.Enumerate(removedRoles)) {
+        this.AddRole(relationType, this.Session.GetStrategy(v));
+        hasChange = true;
+      }
+
+      if (hasChange) {
+        this.AddAssociation(relationType, association);
+      }
+    }
   }
 
   private AddAssociation(relationType: RelationType, association: Strategy) {
-      let roleType = relationType.RoleType;
-      if (!this.AssociationsByRoleType.TryGetValue(roleType, /* out */var, associations)) {
-          associations = new HashSet<IStrategy>();
-          this.AssociationsByRoleType.Add(roleType, associations);
-      }
+    const roleType = relationType.roleType;
 
-      associations.Add(association);
+    let associations: Set<IStrategy>;
+    if (!this.associationsByRoleType.has(roleType)) {
+      associations = new Set();
+      this.associationsByRoleType.set(roleType, associations);
+    }
+
+    associations.add(association);
   }
 
   private AddRole(relationType: RelationType, role: Strategy) {
-      let associationType = relationType.AssociationType;
-      if (!this.RolesByAssociationType.TryGetValue(associationType, /* out */var, roles)) {
-          roles = new HashSet<IStrategy>();
-          this.RolesByAssociationType.Add(associationType, roles);
-      }
+    const associationType = relationType.AssociationType;
 
-      roles.Add(role);
+    let roles: Set<IStrategy>;
+    if (!this.rolesByAssociationType.has(associationType)) {
+      roles = new Set();
+      this.rolesByAssociationType.set(associationType, roles);
+    }
+
+    roles.add(role);
   }
 }

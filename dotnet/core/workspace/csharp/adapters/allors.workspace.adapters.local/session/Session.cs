@@ -35,7 +35,7 @@ namespace Allors.Workspace.Adapters.Local
             return Task.FromResult<IPullResult>(result);
         }
 
-        public override Task<IPullResult> Pull(Data.Procedure procedure, params Data.Pull[] pulls)
+        public override Task<IPullResult> Proc(Data.Procedure procedure, params Data.Pull[] pulls)
         {
             var result = new Pull(this, this.Workspace);
 

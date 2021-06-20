@@ -1,12 +1,8 @@
 export class MapMap<k1, k2, v> {
-  private mapMap: Map<k1, Map<k2, v>>;
+  readonly mapMap: Map<k1, Map<k2, v>>;
 
   constructor() {
     this.mapMap = new Map();
-  }
-
-  keys() {
-    return this.mapMap.keys();
   }
 
   has(key1: k1, key2: k2): boolean {
@@ -36,6 +32,12 @@ export class MapMap<k1, k2, v> {
       map.set(key2, value);
     }
 
+    return this;
+  }
+
+  remove(key1: k1, key2: k2) {
+    const map = this.mapMap.get(key1);
+    map.delete(key2);
     return this;
   }
 }

@@ -89,7 +89,7 @@ namespace Allors.Workspace.Adapters
 
         protected override void OnChange()
         {
-            this.Session.ChangeSetTracker.OnChanged(this);
+            this.Session.ChangeSetTracker.OnDatabaseChanged(this);
             this.Session.PushToDatabaseTracker.OnChanged(this);
         }
     }

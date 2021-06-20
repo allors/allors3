@@ -62,7 +62,7 @@ namespace Allors.Workspace.Adapters.Remote
             return await this.OnPull(pullResponse);
         }
 
-        public override async Task<IPullResult> Pull(Procedure procedure, params Pull[] pulls)
+        public override async Task<IPullResult> Proc(Procedure procedure, params Pull[] pulls)
         {
             var pullRequest = new PullRequest
             {

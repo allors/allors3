@@ -57,7 +57,7 @@ export function Numbers(set?: number[]): Numbers {
 
 export function* enumerate(set: Numbers) {
   if (Array.isArray(set)) {
-    return yield set;
+    return yield* set;
   } else if (set != null) {
     return yield set;
   }
