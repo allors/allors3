@@ -5,4 +5,5 @@ import { ParameterizablePredicate } from './ParameterizablePredicate';
 export interface LessThan extends ParameterizablePredicate {
   roleType: RoleType;
   value?: UnitTypes;
+  path?: RoleType;
 }

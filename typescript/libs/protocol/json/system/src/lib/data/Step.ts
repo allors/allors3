@@ -2,14 +2,14 @@ import { Node } from "./Node";
 
 export interface Step {
   /** AssociationType */
-  a: number;
+  a?: number;
 
   /** RoleType */
-  r: number;
+  r?: number;
 
   /** Next */
-  n: Step;
+  n?: Step;
 
   /** Include */
-  i: Node[];
+  i?: Node[];
 }

@@ -28,6 +28,9 @@ export * from './lib/data/Result';
 export * from './lib/data/Operator';
 export * from './lib/data/Step';
 
+export * from './lib/data/visitor/IVisitable';
+export * from './lib/data/visitor/IVisitor';
+
 export * from './lib/database/IDerivationError';
 export * from './lib/database/IInvokeResult';
 export * from './lib/database/InvokeOptions';

@@ -2,17 +2,17 @@ import { Select } from "./Select";
 
 export interface Result {
   /** SelectRef */
-  r: string;
+  r?: string;
 
   /** Select */
-  s: Select;
+  s?: Select;
 
   /** Name */
-  n: string;
+  n?: string;
 
   /** Skip */
-  k: number;
+  k?: number;
 
   /** Take */
-  t: number;
+  t?: number;
 }

@@ -1,10 +1,10 @@
 export interface Node {
   /** AssociationType */
-  a: number;
+  a?: number;
 
   /** RoleType */
-  r: number;
+  r?: number;
 
   /** Nodes */
-  n: Node[];
+  n?: Node[];
 }

@@ -1,16 +1,19 @@
 import { ObjectType } from '@allors/workspace/meta/system';
-import { CompositeTypes, ParameterTypes } from "../Types";
+import { ParameterTypes } from "../Types";
 import { IExtent } from "./IExtent";
 import { Result } from "./Result";
+import { IObject } from '../IObject';
 
 export interface Pull {
-  objectType?: ObjectType;
-
-  extentRef?: string;
+   extentRef?: string;
 
   extent?: IExtent;
 
-  object?: CompositeTypes;
+  objectType?: ObjectType;
+
+  object?: IObject;
+
+  objectId?: number;
 
   results?: Result[];
 

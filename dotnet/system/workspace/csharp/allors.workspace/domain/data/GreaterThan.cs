@@ -5,7 +5,6 @@
 
 namespace Allors.Workspace.Data
 {
-    
     using Meta;
 
     public class GreaterThan : IRolePredicate

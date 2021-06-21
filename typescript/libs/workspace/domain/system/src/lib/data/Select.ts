@@ -1,8 +1,8 @@
-import { Step } from "./Step";
-import { Tree } from "./Tree";
+import { Step } from './Step';
+import { IVisitable } from './visitor/IVisitable';
 
-export interface Select {
+export interface Select extends IVisitable {
   step?: Step;
 
-  include?: Tree | Node[];
+  include?: Node[];
 }

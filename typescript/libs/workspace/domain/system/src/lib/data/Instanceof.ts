@@ -3,5 +3,5 @@ import { ParameterizablePredicate } from './ParameterizablePredicate';
 
 export interface Instanceof extends ParameterizablePredicate {
   propertyType: PropertyType;
-  instanceObjectType?: ObjectType;
+  objectType?: ObjectType;
 }

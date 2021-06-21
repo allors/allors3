@@ -84,7 +84,7 @@ namespace Allors.Workspace.Protocol.Json
                 d = visited.Dependencies,
                 r = visited.RoleType?.RelationType.Tag,
                 vs = visited.Values?.Select(this.unitConvert.ToJson).ToArray(),
-                pas = visited.Paths?.Select(v=>v.RelationType.Tag).ToArray(),
+                pas = visited.Paths?.Select(v => v.RelationType.Tag).ToArray(),
                 p = visited.Parameter,
             };
 
@@ -192,13 +192,17 @@ namespace Allors.Workspace.Protocol.Json
             this.predicates.Push(predicate);
         }
 
-        public void VisitExtent(Allors.Workspace.Data.Extent visited)
+        public void VisitExtent(Data.Extent visited)
         {
             var extent = new Extent
             {
                 k = ExtentKind.Extent,
                 t = visited.ObjectType?.Tag,
-                s = visited.Sorting?.Select(v => new Sort { d = v.SortDirection, r = v.RoleType?.RelationType.Tag }).ToArray(),
+                s = visited.Sorting?.Select(v => new Sort
+                {
+                    d = v.SortDirection,
+                    r = v.RoleType?.RelationType.Tag
+                }).ToArray(),
             };
 
             this.extents.Push(extent);
@@ -210,7 +214,7 @@ namespace Allors.Workspace.Protocol.Json
             }
         }
 
-        public void VisitSelect(Allors.Workspace.Data.Select visited)
+        public void VisitSelect(Data.Select visited)
         {
             var @select = new Select();
 
@@ -328,7 +332,7 @@ namespace Allors.Workspace.Protocol.Json
             this.predicates.Push(predicate);
         }
 
-        public void VisitNode(Allors.Workspace.Data.Node visited)
+        public void VisitNode(Data.Node visited)
         {
             var node = new Node
             {
@@ -390,7 +394,7 @@ namespace Allors.Workspace.Protocol.Json
             }
         }
 
-        public void VisitPull(Allors.Workspace.Data.Pull visited)
+        public void VisitPull(Data.Pull visited)
         {
             var pull = new Pull
             {
@@ -421,7 +425,7 @@ namespace Allors.Workspace.Protocol.Json
             this.Pull = pull;
         }
 
-        public void VisitResult(Allors.Workspace.Data.Result visited)
+        public void VisitResult(Data.Result visited)
         {
             var result = new Result
             {
@@ -440,7 +444,7 @@ namespace Allors.Workspace.Protocol.Json
             }
         }
 
-        public void VisitSort(Allors.Workspace.Data.Sort visited)
+        public void VisitSort(Data.Sort visited)
         {
             var sort = new Sort
             {
@@ -451,7 +455,7 @@ namespace Allors.Workspace.Protocol.Json
             this.sorts.Push(sort);
         }
 
-        public void VisitStep(Allors.Workspace.Data.Step visited)
+        public void VisitStep(Data.Step visited)
         {
             var step = new Step
             {
@@ -514,7 +518,7 @@ namespace Allors.Workspace.Protocol.Json
             }
         }
 
-        public void VisitProcedure(Data.Procedure procedure) => this.Procedure = new Allors.Protocol.Json.Data.Procedure
+        public void VisitProcedure(Data.Procedure procedure) => this.Procedure = new Procedure
         {
             n = procedure.Name,
             c = procedure.Collections?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Select(v => v.Id).ToArray()),

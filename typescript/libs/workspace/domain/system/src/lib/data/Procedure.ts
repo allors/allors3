@@ -1,11 +1,13 @@
+import { IObject } from '../IObject';
+
 export interface Procedure {
   name: string;
 
-  namedCollections?: string[][];
+  collections?: Map<string, IObject[]>;
 
-  namedObjects?: string[][];
+  objects?: Map<string, IObject>;
 
-  namedValues?: string[][];
+  values?: Map<string, string>;
 
-  objectVersions?: string[][];
+  pool?: Map<IObject, number>;
 }

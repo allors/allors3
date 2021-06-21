@@ -1,8 +1,9 @@
 import { IExtent } from './IExtent';
 import { Sort } from './Sort';
+import { IVisitable } from './visitor/IVisitable';
 
-export interface Operator {
+export interface Operator extends IVisitable {
   operands?: IExtent[];
 
-  sort?: Sort[];
+  sorting?: Sort[];
 }

@@ -7,38 +7,44 @@ export interface Predicate {
   k: PredicateKind;
 
   /** AssociationType */
-  a: number;
+  a?: number;
 
   /** RoleType */
-  r: number;
+  r?: number;
 
   /** ObjectType */
-  t: number;
+  o?: number;
 
   /** Parameter */
-  p: string;
+  p?: string;
 
   /** Dependencies */
-  d: string[];
+  d?: string[];
 
   /** Operand */
-  op: Predicate;
+  op?: Predicate;
 
   /** Operands */
-  ops: Predicate[];
+  ops?: Predicate[];
 
   /** Object */
-  ob: number;
+  ob?: number;
 
   /** Objects */
-  obs: number[];
+  obs?: number[];
 
   /** Value */
-  v: UnitTypes;
+  v?: UnitTypes;
 
   /** Values */
-  vs: UnitTypes[];
+  vs?: UnitTypes[];
+
+  /** Path */
+  pa?: number;
+
+  /** Paths */
+  pas?: number[];
 
   /** Extent */
-  e: Extent;
+  e?: Extent;
 }

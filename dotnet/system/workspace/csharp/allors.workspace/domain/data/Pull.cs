@@ -22,9 +22,9 @@ namespace Allors.Workspace.Data
 
         public long? ObjectId { get; set; }
 
-        public IDictionary<string, object> Arguments { get; set; }
-
         public Result[] Results { get; set; }
+
+        public IDictionary<string, object> Arguments { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitPull(this);
     }
