@@ -19,11 +19,11 @@ export interface ISession {
 
   create(cls: Class): IObject;
 
-  getOne(obj: IObject |  number | string): IObject;
+  getOne<T extends IObject>(obj: IObject |  number | string): T;
 
-  getMany(objects: IObject[] | number[] | string[]): IObject[];
+  getMany<T extends IObject>(objects: IObject[] | number[] | string[]): Generator<T, void, unknown>;
 
-  getAll(objectType?: Composite): IObject[];
+  getAll<T extends IObject>(objectType?: Composite): Generator<T, void, unknown>;
 
   invoke(method: Method | Method[], options?: InvokeOptions): Observable<IInvokeResult>;
 

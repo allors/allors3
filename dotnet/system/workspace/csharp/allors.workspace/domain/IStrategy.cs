@@ -48,10 +48,10 @@ namespace Allors.Workspace
 
         void Remove<T>(IRoleType roleType, T value) where T : IObject;
 
-        void Remove(IRoleType roleType);
+        void RemoveAll(IRoleType roleType);
 
-        T GetComposite<T>(IAssociationType associationType) where T : IObject;
+        T GetCompositeAssociation<T>(IAssociationType associationType) where T : IObject;
 
-        IEnumerable<T> GetComposites<T>(IAssociationType associationType) where T : IObject;
+        IEnumerable<T> GetCompositesAssociation<T>(IAssociationType associationType) where T : IObject;
     }
 }

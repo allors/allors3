@@ -26,25 +26,25 @@ export interface IStrategy {
 
   getUnit(roleType: RoleType): UnitTypes;
 
-  getComposite<T>(roleType: RoleType): T;
+  getComposite<T extends IObject>(roleType: RoleType): T;
 
-  getComposites<T>(roleType: RoleType): T[];
+  getComposites<T extends IObject>(roleType: RoleType): Generator<T, void, unknown>;
 
   set(roleType: RoleType, value: unknown): void;
 
   setUnit(roleType: RoleType, value: UnitTypes): void;
 
-  setComposite<T>(roleType: RoleType, value: T): void;
+  setComposite<T extends IObject>(roleType: RoleType, value: T): void;
 
-  setComposites<T>(roleType: RoleType, value: T[]): void;
+  setComposites<T extends IObject>(roleType: RoleType, value: T[]): void;
 
-  add<T>(roleType: RoleType, value: T): void;
+  add<T extends IObject>(roleType: RoleType, value: T): void;
 
-  remove<T>(roleType: RoleType, value: T): void;
+  remove<T extends IObject>(roleType: RoleType, value: T): void;
 
   removeAll(roleType: RoleType): void;
 
-  getCompositeAssociation<T>(associationType: AssociationType): T;
+  getCompositeAssociation<T extends IObject>(associationType: AssociationType): T;
 
-  getCompositesAssociation<T>(associationType: AssociationType): T[];
+  getCompositesAssociation<T extends IObject>(associationType: AssociationType): T[];
 }

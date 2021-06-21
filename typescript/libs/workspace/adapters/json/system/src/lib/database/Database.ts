@@ -1,8 +1,8 @@
 import { PullResponse, SecurityRequest, SyncRequest, SyncResponse, SecurityResponse, PullRequest, PushRequest, PushResponse, InvokeRequest, InvokeResponse } from '@allors/protocol/json/system';
 import { IWorkspace, IWorkspaceServices, Operations } from '@allors/workspace/domain/system';
-import { Class, MetaPopulation, MethodType, OperandType, RelationType } from '@allors/workspace/meta/system';
+import { Class, MethodType, OperandType, RelationType } from '@allors/workspace/meta/system';
 import { Observable } from 'rxjs';
-import { equals, properSubset } from '../collections/Numbers';
+import { equals } from '../collections/Numbers';
 import { Client } from './Client';
 import { AccessControl } from './Security/AccessControl';
 import { ResponseContext } from './Security/ResponseContext';
@@ -44,9 +44,9 @@ export class Database {
     return this.idGenerator();
   }
 
-  onPushResponse(identity: number, cls: Class): DatabaseRecord {
-    const record = new DatabaseRecord(this, cls, identity, 0);
-    this.recordsById.set(identity, record);
+  onPushResponse(cls: Class, id: number): DatabaseRecord {
+    const record = new DatabaseRecord(this, cls, id, 0);
+    this.recordsById.set(id, record);
     return record;
   }
 

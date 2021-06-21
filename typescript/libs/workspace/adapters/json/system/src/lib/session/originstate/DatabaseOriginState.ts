@@ -4,7 +4,8 @@ import { DatabaseRecord } from '../../database/DatabaseRecord';
 import { IRecord } from '../../IRecord';
 import { RecordBasedOriginState } from './RecordBasedOriginState';
 
-const UnknownVersion = 0;
+export const UnknownVersion = 0;
+export const InitialVersion = 1;
 
 export class DatabaseOriginState extends RecordBasedOriginState {
   DatabaseRecord: DatabaseRecord;
@@ -44,7 +45,7 @@ export class DatabaseOriginState extends RecordBasedOriginState {
       return false;
     }
 
-    const permission = this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, roleType, Operations.Read);
+    const permission = this.Session.workspace.DatabaseConnection.GetPermission(this.Class, roleType, Operations.Read);
     return this.DatabaseRecord.isPermitted(permission);
   }
 
@@ -57,7 +58,7 @@ export class DatabaseOriginState extends RecordBasedOriginState {
       return false;
     }
 
-    const permission = this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, roleType, Operations.Write);
+    const permission = this.Session.workspace.DatabaseConnection.GetPermission(this.Class, roleType, Operations.Write);
     return this.DatabaseRecord.isPermitted(permission);
   }
 
@@ -70,7 +71,7 @@ export class DatabaseOriginState extends RecordBasedOriginState {
       return false;
     }
 
-    const permission = this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, methodType, Operations.Execute);
+    const permission = this.Session.workspace.DatabaseConnection.GetPermission(this.Class, methodType, Operations.Execute);
     return this.DatabaseRecord.isPermitted(permission);
   }
 
@@ -82,7 +83,7 @@ export class DatabaseOriginState extends RecordBasedOriginState {
   public OnPulled() {}
 
   protected /* override */ OnChange() {
-    this.Session.ChangeSetTracker.OnChanged(this);
-    this.Session.PushToDatabaseTracker.OnChanged(this);
+    this.Session.changeSetTracker.OnChanged(this);
+    this.Session.pushToDatabaseTracker.OnChanged(this);
   }
 }

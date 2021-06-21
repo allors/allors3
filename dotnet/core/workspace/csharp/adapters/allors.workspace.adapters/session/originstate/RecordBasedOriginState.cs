@@ -52,8 +52,7 @@ namespace Allors.Workspace.Adapters
 
             if (associationType.IsOne && role.HasValue)
             {
-                var previousAssociationObject =
-                    this.Session.GetAssociation<IObject>(role.Value, associationType).FirstOrDefault();
+                var previousAssociationObject = this.Session.GetCompositeAssociation<IObject>(role.Value, associationType);
 
                 this.SetChangedRole(roleType, role);
 
@@ -89,8 +88,7 @@ namespace Allors.Workspace.Adapters
             }
 
             // OneToMany
-            var previousAssociationObject =
-                this.Session.GetAssociation<IObject>(roleToAdd, associationType).FirstOrDefault();
+            var previousAssociationObject = this.Session.GetCompositeAssociation<IObject>(roleToAdd, associationType);
             previousAssociationObject?.Strategy.Set(roleType, null);
         }
 
@@ -124,8 +122,7 @@ namespace Allors.Workspace.Adapters
             var addedRoles = this.Numbers.Except(role, previousRole);
             foreach (var addedRole in this.Numbers.Enumerate(addedRoles))
             {
-                var previousAssociationObject =
-                    this.Session.GetAssociation<IObject>(addedRole, associationType).FirstOrDefault();
+                var previousAssociationObject = this.Session.GetCompositeAssociation<IObject>(addedRole, associationType);
                 previousAssociationObject?.Strategy.Set(roleType, null);
             }
         }

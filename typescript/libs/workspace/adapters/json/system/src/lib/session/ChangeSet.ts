@@ -48,7 +48,7 @@ export class ChangeSet implements IChangeSet {
 
       this.AddAssociation(relationType, association);
     } else {
-      const numbers = this.Session.Workspace.Numbers;
+      const numbers = this.Session.workspace.Numbers;
       let hasChange = false;
       const addedRoles = numbers.Except(current, previous);
       for (const v in numbers.Enumerate(addedRoles)) {

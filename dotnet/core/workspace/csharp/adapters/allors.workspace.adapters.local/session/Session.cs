@@ -5,7 +5,6 @@
 
 namespace Allors.Workspace.Adapters.Local
 {
-    using System;
     using System.Threading.Tasks;
     using Meta;
 
@@ -35,7 +34,7 @@ namespace Allors.Workspace.Adapters.Local
             return Task.FromResult<IPullResult>(result);
         }
 
-        public override Task<IPullResult> Proc(Data.Procedure procedure, params Data.Pull[] pulls)
+        public override Task<IPullResult> Call(Data.Procedure procedure, params Data.Pull[] pulls)
         {
             var result = new Pull(this, this.Workspace);
 
@@ -51,7 +50,34 @@ namespace Allors.Workspace.Adapters.Local
         {
             var result = new Push(this);
 
-            this.PushToDatabase(result);
+            result.Execute(this.PushToDatabaseTracker);
+
+            if (result.HasErrors)
+            {
+                return Task.FromResult<IPushResult>(result);
+            }
+
+            this.PushToDatabaseTracker.Changed = null;
+
+            if (result.ObjectByNewId?.Count > 0)
+            {
+                foreach (var kvp in result.ObjectByNewId)
+                {
+                    var workspaceId = kvp.Key;
+                    var databaseId = kvp.Value.Id;
+
+                    this.OnDatabasePushResponseNew(workspaceId, databaseId);
+                }
+            }
+
+            this.PushToDatabaseTracker.Created = null;
+
+            foreach (var @object in result.Objects)
+            {
+                var strategy = this.GetStrategy(@object.Id);
+                this.OnDatabasePushResponse(strategy);
+            }
+
             if (!result.HasErrors)
             {
                 this.PushToWorkspace(result);
@@ -122,39 +148,6 @@ namespace Allors.Workspace.Adapters.Local
                     this.InstantiateDatabaseStrategy(databaseObject.Id);
                 }
             }
-        }
-
-        private IPushResult PushToDatabase(Push push)
-        {
-            push.Execute(this.PushToDatabaseTracker);
-
-            if (push.HasErrors)
-            {
-                return push;
-            }
-
-            this.PushToDatabaseTracker.Changed = null;
-
-            if (push.ObjectByNewId?.Count > 0)
-            {
-                foreach (var kvp in push.ObjectByNewId)
-                {
-                    var workspaceId = kvp.Key;
-                    var databaseId = kvp.Value.Id;
-
-                    this.OnDatabasePushResponseNew(workspaceId, databaseId);
-                }
-            }
-
-            this.PushToDatabaseTracker.Created = null;
-
-            foreach (var @object in push.Objects)
-            {
-                var strategy = this.GetStrategy(@object.Id);
-                this.OnDatabasePushResponse(strategy);
-            }
-
-            return push;
         }
     }
 }

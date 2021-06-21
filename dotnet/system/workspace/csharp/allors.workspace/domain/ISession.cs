@@ -20,23 +20,23 @@ namespace Allors.Workspace
 
         T Create<T>(IClass @class) where T : class, IObject;
 
-        T Get<T>(IObject @object) where T : IObject;
+        T GetOne<T>(IObject @object) where T : IObject;
 
-        T Get<T>(T @object) where T : IObject;
+        T GetOne<T>(T @object) where T : IObject;
 
-        T Get<T>(long? id) where T : IObject;
+        T GetOne<T>(long? id) where T : IObject;
 
-        T Get<T>(long id) where T : IObject;
+        T GetOne<T>(long id) where T : IObject;
 
-        T Get<T>(string idAsString) where T : IObject;
+        T GetOne<T>(string idAsString) where T : IObject;
 
-        IEnumerable<T> Get<T>(IEnumerable<IObject> objects) where T : IObject;
+        IEnumerable<T> GetMany<T>(IEnumerable<IObject> objects) where T : IObject;
 
-        IEnumerable<T> Get<T>(IEnumerable<T> objects) where T : IObject;
+        IEnumerable<T> GetMany<T>(IEnumerable<T> objects) where T : IObject;
 
-        IEnumerable<T> Get<T>(IEnumerable<long> identities) where T : IObject;
+        IEnumerable<T> GetMany<T>(IEnumerable<long> identities) where T : IObject;
 
-        IEnumerable<T> Get<T>(IEnumerable<string> responseVersionErrors) where T : IObject;
+        IEnumerable<T> GetMany<T>(IEnumerable<string> responseVersionErrors) where T : IObject;
 
         IEnumerable<T> GetAll<T>() where T : IObject;
 
@@ -48,7 +48,7 @@ namespace Allors.Workspace
 
         Task<IPullResult> Pull(params Pull[] pulls);
 
-        Task<IPullResult> Proc(Procedure procedure, params Pull[] pulls);
+        Task<IPullResult> Call(Procedure procedure, params Pull[] pulls);
 
         Task<IPushResult> Push();
 

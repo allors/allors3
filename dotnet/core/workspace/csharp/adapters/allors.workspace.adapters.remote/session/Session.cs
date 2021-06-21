@@ -5,13 +5,11 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
-    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using Allors.Protocol.Json.Api.Invoke;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Protocol.Json.Api.Push;
-    using Allors.Protocol.Json.Api.Sync;
     using Data;
     using Meta;
     using Protocol.Json;
@@ -25,7 +23,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.DatabaseConnection = workspace.DatabaseConnection;
         }
 
-        public DatabaseConnection DatabaseConnection { get; set; }
+        private DatabaseConnection DatabaseConnection { get; }
 
         public new Workspace Workspace => (Workspace)base.Workspace;
 
@@ -62,7 +60,7 @@ namespace Allors.Workspace.Adapters.Remote
             return await this.OnPull(pullResponse);
         }
 
-        public override async Task<IPullResult> Proc(Procedure procedure, params Pull[] pulls)
+        public override async Task<IPullResult> Call(Procedure procedure, params Pull[] pulls)
         {
             var pullRequest = new PullRequest
             {
@@ -76,7 +74,41 @@ namespace Allors.Workspace.Adapters.Remote
 
         public override async Task<IPushResult> Push()
         {
-            var result = await this.PushToDatabase();
+            var pushRequest = new PushRequest
+            {
+                n = this.PushToDatabaseTracker.Created?.Select(v => ((Strategy)v).DatabasePushNew()).ToArray(),
+                o = this.PushToDatabaseTracker.Changed?.Select(v => ((Strategy)v.Strategy).DatabasePushExisting()).ToArray()
+            };
+            var pushResponse = await this.Workspace.DatabaseConnection.Push(pushRequest);
+
+            if (pushResponse.HasErrors)
+            {
+                return new PushResult(this, pushResponse);
+            }
+
+            if (pushResponse.n != null)
+            {
+                foreach (var pushResponseNewObject in pushResponse.n)
+                {
+                    var workspaceId = pushResponseNewObject.w;
+                    var databaseId = pushResponseNewObject.d;
+
+                    this.OnDatabasePushResponseNew(workspaceId, databaseId);
+                }
+            }
+
+            this.PushToDatabaseTracker.Created = null;
+
+            if (pushRequest.o != null)
+            {
+                foreach (var id in pushRequest.o.Select(v => v.d))
+                {
+                    var strategy = this.GetStrategy(id);
+                    this.OnDatabasePushResponse(strategy);
+                }
+            }
+
+            var result = new PushResult(this, pushResponse);
 
             if (!result.HasErrors)
             {
@@ -84,60 +116,6 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             return result;
-        }
-
-        private async Task<IPullResult> OnPull(PullResponse pullResponse)
-        {
-            var syncRequest = this.Workspace.DatabaseConnection.OnPullResponse(pullResponse);
-            if (syncRequest.o.Length > 0)
-            {
-                await this.Sync(syncRequest);
-            }
-
-            foreach (var v in pullResponse.p)
-            {
-                if (this.StrategyByWorkspaceId.TryGetValue(v.i, out var strategy))
-                {
-                    ((DatabaseOriginState)strategy.DatabaseOriginState).OnPulled();
-                }
-                else
-                {
-                    this.InstantiateDatabaseStrategy(v.i);
-                }
-            }
-
-            return new PullResult(this, pullResponse);
-        }
-
-        private async Task Sync(SyncRequest syncRequest)
-        {
-            var database = (DatabaseConnection)base.Workspace.DatabaseConnection;
-            var syncResponse = await database.Sync(syncRequest);
-            var securityRequest = database.OnSyncResponse(syncResponse);
-
-            foreach (var databaseObject in syncResponse.o)
-            {
-                if (!this.StrategyByWorkspaceId.TryGetValue(databaseObject.i, out var strategy))
-                {
-                    this.InstantiateDatabaseStrategy(databaseObject.i);
-                }
-                else
-                {
-                    ((DatabaseOriginState)strategy.DatabaseOriginState).OnPulled();
-                }
-            }
-
-            if (securityRequest != null)
-            {
-                var securityResponse = await database.Security(securityRequest);
-                securityRequest = database.SecurityResponse(securityResponse);
-
-                if (securityRequest != null)
-                {
-                    securityResponse = await database.Security(securityRequest);
-                    database.SecurityResponse(securityResponse);
-                }
-            }
         }
 
         public override T Create<T>(IClass @class)
@@ -186,45 +164,54 @@ namespace Allors.Workspace.Adapters.Remote
             return strategy;
         }
 
-        private PushRequest PushRequest() => new PushRequest
+        private async Task<IPullResult> OnPull(PullResponse pullResponse)
         {
-            n = this.PushToDatabaseTracker.Created?.Select(v => ((Strategy)v).DatabasePushNew()).ToArray(),
-            o = this.PushToDatabaseTracker.Changed?.Select(v => ((Strategy)v.Strategy).DatabasePushExisting()).ToArray()
-        };
-
-        private async Task<PushResult> PushToDatabase()
-        {
-            var pushRequest = this.PushRequest();
-            var pushResponse = await this.Workspace.DatabaseConnection.Push(pushRequest);
-
-            if (pushResponse.HasErrors)
+            var syncRequest = this.Workspace.DatabaseConnection.OnPullResponse(pullResponse);
+            if (syncRequest.o.Length > 0)
             {
-                return new PushResult(this, pushResponse);
-            }
+                Task ret;
+                var database = (DatabaseConnection)base.Workspace.DatabaseConnection;
+                var syncResponse = await database.Sync(syncRequest);
+                var securityRequest = database.OnSyncResponse(syncResponse);
 
-            if (pushResponse.n != null)
-            {
-                foreach (var pushResponseNewObject in pushResponse.n)
+                foreach (var databaseObject in syncResponse.o)
                 {
-                    var workspaceId = pushResponseNewObject.w;
-                    var databaseId = pushResponseNewObject.d;
+                    if (!this.StrategyByWorkspaceId.TryGetValue(databaseObject.i, out var strategy))
+                    {
+                        this.InstantiateDatabaseStrategy(databaseObject.i);
+                    }
+                    else
+                    {
+                        ((DatabaseOriginState)strategy.DatabaseOriginState).OnPulled();
+                    }
+                }
 
-                    this.OnDatabasePushResponseNew(workspaceId, databaseId);
+                if (securityRequest != null)
+                {
+                    var securityResponse = await database.Security(securityRequest);
+                    securityRequest = database.SecurityResponse(securityResponse);
+
+                    if (securityRequest != null)
+                    {
+                        securityResponse = await database.Security(securityRequest);
+                        database.SecurityResponse(securityResponse);
+                    }
                 }
             }
 
-            this.PushToDatabaseTracker.Created = null;
-
-            if (pushRequest.o != null)
+            foreach (var v in pullResponse.p)
             {
-                foreach (var id in pushRequest.o.Select(v => v.d))
+                if (this.StrategyByWorkspaceId.TryGetValue(v.i, out var strategy))
                 {
-                    var strategy = this.GetStrategy(id);
-                    this.OnDatabasePushResponse(strategy);
+                    ((DatabaseOriginState)strategy.DatabaseOriginState).OnPulled();
+                }
+                else
+                {
+                    this.InstantiateDatabaseStrategy(v.i);
                 }
             }
 
-            return new PushResult(this, pushResponse);
+            return new PullResult(this, pullResponse);
         }
     }
 }

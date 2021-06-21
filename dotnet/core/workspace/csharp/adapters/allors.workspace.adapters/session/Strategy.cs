@@ -6,6 +6,7 @@
 namespace Allors.Workspace.Adapters
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
@@ -38,9 +39,10 @@ namespace Allors.Workspace.Adapters
         public long Version =>
             this.Class.Origin switch
             {
-                Origin.Database => this.DatabaseOriginState.Version,
+                Origin.Session => Allors.Version.Initial.Value,
                 Origin.Workspace => this.WorkspaceOriginState.Version,
-                _ => Allors.Version.Initial.Value
+                Origin.Database => this.DatabaseOriginState.Version,
+                _ => throw new Exception()
             };
 
         public Session Session { get; }
@@ -99,7 +101,7 @@ namespace Allors.Workspace.Adapters
             };
 
         public T GetComposite<T>(IRoleType roleType) where T : IObject =>
-            this.Session.Get<T>(roleType.Origin switch
+            this.Session.GetOne<T>(roleType.Origin switch
             {
                 Origin.Session => (long?)this.Session.GetRole(this, roleType),
                 Origin.Workspace => (long?)this.WorkspaceOriginState?.GetRole(roleType),
@@ -117,9 +119,14 @@ namespace Allors.Workspace.Adapters
                 _ => throw new ArgumentException("Unsupported Origin")
             };
 
-            foreach (var role in this.Session.Workspace.Numbers.Enumerate(roles))
+            if (roles == null)
             {
-                yield return this.Session.Get<T>(role);
+                yield break;
+            }
+
+            foreach (var role in (IEnumerable<IObject>)roles)
+            {
+                yield return (T)role;
             }
         }
 
@@ -269,7 +276,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void Remove(IRoleType roleType)
+        public void RemoveAll(IRoleType roleType)
         {
             if (roleType.ObjectType.IsUnit)
             {
@@ -288,30 +295,30 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public T GetComposite<T>(IAssociationType associationType) where T : IObject
+        public T GetCompositeAssociation<T>(IAssociationType associationType) where T : IObject
         {
             if (associationType.Origin != Origin.Session)
             {
-                return this.Session.GetAssociation<T>(this.Id, associationType).FirstOrDefault();
+                return this.Session.GetCompositeAssociation<T>(this.Id, associationType);
             }
 
             var association = (long?)this.Session.SessionOriginState.Get(this.Id, associationType);
-            return association != null ? this.Session.Get<T>(association) : default;
+            return association != null ? this.Session.GetOne<T>(association) : default;
         }
 
-        public IEnumerable<T> GetComposites<T>(IAssociationType associationType) where T : IObject
+        public IEnumerable<T> GetCompositesAssociation<T>(IAssociationType associationType) where T : IObject
         {
             if (associationType.Origin != Origin.Session)
             {
-                return this.Session.GetAssociation<T>(this.Id, associationType);
+                return this.Session.GetCompositesAssociation<T>(this.Id, associationType);
             }
 
             var association = this.Session.SessionOriginState.Get(this.Id, associationType);
 
             return association switch
             {
-                long id => new[] { this.Session.Get<T>(id) },
-                long[] ids => ids.Select(v => this.Session.Get<T>(v)).ToArray(),
+                long id => new[] { this.Session.GetOne<T>(id) },
+                long[] ids => ids.Select(v => this.Session.GetOne<T>(v)).ToArray(),
                 _ => Array.Empty<T>()
             };
         }

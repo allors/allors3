@@ -49,24 +49,24 @@ namespace Allors.Workspace.Adapters
         public T Create<T>() where T : class, IObject =>
             this.Create<T>((IClass)this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>());
 
-        public T Get<T>(IObject @object) where T : IObject => this.Get<T>(@object.Id);
+        public T GetOne<T>(IObject @object) where T : IObject => this.GetOne<T>(@object.Id);
 
-        public T Get<T>(T @object) where T : IObject => this.Get<T>(@object.Id);
+        public T GetOne<T>(T @object) where T : IObject => this.GetOne<T>(@object.Id);
 
-        public T Get<T>(long? id) where T : IObject => id.HasValue ? this.Get<T>((long)id) : default;
+        public T GetOne<T>(long? id) where T : IObject => id.HasValue ? this.GetOne<T>((long)id) : default;
 
-        public T Get<T>(long id) where T : IObject => (T)this.GetStrategy(id)?.Object;
+        public T GetOne<T>(long id) where T : IObject => (T)this.GetStrategy(id)?.Object;
 
-        public T Get<T>(string idAsString) where T : IObject =>
+        public T GetOne<T>(string idAsString) where T : IObject =>
             long.TryParse(idAsString, out var id) ? (T)this.GetStrategy(id)?.Object : default;
 
-        public IEnumerable<T> Get<T>(IEnumerable<IObject> objects) where T : IObject => objects.Select(this.Get<T>);
+        public IEnumerable<T> GetMany<T>(IEnumerable<IObject> objects) where T : IObject => objects.Select(this.GetOne<T>);
 
-        public IEnumerable<T> Get<T>(IEnumerable<T> objects) where T : IObject => objects.Select(this.Get);
+        public IEnumerable<T> GetMany<T>(IEnumerable<T> objects) where T : IObject => objects.Select(this.GetOne);
 
-        public IEnumerable<T> Get<T>(IEnumerable<long> identities) where T : IObject => identities.Select(this.Get<T>);
+        public IEnumerable<T> GetMany<T>(IEnumerable<long> identities) where T : IObject => identities.Select(this.GetOne<T>);
 
-        public IEnumerable<T> Get<T>(IEnumerable<string> identities) where T : IObject => this.Get<T>(identities.Select(
+        public IEnumerable<T> GetMany<T>(IEnumerable<string> identities) where T : IObject => this.GetMany<T>(identities.Select(
             v =>
             {
                 long.TryParse(v, out var id);
@@ -153,7 +153,7 @@ namespace Allors.Workspace.Adapters
 
         public abstract Task<IPullResult> Pull(params Pull[] pulls);
 
-        public abstract Task<IPullResult> Proc(Procedure procedure, params Pull[] pulls);
+        public abstract Task<IPullResult> Call(Procedure procedure, params Pull[] pulls);
 
         public abstract Task<IPushResult> Push();
 
@@ -182,19 +182,39 @@ namespace Allors.Workspace.Adapters
 
             if (roleType.IsOne)
             {
-                return this.Get<IObject>((long?)role);
+                return this.GetOne<IObject>((long?)role);
             }
 
             return role != null
-                ? this.Workspace.Numbers.Enumerate(role).Select(this.Get<IObject>).ToArray()
+                ? this.Workspace.Numbers.Enumerate(role).Select(this.GetOne<IObject>).ToArray()
                 : this.Workspace.DatabaseConnection.EmptyArray(roleType.ObjectType);
         }
 
-        public IEnumerable<T> GetAssociation<T>(long role, IAssociationType associationType) where T : IObject
+        public T GetCompositeAssociation<T>(long role, IAssociationType associationType) where T : IObject
         {
             var roleType = associationType.RoleType;
 
-            foreach (var association in this.Get(associationType.ObjectType))
+            foreach (var association in this.GetForAssociation(associationType.ObjectType))
+            {
+                if (!association.CanRead(roleType))
+                {
+                    continue;
+                }
+
+                if (association.IsAssociationForRole(roleType, role))
+                {
+                    return (T)association.Object;
+                }
+            }
+
+            return default;
+        }
+
+        public IEnumerable<T> GetCompositesAssociation<T>(long role, IAssociationType associationType) where T : IObject
+        {
+            var roleType = associationType.RoleType;
+
+            foreach (var association in this.GetForAssociation(associationType.ObjectType))
             {
                 if (!association.CanRead(roleType))
                 {
@@ -293,7 +313,7 @@ namespace Allors.Workspace.Adapters
 
         internal static bool IsNewId(long id) => id < 0;
 
-        private IEnumerable<Strategy> Get(IComposite objectType)
+        private IEnumerable<Strategy> GetForAssociation(IComposite objectType)
         {
             var classes = new HashSet<IClass>(objectType.Classes);
             return this.StrategyByWorkspaceId.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);

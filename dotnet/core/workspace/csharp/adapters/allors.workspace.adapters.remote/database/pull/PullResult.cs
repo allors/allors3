@@ -18,11 +18,11 @@ namespace Allors.Workspace.Adapters.Remote
 
             this.Objects = response.o.ToDictionary(
                 pair => pair.Key,
-                pair => session.Get<IObject>(pair.Value),
+                pair => session.GetOne<IObject>(pair.Value),
                 StringComparer.OrdinalIgnoreCase);
             this.Collections = response.c.ToDictionary(
                 pair => pair.Key,
-                pair => pair.Value.Select(session.Get<IObject>).ToArray(),
+                pair => pair.Value.Select(session.GetOne<IObject>).ToArray(),
                 StringComparer.OrdinalIgnoreCase);
             this.Values = response.v.ToDictionary(
                 pair => pair.Key,

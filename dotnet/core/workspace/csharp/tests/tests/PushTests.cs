@@ -42,12 +42,12 @@ namespace Tests.Workspace
             {
                 if (associationType.IsOne)
                 {
-                    var association = newObject.Strategy.GetComposite<IObject>(associationType);
+                    var association = newObject.Strategy.GetCompositeAssociation<IObject>(associationType);
                     Assert.Null(association);
                 }
                 else
                 {
-                    var association = newObject.Strategy.GetComposites<IObject>(associationType);
+                    var association = newObject.Strategy.GetCompositesAssociation<IObject>(associationType);
                     Assert.Empty(association);
                 }
             }
