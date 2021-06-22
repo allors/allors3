@@ -1,5 +1,5 @@
 import { IVisitor, And, Between, ContainedIn, Contains, Equals, Except, Exists, GreaterThan, Instanceof, Intersect, LessThan, Like, Not, Or, Union } from '@allors/workspace/domain/system';
-import { Extent as DataExtent, Select as DataSelect, Node as DataNode, Pull as DataPull, Result as DataResult, Sort as DataSort, Step as DataStep, Procedure as DataProcedure } from '@allors/workspace/domain/system';
+import { Extent as DataExtent, Select as DataSelect, Node as DataNode, Pull as DataPull, Result as DataResult, Sort as DataSort, Step as DataStep, Procedure as DataProcedure, Predicate as DataPredicate } from '@allors/workspace/domain/system';
 import { AssociationType, RoleType } from '@allors/workspace/meta/system';
 import { Extent } from './data/Extent';
 import { ExtentKind } from './data/ExtentKind';
@@ -64,7 +64,7 @@ export class ToJsonVisitor implements IVisitor {
       predicate.ops = [];
       for (let i = 0; i < length; i++) {
         const operand = visited.operands[i];
-        operand.accept(this);
+        this.acceptPredicate(operand, this);
         predicate.ops[i] = this.predicates.pop();
       }
     }
@@ -460,5 +460,9 @@ export class ToJsonVisitor implements IVisitor {
       v,
       p,
     };
+  }
+
+  public acceptPredicate(visitable: DataPredicate) {
+    this.Visit(visitable);
   }
 }

@@ -1,4 +1,4 @@
-import { Origin } from '@allors/workspace/meta/system';
+import { Origin } from '../Origin';
 import { ObjectType } from './ObjectType';
 import { OperandType } from './OperandType';
 

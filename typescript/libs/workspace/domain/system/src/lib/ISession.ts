@@ -1,5 +1,5 @@
-import { Observable } from "rxjs";
-import { Composite,  Class} from "@allors/workspace/meta/system";
+import { Observable } from 'rxjs';
+import { Composite, Class } from '@allors/workspace/meta/system';
 import { IObject } from './IObject';
 import { IWorkspace } from './IWorkspace';
 import { Method } from './operands/Method';
@@ -15,19 +15,21 @@ import { IChangeSet } from './IChangeSet';
 export interface ISession {
   workspace: IWorkspace;
 
-  state: ISessionServices;
+  services: ISessionServices;
 
   create(cls: Class): IObject;
 
-  getOne<T extends IObject>(obj: IObject |  number | string): T;
+  getOne<T extends IObject>(id: number): T;
 
-  getMany<T extends IObject>(objects: IObject[] | number[] | string[]): Generator<T, void, unknown>;
+  getMany<T extends IObject>(...ids: number[]): Generator<T, void, unknown>;
 
   getAll<T extends IObject>(objectType?: Composite): Generator<T, void, unknown>;
 
   invoke(method: Method | Method[], options?: InvokeOptions): Observable<IInvokeResult>;
 
-  pull(pullsOrProceudre: Pull[] | Procedure, pulls?: Pull[]): Observable<IPullResult>;
+  pull(...pulls: Pull[]): Observable<IPullResult>;
+
+  call(procedure: Procedure, ...pulls: Pull[]): Observable<IPullResult>;
 
   push(): Observable<IPushResult>;
 

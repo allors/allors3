@@ -36,3 +36,6 @@ export * from './lib/data/Result';
 export * from './lib/data/Select';
 export * from './lib/data/Sort';
 export * from './lib/data/Step';
+
+export * from './lib/ToJsonVisitor';
+export * from './lib/UnitConvert';

@@ -52,7 +52,7 @@ export class Strategy implements IStrategy {
       return this.getComposite(roleType) != null;
     }
 
-    return this.getComposites(roleType).Any();
+    return this.getComposites(roleType).next().value != null;
   }
 
   public get(roleType: RoleType): any {
@@ -70,9 +70,9 @@ export class Strategy implements IStrategy {
   public getUnit(roleType: RoleType): any {
     switch (this.cls.origin) {
       case Origin.Session:
-        return this.session.GetRole(this, roleType);
+        return this.session.getRole(this, roleType);
       case Origin.Workspace:
-        return this.WorkspaceOriginState?.GetRole(roleType);
+        return this.WorkspaceOriginState?.getRole(roleType);
       case Origin.Database:
         if (this.DatabaseOriginState) {
           if (this.DatabaseOriginState.Version === UnknownVersion) {
@@ -80,7 +80,7 @@ export class Strategy implements IStrategy {
           }
 
           if (this.canRead(roleType)) {
-            return this.DatabaseOriginState?.GetRole(roleType);
+            return this.DatabaseOriginState?.getRole(roleType);
           }
         }
 
@@ -90,12 +90,12 @@ export class Strategy implements IStrategy {
     }
   }
 
-  public getComposite(roleType: RoleType) {
+  public getComposite<T extends IObject>(roleType: RoleType) {
     switch (this.cls.origin) {
       case Origin.Session:
-        return this.session.GetRole(this, roleType);
+        return this.session.getRole(this, roleType);
       case Origin.Workspace:
-        return this.WorkspaceOriginState?.GetRole(roleType);
+        return this.WorkspaceOriginState?.getRole(roleType);
       case Origin.Database:
         if (this.DatabaseOriginState) {
           if (this.DatabaseOriginState.Version === UnknownVersion) {
@@ -103,7 +103,7 @@ export class Strategy implements IStrategy {
           }
 
           if (this.canRead(roleType)) {
-            return this.DatabaseOriginState?.GetRole(roleType);
+            return this.DatabaseOriginState?.getRole(roleType);
           }
         }
 
@@ -113,15 +113,15 @@ export class Strategy implements IStrategy {
     }
   }
 
-  public *getComposites<T>(roleType: RoleType): Generator<T, void, unknown> {
+  public *getComposites<T extends IObject>(roleType: RoleType): Generator<T, void, unknown> {
     let roles: IObject[];
 
     switch (this.cls.origin) {
       case Origin.Session:
-        roles = this.session.GetRole(this, roleType) as IObject[];
+        roles = this.session.getRole(this, roleType) as IObject[];
         break;
       case Origin.Workspace:
-        roles = this.WorkspaceOriginState?.GetRole(roleType) as IObject[];
+        roles = this.WorkspaceOriginState?.getRole(roleType) as IObject[];
         break;
       case Origin.Database:
         if (this.DatabaseOriginState) {
@@ -130,7 +130,7 @@ export class Strategy implements IStrategy {
           }
 
           if (this.canRead(roleType)) {
-            roles = this.DatabaseOriginState?.GetRole(roleType) as IObject[];
+            roles = this.DatabaseOriginState?.getRole(roleType) as IObject[];
           }
         }
 
@@ -141,7 +141,7 @@ export class Strategy implements IStrategy {
 
     if (roles != null) {
       for (const role of roles) {
-        yield role;
+        yield role as T;
       }
     }
   }
@@ -267,18 +267,18 @@ export class Strategy implements IStrategy {
     }
   }
 
-  public getCompositeAssociation(associationType: AssociationType) {
+  public getCompositeAssociation<T extends IObject>(associationType: AssociationType): T {
     if (associationType.origin != Origin.Session) {
-      return this.session.GetCompositeAssociation(this.id, associationType);
+      return this.session.getCompositeAssociation(this.id, associationType);
     }
 
-    let association = this.session.sessionOriginState.Get(this.id, associationType);
+    const association = this.session.sessionOriginState.Get(this.id, associationType);
     return association != null ? this.session.getOne(association) : null;
   }
 
-  public *getCompositesAssociation<T>(associationType: AssociationType):  Generator<T, void, unknown> {
+  public *getCompositesAssociation<T extends IObject>(associationType: AssociationType): Generator<T, void, unknown> {
     if (associationType.origin != Origin.Session) {
-      return this.session.GetCompositesAssociation(this.id, associationType);
+      yield* this.session.getCompositesAssociation<T>(this.id, associationType);
     }
 
     const association = this.session.sessionOriginState.Get(this.id, associationType);

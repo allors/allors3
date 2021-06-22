@@ -39,11 +39,11 @@ export class ChangeSet implements IChangeSet {
       }
 
       if (previous != null) {
-        this.AddRole(relationType, this.Session.GetStrategy(<number>previous));
+        this.AddRole(relationType, this.Session.getStrategy(<number>previous));
       }
 
       if (current != null) {
-        this.AddRole(relationType, this.Session.GetStrategy(<number>current));
+        this.AddRole(relationType, this.Session.getStrategy(<number>current));
       }
 
       this.AddAssociation(relationType, association);
@@ -52,13 +52,13 @@ export class ChangeSet implements IChangeSet {
       let hasChange = false;
       const addedRoles = numbers.Except(current, previous);
       for (const v in numbers.Enumerate(addedRoles)) {
-        this.AddRole(relationType, this.Session.GetStrategy(v));
+        this.AddRole(relationType, this.Session.getStrategy(v));
         hasChange = true;
       }
 
       const removedRoles = numbers.Except(previous, current);
       for (const v in numbers.Enumerate(removedRoles)) {
-        this.AddRole(relationType, this.Session.GetStrategy(v));
+        this.AddRole(relationType, this.Session.getStrategy(v));
         hasChange = true;
       }
 

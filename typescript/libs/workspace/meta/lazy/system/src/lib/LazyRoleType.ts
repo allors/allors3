@@ -9,6 +9,10 @@ import { InternalComposite } from './internal/InternalComposite';
 import { Lookup } from './utils/Lookup';
 
 export class LazyRoleType implements InternalRoleType {
+  readonly isRoleType = true;
+  readonly isAssociationType = false;
+  readonly isMethodType = false;
+
   readonly objectType: InternalObjectType;
   readonly isOne: boolean;
   readonly isMany: boolean;
@@ -76,7 +80,7 @@ export class LazyRoleType implements InternalRoleType {
 
     this.associationType = new LazyAssociationType(this, associationObjectType, multiplicity);
   }
-
+ 
   get pluralName() {
     return (this._pluralName ??= pluralize(this.singularName));
   }

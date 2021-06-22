@@ -6,13 +6,11 @@ import { UnitTypes } from './Types';
 export interface IStrategy {
   object: IObject;
 
-  class: Class;
+  cls: Class;
 
   id: number;
 
   session: ISession;
-
-  diff(): RelationType[];
 
   canRead(roleType: RoleType): boolean;
 
@@ -46,5 +44,5 @@ export interface IStrategy {
 
   getCompositeAssociation<T extends IObject>(associationType: AssociationType): T;
 
-  getCompositesAssociation<T extends IObject>(associationType: AssociationType): T[];
+  getCompositesAssociation<T extends IObject>(associationType: AssociationType): Generator<T, void, unknown>;
 }

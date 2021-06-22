@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Data
 {
-    using System;
-
     public interface IArguments
     {
         bool HasArgument(string name);

@@ -6,7 +6,6 @@
 namespace Allors.Database.Data
 {
     using System;
-    using System.Collections.Generic;
     using Meta;
 
     public class Pull : IVisitable

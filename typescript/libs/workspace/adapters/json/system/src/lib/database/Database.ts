@@ -71,8 +71,8 @@ export class Database {
     if (securityResponse.p != null) {
       for (const syncResponsePermission of securityResponse.p) {
         const id = syncResponsePermission[0];
-        const cls = this.metaPopulation.metaObjectByTag.get(syncResponsePermission[1]) as Class;
-        const metaObject = this.metaPopulation.metaObjectByTag.get(syncResponsePermission[2]);
+        const cls = this.configuration.metaPopulation.metaObjectByTag.get(syncResponsePermission[1]) as Class;
+        const metaObject = this.configuration.metaPopulation.metaObjectByTag.get(syncResponsePermission[2]);
         const operandType: OperandType = (metaObject as RelationType)?.roleType ?? (metaObject as MethodType);
         const operation = syncResponsePermission[3];
 

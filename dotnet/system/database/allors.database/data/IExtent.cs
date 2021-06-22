@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Data
 {
-    using System.Collections.Generic;
     using Meta;
 
     public interface IExtent : IVisitable

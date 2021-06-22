@@ -1,5 +1,3 @@
-import { IVisitable } from './visitor/IVisitable';
-
-export interface Predicate extends IVisitable {
+export interface Predicate {
   dependencies?: string[];
 }

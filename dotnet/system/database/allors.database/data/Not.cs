@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Data
 {
-    using System.Collections.Generic;
-
     public class Not : ICompositePredicate
     {
         public string[] Dependencies { get; set; }

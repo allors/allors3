@@ -16,7 +16,7 @@ export class DatabaseRecord implements IRecord {
   constructor(public readonly database: Database, public readonly cls: Class, public readonly id: number, public version: number) {}
 
   static fromResponse(database: Database, ctx: ResponseContext, syncResponseObject: SyncResponseObject): DatabaseRecord {
-    const obj = new DatabaseRecord(database, database.metaPopulation.metaObjectByTag.get(syncResponseObject.t) as Class, syncResponseObject.i, syncResponseObject.v);
+    const obj = new DatabaseRecord(database, database.configuration.metaPopulation.metaObjectByTag.get(syncResponseObject.t) as Class, syncResponseObject.i, syncResponseObject.v);
     obj.syncResponseRoles = syncResponseObject.r;
     obj.accessControlIds = ctx.checkForMissingAccessControls(syncResponseObject.a);
     obj.deniedPermissionIds = ctx.checkForMissingPermissions(syncResponseObject.d);
@@ -25,7 +25,7 @@ export class DatabaseRecord implements IRecord {
 
   get roleByRelationType(): Map<RelationType, unknown> {
     if (this.syncResponseRoles != null) {
-      const meta = this.database.metaPopulation;
+      const meta = this.database.configuration.metaPopulation;
       this._roleByRelationType = new Map(
         this.syncResponseRoles.map((v) => {
           const relationType = meta.metaObjectByTag.get(v.t) as RelationType;

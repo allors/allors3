@@ -23,12 +23,10 @@ export * from './lib/data/Union';
 export * from './lib/data/Intersect';
 export * from './lib/data/Except';
 export * from './lib/data/Extent';
-export * from './lib/data/Tree';
 export * from './lib/data/Result';
 export * from './lib/data/Operator';
 export * from './lib/data/Step';
 
-export * from './lib/data/visitor/IVisitable';
 export * from './lib/data/visitor/IVisitor';
 
 export * from './lib/database/IDerivationError';

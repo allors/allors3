@@ -1,8 +1,7 @@
 import { PropertyType } from '@allors/workspace/meta/system';
-import { IVisitable } from './visitor/IVisitable';
 import { Node } from './Node';
 
-export interface Step extends IVisitable {
+export interface Step {
   propertyType: PropertyType;
 
   include?: Node[];

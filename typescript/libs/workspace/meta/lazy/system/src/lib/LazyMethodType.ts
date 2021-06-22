@@ -4,6 +4,10 @@ import { InternalMetaPopulation } from './internal/InternalMetaPopulation';
 import { InternalMethodType } from './internal/InternalMethodType';
 
 export class LazyMethodType implements InternalMethodType {
+  readonly isRoleType = false;
+  readonly isAssociationType = false;
+  readonly isMethodType = true;
+
   readonly metaPopulation: InternalMetaPopulation;
   readonly tag: number;
   readonly name: string;

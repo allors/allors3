@@ -23,7 +23,7 @@ export abstract class RecordBasedOriginState {
 
   private PreviousChangedRoleByRelationType: Map<RelationType, any>;
 
-  public GetRole(roleType: RoleType): any {
+  public getRole(roleType: RoleType): any {
     if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.has(roleType.relationType)) {
       return this.ChangedRoleByRelationType.get(roleType.relationType);
     }
@@ -36,14 +36,14 @@ export abstract class RecordBasedOriginState {
   }
 
   public SetCompositeRole(roleType: RoleType, role?: number) {
-    const previousRole = this.GetRole(roleType) as number;
+    const previousRole = this.getRole(roleType) as number;
     if (previousRole == role) {
       return;
     }
 
     const associationType = roleType.associationType;
     if (associationType.isOne && role != null) {
-      const previousAssociationObject = this.Session.GetAssociation(role, associationType).FirstOrDefault();
+      const previousAssociationObject = this.Session.getAssociation(role, associationType).FirstOrDefault();
       this.SetChangedRole(roleType, role);
       if (associationType.isOne && previousAssociationObject != null) {
         //  OneToOne
@@ -55,7 +55,7 @@ export abstract class RecordBasedOriginState {
   }
 
   public AddCompositeRole(roleType: RoleType, roleToAdd: number) {
-    const previousRole = this.GetRole(roleType);
+    const previousRole = this.getRole(roleType);
     if (has(previousRole, roleToAdd)) {
       return;
     }
@@ -68,12 +68,12 @@ export abstract class RecordBasedOriginState {
     }
 
     //  OneToMany
-    const previousAssociationObject = this.Session.GetAssociation(roleToAdd, associationType).FirstOrDefault();
+    const previousAssociationObject = this.Session.getAssociation(roleToAdd, associationType).FirstOrDefault();
     previousAssociationObject?.Strategy.Set(roleType, null);
   }
 
   public RemoveCompositeRole(roleType: RoleType, roleToRemove: number) {
-    const previousRole = this.GetRole(roleType);
+    const previousRole = this.getRole(roleType);
     if (!has(previousRole, roleToRemove)) {
       return;
     }
@@ -83,7 +83,7 @@ export abstract class RecordBasedOriginState {
   }
 
   public SetCompositesRole(roleType: RoleType, role: any) {
-    const previousRole = this.GetRole(roleType);
+    const previousRole = this.getRole(roleType);
     this.SetChangedRole(roleType, role);
     const associationType = roleType.associationType;
     if (associationType.isMany) {
@@ -93,7 +93,7 @@ export abstract class RecordBasedOriginState {
     //  OneToMany
     const addedRoles = difference(role, previousRole);
     for (const addedRole of enumerate(addedRoles)) {
-      const previousAssociationObject = this.Session.GetAssociation(addedRole, associationType).FirstOrDefault();
+      const previousAssociationObject = this.Session.getAssociation(addedRole, associationType).FirstOrDefault();
       previousAssociationObject?.Strategy.Set(roleType, null);
     }
   }
@@ -154,7 +154,7 @@ export abstract class RecordBasedOriginState {
       return false;
     }
 
-    const role = this.GetRole(roleType);
+    const role = this.getRole(roleType);
     if (roleType.isOne) {
       return role == forRole;
     }

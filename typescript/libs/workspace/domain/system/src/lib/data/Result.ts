@@ -1,7 +1,6 @@
-import { Select } from "./Select";
-import { IVisitable } from './visitor/IVisitable';
+import { Select } from './Select';
 
-export interface Result extends IVisitable {
+export interface Result {
   selectRef?: string;
 
   select?: Select;

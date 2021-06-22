@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Data
 {
-    using System.Collections.Generic;
     using System.Linq;
 
     public class And : ICompositePredicate

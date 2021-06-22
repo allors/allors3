@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Data
 {
-    using System.Collections.Generic;
-
     public interface IPredicate : IVisitable
     {
         string[] Dependencies { get; }
