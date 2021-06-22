@@ -1,10 +1,11 @@
 import { PropertyType } from '@allors/workspace/meta/system';
-import { Tree } from "./Tree";
+import { IVisitable } from './visitor/IVisitable';
+import { Node } from './Node';
 
-export interface Step {
+export interface Step extends IVisitable {
   propertyType: PropertyType;
 
-  include?: Tree;
+  include?: Node[];
 
-  next?: Step | Tree;
+  next?: Step;
 }

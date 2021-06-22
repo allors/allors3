@@ -105,8 +105,8 @@ export class ToJsonVisitor implements IVisitor {
     const predicate: Predicate = {
       k: PredicateKind.Contains,
       d: visited.dependencies,
-      a: (visited.propertyType as AssociationType)?.relationType.tag,
-      r: (visited.propertyType as RoleType)?.relationType.tag,
+      a: visited.propertyType.isAssociationType ? (visited.propertyType as AssociationType)?.relationType.tag : undefined,
+      r: visited.propertyType.isRoleType ? (visited.propertyType as RoleType)?.relationType.tag : undefined,
       ob: visited.object?.id,
       p: visited.parameter,
     };
@@ -118,8 +118,8 @@ export class ToJsonVisitor implements IVisitor {
     const predicate: Predicate = {
       k: PredicateKind.Equals,
       d: visited.dependencies,
-      a: (visited.propertyType as AssociationType)?.relationType.tag,
-      r: (visited.propertyType as RoleType)?.relationType.tag,
+      a: visited.propertyType.isAssociationType ? (visited.propertyType as AssociationType)?.relationType.tag : undefined,
+      r: visited.propertyType.isRoleType ? (visited.propertyType as RoleType)?.relationType.tag : undefined,
       ob: visited.object?.id,
       v: this.unitConvert.ToJson(visited.value),
       pa: visited.path?.relationType.tag,
@@ -160,8 +160,8 @@ export class ToJsonVisitor implements IVisitor {
     const predicate: Predicate = {
       k: PredicateKind.Exists,
       d: visited.dependencies,
-      a: (visited.propertyType as AssociationType)?.relationType.tag,
-      r: (visited.propertyType as RoleType)?.relationType.tag,
+      a: visited.propertyType.isAssociationType ? (visited.propertyType as AssociationType)?.relationType.tag : undefined,
+      r: visited.propertyType.isRoleType ? (visited.propertyType as RoleType)?.relationType.tag : undefined,
       p: visited.parameter,
     };
 
@@ -225,8 +225,8 @@ export class ToJsonVisitor implements IVisitor {
       k: PredicateKind.InstanceOf,
       d: visited.dependencies,
       o: visited.objectType?.tag,
-      a: (visited.propertyType as AssociationType)?.relationType.tag,
-      r: (visited.propertyType as RoleType)?.relationType.tag,
+      a: visited.propertyType.isAssociationType ? (visited.propertyType as AssociationType)?.relationType.tag : undefined,
+      r: visited.propertyType.isRoleType ? (visited.propertyType as RoleType)?.relationType.tag : undefined,
     };
 
     this.predicates.push(predicate);
@@ -287,8 +287,8 @@ export class ToJsonVisitor implements IVisitor {
 
   public VisitNode(visited: DataNode) {
     const node: Node = {
-      a: (visited.propertyType as AssociationType)?.relationType.tag,
-      r: (visited.propertyType as RoleType)?.relationType.tag,
+      a: visited.propertyType.isAssociationType ? (visited.propertyType as AssociationType)?.relationType.tag : undefined,
+      r: visited.propertyType.isRoleType ? (visited.propertyType as RoleType)?.relationType.tag : undefined,
     };
 
     this.nodes.push(node);
@@ -383,8 +383,8 @@ export class ToJsonVisitor implements IVisitor {
 
   public VisitStep(visited: DataStep) {
     const step: Step = {
-      a: (visited.propertyType as AssociationType)?.relationType.tag,
-      r: (visited.propertyType as RoleType)?.relationType.tag,
+      a: visited.propertyType.isAssociationType ? (visited.propertyType as AssociationType)?.relationType.tag : undefined,
+      r: visited.propertyType.isRoleType ? (visited.propertyType as RoleType)?.relationType.tag : undefined,
     };
 
     this.steps.push(step);
