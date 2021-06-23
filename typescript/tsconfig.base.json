@@ -16,16 +16,15 @@
     "baseUrl": ".",
     "paths": {
       "@allors/protocol/json/system": ["libs/protocol/json/system/src/index.ts"],
-      "@allors/workspace/adapters/json/system": ["libs/workspace/adapters/json/system/src/index.ts"],
-      "@allors/workspace/adapters/json/system-tests": ["libs/workspace/adapters/json/system-tests/src/index.ts"],
       "@allors/workspace/domain/core": ["libs/workspace/domain/core/src/index.ts"],
       "@allors/workspace/domain/core-custom": ["libs/workspace/domain/core-custom/src/index.ts"],
       "@allors/workspace/domain/core-tests": ["libs/workspace/domain/core-tests/src/index.ts"],
-      "@allors/workspace/domain/system": ["libs/workspace/domain/system/src/index.ts"],
+      "@allors/workspace/domain/json/rxjs/system": ["libs/workspace/domain/json/rxjs/system/src/index.ts"],
+      "@allors/workspace/domain/json/rxjs/system-tests": ["libs/workspace/domain/json/rxjs/system-tests/src/index.ts"],
       "@allors/workspace/meta/core": ["libs/workspace/meta/core/src/index.ts"],
-      "@allors/workspace/meta/lazy/system": ["libs/workspace/meta/lazy/system/src/index.ts"],
-      "@allors/workspace/meta/lazy/system-tests": ["libs/workspace/meta/lazy/system-tests/src/index.ts"],
-      "@allors/workspace/meta/system": ["libs/workspace/meta/system/src/index.ts"]
+      "@allors/workspace/meta/json/system": ["libs/workspace/meta/json/system/src/index.ts"],
+      "@allors/workspace/meta/json/system-tests": ["libs/workspace/meta/json/system-tests/src/index.ts"],
+      "@allors/workspace/system": ["libs/workspace/system/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

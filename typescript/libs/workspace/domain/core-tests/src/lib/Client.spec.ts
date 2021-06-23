@@ -1,4 +1,4 @@
-import { Client } from '@allors/workspace/adapters/json/system';
+import { Client } from '@allors/workspace/domain/json/rxjs/system';
 import { Fixture } from './Fixture';
 
 describe('Client', () => {
@@ -11,11 +11,10 @@ describe('Client', () => {
   });
 
   describe('login', () => {
-
     beforeEach(async () => {
       await fixture.login();
     });
-  
+
     it('userId and jwtToken should be present', async () => {
       expect(client.userId).toBeDefined();
       expect(client.jwtToken).toBeDefined();

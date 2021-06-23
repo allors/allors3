@@ -1,4 +1,4 @@
-import { SortDirection } from "@allors/workspace/domain/system";
+import { SortDirection } from "@allors/workspace/system";
 
 export interface Sort {
   /** RoleType */

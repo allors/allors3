@@ -12,15 +12,14 @@ npm install -D @nrwl/angular
 
 npx nx g @nrwl/workspace:library protocol/json/system
 
-npx nx g @nrwl/workspace:library workspace/adapters/json/system
-npx nx g @nrwl/workspace:library workspace/adapters/json/system-tests
+npx nx g @nrwl/workspace:library workspace/system
 
 npx nx g @nrwl/workspace:library workspace/domain/core
 npx nx g @nrwl/workspace:library workspace/domain/core-custom
 npx nx g @nrwl/workspace:library workspace/domain/core-tests
-npx nx g @nrwl/workspace:library workspace/domain/system
+npx nx g @nrwl/workspace:library workspace/domain/json/rxjs/system
+npx nx g @nrwl/workspace:library workspace/domain/json/rxjs/system-tests
 
 npx nx g @nrwl/workspace:library workspace/meta/core
-npx nx g @nrwl/workspace:library workspace/meta/lazy/system
-npx nx g @nrwl/workspace:library workspace/meta/lazy/system-tests
-npx nx g @nrwl/workspace:library workspace/meta/system
+npx nx g @nrwl/workspace:library workspace/meta/json/system
+npx nx g @nrwl/workspace:library workspace/meta/json/system-tests

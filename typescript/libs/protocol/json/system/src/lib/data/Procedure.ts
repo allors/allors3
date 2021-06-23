@@ -1,4 +1,4 @@
-import { UnitTypes } from "@allors/workspace/domain/system";
+import { UnitTypes } from "@allors/workspace/system";
 
 export interface Procedure {
   /** Name */

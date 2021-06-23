@@ -1,4 +1,3 @@
-import { Response } from '@allors/protocol/json/system';
 import { PullResponseObject } from "./PullResponseObject";
 
 export interface PullResponse extends Response {

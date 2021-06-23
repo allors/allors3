@@ -24,8 +24,8 @@
     "workspace-generator": "nx workspace-generator",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "test:workspace-meta-lazy": "npx nx test workspace-meta-lazy-system-tests --skipNxCache",
-    "test:workspace-adapters-json": "npx nx test workspace-adapters-json-system-tests --skipNxCache",
+    "test:workspace-meta-json": "npx nx test workspace-meta-json-system-tests --skipNxCache",
+    "test:workspace-domain-json-rxjs": "npx nx test workspace-domain-json-rxjs-system-tests --skipNxCache",
     "test:workspace-domain-core": "npx nx test workspace-domain-core-tests --skipNxCache",
     "test:all": "npm run test:workspace-meta-lazy && npm run test:workspace-adapters-json && npm run test:workspace-domain-core"
   },
