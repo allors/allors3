@@ -1,5 +1,5 @@
-import { Interface, Class } from '@allors/workspace/system';
-import { LazyMetaPopulation } from '@allors/workspace/meta/lazy/system';
+import { Interface, Class } from '@allors/workspace/meta/system';
+import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 
 type S = Interface;
 

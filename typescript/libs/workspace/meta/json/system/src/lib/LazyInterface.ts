@@ -1,4 +1,4 @@
-import { ObjectTypeData } from '@allors/workspace/system';
+import { ObjectTypeData } from '@allors/protocol/json/system';
 import { Lookup } from './utils/Lookup';
 import { InternalClass } from './internal/InternalClass';
 import { InternalComposite } from './internal/InternalComposite';

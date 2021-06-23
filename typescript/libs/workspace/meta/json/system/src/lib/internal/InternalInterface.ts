@@ -1,4 +1,4 @@
-import { Interface } from '@allors/workspace/system';
+import { Interface } from '@allors/workspace/meta/system';
 import { InternalAssociationType } from './InternalAssociationType';
 import { InternalComposite } from './InternalComposite';
 import { InternalMethodType } from './InternalMethodType';

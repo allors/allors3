@@ -17,6 +17,7 @@ npx nx g @nrwl/workspace:library workspace/system
 npx nx g @nrwl/workspace:library workspace/domain/core
 npx nx g @nrwl/workspace:library workspace/domain/core-custom
 npx nx g @nrwl/workspace:library workspace/domain/core-tests
+npx nx g @nrwl/workspace:library workspace/domain/json/system
 npx nx g @nrwl/workspace:library workspace/domain/json/rxjs/system
 npx nx g @nrwl/workspace:library workspace/domain/json/rxjs/system-tests
 

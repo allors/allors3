@@ -41,7 +41,7 @@ m(meta, workspaceName) ::= <<
 /* Allors generated file. Do not edit, changes will be overwritten. */
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import { MetaPopulation, Unit, Interface, Class, AssociationType, RoleType, MethodType } from '@allors/workspace/system';
+import { MetaPopulation, Unit, Interface, Class, AssociationType, RoleType, MethodType } from '@allors/workspace/domain/system';
 
 export interface M extends MetaPopulation {
 $meta._.Units:{unit|  $unit._.SingularName$: $unit._.SingularName$;}; separator="\n"$
@@ -123,7 +123,7 @@ $endif$
 >>
 
 data(meta, workspaceName) ::= <<
-import { MetaData } from '@allors/workspace/system';
+import { MetaData } from '@allors/workspace/domain/system';
 
 export const data: MetaData =
 {

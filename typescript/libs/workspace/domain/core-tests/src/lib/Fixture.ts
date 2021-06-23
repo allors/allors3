@@ -1,7 +1,7 @@
 import { ajax } from 'rxjs/ajax';
-import { data, M } from '@allors/workspace/meta/core';
+import { data, M } from '@allors/workspace/meta/json/core';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
-import { AjaxClient } from '@allors/workspace/domain/json/rxjs/system';
+import { AjaxClient } from '@allors/workspace/adapters/json/rxjs/system';
 
 const BASE_URL = 'http://localhost:5000/allors/';
 const AUTH_URL = 'TestAuthentication/Token';

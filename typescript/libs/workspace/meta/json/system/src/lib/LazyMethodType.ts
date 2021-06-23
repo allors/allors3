@@ -1,4 +1,5 @@
-import { Origin, MethodTypeData } from '@allors/workspace/system';
+import { MethodTypeData } from '@allors/protocol/json/system';
+import { Origin } from '@allors/workspace/meta/system';
 import { InternalComposite } from './internal/InternalComposite';
 import { InternalMetaPopulation } from './internal/InternalMetaPopulation';
 import { InternalMethodType } from './internal/InternalMethodType';

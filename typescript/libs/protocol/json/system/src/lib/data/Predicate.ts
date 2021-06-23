@@ -1,4 +1,4 @@
-import { UnitTypes } from "@allors/workspace/system";
+import { UnitTypes } from "@allors/workspace/domain/system";
 import { Extent } from "./Extent";
 import { PredicateKind } from "./PredicateKind";
 

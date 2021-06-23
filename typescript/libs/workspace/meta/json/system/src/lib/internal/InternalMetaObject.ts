@@ -1,3 +1,3 @@
-import { MetaObject } from '@allors/workspace/system';
+import { MetaObject } from '@allors/workspace/meta/system';
 
 export type InternalMetaObject = MetaObject;

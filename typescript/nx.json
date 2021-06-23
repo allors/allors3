@@ -22,6 +22,18 @@
     "protocol-json-system": {
       "tags": []
     },
+    "workspace-adapters-json-rxjs-system": {
+      "tags": []
+    },
+    "workspace-adapters-json-rxjs-system-tests": {
+      "tags": []
+    },
+    "workspace-adapters-json-system": {
+      "tags": []
+    },
+    "workspace-adapters-system": {
+      "tags": []
+    },
     "workspace-domain-core": {
       "tags": []
     },
@@ -31,13 +43,13 @@
     "workspace-domain-core-tests": {
       "tags": []
     },
-    "workspace-domain-json-rxjs-system": {
-      "tags": []
-    },
-    "workspace-domain-json-rxjs-system-tests": {
+    "workspace-domain-system": {
       "tags": []
     },
     "workspace-meta-core": {
+      "tags": []
+    },
+    "workspace-meta-json-core": {
       "tags": []
     },
     "workspace-meta-json-system": {
@@ -46,7 +58,7 @@
     "workspace-meta-json-system-tests": {
       "tags": []
     },
-    "workspace-system": {
+    "workspace-meta-system": {
       "tags": []
     }
   }

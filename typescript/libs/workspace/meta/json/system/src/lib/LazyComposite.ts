@@ -1,4 +1,5 @@
-import { Origin, pluralize, ObjectTypeData } from '@allors/workspace/system';
+import { ObjectTypeData } from '@allors/protocol/json/system';
+import { Origin, pluralize } from '@allors/workspace/meta/system';
 import { frozenEmptySet } from './utils/frozenEmptySet';
 import { InternalComposite } from './internal/InternalComposite';
 import { InternalInterface } from './internal/InternalInterface';
