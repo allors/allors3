@@ -2,7 +2,7 @@ delimiters "$", "$"
 
 TemplateId() ::= <<2FD8EE5D-4976-484F-96F9-9474AE09BFDB>>
 TemplateName() ::= <<Allors Typescript Workspace Meta>>
-TemplateVersion() ::= <<3.0.1>>
+TemplateVersion() ::= <<3.0.2>>
 TemplateAllors() ::= <<1.0>>
 TemplateConfiguration(meta, workspaceName) ::= <<
 $!
@@ -25,7 +25,6 @@ For more information visit http://www.allors.com/legal
 <generations>
   <generation template="index" output="index.ts"/>
   <generation template="m" output="m.g.ts"/>
-  <generation template="data" output="data.g.ts"/>
 </generations>
 >>
 
@@ -33,7 +32,6 @@ index(meta, workspaceName) ::= <<
 /* Allors generated file. Do not edit, changes will be overwritten. */
 
 export * from './m.g';
-export { data } from './data.g';
 
 >>
 
@@ -121,67 +119,3 @@ $endif$
 $endif$
 
 >>
-
-data(meta, workspaceName) ::= <<
-import { MetaData } from '@allors/workspace/domain/system';
-
-export const data: MetaData =
-{
-  i:
-  [
-$meta._.WorkspaceInterfacesByWorkspaceName.(workspaceName):{objectType|$data_objectType(objectType)$}; separator=",\n"$
-  ],
-  c:
-  [
-$meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{objectType|$data_objectType(objectType)$}; separator=",\n"$
-  ],
-  o:
-  [
-    [$meta._.WorkspaceWorkspaceOriginTagsByWorkspaceName.(workspaceName):{tag|$tag$}; separator=","$],
-    [$meta._.WorkspaceSessionOriginTagsByWorkspaceName.(workspaceName):{tag|$tag$}; separator=","$]
-  ],
-  m:
-  [
-    [$meta._.WorkspaceOneToOneTagsByWorkspaceName.(workspaceName):{tag|$tag$}; separator=","$],
-    [$meta._.WorkspaceOneToManyTagsByWorkspaceName.(workspaceName):{tag|$tag$}; separator=","$],
-    [$meta._.WorkspaceManyToManyTagsByWorkspaceName.(workspaceName):{tag|$tag$}; separator=","$]
-  ],
-  d: [$meta._.WorkspaceDerivedTagsByWorkspaceName.(workspaceName):{tag|$tag$}; separator=","$],
-  r: [$meta._.WorkspaceRequiredTagsByWorkspaceName.(workspaceName):{tag|$tag$}; separator=","$],
-  u: [$meta._.WorkspaceUniqueTagsByWorkspaceName.(workspaceName):{tag|$tag$}; separator=","$],
-  t:
-  {
-    $meta._.WorkspaceMediaTagsByMediaTypeNameByWorkspaceName.(workspaceName):{mediaTypeName|"$mediaTypeName$": [$data_mediaType(mediaTypeName)$]}; separator=",\n"$
-  }
-}
-
->>
-
-
-data_objectType(objectType) ::= <<
-    [$objectType._.Tag$, "$objectType._.SingularName$", $data_supertypes()$, $data_relationTypes()$, $data_methodTypes()$$if(objectType.ExistAssignedPluralName)$, "$objectType._.PluralName$"$endif$]
->>
-
-data_supertypes() ::= <<[$objectType._.WorkspaceDirectSupertypesByWorkspaceName.(workspaceName):{supertype|$supertype._.Tag$}; separator=","$]>>
-
-data_relationTypes() ::= <<[$objectType._.WorkspaceExclusiveRoleTypesByWorkspaceName.(workspaceName):{roleType|$data_relationType(relationType=roleType._.RelationType, associationType=roleType._.AssociationType, roleType=roleType)$}; separator=","$]>>
-
-data_relationType(relationType, associationType, roleType) ::= <<[$relationType._.Tag$, $roleType._.ObjectType._.Tag$$data_relationType_singularAndPluralName()$]>>
-
-data_relationType_singularAndPluralName() ::= <<$if(roleType._.ExistAssignedSingularName)$, "$roleType._.singularName$"$data_relationType_pluralName()$$endif$>>
-
-data_relationType_pluralName() ::= <<$if(roleType._.ExistAssignedPluralName)$, "$roleType._.pluralName$"$endif$>>
-
-data_methodTypes() ::= <<[$objectType._.WorkspaceExclusiveMethodTypesByWorkspaceName.(workspaceName):{methodType|$data_methodType(methodType)$}; separator=","$]>>
-
-data_methodType(methodType) ::= <<[$methodType._.Tag$, "$methodType._.Name$"]>>
-
-data_origin(metaObject) ::= <<$if(!metaObject.IsDefaultOrigin)$$metaObject.Tag$$endif$>>
-
-data_mediaType(mediaTypeName) ::= <<$meta._.WorkspaceMediaTagsByMediaTypeNameByWorkspaceName.(workspaceName).(mediaTypeName):{tag|$tag$}; separator=","$>>
-
-boolean(value) ::= "$if(value)$true$else$false$endif$"
-
-DropEmpty ::= ["": false, default: key]
-
-Separated(l, s, w=false) ::= "$if (DropEmpty.(first(l)))$$if (w)$$s$$endif$$first(l)$$Separated(rest(l), s, true)$$else$$if (rest(l))$$Separated(rest(l), s, w)$$endif$$endif$"
