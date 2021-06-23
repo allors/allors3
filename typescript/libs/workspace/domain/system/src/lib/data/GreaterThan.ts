@@ -1,4 +1,4 @@
-import { RoleType } from "../meta/RoleType";
+import { RoleType } from "@allors/workspace/meta/system";
 import { UnitTypes } from "../runtime/Types";
 import { ParameterizablePredicate } from "./ParameterizablePredicate";
 

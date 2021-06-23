@@ -1,4 +1,4 @@
-import { RoleType } from '../meta/RoleType';
+import { RoleType } from '@allors/workspace/meta/system';
 import { SortDirection } from './SortDirection';
 
 export interface Sort {

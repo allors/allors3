@@ -1,5 +1,4 @@
-import { PropertyType } from '../meta/PropertyType';
-import { RoleType } from '../meta/RoleType';
+import { PropertyType, RoleType } from '@allors/workspace/meta/system';
 import { IObject } from '../runtime/IObject';
 import { UnitTypes } from '../runtime/Types';
 import { ParameterizablePredicate } from './ParameterizablePredicate';

@@ -1,4 +1,4 @@
-import { PropertyType } from '../meta/PropertyType';
+import { PropertyType } from '@allors/workspace/meta/system';
 import { IObject } from '../runtime/IObject';
 import { ParameterizablePredicate } from './ParameterizablePredicate';
 

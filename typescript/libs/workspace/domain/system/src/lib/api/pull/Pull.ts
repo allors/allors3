@@ -1,6 +1,6 @@
+import { ObjectType } from "@allors/workspace/meta/system";
 import { IExtent } from "../../data/IExtent";
 import { Result } from "../../data/Result";
-import { ObjectType } from "../../meta/ObjectType";
 import { IObject } from "../../runtime/IObject";
 import { ParameterTypes } from "../../runtime/Types";
 

@@ -22,25 +22,25 @@
     "protocol-json-system": {
       "tags": []
     },
-    "workspace-adapters-json-rxjs-system": {
+    "workspace-adapters-json-fetch-system": {
       "tags": []
     },
-    "workspace-adapters-json-rxjs-system-tests": {
+    "workspace-adapters-json-fetch-system-tests": {
       "tags": []
     },
     "workspace-adapters-json-system": {
       "tags": []
     },
+    "workspace-adapters-json-system-tests": {
+      "tags": []
+    },
     "workspace-adapters-system": {
       "tags": []
     },
+    "workspace-adapters-system-tests": {
+      "tags": []
+    },
     "workspace-domain-core": {
-      "tags": []
-    },
-    "workspace-domain-core-custom": {
-      "tags": []
-    },
-    "workspace-domain-core-tests": {
       "tags": []
     },
     "workspace-domain-system": {

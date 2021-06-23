@@ -45,13 +45,11 @@ export * from './lib/runtime/IChangeSet';
 export * from './lib/runtime/IObject';
 export * from './lib/runtime/IObjectFactory';
 export * from './lib/runtime/ISession';
+export * from './lib/runtime/ISessionServices';
 export * from './lib/runtime/IStrategy';
 export * from './lib/runtime/IWorkspace';
+export * from './lib/runtime/IWorkspaceServices';
+export * from './lib/runtime/Method';
 export * from './lib/runtime/Operations';
+export * from './lib/runtime/Role';
 export * from './lib/runtime/Types';
-
-export * from './lib/runtime/operands/Method';
-export * from './lib/runtime/operands/Role';
-
-export * from './lib/runtime/state/ISessionServices';
-export * from './lib/runtime/state/IWorkspaceServices';

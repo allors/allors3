@@ -1,10 +1,10 @@
 import { IObject, IStrategy } from '@allors/workspace/domain/system';
-import { AssociationType, Class, MethodType, Origin, RoleType } from '@allors/workspace/domain/system';
 import { DatabaseRecord } from '../database/DatabaseRecord';
 import { DatabaseOriginState, InitialVersion, UnknownVersion } from './originstate/DatabaseOriginState';
 import { WorkspaceOriginState } from './originstate/WorkspaceOriginState';
 import { isNewId, Session } from './Session';
 import { Numbers, enumerate } from '../collections/Numbers';
+import { AssociationType, Class, Origin, RoleType } from '@allors/workspace/meta/system';
 
 export class Strategy implements IStrategy {
   DatabaseOriginState: DatabaseOriginState;
@@ -113,7 +113,7 @@ export class Strategy implements IStrategy {
     }
   }
 
-  public *getComposites<T extends IObject>(roleType: RoleType): Generator<T, void, unknown> {
+  public getComposites<T extends IObject>(roleType: RoleType): T[] {
     let roles: IObject[];
 
     switch (this.cls.origin) {
@@ -139,11 +139,7 @@ export class Strategy implements IStrategy {
         throw new Error('Unknown origin');
     }
 
-    if (roles != null) {
-      for (const role of roles) {
-        yield role as T;
-      }
-    }
+    return roles as T[];
   }
 
   public set(roleType: RoleType, value: any) {
@@ -276,9 +272,9 @@ export class Strategy implements IStrategy {
     return association != null ? this.session.getOne(association) : null;
   }
 
-  public *getCompositesAssociation<T extends IObject>(associationType: AssociationType): Generator<T, void, unknown> {
+  public getCompositesAssociation<T extends IObject>(associationType: AssociationType): T[] {
     if (associationType.origin != Origin.Session) {
-      yield* this.session.getCompositesAssociation<T>(this.id, associationType);
+      yield * this.session.getCompositesAssociation<T>(this.id, associationType);
     }
 
     const association = this.session.sessionOriginState.Get(this.id, associationType);

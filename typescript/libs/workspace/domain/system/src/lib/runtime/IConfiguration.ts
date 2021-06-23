@@ -1,4 +1,4 @@
-import { MetaPopulation } from '../meta/MetaPopulation';
+import { MetaPopulation } from '@allors/workspace/meta/system';
 import { IObjectFactory } from './IObjectFactory';
 
 export interface IConfiguration {

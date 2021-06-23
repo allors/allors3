@@ -1,4 +1,4 @@
-import { Role } from "../runtime/operands/Role";
+import { Role } from "../runtime/Role";
 
 export interface IDerivationError {
   message: string;

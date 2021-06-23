@@ -13,6 +13,7 @@ import { InvokeResult } from '../database/invoke/InvokeResult';
 import { map } from 'rxjs/operators';
 import { PushResult } from '../database/push/PushResult';
 import { enumerate } from '../collections/Numbers';
+import { IStrategy } from '../../../../../domain/system/src/lib/runtime/IStrategy';
 
 export function isNewId(id: number): boolean {
   return id < 0;
@@ -62,16 +63,11 @@ export class Session implements ISession {
     return (this.getStrategy(id)?.object as unknown) as T;
   }
 
-  *getMany<T>(...ids: number[]): Generator<T, void, unknown> {
-    for (const id of ids) {
-      const strategy = this.getStrategy(id);
-      if (strategy !== null) {
-        yield (strategy.object as unknown) as T;
-      }
-    }
+  getMany<T>(...ids: number[]): T[] {
+    return (ids.map((v) => this.getStrategy(v)).filter((v) => v != null) as unknown) as T[];
   }
 
-  *getAll<T>(objectType: Composite) {
+  getAll<T>(objectType: Composite): T[] {
     for (const cls of objectType.classes) {
       switch (cls.origin) {
         case Origin.Workspace:
@@ -237,8 +233,10 @@ export class Session implements ISession {
     }
   }
 
-  public *getCompositesAssociation<T extends IObject>(role: number, associationType: AssociationType): Generator<T, void, unknown> {
+  public getCompositesAssociation<T extends IObject>(role: number, associationType: AssociationType): T[] {
     const roleType = associationType.roleType;
+
+
     for (const association of this.getForAssociation(associationType.objectType as Composite)) {
       if (!association.canRead(roleType)) {
         // TODO: Warning!!! continue If
@@ -307,12 +305,16 @@ export class Session implements ISession {
     strategy.onDatabasePushResponse(databaseRecord);
   }
 
-  private *getForAssociation(objectType: Composite) {
+  private getForAssociation(objectType: Composite): IStrategy[] {
     const classes = objectType.classes;
 
+    return this.strategyByWorkspaceId
+
+    var strategies = [];
+
     for (const [_, strategy] of this.strategyByWorkspaceId) {
-      if (classes.has(strategy.Class)) {
-        yield strategy;
+      if (classes.has(strategy.cls)) {
+        strategies.push(strategy);
       }
     }
   }

@@ -1,18 +1,17 @@
 import { InvokeRequest, InvokeResponse, PullRequest, PullResponse, PushRequest, PushResponse, SecurityRequest, SecurityResponse, SyncRequest, SyncResponse } from '@allors/protocol/json/system';
-import { Observable } from 'rxjs';
 
 export interface Client {
   baseUrl: string;
   userId: number;
   jwtToken: string;
 
-  pull(pullRequest: PullRequest): Observable<PullResponse>;
+  pull(pullRequest: PullRequest): Promise<PullResponse>;
 
-  sync(syncRequest: SyncRequest): Observable<SyncResponse>;
+  sync(syncRequest: SyncRequest): Promise<SyncResponse>;
 
-  push(pushRequest: PushRequest): Observable<PushResponse>;
+  push(pushRequest: PushRequest): Promise<PushResponse>;
 
-  invoke(invokeRequest: InvokeRequest): Observable<InvokeResponse>;
+  invoke(invokeRequest: InvokeRequest): Promise<InvokeResponse>;
 
-  security(securityRequest: SecurityRequest): Observable<SecurityResponse>;
+  security(securityRequest: SecurityRequest): Promise<SecurityResponse>;
 }

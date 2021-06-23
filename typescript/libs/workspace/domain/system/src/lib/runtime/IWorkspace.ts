@@ -1,6 +1,6 @@
 import { IDatabase } from './IDatabase';
 import { ISession } from './ISession';
-import { IWorkspaceServices } from './state/IWorkspaceServices';
+import { IWorkspaceServices } from './IWorkspaceServices';
 
 export interface IWorkspace {
 

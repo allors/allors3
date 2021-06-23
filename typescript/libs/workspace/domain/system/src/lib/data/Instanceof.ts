@@ -1,5 +1,4 @@
-import { ObjectType } from '../meta/ObjectType';
-import { PropertyType } from '../meta/PropertyType';
+import { ObjectType, PropertyType } from '@allors/workspace/meta/system';
 import { ParameterizablePredicate } from './ParameterizablePredicate';
 
 export interface Instanceof extends ParameterizablePredicate {

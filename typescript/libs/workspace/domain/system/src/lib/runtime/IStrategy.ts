@@ -1,7 +1,4 @@
-import { AssociationType } from '../meta/AssociationType';
-import { Class } from '../meta/Class';
-import { MethodType } from '../meta/MethodType';
-import { RoleType } from '../meta/RoleType';
+import { AssociationType, Class, MethodType, RoleType } from '@allors/workspace/meta/system';
 import { IObject } from './IObject';
 import { ISession } from './ISession';
 import { UnitTypes } from './Types';
@@ -29,7 +26,7 @@ export interface IStrategy {
 
   getComposite<T extends IObject>(roleType: RoleType): T;
 
-  getComposites<T extends IObject>(roleType: RoleType): Generator<T, void, unknown>;
+  getComposites<T extends IObject>(roleType: RoleType): T[];
 
   set(roleType: RoleType, value: unknown): void;
 
@@ -47,5 +44,5 @@ export interface IStrategy {
 
   getCompositeAssociation<T extends IObject>(associationType: AssociationType): T;
 
-  getCompositesAssociation<T extends IObject>(associationType: AssociationType): Generator<T, void, unknown>;
+  getCompositesAssociation<T extends IObject>(associationType: AssociationType): T[];
 }
