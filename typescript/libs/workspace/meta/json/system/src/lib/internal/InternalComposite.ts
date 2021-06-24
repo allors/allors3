@@ -9,6 +9,7 @@ export interface InternalComposite extends InternalObjectType, Composite {
   derive(lookup: Lookup): void;
   deriveSuper(): void;
   deriveOperand(): void;
+  deriveOriginRoleType(): void;
   supertypeGenerator(): IterableIterator<InternalInterface>;
   onNewAssociationType(associationType: InternalAssociationType): void;
   onNewRoleType(roleType: InternalRoleType): void;

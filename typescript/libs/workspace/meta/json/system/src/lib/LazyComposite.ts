@@ -9,6 +9,8 @@ import { InternalMetaPopulation } from './internal/InternalMetaPopulation';
 import { LazyRelationType } from './LazyRelationType';
 import { LazyMethodType } from './LazyMethodType';
 import { Lookup } from './utils/Lookup';
+import { Origin, RoleType } from '@allors/workspace/meta/system';
+import { Workspace } from '../../../../../adapters/json/system/src/lib/runtime/Workspace';
 
 export abstract class LazyComposite implements InternalComposite {
   isUnit = false;
@@ -27,6 +29,9 @@ export abstract class LazyComposite implements InternalComposite {
   directAssociationTypes: Set<InternalAssociationType> = new Set();
   directRoleTypes: Set<InternalRoleType> = new Set();
   directMethodTypes: Set<InternalMethodType> = new Set();
+
+  databaseOriginRoleTypes: Set<RoleType>;
+  workspaceOriginRoleTypes: Set<RoleType>;
 
   abstract isInterface: boolean;
   abstract isClass: boolean;
@@ -47,6 +52,7 @@ export abstract class LazyComposite implements InternalComposite {
     this.origin = lookup.o.get(t) ?? Origin.Database;
     metaPopulation.onNewComposite(this);
   }
+
   onNewAssociationType(associationType: InternalAssociationType) {
     this.directAssociationTypes.add(associationType);
   }
@@ -93,6 +99,11 @@ export abstract class LazyComposite implements InternalComposite {
     this.methodTypes.forEach((v) => ((this as Record<string, unknown>)[v.name] = v));
   }
 
+  deriveOriginRoleType() {
+    this.databaseOriginRoleTypes = new Set(this.databaseOriginRoleTypesGenerator());
+    this.workspaceOriginRoleTypes = new Set(this.workspaceOriginRoleTypesGenerator());
+  }
+
   *supertypeGenerator(): IterableIterator<InternalInterface> {
     if (this.supertypes) {
       yield* this.supertypes.values();
@@ -133,6 +144,22 @@ export abstract class LazyComposite implements InternalComposite {
       yield* this.directMethodTypes;
       for (const supertype of this.directSupertypes) {
         yield* supertype.methodTypeGenerator();
+      }
+    }
+  }
+
+  *databaseOriginRoleTypesGenerator(): IterableIterator<InternalRoleType> {
+    for (const roleType of this.roleTypes) {
+      if (roleType.origin === Origin.Database) {
+        yield roleType;
+      }
+    }
+  }
+
+  *workspaceOriginRoleTypesGenerator(): IterableIterator<InternalRoleType> {
+    for (const roleType of this.roleTypes) {
+      if (roleType.origin === Origin.Workspace) {
+        yield roleType;
       }
     }
   }

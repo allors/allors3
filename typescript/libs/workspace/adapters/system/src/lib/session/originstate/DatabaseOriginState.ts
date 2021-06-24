@@ -28,7 +28,7 @@ export class DatabaseOriginState extends RecordBasedOriginState {
     return this.Record != null;
   }
 
-  get RoleTypes(): RoleType[] {
+  get RoleTypes(): Set<RoleType> {
     return this.Class.databaseOriginRoleTypes;
   }
 

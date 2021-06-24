@@ -17,5 +17,8 @@ export interface Composite extends ObjectType {
   roleTypes: Set<RoleType>;
   methodTypes: Set<MethodType>;
 
+  databaseOriginRoleTypes: Set<RoleType>;
+  workspaceOriginRoleTypes: Set<RoleType>;
+
   isAssignableFrom(objectType: Composite): boolean;
 }

@@ -1,4 +1,4 @@
-import { PropertyType } from '@allors/workspace/domain/system';
+import { PropertyType } from '@allors/workspace/meta/system';
 import { MapMap } from '../../collections/MapMap';
 import { equals, Numbers } from '../../collections/Numbers';
 

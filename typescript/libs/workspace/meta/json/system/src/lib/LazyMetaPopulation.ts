@@ -35,6 +35,7 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
     this.composites.forEach((v) => v.deriveSuper());
     this.interfaces.forEach((v) => v.deriveSub());
     this.composites.forEach((v) => v.deriveOperand());
+    this.composites.forEach((v) => v.deriveOriginRoleType());
   }
 
   onNew(metaObject: InternalMetaObject) {

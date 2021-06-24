@@ -7,13 +7,13 @@ import { add, has, remove, difference, enumerate } from '../../collections/Numbe
 import { Class, RelationType, RoleType } from '@allors/workspace/meta/system';
 
 export abstract class RecordBasedOriginState {
-  public abstract Strategy: Strategy;
+  public Strategy: Strategy;
 
   protected HasChanges(): boolean {
     return this.Record == null || this.ChangedRoleByRelationType?.size > 0;
   }
 
-  protected abstract RoleTypes: RoleType[];
+  protected abstract RoleTypes: Set<RoleType>;
 
   protected abstract Record: IRecord;
 
@@ -43,11 +43,11 @@ export abstract class RecordBasedOriginState {
 
     const associationType = roleType.associationType;
     if (associationType.isOne && role != null) {
-      const previousAssociationObject = this.Session.getAssociation(role, associationType).FirstOrDefault();
+      const previousAssociationObject = this.Session.getCompositeAssociation(role, associationType);
       this.SetChangedRole(roleType, role);
       if (associationType.isOne && previousAssociationObject != null) {
         //  OneToOne
-        previousAssociationObject?.Strategy.Set(roleType, null);
+        previousAssociationObject?.strategy.set(roleType, null);
       }
     } else {
       this.SetChangedRole(roleType, role);
@@ -68,8 +68,8 @@ export abstract class RecordBasedOriginState {
     }
 
     //  OneToMany
-    const previousAssociationObject = this.Session.getAssociation(roleToAdd, associationType).FirstOrDefault();
-    previousAssociationObject?.Strategy.Set(roleType, null);
+    const previousAssociationObject = this.Session.getCompositeAssociation(roleToAdd, associationType);
+    previousAssociationObject?.strategy.set(roleType, null);
   }
 
   public RemoveCompositeRole(roleType: RoleType, roleToRemove: number) {
@@ -93,8 +93,8 @@ export abstract class RecordBasedOriginState {
     //  OneToMany
     const addedRoles = difference(role, previousRole);
     for (const addedRole of enumerate(addedRoles)) {
-      const previousAssociationObject = this.Session.getAssociation(addedRole, associationType).FirstOrDefault();
-      previousAssociationObject?.Strategy.Set(roleType, null);
+      const previousAssociationObject = this.Session.getCompositeAssociation(addedRole, associationType);
+      previousAssociationObject?.strategy.set(roleType, null);
     }
   }
 

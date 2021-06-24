@@ -7,7 +7,7 @@ import { PushToDatabaseTracker } from './trackers/PushToDatabaseTracker';
 import { PushToWorkspaceTracker } from './trackers/PushToWorkspaceTracker';
 import { ChangeSet } from './ChangeSet';
 import { enumerate } from '../collections/Numbers';
-import { AssociationType, Class, Composite, Origin } from '@allors/workspace/meta/system';
+import { AssociationType, Class, Composite, Origin, RoleType } from '@allors/workspace/meta/system';
 
 export function isNewId(id: number): boolean {
   return id < 0;
@@ -117,8 +117,6 @@ export abstract class Session implements ISession {
 
     return changeSet;
   }
-
-
 
   public getStrategy(id: number): Strategy {
     if (id == 0) {

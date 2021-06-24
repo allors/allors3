@@ -1,5 +1,6 @@
 import { IChangeSet, IStrategy } from '@allors/workspace/domain/system';
 import { AssociationType, PropertyType, RelationType, RoleType } from '@allors/workspace/meta/system';
+import { MapMap } from '../collections/MapMap';
 import { difference, enumerate } from '../collections/Numbers';
 import { Session } from './Session';
 import { Strategy } from './Strategy';
@@ -14,11 +15,11 @@ export class ChangeSet implements IChangeSet {
     this.rolesByAssociationType = new Map();
   }
 
-  public AddSessionStateChanges(sessionStateChangeSet: Map<PropertyType, Map<number, any>>) {
-    sessionStateChangeSet.forEach((map, propertyType) => {
+  public AddSessionStateChanges(sessionStateChangeSet: MapMap<PropertyType, number, any>) {
+    sessionStateChangeSet.mapMap.forEach((map, propertyType) => {
       const ids = map.keys;
 
-      const strategies = new Set<IStrategy>(this.Session.GetStrategies(ids));
+      const strategies = new Set<IStrategy>(this.Session.getStrategies(ids));
 
       if (propertyType.isAssociationType) {
         this.rolesByAssociationType.set(propertyType as AssociationType, strategies);
@@ -51,13 +52,13 @@ export class ChangeSet implements IChangeSet {
     } else {
       let hasChange = false;
       const addedRoles = difference(current, previous);
-      for (const v in enumerate(addedRoles)) {
+      for (const v of enumerate(addedRoles)) {
         this.AddRole(relationType, this.Session.getStrategy(v));
         hasChange = true;
       }
 
       const removedRoles = difference(previous, current);
-      for (const v in enumerate(removedRoles)) {
+      for (const v of enumerate(removedRoles)) {
         this.AddRole(relationType, this.Session.getStrategy(v));
         hasChange = true;
       }

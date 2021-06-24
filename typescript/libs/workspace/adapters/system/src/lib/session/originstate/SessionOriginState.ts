@@ -1,4 +1,4 @@
-import { PropertyType, RoleType } from '@allors/workspace/domain/system';
+import { PropertyType, RoleType } from '@allors/workspace/meta/system';
 import { add, difference, enumerate, has, Numbers, remove } from '../../collections/Numbers';
 import { ChangeSet } from '../ChangeSet';
 import { PropertyByObjectByPropertyType } from './PropertyByObjectByPropertyType';
@@ -24,7 +24,7 @@ export class SessionOriginState {
 
   public SetCompositeRole(association: number, roleType: RoleType, newRole: number) {
     if (newRole === null) {
-      this.RemoveRole(association, roleType);
+      this.RemoveRoles(association, roleType);
       return;
     }
 
@@ -49,7 +49,7 @@ export class SessionOriginState {
 
   public SetCompositesRole(association: number, roleType: RoleType, newRole: any) {
     if (newRole == null) {
-      this.RemoveRole(association, roleType);
+      this.RemoveRoles(association, roleType);
       return;
     }
 
@@ -115,7 +115,7 @@ export class SessionOriginState {
     }
   }
 
-  private RemoveRole(association: number, roleType: RoleType) {
+  private RemoveRoles(association: number, roleType: RoleType) {
     if (roleType.objectType.isUnit) {
       //  Role
       this.SetUnitRole(association, roleType, null);

@@ -1,4 +1,4 @@
-import { RoleType } from '@allors/workspace/domain/system';
+import { RoleType } from '@allors/workspace/meta/system';
 import { IRecord } from '../../IRecord';
 import { WorkspaceRecord } from '../../workspace/WorkspaceRecord';
 import { Strategy } from '../Strategy';
@@ -15,8 +15,8 @@ export /* sealed */ class WorkspaceOriginState extends RecordBasedOriginState {
     this.PreviousRecord = this.WorkspaceRecord;
   }
 
-  get RoleTypes(): RoleType[] {
-    return this.Class.WorkspaceOriginRoleTypes;
+  get RoleTypes(): Set<RoleType> {
+    return this.Class.workspaceOriginRoleTypes;
   }
 
   get Record(): IRecord {
@@ -28,8 +28,8 @@ export /* sealed */ class WorkspaceOriginState extends RecordBasedOriginState {
   }
 
   protected /* override */ OnChange() {
-    this.Strategy.Session.ChangeSetTracker.OnChanged(this);
-    this.Strategy.Session.PushToWorkspaceTracker.OnChanged(this);
+    this.Strategy.session.changeSetTracker.OnWorkspaceChanged(this);
+    this.Strategy.session.pushToWorkspaceTracker.OnChanged(this);
   }
 
   public Push() {
@@ -37,7 +37,7 @@ export /* sealed */ class WorkspaceOriginState extends RecordBasedOriginState {
       this.Workspace.push(this.Id, this.Class, this.Record?.version ?? 0, this.ChangedRoleByRelationType);
     }
 
-    this.WorkspaceRecord = this.Workspace.GetRecord(this.Id);
+    this.WorkspaceRecord = this.Workspace.getRecord(this.Id);
     this.ChangedRoleByRelationType = null;
   }
 }
