@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\Core\Workspace\CSharp\Allors.Workspace.Meta\Meta*\**\*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\System\Workspace\CSharp\Allors.Workspace.Meta.Lazy\Allors.Workspace.Meta.Lazy.csproj" />
+    <ProjectReference Include="..\Meta\Workspace.Meta.csproj" />
+  </ItemGroup>
+</Project>

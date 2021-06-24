@@ -55,7 +55,7 @@ namespace Allors.Workspace.Meta
         {
             if (this.IsOne)
             {
-                var association = strategy.GetCompositeAssociation<IObject>(this);
+                var association = strategy.GetComposite<IObject>(this);
 
                 if (ofType == null || association == null)
                 {
@@ -66,7 +66,7 @@ namespace Allors.Workspace.Meta
             }
             else
             {
-                var association = strategy.GetCompositesAssociation<IObject>(this);
+                var association = strategy.GetComposites<IObject>(this);
 
                 if (ofType == null || association == null)
                 {

@@ -276,7 +276,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void RemoveAll(IRoleType roleType)
+        public void Remove(IRoleType roleType)
         {
             if (roleType.ObjectType.IsUnit)
             {
@@ -295,7 +295,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public T GetCompositeAssociation<T>(IAssociationType associationType) where T : IObject
+        public T GetComposite<T>(IAssociationType associationType) where T : IObject
         {
             if (associationType.Origin != Origin.Session)
             {
@@ -306,7 +306,7 @@ namespace Allors.Workspace.Adapters
             return association != null ? this.Session.GetOne<T>(association) : default;
         }
 
-        public IEnumerable<T> GetCompositesAssociation<T>(IAssociationType associationType) where T : IObject
+        public IEnumerable<T> GetComposites<T>(IAssociationType associationType) where T : IObject
         {
             if (associationType.Origin != Origin.Session)
             {
