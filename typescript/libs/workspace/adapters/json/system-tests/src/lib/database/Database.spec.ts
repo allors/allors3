@@ -1,9 +1,10 @@
-import { PullRequest, ExtentKind } from '@allors/protocol/json/system';
+import { MetaPopulation } from '@allors/workspace/meta/system';
+import { M } from '@allors/workspace/meta/core';
+import { Configuration, ObjectFactory } from '@allors/workspace/adapters/system';
 import { Database } from '@allors/workspace/adapters/json/system';
-import { M } from '@allors/workspace/meta/json/core';
+import { PullRequest, ExtentKind } from '@allors/protocol/json/system';
 import { Fixture } from '../Fixture';
 import { WorkspaceServices } from '../WorkspaceServices';
-import { Configuration, ObjectFactory } from '@workspace/adapters/json/system';
 
 describe('Database', () => {
   let fixture: Fixture;
@@ -17,12 +18,12 @@ describe('Database', () => {
 
     let nextId = -1;
     database = new Database(
-      new Configuration('Default', fixture.metaPopulation, new ObjectFactory()),
-      fixture.client,
+      new Configuration('Default', fixture.metaPopulation, new ObjectFactory(fixture.metaPopulation)),
       () => {
         return new WorkspaceServices();
       },
-      () => nextId--
+      () => nextId--,
+      fixture.client
     );
   });
 
@@ -38,7 +39,7 @@ describe('Database', () => {
       ],
     };
 
-    const pullResponse = await database.pull(pullRequest).toPromise();
+    const pullResponse = await database.pull(pullRequest);
 
     expect(pullResponse).toBeDefined();
   });

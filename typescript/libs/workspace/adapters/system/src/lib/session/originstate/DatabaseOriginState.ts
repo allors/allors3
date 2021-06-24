@@ -82,7 +82,7 @@ export class DatabaseOriginState extends RecordBasedOriginState {
 
   public OnPulled() {}
 
-  protected /* override */ OnChange() {
+  OnChange() {
     this.Session.changeSetTracker.OnDatabaseChanged(this);
     this.Session.pushToDatabaseTracker.OnChanged(this);
   }

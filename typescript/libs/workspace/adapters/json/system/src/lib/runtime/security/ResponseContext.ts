@@ -1,4 +1,4 @@
-import { Numbers } from '../../collections/Numbers';
+import { Numbers } from '@allors/workspace/adapters/system';
 import { Database } from '../Database';
 
 export class ResponseContext {

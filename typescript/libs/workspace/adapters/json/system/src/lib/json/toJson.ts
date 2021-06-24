@@ -1,9 +1,6 @@
-import { UnitTypes, Pull as DataPull, Extent as DataExtent, Predicate as DataPredicate, Sort as DataSort } from '@allors/workspace/domain/system';
-import { ObjectType } from '@allors/workspace/domain/system';
-import { Extent } from './data/Extent';
-import { Predicate } from './data/Predicate';
-import { Pull } from './data/Pull';
-import { Sort } from './data/Sort';
+import { ObjectType } from '@allors/workspace/meta/system';
+import { UnitTypes, Pull as DataPull, IExtent as DataExtent, Predicate as DataPredicate, Sort as DataSort, ParameterTypes } from '@allors/workspace/domain/system';
+import { Extent, Predicate, Pull, Result, Sort } from '@allors/protocol/json/system';
 
 export function unitToJson(value: unknown): UnitTypes {
   switch (typeof value) {
@@ -26,20 +23,20 @@ export function pullToJson(from: DataPull): Pull {
     e: extentToJson(from.extent),
     t: from.objectType?.tag,
     o: from.object?.id,
-    r: resultsToJson(from.result),
+    r: resultsToJson(from.results),
     a: argumentsToJson(from.arguments),
   };
 }
 
 export function extentToJson(from: DataExtent): Extent {
   return {
-    k: from.kind,
+    k: undefined,
 
-    o: extentsToJson(from.operands),
+    // o: extentsToJson(from.operands),
 
-    t: objectTypeToJson(from.objectType),
+    // t: objectTypeToJson(from.objectType),
 
-    p: predicateToJson(from.predicate),
+    // p: predicateToJson(from.predicate),
 
     s: sortingsToJson(from.sorting),
   };
@@ -55,7 +52,7 @@ export function objectTypeToJson(from: ObjectType): number {
 
 export function predicateToJson(from: DataPredicate): Predicate {
   return {
-    k: from.kind,
+    k: undefined,
 
     /** AssociationType */
     a: undefined,
@@ -103,3 +100,11 @@ export function predicateToJson(from: DataPredicate): Predicate {
 function sortingsToJson(sorting: DataSort[]): Sort[] {
   return undefined;
 }
+function resultsToJson(result: any): Result[] {
+  return undefined;
+}
+
+function argumentsToJson(args: { [name: string]: ParameterTypes; }): { [name: string]: string; } {
+  return undefined;
+}
+

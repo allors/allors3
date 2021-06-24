@@ -15,8 +15,6 @@ export abstract class Workspace implements IWorkspace {
     this.workspaceIdsByWorkspaceClass = new Map();
 
     this.recordById = new Map();
-
-    this.services.onInit(this);
   }
 
   abstract createSession(): ISession;

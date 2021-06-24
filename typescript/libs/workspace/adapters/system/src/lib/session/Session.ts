@@ -1,4 +1,4 @@
-import { IChangeSet, InvokeOptions, IObject, IPullResult, IPushResult, IResult, ISession, ISessionServices, IStrategy, Method, Procedure, Pull } from '@allors/workspace/domain/system';
+import { IChangeSet, InvokeOptions, IObject, IPullResult, IPushResult, IResult, ISession, ISessionServices, Method, Procedure, Pull } from '@allors/workspace/domain/system';
 import { Workspace } from '../workspace/Workspace';
 import { SessionOriginState } from './originstate/SessionOriginState';
 import { Strategy } from './Strategy';
@@ -33,7 +33,6 @@ export abstract class Session implements ISession {
     this.changeSetTracker = new ChangeSetTracker();
     this.pushToDatabaseTracker = new PushToDatabaseTracker();
     this.pushToWorkspaceTracker = new PushToWorkspaceTracker();
-    this.services.onInit(this);
   }
 
   abstract invoke(method: Method | Method[], options?: InvokeOptions): Promise<IResult>;
