@@ -2,7 +2,6 @@ module.exports = {
   projects: [
     ,
     '<rootDir>/libs/workspace/adapters/json/system',
-    '<rootDir>/libs/workspace/adapters/json/system-tests',
     '<rootDir>/libs/workspace/domain/core',
     '<rootDir>/libs/workspace/meta/core',
     '<rootDir>/libs/workspace/meta/lazy/system',
@@ -11,7 +10,6 @@ module.exports = {
     '<rootDir>/libs/workspace/meta/system',
     '<rootDir>/libs/workspace/domain/system',
     '<rootDir>/libs/workspace/adapters/system',
-    '<rootDir>/libs/workspace/adapters/json/fetch/system',
-    '<rootDir>/libs/workspace/adapters/system-tests',
+    '<rootDir>/libs/workspace/adapters/json/system-tests',
   ],
 };

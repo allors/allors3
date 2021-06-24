@@ -1,7 +1,6 @@
 import { InvokeRequest, PullRequest, PullResponse, PushRequest, PushResponse, Response, SecurityRequest, SecurityResponse, SyncRequest, SyncResponse } from '@allors/protocol/json/system';
 import { AuthenticationTokenRequest } from './auth/AuthenticationTokenRequest';
 
-
 export class AjaxClient implements Client {
   userId: number;
   jwtToken: string;

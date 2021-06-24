@@ -1,10 +1,9 @@
 import { ISession, IWorkspace, IWorkspaceServices } from '@allors/workspace/domain/system';
-import { Class, RelationType } from '@allors/workspace/domain/system';
+import { Class, RelationType } from '@allors/workspace/meta/system';
 import { Database } from '../Database/Database';
-import { Session } from '../Session/Session';
 import { WorkspaceRecord } from './WorkspaceRecord';
 
-export class Workspace implements IWorkspace {
+export abstract class Workspace implements IWorkspace {
   workspaceClassByWorkspaceId: Map<number, Class>;
 
   workspaceIdsByWorkspaceClass: Map<Class, Set<number>>;
@@ -20,9 +19,7 @@ export class Workspace implements IWorkspace {
     this.services.onInit(this);
   }
 
-  createSession(): ISession {
-    return new Session(this, this.services.createSessionServices());
-  }
+  abstract createSession(): ISession;
 
   getRecord(identity: number): WorkspaceRecord | undefined {
     return this.recordById.get(identity);

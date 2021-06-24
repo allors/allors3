@@ -1,5 +1,6 @@
 import { IChangeSet, IStrategy } from '@allors/workspace/domain/system';
-import { AssociationType, PropertyType, RelationType, RoleType } from '@allors/workspace/domain/system';
+import { AssociationType, PropertyType, RelationType, RoleType } from '@allors/workspace/meta/system';
+import { difference, enumerate } from '../collections/Numbers';
 import { Session } from './Session';
 import { Strategy } from './Strategy';
 
@@ -48,16 +49,15 @@ export class ChangeSet implements IChangeSet {
 
       this.AddAssociation(relationType, association);
     } else {
-      const numbers = this.Session.workspace.Numbers;
       let hasChange = false;
-      const addedRoles = numbers.Except(current, previous);
-      for (const v in numbers.Enumerate(addedRoles)) {
+      const addedRoles = difference(current, previous);
+      for (const v in enumerate(addedRoles)) {
         this.AddRole(relationType, this.Session.getStrategy(v));
         hasChange = true;
       }
 
-      const removedRoles = numbers.Except(previous, current);
-      for (const v in numbers.Enumerate(removedRoles)) {
+      const removedRoles = difference(previous, current);
+      for (const v in enumerate(removedRoles)) {
         this.AddRole(relationType, this.Session.getStrategy(v));
         hasChange = true;
       }
@@ -81,7 +81,7 @@ export class ChangeSet implements IChangeSet {
   }
 
   private AddRole(relationType: RelationType, role: Strategy) {
-    const associationType = relationType.AssociationType;
+    const associationType = relationType.associationType;
 
     let roles: Set<IStrategy>;
     if (!this.rolesByAssociationType.has(associationType)) {

@@ -1,6 +1,4 @@
-import { IChangeSet, IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, ISession, ISessionServices, Method, Procedure, Pull } from '@allors/workspace/domain/system';
-import { AssociationType, Class, Composite, Origin, RoleType } from '@allors/workspace/domain/system';
-import { InvokeRequest, PullRequest } from '@allors/protocol/json/system';
+import { IChangeSet, InvokeOptions, IObject, IPullResult, IPushResult, IResult, ISession, ISessionServices, IStrategy, Method, Procedure, Pull } from '@allors/workspace/domain/system';
 import { Workspace } from '../workspace/Workspace';
 import { SessionOriginState } from './originstate/SessionOriginState';
 import { Strategy } from './Strategy';
@@ -8,18 +6,14 @@ import { ChangeSetTracker } from './trackers/ChangSetTracker';
 import { PushToDatabaseTracker } from './trackers/PushToDatabaseTracker';
 import { PushToWorkspaceTracker } from './trackers/PushToWorkspaceTracker';
 import { ChangeSet } from './ChangeSet';
-import { Observable } from 'rxjs';
-import { InvokeResult } from '../database/invoke/InvokeResult';
-import { map } from 'rxjs/operators';
-import { PushResult } from '../database/push/PushResult';
 import { enumerate } from '../collections/Numbers';
-import { IStrategy } from '../../../../../domain/system/src/lib/runtime/IStrategy';
+import { AssociationType, Class, Composite, Origin } from '@allors/workspace/meta/system';
 
 export function isNewId(id: number): boolean {
   return id < 0;
 }
 
-export class Session implements ISession {
+export abstract class Session implements ISession {
   changeSetTracker: ChangeSetTracker;
 
   pushToDatabaseTracker: PushToDatabaseTracker;
@@ -42,6 +36,14 @@ export class Session implements ISession {
     this.services.onInit(this);
   }
 
+  abstract invoke(method: Method | Method[], options?: InvokeOptions): Promise<IResult>;
+
+  abstract call(procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult>;
+
+  abstract pull(pulls: Pull[]): Promise<IPullResult>;
+
+  abstract push(): Promise<IResult>;
+
   create(cls: Class): any {
     const workspaceId = this.workspace.database.nextId();
     const strategy = new Strategy(this, cls, workspaceId);
@@ -63,11 +65,13 @@ export class Session implements ISession {
     return (this.getStrategy(id)?.object as unknown) as T;
   }
 
-  getMany<T>(...ids: number[]): T[] {
+  getMany<T>(ids: number[]): T[] {
     return (ids.map((v) => this.getStrategy(v)).filter((v) => v != null) as unknown) as T[];
   }
 
-  getAll<T>(objectType: Composite): T[] {
+  getAll<T extends IObject>(objectType: Composite): T[] {
+    const all: T[] = [];
+
     for (const cls of objectType.classes) {
       switch (cls.origin) {
         case Origin.Workspace:
@@ -76,10 +80,10 @@ export class Session implements ISession {
             for (const id of ids) {
               if (this.strategyByWorkspaceId.has(id)) {
                 const strategy = this.strategyByWorkspaceId.get(id);
-                yield (strategy.object as unknown) as T;
+                all.push(strategy.object as T);
               } else {
                 const strategy = this.instantiateWorkspaceStrategy(id);
-                yield (strategy.object as unknown) as T;
+                all.push(strategy.object as T);
               }
             }
           }
@@ -87,6 +91,8 @@ export class Session implements ISession {
           break;
       }
     }
+
+    return all;
   }
 
   checkpoint(): IChangeSet {
@@ -112,82 +118,7 @@ export class Session implements ISession {
     return changeSet;
   }
 
-  public invoke(methods: Method[], options: InvokeOptions): Observable<IInvokeResult> {
-    const invokeRequest: InvokeRequest = {
-      l: methods.map((v) => {
-        return {
-          i: v.object.id,
-          v: (v.object.strategy as Strategy).DatabaseOriginState.Version,
-          m: v.MethodType.tag,
-        };
-      }),
-      o:
-        options != null
-          ? {
-              c: options.continueOnError,
-              i: options.isolated,
-            }
-          : null,
-    };
 
-    return this.workspace.database.invoke(invokeRequest).pipe(map((v) => new InvokeResult(this, v)));
-  }
-
-  public pull(...pulls: Pull[]): Observable<IPullResult> {
-    const pullRequest: PullRequest = {
-      l: pulls.map((v) => toJson(v)),
-    };
-
-    return this.workspace.database.pull(pullRequest).pipe(map((v) => this.OnPull(v)));
-  }
-
-  public call(procedure: Procedure, ...pulls: Pull[]): Observable<IPullResult> {
-    const pullRequest: PullRequest = {
-      p: procedure.ToJson(this.database.UnitConvert),
-      l: pulls.map((v) => v.ToJson(this.database.UnitConvert)),
-    };
-
-    var pullResponse = await this.workspace.DatabaseConnection.Pull(pullRequest);
-    return await this.OnPull(pullResponse);
-  }
-
-  public push(): Observable<IPushResult> {
-    const pushRequest: PushRequest = {
-      n: [...this.pushToDatabaseTracker.Created].map((v) => v.DatabasePushNew()),
-      o: [...this.pushToDatabaseTracker.Changed].map((v) => v.Strategy.DatabasePushExisting()),
-    };
-
-    return this.workspace.database.push(pushRequest).pipe(map((v) => new PushResult(this, v)));
-
-    // TODO:
-    //
-    // if (pushResponse.HasErrors) {
-    //     return new PushResult(this, pushResponse);
-    // }
-
-    // if ((pushResponse.n != null)) {
-    //     for (let pushResponseNewObject in pushResponse.n) {
-    //         let workspaceId = pushResponseNewObject.w;
-    //         let databaseId = pushResponseNewObject.d;
-    //         this.OnDatabasePushResponseNew(workspaceId, databaseId);
-    //     }
-
-    // }
-
-    // this.PushToDatabaseTracker.Created = null;
-    // if ((pushRequest.o != null)) {
-    //     for (let id in pushRequest.o.Select(() => {  }, v.d)) {
-    //         let strategy = this.GetStrategy(id);
-    //         this.OnDatabasePushResponse(strategy);
-    //     }
-
-    // }
-
-    // let result = new PushResult(this, pushResponse);
-    // if (!result.HasErrors) {
-    //     this.PushToWorkspace(result);
-    // }
-  }
 
   public getStrategy(id: number): Strategy {
     if (id == 0) {
@@ -236,6 +167,7 @@ export class Session implements ISession {
   public getCompositesAssociation<T extends IObject>(role: number, associationType: AssociationType): T[] {
     const roleType = associationType.roleType;
 
+    const associations: T[] = [];
 
     for (const association of this.getForAssociation(associationType.objectType as Composite)) {
       if (!association.canRead(roleType)) {
@@ -243,9 +175,11 @@ export class Session implements ISession {
       }
 
       if (association.isAssociationForRole(roleType, role)) {
-        yield association.object as T;
+        associations.push(association.object as T);
       }
     }
+
+    return associations;
   }
 
   protected addStrategy(strategy: Strategy) {
@@ -293,7 +227,7 @@ export class Session implements ISession {
 
   protected onDatabasePushResponseNew(workspaceId: number, databaseId: number) {
     const strategy = this.strategyByWorkspaceId[workspaceId];
-    this.pushToDatabaseTracker.Created.Remove(strategy);
+    this.pushToDatabaseTracker.Created.delete(strategy);
     this.removeStrategy(strategy);
     strategy.OnDatabasePushNewId(databaseId);
     this.addStrategy(strategy);
@@ -308,22 +242,22 @@ export class Session implements ISession {
   private getForAssociation(objectType: Composite): IStrategy[] {
     const classes = objectType.classes;
 
-    return this.strategyByWorkspaceId
-
-    var strategies = [];
+    const strategies: IStrategy[] = [];
 
     for (const [_, strategy] of this.strategyByWorkspaceId) {
       if (classes.has(strategy.cls)) {
         strategies.push(strategy);
       }
     }
+
+    return strategies;
   }
 
   public instantiateDatabaseStrategy(id: number): Strategy {
     const databaseRecord = this.workspace.database.getRecord(id);
-    const strategy = new Strategy(this, databaseRecord);
+    const strategy = Strategy.fromDatabaseRecord(this, databaseRecord);
     this.addStrategy(strategy);
-    this.ChangeSetTracker.OnInstantiated(strategy);
+    this.changeSetTracker.OnInstantiated(strategy);
     return strategy;
   }
 

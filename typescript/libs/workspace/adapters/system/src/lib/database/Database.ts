@@ -1,7 +1,5 @@
 import { PullResponse, SecurityRequest, SyncRequest, SyncResponse, SecurityResponse, PullRequest, PushRequest, PushResponse, InvokeRequest, InvokeResponse } from '@allors/protocol/json/system';
 import { IWorkspace, IWorkspaceServices, Operations } from '@allors/workspace/domain/system';
-import { Class, MethodType, OperandType, RelationType } from '@allors/workspace/domain/system';
-import { Observable } from 'rxjs';
 import { equals } from '../collections/Numbers';
 import { Client } from './Client';
 import { AccessControl } from './Security/AccessControl';
@@ -10,6 +8,7 @@ import { MapMap } from '../collections/MapMap';
 import { DatabaseRecord } from './DatabaseRecord';
 import { Workspace } from '../workspace/Workspace';
 import { Configuration } from '../Configuration';
+import { Class, MethodType, OperandType, RelationType } from '@allors/workspace/meta/system';
 
 export type ServicesBuilder = () => IWorkspaceServices;
 
@@ -180,23 +179,23 @@ export class Database {
     return this.recordsById.get(identity);
   }
 
-  pull(pullRequest: PullRequest): Observable<PullResponse> {
+  pull(pullRequest: PullRequest): Promise<PullResponse> {
     return this.client.pull(pullRequest);
   }
 
-  sync(syncRequest: SyncRequest): Observable<SyncResponse> {
+  sync(syncRequest: SyncRequest): Promise<SyncResponse> {
     return this.client.sync(syncRequest);
   }
 
-  push(pushRequest: PushRequest): Observable<PushResponse> {
+  push(pushRequest: PushRequest): Promise<PushResponse> {
     return this.client.push(pushRequest);
   }
 
-  invoke(invokeRequest: InvokeRequest): Observable<InvokeResponse> {
+  invoke(invokeRequest: InvokeRequest): Promise<InvokeResponse> {
     return this.client.invoke(invokeRequest);
   }
 
-  security(securityRequest: SecurityRequest): Observable<SecurityResponse> {
+  security(securityRequest: SecurityRequest): Promise<SecurityResponse> {
     return this.client.security(securityRequest);
   }
 }

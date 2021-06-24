@@ -1,10 +1,10 @@
-import { Class, RelationType, RoleType } from '@allors/workspace/domain/system';
 import { IRecord } from '../../IRecord';
 import { ChangeSet } from '../ChangeSet';
 import { Strategy } from '../Strategy';
 import { Workspace } from '../../workspace/Workspace';
 import { Session } from '../Session';
 import { add, has, remove, difference, enumerate } from '../../collections/Numbers';
+import { Class, RelationType, RoleType } from '@allors/workspace/meta/system';
 
 export abstract class RecordBasedOriginState {
   public abstract Strategy: Strategy;
@@ -175,14 +175,14 @@ export abstract class RecordBasedOriginState {
   }
 
   protected get Class(): Class {
-    return this.Strategy.class;
+    return this.Strategy.cls;
   }
 
   protected get Session(): Session {
-    return this.Strategy.Session;
+    return this.Strategy.session;
   }
 
   protected get Workspace(): Workspace {
-    return this.Strategy.Workspace;
+    return this.Strategy.session.workspace;
   }
 }

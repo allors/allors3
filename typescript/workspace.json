@@ -22,48 +22,6 @@
         }
       }
     },
-    "workspace-adapters-json-fetch-system": {
-      "root": "libs/workspace/adapters/json/fetch/system",
-      "sourceRoot": "libs/workspace/adapters/json/fetch/system/src",
-      "projectType": "library",
-      "targets": {
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/workspace/adapters/json/fetch/system/**/*.ts"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/adapters/json/fetch/system"],
-          "options": {
-            "jestConfig": "libs/workspace/adapters/json/fetch/system/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "workspace-adapters-json-fetch-system-tests": {
-      "root": "libs/workspace/adapters/json/fetch/system-tests",
-      "sourceRoot": "libs/workspace/adapters/json/fetch/system-tests/src",
-      "projectType": "library",
-      "targets": {
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/workspace/adapters/json/fetch/system-tests/**/*.ts"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/adapters/json/fetch/system-tests"],
-          "options": {
-            "jestConfig": "libs/workspace/adapters/json/fetch/system-tests/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "workspace-adapters-json-system": {
       "root": "libs/workspace/adapters/json/system",
       "sourceRoot": "libs/workspace/adapters/json/system/src",

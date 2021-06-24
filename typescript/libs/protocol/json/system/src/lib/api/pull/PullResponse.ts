@@ -1,4 +1,5 @@
 import { PullResponseObject } from "./PullResponseObject";
+import { Response } from '../Response'
 
 export interface PullResponse extends Response {
   /** Collections */

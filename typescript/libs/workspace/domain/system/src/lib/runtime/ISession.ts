@@ -20,7 +20,7 @@ export interface ISession {
 
   getOne<T extends IObject>(id: number): T;
 
-  getMany<T extends IObject>(...ids: number[]): T[];
+  getMany<T extends IObject>(ids: number[]): T[];
 
   getAll<T extends IObject>(objectType?: Composite): T[];
 
@@ -30,7 +30,7 @@ export interface ISession {
 
   call(procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult>;
 
-  pull(...pulls: Pull[]): Promise<IPullResult>;
+  pull(pulls: Pull[]): Promise<IPullResult>;
 
   push(): Promise<IPushResult>;
 }
