@@ -1,4 +1,4 @@
-import { MetaPopulation } from '@allors/workspace/domain/system';
+import { MetaPopulation } from '@allors/workspace/meta/system';
 import { ObjectFactory } from './ObjectFactory';
 
 export class Configuration {

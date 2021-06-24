@@ -4,7 +4,7 @@ import { DatabaseOriginState, InitialVersion, UnknownVersion } from './originsta
 import { WorkspaceOriginState } from './originstate/WorkspaceOriginState';
 import { isNewId, Session } from './Session';
 import { Numbers, enumerate } from '../collections/Numbers';
-import { AssociationType, Class, Origin, RoleType } from '@allors/workspace/meta/system';
+import { AssociationType, Class, MethodType, Origin, RoleType } from '@allors/workspace/meta/system';
 
 export class Strategy implements IStrategy {
   DatabaseOriginState: DatabaseOriginState;
@@ -52,7 +52,7 @@ export class Strategy implements IStrategy {
       return this.getComposite(roleType) != null;
     }
 
-    return this.getComposites(roleType).next().value != null;
+    return this.getComposites(roleType)?.length > 0;
   }
 
   public get(roleType: RoleType): any {
@@ -273,15 +273,19 @@ export class Strategy implements IStrategy {
   }
 
   public getCompositesAssociation<T extends IObject>(associationType: AssociationType): T[] {
+    const composites: T[] = [];
+
     if (associationType.origin != Origin.Session) {
-      yield * this.session.getCompositesAssociation<T>(this.id, associationType);
+      composites.push(...this.session.getCompositesAssociation<T>(this.id, associationType));
     }
 
     const association = this.session.sessionOriginState.Get(this.id, associationType);
 
     for (const id of enumerate(association)) {
-      yield this.session.getOne(id);
+      composites.push(this.session.getOne(id));
     }
+
+    return composites;
   }
 
   public canRead(roleType: RoleType): boolean {

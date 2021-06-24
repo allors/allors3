@@ -135,17 +135,20 @@ export abstract class Session implements ISession {
   }
 
   public getRole(association: Strategy, roleType: RoleType): any {
-    const role = this.sessionOriginState.Get(association.Id, roleType);
+    const role = this.sessionOriginState.Get(association.id, roleType);
     if (roleType.objectType.isUnit) {
       return role;
     }
 
     if (roleType.isOne) {
-      return this.Get(role);
+      return this.getOne<IObject>(role);
     }
 
     if (role !== null) {
-      return enumerate(role).map((v) => this.Get(v));
+      const roles = [];
+      for (const v of enumerate(role)) {
+        roles.push(this.getOne<IObject>(v));
+      }
     } else {
       return [];
     }
@@ -233,14 +236,14 @@ export abstract class Session implements ISession {
   }
 
   protected onDatabasePushResponse(strategy: Strategy) {
-    const databaseRecord = this.workspace.database.onPushResponse(strategy.Class, strategy.Id);
+    const databaseRecord = this.workspace.database.onPushResponse(strategy.cls, strategy.id);
     strategy.onDatabasePushResponse(databaseRecord);
   }
 
-  private getForAssociation(objectType: Composite): IStrategy[] {
+  private getForAssociation(objectType: Composite): Strategy[] {
     const classes = objectType.classes;
 
-    const strategies: IStrategy[] = [];
+    const strategies: Strategy[] = [];
 
     for (const [_, strategy] of this.strategyByWorkspaceId) {
       if (classes.has(strategy.cls)) {

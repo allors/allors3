@@ -1,4 +1,4 @@
-import { Class, RelationType, RoleType } from '@allors/workspace/domain/system';
+import { Class, RelationType, RoleType } from '@allors/workspace/meta/system';
 import { IRecord } from '../IRecord';
 import { Strategy } from '../session/Strategy';
 

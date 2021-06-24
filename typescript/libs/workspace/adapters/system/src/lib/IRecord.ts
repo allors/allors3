@@ -1,4 +1,4 @@
-import { RoleType } from '@allors/workspace/domain/system';
+import { RoleType } from "@allors/workspace/meta/system";
 
 export interface IRecord {
   version: number;

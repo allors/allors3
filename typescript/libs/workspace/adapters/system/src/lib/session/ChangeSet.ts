@@ -16,17 +16,20 @@ export class ChangeSet implements IChangeSet {
   }
 
   public AddSessionStateChanges(sessionStateChangeSet: MapMap<PropertyType, number, any>) {
-    sessionStateChangeSet.mapMap.forEach((map, propertyType) => {
-      const ids = map.keys;
+    for (const [propertyType, map] of sessionStateChangeSet.mapMap) {
+      const strategies = new Set<IStrategy>();
 
-      const strategies = new Set<IStrategy>(this.Session.getStrategies(ids));
+      for (const [id] of map) {
+        const strategy = this.Session.getStrategy(id);
+        strategies.add(strategy);
+      }
 
       if (propertyType.isAssociationType) {
         this.rolesByAssociationType.set(propertyType as AssociationType, strategies);
       } else if (propertyType.isRoleType) {
         this.associationsByRoleType.set(propertyType as RoleType, strategies);
       }
-    });
+    }
   }
 
   public Diff(association: Strategy, relationType: RelationType, current: any, previous: any) {
