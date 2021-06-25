@@ -1,6 +1,19 @@
-import { ObjectType, RoleType } from '@allors/workspace/meta/system';
-import { UnitTypes, Procedure as DataProcedure, Pull as DataPull, Extent as DataExtent, Predicate as DataPredicate, Sort as DataSort, Result as DataResult, Select as DataSelect, Step as DataStep, Node as DataNode, ParameterTypes } from '@allors/workspace/domain/system';
-import { Extent, ExtentKind, Predicate, Procedure, Pull, Result, Select, Sort, Step, Node } from '@allors/protocol/json/system';
+import { AssociationType, ObjectType, PropertyType, RoleType } from '@allors/workspace/meta/system';
+import {
+  UnitTypes,
+  Procedure as DataProcedure,
+  Pull as DataPull,
+  Extent as DataExtent,
+  Predicate as DataPredicate,
+  Sort as DataSort,
+  Result as DataResult,
+  Select as DataSelect,
+  Step as DataStep,
+  Node as DataNode,
+  ParameterTypes,
+  IObject,
+} from '@allors/workspace/domain/system';
+import { Extent, ExtentKind, Predicate, Procedure, Pull, Result, Select, Sort, Step, Node, PredicateKind } from '@allors/protocol/json/system';
 
 export function unitToJson(value: unknown): UnitTypes {
   switch (typeof value) {
@@ -23,10 +36,10 @@ export function procedureToJson(from: DataProcedure): Procedure {
 
 export function pullToJson(from: DataPull): Pull {
   return {
-    er: from.extentRef,
+    er: extentRefToJson(from.extentRef),
     e: extentToJson(from.extent),
-    t: from.objectType?.tag,
-    o: from.object?.id,
+    t: objectTypeToJson(from.objectType),
+    o: objectToJson(from.object),
     r: resultsToJson(from.results),
     a: argumentsToJson(from.arguments),
   };
@@ -58,14 +71,23 @@ export function predicateToJson(from: DataPredicate): Predicate {
   switch (from.kind) {
     case 'And':
       return {
-        k: ExtentKind[from.kind],
+        k: PredicateKind[from.kind],
         d: from.dependencies,
         ops: predicatesToJson(from.operands),
       };
 
     case 'GreaterThan':
       return {
-        k: ExtentKind[from.kind],
+        k: PredicateKind[from.kind],
+        d: from.dependencies,
+        r: roleTypeToJson(from.roleType),
+        v: unitToJson(from.value),
+        pa: roleTypeToJson(from.path),
+      };
+
+    case 'LessThan':
+      return {
+        k: PredicateKind[from.kind],
         d: from.dependencies,
         r: roleTypeToJson(from.roleType),
         v: unitToJson(from.value),
@@ -89,29 +111,25 @@ function resultToJson(from: DataResult): Result {
 
 function selectToJson(from: DataSelect): Select {
   return {
-  s: stepToJson(from.step),
-  i: nodesToJson(from.include),
+    s: stepToJson(from.step),
+    i: nodesToJson(from.include),
   };
 }
 
 function stepToJson(from: DataStep): Step {
   return {
-    p: propertyTypeToJson(from.propertyType),
+    a: asAssociationTypeToJson(from.propertyType),
+    r: asRoleTypeToJson(from.propertyType),
     n: stepToJson(from.next),
     i: nodesToJson(from.include),
-}
+  };
 }
 
 function nodeToJson(from: DataNode): Node {
   return {
- /** AssociationType */
- a: number;
-
- /** RoleType */
- r: number;
-
- /** Nodes */
- n: Node[];
+    a: asAssociationTypeToJson(from.propertyType),
+    r: asRoleTypeToJson(from.propertyType),
+    n: nodesToJson(from.nodes),
   };
 }
 
@@ -139,4 +157,24 @@ export function objectTypeToJson(from: ObjectType): number {
 
 export function roleTypeToJson(from: RoleType): number {
   return from?.relationType.tag;
+}
+
+export function asAssociationTypeToJson(from: PropertyType): number {
+  if (from.isAssociationType) {
+    return (from as AssociationType).relationType.tag;
+  }
+}
+
+export function asRoleTypeToJson(from: PropertyType): number {
+  if (from.isRoleType) {
+    return (from as RoleType).relationType.tag;
+  }
+}
+
+export function objectToJson(from: IObject): number {
+  return from?.id;
+}
+
+export function extentRefToJson(from: string): string {
+  return from;
 }

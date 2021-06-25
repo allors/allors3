@@ -35,6 +35,8 @@ export abstract class Session implements ISession {
     this.pushToWorkspaceTracker = new PushToWorkspaceTracker();
   }
 
+  abstract Create(cls: Composite): IObject;
+
   abstract invoke(method: Method | Method[], options?: InvokeOptions): Promise<IResult>;
 
   abstract call(procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult>;
@@ -42,23 +44,6 @@ export abstract class Session implements ISession {
   abstract pull(pulls: Pull[]): Promise<IPullResult>;
 
   abstract push(): Promise<IResult>;
-
-  create(cls: Class): any {
-    const workspaceId = this.workspace.database.nextId();
-    const strategy = new Strategy(this, cls, workspaceId);
-    this.addStrategy(strategy);
-
-    if (cls.origin !== Origin.Session) {
-      this.pushToWorkspaceTracker.OnCreated(strategy);
-      if (cls.origin === Origin.Database) {
-        this.pushToDatabaseTracker.OnCreated(strategy);
-      }
-    }
-
-    this.changeSetTracker.OnCreated(strategy);
-
-    return strategy.object;
-  }
 
   getOne<T>(id: number): T {
     return (this.getStrategy(id)?.object as unknown) as T;
@@ -253,23 +238,7 @@ export abstract class Session implements ISession {
     return strategies;
   }
 
-  public instantiateDatabaseStrategy(id: number): Strategy {
-    const databaseRecord = this.workspace.database.getRecord(id);
-    const strategy = Strategy.fromDatabaseRecord(this, databaseRecord);
-    this.addStrategy(strategy);
-    this.changeSetTracker.OnInstantiated(strategy);
-    return strategy;
-  }
+  abstract instantiateDatabaseStrategy(id: number): Strategy;
 
-  protected instantiateWorkspaceStrategy(id: number): Strategy {
-    if (!this.workspace.workspaceClassByWorkspaceId.has(id)) {
-      return null;
-    }
-
-    const cls = this.workspace.workspaceClassByWorkspaceId.get(id);
-    const strategy = new Strategy(this, cls, id);
-    this.addStrategy(strategy);
-    this.changeSetTracker.OnInstantiated(strategy);
-    return strategy;
-  }
+  abstract instantiateWorkspaceStrategy(id: number): Strategy;
 }

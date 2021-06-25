@@ -1,6 +1,7 @@
 import { AssociationType, Class, MethodType, RoleType } from '@allors/workspace/meta/system';
 import { IObject } from './IObject';
 import { ISession } from './ISession';
+import { Method } from './Method';
 import { UnitTypes } from './Types';
 
 export interface IStrategy {
@@ -45,4 +46,6 @@ export interface IStrategy {
   getCompositeAssociation<T extends IObject>(associationType: AssociationType): T;
 
   getCompositesAssociation<T extends IObject>(associationType: AssociationType): T[];
+
+  method(methodType: MethodType): Method;
 }

@@ -64,7 +64,7 @@ namespace Allors.Database.Protocol.Json
 
             switch (visited.k)
             {
-                case ExtentKind.Extent:
+                case ExtentKind.Filter:
                     if (!visited.t.HasValue)
                     {
                         throw new Exception("Unknown extent kind " + visited.k);

@@ -1,11 +1,10 @@
-import { IStrategy } from '@allors/workspace/domain/system';
 import { DatabaseOriginState } from '../originstate/DatabaseOriginState';
 import { WorkspaceOriginState } from '../originstate/WorkspaceOriginState';
 import { Strategy } from '../Strategy';
 
-export /* sealed */ class ChangeSetTracker {
-  Created: Set<IStrategy>;
-  Instantiated: Set<IStrategy>;
+export class ChangeSetTracker {
+  Created: Set<Strategy>;
+  Instantiated: Set<Strategy>;
   DatabaseOriginStates: Set<DatabaseOriginState>;
   WorkspaceOriginStates: Set<WorkspaceOriginState>;
 

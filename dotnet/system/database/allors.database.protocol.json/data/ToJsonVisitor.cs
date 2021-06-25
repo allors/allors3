@@ -196,7 +196,7 @@ namespace Allors.Database.Protocol.Json
         {
             var extent = new Extent
             {
-                k = ExtentKind.Extent,
+                k = ExtentKind.Filter,
                 t = visited.ObjectType?.Tag,
                 s = visited.Sorting?.Select(v => new Sort { d = v.SortDirection, r = v.RoleType?.RelationType.Tag }).ToArray(),
             };

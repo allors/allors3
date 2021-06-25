@@ -1,10 +1,8 @@
 import { Database } from '@allors/workspace/adapters/system';
 import { Tests } from '../Tests';
 import { c1B, c2B } from '../Names';
-import { Pull, GreaterThan, LessThan } from '@allors/workspace/domain/system';
-
-import 'jest-extended';
-import 'jest-chain';
+import { Pull } from '@allors/workspace/domain/system';
+import { expect } from '@jest/globals';
 
 export class PullTests extends Tests {
   constructor(database: Database, public login: (login: string) => Promise<boolean>) {
@@ -22,16 +20,30 @@ export class PullTests extends Tests {
         objectType: m.C1,
         predicate: {
           kind: 'And',
-          operands: [{ roleType: m.C1.C1AllorsInteger, value: 0 } as GreaterThan, { roleType: m.C1.C1AllorsInteger, value: 2 } as LessThan],
+          operands: [
+            {
+              kind: 'GreaterThan',
+              roleType: m.C1.C1AllorsInteger,
+              value: 0,
+            },
+            {
+              kind: 'LessThan',
+              roleType: m.C1.C1AllorsInteger,
+              value: 2,
+            },
+          ],
         },
       },
     };
 
     let result = await session.pull([pull]);
 
-    expect(result.collections).toHaveLength(1);
-    expect(result.objects).toBeEmpty();
-    expect(result.values).toBeEmpty();
+    expect(result.collections.size).toBe(1);
+    expect(result.objects.size).toBe(0);
+    expect(result.values.size).toBe(0);
+
+    let collection = result.collections.get('C1s');
+    expect(collection).toHaveLength(1);
 
     //  Interface
     pull = {
@@ -57,10 +69,12 @@ export class PullTests extends Tests {
     };
 
     result = await session.pull([pull]);
-    expect(result.collections).toHaveLength(1);
-    expect(result.objects).toBeEmpty();
-    expect(result.values).toBeEmpty();
 
-    expect(result.collections).toIncludeAllMembers([c1B, c2B]);
+    expect(result.collections.size).toEqual(1);
+    expect(result.objects.size).toBe(0);
+    expect(result.values.size).toBe(0);
+
+    collection = result.collections.get('I12s');
+    expect(collection).toHaveLength(2);
   }
 }

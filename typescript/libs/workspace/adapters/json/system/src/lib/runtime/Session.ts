@@ -1,13 +1,15 @@
 import { InvokeRequest, PullRequest, PullResponse, PushRequest } from '@allors/protocol/json/system';
-import { DatabaseRecord, Session as SystemSession, Strategy } from '@allors/workspace/adapters/system';
+import { Session as SystemSession } from '@allors/workspace/adapters/system';
 import { IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, ISessionServices, Method, Procedure, Pull } from '@allors/workspace/domain/system';
 import { Class, Origin } from '@allors/workspace/meta/system';
 import { procedureToJson, pullToJson } from '../json/toJson';
 import { Database } from './Database';
 import { DatabaseOriginState } from './DatabaseOriginState';
+import { DatabaseRecord } from './DatabaseRecord';
 import { InvokeResult } from './invoke/InvokeResult';
 import { PullResult } from './pull/PullResult';
 import { PushResult } from './push/PushResult';
+import { Strategy } from './Strategy';
 import { Workspace } from './Workspace';
 
 export class Session extends SystemSession {
@@ -27,7 +29,7 @@ export class Session extends SystemSession {
         return {
           i: v.object.id,
           v: (v.object.strategy as Strategy).DatabaseOriginState.Version,
-          m: v.MethodType.tag,
+          m: v.methodType.tag,
         };
       }),
       o:
@@ -116,7 +118,7 @@ export class Session extends SystemSession {
     return strategy.object as T;
   }
 
-  public InstantiateDatabaseStrategy(id: number): Strategy {
+  instantiateDatabaseStrategy(id: number): Strategy {
     const databaseRecord = this.workspace.database.getRecord(id) as DatabaseRecord;
     const strategy = Strategy.fromDatabaseRecord(this, databaseRecord);
     this.addStrategy(strategy);
@@ -124,7 +126,7 @@ export class Session extends SystemSession {
     return strategy;
   }
 
-  protected InstantiateWorkspaceStrategy(id: number): Strategy {
+  instantiateWorkspaceStrategy(id: number): Strategy {
     if (!this.workspace.workspaceClassByWorkspaceId.has(id)) {
       return null;
     }
@@ -144,7 +146,7 @@ export class Session extends SystemSession {
       let securityRequest = database.onSyncResponse(syncResponse);
       for (const v of syncResponse.o) {
         if (!this.strategyByWorkspaceId.has(v.i)) {
-          this.InstantiateDatabaseStrategy(v.i);
+          this.instantiateDatabaseStrategy(v.i);
         } else {
           const strategy = this.strategyByWorkspaceId.get(v.i);
           strategy.DatabaseOriginState.OnPulled();
@@ -166,7 +168,7 @@ export class Session extends SystemSession {
         const strategy = this.strategyByWorkspaceId.get(v.i);
         strategy.DatabaseOriginState.OnPulled();
       } else {
-        this.InstantiateDatabaseStrategy(v.i);
+        this.instantiateDatabaseStrategy(v.i);
       }
     }
 

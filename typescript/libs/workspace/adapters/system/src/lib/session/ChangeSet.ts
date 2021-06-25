@@ -1,4 +1,4 @@
-import { IChangeSet, IStrategy } from '@allors/workspace/domain/system';
+import { IChangeSet, IStrategy, ISession } from '@allors/workspace/domain/system';
 import { AssociationType, PropertyType, RelationType, RoleType } from '@allors/workspace/meta/system';
 import { MapMap } from '../collections/MapMap';
 import { difference, enumerate } from '../collections/Numbers';
@@ -10,7 +10,7 @@ export class ChangeSet implements IChangeSet {
 
   rolesByAssociationType: Map<AssociationType, Set<IStrategy>>;
 
-  public constructor(public Session: Session, public Created: Set<IStrategy>, public Instantiated: Set<IStrategy>) {
+  public constructor(public Session: ISession, public Created: Set<IStrategy>, public Instantiated: Set<IStrategy>) {
     this.associationsByRoleType = new Map();
     this.rolesByAssociationType = new Map();
   }
@@ -20,7 +20,7 @@ export class ChangeSet implements IChangeSet {
       const strategies = new Set<IStrategy>();
 
       for (const [id] of map) {
-        const strategy = this.Session.getStrategy(id);
+        const strategy = (this.Session as Session).getStrategy(id);
         strategies.add(strategy);
       }
 
@@ -44,11 +44,11 @@ export class ChangeSet implements IChangeSet {
       }
 
       if (previous != null) {
-        this.AddRole(relationType, this.Session.getStrategy(<number>previous));
+        this.AddRole(relationType, (this.Session as Session).getStrategy(<number>previous));
       }
 
       if (current != null) {
-        this.AddRole(relationType, this.Session.getStrategy(<number>current));
+        this.AddRole(relationType, (this.Session as Session).getStrategy(<number>current));
       }
 
       this.AddAssociation(relationType, association);
@@ -56,13 +56,13 @@ export class ChangeSet implements IChangeSet {
       let hasChange = false;
       const addedRoles = difference(current, previous);
       for (const v of enumerate(addedRoles)) {
-        this.AddRole(relationType, this.Session.getStrategy(v));
+        this.AddRole(relationType, (this.Session as Session).getStrategy(v));
         hasChange = true;
       }
 
       const removedRoles = difference(previous, current);
       for (const v of enumerate(removedRoles)) {
-        this.AddRole(relationType, this.Session.getStrategy(v));
+        this.AddRole(relationType, (this.Session as Session).getStrategy(v));
         hasChange = true;
       }
 
@@ -75,7 +75,7 @@ export class ChangeSet implements IChangeSet {
   private AddAssociation(relationType: RelationType, association: Strategy) {
     const roleType = relationType.roleType;
 
-    let associations: Set<IStrategy>;
+    let associations: Set<Strategy>;
     if (!this.associationsByRoleType.has(roleType)) {
       associations = new Set();
       this.associationsByRoleType.set(roleType, associations);

@@ -1,4 +1,4 @@
-import { IObject, IStrategy } from '@allors/workspace/domain/system';
+import { IObject, IStrategy, Method } from '@allors/workspace/domain/system';
 import { DatabaseRecord } from '../database/DatabaseRecord';
 import { DatabaseOriginState, InitialVersion, UnknownVersion } from './originstate/DatabaseOriginState';
 import { WorkspaceOriginState } from './originstate/WorkspaceOriginState';
@@ -6,7 +6,7 @@ import { isNewId, Session } from './Session';
 import { Numbers, enumerate } from '../collections/Numbers';
 import { AssociationType, Class, MethodType, Origin, RoleType } from '@allors/workspace/meta/system';
 
-export class Strategy implements IStrategy {
+export abstract class Strategy implements IStrategy {
   DatabaseOriginState: DatabaseOriginState;
   WorkspaceOriginState: WorkspaceOriginState;
 
@@ -16,10 +16,6 @@ export class Strategy implements IStrategy {
     if (this.cls.origin !== Origin.Session) {
       this.WorkspaceOriginState = new WorkspaceOriginState(this, this.session.workspace.getRecord(this.id));
     }
-  }
-
-  static fromDatabaseRecord(session: Session, databaseRecord: DatabaseRecord) {
-    return new Strategy(session, databaseRecord.cls, databaseRecord.id);
   }
 
   public get version(): number {
@@ -298,6 +294,13 @@ export class Strategy implements IStrategy {
 
   public canExecute(methodType: MethodType): boolean {
     return this.DatabaseOriginState?.CanExecute(methodType) ?? false;
+  }
+
+  method(methodType: MethodType): Method {
+    return {
+      object: this.object,
+      methodType,
+    };
   }
 
   public isAssociationForRole(roleType: RoleType, forRoleId: number): boolean {
