@@ -1,3 +1,5 @@
-import { Operator } from './Operator';
+import { OperatorBase } from './Operator';
 
-export type Union = Operator;
+export interface Union extends OperatorBase {
+  kind: 'Union';
+}

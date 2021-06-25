@@ -1,6 +1,6 @@
-import { ObjectType } from '@allors/workspace/meta/system';
-import { UnitTypes, Procedure as DataProcedure, Pull as DataPull, Extent as DataExtent, Predicate as DataPredicate, Sort as DataSort, ParameterTypes } from '@allors/workspace/domain/system';
-import { Extent, Predicate, Procedure, Pull, Result, Sort } from '@allors/protocol/json/system';
+import { ObjectType, RoleType } from '@allors/workspace/meta/system';
+import { UnitTypes, Procedure as DataProcedure, Pull as DataPull, Extent as DataExtent, Predicate as DataPredicate, Sort as DataSort, Result as DataResult, Select as DataSelect, Step as DataStep, Node as DataNode, ParameterTypes } from '@allors/workspace/domain/system';
+import { Extent, ExtentKind, Predicate, Procedure, Pull, Result, Select, Sort, Step, Node } from '@allors/protocol/json/system';
 
 export function unitToJson(value: unknown): UnitTypes {
   switch (typeof value) {
@@ -33,82 +33,110 @@ export function pullToJson(from: DataPull): Pull {
 }
 
 export function extentToJson(from: DataExtent): Extent {
+  switch (from.kind) {
+    case 'Filter':
+      return {
+        k: ExtentKind[from.kind],
+        t: objectTypeToJson(from.objectType),
+        s: sortingsToJson(from.sorting),
+        p: predicateToJson(from.predicate),
+      };
+
+    case 'Except':
+    case 'Intersect':
+    case 'Union':
+      return {
+        k: ExtentKind[from.kind],
+        // t: objectTypeToJson(from.objectType),
+        s: sortingsToJson(from.sorting),
+        o: extentsToJson(from.operands),
+      };
+  }
+}
+
+export function predicateToJson(from: DataPredicate): Predicate {
+  switch (from.kind) {
+    case 'And':
+      return {
+        k: ExtentKind[from.kind],
+        d: from.dependencies,
+        ops: predicatesToJson(from.operands),
+      };
+
+    case 'GreaterThan':
+      return {
+        k: ExtentKind[from.kind],
+        d: from.dependencies,
+        r: roleTypeToJson(from.roleType),
+        v: unitToJson(from.value),
+        pa: roleTypeToJson(from.path),
+      };
+  }
+}
+
+function sortingsToJson(sorting: DataSort[]): Sort[] {
+  return undefined;
+}
+function resultToJson(from: DataResult): Result {
   return {
-    k: undefined,
-
-    // o: extentsToJson(from.operands),
-
-    // t: objectTypeToJson(from.objectType),
-
-    // p: predicateToJson(from.predicate),
-
-    s: sortingsToJson(from.sorting),
+    r: from.selectRef,
+    s: selectToJson(from.select),
+    n: from.name,
+    k: from.skip,
+    t: from.take,
   };
+}
+
+function selectToJson(from: DataSelect): Select {
+  return {
+  s: stepToJson(from.step),
+  i: nodesToJson(from.include),
+  };
+}
+
+function stepToJson(from: DataStep): Step {
+  return {
+    p: propertyTypeToJson(from.propertyType),
+    n: stepToJson(from.next),
+    i: nodesToJson(from.include),
+}
+}
+
+function nodeToJson(from: DataNode): Node {
+  return {
+ /** AssociationType */
+ a: number;
+
+ /** RoleType */
+ r: number;
+
+ /** Nodes */
+ n: Node[];
+  };
+}
+
+function argumentsToJson(args: { [name: string]: ParameterTypes }): { [name: string]: string } {
+  return undefined;
 }
 
 export function extentsToJson(from: DataExtent[]): Extent[] {
   return from?.map(extentToJson);
+}
+export function predicatesToJson(from: DataPredicate[]): Predicate[] {
+  return from?.map(predicateToJson);
+}
+
+export function resultsToJson(from: DataResult[]): Result[] {
+  return from?.map(resultToJson);
+}
+export function nodesToJson(from: DataNode[]): Node[] {
+  return from?.map(nodeToJson);
 }
 
 export function objectTypeToJson(from: ObjectType): number {
   return from?.tag;
 }
 
-export function predicateToJson(from: DataPredicate): Predicate {
-  return {
-    k: undefined,
-
-    /** AssociationType */
-    a: undefined,
-
-    /** RoleType */
-    r: undefined,
-
-    /** ObjectType */
-    o: undefined,
-
-    /** Parameter */
-    p: undefined,
-
-    /** Dependencies */
-    d: undefined,
-
-    /** Operand */
-    op: undefined,
-
-    /** Operands */
-    ops: undefined,
-
-    /** Object */
-    ob: undefined,
-
-    /** Objects */
-    obs: undefined,
-
-    /** Value */
-    v: undefined,
-
-    /** Values */
-    vs: undefined,
-
-    /** Path */
-    pa: undefined,
-
-    /** Paths */
-    pas: undefined,
-
-    /** Extent */
-    e: undefined,
-  };
+export function roleTypeToJson(from: RoleType): number {
+  return from?.relationType.tag;
 }
-function sortingsToJson(sorting: DataSort[]): Sort[] {
-  return undefined;
-}
-function resultsToJson(result: any): Result[] {
-  return undefined;
-}
-
-function argumentsToJson(args: { [name: string]: ParameterTypes; }): { [name: string]: string; } {
-  return undefined;
-}
-

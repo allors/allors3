@@ -4,3 +4,5 @@ import { Intersect } from './Intersect';
 import { Except } from './Except';
 
 export type Extent = Filter | Union | Intersect | Except;
+
+export type ExtentKind = Extent['kind'];

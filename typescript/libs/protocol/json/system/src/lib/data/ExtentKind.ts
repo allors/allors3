@@ -1,5 +1,5 @@
 export enum ExtentKind {
-  Extent = 1,
+  Filter = 1,
 
   Union = 2,
 

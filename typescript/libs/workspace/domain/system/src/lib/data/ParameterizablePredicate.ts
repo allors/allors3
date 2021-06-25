@@ -9,7 +9,9 @@ import { LessThan } from './LessThan';
 import { Like } from './Like';
 import { PredicateBase } from './Predicate';
 
-export type ParameterizablePredicate = Between | ContainedIn | Contains | Equals | Exists | GreaterThan | Instanceof | LessThan | Like  ;
+export type ParameterizablePredicate = Between | ContainedIn | Contains | Equals | Exists | GreaterThan | Instanceof | LessThan | Like;
+
+export type ParameterizablePredicateKind = ParameterizablePredicate['kind'];
 
 export interface ParameterizablePredicateBase extends PredicateBase {
   parameter?: string;

@@ -1,3 +1,5 @@
-import { Operator } from './Operator';
+import { OperatorBase } from './Operator';
 
-export type Except = Operator;
+export interface Except extends OperatorBase {
+  kind: 'Except';
+}
