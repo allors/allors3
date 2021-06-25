@@ -1,16 +1,18 @@
 import { MetaPopulation } from '@allors/workspace/meta/system';
-import { M } from '@allors/workspace/meta/core';
+import { FetchClient } from './FetchClient';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/core';
-import { FetchClient } from './FetchClient';
+import { Database } from '@allors/workspace/adapters/json/system';
+import { Configuration, ObjectFactory } from '@allors/workspace/adapters/system';
+import { WorkspaceServices } from '@allors/workspace/adapters/system-tests';
 
 const BASE_URL = 'http://localhost:5000/allors/';
 const AUTH_URL = 'TestAuthentication/Token';
 
 export class Fixture {
-  metaPopulation: MetaPopulation;
-  m: M;
   client: FetchClient;
+  metaPopulation: MetaPopulation;
+  database: Database;
 
   async init(population?: string) {
     this.client = new FetchClient(BASE_URL, AUTH_URL);
@@ -19,6 +21,15 @@ export class Fixture {
     await this.client.login('administrator', '');
 
     this.metaPopulation = new LazyMetaPopulation(data);
-    this.m = (this.metaPopulation as MetaPopulation) as M;
+
+    let nextId = -1;
+    this.database = new Database(
+      new Configuration('Default', this.metaPopulation, new ObjectFactory(this.metaPopulation)),
+      () => {
+        return new WorkspaceServices();
+      },
+      () => nextId--,
+      this.client
+    );
   }
 }
