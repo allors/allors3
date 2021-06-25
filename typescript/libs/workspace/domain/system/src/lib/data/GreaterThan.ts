@@ -1,8 +1,9 @@
 import { RoleType } from "@allors/workspace/meta/system";
 import { UnitTypes } from "../runtime/Types";
-import { ParameterizablePredicate } from "./ParameterizablePredicate";
+import { ParameterizablePredicateBase } from "./ParameterizablePredicate";
 
-export interface GreaterThan extends ParameterizablePredicate {
+export interface GreaterThan extends ParameterizablePredicateBase {
+  kind: 'GreaterThan';
   roleType: RoleType;
   value?: UnitTypes;
   path?: RoleType;

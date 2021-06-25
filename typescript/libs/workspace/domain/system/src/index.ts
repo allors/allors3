@@ -15,7 +15,7 @@ export * from './lib/api/push/IPushResult';
 // data
 export * from './lib/data/Node';
 export * from './lib/data/Select';
-export * from './lib/data/IExtent';
+export * from './lib/data/Extent';
 export * from './lib/data/Sort';
 export * from './lib/data/SortDirection';
 export * from './lib/data/Predicate';

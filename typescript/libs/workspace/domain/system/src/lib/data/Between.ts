@@ -1,8 +1,9 @@
 import { RoleType } from '@allors/workspace/meta/system';
 import { UnitTypes } from '../runtime/Types';
-import { ParameterizablePredicate } from './ParameterizablePredicate';
+import { ParameterizablePredicateBase } from './ParameterizablePredicate';
 
-export interface Between extends ParameterizablePredicate {
+export interface Between extends ParameterizablePredicateBase {
+  kind: 'Between';
   roleType: RoleType;
 
   values?: UnitTypes[];

@@ -1,5 +1,10 @@
 import { Database } from '@allors/workspace/adapters/system';
 import { Tests } from '../Tests';
+import { c1B, c2B } from '../Names';
+import { Pull, GreaterThan, LessThan } from '@allors/workspace/domain/system';
+
+import 'jest-extended';
+import 'jest-chain';
 
 export class PullTests extends Tests {
   constructor(database: Database, public login: (login: string) => Promise<boolean>) {
@@ -7,27 +12,55 @@ export class PullTests extends Tests {
   }
 
   async andGreaterThanLessThan() {
-    await this.login('administrator');
+    const session = this.workspace.createSession();
+    const m = this.m;
 
+    //  Class
+    let pull: Pull = {
+      extent: {
+        kind: 'Filter',
+        objectType: m.C1,
+        predicate: {
+          kind: 'And',
+          operands: [{ roleType: m.C1.C1AllorsInteger, value: 0 } as GreaterThan, { roleType: m.C1.C1AllorsInteger, value: 2 } as LessThan],
+        },
+      },
+    };
 
+    let result = await session.pull([pull]);
 
-    //     let session = this.Workspace.CreateSession();
-    //     let m = this.M;
-    //     //  Class
-    //     let pull = [][
-    //             Extent=newExtent(this.M.C1Unknown{Predicate=newAnd{Operands=newIPredicate[Unknown{newGreaterThan(m.C1.C1AllorsIntegerUnknown{Value=0Unknown,newLessThan(m.C1.C1AllorsIntegerUnknown{Value=2UnknownUnknownUnknownUnknown];
-    //     let result = session.Pull(pull);
-    //     Assert.Single(result.Collections);
-    //     Assert.Empty(result.Objects);
-    //     Assert.Empty(result.Values);
-    //     result.Assert().Collection().Equal(c1B);
-    //     //  Interface
-    //     pull = [][
-    //             Extent=newExtent(this.M.I12Unknown{Predicate=newAnd{Operands=newIPredicate[Unknown{newGreaterThan(m.I12.I12AllorsIntegerUnknown{Value=0Unknown,newLessThan(m.I12.I12AllorsIntegerUnknown{Value=2UnknownUnknownUnknownUnknown];
-    //     result = session.Pull(pull);
-    //     Assert.Single(result.Collections);
-    //     Assert.Empty(result.Objects);
-    //     Assert.Empty(result.Values);
-    //     result.Assert().Collection().Equal(c1B, c2B);
+    expect(result.collections).toHaveLength(1);
+    expect(result.objects).toBeEmpty();
+    expect(result.values).toBeEmpty();
+
+    //  Interface
+    pull = {
+      extent: {
+        kind: 'Filter',
+        objectType: m.I12,
+        predicate: {
+          kind: 'And',
+          operands: [
+            {
+              kind: 'GreaterThan',
+              roleType: m.I12.I12AllorsInteger,
+              value: 0,
+            },
+            {
+              kind: 'LessThan',
+              roleType: m.I12.I12AllorsInteger,
+              value: 2,
+            },
+          ],
+        },
+      },
+    };
+
+    result = await session.pull([pull]);
+    expect(result.collections).toHaveLength(1);
+    expect(result.objects).toBeEmpty();
+    expect(result.values).toBeEmpty();
+
+    expect(result.collections).toIncludeAllMembers([c1B, c2B]);
   }
 }

@@ -1,5 +1,5 @@
 import { ObjectType } from '@allors/workspace/meta/system';
-import { UnitTypes, Procedure as DataProcedure, Pull as DataPull, IExtent as DataExtent, Predicate as DataPredicate, Sort as DataSort, ParameterTypes } from '@allors/workspace/domain/system';
+import { UnitTypes, Procedure as DataProcedure, Pull as DataPull, Extent as DataExtent, Predicate as DataPredicate, Sort as DataSort, ParameterTypes } from '@allors/workspace/domain/system';
 import { Extent, Predicate, Procedure, Pull, Result, Sort } from '@allors/protocol/json/system';
 
 export function unitToJson(value: unknown): UnitTypes {

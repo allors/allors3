@@ -1,7 +1,8 @@
 import { RoleType } from '@allors/workspace/meta/system';
-import { ParameterizablePredicate } from './ParameterizablePredicate';
+import { ParameterizablePredicateBase } from './ParameterizablePredicate';
 
-export interface Like extends ParameterizablePredicate {
+export interface Like extends ParameterizablePredicateBase {
+  kind: 'Like';
   roleType: RoleType;
   value?: string;
 }

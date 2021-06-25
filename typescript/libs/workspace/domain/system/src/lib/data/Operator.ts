@@ -1,8 +1,8 @@
-import { IExtent } from './IExtent';
+import { Extent } from './Extent';
 import { Sort } from './Sort';
 
 export interface Operator {
-  operands?: IExtent[];
+  operands?: Extent[];
 
   sorting?: Sort[];
 }
