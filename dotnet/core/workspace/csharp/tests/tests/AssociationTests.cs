@@ -27,7 +27,7 @@ namespace Tests.Workspace
             {
                 new Pull
                 {
-                    Extent = new Extent(this.M.C2)
+                    Extent = new Filter(this.M.C2)
                     {
                         Predicate = new Equals(this.M.C2.Name) {Value = "c2C"}
                     },
@@ -67,7 +67,7 @@ namespace Tests.Workspace
             {
                 new Pull
                 {
-                    Extent = new Extent(this.M.C2)
+                    Extent = new Filter(this.M.C2)
                     {
                         Predicate = new Equals(this.M.C2.Name) {Value = "c2C"}
                     },

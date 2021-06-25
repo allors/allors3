@@ -24,7 +24,7 @@ namespace Tests.Workspace
 
             var session = this.Workspace.CreateSession();
 
-            var pull = new[] { new Pull { Extent = new Extent(this.M.Organisation) } };
+            var pull = new[] { new Pull { Extent = new Filter(this.M.Organisation) } };
 
             var organisation = (await session.Pull(pull)).GetCollection<Organisation>().First();
 
@@ -47,7 +47,7 @@ namespace Tests.Workspace
 
             var session = this.Workspace.CreateSession();
 
-            var pull = new[] { new Pull { Extent = new Extent(this.M.Organisation) } };
+            var pull = new[] { new Pull { Extent = new Filter(this.M.Organisation) } };
 
             var organisation1 = (await session.Pull(pull)).GetCollection<Organisation>().First();
             var organisation2 = (await session.Pull(pull)).GetCollection<Organisation>().Skip(1).First();
@@ -74,7 +74,7 @@ namespace Tests.Workspace
 
             var session = this.Workspace.CreateSession();
 
-            var pull = new[] { new Pull { Extent = new Extent(this.M.Organisation) } };
+            var pull = new[] { new Pull { Extent = new Filter(this.M.Organisation) } };
 
             var organisation1 = (await session.Pull(pull)).GetCollection<Organisation>().First();
             var organisation2 = (await session.Pull(pull)).GetCollection<Organisation>().Skip(1).First();

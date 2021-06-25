@@ -11,7 +11,6 @@ namespace Allors.Workspace.Protocol.Direct
     using Database;
     using Database.Data;
     using Database.Meta;
-    using Sort = Database.Sort;
 
     public class ToDatabaseVisitor
     {
@@ -44,10 +43,10 @@ namespace Allors.Workspace.Protocol.Direct
                 Pool = ws.Pool?.ToDictionary(v => this.transaction.Instantiate(v.Key.Id), v => v.Value),
             };
 
-        private Database.Data.IExtent Visit(Data.IExtent ws) =>
+        private Database.Data.IExtent Visit(Data.Extent ws) =>
             ws switch
             {
-                Data.Extent extent => this.Visit(extent),
+                Data.Filter filter => this.Visit(filter),
                 Data.Except except => this.Visit(except),
                 Data.Intersect intersect => this.Visit(intersect),
                 Data.Union union => this.Visit(union),
@@ -55,7 +54,7 @@ namespace Allors.Workspace.Protocol.Direct
                 _ => throw new Exception($"Unknown implementation of IExtent: {ws.GetType()}")
             };
 
-        private Database.Data.Extent Visit(Data.Extent ws) => new Database.Data.Extent((IComposite)this.Visit(ws.ObjectType))
+        private Database.Data.Extent Visit(Data.Filter ws) => new Database.Data.Extent((IComposite)this.Visit(ws.ObjectType))
         {
             Predicate = this.Visit(ws.Predicate)
         };

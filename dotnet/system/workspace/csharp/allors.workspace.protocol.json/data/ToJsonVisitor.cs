@@ -192,7 +192,7 @@ namespace Allors.Workspace.Protocol.Json
             this.predicates.Push(predicate);
         }
 
-        public void VisitExtent(Data.Extent visited)
+        public void VisitFilter(Data.Filter visited)
         {
             var extent = new Extent
             {

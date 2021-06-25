@@ -25,7 +25,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1),
+                Extent = new Filter(this.M.C1),
                 Results = new[]
                 {
                     new Result

@@ -34,7 +34,7 @@ namespace Tests.Workspace
             // Class
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1)
+                Extent = new Filter(this.M.C1)
                 {
                     Predicate = new And
                     {
@@ -58,7 +58,7 @@ namespace Tests.Workspace
             // Interface
             pull = new Pull
             {
-                Extent = new Extent(this.M.I12)
+                Extent = new Filter(this.M.I12)
                 {
                     Predicate = new And
                     {
@@ -91,11 +91,11 @@ namespace Tests.Workspace
             // Empty
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C2)
+                Extent = new Filter(this.M.C2)
                 {
                     Predicate = new ContainedIn(m.C2.C1sWhereC1C2Many2Many)
                     {
-                        Extent = new Extent(this.M.C1)
+                        Extent = new Filter(this.M.C1)
                         {
                             Predicate = new Equals(m.C1.C1AllorsString) { Value = "Nothing here!" }
                         }
@@ -112,11 +112,11 @@ namespace Tests.Workspace
             // Full
             pull = new Pull
             {
-                Extent = new Extent(this.M.C2)
+                Extent = new Filter(this.M.C2)
                 {
                     Predicate = new ContainedIn(m.C2.C1sWhereC1C2Many2Many)
                     {
-                        Extent = new Extent(this.M.C1)
+                        Extent = new Filter(this.M.C1)
                     }
                 }
             };
@@ -132,11 +132,11 @@ namespace Tests.Workspace
             // Filtered
             pull = new Pull
             {
-                Extent = new Extent(this.M.C2)
+                Extent = new Filter(this.M.C2)
                 {
                     Predicate = new ContainedIn(m.C2.C1sWhereC1C2Many2Many)
                     {
-                        Extent = new Extent(this.M.C1)
+                        Extent = new Filter(this.M.C1)
                         {
                             Predicate = new Equals(m.C1.C1AllorsString) { Value = "ᴀbra" }
                         }
@@ -166,7 +166,7 @@ namespace Tests.Workspace
             // Full
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C2)
+                Extent = new Filter(this.M.C2)
                 {
                     Predicate = new Contains(m.C2.C1sWhereC1C2Many2Many)
                     {
@@ -195,7 +195,7 @@ namespace Tests.Workspace
             // Full
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C2)
+                Extent = new Filter(this.M.C2)
                 {
                     Predicate = new Exists(m.C2.C1sWhereC1C2Many2Many)
                 }
@@ -220,11 +220,11 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C2)
+                Extent = new Filter(this.M.C2)
                 {
                     Predicate = new ContainedIn(m.C2.C1sWhereC1C2Many2One)
                     {
-                        Extent = new Extent(this.M.C1)
+                        Extent = new Filter(this.M.C1)
                         {
                             Predicate = new Equals(m.C1.C1AllorsString) { Value = "ᴀbra" }
                         }
@@ -254,7 +254,7 @@ namespace Tests.Workspace
             // Full
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C2)
+                Extent = new Filter(this.M.C2)
                 {
                     Predicate = new Contains(m.C2.C1sWhereC1C2Many2One)
                     {
@@ -282,11 +282,11 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C2)
+                Extent = new Filter(this.M.C2)
                 {
                     Predicate = new ContainedIn(m.C2.C1WhereC1C2One2Many)
                     {
-                        Extent = new Extent(this.M.C1)
+                        Extent = new Filter(this.M.C1)
                         {
                             Predicate = new Equals(m.C1.C1AllorsString) { Value = "ᴀbra" }
                         }
@@ -316,7 +316,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C2)
+                Extent = new Filter(this.M.C2)
                 {
                     Predicate = new Equals(m.C2.C1WhereC1C2One2Many)
                     {
@@ -335,7 +335,7 @@ namespace Tests.Workspace
 
             pull = new Pull
             {
-                Extent = new Extent(this.M.C2)
+                Extent = new Filter(this.M.C2)
                 {
                     Predicate = new Equals(m.C2.C1WhereC1C2One2Many)
                     {
@@ -364,7 +364,7 @@ namespace Tests.Workspace
             // Class
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C2)
+                Extent = new Filter(this.M.C2)
                 {
                     Predicate = new Exists(m.C2.C1WhereC1C2One2Many)
                 }
@@ -381,7 +381,7 @@ namespace Tests.Workspace
             // Interface
             pull = new Pull
             {
-                Extent = new Extent(this.M.I2)
+                Extent = new Filter(this.M.I2)
                 {
                     Predicate = new Exists(m.I2.I1WhereI1I2One2Many)
                 }
@@ -406,7 +406,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C2)
+                Extent = new Filter(this.M.C2)
                 {
                     Predicate = new Instanceof(m.C2.C1WhereC1C2One2Many) { ObjectType = m.C1 }
                 }
@@ -431,11 +431,11 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C2)
+                Extent = new Filter(this.M.C2)
                 {
                     Predicate = new ContainedIn(m.C2.C1WhereC1C2One2One)
                     {
-                        Extent = new Extent(this.M.C1)
+                        Extent = new Filter(this.M.C1)
                         {
                             Predicate = new Equals(m.C1.C1AllorsString) { Value = "ᴀbra" }
                         }
@@ -465,7 +465,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C2)
+                Extent = new Filter(this.M.C2)
                 {
                     Predicate = new Equals(m.C2.C1WhereC1C2One2One)
                     {
@@ -484,7 +484,7 @@ namespace Tests.Workspace
 
             pull = new Pull
             {
-                Extent = new Extent(this.M.C2)
+                Extent = new Filter(this.M.C2)
                 {
                     Predicate = new Equals(m.C2.C1WhereC1C2One2One)
                     {
@@ -513,7 +513,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1)
+                Extent = new Filter(this.M.C1)
                 {
                     Predicate = new Exists(m.C1.C1WhereC1C1One2One)
                 }
@@ -529,7 +529,7 @@ namespace Tests.Workspace
 
             pull = new Pull
             {
-                Extent = new Extent(this.M.C2)
+                Extent = new Filter(this.M.C2)
                 {
                     Predicate = new Exists(m.C2.C1WhereC1C2One2One)
                 }
@@ -554,7 +554,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.I12)
+                Extent = new Filter(this.M.I12)
                 {
                     Predicate = new Instanceof(m.I12.I12WhereI12I12One2One) { ObjectType = m.C1 }
                 }
@@ -570,7 +570,7 @@ namespace Tests.Workspace
 
             pull = new Pull
             {
-                Extent = new Extent(this.M.I12)
+                Extent = new Filter(this.M.I12)
                 {
                     Predicate = new Instanceof(m.I12.I12WhereI12I12One2One) { ObjectType = m.I2 }
                 }
@@ -597,7 +597,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Equals { Object = c1c }
                 }
@@ -622,7 +622,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.I12)
+                Extent = new Filter(m.I12)
             };
 
             var result = await session.Pull(pull);
@@ -644,7 +644,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.I12)
+                Extent = new Filter(m.I12)
                 {
                     Predicate = new Instanceof
                     {
@@ -674,7 +674,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Not
                     {
@@ -705,7 +705,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Or
                     {
@@ -738,10 +738,10 @@ namespace Tests.Workspace
             {
                 Extent = new Except
                 {
-                    Operands = new IExtent[]
+                    Operands = new Extent[]
                     {
-                        new Extent(m.I12),
-                        new Extent(m.I12)
+                        new Filter(m.I12),
+                        new Filter(m.I12)
                         {
                             Predicate = new Instanceof{ObjectType = m.C2}
                         }
@@ -770,10 +770,10 @@ namespace Tests.Workspace
             {
                 Extent = new Intersect()
                 {
-                    Operands = new IExtent[]
+                    Operands = new Extent[]
                     {
-                        new Extent(m.I12),
-                        new Extent(m.I12)
+                        new Filter(m.I12),
+                        new Filter(m.I12)
                         {
                             Predicate = new Instanceof{ObjectType = m.C2}
                         }
@@ -802,10 +802,10 @@ namespace Tests.Workspace
             {
                 Extent = new Union
                 {
-                    Operands = new IExtent[]
+                    Operands = new Extent[]
                     {
-                        new Extent(m.C1){Predicate = new Equals(m.C1.Name) {Value = "c1A"}},
-                        new Extent(m.C1){Predicate = new Equals(m.C1.Name) {Value = "c1B"}}
+                        new Filter(m.C1){Predicate = new Equals(m.C1.Name) {Value = "c1A"}},
+                        new Filter(m.C1){Predicate = new Equals(m.C1.Name) {Value = "c1B"}}
                     }
                 }
             };
@@ -829,7 +829,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Between(m.C1.C1AllorsDateTime)
                     {
@@ -857,7 +857,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Between(m.C1.C1AllorsDateTime)
                     {
@@ -889,7 +889,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new GreaterThan(m.C1.C1AllorsDateTime)
                     {
@@ -917,7 +917,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new GreaterThan(m.C1.C1AllorsDateTime)
                     {
@@ -945,7 +945,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new LessThan(m.C1.C1AllorsDateTime)
                     {
@@ -973,7 +973,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new LessThan(m.C1.C1AllorsDateTime)
                     {
@@ -1001,7 +1001,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Equals(m.C1.C1AllorsDateTime)
                     {
@@ -1029,7 +1029,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Between(m.C1.C1AllorsDecimal)
                     {
@@ -1057,7 +1057,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Between(m.C1.C1AllorsDecimal)
                     {
@@ -1085,7 +1085,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new GreaterThan(m.C1.C1AllorsDecimal)
                     {
@@ -1113,7 +1113,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new GreaterThan(m.C1.C1AllorsDecimal)
                     {
@@ -1141,7 +1141,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new LessThan(m.C1.C1AllorsDecimal)
                     {
@@ -1169,7 +1169,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new LessThan(m.C1.C1AllorsDecimal)
                     {
@@ -1197,7 +1197,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Equals(m.C1.C1AllorsDecimal)
                     {
@@ -1225,7 +1225,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Between(m.C1.C1AllorsDouble)
                     {
@@ -1253,7 +1253,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Between(m.C1.C1AllorsDouble)
                     {
@@ -1281,7 +1281,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new GreaterThan(m.C1.C1AllorsDouble)
                     {
@@ -1309,7 +1309,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new GreaterThan(m.C1.C1AllorsDouble)
                     {
@@ -1337,7 +1337,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new LessThan(m.C1.C1AllorsDouble)
                     {
@@ -1365,7 +1365,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new LessThan(m.C1.C1AllorsDouble)
                     {
@@ -1393,7 +1393,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Equals(m.C1.C1AllorsDouble)
                     {
@@ -1421,7 +1421,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Between(m.C1.C1AllorsInteger)
                     {
@@ -1449,7 +1449,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Between(m.C1.C1AllorsInteger)
                     {
@@ -1477,7 +1477,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new GreaterThan(m.C1.C1AllorsInteger)
                     {
@@ -1505,7 +1505,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new GreaterThan(m.C1.C1AllorsInteger)
                     {
@@ -1533,7 +1533,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new LessThan(m.C1.C1AllorsInteger)
                     {
@@ -1561,7 +1561,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new LessThan(m.C1.C1AllorsInteger)
                     {
@@ -1589,7 +1589,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Equals(m.C1.C1AllorsInteger)
                     {
@@ -1617,7 +1617,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Exists(m.C1.C1AllorsInteger)
                 }
@@ -1642,7 +1642,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Equals(m.C1.C1AllorsString)
                     {
@@ -1670,7 +1670,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Equals(m.C1.C1AllorsString)
                     {
@@ -1698,7 +1698,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Like(m.C1.C1AllorsString)
                     {
@@ -1726,7 +1726,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(m.C1)
+                Extent = new Filter(m.C1)
                 {
                     Predicate = new Equals(m.C1.C1AllorsUnique)
                     {
@@ -1755,11 +1755,11 @@ namespace Tests.Workspace
             // Empty
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1)
+                Extent = new Filter(this.M.C1)
                 {
                     Predicate = new ContainedIn(m.C1.C1I12Many2Manies)
                     {
-                        Extent = new Extent(this.M.I12)
+                        Extent = new Filter(this.M.I12)
                         {
                             Predicate = new Equals(m.I12.I12AllorsString) { Value = "Nothing here!" }
                         }
@@ -1776,11 +1776,11 @@ namespace Tests.Workspace
             // Full
             pull = new Pull
             {
-                Extent = new Extent(this.M.C1)
+                Extent = new Filter(this.M.C1)
                 {
                     Predicate = new ContainedIn(m.C1.C1I12Many2Manies)
                     {
-                        Extent = new Extent(this.M.I12)
+                        Extent = new Filter(this.M.I12)
                     }
                 }
             };
@@ -1796,11 +1796,11 @@ namespace Tests.Workspace
             // Filtered
             pull = new Pull
             {
-                Extent = new Extent(this.M.C1)
+                Extent = new Filter(this.M.C1)
                 {
                     Predicate = new ContainedIn(m.C1.C1I12Many2Manies)
                     {
-                        Extent = new Extent(this.M.I12)
+                        Extent = new Filter(this.M.I12)
                         {
                             Predicate = new Equals(m.I12.I12AllorsString) { Value = "ᴀbra" }
                         }
@@ -1829,7 +1829,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1)
+                Extent = new Filter(this.M.C1)
                 {
                     Predicate = new Contains(m.C1.C1C2Many2Manies)
                     {
@@ -1857,11 +1857,11 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1)
+                Extent = new Filter(this.M.C1)
                 {
                     Predicate = new ContainedIn(m.C1.C1I12One2Manies)
                     {
-                        Extent = new Extent(this.M.I12)
+                        Extent = new Filter(this.M.I12)
                         {
                             Predicate = new Equals(m.I12.I12AllorsString) { Value = "ᴀbra" }
                         }
@@ -1890,7 +1890,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1)
+                Extent = new Filter(this.M.C1)
                 {
                     Predicate = new Contains(m.C1.C1C2One2Manies)
                     {
@@ -1918,11 +1918,11 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1)
+                Extent = new Filter(this.M.C1)
                 {
                     Predicate = new ContainedIn(m.C1.C1I12Many2One)
                     {
-                        Extent = new Extent(this.M.I12)
+                        Extent = new Filter(this.M.I12)
                         {
                             Predicate = new Equals(m.I12.I12AllorsString) { Value = "ᴀbra" }
                         }
@@ -1949,11 +1949,11 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1)
+                Extent = new Filter(this.M.C1)
                 {
                     Predicate = new ContainedIn(m.C1.C1I12Many2One)
                     {
-                        Extent = new Extent(this.M.I12)
+                        Extent = new Filter(this.M.I12)
                         {
                             Predicate = new Equals(m.I12.I12AllorsString) { Value = "ᴀbra" }
                         }

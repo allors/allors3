@@ -9,11 +9,11 @@ namespace Allors.Workspace.Data
 
     public class Except : IExtentOperator
     {
-        public Except(params IExtent[] operands) => this.Operands = operands;
+        public Except(params Extent[] operands) => this.Operands = operands;
 
         public IComposite ObjectType => this.Operands?[0].ObjectType;
 
-        public IExtent[] Operands { get; set; }
+        public Extent[] Operands { get; set; }
 
         public Sort[] Sorting { get; set; }
 

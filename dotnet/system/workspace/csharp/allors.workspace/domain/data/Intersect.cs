@@ -9,11 +9,11 @@ namespace Allors.Workspace.Data
 
     public class Intersect : IExtentOperator
     {
-        public Intersect(params IExtent[] operands) => this.Operands = operands;
+        public Intersect(params Extent[] operands) => this.Operands = operands;
 
         public IComposite ObjectType => this.Operands?[0].ObjectType;
 
-        public IExtent[] Operands { get; set; }
+        public Extent[] Operands { get; set; }
 
         public Sort[] Sorting { get; set; }
 

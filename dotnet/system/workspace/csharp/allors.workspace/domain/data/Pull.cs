@@ -14,7 +14,7 @@ namespace Allors.Workspace.Data
     {
         public Guid? ExtentRef { get; set; }
 
-        public IExtent Extent { get; set; }
+        public Extent Extent { get; set; }
 
         public IObjectType ObjectType { get; set; }
 

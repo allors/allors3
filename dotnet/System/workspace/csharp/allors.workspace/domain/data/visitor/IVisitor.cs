@@ -21,7 +21,7 @@ namespace Allors.Workspace.Data
 
         void VisitExists(Exists visited);
 
-        void VisitExtent(Extent visited);
+        void VisitFilter(Filter visited);
 
         void VisitSelect(Select visited);
 

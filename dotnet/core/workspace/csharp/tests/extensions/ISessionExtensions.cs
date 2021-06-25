@@ -17,7 +17,7 @@ namespace Tests.Workspace
         {
             var objectType = (IComposite)@this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>();
             var roleType = objectType.RoleTypes.First(v => v.Name.Equals("Name"));
-            var pull = new Pull { Extent = new Extent(objectType) { Predicate = new Equals(roleType) { Value = name } } };
+            var pull = new Pull { Extent = new Filter(objectType) { Predicate = new Equals(roleType) { Value = name } } };
             var result = await @this.Pull(pull);
             var collection = result.GetCollection<T>();
             return collection[0];

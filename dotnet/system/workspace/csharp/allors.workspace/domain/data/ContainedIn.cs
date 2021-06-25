@@ -17,7 +17,7 @@ namespace Allors.Workspace.Data
 
         public IPropertyType PropertyType { get; set; }
 
-        public IExtent Extent { get; set; }
+        public Extent Extent { get; set; }
 
         public IEnumerable<IObject> Objects { get; set; }
 

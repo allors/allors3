@@ -80,7 +80,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1)
+                Extent = new Filter(this.M.C1)
                 {
                     Predicate = new Equals(this.M.C1.Name) { Value = "c1A" }
                 }
@@ -109,7 +109,7 @@ namespace Tests.Workspace
 
             var pull = new Pull
             {
-                Extent = new Extent(this.M.C1)
+                Extent = new Filter(this.M.C1)
             };
 
             var result = await session.Pull(pull);

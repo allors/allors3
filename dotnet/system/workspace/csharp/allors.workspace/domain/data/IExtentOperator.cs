@@ -5,8 +5,8 @@
 
 namespace Allors.Workspace.Data
 {
-    public interface IExtentOperator : IExtent
+    public interface IExtentOperator : Extent
     {
-        IExtent[] Operands { get; set; }
+        Extent[] Operands { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace Tests.Workspace
             {
                 new Pull
                 {
-                    Extent = new Extent(this.M.C1)
+                    Extent = new Filter(this.M.C1)
                 }
             };
 
