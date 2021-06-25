@@ -7,7 +7,7 @@ import { RecordBasedOriginState } from './RecordBasedOriginState';
 export const UnknownVersion = 0;
 export const InitialVersion = 1;
 
-export class DatabaseOriginState extends RecordBasedOriginState {
+export abstract class DatabaseOriginState extends RecordBasedOriginState {
   DatabaseRecord: DatabaseRecord;
 
   protected constructor(record: DatabaseRecord) {

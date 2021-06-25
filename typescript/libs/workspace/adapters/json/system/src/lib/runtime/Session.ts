@@ -1,19 +1,22 @@
-import { InvokeRequest, PullRequest, PushRequest } from '@allors/protocol/json/system';
-import { Session as SystemSession, Strategy } from '@allors/workspace/adapters/system';
-import { IInvokeResult, InvokeOptions, IPullResult, IPushResult, ISessionServices, Method, Procedure, Pull } from '@allors/workspace/domain/system';
+import { InvokeRequest, PullRequest, PullResponse, PushRequest } from '@allors/protocol/json/system';
+import { DatabaseRecord, Session as SystemSession, Strategy } from '@allors/workspace/adapters/system';
+import { IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, ISessionServices, Method, Procedure, Pull } from '@allors/workspace/domain/system';
+import { Class, Origin } from '@allors/workspace/meta/system';
+import { procedureToJson, pullToJson } from '../json/toJson';
 import { Database } from './Database';
+import { DatabaseOriginState } from './DatabaseOriginState';
 import { InvokeResult } from './invoke/InvokeResult';
+import { PullResult } from './pull/PullResult';
 import { PushResult } from './push/PushResult';
 import { Workspace } from './Workspace';
 
 export class Session extends SystemSession {
-
-  get database(): Database{
+  get database(): Database {
     return this.workspace.database as Database;
   }
 
   constructor(workspace: Workspace, services: ISessionServices) {
-    super(workspace, services)
+    super(workspace, services);
 
     this.services.onInit(this);
   }
@@ -42,7 +45,7 @@ export class Session extends SystemSession {
 
   async pull(pulls: Pull[]): Promise<IPullResult> {
     const pullRequest: PullRequest = {
-      l: pulls.map((v) => toJson(v)),
+      l: pulls.map((v) => pullToJson(v)),
     };
 
     const result = await this.database.pull(pullRequest);
@@ -51,8 +54,8 @@ export class Session extends SystemSession {
 
   async call(procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult> {
     const pullRequest: PullRequest = {
-      p: procedure.ToJson(),
-      l: pulls.map((v) => v.ToJson()),
+      p: procedureToJson(procedure),
+      l: pulls.map((v) => pullToJson(v)),
     };
 
     const response = await this.database.pull(pullRequest);
@@ -61,8 +64,8 @@ export class Session extends SystemSession {
 
   async push(): Promise<IPushResult> {
     const pushRequest: PushRequest = {
-      n: [...this.pushToDatabaseTracker.Created].map((v) => v.DatabaseOriginState.pushNew()),
-      o: [...this.pushToDatabaseTracker.Changed].map((v) => v.Strategy.DatabaseOriginState.PushExisting()),
+      n: [...this.pushToDatabaseTracker.Created].map((v) => (v.DatabaseOriginState as DatabaseOriginState).PushNew()),
+      o: [...this.pushToDatabaseTracker.Changed].map((v) => (v.Strategy.DatabaseOriginState as DatabaseOriginState).PushExisting()),
     };
 
     const result = await this.database.push(pushRequest);
@@ -98,6 +101,75 @@ export class Session extends SystemSession {
     // }
   }
 
+  Create<T extends IObject>(cls: Class): T {
+    const workspaceId = this.workspace.database.nextId();
+    const strategy = new Strategy(this, cls, workspaceId);
+    this.addStrategy(strategy);
+    if (cls.origin != Origin.Session) {
+      this.pushToWorkspaceTracker.OnCreated(strategy);
+      if (cls.origin == Origin.Database) {
+        this.pushToDatabaseTracker.OnCreated(strategy);
+      }
+    }
 
+    this.changeSetTracker.OnCreated(strategy);
+    return strategy.object as T;
+  }
 
+  public InstantiateDatabaseStrategy(id: number): Strategy {
+    const databaseRecord = this.workspace.database.getRecord(id) as DatabaseRecord;
+    const strategy = Strategy.fromDatabaseRecord(this, databaseRecord);
+    this.addStrategy(strategy);
+    this.changeSetTracker.OnInstantiated(strategy);
+    return strategy;
+  }
+
+  protected InstantiateWorkspaceStrategy(id: number): Strategy {
+    if (!this.workspace.workspaceClassByWorkspaceId.has(id)) {
+      return null;
+    }
+
+    const cls = this.workspace.workspaceClassByWorkspaceId.get(id);
+    const strategy = new Strategy(this, cls, id);
+    this.addStrategy(strategy);
+    this.changeSetTracker.OnInstantiated(strategy);
+    return strategy;
+  }
+
+  private async OnPull(pullResponse: PullResponse): Promise<IPullResult> {
+    const syncRequest = (this.workspace.database as Database).onPullResonse(pullResponse);
+    if (syncRequest.o.length > 0) {
+      const database = this.workspace.database as Database;
+      const syncResponse = await database.sync(syncRequest);
+      let securityRequest = database.onSyncResponse(syncResponse);
+      for (const v of syncResponse.o) {
+        if (!this.strategyByWorkspaceId.has(v.i)) {
+          this.InstantiateDatabaseStrategy(v.i);
+        } else {
+          const strategy = this.strategyByWorkspaceId.get(v.i);
+          strategy.DatabaseOriginState.OnPulled();
+        }
+      }
+
+      if (securityRequest != null) {
+        let securityResponse = await database.security(securityRequest);
+        securityRequest = database.securityResponse(securityResponse);
+        if (securityRequest != null) {
+          securityResponse = await database.security(securityRequest);
+          database.securityResponse(securityResponse);
+        }
+      }
+    }
+
+    for (const v of pullResponse.p) {
+      if (this.strategyByWorkspaceId.has(v.i)) {
+        const strategy = this.strategyByWorkspaceId.get(v.i);
+        strategy.DatabaseOriginState.OnPulled();
+      } else {
+        this.InstantiateDatabaseStrategy(v.i);
+      }
+    }
+
+    return new PullResult(this, pullResponse);
+  }
 }

@@ -24,13 +24,14 @@
     "workspace-generator": "nx workspace-generator",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "test:workspace-meta-json": "npx nx test workspace-meta-json-system-tests --skipNxCache",
-    "test:workspace-adapters": "npx nx test workspace-adapters-system-tests --skipNxCache",
-    "test:workspace-adapters-json": "npx nx test workspace-adapters-json-system-tests --skipNxCache",
-    "test:all": "npm run test:workspace-meta-json && npm run test:workspace-adapters && npm run test:workspace-adapters-json"
+    "test:workspace-meta-json-system": "npx nx test workspace-meta-json-system-tests --skipNxCache",
+    "test:workspace-adapters-system": "npx nx test workspace-adapters-system-tests --skipNxCache",
+    "test:workspace-adapters-json-system": "npx nx test workspace-adapters-json-system-tests --skipNxCache",
+    "test:all": "npm run test:workspace-meta-json-system && npm run test:workspace-adapters-system && npm run test:workspace-adapters-json-system"
   },
   "private": true,
   "dependencies": {
+    "cross-fetch": "^3.1.4",
     "tslib": "^2.0.0"
   },
   "devDependencies": {

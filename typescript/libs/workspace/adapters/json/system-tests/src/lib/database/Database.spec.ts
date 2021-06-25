@@ -1,4 +1,3 @@
-import { MetaPopulation } from '@allors/workspace/meta/system';
 import { M } from '@allors/workspace/meta/core';
 import { Configuration, ObjectFactory } from '@allors/workspace/adapters/system';
 import { Database } from '@allors/workspace/adapters/json/system';

@@ -1,69 +1,92 @@
+import fetch from 'cross-fetch';
 import { InvokeRequest, PullRequest, PullResponse, PushRequest, PushResponse, Response, SecurityRequest, SecurityResponse, SyncRequest, SyncResponse } from '@allors/protocol/json/system';
-import { AuthenticationTokenRequest } from './auth/AuthenticationTokenRequest';
+import { Client } from '@allors/workspace/adapters/json/system';
 
-export class AjaxClient implements Client {
+interface AuthenticationTokenRequest {
+  /** login */
+  l: string;
+
+  /** password */
+  p: string;
+}
+
+interface AuthenticationTokenResponse {
+  /** Authenticated */
+  a: boolean;
+
+  /** User id */
+  u: number;
+
+  /** Token */
+  t: string;
+}
+
+export class FetchClient implements Client {
   userId: number;
   jwtToken: string;
 
   constructor(public baseUrl: string, public authUrl: string) {}
 
-  login(login: string, password?: string): Observable<boolean> {
+  async setup(population = 'full') {
+    await fetch(`${this.baseUrl}Test/Setup?population=${population}`);
+  }
+
+  async login(login: string, password?: string): Promise<boolean> {
     const tokenRequest: Partial<AuthenticationTokenRequest> = {
       l: login,
       p: password,
     };
 
-    const ajaxRequest: AjaxRequest = {
-      url: `${this.baseUrl}${this.authUrl}`,
+    const response = await fetch(`${this.baseUrl}${this.authUrl}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: tokenRequest,
-    };
+      body: JSON.stringify(tokenRequest),
+    });
 
-    return ajax(ajaxRequest).pipe(
-      map((ajaxResponse) => {
-        const authenticationResponse = ajaxResponse.response as AuthenticationTokenResponse;
-        return authenticationResponse;
-      }),
-      tap((authenticationResponse) => {
-        if (authenticationResponse.a) {
-          this.userId = authenticationResponse.u;
-          this.jwtToken = authenticationResponse.t;
-        }
-      }),
-      map((authenticationResponse) => authenticationResponse.a)
-    );
+    if (response.ok) {
+      const tokenResponse = (await response.json()) as AuthenticationTokenResponse;
+
+      if (tokenResponse.a) {
+        this.userId = tokenResponse.u;
+        this.jwtToken = tokenResponse.t;
+        return true;
+      }
+    }
+
+    return false;
   }
 
-  pull(pullRequest: PullRequest): Observable<PullResponse> {
-    return this.post('pull', pullRequest);
+  async pull(pullRequest: PullRequest): Promise<PullResponse> {
+    return await this.post('pull', pullRequest);
   }
 
-  sync(syncRequest: SyncRequest): Observable<SyncResponse> {
-    return this.post('sync', syncRequest);
+  async sync(syncRequest: SyncRequest): Promise<SyncResponse> {
+    return await this.post('sync', syncRequest);
   }
 
-  push(pushRequest: PushRequest): Observable<PushResponse> {
-    return this.post('sync', pushRequest);
-  }
-  invoke(invokeRequest: InvokeRequest): Observable<Response> {
-    return this.post('sync', invokeRequest);
-  }
-  security(securityRequest: SecurityRequest): Observable<SecurityResponse> {
-    return this.post('sync', securityRequest);
+  async push(pushRequest: PushRequest): Promise<PushResponse> {
+    return await this.post('sync', pushRequest);
   }
 
-  private post<T>(relativeUrl: string, body: any) {
-    return ajax({
-      url: `${this.baseUrl}${relativeUrl}`,
+  async invoke(invokeRequest: InvokeRequest): Promise<Response> {
+    return await this.post('sync', invokeRequest);
+  }
+  async security(securityRequest: SecurityRequest): Promise<SecurityResponse> {
+    return await this.post('sync', securityRequest);
+  }
+
+  async post<T>(relativeUrl: string, data: any): Promise<T> {
+    const response = await fetch(`${this.baseUrl}${relativeUrl}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${this.jwtToken}`,
       },
-      body,
-    }).pipe(map((ajaxResponse) => ajaxResponse.response as T));
+      body: JSON.stringify(data),
+    });
+
+    return await response.json();
   }
 }

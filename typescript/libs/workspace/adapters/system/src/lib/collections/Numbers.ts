@@ -63,6 +63,14 @@ export function* enumerate(set: Numbers) {
   }
 }
 
+export function toArray(set: Numbers) {
+  if (Array.isArray(set)) {
+    return set;
+  } else if (set != null) {
+    return [set];
+  }
+}
+
 export function has(set: Numbers, value: number): boolean {
   assert(value);
 

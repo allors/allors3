@@ -1,6 +1,6 @@
 import { ObjectType } from '@allors/workspace/meta/system';
-import { UnitTypes, Pull as DataPull, IExtent as DataExtent, Predicate as DataPredicate, Sort as DataSort, ParameterTypes } from '@allors/workspace/domain/system';
-import { Extent, Predicate, Pull, Result, Sort } from '@allors/protocol/json/system';
+import { UnitTypes, Procedure as DataProcedure, Pull as DataPull, IExtent as DataExtent, Predicate as DataPredicate, Sort as DataSort, ParameterTypes } from '@allors/workspace/domain/system';
+import { Extent, Predicate, Procedure, Pull, Result, Sort } from '@allors/protocol/json/system';
 
 export function unitToJson(value: unknown): UnitTypes {
   switch (typeof value) {
@@ -15,6 +15,10 @@ export function unitToJson(value: unknown): UnitTypes {
   }
 
   throw new Error(`Unsupported value: ${value}`);
+}
+
+export function procedureToJson(from: DataProcedure): Procedure {
+  return undefined;
 }
 
 export function pullToJson(from: DataPull): Pull {
