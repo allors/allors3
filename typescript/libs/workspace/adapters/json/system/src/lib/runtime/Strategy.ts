@@ -8,7 +8,7 @@ export class Strategy extends SystemStrategy {
     super(session, cls, id);
 
     if (this.cls.origin === Origin.Database) {
-      this.DatabaseOriginState = new DatabaseOriginState(session.workspace.database.getRecord(this.id));
+      this.DatabaseOriginState = new DatabaseOriginState(this, session.workspace.database.getRecord(this.id));
     }
   }
 

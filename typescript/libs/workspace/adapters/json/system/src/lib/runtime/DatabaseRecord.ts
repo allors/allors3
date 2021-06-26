@@ -63,6 +63,14 @@ export class DatabaseRecord extends SystemDatabaseRecord {
       return false;
     }
 
-    return !has(this.deniedPermissionIds, permission) && this.accessControlIds.some((v) => has(this.database.accessControlById[v].permissionIds, permission));
+    if (this.deniedPermissionIds != null && has(this.deniedPermissionIds, permission)) {
+      return false;
+    }
+
+    if (this.accessControlIds == null) {
+      return false;
+    }
+
+    return this.accessControlIds.some((v) => this.database.accessControlById.get(v).permissionIds.has(permission));
   }
 }

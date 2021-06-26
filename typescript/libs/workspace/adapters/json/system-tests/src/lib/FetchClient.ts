@@ -67,14 +67,15 @@ export class FetchClient implements Client {
   }
 
   async push(pushRequest: PushRequest): Promise<PushResponse> {
-    return await this.post('sync', pushRequest);
+    return await this.post('push', pushRequest);
   }
 
   async invoke(invokeRequest: InvokeRequest): Promise<Response> {
-    return await this.post('sync', invokeRequest);
+    return await this.post('invoke', invokeRequest);
   }
+  
   async security(securityRequest: SecurityRequest): Promise<SecurityResponse> {
-    return await this.post('sync', securityRequest);
+    return await this.post('security', securityRequest);
   }
 
   async post<T>(relativeUrl: string, data: any): Promise<T> {

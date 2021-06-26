@@ -11,7 +11,7 @@ export class PushToDatabaseTracker {
   }
 
   OnChanged(state: DatabaseOriginState) {
-    if (!state.Strategy.isNew) {
+    if (!state.strategy.isNew) {
       (this.Changed ??= new Set<DatabaseOriginState>()).add(state);
     }
   }

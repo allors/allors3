@@ -7,7 +7,7 @@ import { add, has, remove, difference, enumerate } from '../../collections/Numbe
 import { Class, RelationType, RoleType } from '@allors/workspace/meta/system';
 
 export abstract class RecordBasedOriginState {
-  public Strategy: Strategy;
+  protected constructor(public strategy: Strategy) {}
 
   protected HasChanges(): boolean {
     return this.Record == null || this.ChangedRoleByRelationType?.size > 0;
@@ -107,7 +107,7 @@ export abstract class RecordBasedOriginState {
           //  Changed roles
           this.ChangedRoleByRelationType.forEach((current, relationType) => {
             const previous = this.Record?.getRole(relationType.roleType);
-            changeSet.Diff(this.Strategy, relationType, current, previous);
+            changeSet.Diff(this.strategy, relationType, current, previous);
           });
         }
       }
@@ -115,7 +115,7 @@ export abstract class RecordBasedOriginState {
       //  Previous changed roles
       this.ChangedRoleByRelationType.forEach((current, relationType) => {
         const previous = this.PreviousChangedRoleByRelationType.get(relationType);
-        changeSet.Diff(this.Strategy, relationType, current, previous);
+        changeSet.Diff(this.strategy, relationType, current, previous);
       });
     } else {
       //  Different record
@@ -127,19 +127,19 @@ export abstract class RecordBasedOriginState {
           const previous = this.PreviousChangedRoleByRelationType.get(relationType);
           if (this.ChangedRoleByRelationType?.has(relationType)) {
             const current = this.ChangedRoleByRelationType.get(relationType);
-            changeSet.Diff(this.Strategy, relationType, current, previous);
+            changeSet.Diff(this.strategy, relationType, current, previous);
           } else {
             current = this.Record.getRole(roleType);
-            changeSet.Diff(this.Strategy, relationType, current, previous);
+            changeSet.Diff(this.strategy, relationType, current, previous);
           }
         } else {
           previous = this.PreviousRecord?.getRole(roleType);
           if (this.ChangedRoleByRelationType?.has(relationType)) {
             const current = this.ChangedRoleByRelationType?.get(relationType);
-            changeSet.Diff(this.Strategy, relationType, current, previous);
+            changeSet.Diff(this.strategy, relationType, current, previous);
           } else {
             current = this.Record.getRole(roleType);
-            changeSet.Diff(this.Strategy, relationType, current, previous);
+            changeSet.Diff(this.strategy, relationType, current, previous);
           }
         }
       });
@@ -171,18 +171,18 @@ export abstract class RecordBasedOriginState {
   }
 
   protected get Id(): number {
-    return this.Strategy.id;
+    return this.strategy.id;
   }
 
   protected get Class(): Class {
-    return this.Strategy.cls;
+    return this.strategy.cls;
   }
 
   protected get Session(): Session {
-    return this.Strategy.session;
+    return this.strategy.session;
   }
 
   protected get Workspace(): Workspace {
-    return this.Strategy.session.workspace;
+    return this.strategy.session.workspace;
   }
 }

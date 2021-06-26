@@ -3,8 +3,8 @@ import { DatabaseOriginState as SystemDatabaseOriginState, DatabaseRecord, diffe
 import { unitToJson } from '../json/toJson';
 
 export class DatabaseOriginState extends SystemDatabaseOriginState {
-  constructor(record: DatabaseRecord) {
-    super(record);
+  constructor(strategy: Strategy, record: DatabaseRecord) {
+    super(strategy, record);
   }
 
   PushNew(): PushRequestNewObject {

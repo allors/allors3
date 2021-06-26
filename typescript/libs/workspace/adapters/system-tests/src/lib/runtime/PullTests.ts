@@ -3,6 +3,7 @@ import { Tests } from '../Tests';
 import { c1B, c2B } from '../Names';
 import { Pull } from '@allors/workspace/domain/system';
 import { expect } from '@jest/globals';
+import { assert_equal } from '../Assert';
 
 export class PullTests extends Tests {
   constructor(database: Database, public login: (login: string) => Promise<boolean>) {
@@ -43,7 +44,8 @@ export class PullTests extends Tests {
     expect(result.values.size).toBe(0);
 
     let collection = result.collections.get('C1s');
-    expect(collection).toHaveLength(1);
+
+    assert_equal(collection, [c1B]);
 
     //  Interface
     pull = {
@@ -75,6 +77,6 @@ export class PullTests extends Tests {
     expect(result.values.size).toBe(0);
 
     collection = result.collections.get('I12s');
-    expect(collection).toHaveLength(2);
+    assert_equal(collection, [c1B, c2B]);
   }
 }

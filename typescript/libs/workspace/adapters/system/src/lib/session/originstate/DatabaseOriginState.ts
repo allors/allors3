@@ -2,6 +2,7 @@ import { Operations } from '@allors/workspace/domain/system';
 import { MethodType, RoleType } from '@allors/workspace/meta/system';
 import { DatabaseRecord } from '../../database/DatabaseRecord';
 import { IRecord } from '../../IRecord';
+import { Strategy } from '../Strategy';
 import { RecordBasedOriginState } from './RecordBasedOriginState';
 
 export const UnknownVersion = 0;
@@ -10,8 +11,8 @@ export const InitialVersion = 1;
 export abstract class DatabaseOriginState extends RecordBasedOriginState {
   DatabaseRecord: DatabaseRecord;
 
-  protected constructor(record: DatabaseRecord) {
-    super();
+  protected constructor(strategy: Strategy, record: DatabaseRecord) {
+    super(strategy);
     this.DatabaseRecord = record;
     this.PreviousRecord = this.DatabaseRecord;
   }
@@ -80,7 +81,9 @@ export abstract class DatabaseOriginState extends RecordBasedOriginState {
     this.ChangedRoleByRelationType = null;
   }
 
-  public OnPulled() {}
+  public OnPulled() {
+    this.DatabaseRecord = this.Session.workspace.database.getRecord(this.Id);
+  }
 
   OnChange() {
     this.Session.changeSetTracker.OnDatabaseChanged(this);

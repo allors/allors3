@@ -1,5 +1,6 @@
-import { Numbers } from '@allors/workspace/adapters/system';
+import { Numbers, toArray } from '@allors/workspace/adapters/system';
 import { Database } from '../Database';
+import { enumerate } from '../../../../../../system/src/lib/collections/Numbers';
 
 export class ResponseContext {
   constructor(private readonly database: Database) {
@@ -12,10 +13,22 @@ export class ResponseContext {
   missingPermissionIds: Set<number>;
 
   checkForMissingAccessControls(value: Numbers): Numbers {
-    return value?.filter((v) => !this.missingAccessControlIds.has(v));
+    for (const id of enumerate(value)) {
+      if (!this.database.accessControlById.has(id)) {
+        this.missingAccessControlIds.add(id);
+      }
+    }
+
+    return value;
   }
 
   checkForMissingPermissions(value: Numbers): Numbers {
-    return value?.filter((v) => !this.missingPermissionIds.has(v));
+    for (const id of enumerate(value)) {
+      if (!this.database.permissions.has(id)) {
+        this.missingPermissionIds.add(id);
+      }
+    }
+
+    return value;
   }
 }

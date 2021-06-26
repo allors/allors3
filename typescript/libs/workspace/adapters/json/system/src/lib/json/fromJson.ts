@@ -11,6 +11,11 @@ export function unitFromJson(tag: number, value: unknown): UnitTypes {
       if (value instanceof Date) {
         return value;
       }
+
+      if (typeof value === 'string') {
+        return new Date(value);
+      }
+
       break;
 
     case UnitTags.Binary:

@@ -42,7 +42,7 @@ function* _remove(set: Array<number>, value: number) {
 }
 
 function assert(value: unknown): asserts value {
-  if (value === undefined) {
+  if (value == null) {
     throw new Error('value must be defined');
   }
 }
@@ -74,6 +74,10 @@ export function toArray(set: Numbers) {
 export function has(set: Numbers, value: number): boolean {
   assert(value);
 
+  if (set == null) {
+    return false;
+  }
+
   if (Number.isInteger(value)) {
     if (Array.isArray(set)) {
       return _has(set, value);
@@ -84,11 +88,11 @@ export function has(set: Numbers, value: number): boolean {
 }
 
 export function equals(self: Numbers, other: Numbers): boolean {
-  if (self === undefined) {
-    return other === undefined;
+  if (self == null) {
+    return other == null;
   }
 
-  if (other === undefined) {
+  if (other == null) {
     return false;
   }
 
@@ -130,7 +134,7 @@ export function remove(set: Numbers, value: number): Numbers {
 }
 
 export function difference(self: Numbers, other: Numbers): Numbers {
-  if (self === undefined || other === undefined) {
+  if (self == null || other == null) {
     return self;
   }
 
@@ -139,11 +143,11 @@ export function difference(self: Numbers, other: Numbers): Numbers {
 }
 
 export function properSubset(self: Numbers, other: Numbers): boolean {
-  if (other === undefined) {
+  if (other == null) {
     return false;
   }
 
-  if (self === undefined) {
+  if (self == null) {
     return true;
   }
 

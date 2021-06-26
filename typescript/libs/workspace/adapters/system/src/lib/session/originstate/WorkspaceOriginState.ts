@@ -5,12 +5,12 @@ import { Strategy } from '../Strategy';
 import { RecordBasedOriginState } from './RecordBasedOriginState';
 
 export /* sealed */ class WorkspaceOriginState extends RecordBasedOriginState {
-  public Strategy: Strategy;
+  public strategy: Strategy;
   private WorkspaceRecord: WorkspaceRecord;
 
   public constructor(strategy: Strategy, record: WorkspaceRecord) {
-    super();
-    this.Strategy = strategy;
+    super(strategy);
+    this.strategy = strategy;
     this.WorkspaceRecord = record;
     this.PreviousRecord = this.WorkspaceRecord;
   }
@@ -28,8 +28,8 @@ export /* sealed */ class WorkspaceOriginState extends RecordBasedOriginState {
   }
 
   protected /* override */ OnChange() {
-    this.Strategy.session.changeSetTracker.OnWorkspaceChanged(this);
-    this.Strategy.session.pushToWorkspaceTracker.OnChanged(this);
+    this.strategy.session.changeSetTracker.OnWorkspaceChanged(this);
+    this.strategy.session.pushToWorkspaceTracker.OnChanged(this);
   }
 
   public Push() {

@@ -67,7 +67,7 @@ export class Session extends SystemSession {
   async push(): Promise<IPushResult> {
     const pushRequest: PushRequest = {
       n: [...this.pushToDatabaseTracker.Created].map((v) => (v.DatabaseOriginState as DatabaseOriginState).PushNew()),
-      o: [...this.pushToDatabaseTracker.Changed].map((v) => (v.Strategy.DatabaseOriginState as DatabaseOriginState).PushExisting()),
+      o: [...this.pushToDatabaseTracker.Changed].map((v) => (v.strategy.DatabaseOriginState as DatabaseOriginState).PushExisting()),
     };
 
     const result = await this.database.push(pushRequest);

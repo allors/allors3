@@ -197,7 +197,7 @@ export abstract class Session implements ISession {
 
     if (this.pushToWorkspaceTracker.Changed != null) {
       for (const state of this.pushToWorkspaceTracker.Changed) {
-        if (this.pushToWorkspaceTracker.Created?.has(state.Strategy) == true) {
+        if (this.pushToWorkspaceTracker.Created?.has(state.strategy) == true) {
           continue;
         }
 
