@@ -21,8 +21,11 @@ expect.extend({
   },
 });
 
-// TODO: Module augmentation doesn't work yet for Matchers<R>
-//       and we can't use the global expect because we're in a module
-export function assert_equal(collection: IObject[], names: string[]) {
-  (expect(collection) as any).toEqualObjects(names);
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace jest {
+    interface Matchers<R> {
+      toEqualObjects: (argument: string[]) => R;
+    }
+  }
 }

@@ -1,15 +1,14 @@
-import { PullTests } from '@allors/workspace/adapters/system-tests';
+import { init, andGreaterThanLessThan } from '@allors/workspace/adapters/system-tests';
 import { Fixture } from '../Fixture';
 
 let fixture: Fixture;
-let tests: PullTests;
 
 beforeEach(async () => {
   fixture = new Fixture();
   await fixture.init();
-  tests = new PullTests(fixture.database, (login) => fixture.client.login(login));
+  await init(fixture.database, (login) => fixture.client.login(login));
 });
 
 test('andGreaterThanLessThan', async () => {
-  await tests.andGreaterThanLessThan();
+  await andGreaterThanLessThan();
 });
