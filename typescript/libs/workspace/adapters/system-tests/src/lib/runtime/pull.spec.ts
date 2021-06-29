@@ -1,12 +1,14 @@
 import { Database } from '@allors/workspace/adapters/system';
 import { Pull } from '@allors/workspace/domain/system';
-import { Fixture, c1B, c2B } from '../Fixture';
-import  '../Matchers';
+import { resultCollection } from '@allors/workspace/domain/core';
+import { Fixture, name_c1B, name_c2B } from '../Fixture';
+import '../Matchers';
 
 let fixture: Fixture;
 
-export async function init(database: Database, login: (login: string) => Promise<boolean>) {
+export async function initPull(database: Database, login: (login: string) => Promise<boolean>) {
   fixture = new Fixture(database, login);
+  
 }
 
 export async function andGreaterThanLessThan() {
@@ -37,14 +39,15 @@ export async function andGreaterThanLessThan() {
   };
 
   let result = await session.pull([pull]);
+  let collection = resultCollection(result, m);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
   expect(result.values.size).toBe(0);
 
-  let collection = result.collections.get('C1s');
+  const c1s = collection('C1');
 
-  expect(collection).toEqualObjects([c1B]);
+  expect(c1s).toEqualObjects([name_c1B]);
 
   //  Interface
   pull = {
@@ -70,11 +73,12 @@ export async function andGreaterThanLessThan() {
   };
 
   result = await session.pull([pull]);
+  collection = resultCollection(result, m);
 
   expect(result.collections.size).toEqual(1);
   expect(result.objects.size).toBe(0);
   expect(result.values.size).toBe(0);
 
-  collection = result.collections.get('I12s');
-  expect(collection).toEqualObjects([c1B, c2B]);
+  const i12s = collection('I12');
+  expect(i12s).toEqualObjects([name_c1B, name_c2B]);
 }

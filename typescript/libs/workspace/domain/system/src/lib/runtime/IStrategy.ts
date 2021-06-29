@@ -27,7 +27,7 @@ export interface IStrategy {
 
   getComposite<T extends IObject>(roleType: RoleType): T;
 
-  getComposites<T extends IObject>(roleType: RoleType): T[];
+  getComposites<T extends IObject>(roleType: RoleType): ReadonlyArray<T>;
 
   set(roleType: RoleType, value: unknown): void;
 
@@ -35,7 +35,7 @@ export interface IStrategy {
 
   setComposite<T extends IObject>(roleType: RoleType, value: T): void;
 
-  setComposites<T extends IObject>(roleType: RoleType, value: T[]): void;
+  setComposites<T extends IObject>(roleType: RoleType, value: ReadonlyArray<T>): void;
 
   add<T extends IObject>(roleType: RoleType, value: T): void;
 
@@ -45,7 +45,7 @@ export interface IStrategy {
 
   getCompositeAssociation<T extends IObject>(associationType: AssociationType): T;
 
-  getCompositesAssociation<T extends IObject>(associationType: AssociationType): T[];
+  getCompositesAssociation<T extends IObject>(associationType: AssociationType): ReadonlyArray<T>;
 
   method(methodType: MethodType): Method;
 }

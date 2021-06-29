@@ -186,7 +186,7 @@ export abstract class Strategy implements IStrategy {
     }
   }
 
-  public setComposites(roleType: RoleType, role: IObject[]) {
+  public setComposites(roleType: RoleType, role: ReadonlyArray<IObject>) {
     const roleNumbers = Numbers(role?.map((v) => v.id));
 
     switch (roleType.origin) {

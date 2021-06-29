@@ -1,7 +1,7 @@
 import { PropertyType } from "@allors/workspace/meta/system";
 
 export interface Node {
-  kind: 'Like';
+  kind: 'Node';
   propertyType: PropertyType;
   nodes?: Node[];
 }
