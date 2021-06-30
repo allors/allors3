@@ -8,4 +8,10 @@ export interface IPullResult extends IResult {
   objects: Map<string, IObject>;
 
   values: Map<string, UnitTypes>;
+
+  collection<T extends IObject>(name: string): T[];
+
+  object<T extends IObject>(name: string): T;
+
+  value(name: string): UnitTypes | Array<UnitTypes>;
 }

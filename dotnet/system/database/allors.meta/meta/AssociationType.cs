@@ -57,7 +57,11 @@ namespace Allors.Database.Meta
 
         string IPropertyType.SingularName => this.SingularName;
 
+        string IPropertyType.SingularFullName => this.SingularName;
+
         string IPropertyType.PluralName => this.PluralName;
+
+        string IPropertyType.PluralFullName => this.PluralName;
 
         IObjectType IPropertyType.ObjectType => this.objectType;
 
@@ -93,10 +97,6 @@ namespace Allors.Database.Meta
         IRoleType IAssociationType.RoleType => this.RoleType;
 
         IComposite IAssociationType.ObjectType => this.objectType;
-
-        string IAssociationType.SingularFullName => this.SingularName;
-
-        string IAssociationType.PluralFullName => this.PluralName;
 
         ICompositeBase IAssociationTypeBase.ObjectType
         {

@@ -37,12 +37,9 @@ namespace Allors.Workspace.Adapters.Local
 
             var @class = @object.Strategy?.Class;
 
-            if (@class != null && this.pull.ObjectType is IComposite objectType)
+            if (@class != null && this.pull.ObjectType is IComposite objectType && !objectType.IsAssignableFrom(@class))
             {
-                if (!objectType.IsAssignableFrom(@class))
-                {
-                    return;
-                }
+                return;
             }
 
             if (this.pull.Results != null)
@@ -69,14 +66,14 @@ namespace Allors.Workspace.Adapters.Local
 
                                 if (select.Step.IsOne)
                                 {
-                                    name ??= propertyType.SingularName;
+                                    name ??= propertyType.SingularFullName;
 
                                     @object = (IObject)select.Step.Get(@object, this.acls);
                                     response.AddObject(name, @object, include);
                                 }
                                 else
                                 {
-                                    name ??= propertyType.PluralName;
+                                    name ??= propertyType.PluralFullName;
 
                                     var stepResult = select.Step.Get(@object, this.acls);
                                     var objects = stepResult is HashSet<object> set

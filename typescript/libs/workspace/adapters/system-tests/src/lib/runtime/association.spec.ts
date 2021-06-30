@@ -1,8 +1,8 @@
 import { Database } from '@allors/workspace/adapters/system';
 import { Pull } from '@allors/workspace/domain/system';
-import { resultCollection } from '@allors/workspace/domain/core';
 import { Fixture, name_c1C, name_c2C } from '../Fixture';
 import '../Matchers';
+import '@allors/workspace/domain/core';
 
 let fixture: Fixture;
 
@@ -35,9 +35,8 @@ export async function databaseGetOne2Many() {
   };
 
   const result = await session.pull([pull]);
-  const collection = resultCollection(result, m);
 
-  const c2s = collection('C2');
+  const c2s = result.collection('C2s');
 
   const c2C = c2s.find((v) => v.Name === name_c2C);
 

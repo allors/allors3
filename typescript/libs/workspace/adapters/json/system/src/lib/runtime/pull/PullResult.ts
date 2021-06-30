@@ -20,4 +20,13 @@ export class PullResult extends Result implements IPullResult {
     this.collections = new Map(Object.keys(response.c).map((v) => [v, response.c[v].map((w) => session.getOne(w))]));
     this.values = new Map(Object.keys(response.v).map((v) => [v, response.v[v]]));
   }
+  collection(name: string): IObject[] {
+    return this.collections.get(name);
+  }
+  object(name: string): IObject {
+    return this.objects.get(name);
+  }
+  value(name: string): UnitTypes | UnitTypes[] {
+    return this.values.get(name);
+  }
 }

@@ -15,9 +15,13 @@ namespace Allors.Database.Meta
 
         string Name { get; }
 
-        string SingularName { get;  }
+        string SingularName { get; }
+
+        string SingularFullName { get; }
 
         string PluralName { get; }
+
+        string PluralFullName { get; }
 
         bool IsOne { get; }
 

@@ -67,32 +67,29 @@ namespace Allors.Workspace.Adapters.Local
                     this.AddCollectionInternal(name, list, tree);
                     break;
                 default:
-                {
                     this.AddCollectionInternal(name, collection.ToArray(), tree);
                     break;
-                }
             }
         }
 
         public void AddObject(string name, Database.IObject @object, Node[] tree)
         {
-            if (@object != null)
+            if (@object == null || this.AllowedClasses?.Contains(@object.Strategy.Class) != true)
             {
-                if (this.AllowedClasses?.Contains(@object.Strategy.Class) == true)
-                {
-                    if (tree != null)
-                    {
-                        // Prefetch
-                        var session = @object.Strategy.Transaction;
-                        var prefetcher = tree.BuildPrefetchPolicy();
-                        session.Prefetch(prefetcher, @object);
-                    }
-
-                    this.DatabaseObjects.Add(@object);
-                    this.DatabaseObjectByName[name] = @object;
-                    tree?.Resolve(@object, this.AccessControlLists, this.DatabaseObjects);
-                }
+                return;
             }
+
+            if (tree != null)
+            {
+                // Prefetch
+                var session = @object.Strategy.Transaction;
+                var prefetcher = tree.BuildPrefetchPolicy();
+                session.Prefetch(prefetcher, @object);
+            }
+
+            this.DatabaseObjects.Add(@object);
+            this.DatabaseObjectByName[name] = @object;
+            tree?.Resolve(@object, this.AccessControlLists, this.DatabaseObjects);
         }
 
         public void AddValue(string name, object value)

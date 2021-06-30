@@ -21,10 +21,6 @@ namespace Allors.Database.Meta
 
         string FullName { get; }
 
-        string SingularFullName { get; }
-
-        string PluralFullName { get; }
-
         int? Size { get; }
 
         int? Precision { get; }

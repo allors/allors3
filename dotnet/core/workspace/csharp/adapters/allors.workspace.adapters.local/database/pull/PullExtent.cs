@@ -82,7 +82,7 @@ namespace Allors.Workspace.Adapters.Local
                                         .ToArray();
 
                                 var propertyType = select.Step.End.PropertyType;
-                                name ??= propertyType.PluralName;
+                                name ??= propertyType.PluralFullName;
                             }
 
                             name ??= extent.ObjectType.PluralName;

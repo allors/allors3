@@ -18,9 +18,5 @@ namespace Allors.Database.Meta
         IRoleType RoleType { get; }
 
         new IComposite ObjectType { get; }
-
-        string SingularFullName { get; }
-
-        string PluralFullName { get; }
     }
 }
