@@ -47,8 +47,6 @@ export async function andGreaterThanLessThan() {
 
   const c1s = result.collection('C1s');
 
-  const x = result.collection('DataChips');
-
   expect(c1s).toEqualObjects([name_c1B]);
 
   //  Interface

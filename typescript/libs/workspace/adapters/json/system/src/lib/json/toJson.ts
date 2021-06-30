@@ -15,19 +15,23 @@ import {
 } from '@allors/workspace/domain/system';
 import { Extent, ExtentKind, Predicate, Procedure, Pull, Result, Select, Sort, Step, Node, PredicateKind } from '@allors/protocol/json/system';
 
-export function unitToJson(value: unknown): UnitTypes {
-  switch (typeof value) {
+export function unitToJson(from: unknown): UnitTypes {
+  if (from == null) {
+    return;
+  }
+
+  switch (typeof from) {
     case 'boolean':
     case 'number':
     case 'string':
-      return value;
+      return from;
   }
 
-  if (value instanceof Date) {
-    return value;
+  if (from instanceof Date) {
+    return from;
   }
 
-  throw new Error(`Unsupported value: ${value}`);
+  throw new Error(`Unsupported value: ${from}`);
 }
 
 export function procedureToJson(from: DataProcedure): Procedure {
@@ -35,6 +39,10 @@ export function procedureToJson(from: DataProcedure): Procedure {
 }
 
 export function pullToJson(from: DataPull): Pull {
+  if (from == null) {
+    return;
+  }
+
   return {
     er: extentRefToJson(from.extentRef),
     e: extentToJson(from.extent),
@@ -46,6 +54,10 @@ export function pullToJson(from: DataPull): Pull {
 }
 
 export function extentToJson(from: DataExtent): Extent {
+  if (from == null) {
+    return;
+  }
+
   switch (from.kind) {
     case 'Filter':
       return {
@@ -68,6 +80,10 @@ export function extentToJson(from: DataExtent): Extent {
 }
 
 export function predicateToJson(from: DataPredicate): Predicate {
+  if (from == null) {
+    return;
+  }
+
   switch (from.kind) {
     case 'And':
       return {
@@ -96,10 +112,19 @@ export function predicateToJson(from: DataPredicate): Predicate {
   }
 }
 
-function sortingsToJson(sorting: DataSort[]): Sort[] {
+function sortingsToJson(from: DataSort[]): Sort[] {
+  if (from == null) {
+    return;
+  }
+
   return undefined;
 }
+
 function resultToJson(from: DataResult): Result {
+  if (from == null) {
+    return;
+  }
+
   return {
     r: from.selectRef,
     s: selectToJson(from.select),
@@ -110,6 +135,10 @@ function resultToJson(from: DataResult): Result {
 }
 
 function selectToJson(from: DataSelect): Select {
+  if (from == null) {
+    return;
+  }
+
   return {
     s: stepToJson(from.step),
     i: nodesToJson(from.include),
@@ -117,6 +146,10 @@ function selectToJson(from: DataSelect): Select {
 }
 
 function stepToJson(from: DataStep): Step {
+  if (from == null) {
+    return;
+  }
+
   return {
     a: asAssociationTypeToJson(from.propertyType),
     r: asRoleTypeToJson(from.propertyType),
@@ -126,6 +159,10 @@ function stepToJson(from: DataStep): Step {
 }
 
 function nodeToJson(from: DataNode): Node {
+  if (from == null) {
+    return;
+  }
+
   return {
     a: asAssociationTypeToJson(from.propertyType),
     r: asRoleTypeToJson(from.propertyType),
@@ -133,7 +170,11 @@ function nodeToJson(from: DataNode): Node {
   };
 }
 
-function argumentsToJson(args: { [name: string]: ParameterTypes }): { [name: string]: string } {
+function argumentsToJson(from: { [name: string]: ParameterTypes }): { [name: string]: string } {
+  if (from == null) {
+    return;
+  }
+
   return undefined;
 }
 
@@ -160,13 +201,13 @@ export function roleTypeToJson(from: RoleType): number {
 }
 
 export function asAssociationTypeToJson(from: PropertyType): number {
-  if (from.isAssociationType) {
+  if (from?.isAssociationType) {
     return (from as AssociationType).relationType.tag;
   }
 }
 
 export function asRoleTypeToJson(from: PropertyType): number {
-  if (from.isRoleType) {
+  if (from?.isRoleType) {
     return (from as RoleType).relationType.tag;
   }
 }
