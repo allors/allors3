@@ -8,7 +8,6 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Derivations;
     using Meta;
     using Derivations.Rules;
 
@@ -24,10 +23,8 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<Good>())
             {
-                var identifications = @this.ProductIdentifications;
-                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Transaction).Good);
-                var goodIdentification = identifications.FirstOrDefault();
-
+                var good = new ProductIdentificationTypes(@this.Strategy.Transaction).Good;
+                var goodIdentification = @this.ProductIdentifications.FirstOrDefault(v => Equals(good, v.ProductIdentificationType));
                 @this.ProductNumber = goodIdentification?.Identification;
 
                 if (!@this.ExistProductIdentifications)

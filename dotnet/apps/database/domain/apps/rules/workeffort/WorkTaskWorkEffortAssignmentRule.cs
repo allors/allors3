@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<WorkTask>())
             {
-                foreach (ServiceEntry serviceEntry in @this.ServiceEntriesWhereWorkEffort)
+                foreach (var serviceEntry in @this.ServiceEntriesWhereWorkEffort)
                 {
                     if (serviceEntry is TimeEntry timeEntry)
                     {

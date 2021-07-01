@@ -56,52 +56,52 @@ namespace Allors.Database.Domain
         {
             if (this.IsDeletable)
             {
-                foreach (ProductIdentification productIdentification in this.ProductIdentifications)
+                foreach (var productIdentification in this.ProductIdentifications)
                 {
                     productIdentification.Delete();
                 }
 
-                foreach (LocalisedText localisedText in this.LocalisedNames)
+                foreach (var localisedText in this.LocalisedNames)
                 {
                     localisedText.Delete();
                 }
 
-                foreach (LocalisedText localisedText in this.LocalisedDescriptions)
+                foreach (var localisedText in this.LocalisedDescriptions)
                 {
                     localisedText.Delete();
                 }
 
-                foreach (PriceComponent priceComponent in this.VirtualProductPriceComponents)
+                foreach (var priceComponent in this.VirtualProductPriceComponents)
                 {
                     priceComponent.Delete();
                 }
 
-                foreach (EstimatedProductCost estimatedProductCosts in this.EstimatedProductCosts)
+                foreach (var estimatedProductCosts in this.EstimatedProductCosts)
                 {
                     estimatedProductCosts.Delete();
                 }
 
-                foreach (ProductFeatureApplicability productFeatureApplicability in this.ProductFeatureApplicabilitiesWhereAvailableFor)
+                foreach (var productFeatureApplicability in this.ProductFeatureApplicabilitiesWhereAvailableFor)
                 {
                     productFeatureApplicability.Delete();
                 }
 
-                foreach (InventoryItem inventoryItem in this.InventoryItemsWherePart)
+                foreach (var inventoryItem in this.InventoryItemsWherePart)
                 {
                     inventoryItem.Delete();
                 }
 
-                foreach (PartSubstitute partSubstitute in this.PartSubstitutesWherePart)
+                foreach (var partSubstitute in this.PartSubstitutesWherePart)
                 {
                     partSubstitute.Delete();
                 }
 
-                foreach (PartSubstitute partSubstitute in this.PartSubstitutesWhereSubstitutionPart)
+                foreach (var partSubstitute in this.PartSubstitutesWhereSubstitutionPart)
                 {
                     partSubstitute.Delete();
                 }
 
-                foreach (SupplierOffering supplierOffering in this.SupplierOfferingsWherePart)
+                foreach (var supplierOffering in this.SupplierOfferingsWherePart)
                 {
                     supplierOffering.Delete();
                 }

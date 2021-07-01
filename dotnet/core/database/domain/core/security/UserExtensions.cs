@@ -6,7 +6,8 @@
 namespace Allors.Database.Domain
 {
     using System;
-   
+    using System.Linq;
+
 
     public static partial class UserExtensions
     {
@@ -64,7 +65,7 @@ namespace Allors.Database.Domain
             @this.OwnerAccessControl?.Delete();
             @this.OwnerSecurityToken?.Delete();
 
-            foreach (Login login in @this.Logins)
+            foreach (var login in @this.Logins)
             {
                 login.Delete();
             }

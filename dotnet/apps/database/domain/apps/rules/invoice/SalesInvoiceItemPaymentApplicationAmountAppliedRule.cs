@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<SalesInvoiceItem>())
             {
                 var amountPaid = 0M;
-                foreach (PaymentApplication paymentApplication in @this.PaymentApplicationsWhereInvoiceItem)
+                foreach (var paymentApplication in @this.PaymentApplicationsWhereInvoiceItem)
                 {
                     amountPaid += paymentApplication.AmountApplied;
                 }

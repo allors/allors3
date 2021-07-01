@@ -8,6 +8,7 @@ namespace Allors.Database.Domain.Tests
 {
     using System;
     using System.Globalization;
+    using System.Linq;
     using Adapters.Memory;
     using Domain;
     using Configuration;
@@ -105,7 +106,7 @@ namespace Allors.Database.Domain.Tests
             var belgium = new Countries(this.Transaction).CountryByIsoCode["BE"];
             var euro = belgium.Currency;
 
-            singleton.AddAdditionalLocale(belgium.LocalesWhereCountry.First);
+            singleton.AddAdditionalLocale(belgium.LocalesWhereCountry.FirstOrDefault());
 
             var postalAddress = new PostalAddressBuilder(this.Transaction)
                 .WithAddress1("Kleine Nieuwedijkstraat 2")
@@ -192,7 +193,7 @@ namespace Allors.Database.Domain.Tests
 
             singleton.Settings.DefaultFacility = facility;
 
-            var collectionMethod = new PaymentMethods(this.Transaction).Extent().First;
+            var collectionMethod = new PaymentMethods(this.Transaction).Extent().FirstOrDefault();
 
             new StoreBuilder(this.Transaction)
                 .WithName("store")

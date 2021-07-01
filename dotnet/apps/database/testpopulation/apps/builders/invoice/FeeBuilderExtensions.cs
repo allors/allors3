@@ -12,8 +12,8 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var faker = @this.Transaction.Faker();
 
-            @this.WithAmount(decimal.Round(faker.Random.Decimal(10, 100), 2));
-            @this.WithDescription(faker.Lorem.Sentence());
+            @this.WithAmount(decimal.Round(faker.Random.Decimal(10, 100), 2))
+                .WithDescription(faker.Lorem.Sentence());
 
             return @this;
         }
@@ -22,8 +22,8 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var faker = @this.Transaction.Faker();
 
-            @this.WithPercentage(decimal.Round(faker.Random.Decimal(1, 5), 2));
-            @this.WithDescription(faker.Lorem.Sentence());
+            @this.WithPercentage(decimal.Round(faker.Random.Decimal(1, 5), 2))
+                .WithDescription(faker.Lorem.Sentence());
 
             return @this;
         }

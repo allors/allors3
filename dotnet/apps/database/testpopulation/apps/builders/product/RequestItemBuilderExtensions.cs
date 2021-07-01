@@ -6,6 +6,8 @@
 
 namespace Allors.Database.Domain.TestPopulation
 {
+    using System.Linq;
+
     public static partial class RequestItemBuilderExtensions
     {
         public static RequestItemBuilder WithSerializedDefaults(this RequestItemBuilder @this, Organisation internalOrganisation)
@@ -14,13 +16,13 @@ namespace Allors.Database.Domain.TestPopulation
 
             var finishedGood = new UnifiedGoodBuilder(@this.Transaction).WithSerialisedDefaults(internalOrganisation).Build();
 
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithMaximumAllowedPrice(faker.Random.UInt());
-            @this.WithQuantity(1);
-            @this.WithProduct(finishedGood);
-            @this.WithRequiredByDate(@this.Transaction.Now().AddDays(7));
-            @this.WithSerialisedItem(finishedGood.SerialisedItems.First);
+            @this.WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithMaximumAllowedPrice(faker.Random.UInt())
+                .WithQuantity(1)
+                .WithProduct(finishedGood)
+                .WithRequiredByDate(@this.Transaction.Now().AddDays(7))
+                .WithSerialisedItem(finishedGood.SerialisedItems.FirstOrDefault());
 
             return @this;
         }
@@ -31,12 +33,12 @@ namespace Allors.Database.Domain.TestPopulation
 
             var finishedGood = new UnifiedGoodBuilder(@this.Transaction).WithNonSerialisedDefaults(internalOrganisation).Build();
 
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithMaximumAllowedPrice(faker.Random.UInt());
-            @this.WithQuantity(faker.Random.UShort());
-            @this.WithProduct(finishedGood);
-            @this.WithRequiredByDate(@this.Transaction.Now().AddDays(7));
+            @this.WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithMaximumAllowedPrice(faker.Random.UInt())
+                .WithQuantity(faker.Random.UShort())
+                .WithProduct(finishedGood)
+                .WithRequiredByDate(@this.Transaction.Now().AddDays(7));
 
             return @this;
         }

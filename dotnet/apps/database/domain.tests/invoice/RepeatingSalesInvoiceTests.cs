@@ -66,7 +66,7 @@ namespace Allors.Database.Domain.Tests
             var weekDay = repeatingInvoice.NextExecutionDate.DayOfWeek.ToString();
             var daysOfWeek = new DaysOfWeek(this.Transaction).Extent();
             daysOfWeek.Filter.AddEquals(this.M.Enumeration.Name, weekDay);
-            var dayOfWeek = daysOfWeek.First;
+            var dayOfWeek = daysOfWeek.FirstOrDefault();
 
             repeatingInvoice.Frequency = new TimeFrequencies(this.Transaction).Week;
             repeatingInvoice.DayOfWeek = dayOfWeek;
@@ -131,7 +131,7 @@ namespace Allors.Database.Domain.Tests
             var weekDay = repeatingInvoice.NextExecutionDate.DayOfWeek.ToString();
             var daysOfWeek = new DaysOfWeek(this.Transaction).Extent();
             daysOfWeek.Filter.AddEquals(this.M.Enumeration.Name, weekDay);
-            var dayOfWeek = daysOfWeek.First;
+            var dayOfWeek = daysOfWeek.FirstOrDefault();
 
             repeatingInvoice.DayOfWeek = dayOfWeek;
 
@@ -177,7 +177,7 @@ namespace Allors.Database.Domain.Tests
             var weekDay = nextExecutionDate.DayOfWeek.ToString();
             var daysOfWeek = new DaysOfWeek(this.Transaction).Extent();
             daysOfWeek.Filter.AddEquals(this.M.Enumeration.Name, weekDay);
-            var dayOfWeek = daysOfWeek.First;
+            var dayOfWeek = daysOfWeek.FirstOrDefault();
 
             var repeatingInvoice = new RepeatingSalesInvoiceBuilder(this.Transaction)
                 .WithSource(invoice)
@@ -236,7 +236,7 @@ namespace Allors.Database.Domain.Tests
             var weekDay = nextExecutionDate.DayOfWeek.ToString();
             var daysOfWeek = new DaysOfWeek(this.Transaction).Extent();
             daysOfWeek.Filter.AddEquals(this.M.Enumeration.Name, weekDay);
-            var dayOfWeek = daysOfWeek.First;
+            var dayOfWeek = daysOfWeek.FirstOrDefault();
 
             var repeatingInvoice = new RepeatingSalesInvoiceBuilder(this.Transaction)
                 .WithSource(invoice)
@@ -305,7 +305,7 @@ namespace Allors.Database.Domain.Tests
 
             RepeatingSalesInvoices.Daily(this.Transaction);
 
-            Assert.Equal(countBefore, new SalesInvoices(this.Transaction).Extent().Count);
+            Assert.Equal(countBefore, new SalesInvoices(this.Transaction).Extent().Count());
             Assert.Equal(new DateTime(2018, 5, 14), repeatingInvoice.NextExecutionDate.Date);
             Assert.Empty(repeatingInvoice.SalesInvoices);
         }
@@ -362,7 +362,7 @@ namespace Allors.Database.Domain.Tests
 
             RepeatingSalesInvoices.Daily(this.Transaction);
 
-            Assert.Equal(countBefore + 1, new SalesInvoices(this.Transaction).Extent().Count);
+            Assert.Equal(countBefore + 1, new SalesInvoices(this.Transaction).Extent().Count());
             Assert.Equal(new DateTime(2018, 5, 21), repeatingInvoice.NextExecutionDate.Date);
             Assert.Single(repeatingInvoice.SalesInvoices);
         }
@@ -418,7 +418,7 @@ namespace Allors.Database.Domain.Tests
 
             RepeatingSalesInvoices.Daily(this.Transaction);
 
-            Assert.Equal(countBefore + 1, new SalesInvoices(this.Transaction).Extent().Count);
+            Assert.Equal(countBefore + 1, new SalesInvoices(this.Transaction).Extent().Count());
             Assert.Equal(new DateTime(2018, 6, 14), repeatingInvoice.NextExecutionDate.Date);
             Assert.Single(repeatingInvoice.SalesInvoices);
         }
@@ -476,7 +476,7 @@ namespace Allors.Database.Domain.Tests
 
             RepeatingSalesInvoices.Daily(this.Transaction);
 
-            Assert.Equal(countBefore + 1, new SalesInvoices(this.Transaction).Extent().Count);
+            Assert.Equal(countBefore + 1, new SalesInvoices(this.Transaction).Extent().Count());
             Assert.Equal(new DateTime(2018, 5, 21), repeatingInvoice.NextExecutionDate.Date);
             Assert.Equal(new DateTime(2018, 5, 14), repeatingInvoice.PreviousExecutionDate.Value.Date);
             Assert.Single(repeatingInvoice.SalesInvoices);
@@ -489,9 +489,9 @@ namespace Allors.Database.Domain.Tests
 
             RepeatingSalesInvoices.Daily(this.Transaction);
 
-            Assert.Equal(countBefore + 2, new SalesInvoices(this.Transaction).Extent().Count);
+            Assert.Equal(countBefore + 2, new SalesInvoices(this.Transaction).Extent().Count());
             Assert.Equal(new DateTime(2018, 5, 28), repeatingInvoice.NextExecutionDate.Date);
-            Assert.Equal(2, repeatingInvoice.SalesInvoices.Count);
+            Assert.Equal(2, repeatingInvoice.SalesInvoices.Count());
 
             var mayTwentyEight2018 = new DateTime(2018, 5, 28, 12, 0, 0, DateTimeKind.Utc);
             timeShift = mayTwentyEight2018 - DateTime.UtcNow;
@@ -501,10 +501,10 @@ namespace Allors.Database.Domain.Tests
 
             RepeatingSalesInvoices.Daily(this.Transaction);
 
-            Assert.Equal(countBefore + 3, new SalesInvoices(this.Transaction).Extent().Count);
+            Assert.Equal(countBefore + 3, new SalesInvoices(this.Transaction).Extent().Count());
             Assert.Equal(new DateTime(2018, 6, 4), repeatingInvoice.NextExecutionDate.Date);
             Assert.Equal(new DateTime(2018, 5, 28), repeatingInvoice.PreviousExecutionDate.Value.Date);
-            Assert.Equal(3, repeatingInvoice.SalesInvoices.Count);
+            Assert.Equal(3, repeatingInvoice.SalesInvoices.Count());
 
             var juneFour2018 = new DateTime(2018, 6, 4, 12, 0, 0, DateTimeKind.Utc);
             timeShift = juneFour2018 - DateTime.UtcNow;
@@ -514,10 +514,10 @@ namespace Allors.Database.Domain.Tests
 
             RepeatingSalesInvoices.Daily(this.Transaction);
 
-            Assert.Equal(countBefore + 4, new SalesInvoices(this.Transaction).Extent().Count);
+            Assert.Equal(countBefore + 4, new SalesInvoices(this.Transaction).Extent().Count());
             Assert.Equal(new DateTime(2018, 6, 4), repeatingInvoice.NextExecutionDate.Date);
             Assert.Equal(new DateTime(2018, 6, 4), repeatingInvoice.PreviousExecutionDate.Value.Date);
-            Assert.Equal(4, repeatingInvoice.SalesInvoices.Count);
+            Assert.Equal(4, repeatingInvoice.SalesInvoices.Count());
 
             var juneEleven2018 = new DateTime(2018, 6, 11, 12, 0, 0, DateTimeKind.Utc);
             timeShift = juneEleven2018 - DateTime.UtcNow;
@@ -527,10 +527,10 @@ namespace Allors.Database.Domain.Tests
 
             RepeatingSalesInvoices.Daily(this.Transaction);
 
-            Assert.Equal(countBefore + 4, new SalesInvoices(this.Transaction).Extent().Count);
+            Assert.Equal(countBefore + 4, new SalesInvoices(this.Transaction).Extent().Count());
             Assert.Equal(new DateTime(2018, 6, 4), repeatingInvoice.NextExecutionDate.Date);
             Assert.Equal(new DateTime(2018, 6, 4), repeatingInvoice.PreviousExecutionDate.Value.Date);
-            Assert.Equal(4, repeatingInvoice.SalesInvoices.Count);
+            Assert.Equal(4, repeatingInvoice.SalesInvoices.Count());
         }
     }
 

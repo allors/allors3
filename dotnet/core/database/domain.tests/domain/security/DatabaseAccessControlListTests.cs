@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Allors;
     using Database;
     using Domain;
@@ -68,7 +69,7 @@ namespace Allors.Database.Domain.Tests
                 var token = new SecurityTokenBuilder(session).Build();
                 organisation.AddSecurityToken(token);
 
-                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First);
+                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First());
                 token.AddAccessControl(accessControl);
 
                 this.Transaction.Derive();
@@ -106,7 +107,7 @@ namespace Allors.Database.Domain.Tests
                 var token = new SecurityTokenBuilder(session).Build();
                 organisation.AddSecurityToken(token);
 
-                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First);
+                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First());
                 token.AddAccessControl(accessControl);
 
                 Assert.False(this.Transaction.Derive(false).HasErrors);
@@ -147,7 +148,7 @@ namespace Allors.Database.Domain.Tests
                 organisation.AddSecurityToken(token);
 
                 var role = (Role)session.Instantiate(new Roles(this.Transaction).FindBy(this.M.Role.Name, "Role"));
-                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First);
+                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First());
                 token.AddAccessControl(accessControl);
 
                 Assert.False(this.Transaction.Derive(false).HasErrors);
@@ -188,7 +189,7 @@ namespace Allors.Database.Domain.Tests
                 organisation.AddSecurityToken(token);
 
                 var role = (Role)session.Instantiate(new Roles(this.Transaction).FindBy(this.M.Role.Name, "Role"));
-                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First);
+                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First());
                 token.AddAccessControl(accessControl);
 
                 Assert.False(this.Transaction.Derive(false).HasErrors);
@@ -223,7 +224,7 @@ namespace Allors.Database.Domain.Tests
                 var token = new SecurityTokenBuilder(session).Build();
                 organisation.AddSecurityToken(token);
 
-                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First);
+                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First());
                 token.AddAccessControl(accessControl);
 
                 this.Transaction.Derive();
@@ -265,7 +266,7 @@ namespace Allors.Database.Domain.Tests
                 organisation.AddSecurityToken(token);
 
                 var role = (Role)session.Instantiate(new Roles(this.Transaction).FindBy(this.M.Role.Name, "Role"));
-                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First);
+                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First());
                 token.AddAccessControl(accessControl);
 
                 Assert.False(this.Transaction.Derive(false).HasErrors);

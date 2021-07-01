@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
 
                 @this.Strategy.Transaction.Prefetch(@this.PrefetchPolicy);
 
-                if (!@this.ExistTimeSheetWhereWorker && (@this.AppsIsActiveEmployee(now) || @this.CurrentOrganisationContactRelationships.Count > 0))
+                if (!@this.ExistTimeSheetWhereWorker && (@this.AppsIsActiveEmployee(now) || @this.CurrentOrganisationContactRelationships.Any()))
                 {
                     new TimeSheetBuilder(@this.Strategy.Transaction).WithWorker(@this).Build();
                 }

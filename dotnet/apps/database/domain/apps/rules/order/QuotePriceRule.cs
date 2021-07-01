@@ -58,7 +58,7 @@ namespace Allors.Database.Domain
                 @this.TotalListPrice = 0;
                 @this.GrandTotal = 0;
 
-                foreach (QuoteItem quoteItem in @this.ValidQuoteItems)
+                foreach (var quoteItem in @this.ValidQuoteItems)
                 {
                     if (!quoteItem.ExistQuoteItemWhereQuotedWithFeature)
                     {
@@ -90,7 +90,7 @@ namespace Allors.Database.Domain
                 var miscellaneousVat = 0M;
                 var miscellaneousIrpf = 0M;
 
-                foreach (OrderAdjustment orderAdjustment in @this.OrderAdjustments)
+                foreach (var orderAdjustment in @this.OrderAdjustments)
                 {
                     if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
                     {

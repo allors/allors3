@@ -2220,14 +2220,14 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.AssignedVatRegime = vatRegime;
             this.Derive();
 
-            Assert.Equal(vatRegime.VatRates[0], invoiceItem.VatRate);
+            Assert.Equal(vatRegime.VatRates.ElementAt(0), invoiceItem.VatRate);
         }
 
         [Fact]
         public void ChangedSalesInvoiceInvoiceDateDeriveVatRate()
         {
             var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
-            vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            vatRegime.VatRates.ElementAt(0).ThroughDate = this.Transaction.Now().AddDays(-1).Date;
             this.Derive();
 
             var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
@@ -2299,7 +2299,7 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.AssignedIrpfRegime = irpfRegime;
             this.Derive();
 
-            Assert.Equal(irpfRegime.IrpfRates[0], invoiceItem.IrpfRate);
+            Assert.Equal(irpfRegime.IrpfRates.ElementAt(0), invoiceItem.IrpfRate);
         }
 
         [Fact]

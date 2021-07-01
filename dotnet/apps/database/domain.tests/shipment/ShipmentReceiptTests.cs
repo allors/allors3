@@ -36,7 +36,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var inventoryItem = good1.Part.InventoryItemsWherePart.First;
+            var inventoryItem = good1.Part.InventoryItemsWherePart.FirstOrDefault();
             var builder = new ShipmentReceiptBuilder(this.Transaction);
             builder.Build();
 
@@ -89,14 +89,14 @@ namespace Allors.Database.Domain.Tests
             order.QuickReceive();
             this.Transaction.Derive();
 
-            var shipment = (PurchaseShipment)item1.OrderShipmentsWhereOrderItem.First.ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (PurchaseShipment)item1.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
             shipment.Receive();
             this.Transaction.Derive();
 
             var receipt = item1.ShipmentReceiptsWhereOrderItem.Single();
 
             Assert.Equal(new Facilities(this.Transaction).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Transaction).Warehouse), receipt.InventoryItem.Facility);
-            Assert.Equal(part.InventoryItemsWherePart[0], receipt.InventoryItem);
+            Assert.Equal(part.InventoryItemsWherePart.ElementAt(0), receipt.InventoryItem);
         }
 
         [Fact]
@@ -121,14 +121,14 @@ namespace Allors.Database.Domain.Tests
             order.QuickReceive();
             this.Transaction.Derive();
 
-            var shipment = (PurchaseShipment)item1.OrderShipmentsWhereOrderItem.First.ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (PurchaseShipment)item1.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
             shipment.Receive();
             this.Transaction.Derive();
 
             var receipt = item1.ShipmentReceiptsWhereOrderItem.Single();
 
             Assert.Equal(new Facilities(this.Transaction).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Transaction).Warehouse), receipt.InventoryItem.Facility);
-            Assert.Equal(good1.Part.InventoryItemsWherePart[0], receipt.InventoryItem);
+            Assert.Equal(good1.Part.InventoryItemsWherePart.ElementAt(0), receipt.InventoryItem);
 
             this.Transaction.Rollback();
         }
@@ -136,7 +136,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenShipmentReceiptWhenDerivingThenInventoryItemQuantityOnHandIsUpdated()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.IsImmediatelyPicked = false;
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
@@ -156,7 +156,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var inventoryItem = good1.Part.InventoryItemsWherePart.First;
+            var inventoryItem = good1.Part.InventoryItemsWherePart.FirstOrDefault();
 
             var order1 = new SalesOrderBuilder(this.Transaction)
                 .WithBillToCustomer(customer)
@@ -235,7 +235,7 @@ namespace Allors.Database.Domain.Tests
             order.QuickReceive();
             this.Transaction.Derive();
 
-            var shipment = (PurchaseShipment)item1.OrderShipmentsWhereOrderItem.First.ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (PurchaseShipment)item1.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
             shipment.Receive();
             this.Transaction.Derive();
 
@@ -324,7 +324,7 @@ namespace Allors.Database.Domain.Tests
             shipmentReceipt.QuantityAccepted = 2;
             this.Derive();
 
-            var orderShipment = shipmentItem.OrderShipmentsWhereShipmentItem.First;
+            var orderShipment = shipmentItem.OrderShipmentsWhereShipmentItem.FirstOrDefault();
             Assert.Equal(2, orderShipment.Quantity);
         }
 
@@ -349,7 +349,7 @@ namespace Allors.Database.Domain.Tests
             var shipmentReceipt = new ShipmentReceiptBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).Build();
             this.Derive();
 
-            shipmentReceipt.Facility = this.InternalOrganisation.FacilitiesWhereOwner.First;
+            shipmentReceipt.Facility = this.InternalOrganisation.FacilitiesWhereOwner.FirstOrDefault();
             this.Derive();
 
             Assert.True(shipmentReceipt.ExistInventoryItem);
@@ -373,7 +373,7 @@ namespace Allors.Database.Domain.Tests
             shipment.AddShipmentItem(shipmentItem);
             this.Derive();
 
-            var shipmentReceipt = new ShipmentReceiptBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).WithFacility(this.InternalOrganisation.FacilitiesWhereOwner.First).Build();
+            var shipmentReceipt = new ShipmentReceiptBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).WithFacility(this.InternalOrganisation.FacilitiesWhereOwner.FirstOrDefault()).Build();
             this.Derive();
 
             shipmentItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
@@ -400,7 +400,7 @@ namespace Allors.Database.Domain.Tests
             shipment.AddShipmentItem(shipmentItem);
             this.Derive();
 
-            var shipmentReceipt = new ShipmentReceiptBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).WithFacility(this.InternalOrganisation.FacilitiesWhereOwner.First).Build();
+            var shipmentReceipt = new ShipmentReceiptBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithOrderItem(orderItem).WithFacility(this.InternalOrganisation.FacilitiesWhereOwner.FirstOrDefault()).Build();
             this.Derive();
 
             shipmentItem.Part = part;

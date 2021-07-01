@@ -34,10 +34,7 @@ namespace Allors.Database.Domain
                 {
                     foreach (var contactMechanismPurpose in @this.ContactPurposes)
                     {
-                        var partyContactMechanisms = @this.PartyWherePartyContactMechanism.PartyContactMechanisms;
-                        partyContactMechanisms.Filter.AddContains(this.M.PartyContactMechanism.ContactPurposes, (IObject)contactMechanismPurpose);
-
-                        foreach (PartyContactMechanism partyContactMechanismFromOrganisationWherePartyContactMechanism in partyContactMechanisms)
+                        foreach (var partyContactMechanismFromOrganisationWherePartyContactMechanism in @this.PartyWherePartyContactMechanism.PartyContactMechanisms.Where(v => v.ContactPurposes.Contains(contactMechanismPurpose)))
                         {
                             if (!partyContactMechanismFromOrganisationWherePartyContactMechanism.Equals(@this))
                             {

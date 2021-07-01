@@ -49,7 +49,7 @@ namespace Allors.Database.Domain
             this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Received;
             this.EstimatedArrivalDate = this.Transaction().Now().Date;
 
-            foreach (ShipmentItem shipmentItem in this.ShipmentItems)
+            foreach (var shipmentItem in this.ShipmentItems)
             {
                 shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Transaction()).Received;
 
@@ -65,7 +65,7 @@ namespace Allors.Database.Domain
                     }
                     else
                     {
-                        foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
+                        foreach (var orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
                         {
                             new ShipmentReceiptBuilder(this.Transaction())
                                 .WithQuantityAccepted(orderShipment.Quantity)

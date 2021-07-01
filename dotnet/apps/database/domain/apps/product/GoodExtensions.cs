@@ -15,9 +15,8 @@ namespace Allors.Database.Domain
             var m = @this.Strategy.Transaction.Database.Services().M;
             var settings = @this.Strategy.Transaction.GetSingleton().Settings;
 
-            var identifications = @this.ProductIdentifications;
-            identifications.Filter.AddEquals(m.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Transaction).Good);
-            var goodIdentification = identifications.FirstOrDefault();
+            var good = new ProductIdentificationTypes(@this.Strategy.Transaction).Good;
+            var goodIdentification = @this.ProductIdentifications.FirstOrDefault(v => good.Equals(v.ProductIdentificationType));
 
             if (goodIdentification == null && settings.UseProductNumberCounter)
             {

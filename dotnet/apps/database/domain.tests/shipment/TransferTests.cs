@@ -6,6 +6,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Xunit;
 
     public class TransferRuleTests : DomainTest, IClassFixture<Fixture>
@@ -16,25 +17,25 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipToPartyDeriveShipToAddress()
         {
             var shipment = new TransferBuilder(this.Transaction)
-                .WithShipToParty(this.InternalOrganisation.ActiveCustomers.First)
+                .WithShipToParty(this.InternalOrganisation.ActiveCustomers.FirstOrDefault())
                 .Build();
             this.Derive();
 
-            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipToAddress);
+            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First().ShippingAddress, shipment.ShipToAddress);
         }
 
         [Fact]
         public void ChangedShipToAddressDeriveShipToAddress()
         {
             var shipment = new TransferBuilder(this.Transaction)
-                .WithShipToParty(this.InternalOrganisation.ActiveCustomers.First)
+                .WithShipToParty(this.InternalOrganisation.ActiveCustomers.FirstOrDefault())
                 .Build();
             this.Derive();
 
             shipment.RemoveShipToAddress();
             this.Derive();
 
-            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipToAddress);
+            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First().ShippingAddress, shipment.ShipToAddress);
         }
 
         [Fact]

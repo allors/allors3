@@ -34,7 +34,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Rollback();
 
-            builder.WithBilledFrom(this.InternalOrganisation.ActiveSuppliers.First);
+            builder.WithBilledFrom(this.InternalOrganisation.ActiveSuppliers.FirstOrDefault());
             builder.Build();
 
             Assert.False(this.Derive().HasErrors);
@@ -265,7 +265,7 @@ namespace Allors.Database.Domain.Tests
             purchaseInvoice.AddPurchaseInvoiceItem(invoiceItem);
             this.Derive();
 
-            new OrderItemBillingBuilder(this.Transaction).WithOrderItem(purchaseOrder.PurchaseOrderItems[0]).WithInvoiceItem(invoiceItem).Build();
+            new OrderItemBillingBuilder(this.Transaction).WithOrderItem(purchaseOrder.PurchaseOrderItems.ElementAt(0)).WithInvoiceItem(invoiceItem).Build();
             this.Derive();
 
             Assert.Contains(purchaseOrder, purchaseInvoice.PurchaseOrders);
@@ -275,7 +275,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedInvoiceDateDeriveVatRate()
         {
             var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
-            vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            vatRegime.VatRates.ElementAt(0).ThroughDate = this.Transaction.Now().AddDays(-1).Date;
             this.Derive();
 
             var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
@@ -557,7 +557,7 @@ namespace Allors.Database.Domain.Tests
             purchaseInvoice.Approve();
             this.Derive();
 
-            Assert.Equal(purchaseInvoice.BilledTo, purchaseInvoice.PurchaseInvoiceItems[0].SerialisedItem.Buyer);
+            Assert.Equal(purchaseInvoice.BilledTo, purchaseInvoice.PurchaseInvoiceItems.ElementAt(0).SerialisedItem.Buyer);
         }
 
         [Fact]
@@ -574,7 +574,7 @@ namespace Allors.Database.Domain.Tests
             purchaseInvoice.Approve();
             this.Derive();
 
-            Assert.Equal(purchaseInvoice.PurchaseInvoiceItems[0].TotalExVat, purchaseInvoice.PurchaseInvoiceItems[0].SerialisedItem.PurchasePrice);
+            Assert.Equal(purchaseInvoice.PurchaseInvoiceItems.ElementAt(0).TotalExVat, purchaseInvoice.PurchaseInvoiceItems.ElementAt(0).SerialisedItem.PurchasePrice);
         }
     }
 
@@ -589,14 +589,14 @@ namespace Allors.Database.Domain.Tests
 
             var supplierOffering = new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part)
-                .WithSupplier(this.InternalOrganisation.ActiveSuppliers[0])
+                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.ElementAt(0))
                 .WithPrice(1)
                 .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
             var invoice = new PurchaseInvoiceBuilder(this.Transaction)
                 .WithPurchaseInvoiceState(new PurchaseInvoiceStates(this.Transaction).Cancelled)
-                .WithBilledFrom(this.InternalOrganisation.ActiveSuppliers[0])
+                .WithBilledFrom(this.InternalOrganisation.ActiveSuppliers.ElementAt(0))
                 .WithInvoiceDate(this.Transaction.Now())
                 .Build();
             this.Derive();
@@ -622,10 +622,10 @@ namespace Allors.Database.Domain.Tests
             Assert.True(invoice.TotalIncVat > 0);
             var totalIncVatBefore = invoice.TotalIncVat;
 
-            invoice.PurchaseInvoiceItems.First.CancelFromInvoice();
+            invoice.PurchaseInvoiceItems.First().CancelFromInvoice();
             this.Transaction.Derive();
 
-            Assert.Equal(invoice.TotalIncVat, totalIncVatBefore - invoice.PurchaseInvoiceItems.First.TotalIncVat);
+            Assert.Equal(invoice.TotalIncVat, totalIncVatBefore - invoice.PurchaseInvoiceItems.First().TotalIncVat);
         }
 
         [Fact]
@@ -635,12 +635,12 @@ namespace Allors.Database.Domain.Tests
 
             var supplierOffering = new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(part)
-                .WithSupplier(this.InternalOrganisation.ActiveSuppliers[0])
+                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.ElementAt(0))
                 .WithPrice(1)
                 .WithFromDate(this.Transaction.Now().AddDays(-1))
                 .Build();
 
-            var invoice = new PurchaseInvoiceBuilder(this.Transaction).WithBilledFrom(this.InternalOrganisation.ActiveSuppliers[0]).WithInvoiceDate(this.Transaction.Now()).Build();
+            var invoice = new PurchaseInvoiceBuilder(this.Transaction).WithBilledFrom(this.InternalOrganisation.ActiveSuppliers.ElementAt(0)).WithInvoiceDate(this.Transaction.Now()).Build();
             this.Derive();
 
             var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).WithPart(part).WithQuantity(1).Build();
@@ -698,7 +698,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesInvoiceItemPartCalculatePrice()
         {
-            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var supplier = this.InternalOrganisation.ActiveSuppliers.ElementAt(0);
             var part1 = new UnifiedGoodBuilder(this.Transaction).Build();
             var part2 = new UnifiedGoodBuilder(this.Transaction).Build();
 
@@ -734,7 +734,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedBilledFromCalculatePrice()
         {
-            var supplier1 = this.InternalOrganisation.ActiveSuppliers[0];
+            var supplier1 = this.InternalOrganisation.ActiveSuppliers.ElementAt(0);
             var supplier2 = this.InternalOrganisation.CreateSupplier(this.Transaction.Faker());
             var part = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Derive();
@@ -771,7 +771,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedRoleSalesInvoiceItemDiscountAdjustmentsCalculatePrice()
         {
-            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var supplier = this.InternalOrganisation.ActiveSuppliers.ElementAt(0);
             var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
             new SupplierOfferingBuilder(this.Transaction)
@@ -800,7 +800,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPurchaseInvoiceItemDiscountAdjustmentPercentageCalculatePrice()
         {
-            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var supplier = this.InternalOrganisation.ActiveSuppliers.ElementAt(0);
             var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
             new SupplierOfferingBuilder(this.Transaction)
@@ -834,7 +834,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPurchaseInvoiceItemDiscountAdjustmentAmountCalculatePrice()
         {
-            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var supplier = this.InternalOrganisation.ActiveSuppliers.ElementAt(0);
             var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
             new SupplierOfferingBuilder(this.Transaction)
@@ -868,7 +868,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPurchaseInvoiceItemSurchargeAdjustmentsCalculatePrice()
         {
-            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var supplier = this.InternalOrganisation.ActiveSuppliers.ElementAt(0);
             var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
             new SupplierOfferingBuilder(this.Transaction)
@@ -897,7 +897,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPurchaseInvoiceItemSurchargeAdjustmentPercentageCalculatePrice()
         {
-            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var supplier = this.InternalOrganisation.ActiveSuppliers.ElementAt(0);
             var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
             new SupplierOfferingBuilder(this.Transaction)
@@ -931,7 +931,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPurchaseInvoiceItemSurchargeAdjustmentAmountCalculatePrice()
         {
-            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var supplier = this.InternalOrganisation.ActiveSuppliers.ElementAt(0);
             var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
             new SupplierOfferingBuilder(this.Transaction)
@@ -965,7 +965,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedDiscountAdjustmentsCalculatePrice()
         {
-            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var supplier = this.InternalOrganisation.ActiveSuppliers.ElementAt(0);
             var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
             new SupplierOfferingBuilder(this.Transaction)
@@ -994,7 +994,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedDiscountAdjustmentPercentageCalculatePrice()
         {
-            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var supplier = this.InternalOrganisation.ActiveSuppliers.ElementAt(0);
             var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
             new SupplierOfferingBuilder(this.Transaction)
@@ -1028,7 +1028,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedDiscountAdjustmentAmountCalculatePrice()
         {
-            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var supplier = this.InternalOrganisation.ActiveSuppliers.ElementAt(0);
             var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
             new SupplierOfferingBuilder(this.Transaction)
@@ -1062,7 +1062,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSurchargeAdjustmentsCalculatePrice()
         {
-            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var supplier = this.InternalOrganisation.ActiveSuppliers.ElementAt(0);
             var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
             new SupplierOfferingBuilder(this.Transaction)
@@ -1091,7 +1091,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSurchargeAdjustmentPercentageCalculatePrice()
         {
-            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var supplier = this.InternalOrganisation.ActiveSuppliers.ElementAt(0);
             var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
             new SupplierOfferingBuilder(this.Transaction)
@@ -1125,7 +1125,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSurchargeAdjustmentAmountCalculatePrice()
         {
-            var supplier = this.InternalOrganisation.ActiveSuppliers[0];
+            var supplier = this.InternalOrganisation.ActiveSuppliers.ElementAt(0);
             var part = new UnifiedGoodBuilder(this.Transaction).Build();
 
             new SupplierOfferingBuilder(this.Transaction)
@@ -1160,7 +1160,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseInvoiceInvoiceDateDeriveVatRate()
         {
             var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
-            vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            vatRegime.VatRates.ElementAt(0).ThroughDate = this.Transaction.Now().AddDays(-1).Date;
             this.Derive();
 
             var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();

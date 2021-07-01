@@ -6,6 +6,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Xunit;
 
     public class ShipmentPackageTests : DomainTest, IClassFixture<Fixture>
@@ -56,7 +57,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedItemIssuanceShipmentItemDeriveDocuments()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.AutoGenerateShipmentPackage = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
             this.Derive();
@@ -87,7 +88,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPickListPickListStateDeriveDocuments()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.AutoGenerateShipmentPackage = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).Build();
             this.Derive();

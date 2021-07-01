@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
                 @this.ValidInvoiceItems = @this.PurchaseInvoiceItems.Where(v => v.IsValid).ToArray();
 
                 //Sync
-                foreach (PurchaseInvoiceItem invoiceItem in @this.PurchaseInvoiceItems)
+                foreach (var invoiceItem in @this.PurchaseInvoiceItems)
                 {
                     //invoiceItem.Sync(purchaseInvoice);
                     invoiceItem.SyncedInvoice = @this;

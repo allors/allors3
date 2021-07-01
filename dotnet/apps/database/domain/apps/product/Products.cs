@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System;
+    using System.Linq;
 
     public partial class Products
     {
@@ -24,7 +25,7 @@ namespace Allors.Database.Domain
             var baseprices = new PriceComponent[0];
             if (product.ExistBasePrices)
             {
-                baseprices = product.BasePrices;
+                baseprices = product.BasePrices.ToArray();
             }
 
             var party = salesOrder != null ? salesOrder.ShipToCustomer : salesInvoice?.BillToCustomer;
@@ -32,32 +33,27 @@ namespace Allors.Database.Domain
             foreach (BasePrice priceComponent in baseprices)
             {
                 if (priceComponent.FromDate <= date &&
-                    (!priceComponent.ExistThroughDate || priceComponent.ThroughDate >= date))
-                {
-                    if (PriceComponents.AppsIsApplicable(new PriceComponents.IsApplicable
+                    (!priceComponent.ExistThroughDate || priceComponent.ThroughDate >= date) &&
+                    PriceComponents.AppsIsApplicable(new PriceComponents.IsApplicable
                     {
                         PriceComponent = priceComponent,
                         Customer = party,
                         Product = product,
                         SalesOrder = salesOrder,
                         SalesInvoice = salesInvoice,
-                    }))
+                    }) &&
+                    priceComponent.ExistPrice)
+                {
+                    if (productBasePrice == 0 || priceComponent.Price < productBasePrice)
                     {
-                        if (priceComponent.ExistPrice)
-                        {
-                            if (productBasePrice == 0 || priceComponent.Price < productBasePrice)
-                            {
-                                productBasePrice = priceComponent.Price ?? 0;
-                            }
-                        }
+                        productBasePrice = priceComponent.Price ?? 0;
                     }
                 }
             }
 
             var currentPriceComponents = new PriceComponents(product.Strategy.Transaction).CurrentPriceComponents(date);
-            var priceComponents = product.GetPriceComponents(currentPriceComponents);
 
-            foreach (var priceComponent in priceComponents)
+            foreach (var priceComponent in product.GetPriceComponents(currentPriceComponents))
             {
                 if (priceComponent.Strategy.Class.Equals(m.DiscountComponent) || priceComponent.Strategy.Class.Equals(m.SurchargeComponent))
                 {

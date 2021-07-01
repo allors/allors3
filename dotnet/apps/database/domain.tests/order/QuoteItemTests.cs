@@ -79,7 +79,7 @@ namespace Allors.Database.Domain.Tests
             quote.AssignedVatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
             this.Derive();
 
-            Assert.Equal(quoteItem.VatRate, quote.AssignedVatRegime.VatRates[0]);
+            Assert.Equal(quoteItem.VatRate, quote.AssignedVatRegime.VatRates.ElementAt(0));
         }
 
         [Fact]
@@ -124,14 +124,14 @@ namespace Allors.Database.Domain.Tests
             quote.AssignedIrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
             this.Derive();
 
-            Assert.Equal(quoteItem.IrpfRate, quote.AssignedIrpfRegime.IrpfRates[0]);
+            Assert.Equal(quoteItem.IrpfRate, quote.AssignedIrpfRegime.IrpfRates.ElementAt(0));
         }
 
         [Fact]
         public void ChangedQuoteIssueDateDeriveVatRate()
         {
             var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
-            vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            vatRegime.VatRates.ElementAt(0).ThroughDate = this.Transaction.Now().AddDays(-1).Date;
             this.Derive();
 
             var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
@@ -703,7 +703,7 @@ namespace Allors.Database.Domain.Tests
             var theBad = new CustomOrganisationClassificationBuilder(this.Transaction).WithName("bad customer").Build();
             var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
+            var customer1 = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             customer1.AddPartyClassification(theGood);
 
             var customer2 = this.InternalOrganisation.ActiveCustomers.Last();

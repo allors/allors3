@@ -6,6 +6,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Xunit;
 
     public class DropShipmentRuleTests : DomainTest, IClassFixture<Fixture>
@@ -15,9 +16,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedStoreDeriveShipmentNumber()
         {
-            var store = this.InternalOrganisation.StoresWhereInternalOrganisation.First;
+            var store = this.InternalOrganisation.StoresWhereInternalOrganisation.FirstOrDefault();
             store.RemoveDropShipmentNumberPrefix();
-            var number = this.InternalOrganisation.StoresWhereInternalOrganisation.First.DropShipmentNumberCounter.Value;
+            var number = this.InternalOrganisation.StoresWhereInternalOrganisation.First().DropShipmentNumberCounter.Value;
 
             var shipment = new DropShipmentBuilder(this.Transaction).WithStore(store).Build();
             this.Derive();
@@ -28,7 +29,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedStoreDeriveSortableShipmentNumber()
         {
-            var store = this.InternalOrganisation.StoresWhereInternalOrganisation.First;
+            var store = this.InternalOrganisation.StoresWhereInternalOrganisation.FirstOrDefault();
             var number = store.DropShipmentNumberCounter.Value;
 
             var shipment = new DropShipmentBuilder(this.Transaction).WithStore(store).Build();
@@ -41,25 +42,25 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipToPartyDeriveShipToAddress()
         {
             var shipment = new DropShipmentBuilder(this.Transaction)
-                .WithShipToParty(this.InternalOrganisation.ActiveCustomers.First)
+                .WithShipToParty(this.InternalOrganisation.ActiveCustomers.FirstOrDefault())
                 .Build();
             this.Derive();
 
-            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipToAddress);
+            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First().ShippingAddress, shipment.ShipToAddress);
         }
 
         [Fact]
         public void ChangedShipToAddressDeriveShipToAddress()
         {
             var shipment = new DropShipmentBuilder(this.Transaction)
-                .WithShipToParty(this.InternalOrganisation.ActiveCustomers.First)
+                .WithShipToParty(this.InternalOrganisation.ActiveCustomers.FirstOrDefault())
                 .Build();
             this.Derive();
 
             shipment.RemoveShipToAddress();
             this.Derive();
 
-            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipToAddress);
+            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First().ShippingAddress, shipment.ShipToAddress);
         }
 
         [Fact]

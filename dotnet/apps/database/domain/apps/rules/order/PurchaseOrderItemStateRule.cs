@@ -77,7 +77,7 @@ namespace Allors.Database.Domain
                     if (@this.IsReceivable)
                     {
                         var quantityReceived = 0M;
-                        foreach (ShipmentReceipt shipmentReceipt in @this.ShipmentReceiptsWhereOrderItem)
+                        foreach (var shipmentReceipt in @this.ShipmentReceiptsWhereOrderItem)
                         {
                             quantityReceived += shipmentReceipt.QuantityAccepted;
                         }

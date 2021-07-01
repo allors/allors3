@@ -14,19 +14,19 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var faker = @this.Transaction.Faker();
 
-            var customer = faker.Random.ListItem(internalOrganisation.ActiveCustomers);
+            var customer = faker.Random.ListItem(internalOrganisation.ActiveCustomers.ToArray());
 
-            @this.WithContactPerson(customer.CurrentContacts.FirstOrDefault());
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithIssuer(internalOrganisation);
-            @this.WithIssueDate(@this.Transaction.Now().AddDays(-2));
-            @this.WithValidFromDate(@this.Transaction.Now().AddDays(-2));
-            @this.WithValidThroughDate(@this.Transaction.Now().AddDays(2));
-            @this.WithRequiredResponseDate(@this.Transaction.Now().AddDays(2));
-            @this.WithReceiver(customer);
-            @this.WithFullfillContactMechanism(customer.GeneralCorrespondence);
+            @this.WithContactPerson(customer.CurrentContacts.FirstOrDefault())
+                .WithDescription(faker.Lorem.Sentence())
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithIssuer(internalOrganisation)
+                .WithIssueDate(@this.Transaction.Now().AddDays(-2))
+                .WithValidFromDate(@this.Transaction.Now().AddDays(-2))
+                .WithValidThroughDate(@this.Transaction.Now().AddDays(2))
+                .WithRequiredResponseDate(@this.Transaction.Now().AddDays(2))
+                .WithReceiver(customer)
+                .WithFullfillContactMechanism(customer.GeneralCorrespondence);
 
             return @this;
         }

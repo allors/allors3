@@ -142,8 +142,8 @@ namespace Allors
                 quoteCounterValue: 0,
                 orderCounterValue: 0,
                 purchaseOrderCounterValue: 0,
-                purchaseInvoiceCounterValue: 0,
                 invoiceCounterValue: 0,
+                purchaseInvoiceCounterValue: 0,
                 purchaseOrderNeedsApproval: false,
                 purchaseOrderApprovalThresholdLevel1: null,
                 purchaseOrderApprovalThresholdLevel2: null,
@@ -159,7 +159,7 @@ namespace Allors
             // Give Administrator access
             new EmploymentBuilder(@this.Transaction()).WithEmployee(administrator).WithEmployer(allors).Build();
 
-            @this.Settings.DefaultFacility = allors.FacilitiesWhereOwner.First;
+            @this.Settings.DefaultFacility = allors.FacilitiesWhereOwner.FirstOrDefault();
 
             var allorsEmployee1 = allors.CreateEmployee("letmein", faker);
             var allorsEmployee2 = allors.CreateEmployee("letmein", faker);
@@ -206,7 +206,7 @@ namespace Allors
 
             new InventoryItemTransactionBuilder(@this.Transaction())
                 .WithSerialisedItem(serialisedItem)
-                .WithFacility(allors.FacilitiesWhereOwner.First)
+                .WithFacility(allors.FacilitiesWhereOwner.FirstOrDefault())
                 .WithQuantity(1)
                 .WithReason(new InventoryTransactionReasons(@this.Transaction()).IncomingShipment)
                 .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(@this.Transaction()).Good)
@@ -265,8 +265,8 @@ namespace Allors
                     .WithDescription($"Meeting {i}")
                     .WithSubject($"meeting {i}")
                     .WithEventPurpose(new CommunicationEventPurposes(@this.Transaction()).Meeting)
-                    .WithFromParty(allors.CurrentContacts.First)
-                    .WithToParty(b2BCustomer.CurrentContacts.First)
+                    .WithFromParty(allors.CurrentContacts.FirstOrDefault())
+                    .WithToParty(b2BCustomer.CurrentContacts.FirstOrDefault())
                     .WithOwner(administrator)
                     .WithActualStart(@this.Transaction().Now())
                     .Build();
@@ -274,8 +274,8 @@ namespace Allors
                 new EmailCommunicationBuilder(@this.Transaction())
                     .WithDescription($"Email {i}")
                     .WithSubject($"email {i}")
-                    .WithFromParty(allors.CurrentContacts.First)
-                    .WithToParty(b2BCustomer.CurrentContacts.First)
+                    .WithFromParty(allors.CurrentContacts.FirstOrDefault())
+                    .WithToParty(b2BCustomer.CurrentContacts.FirstOrDefault())
                     .WithFromEmail(allors.GeneralEmail)
                     .WithToEmail(email2)
                     .WithEventPurpose(new CommunicationEventPurposes(@this.Transaction()).Meeting)
@@ -287,7 +287,7 @@ namespace Allors
                     .WithDescription($"Letter {i}")
                     .WithSubject($"letter {i}")
                     .WithFromParty(administrator)
-                    .WithToParty(b2BCustomer.CurrentContacts.First)
+                    .WithToParty(b2BCustomer.CurrentContacts.FirstOrDefault())
                     .WithEventPurpose(new CommunicationEventPurposes(@this.Transaction()).Meeting)
                     .WithOwner(administrator)
                     .WithActualStart(@this.Transaction().Now())
@@ -297,7 +297,7 @@ namespace Allors
                     .WithDescription($"Phone {i}")
                     .WithSubject($"phone {i}")
                     .WithFromParty(administrator)
-                    .WithToParty(b2BCustomer.CurrentContacts.First)
+                    .WithToParty(b2BCustomer.CurrentContacts.FirstOrDefault())
                     .WithEventPurpose(new CommunicationEventPurposes(@this.Transaction()).Meeting)
                     .WithOwner(administrator)
                     .WithActualStart(@this.Transaction().Now())
@@ -386,7 +386,7 @@ line2")
                 var salesInvoice = new SalesInvoiceBuilder(@this.Transaction())
                     .WithBilledFrom(allors)
                     .WithBillToCustomer(b2BCustomer)
-                    .WithBillToContactPerson(b2BCustomer.CurrentContacts.First)
+                    .WithBillToContactPerson(b2BCustomer.CurrentContacts.FirstOrDefault())
                     .WithAssignedBillToContactMechanism(b2BCustomer.BillingAddress)
                     .WithSalesInvoiceItem(salesInvoiceItem1)
                     .WithSalesInvoiceItem(salesInvoiceItem2)
@@ -415,7 +415,7 @@ line2")
 
             for (var i = 0; i < 4; i++)
             {
-                var supplier = faker.Random.ListItem(allors.ActiveSuppliers);
+                var supplier = faker.Random.ListItem(allors.ActiveSuppliers.ToArray());
 
                 var purchaseInvoiceItem1 = new PurchaseInvoiceItemBuilder(@this.Transaction())
                     .WithDescription("first item")
@@ -457,7 +457,7 @@ line2")
                 var purchaseOrderItem1 = new PurchaseOrderItemBuilder(@this.Transaction())
                     .WithDescription("first purchase order item")
                     .WithPart(nonSerialisedPart1)
-                    .WithStoredInFacility(allors.FacilitiesWhereOwner.First)
+                    .WithStoredInFacility(allors.FacilitiesWhereOwner.FirstOrDefault())
                     .WithQuantityOrdered(1)
                     .Build();
 
@@ -549,7 +549,7 @@ line2")
             allorsEmployee2.TimeSheetWhereWorker.AddTimeEntry(timeEntryTomorrow2);
 
             var po = new PurchaseOrders(@this.Transaction()).Extent().First;
-            foreach (PurchaseOrderItem purchaseOrderItem in po.PurchaseOrderItems)
+            foreach (var purchaseOrderItem in po.PurchaseOrderItems)
             {
                 new WorkEffortPurchaseOrderItemAssignmentBuilder(@this.Transaction())
                     .WithPurchaseOrderItem(purchaseOrderItem)

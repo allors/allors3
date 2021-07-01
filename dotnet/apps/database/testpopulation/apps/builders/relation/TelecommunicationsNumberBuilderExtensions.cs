@@ -13,10 +13,10 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var faker = @this.Transaction.Faker();
 
-            @this.WithCountryCode(faker.Phone.PhoneNumber("####"));
-            @this.WithContactNumber(faker.Phone.PhoneNumber("## ## ##"));
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithContactMechanismType(faker.Random.ListItem(@this.Transaction.Extent<ContactMechanismType>()));
+            @this.WithCountryCode(faker.Phone.PhoneNumber("####"))
+                .WithContactNumber(faker.Phone.PhoneNumber("## ## ##"))
+                .WithDescription(faker.Lorem.Sentence())
+                .WithContactMechanismType(faker.Random.ListItem(@this.Transaction.Extent<ContactMechanismType>()));
 
             return @this;
         }

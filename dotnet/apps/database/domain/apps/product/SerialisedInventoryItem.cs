@@ -5,6 +5,8 @@
 
 namespace Allors.Database.Domain
 {
+    using System.Linq;
+
     public partial class SerialisedInventoryItem
     {
         // TODO: Cache

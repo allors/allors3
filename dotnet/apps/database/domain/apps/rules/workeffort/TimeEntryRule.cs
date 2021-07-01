@@ -205,7 +205,7 @@ namespace Allors.Database.Domain
                     @this.BillingAmount = Rounder.RoundDecimal((decimal)(@this.BillingRate * billableTimeInTimeEntryRateFrequency), 2);
 
                     var timeSpendInTimeEntryRateFrequency = Rounder.RoundDecimal((decimal)frequencies.Minute.ConvertToFrequency(@this.AmountOfTimeInMinutes, @this.BillingFrequency), 2);
-                    @this.Cost = Rounder.RoundDecimal((decimal)(costRate * timeSpendInTimeEntryRateFrequency), 2);
+                    @this.Cost = Rounder.RoundDecimal(costRate * timeSpendInTimeEntryRateFrequency, 2);
                 }
 
             }

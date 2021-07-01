@@ -23,9 +23,8 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<NonUnifiedPart>())
             {
-                var identifications = @this.ProductIdentifications;
-                identifications.Filter.AddEquals(this.M.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Transaction).Part);
-                var partIdentification = identifications.FirstOrDefault();
+                var part = new ProductIdentificationTypes(@this.Strategy.Transaction).Part;
+                var partIdentification = @this.ProductIdentifications.FirstOrDefault(v => Equals(part, v.ProductIdentificationType));
 
                 @this.ProductNumber = partIdentification?.Identification;
             }

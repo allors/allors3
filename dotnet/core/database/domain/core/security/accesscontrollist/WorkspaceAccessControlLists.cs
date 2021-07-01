@@ -50,7 +50,7 @@ namespace Allors.Database.Domain
             var accessControlCache = database.Services().AccessControlCache;
 
             List<AccessControl> misses = null;
-            foreach (AccessControl accessControl in this.User.AccessControlsWhereEffectiveUser)
+            foreach (var accessControl in this.User.AccessControlsWhereEffectiveUser)
             {
                 var effectivePermissions = accessControlCache.GetPermissions(this.WorkspaceName, accessControl.Id);
                 if (effectivePermissions == null)

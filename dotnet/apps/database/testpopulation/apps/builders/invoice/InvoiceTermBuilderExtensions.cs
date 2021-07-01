@@ -17,9 +17,9 @@ namespace Allors.Database.Domain.TestPopulation
             var allInvoiceItemTypes = @this.Transaction.Extent<InvoiceTermType>().ToList();
             var invoiceItemTypes = allInvoiceItemTypes.Except(allInvoiceItemTypes.Where(v => v.UniqueId == InvoiceTermTypes.PaymentNetDaysId).ToList()).ToList();
 
-            @this.WithTermValue(faker.Lorem.Sentence());
-            @this.WithTermType(faker.Random.ListItem(invoiceItemTypes));
-            @this.WithDescription(faker.Lorem.Sentence());
+            @this.WithTermValue(faker.Lorem.Sentence())
+                .WithTermType(faker.Random.ListItem(invoiceItemTypes))
+                .WithDescription(faker.Lorem.Sentence());
 
             return @this;
         }
@@ -28,9 +28,9 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var faker = @this.Transaction.Faker();
 
-            @this.WithTermValue(faker.Random.Int(7, 30).ToString());
-            @this.WithTermType(new InvoiceTermTypes(@this.Transaction).PaymentNetDays);
-            @this.WithDescription(faker.Lorem.Sentence());
+            @this.WithTermValue(faker.Random.Int(7, 30).ToString())
+                .WithTermType(new InvoiceTermTypes(@this.Transaction).PaymentNetDays)
+                .WithDescription(faker.Lorem.Sentence());
 
             return @this;
         }

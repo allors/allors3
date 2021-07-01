@@ -49,7 +49,7 @@ namespace Allors.Database.Domain
                 @this.ShippingInquiriesFax = null;
                 @this.ShippingAddress = null;
 
-                foreach (PartyContactMechanism partyContactMechanism in @this.PartyContactMechanisms)
+                foreach (var partyContactMechanism in @this.PartyContactMechanisms)
                 {
                     if (partyContactMechanism.UseAsDefault)
                     {

@@ -28,11 +28,7 @@ namespace Allors.Database.Domain
                 return false;
             }
 
-            var m = @this.Strategy.Transaction.Database.Services().M;
-
-            var customerRelationships = @this.CustomerRelationshipsWhereCustomer;
-            customerRelationships.Filter.AddEquals(m.CustomerRelationship.InternalOrganisation, internalOrganisation);
-
+            var customerRelationships = @this.CustomerRelationshipsWhereCustomer.Where(v => Equals(internalOrganisation, v.InternalOrganisation));
             return customerRelationships.Any(relationship => relationship.FromDate.Date <= date
                                                              && (!relationship.ExistThroughDate || relationship.ThroughDate >= date));
         }
@@ -41,23 +37,23 @@ namespace Allors.Database.Domain
         {
             var m = @this.Strategy.Transaction.Database.Services().M;
 
-            var shipments = @this.ShipmentsWhereShipToParty;
+            var shipments = @this.ShipmentsWhereShipToParty.OfType<CustomerShipment>();
             if (address != null)
             {
-                shipments.Filter.AddEquals(m.Shipment.ShipToAddress, address);
+                shipments = shipments.Where(v => Equals(address, v.ShipToAddress));
             }
 
             if (store != null)
             {
-                shipments.Filter.AddEquals(m.Shipment.Store, store);
+                shipments = shipments.Where(v => Equals(store, v.Store));
             }
 
             if (shipmentMethod != null)
             {
-                shipments.Filter.AddEquals(m.Shipment.ShipmentMethod, shipmentMethod);
+                shipments = shipments.Where(v => Equals(shipmentMethod, v.ShipmentMethod));
             }
 
-            foreach (CustomerShipment shipment in shipments)
+            foreach (var shipment in shipments)
             {
                 if (shipment.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Transaction).Created) ||
                     shipment.ShipmentState.Equals(new ShipmentStates(@this.Strategy.Transaction).Picking) ||

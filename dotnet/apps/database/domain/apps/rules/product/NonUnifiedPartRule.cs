@@ -42,7 +42,7 @@ namespace Allors.Database.Domain
 
                 builder.Append(@this.Name);
 
-                foreach (LocalisedText localisedText in @this.LocalisedNames)
+                foreach (var localisedText in @this.LocalisedNames)
                 {
                     builder.Append(string.Join(", ", localisedText.Text));
                 }

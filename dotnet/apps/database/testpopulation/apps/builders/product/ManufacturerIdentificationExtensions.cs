@@ -12,8 +12,8 @@ namespace Allors.Database.Domain.TestPopulation
         public static ManufacturerIdentificationBuilder WithDefaults(this ManufacturerIdentificationBuilder @this)
         {
             var faker = @this.Transaction.Faker();
-            @this.WithIdentification(faker.Random.AlphaNumeric(9));
-            @this.WithProductIdentificationType(new ProductIdentificationTypes(@this.Transaction).Manufacturer);
+            @this.WithIdentification(faker.Random.AlphaNumeric(9))
+                .WithProductIdentificationType(new ProductIdentificationTypes(@this.Transaction).Manufacturer);
             return @this;
         }
     }

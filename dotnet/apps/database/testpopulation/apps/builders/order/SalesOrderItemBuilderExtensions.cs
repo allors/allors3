@@ -22,17 +22,17 @@ namespace Allors.Database.Domain.TestPopulation
 
             var unifiedGoodExtent = @this.Transaction.Extent<UnifiedGood>();
             unifiedGoodExtent.Filter.AddEquals(m.UnifiedGood.InventoryItemKind, new InventoryItemKinds(@this.Transaction).Serialised);
-            var serializedProduct = unifiedGoodExtent.First();
+            var serializedProduct = unifiedGoodExtent.FirstOrDefault();
 
-            @this.WithDescription(faker.Lorem.Sentences(2));
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithInvoiceItemType(faker.Random.ListItem(otherInvoiceItemTypes));
-            @this.WithProduct(serializedProduct);
-            @this.WithSerialisedItem(serializedProduct.SerialisedItems.First);
-            @this.WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()));
-            @this.WithQuantityOrdered(1);
-            @this.WithAssignedUnitPrice(faker.Random.UInt());
+            @this.WithDescription(faker.Lorem.Sentences(2))
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithInvoiceItemType(faker.Random.ListItem(otherInvoiceItemTypes))
+                .WithProduct(serializedProduct)
+                .WithSerialisedItem(serializedProduct.SerialisedItems.FirstOrDefault())
+                .WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()))
+                .WithQuantityOrdered(1)
+                .WithAssignedUnitPrice(faker.Random.UInt());
 
             return @this;
         }
@@ -47,15 +47,15 @@ namespace Allors.Database.Domain.TestPopulation
             unifiedGoodExtent.Filter.AddEquals(m.UnifiedGood.InventoryItemKind, new InventoryItemKinds(@this.Transaction).Serialised);
             var serializedProduct = unifiedGoodExtent.First();
 
-            @this.WithDescription(faker.Lorem.Sentences(2));
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithInvoiceItemType(invoiceItemType);
-            @this.WithProduct(serializedProduct);
-            @this.WithSerialisedItem(serializedProduct.SerialisedItems.First);
-            @this.WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()));
-            @this.WithQuantityOrdered(1);
-            @this.WithAssignedUnitPrice(faker.Random.UInt());
+            @this.WithDescription(faker.Lorem.Sentences(2))
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithInvoiceItemType(invoiceItemType)
+                .WithProduct(serializedProduct)
+                .WithSerialisedItem(serializedProduct.SerialisedItems.FirstOrDefault())
+                .WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()))
+                .WithQuantityOrdered(1)
+                .WithAssignedUnitPrice(faker.Random.UInt());
 
             return @this;
         }
@@ -68,13 +68,13 @@ namespace Allors.Database.Domain.TestPopulation
 
             var product = @this.Transaction.Extent<NonUnifiedGood>().First(v => v.Part.InventoryItemKind.Equals(new InventoryItemKinds(@this.Transaction).NonSerialised));
 
-            @this.WithDescription(faker.Lorem.Sentences(2));
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithInvoiceItemType(invoiceItemType);
-            @this.WithProduct(product);
-            @this.WithQuantityOrdered(faker.Random.UInt(2, 100));
-            @this.WithAssignedUnitPrice(faker.Random.UInt());
+            @this.WithDescription(faker.Lorem.Sentences(2))
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithInvoiceItemType(invoiceItemType)
+                .WithProduct(product)
+                .WithQuantityOrdered(faker.Random.UInt(2, 100))
+                .WithAssignedUnitPrice(faker.Random.UInt());
 
             return @this;
         }

@@ -15,20 +15,20 @@ namespace Allors.Database.Domain.TestPopulation
             var faker = @this.Transaction.Faker();
 
             var postalAddress = new PostalAddressBuilder(@this.Transaction).WithDefaults().Build();
-            var supplier = faker.Random.ListItem(internalOrganisation.ActiveSuppliers);
+            var supplier = faker.Random.ListItem(internalOrganisation.ActiveSuppliers.ToArray());
 
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithShipToContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault());
-            @this.WithAssignedShipToAddress(internalOrganisation.ShippingAddress);
-            @this.WithBillToContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault());
-            @this.WithAssignedBillToContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithTakenViaContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault());
-            @this.WithAssignedTakenViaContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithTakenViaSupplier(supplier);
-            @this.WithStoredInFacility(faker.Random.ListItem(internalOrganisation.FacilitiesWhereOwner));
-            @this.WithOrderedBy(internalOrganisation);
+            @this.WithDescription(faker.Lorem.Sentence())
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithShipToContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault())
+                .WithAssignedShipToAddress(internalOrganisation.ShippingAddress)
+                .WithBillToContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault())
+                .WithAssignedBillToContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithTakenViaContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault())
+                .WithAssignedTakenViaContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithTakenViaSupplier(supplier)
+                .WithStoredInFacility(faker.Random.ListItem(internalOrganisation.FacilitiesWhereOwner.ToArray()))
+                .WithOrderedBy(internalOrganisation);
 
             return @this;
         }

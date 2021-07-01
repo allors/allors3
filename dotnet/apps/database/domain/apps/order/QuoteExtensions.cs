@@ -58,12 +58,12 @@ namespace Allors.Database.Domain
                 || propasal != null && propasal.IsDeletable()
                 || statementOfWork != null && statementOfWork.IsDeletable())
             {
-                foreach (OrderAdjustment orderAdjustment in @this.OrderAdjustments)
+                foreach (var orderAdjustment in @this.OrderAdjustments)
                 {
                     orderAdjustment.Delete();
                 }
 
-                foreach (QuoteItem item in @this.QuoteItems)
+                foreach (var item in @this.QuoteItems)
                 {
                     item.Delete();
                 }
@@ -130,7 +130,7 @@ namespace Allors.Database.Domain
         {
             var quoteItemStates = new QuoteItemStates(@this.Strategy.Transaction);
 
-            foreach (QuoteItem quoteItem in @this.QuoteItems)
+            foreach (var quoteItem in @this.QuoteItems)
             {
                 if (@this.QuoteState.IsCreated)
                 {

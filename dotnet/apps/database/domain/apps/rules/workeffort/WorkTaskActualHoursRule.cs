@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
             {
                 @this.ActualHours = 0M;
 
-                foreach (ServiceEntry serviceEntry in @this.ServiceEntriesWhereWorkEffort)
+                foreach (var serviceEntry in @this.ServiceEntriesWhereWorkEffort)
                 {
                     if (serviceEntry is TimeEntry timeEntry)
                     {

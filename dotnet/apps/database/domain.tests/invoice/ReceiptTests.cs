@@ -67,7 +67,7 @@ namespace Allors.Database.Domain.Tests
             this.InstantiateObjects(this.Transaction);
 
             var productItem = new InvoiceItemTypes(this.Transaction).ProductItem;
-            var contactMechanism = new ContactMechanisms(this.Transaction).Extent().First;
+            var contactMechanism = new ContactMechanisms(this.Transaction).Extent().FirstOrDefault();
 
             var invoice = new SalesInvoiceBuilder(this.Transaction)
                 .WithBillToCustomer(this.billToCustomer)
@@ -144,16 +144,16 @@ namespace Allors.Database.Domain.Tests
             var receipt = new ReceiptBuilder(this.Transaction)
                 .WithAmount(100)
                 .WithEffectiveDate(this.Transaction.Now())
-                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.SalesInvoiceItems[0]).WithAmountApplied(50).Build())
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.SalesInvoiceItems.ElementAt(0)).WithAmountApplied(50).Build())
                 .Build();
 
             Assert.False(this.Derive().HasErrors);
 
-            receipt.AddPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.SalesInvoiceItems[0]).WithAmountApplied(50).Build());
+            receipt.AddPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.SalesInvoiceItems.ElementAt(0)).WithAmountApplied(50).Build());
 
             Assert.False(this.Derive().HasErrors);
 
-            receipt.AddPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.SalesInvoiceItems[0]).WithAmountApplied(1).Build());
+            receipt.AddPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.SalesInvoiceItems.ElementAt(0)).WithAmountApplied(1).Build());
 
             var errors = this.Derive().Errors.ToList();
 

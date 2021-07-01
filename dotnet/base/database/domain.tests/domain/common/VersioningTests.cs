@@ -8,6 +8,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Domain;
     using Xunit;
 
@@ -113,7 +114,7 @@ namespace Allors.Database.Domain.Tests
             Assert.False(version.ExistAmount);
             Assert.False(version.ExistOrderState);
             Assert.Single(version.OrderLines);
-            Assert.Equal(orderLine, version.OrderLines[0]);
+            Assert.Equal(orderLine, version.OrderLines.ElementAt(0));
         }
     }
 }

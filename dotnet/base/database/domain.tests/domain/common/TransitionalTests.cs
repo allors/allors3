@@ -8,6 +8,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Domain;
     using Xunit;
 
@@ -93,10 +94,10 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(notShipped, order.LastShipmentState);
             Assert.False(order.ExistPreviousShipmentState);
 
-            Assert.Equal(2, order.ObjectStates.Count);
+            Assert.Equal(2, order.ObjectStates.Count());
             Assert.Contains(confirmed, order.ObjectStates);
             Assert.Contains(notShipped, order.ObjectStates);
-            Assert.Equal(2, order.LastObjectStates.Count);
+            Assert.Equal(2, order.LastObjectStates.Count());
             Assert.Contains(confirmed, order.LastObjectStates);
             Assert.Contains(notShipped, order.LastObjectStates);
             Assert.Single(order.PreviousObjectStates);
@@ -106,13 +107,13 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Derive();
 
-            Assert.Equal(2, order.ObjectStates.Count);
+            Assert.Equal(2, order.ObjectStates.Count());
             Assert.Contains(confirmed, order.ObjectStates);
             Assert.Contains(partiallyShipped, order.ObjectStates);
-            Assert.Equal(2, order.LastObjectStates.Count);
+            Assert.Equal(2, order.LastObjectStates.Count());
             Assert.Contains(confirmed, order.LastObjectStates);
             Assert.Contains(partiallyShipped, order.LastObjectStates);
-            Assert.Equal(2, order.PreviousObjectStates.Count);
+            Assert.Equal(2, order.PreviousObjectStates.Count());
             Assert.Contains(initial, order.PreviousObjectStates);
             Assert.Contains(notShipped, order.PreviousObjectStates);
         }

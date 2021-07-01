@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         {
             get
             {
-                foreach (PickListItem pickListItem in this.PickListItems)
+                foreach (var pickListItem in this.PickListItems)
                 {
                     if (pickListItem.Quantity != pickListItem.QuantityPicked)
                     {
@@ -50,14 +50,14 @@ namespace Allors.Database.Domain
 
         public void AppsDelete(PickListDelete method)
         {
-            foreach (PickListItem pickListItem in this.PickListItems)
+            foreach (var pickListItem in this.PickListItems)
             {
                 pickListItem.Delete();
             }
 
             if (this.ExistShipToParty)
             {
-                foreach (Shipment shipment in this.ShipToParty.ShipmentsWhereShipToParty)
+                foreach (var shipment in this.ShipToParty.ShipmentsWhereShipToParty)
                 {
                     shipment.DerivationTrigger = Guid.NewGuid();
                 }

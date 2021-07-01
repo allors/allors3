@@ -20,7 +20,7 @@ namespace Allors.Database.Domain.TestPopulation
 
             var otherInternalOrganization = internalOrganisations.Except(new List<Organisation> { internalOrganisation }).FirstOrDefault();
 
-            var endCustomer = faker.Random.ListItem(internalOrganisation.ActiveCustomers);
+            var endCustomer = faker.Random.ListItem(internalOrganisation.ActiveCustomers.ToArray());
             var salesInvoiceItem_Default = new SalesInvoiceItemBuilder(@this.Transaction).WithDefaults().Build();
             var salesInvoiceItem_Product = new SalesInvoiceItemBuilder(@this.Transaction).WithProductItemDefaults().Build();
             var salesInvoiceItem_Part = new SalesInvoiceItemBuilder(@this.Transaction).WithPartItemDefaults().Build();
@@ -28,36 +28,36 @@ namespace Allors.Database.Domain.TestPopulation
             var salesInvoiceType = new SalesInvoiceTypes(@this.Transaction).SalesInvoice;
             var paymentMethod = faker.Random.ListItem(@this.Transaction.Extent<PaymentMethod>());
 
-            @this.WithCustomerReference(faker.Random.String(16).ToUpper(CultureInfo.CurrentCulture));
-            @this.WithBilledFrom(internalOrganisation);
-            @this.WithAssignedBilledFromContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithBilledFromContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault());
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithBillToCustomer(otherInternalOrganization);
-            @this.WithAssignedBillToContactMechanism(otherInternalOrganization.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithBillToContactPerson(otherInternalOrganization.CurrentContacts.FirstOrDefault());
-            @this.WithBillToEndCustomer(endCustomer);
-            @this.WithAssignedBillToEndCustomerContactMechanism(endCustomer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithBillToEndCustomerContactPerson(endCustomer.CurrentContacts.FirstOrDefault());
-            @this.WithShipToEndCustomer(endCustomer);
-            @this.WithAssignedShipToEndCustomerAddress(endCustomer.ShippingAddress);
-            @this.WithShipToEndCustomerContactPerson(endCustomer.CurrentContacts.FirstOrDefault());
-            @this.WithShipToCustomer(otherInternalOrganization);
-            @this.WithAssignedShipToAddress(otherInternalOrganization.ShippingAddress);
-            @this.WithShipToContactPerson(otherInternalOrganization.CurrentContacts.FirstOrDefault());
-            @this.WithSalesInvoiceType(salesInvoiceType);
-            @this.WithTotalListPrice(faker.Random.Decimal());
-            @this.WithAssignedPaymentMethod(paymentMethod);
-            @this.WithSalesInvoiceItem(salesInvoiceItem_Default);
-            @this.WithSalesInvoiceItem(salesInvoiceItem_Product);
-            @this.WithSalesInvoiceItem(salesInvoiceItem_Part);
-            @this.WithAdvancePayment(faker.Random.Decimal());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaultsForPaymentNetDays().Build());
-            @this.WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithCustomerReference(faker.Random.String(16).ToUpper(CultureInfo.CurrentCulture))
+                .WithBilledFrom(internalOrganisation)
+                .WithAssignedBilledFromContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithBilledFromContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault())
+                .WithDescription(faker.Lorem.Sentence())
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithBillToCustomer(otherInternalOrganization)
+                .WithAssignedBillToContactMechanism(otherInternalOrganization.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithBillToContactPerson(otherInternalOrganization.CurrentContacts.FirstOrDefault())
+                .WithBillToEndCustomer(endCustomer)
+                .WithAssignedBillToEndCustomerContactMechanism(endCustomer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithBillToEndCustomerContactPerson(endCustomer.CurrentContacts.FirstOrDefault())
+                .WithShipToEndCustomer(endCustomer)
+                .WithAssignedShipToEndCustomerAddress(endCustomer.ShippingAddress)
+                .WithShipToEndCustomerContactPerson(endCustomer.CurrentContacts.FirstOrDefault())
+                .WithShipToCustomer(otherInternalOrganization)
+                .WithAssignedShipToAddress(otherInternalOrganization.ShippingAddress)
+                .WithShipToContactPerson(otherInternalOrganization.CurrentContacts.FirstOrDefault())
+                .WithSalesInvoiceType(salesInvoiceType)
+                .WithTotalListPrice(faker.Random.Decimal())
+                .WithAssignedPaymentMethod(paymentMethod)
+                .WithSalesInvoiceItem(salesInvoiceItem_Default)
+                .WithSalesInvoiceItem(salesInvoiceItem_Product)
+                .WithSalesInvoiceItem(salesInvoiceItem_Part)
+                .WithAdvancePayment(faker.Random.Decimal())
+                .WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaultsForPaymentNetDays().Build())
+                .WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build())
+                .WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build())
+                .WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
 
             return @this;
         }
@@ -66,7 +66,7 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var faker = @this.Transaction.Faker();
 
-            var customer = internalOrganisation.ActiveCustomers.Where(v => v.GetType().Name == typeof(Organisation).Name).FirstOrDefault();
+            var customer = internalOrganisation.ActiveCustomers.FirstOrDefault(v => v.GetType().Name == nameof(Organisation));
 
             var salesInvoiceType = new SalesInvoiceTypes(@this.Transaction).SalesInvoice;
             var paymentMethod = faker.Random.ListItem(@this.Transaction.Extent<PaymentMethod>());
@@ -75,30 +75,30 @@ namespace Allors.Database.Domain.TestPopulation
             var salesInvoiceItem_Product = new SalesInvoiceItemBuilder(@this.Transaction).WithProductItemDefaults().Build();
             var salesInvoiceItem_Part = new SalesInvoiceItemBuilder(@this.Transaction).WithPartItemDefaults().Build();
 
-            @this.WithCustomerReference(faker.Random.String(16).ToUpper(CultureInfo.CurrentCulture));
-            @this.WithBilledFrom(internalOrganisation);
-            @this.WithAssignedBilledFromContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithBilledFromContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault());
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithBillToCustomer(customer);
-            @this.WithAssignedBillToContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithBillToContactPerson(customer.CurrentContacts.FirstOrDefault());
-            @this.WithShipToCustomer(customer);
-            @this.WithAssignedShipToAddress(customer.ShippingAddress);
-            @this.WithShipToContactPerson(customer.CurrentContacts.FirstOrDefault());
-            @this.WithSalesInvoiceType(salesInvoiceType);
-            @this.WithTotalListPrice(faker.Random.Decimal());
-            @this.WithAssignedPaymentMethod(paymentMethod);
-            @this.WithSalesInvoiceItem(salesInvoiceItem_Default);
-            @this.WithSalesInvoiceItem(salesInvoiceItem_Product);
-            @this.WithSalesInvoiceItem(salesInvoiceItem_Part);
-            @this.WithAdvancePayment(faker.Random.Decimal());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaultsForPaymentNetDays().Build());
-            @this.WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithCustomerReference(faker.Random.String(16).ToUpper(CultureInfo.CurrentCulture))
+                .WithBilledFrom(internalOrganisation)
+                .WithAssignedBilledFromContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithBilledFromContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault())
+                .WithDescription(faker.Lorem.Sentence())
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithBillToCustomer(customer)
+                .WithAssignedBillToContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithBillToContactPerson(customer.CurrentContacts.FirstOrDefault())
+                .WithShipToCustomer(customer)
+                .WithAssignedShipToAddress(customer.ShippingAddress)
+                .WithShipToContactPerson(customer.CurrentContacts.FirstOrDefault())
+                .WithSalesInvoiceType(salesInvoiceType)
+                .WithTotalListPrice(faker.Random.Decimal())
+                .WithAssignedPaymentMethod(paymentMethod)
+                .WithSalesInvoiceItem(salesInvoiceItem_Default)
+                .WithSalesInvoiceItem(salesInvoiceItem_Product)
+                .WithSalesInvoiceItem(salesInvoiceItem_Part)
+                .WithAdvancePayment(faker.Random.Decimal())
+                .WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaultsForPaymentNetDays().Build())
+                .WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build())
+                .WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build())
+                .WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
 
             return @this;
         }
@@ -107,7 +107,7 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var faker = @this.Transaction.Faker();
 
-            var customer = internalOrganisation.ActiveCustomers.Where(v => v.GetType().Name == typeof(Person).Name).FirstOrDefault();
+            var customer = internalOrganisation.ActiveCustomers.FirstOrDefault(v => v.GetType().Name == nameof(Person));
 
             var salesInvoiceItem_Default = new SalesInvoiceItemBuilder(@this.Transaction).WithDefaults().Build();
             var salesInvoiceItem_Product = new SalesInvoiceItemBuilder(@this.Transaction).WithProductItemDefaults().Build();
@@ -116,28 +116,28 @@ namespace Allors.Database.Domain.TestPopulation
             var salesInvoiceType = new SalesInvoiceTypes(@this.Transaction).SalesInvoice;
             var paymentMethod = faker.Random.ListItem(@this.Transaction.Extent<PaymentMethod>());
 
-            @this.WithCustomerReference(faker.Random.String(16).ToUpper(CultureInfo.CurrentCulture));
-            @this.WithBilledFrom(internalOrganisation);
-            @this.WithAssignedBilledFromContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithBilledFromContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault());
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithBillToCustomer(customer);
-            @this.WithAssignedBillToContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithShipToCustomer(customer);
-            @this.WithAssignedShipToAddress(customer.ShippingAddress);
-            @this.WithSalesInvoiceType(salesInvoiceType);
-            @this.WithTotalListPrice(faker.Random.Decimal());
-            @this.WithAssignedPaymentMethod(paymentMethod);
-            @this.WithSalesInvoiceItem(salesInvoiceItem_Default);
-            @this.WithSalesInvoiceItem(salesInvoiceItem_Product);
-            @this.WithSalesInvoiceItem(salesInvoiceItem_Part);
-            @this.WithAdvancePayment(faker.Random.Decimal());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaultsForPaymentNetDays().Build());
-            @this.WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithCustomerReference(faker.Random.String(16).ToUpper(CultureInfo.CurrentCulture))
+                .WithBilledFrom(internalOrganisation)
+                .WithAssignedBilledFromContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithBilledFromContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault())
+                .WithDescription(faker.Lorem.Sentence())
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithBillToCustomer(customer)
+                .WithAssignedBillToContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithShipToCustomer(customer)
+                .WithAssignedShipToAddress(customer.ShippingAddress)
+                .WithSalesInvoiceType(salesInvoiceType)
+                .WithTotalListPrice(faker.Random.Decimal())
+                .WithAssignedPaymentMethod(paymentMethod)
+                .WithSalesInvoiceItem(salesInvoiceItem_Default)
+                .WithSalesInvoiceItem(salesInvoiceItem_Product)
+                .WithSalesInvoiceItem(salesInvoiceItem_Part)
+                .WithAdvancePayment(faker.Random.Decimal())
+                .WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaultsForPaymentNetDays().Build())
+                .WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build())
+                .WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build())
+                .WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
 
             return @this;
         }
@@ -146,7 +146,7 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var faker = @this.Transaction.Faker();
 
-            var customer = faker.Random.ListItem(internalOrganisation.ActiveCustomers);
+            var customer = faker.Random.ListItem(internalOrganisation.ActiveCustomers.ToArray());
 
             var salesInvoiceItem_Default = new SalesInvoiceItemBuilder(@this.Transaction).WithDefaults().Build();
             var salesInvoiceItem_Product = new SalesInvoiceItemBuilder(@this.Transaction).WithProductItemDefaults().Build();
@@ -155,36 +155,36 @@ namespace Allors.Database.Domain.TestPopulation
             var salesInvoiceType = new SalesInvoiceTypes(@this.Transaction).CreditNote;
             var paymentMethod = faker.Random.ListItem(@this.Transaction.Extent<PaymentMethod>());
 
-            @this.WithCustomerReference(faker.Random.String(16).ToUpper(CultureInfo.CurrentCulture));
-            @this.WithBilledFrom(internalOrganisation);
-            @this.WithAssignedBilledFromContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithBilledFromContactPerson(customer.CurrentContacts.FirstOrDefault());
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithBillToCustomer(customer.CurrentContacts.FirstOrDefault());
-            @this.WithAssignedBillToContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithBillToContactPerson(customer.CurrentContacts.FirstOrDefault());
-            @this.WithBillToEndCustomer(customer);
-            @this.WithAssignedBillToEndCustomerContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithBillToEndCustomerContactPerson(customer.CurrentContacts.FirstOrDefault());
-            @this.WithShipToEndCustomer(customer);
-            @this.WithAssignedShipToEndCustomerAddress(customer.ShippingAddress);
-            @this.WithShipToEndCustomerContactPerson(customer.CurrentContacts.FirstOrDefault());
-            @this.WithShipToCustomer(customer);
-            @this.WithAssignedShipToAddress(customer.ShippingAddress);
-            @this.WithShipToContactPerson(customer.CurrentContacts.FirstOrDefault());
-            @this.WithSalesInvoiceType(salesInvoiceType);
-            @this.WithTotalListPrice(faker.Random.Decimal());
-            @this.WithAssignedPaymentMethod(paymentMethod);
-            @this.WithSalesInvoiceItem(salesInvoiceItem_Default);
-            @this.WithSalesInvoiceItem(salesInvoiceItem_Product);
-            @this.WithSalesInvoiceItem(salesInvoiceItem_Part);
-            @this.WithAdvancePayment(faker.Random.Decimal());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaultsForPaymentNetDays().Build());
-            @this.WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithCustomerReference(faker.Random.String(16).ToUpper(CultureInfo.CurrentCulture))
+                .WithBilledFrom(internalOrganisation)
+                .WithAssignedBilledFromContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithBilledFromContactPerson(customer.CurrentContacts.FirstOrDefault())
+                .WithDescription(faker.Lorem.Sentence())
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithBillToCustomer(customer.CurrentContacts.FirstOrDefault())
+                .WithAssignedBillToContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithBillToContactPerson(customer.CurrentContacts.FirstOrDefault())
+                .WithBillToEndCustomer(customer)
+                .WithAssignedBillToEndCustomerContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithBillToEndCustomerContactPerson(customer.CurrentContacts.FirstOrDefault())
+                .WithShipToEndCustomer(customer)
+                .WithAssignedShipToEndCustomerAddress(customer.ShippingAddress)
+                .WithShipToEndCustomerContactPerson(customer.CurrentContacts.FirstOrDefault())
+                .WithShipToCustomer(customer)
+                .WithAssignedShipToAddress(customer.ShippingAddress)
+                .WithShipToContactPerson(customer.CurrentContacts.FirstOrDefault())
+                .WithSalesInvoiceType(salesInvoiceType)
+                .WithTotalListPrice(faker.Random.Decimal())
+                .WithAssignedPaymentMethod(paymentMethod)
+                .WithSalesInvoiceItem(salesInvoiceItem_Default)
+                .WithSalesInvoiceItem(salesInvoiceItem_Product)
+                .WithSalesInvoiceItem(salesInvoiceItem_Part)
+                .WithAdvancePayment(faker.Random.Decimal())
+                .WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaultsForPaymentNetDays().Build())
+                .WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build())
+                .WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build())
+                .WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
 
             return @this;
         }
@@ -193,32 +193,32 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var faker = @this.Transaction.Faker();
 
-            var customer = internalOrganisation.ActiveCustomers.Where(v => v.GetType().Name == typeof(Organisation).Name).FirstOrDefault();
+            var customer = internalOrganisation.ActiveCustomers.FirstOrDefault(v => v.GetType().Name == nameof(Organisation));
 
             var salesInvoiceType = new SalesInvoiceTypes(@this.Transaction).SalesInvoice;
             var paymentMethod = faker.Random.ListItem(@this.Transaction.Extent<PaymentMethod>());
 
-            @this.WithCustomerReference(faker.Random.String(16).ToUpper(CultureInfo.CurrentCulture));
-            @this.WithBilledFrom(internalOrganisation);
-            @this.WithAssignedBilledFromContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithBilledFromContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault());
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithBillToCustomer(customer);
-            @this.WithAssignedBillToContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithBillToContactPerson(customer.CurrentContacts.FirstOrDefault());
-            @this.WithShipToCustomer(customer);
-            @this.WithAssignedShipToAddress(customer.ShippingAddress);
-            @this.WithShipToContactPerson(customer.CurrentContacts.FirstOrDefault());
-            @this.WithSalesInvoiceType(salesInvoiceType);
-            @this.WithTotalListPrice(faker.Random.Decimal());
-            @this.WithAssignedPaymentMethod(paymentMethod);
-            @this.WithAdvancePayment(faker.Random.Decimal());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaultsForPaymentNetDays().Build());
-            @this.WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithCustomerReference(faker.Random.String(16).ToUpper(CultureInfo.CurrentCulture))
+                .WithBilledFrom(internalOrganisation)
+                .WithAssignedBilledFromContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithBilledFromContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault())
+                .WithDescription(faker.Lorem.Sentence())
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithBillToCustomer(customer)
+                .WithAssignedBillToContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithBillToContactPerson(customer.CurrentContacts.FirstOrDefault())
+                .WithShipToCustomer(customer)
+                .WithAssignedShipToAddress(customer.ShippingAddress)
+                .WithShipToContactPerson(customer.CurrentContacts.FirstOrDefault())
+                .WithSalesInvoiceType(salesInvoiceType)
+                .WithTotalListPrice(faker.Random.Decimal())
+                .WithAssignedPaymentMethod(paymentMethod)
+                .WithAdvancePayment(faker.Random.Decimal())
+                .WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaultsForPaymentNetDays().Build())
+                .WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build())
+                .WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build())
+                .WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
 
             return @this;
         }

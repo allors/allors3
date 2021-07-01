@@ -1,10 +1,11 @@
-// <copyright file="LocalisedText.cs" company="Allors bvba">
+// <copyright file="UnitOfMeasureConversionAccessor.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
 namespace Allors.Database.Domain
 {
+    using System.Collections.Generic;
     using Meta;
 
     public partial class UnitOfMeasureConversionAccessor
@@ -15,8 +16,7 @@ namespace Allors.Database.Domain
 
         public decimal? Get(IObject @object, TimeFrequency toUnitOfMeasure)
         {
-            var unitOfMeasureConversions = @object.Strategy.GetCompositeRoles(this.roleType);
-            foreach (UnitOfMeasureConversion unitOfMeasureConversion in unitOfMeasureConversions)
+            foreach (var unitOfMeasureConversion in @object.Strategy.GetCompositeRoles<UnitOfMeasureConversion>(this.roleType))
             {
                 if (unitOfMeasureConversion?.ToUnitOfMeasure?.Equals(toUnitOfMeasure) == true)
                 {
@@ -29,8 +29,7 @@ namespace Allors.Database.Domain
 
         public void Set(IObject @object, TimeFrequency toUnitOfMeasure, decimal conversionFactor)
         {
-            var unitOfMeasureConversions = @object.Strategy.GetCompositeRoles(this.roleType);
-            foreach (UnitOfMeasureConversion existingUnitOfMeasureConversion in unitOfMeasureConversions)
+            foreach (var existingUnitOfMeasureConversion in @object.Strategy.GetCompositeRoles<UnitOfMeasureConversion>(this.roleType))
             {
                 if (existingUnitOfMeasureConversion?.ToUnitOfMeasure?.Equals(toUnitOfMeasure) == true)
                 {

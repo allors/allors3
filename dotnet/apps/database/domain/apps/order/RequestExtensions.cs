@@ -43,7 +43,7 @@ namespace Allors.Database.Domain
         {
             if (@this.IsDeletable())
             {
-                foreach (RequestItem item in @this.RequestItems)
+                foreach (var item in @this.RequestItems)
                 {
                     item.Delete();
                 }

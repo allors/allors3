@@ -42,36 +42,36 @@ namespace Allors.Database.Domain.TestPopulation
             var replacementValue = Convert.ToDecimal(faker.Commerce.Price());
             var lifetime = faker.Random.Int(0, 20);
 
-            @this.WithName(faker.Commerce.ProductName());
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithLifeTime(lifetime);
-            @this.WithDepreciationYears(faker.Random.Int(0, lifetime));
-            @this.WithReplacementValue(replacementValue);
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithInventoryItemKind(new InventoryItemKinds(@this.Transaction).NonSerialised);
-            @this.WithKeywords(faker.Lorem.Sentence());
-            @this.WithUnitOfMeasure(new UnitsOfMeasure(@this.Transaction).Piece);
-            @this.WithPrimaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
-            @this.WithPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
-            @this.WithPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
-            @this.WithPublicElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
-            @this.WithPrivateElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc2.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
-            @this.WithProductIdentification(new SkuIdentificationBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithProductIdentification(new EanIdentificationBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithProductIdentification(new ManufacturerIdentificationBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithVatRegime(faker.Random.ListItem(@this.Transaction.Extent<VatRegime>()));
+            @this.WithName(faker.Commerce.ProductName())
+                .WithDescription(faker.Lorem.Sentence())
+                .WithLifeTime(lifetime)
+                .WithDepreciationYears(faker.Random.Int(0, lifetime))
+                .WithReplacementValue(replacementValue)
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithInventoryItemKind(new InventoryItemKinds(@this.Transaction).NonSerialised)
+                .WithKeywords(faker.Lorem.Sentence())
+                .WithUnitOfMeasure(new UnitsOfMeasure(@this.Transaction).Piece)
+                .WithPrimaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build())
+                .WithPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build())
+                .WithPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build())
+                .WithPublicElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build())
+                .WithPrivateElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc2.en.pdf").WithInData(faker.Random.Bytes(1000)).Build())
+                .WithProductIdentification(new SkuIdentificationBuilder(@this.Transaction).WithDefaults().Build())
+                .WithProductIdentification(new EanIdentificationBuilder(@this.Transaction).WithDefaults().Build())
+                .WithProductIdentification(new ManufacturerIdentificationBuilder(@this.Transaction).WithDefaults().Build())
+                .WithVatRegime(faker.Random.ListItem(@this.Transaction.Extent<VatRegime>()));
 
-            foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
+            foreach (var additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
             {
-                @this.WithLocalisedName(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Word()).WithLocale(additionalLocale).Build());
-                @this.WithLocalisedDescription(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
-                @this.WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
-                @this.WithLocalisedKeyword(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
+                @this.WithLocalisedName(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Word()).WithLocale(additionalLocale).Build())
+                    .WithLocalisedDescription(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build())
+                    .WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build())
+                    .WithLocalisedKeyword(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
 
                 var localisedDocument = new MediaBuilder(@this.Transaction).WithInFileName($"doc1.{additionalLocale.Country.IsoCode}.pdf").WithInData(faker.Random.Bytes(1000)).Build();
-                @this.WithPublicLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Transaction).WithMedia(localisedDocument).WithLocale(additionalLocale).Build());
-                @this.WithPrivateLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Transaction).WithMedia(localisedDocument).WithLocale(additionalLocale).Build());
+                @this.WithPublicLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Transaction).WithMedia(localisedDocument).WithLocale(additionalLocale).Build())
+                    .WithPrivateLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Transaction).WithMedia(localisedDocument).WithLocale(additionalLocale).Build());
             }
 
             return @this;
@@ -109,37 +109,37 @@ namespace Allors.Database.Domain.TestPopulation
             var replacementValue = Convert.ToDecimal(faker.Commerce.Price());
             var lifetime = faker.Random.Int(0, 20);
 
-            @this.WithName(faker.Commerce.ProductName());
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithLifeTime(lifetime);
-            @this.WithDepreciationYears(faker.Random.Int(0, lifetime));
-            @this.WithReplacementValue(replacementValue);
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithInventoryItemKind(new InventoryItemKinds(@this.Transaction).Serialised);
-            @this.WithKeywords(faker.Lorem.Sentence());
-            @this.WithUnitOfMeasure(new UnitsOfMeasure(@this.Transaction).Piece);
-            @this.WithPrimaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
-            @this.WithPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
-            @this.WithPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build());
-            @this.WithPublicElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
-            @this.WithPrivateElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc2.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
-            @this.WithProductIdentification(new SkuIdentificationBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithProductIdentification(new EanIdentificationBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithProductIdentification(new ManufacturerIdentificationBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithSerialisedItem(new SerialisedItemBuilder(@this.Transaction).WithDefaults(internalOrganisation).Build());
-            @this.WithVatRegime(faker.Random.ListItem(@this.Transaction.Extent<VatRegime>()));
+            @this.WithName(faker.Commerce.ProductName())
+                .WithDescription(faker.Lorem.Sentence())
+                .WithComment(faker.Lorem.Sentence())
+                .WithLifeTime(lifetime)
+                .WithDepreciationYears(faker.Random.Int(0, lifetime))
+                .WithReplacementValue(replacementValue)
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithInventoryItemKind(new InventoryItemKinds(@this.Transaction).Serialised)
+                .WithKeywords(faker.Lorem.Sentence())
+                .WithUnitOfMeasure(new UnitsOfMeasure(@this.Transaction).Piece)
+                .WithPrimaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build())
+                .WithPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build())
+                .WithPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 200, height: 56)).Build())
+                .WithPublicElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build())
+                .WithPrivateElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc2.en.pdf").WithInData(faker.Random.Bytes(1000)).Build())
+                .WithProductIdentification(new SkuIdentificationBuilder(@this.Transaction).WithDefaults().Build())
+                .WithProductIdentification(new EanIdentificationBuilder(@this.Transaction).WithDefaults().Build())
+                .WithProductIdentification(new ManufacturerIdentificationBuilder(@this.Transaction).WithDefaults().Build())
+                .WithSerialisedItem(new SerialisedItemBuilder(@this.Transaction).WithDefaults(internalOrganisation).Build())
+                .WithVatRegime(faker.Random.ListItem(@this.Transaction.Extent<VatRegime>()));
 
-            foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
+            foreach (var additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
             {
-                @this.WithLocalisedName(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Word()).WithLocale(additionalLocale).Build());
-                @this.WithLocalisedDescription(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
-                @this.WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
-                @this.WithLocalisedKeyword(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
+                @this.WithLocalisedName(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Word()).WithLocale(additionalLocale).Build())
+                    .WithLocalisedDescription(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build())
+                    .WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build())
+                    .WithLocalisedKeyword(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
 
                 var localisedDocument = new MediaBuilder(@this.Transaction).WithInFileName($"doc1.{additionalLocale.Country.IsoCode}.pdf").WithInData(faker.Random.Bytes(1000)).Build();
-                @this.WithPublicLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Transaction).WithMedia(localisedDocument).WithLocale(additionalLocale).Build());
-                @this.WithPrivateLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Transaction).WithMedia(localisedDocument).WithLocale(additionalLocale).Build());
+                @this.WithPublicLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Transaction).WithMedia(localisedDocument).WithLocale(additionalLocale).Build())
+                    .WithPrivateLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Transaction).WithMedia(localisedDocument).WithLocale(additionalLocale).Build());
             }
 
             return @this;

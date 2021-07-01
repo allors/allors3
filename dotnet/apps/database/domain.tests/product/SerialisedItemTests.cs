@@ -24,7 +24,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenSerializedItem_WhenAddingWithSameSerialNumber_ThenError()
         {
             var good = new UnifiedGoodBuilder(this.Transaction).WithSerialisedDefaults(this.InternalOrganisation).Build();
-            var serialNumber = good.SerialisedItems.First.SerialNumber;
+            var serialNumber = good.SerialisedItems.First().SerialNumber;
 
             var newItem = new SerialisedItemBuilder(this.Transaction).WithSerialNumber(serialNumber).Build();
             good.AddSerialisedItem(newItem);
@@ -55,7 +55,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSerializedItem_WhenDerived_ThenSuppliedByPartyNameIsSet()
         {
-            var supplier = this.InternalOrganisation.ActiveSuppliers.First;
+            var supplier = this.InternalOrganisation.ActiveSuppliers.FirstOrDefault();
 
             var newItem = new SerialisedItemBuilder(this.Transaction).WithForSaleDefaults(this.InternalOrganisation).WithAssignedSuppliedBy(supplier).Build();
 
@@ -67,7 +67,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSerializedItem_WhenDerived_ThenSuppliedByPartyNameIsSetFromSupplierOffering()
         {
-            var supplier = this.InternalOrganisation.ActiveSuppliers.First;
+            var supplier = this.InternalOrganisation.ActiveSuppliers.FirstOrDefault();
 
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).WithSerialisedDefaults(this.InternalOrganisation).Build();
             this.Transaction.Derive();
@@ -93,7 +93,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSerializedItem_WhenDerived_ThenOwnedByPartyNameIsSet()
         {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
 
             var newItem = new SerialisedItemBuilder(this.Transaction).WithForSaleDefaults(this.InternalOrganisation).Build();
             newItem.OwnedBy = customer;
@@ -106,7 +106,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSerializedItem_WhenDerived_ThenRentedByPartyNameIsSet()
         {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
 
             var newItem = new SerialisedItemBuilder(this.Transaction).WithForSaleDefaults(this.InternalOrganisation).Build();
             newItem.RentedBy = customer;
@@ -414,7 +414,7 @@ namespace Allors.Database.Domain.Tests
             part.ProductType = productType;
             this.Derive();
 
-            Assert.Equal(characteristicType, serialisedItem.SerialisedItemCharacteristics.First.SerialisedItemCharacteristicType);
+            Assert.Equal(characteristicType, serialisedItem.SerialisedItemCharacteristics.First().SerialisedItemCharacteristicType);
         }
 
         [Fact]
@@ -435,7 +435,7 @@ namespace Allors.Database.Domain.Tests
             productType.AddSerialisedItemCharacteristicType(characteristicType);
             this.Derive();
 
-            Assert.Equal(characteristicType, serialisedItem.SerialisedItemCharacteristics.First.SerialisedItemCharacteristicType);
+            Assert.Equal(characteristicType, serialisedItem.SerialisedItemCharacteristics.First().SerialisedItemCharacteristicType);
         }
 
         [Fact]

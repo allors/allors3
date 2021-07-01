@@ -13,8 +13,8 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var faker = @this.Transaction.Faker();
 
-            @this.WithElectronicAddressString(faker.Internet.Email());
-            @this.WithDescription(faker.Lorem.Sentence());
+            @this.WithElectronicAddressString(faker.Internet.Email())
+                .WithDescription(faker.Lorem.Sentence());
 
             return @this;
         }

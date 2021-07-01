@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Domain.TestPopulation
 {
+    using System.Linq;
     using Domain;
     using Bogus;
     using Person = Person;
@@ -128,7 +129,7 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var part = new NonUnifiedPartBuilder(@this.Transaction()).WithNonSerialisedDefaults(@this).Build();
 
-            foreach (Organisation supplier in @this.ActiveSuppliers)
+            foreach (var supplier in @this.ActiveSuppliers)
             {
                 new SupplierOfferingBuilder(@this.Transaction())
                     .WithFromDate(faker.Date.Past(refDate: @this.Transaction().Now()))
@@ -141,7 +142,7 @@ namespace Allors.Database.Domain.TestPopulation
 
             new InventoryItemTransactionBuilder(@this.Transaction())
                 .WithPart(part)
-                .WithFacility(@this.FacilitiesWhereOwner.First)
+                .WithFacility(@this.FacilitiesWhereOwner.FirstOrDefault())
                 .WithQuantity(faker.Random.Number(1000))
                 .WithReason(new InventoryTransactionReasons(@this.Transaction()).Unknown)
                 .Build();
@@ -153,7 +154,7 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var part = new NonUnifiedPartBuilder(@this.Transaction()).WithSerialisedDefaults(@this, faker).Build();
 
-            foreach (Organisation supplier in @this.ActiveSuppliers)
+            foreach (var supplier in @this.ActiveSuppliers)
             {
                 new SupplierOfferingBuilder(@this.Transaction())
                     .WithFromDate(faker.Date.Past(refDate: @this.Transaction().Now()))
@@ -176,7 +177,7 @@ namespace Allors.Database.Domain.TestPopulation
 
             new InventoryItemTransactionBuilder(@this.Transaction())
                 .WithSerialisedItem(serialisedItem)
-                .WithFacility(@this.FacilitiesWhereOwner.First)
+                .WithFacility(@this.FacilitiesWhereOwner.FirstOrDefault())
                 .WithQuantity(1)
                 .WithReason(new InventoryTransactionReasons(@this.Transaction()).IncomingShipment)
                 .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(@this.Transaction()).Good)

@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Domain.TestPopulation
 {
+    using System.Linq;
     using Bogus;
 
     public static partial class OrganisationBuilderExtensions
@@ -16,42 +17,37 @@ namespace Allors.Database.Domain.TestPopulation
 
             var euCountry = new Countries(@this.Transaction).FindBy(m.Country.IsoCode, faker.PickRandom(Countries.EuMemberStates));
 
-            @this.WithName(faker.Company.CompanyName());
-            @this.WithEuListingState(euCountry);
-            @this.WithLegalForm(faker.Random.ListItem(@this.Transaction.Extent<LegalForm>()));
-            @this.WithLocale(faker.Random.ListItem(@this.Transaction.GetSingleton().Locales));
-            @this.WithTaxNumber($"{euCountry.IsoCode}{faker.Random.Number(99999999)}");
-            @this.WithComment(faker.Lorem.Paragraph());
-
-            @this.WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
+            @this.WithName(faker.Company.CompanyName())
+                .WithEuListingState(euCountry)
+                .WithLegalForm(faker.Random.ListItem(@this.Transaction.Extent<LegalForm>()))
+                .WithLocale(faker.Random.ListItem(@this.Transaction.GetSingleton().Locales.ToArray()))
+                .WithTaxNumber($"{euCountry.IsoCode}{faker.Random.Number(99999999)}")
+                .WithComment(faker.Lorem.Paragraph())
+                .WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
                 .WithUseAsDefault(true)
                 .WithContactMechanism(new PostalAddressBuilder(@this.Transaction).WithDefaults().Build())
                 .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).GeneralCorrespondence)
                 .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).ShippingAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).HeadQuarters)
-                .Build());
-
-            @this.WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
+                .Build())
+                .WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
                 .WithUseAsDefault(true)
                 .WithContactMechanism(new EmailAddressBuilder(@this.Transaction).WithDefaults().Build())
                 .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).GeneralEmail)
                 .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).BillingAddress)
-                .Build());
-
-            @this.WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
+                .Build())
+                .WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
                 .WithUseAsDefault(true)
                 .WithContactMechanism(new WebAddressBuilder(@this.Transaction).WithDefaults().Build())
                 .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).InternetAddress)
-                .Build());
-
-            @this.WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
+                .Build())
+                .WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
                 .WithUseAsDefault(true)
                 .WithContactMechanism(new TelecommunicationsNumberBuilder(@this.Transaction).WithDefaults().Build())
                 .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).GeneralPhoneNumber)
                 .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).BillingInquiriesPhone)
-                .Build());
-
-            @this.WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
+                .Build())
+                .WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
                 .WithUseAsDefault(true)
                 .WithContactMechanism(new TelecommunicationsNumberBuilder(@this.Transaction).WithDefaults().Build())
                 .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).OrderInquiriesPhone)
@@ -65,8 +61,8 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var company = faker.Company;
 
-            @this.WithName(company.CompanyName());
-            @this.WithIsManufacturer(true);
+            @this.WithName(company.CompanyName())
+                .WithIsManufacturer(true);
 
             return @this;
         }
@@ -79,13 +75,13 @@ namespace Allors.Database.Domain.TestPopulation
             var company = faker.Company;
             var euCountry = new Countries(@this.Transaction).FindBy(m.Country.IsoCode, faker.PickRandom(Countries.EuMemberStates));
 
-            @this.WithName(company.CompanyName());
-            @this.WithEuListingState(euCountry);
-            @this.WithLegalForm(faker.Random.ListItem(@this.Transaction.Extent<LegalForm>()));
-            @this.WithLocale(faker.Random.ListItem(@this.Transaction.GetSingleton().Locales));
-            @this.WithTaxNumber($"{euCountry.IsoCode}{faker.Random.Number(99999999)}");
-            @this.WithComment(faker.Lorem.Paragraph());
-            @this.WithIsInternalOrganisation(true);
+            @this.WithName(company.CompanyName())
+                .WithEuListingState(euCountry)
+                .WithLegalForm(faker.Random.ListItem(@this.Transaction.Extent<LegalForm>()))
+                .WithLocale(faker.Random.ListItem(@this.Transaction.GetSingleton().Locales.ToArray()))
+                .WithTaxNumber($"{euCountry.IsoCode}{faker.Random.Number(99999999)}")
+                .WithComment(faker.Lorem.Paragraph())
+                .WithIsInternalOrganisation(true);
 
             return @this;
         }

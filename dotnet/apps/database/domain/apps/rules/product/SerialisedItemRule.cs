@@ -51,7 +51,7 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistPartWhereSerialisedItem && part.ExistProductType)
                 {
-                    foreach (SerialisedItemCharacteristicType characteristicType in part.ProductType.SerialisedItemCharacteristicTypes)
+                    foreach (var characteristicType in part.ProductType.SerialisedItemCharacteristicTypes)
                     {
                         var characteristic = @this.SerialisedItemCharacteristics.FirstOrDefault(v2 => Equals(v2.SerialisedItemCharacteristicType, characteristicType));
                         if (characteristic == null)
@@ -60,10 +60,7 @@ namespace Allors.Database.Domain
                                 .WithSerialisedItemCharacteristicType(characteristicType).Build();
                             @this.AddSerialisedItemCharacteristic(newCharacteristic);
 
-                            var partCharacteristics = part.SerialisedItemCharacteristics;
-                            partCharacteristics.Filter.AddEquals(this.M.SerialisedItemCharacteristic.SerialisedItemCharacteristicType, characteristicType);
-                            var fromPart = partCharacteristics.FirstOrDefault();
-
+                            var fromPart = part.SerialisedItemCharacteristics.FirstOrDefault(v => Equals(characteristicType, v.SerialisedItemCharacteristicType));
                             if (fromPart != null)
                             {
                                 newCharacteristic.Value = fromPart.Value;

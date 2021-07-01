@@ -25,9 +25,9 @@ namespace Allors.Database.Domain
             {
                 if (!@this.ExistPicker)
                 {
-                    foreach(PickListItem pickListItem in @this.PickListItems)
+                    foreach(var pickListItem in @this.PickListItems)
                     {
-                        foreach(ItemIssuance itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
+                        foreach(var itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
                         {
                             if (itemIssuance.ShipmentItem.ShipmentWhereShipmentItem.ShipmentState.IsOnHold)
                             {

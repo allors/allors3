@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
                         @this.CanInvoice = false;
                     }
 
-                    foreach (WorkEffortBilling workEffortBilling in @this.WorkEffortBillingsWhereWorkEffort)
+                    foreach (var workEffortBilling in @this.WorkEffortBillingsWhereWorkEffort)
                     {
                         if (workEffortBilling.InvoiceItem is SalesInvoiceItem invoiceItem
                             && invoiceItem.ExistSalesInvoiceWhereSalesInvoiceItem
@@ -61,7 +61,7 @@ namespace Allors.Database.Domain
                                 break;
                             }
 
-                            foreach (TimeEntryBilling timeEntryBilling in timeEntry.TimeEntryBillingsWhereTimeEntry)
+                            foreach (var timeEntryBilling in timeEntry.TimeEntryBillingsWhereTimeEntry)
                             {
                                 if (timeEntryBilling.InvoiceItem is SalesInvoiceItem invoiceItem
                                     && invoiceItem.ExistSalesInvoiceWhereSalesInvoiceItem
@@ -81,7 +81,7 @@ namespace Allors.Database.Domain
 
                     if (@this.CanInvoice)
                     {
-                        foreach (WorkEffort child in @this.Children)
+                        foreach (var child in @this.Children)
                         {
                             if (!(child.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Transaction).Completed)
                                 || child.WorkEffortState.Equals(new WorkEffortStates(@this.Strategy.Transaction).Finished)))

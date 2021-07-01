@@ -26,15 +26,15 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SalesInvoice>())
             {
-                foreach (SalesInvoiceItem salesInvoiceItem in @this.SalesInvoiceItems)
+                foreach (var salesInvoiceItem in @this.SalesInvoiceItems)
                 {
-                    foreach (ShipmentItemBilling shipmentItemBilling in salesInvoiceItem.ShipmentItemBillingsWhereInvoiceItem)
+                    foreach (var shipmentItemBilling in salesInvoiceItem.ShipmentItemBillingsWhereInvoiceItem)
                     {
                         if (!@this.Shipments.Contains(shipmentItemBilling.ShipmentItem.ShipmentWhereShipmentItem))
                         {
                             @this.AddShipment(shipmentItemBilling.ShipmentItem.ShipmentWhereShipmentItem);
 
-                            foreach (OrderShipment orderShipment in shipmentItemBilling.ShipmentItem.OrderShipmentsWhereShipmentItem)
+                            foreach (var orderShipment in shipmentItemBilling.ShipmentItem.OrderShipmentsWhereShipmentItem)
                             {
                                 if (orderShipment.OrderItem is SalesOrderItem salesOrderItem
                                     && !@this.SalesOrders.Contains(salesOrderItem.SalesOrderWhereSalesOrderItem))

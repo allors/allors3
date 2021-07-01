@@ -21,9 +21,8 @@ namespace Allors.Database.Domain
             var m = @this.Strategy.Transaction.Database.Services().M;
             var settings = @this.Strategy.Transaction.GetSingleton().Settings;
 
-            var identifications = @this.ProductIdentifications;
-            identifications.Filter.AddEquals(m.ProductIdentification.ProductIdentificationType, new ProductIdentificationTypes(@this.Strategy.Transaction).Part);
-            var partIdentification = identifications.FirstOrDefault();
+            var part = new ProductIdentificationTypes(@this.Strategy.Transaction).Part;
+            var partIdentification = @this.ProductIdentifications.FirstOrDefault(v => Equals(part, v.ProductIdentificationType));
 
             if (partIdentification == null && settings.UsePartNumberCounter)
             {
@@ -37,7 +36,7 @@ namespace Allors.Database.Domain
 
         public static string PartIdentification(this Part @this)
         {
-            if (@this.ProductIdentifications.Count == 0)
+            if (!@this.ProductIdentifications.Any())
             {
                 return null;
             }

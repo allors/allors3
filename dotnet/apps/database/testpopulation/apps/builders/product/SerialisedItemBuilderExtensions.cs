@@ -22,49 +22,48 @@ namespace Allors.Database.Domain.TestPopulation
             var replacementValue = Convert.ToDecimal(faker.Commerce.Price());
             var expectedSalesPrice = Convert.ToDecimal(faker.Commerce.Price(replacementValue + 1000, replacementValue + 10000));
 
-            @this.WithName(faker.Lorem.Word());
-            @this.WithSerialisedItemAvailability(availability);
-            @this.WithSerialisedItemState(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemState>()));
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithKeywords(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithAcquiredDate(acquiredDate);
-            @this.WithLastServiceDate(serviceDate);
-            @this.WithNextServiceDate(faker.Date.Future(refDate: serviceDate));
-            @this.WithSerialNumber(faker.Random.AlphaNumeric(12));
-            @this.WithOwnership(faker.Random.ListItem(@this.Transaction.Extent<Ownership>()));
-            @this.WithManufacturingYear(serviceDate.Year - 5);
-            @this.WithAssignedPurchasePrice(Convert.ToDecimal(faker.Commerce.Price(replacementValue)));
-            @this.WithExpectedSalesPrice(expectedSalesPrice);
-            @this.WithPrimaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build());
+            @this.WithName(faker.Lorem.Word())
+                .WithSerialisedItemAvailability(availability)
+                .WithSerialisedItemState(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemState>()))
+                .WithDescription(faker.Lorem.Sentence())
+                .WithKeywords(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithAcquiredDate(acquiredDate)
+                .WithLastServiceDate(serviceDate)
+                .WithNextServiceDate(faker.Date.Future(refDate: serviceDate))
+                .WithSerialNumber(faker.Random.AlphaNumeric(12))
+                .WithOwnership(faker.Random.ListItem(@this.Transaction.Extent<Ownership>()))
+                .WithManufacturingYear(serviceDate.Year - 5)
+                .WithAssignedPurchasePrice(Convert.ToDecimal(faker.Commerce.Price(replacementValue)))
+                .WithExpectedSalesPrice(expectedSalesPrice)
+                .WithPrimaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build());
             if (@this.SecondaryPhotos != null)
             {
-                @this.WithSecondaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build());
-                @this.WithSecondaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build());
+                @this.WithSecondaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build())
+                    .WithSecondaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build());
             }
-            @this.WithAdditionalPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build());
-            @this.WithAdditionalPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build());
-            @this.WithAdditionalPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build());
-            @this.WithPrivatePhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build());
-            @this.WithAvailableForSale(faker.Random.Bool());
-
-            @this.WithBuyer(internalOrganisation);
-            @this.WithSeller(internalOrganisation);
+            @this.WithAdditionalPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build())
+                .WithAdditionalPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build())
+                .WithAdditionalPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build())
+                .WithPrivatePhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build())
+                .WithAvailableForSale(faker.Random.Bool())
+                .WithBuyer(internalOrganisation)
+                .WithSeller(internalOrganisation);
             @this.OwnedBy = (availability.IsSold ? new Organisations(@this.Transaction).FindBy(m.Organisation.IsInternalOrganisation, false) : internalOrganisation) ?? internalOrganisation;
 
             if (availability.IsInRent)
             {
-                @this.WithRentedBy(new Organisations(@this.Transaction).FindBy(m.Organisation.IsInternalOrganisation, false));
-                @this.WithRentalFromDate(faker.Date.Between(start: acquiredDate, end: acquiredDate.AddDays(10)));
-                @this.WithRentalThroughDate(faker.Date.Future(refDate: acquiredDate.AddYears(2)));
-                @this.WithExpectedReturnDate(faker.Date.Between(start: acquiredDate.AddYears(2).AddDays(1), end: acquiredDate.AddYears(2).AddDays(10)));
+                @this.WithRentedBy(new Organisations(@this.Transaction).FindBy(m.Organisation.IsInternalOrganisation, false))
+                    .WithRentalFromDate(faker.Date.Between(start: acquiredDate, end: acquiredDate.AddDays(10)))
+                    .WithRentalThroughDate(faker.Date.Future(refDate: acquiredDate.AddYears(2)))
+                    .WithExpectedReturnDate(faker.Date.Between(start: acquiredDate.AddYears(2).AddDays(1), end: acquiredDate.AddYears(2).AddDays(10)));
             }
 
-            foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
+            foreach (var additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
             {
-                @this.WithLocalisedName(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Word()).WithLocale(additionalLocale).Build());
-                @this.WithLocalisedDescription(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
-                @this.WithLocalisedKeyword(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
+                @this.WithLocalisedName(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Word()).WithLocale(additionalLocale).Build())
+                    .WithLocalisedDescription(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build())
+                    .WithLocalisedKeyword(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
             }
 
             return @this;
@@ -79,35 +78,35 @@ namespace Allors.Database.Domain.TestPopulation
             var replacementValue = Convert.ToDecimal(faker.Commerce.Price());
             var expectedSalesPrice = Convert.ToDecimal(faker.Commerce.Price(replacementValue + 1000, replacementValue + 10000));
 
-            @this.WithName(faker.Lorem.Word());
-            @this.WithSerialisedItemAvailability(new SerialisedItemAvailabilities(@this.Transaction).Available);
-            @this.WithSerialisedItemState(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemState>()));
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithKeywords(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithAcquiredDate(acquiredDate);
-            @this.WithLastServiceDate(serviceDate);
-            @this.WithNextServiceDate(faker.Date.Future(refDate: serviceDate));
-            @this.WithSerialNumber(faker.Random.AlphaNumeric(12));
-            @this.WithOwnership(faker.Random.ListItem(@this.Transaction.Extent<Ownership>()));
-            @this.WithManufacturingYear(serviceDate.Year - 5);
-            @this.WithAssignedPurchasePrice(Convert.ToDecimal(faker.Commerce.Price(replacementValue)));
-            @this.WithExpectedSalesPrice(expectedSalesPrice);
-            @this.WithPrimaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build());
-            @this.WithSecondaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build());
-            @this.WithSecondaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build());
-            @this.WithAdditionalPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build());
-            @this.WithAdditionalPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build());
-            @this.WithAdditionalPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build());
-            @this.WithPrivatePhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build());
-            @this.WithAvailableForSale(true);
-            @this.WithOwnedBy(internalOrganisation);
+            @this.WithName(faker.Lorem.Word())
+                .WithSerialisedItemAvailability(new SerialisedItemAvailabilities(@this.Transaction).Available)
+                .WithSerialisedItemState(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemState>()))
+                .WithDescription(faker.Lorem.Sentence())
+                .WithKeywords(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithAcquiredDate(acquiredDate)
+                .WithLastServiceDate(serviceDate)
+                .WithNextServiceDate(faker.Date.Future(refDate: serviceDate))
+                .WithSerialNumber(faker.Random.AlphaNumeric(12))
+                .WithOwnership(faker.Random.ListItem(@this.Transaction.Extent<Ownership>()))
+                .WithManufacturingYear(serviceDate.Year - 5)
+                .WithAssignedPurchasePrice(Convert.ToDecimal(faker.Commerce.Price(replacementValue)))
+                .WithExpectedSalesPrice(expectedSalesPrice)
+                .WithPrimaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build())
+                .WithSecondaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build())
+                .WithSecondaryPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build())
+                .WithAdditionalPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build())
+                .WithAdditionalPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build())
+                .WithAdditionalPhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build())
+                .WithPrivatePhoto(new MediaBuilder(@this.Transaction).WithInDataUri(faker.Image.DataUri(width: 800, height: 600)).Build())
+                .WithAvailableForSale(true)
+                .WithOwnedBy(internalOrganisation);
 
-            foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
+            foreach (var additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
             {
-                @this.WithLocalisedName(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Word()).WithLocale(additionalLocale).Build());
-                @this.WithLocalisedDescription(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
-                @this.WithLocalisedKeyword(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
+                @this.WithLocalisedName(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Word()).WithLocale(additionalLocale).Build())
+                    .WithLocalisedDescription(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build())
+                    .WithLocalisedKeyword(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
             }
 
             return @this;

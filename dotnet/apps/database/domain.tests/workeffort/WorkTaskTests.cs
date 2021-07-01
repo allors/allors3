@@ -209,11 +209,11 @@ namespace Allors.Database.Domain.Tests
             //// Work Effort Data
             var salesPerson = new PersonBuilder(this.Transaction).WithFirstName("Sales").WithLastName("Person").Build();
             var salesOrder = this.CreateSalesOrder(customer, organisation);
-            var workOrder = this.CreateWorkEffort(organisation, customer, customerContact, salesOrder.SalesOrderItems.First);
+            var workOrder = this.CreateWorkEffort(organisation, customer, customerContact, salesOrder.SalesOrderItems.FirstOrDefault());
             var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
             var employment = new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(organisation).Build();
 
-            var salesOrderItem = salesOrder.SalesOrderItems.First;
+            var salesOrderItem = salesOrder.SalesOrderItems.FirstOrDefault();
             salesOrder.AddValidOrderItem(salesOrderItem);
 
             //// Work Effort Inventory Assignmets
@@ -280,13 +280,13 @@ namespace Allors.Database.Domain.Tests
             //// Work Effort Data
             var salesPerson = new PersonBuilder(this.Transaction).WithFirstName("Sales").WithLastName("Person").Build();
             var salesOrder = this.CreateSalesOrder(customer, organisation);
-            var workOrder = this.CreateWorkEffort(organisation, customer, customerContact, salesOrder.SalesOrderItems.First);
+            var workOrder = this.CreateWorkEffort(organisation, customer, customerContact, salesOrder.SalesOrderItems.FirstOrDefault());
             var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
             var employment = new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(organisation).Build();
 
             this.Transaction.Derive(true);
 
-            var salesOrderItem = salesOrder.SalesOrderItems.First;
+            var salesOrderItem = salesOrder.SalesOrderItems.FirstOrDefault();
             salesOrder.AddValidOrderItem(salesOrderItem);
 
             //// Work Effort Inventory Assignmets
@@ -399,13 +399,13 @@ namespace Allors.Database.Domain.Tests
 
             workOrder.Invoice();
 
-            var salesInvoice = customer.SalesInvoicesWhereBillToCustomer.First;
+            var salesInvoice = customer.SalesInvoicesWhereBillToCustomer.First();
 
             Assert.Equal(2, salesInvoice.InvoiceItems.Length);
-            Assert.Equal(10, timeEntryYesterday.TimeEntryBillingsWhereTimeEntry.First.InvoiceItem.AssignedUnitPrice);
-            Assert.Equal(3, timeEntryYesterday.TimeEntryBillingsWhereTimeEntry.First.InvoiceItem.Quantity);
-            Assert.Equal(12, timeEntryToday.TimeEntryBillingsWhereTimeEntry.First.InvoiceItem.AssignedUnitPrice);
-            Assert.Equal(10, timeEntryToday.TimeEntryBillingsWhereTimeEntry.First.InvoiceItem.Quantity);
+            Assert.Equal(10, timeEntryYesterday.TimeEntryBillingsWhereTimeEntry.First().InvoiceItem.AssignedUnitPrice);
+            Assert.Equal(3, timeEntryYesterday.TimeEntryBillingsWhereTimeEntry.First().InvoiceItem.Quantity);
+            Assert.Equal(12, timeEntryToday.TimeEntryBillingsWhereTimeEntry.First().InvoiceItem.AssignedUnitPrice);
+            Assert.Equal(10, timeEntryToday.TimeEntryBillingsWhereTimeEntry.First().InvoiceItem.Quantity);
         }
 
         [Fact]
@@ -488,15 +488,15 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive(true);
 
-            var salesInvoice = customer.SalesInvoicesWhereBillToCustomer.First;
+            var salesInvoice = customer.SalesInvoicesWhereBillToCustomer.First();
 
             Assert.Equal(3, salesInvoice.InvoiceItems.Length);
-            Assert.Equal(10, timeEntryYesterday.TimeEntryBillingsWhereTimeEntry.First.InvoiceItem.AssignedUnitPrice);
-            Assert.Equal(3, timeEntryYesterday.TimeEntryBillingsWhereTimeEntry.First.InvoiceItem.Quantity);
-            Assert.Equal(12, timeEntryToday.TimeEntryBillingsWhereTimeEntry.First.InvoiceItem.AssignedUnitPrice);
-            Assert.Equal(4, timeEntryToday.TimeEntryBillingsWhereTimeEntry.First.InvoiceItem.Quantity);
-            Assert.Equal(14, timeEntryTomorrow.TimeEntryBillingsWhereTimeEntry.First.InvoiceItem.AssignedUnitPrice);
-            Assert.Equal(6, timeEntryTomorrow.TimeEntryBillingsWhereTimeEntry.First.InvoiceItem.Quantity);
+            Assert.Equal(10, timeEntryYesterday.TimeEntryBillingsWhereTimeEntry.First().InvoiceItem.AssignedUnitPrice);
+            Assert.Equal(3, timeEntryYesterday.TimeEntryBillingsWhereTimeEntry.First().InvoiceItem.Quantity);
+            Assert.Equal(12, timeEntryToday.TimeEntryBillingsWhereTimeEntry.First().InvoiceItem.AssignedUnitPrice);
+            Assert.Equal(4, timeEntryToday.TimeEntryBillingsWhereTimeEntry.First().InvoiceItem.Quantity);
+            Assert.Equal(14, timeEntryTomorrow.TimeEntryBillingsWhereTimeEntry.First().InvoiceItem.AssignedUnitPrice);
+            Assert.Equal(6, timeEntryTomorrow.TimeEntryBillingsWhereTimeEntry.First().InvoiceItem.Quantity);
         }
 
         [Fact]
@@ -558,11 +558,11 @@ namespace Allors.Database.Domain.Tests
 
             workOrder.Invoice();
 
-            var salesInvoice = customer.SalesInvoicesWhereBillToCustomer.First;
+            var salesInvoice = customer.SalesInvoicesWhereBillToCustomer.First();
 
             Assert.Single(salesInvoice.InvoiceItems);
-            Assert.Equal(10, timeEntryYesterday.TimeEntryBillingsWhereTimeEntry.First.InvoiceItem.AssignedUnitPrice);
-            Assert.Equal(13, timeEntryYesterday.TimeEntryBillingsWhereTimeEntry.First.InvoiceItem.Quantity);
+            Assert.Equal(10, timeEntryYesterday.TimeEntryBillingsWhereTimeEntry.First().InvoiceItem.AssignedUnitPrice);
+            Assert.Equal(13, timeEntryYesterday.TimeEntryBillingsWhereTimeEntry.First().InvoiceItem.Quantity);
         }
 
         [Fact]
@@ -638,7 +638,7 @@ namespace Allors.Database.Domain.Tests
 
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntryToday);
 
-            new WorkEffortInventoryAssignmentBuilder(this.Transaction).WithAssignment(workOrder).WithInventoryItem(part1.InventoryItemsWherePart.First).WithQuantity(3).Build();
+            new WorkEffortInventoryAssignmentBuilder(this.Transaction).WithAssignment(workOrder).WithInventoryItem(part1.InventoryItemsWherePart.FirstOrDefault()).WithQuantity(3).Build();
 
             this.Transaction.Derive(true);
 
@@ -650,11 +650,11 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive(true);
 
-            var salesInvoice = customer.SalesInvoicesWhereBillToCustomer.First;
+            var salesInvoice = customer.SalesInvoicesWhereBillToCustomer.First();
 
             Assert.Equal(2, salesInvoice.InvoiceItems.Length);
-            Assert.Equal(10, workOrder.WorkEffortBillingsWhereWorkEffort.First.InvoiceItem.AssignedUnitPrice);
-            Assert.Equal(30, workOrder.WorkEffortBillingsWhereWorkEffort.First.InvoiceItem.TotalExVat);
+            Assert.Equal(10, workOrder.WorkEffortBillingsWhereWorkEffort.First().InvoiceItem.AssignedUnitPrice);
+            Assert.Equal(30, workOrder.WorkEffortBillingsWhereWorkEffort.First().InvoiceItem.TotalExVat);
         }
 
         [Fact]
@@ -707,10 +707,10 @@ namespace Allors.Database.Domain.Tests
             workOrder.Invoice();
             this.Transaction.Derive(true);
 
-            var salesInvoice = customer.SalesInvoicesWhereBillToCustomer.First;
+            var salesInvoice = customer.SalesInvoicesWhereBillToCustomer.First();
 
             Assert.Single(salesInvoice.InvoiceItems);
-            Assert.NotEqual(salesInvoiceItem, salesInvoice.SalesInvoiceItems.First);
+            Assert.NotEqual(salesInvoiceItem, salesInvoice.SalesInvoiceItems.FirstOrDefault());
             Assert.Equal(1, salesInvoice.GrandTotal);
         }
 
@@ -733,7 +733,7 @@ namespace Allors.Database.Domain.Tests
 
             return new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workOrder)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(quantity)
                 .Build();
         }
@@ -786,7 +786,7 @@ namespace Allors.Database.Domain.Tests
             new WorkTaskBuilder(this.Transaction)
             .WithName("Task")
             .WithTakenBy(takenBy)
-            .WithFacility(new Facilities(this.Transaction).Extent().First)
+            .WithFacility(new Facilities(this.Transaction).Extent().FirstOrDefault())
             .WithCustomer(customer)
             .WithContactPerson(contact)
             .WithWorkEffortPurpose(new WorkEffortPurposes(this.Transaction).Maintenance)
@@ -856,7 +856,7 @@ namespace Allors.Database.Domain.Tests
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
             this.Derive();
 
-            var worker = this.InternalOrganisation.ActiveEmployees.First;
+            var worker = this.InternalOrganisation.ActiveEmployees.FirstOrDefault();
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithWorkEffort(workTask)
                 .WithWorker(worker)
@@ -873,7 +873,7 @@ namespace Allors.Database.Domain.Tests
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
             this.Derive();
 
-            var worker = this.InternalOrganisation.ActiveEmployees.First;
+            var worker = this.InternalOrganisation.ActiveEmployees.FirstOrDefault();
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithWorkEffort(workTask)
                 .WithWorker(worker)
@@ -893,7 +893,7 @@ namespace Allors.Database.Domain.Tests
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
             this.Derive();
 
-            var worker = this.InternalOrganisation.ActiveEmployees.First;
+            var worker = this.InternalOrganisation.ActiveEmployees.FirstOrDefault();
             var timeEntry = new TimeEntryBuilder(this.Transaction)
                 .WithWorkEffort(workTask)
                 .WithWorker(worker)
@@ -1048,7 +1048,7 @@ namespace Allors.Database.Domain.Tests
             inventoryAssignment.Assignment = workTask;
             this.Derive();
 
-            Assert.Equal(10, inventoryAssignment.InventoryItemTransactions.First.Quantity);
+            Assert.Equal(10, inventoryAssignment.InventoryItemTransactions.First().Quantity);
         }
 
         [Fact]
@@ -1069,7 +1069,7 @@ namespace Allors.Database.Domain.Tests
             inventoryAssignment.Quantity = 10;
             this.Derive();
 
-            Assert.Equal(10, inventoryAssignment.InventoryItemTransactions.First.Quantity);
+            Assert.Equal(10, inventoryAssignment.InventoryItemTransactions.First().Quantity);
         }
 
         [Fact]
@@ -1095,7 +1095,7 @@ namespace Allors.Database.Domain.Tests
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part1.InventoryItemsWherePart.First)
+                .WithInventoryItem(part1.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(1)
                 .Build();
             this.Derive();
@@ -1103,7 +1103,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(2, part1.QuantityOnHand);
             Assert.Equal(3, part2.QuantityOnHand);
 
-            inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.First;
+            inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.FirstOrDefault();
             this.Derive();
 
             Assert.Equal(3, part1.QuantityOnHand);
@@ -1125,7 +1125,7 @@ namespace Allors.Database.Domain.Tests
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(1)
                 .Build();
             this.Derive();
@@ -1277,7 +1277,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             new SupplierOfferingBuilder(this.Transaction)
-                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.FirstOrDefault())
                 .WithPart(part)
                 .Build();
             this.Derive();
@@ -1286,7 +1286,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             var workEffortInventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(1)
                 .WithAssignedUnitSellingPrice(10)
                 .Build();
@@ -1305,7 +1305,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             new SupplierOfferingBuilder(this.Transaction)
-                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.FirstOrDefault())
                 .WithPart(part)
                 .Build();
             this.Derive();
@@ -1315,7 +1315,7 @@ namespace Allors.Database.Domain.Tests
 
             var workEffortInventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(1)
                 .WithAssignedUnitSellingPrice(10)
                 .Build();
@@ -1334,7 +1334,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             new SupplierOfferingBuilder(this.Transaction)
-                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.FirstOrDefault())
                 .WithPart(part)
                 .Build();
             this.Derive();
@@ -1344,7 +1344,7 @@ namespace Allors.Database.Domain.Tests
 
             var workEffortInventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(1)
                 .WithAssignedUnitSellingPrice(10)
                 .Build();
@@ -1363,7 +1363,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             new SupplierOfferingBuilder(this.Transaction)
-                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.FirstOrDefault())
                 .WithPart(part)
                 .Build();
             this.Derive();
@@ -1373,7 +1373,7 @@ namespace Allors.Database.Domain.Tests
 
             var workEffortInventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(1)
                 .WithAssignedUnitSellingPrice(10)
                 .Build();
@@ -1557,7 +1557,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             new SupplierOfferingBuilder(this.Transaction)
-                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.FirstOrDefault())
                 .WithPart(part)
                 .Build();
             this.Derive();
@@ -1566,7 +1566,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             var workEffortInventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(1)
                 .WithAssignedUnitSellingPrice(10)
                 .Build();
@@ -1640,7 +1640,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            workEffort.Customer = this.InternalOrganisation.ActiveCustomers.First;
+            workEffort.Customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             this.Derive();
 
             Assert.Equal(10, workEffort.TotalRevenue);
@@ -1650,7 +1650,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedWorkEffortExecutedByDeriveTotalRevenue()
         {
             var workEffort = new WorkTaskBuilder(this.Transaction)
-                .WithCustomer(this.InternalOrganisation.ActiveCustomers.First)
+                .WithCustomer(this.InternalOrganisation.ActiveCustomers.FirstOrDefault())
                 .Build();
             this.Derive();
 
@@ -1781,7 +1781,7 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedExecutedByDeriveRevisePermission()
         {
             var workTask = new WorkTaskBuilder(this.Transaction)
-                .WithCustomer(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithCustomer(this.InternalOrganisation.ActiveSuppliers.FirstOrDefault())
                 .WithExecutedBy(this.InternalOrganisation)
                 .WithWorkEffortState(new WorkEffortStates(this.Transaction).Finished)
                 .Build();
@@ -1790,7 +1790,7 @@ namespace Allors.Database.Domain.Tests
             var revisePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Revise);
             Assert.Contains(revisePermission, workTask.DeniedPermissions);
 
-            workTask.ExecutedBy = this.InternalOrganisation.ActiveSuppliers.First;
+            workTask.ExecutedBy = this.InternalOrganisation.ActiveSuppliers.FirstOrDefault();
             this.Derive();
 
             Assert.DoesNotContain(revisePermission, workTask.DeniedPermissions);

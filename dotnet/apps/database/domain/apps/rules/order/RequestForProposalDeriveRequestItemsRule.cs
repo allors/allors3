@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<RequestForProposal>())
             {
-                foreach (RequestItem requestItem in @this.RequestItems)
+                foreach (var requestItem in @this.RequestItems)
                 {
                     requestItem.Sync(@this);
                 }

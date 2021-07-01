@@ -34,10 +34,7 @@ namespace Allors.Database.Domain
 
                     foreach (Facility facility in warehouses)
                     {
-                        var inventoryItems = @this.Part.InventoryItemsWherePart;
-                        inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, facility);
-                        var inventoryItem = inventoryItems.First;
-
+                        var inventoryItem = @this.Part.InventoryItemsWherePart.FirstOrDefault(v => Equals(facility, v.Facility));
                         if (inventoryItem == null)
                         {
                             new NonSerialisedInventoryItemBuilder(@this.Strategy.Transaction).WithPart(@this.Part).WithFacility(facility).WithUnitOfMeasure(@this.Part.UnitOfMeasure).Build();

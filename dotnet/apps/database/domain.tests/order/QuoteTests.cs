@@ -59,7 +59,7 @@ namespace Allors.Database.Domain.Tests
                .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "sv"))
                .Build();
 
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             customer.Locale = swedishLocale;
 
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
@@ -81,7 +81,7 @@ namespace Allors.Database.Domain.Tests
 
             this.InternalOrganisation.Locale = swedishLocale;
 
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             customer.RemoveLocale();
 
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
@@ -168,7 +168,7 @@ namespace Allors.Database.Domain.Tests
                 .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "sv"))
                 .Build();
 
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
 
             var quote = new ProductQuoteBuilder(this.Transaction).WithReceiver(customer).Build();
             this.Derive();
@@ -183,7 +183,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedReceiverPreferredCurrencyDeriveDerivedCurrency()
         {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             customer.RemoveLocale();
             customer.RemovePreferredCurrency();
 
@@ -205,7 +205,7 @@ namespace Allors.Database.Domain.Tests
                 .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "sv"))
                 .Build();
 
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             customer.Locale = newLocale;
             customer.RemovePreferredCurrency();
 
@@ -222,7 +222,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedIssueDateDeriveVatRate()
         {
             var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
-            vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            vatRegime.VatRates.ElementAt(0).ThroughDate = this.Transaction.Now().AddDays(-1).Date;
             this.Derive();
 
             var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
@@ -352,10 +352,10 @@ namespace Allors.Database.Domain.Tests
             Assert.True(quote.TotalIncVat > 0);
             var totalIncVatBefore = quote.TotalIncVat;
 
-            quote.QuoteItems.First.Cancel();
+            quote.QuoteItems.First().Cancel();
             this.Transaction.Derive();
 
-            Assert.Equal(quote.TotalIncVat, totalIncVatBefore - quote.QuoteItems.First.TotalIncVat);
+            Assert.Equal(quote.TotalIncVat, totalIncVatBefore - quote.QuoteItems.First().TotalIncVat);
         }
 
         [Fact]
@@ -607,7 +607,7 @@ namespace Allors.Database.Domain.Tests
             var theBad = new CustomOrganisationClassificationBuilder(this.Transaction).WithName("bad customer").Build();
             var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
+            var customer1 = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             customer1.AddPartyClassification(theGood);
 
             var customer2 = this.InternalOrganisation.ActiveCustomers.Last();

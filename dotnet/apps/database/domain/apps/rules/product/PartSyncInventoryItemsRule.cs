@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<Part>())
             {
-                foreach (InventoryItem inventoryItem in @this.InventoryItemsWherePart)
+                foreach (var inventoryItem in @this.InventoryItemsWherePart)
                 {
                     inventoryItem.Sync(@this);
                 }

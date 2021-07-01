@@ -132,17 +132,17 @@ namespace Allors.Database.Domain
         {
             if (this.IsDeletable)
             {
-                foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
+                foreach (var orderAdjustment in this.OrderAdjustments)
                 {
                     orderAdjustment.Delete();
                 }
 
-                foreach (SalesOrderItem item in this.SalesOrderItems)
+                foreach (var item in this.SalesOrderItems)
                 {
                     item.Delete();
                 }
 
-                foreach (SalesTerm salesTerm in this.SalesTerms)
+                foreach (var salesTerm in this.SalesTerms)
                 {
                     salesTerm.Delete();
                 }
@@ -272,7 +272,7 @@ namespace Allors.Database.Domain
                                 var part = unifiedGood ?? nonUnifiedGood?.Part;
 
                                 ShipmentItem shipmentItem = null;
-                                foreach (ShipmentItem item in pendingShipment.ShipmentItems)
+                                foreach (var item in pendingShipment.ShipmentItems)
                                 {
                                     if (inventoryItemKind != null
                                         && inventoryItemKind.Equals(new InventoryItemKinds(this.Transaction()).NonSerialised)
@@ -380,7 +380,7 @@ namespace Allors.Database.Domain
                     .WithLocale(this.DerivedLocale)
                     .Build();
 
-                foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
+                foreach (var orderAdjustment in this.OrderAdjustments)
                 {
                     OrderAdjustment newAdjustment = null;
                     if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
@@ -451,7 +451,7 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                foreach (SalesTerm salesTerm in this.SalesTerms)
+                foreach (var salesTerm in this.SalesTerms)
                 {
                     if (salesTerm.GetType().Name == typeof(IncoTerm).Name)
                     {

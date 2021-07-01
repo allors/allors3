@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
 
                 var through = this.ExistThroughDate ? this.ThroughDate : this.Transaction().Now();
                 var minutes = (decimal)(through - this.FromDate).Value.TotalMinutes;
-                var hours = (decimal)frequencies.Minute.ConvertToFrequency((decimal)minutes, frequencies.Hour);
+                var hours = (decimal)frequencies.Minute.ConvertToFrequency(minutes, frequencies.Hour);
 
                 return Rounder.RoundDecimal(hours, this.DecimalScale);
             }

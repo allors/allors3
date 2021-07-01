@@ -16,7 +16,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPickListBuilder_WhenBuild_ThenPostBuildRelationsMustExist()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.IsImmediatelyPicked = false;
 
             var pickList = new PickListBuilder(this.Transaction).Build();
@@ -29,7 +29,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPickList_WhenPicked_ThenInventoryIsAdjustedAndOrderItemsQuantityPickedIsSet()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.IsImmediatelyPicked = false;
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
@@ -74,8 +74,8 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var good1Inventory = (NonSerialisedInventoryItem)good1.Part.InventoryItemsWherePart.First;
-            var good2Inventory = (NonSerialisedInventoryItem)good2.Part.InventoryItemsWherePart.First;
+            var good1Inventory = (NonSerialisedInventoryItem)good1.Part.InventoryItemsWherePart.FirstOrDefault();
+            var good2Inventory = (NonSerialisedInventoryItem)good2.Part.InventoryItemsWherePart.FirstOrDefault();
 
             var colorWhite = new ColourBuilder(this.Transaction)
                 .WithName("white")
@@ -124,12 +124,12 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)mechelenAddress.ShipmentsWhereShipToAddress[0];
+            var shipment = (CustomerShipment)mechelenAddress.ShipmentsWhereShipToAddress.ElementAt(0);
 
             shipment.Pick();
             this.Transaction.Derive();
 
-            var pickList = good1.Part.InventoryItemsWherePart[0].PickListItemsWhereInventoryItem[0].PickListWherePickListItem;
+            var pickList = good1.Part.InventoryItemsWherePart.ElementAt(0).PickListItemsWhereInventoryItem.ElementAt(0).PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
 
             //// item5: only 4 out of 5 are actually picked
@@ -161,7 +161,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPickList_WhenActualQuantityPickedIsLess_ThenShipmentItemQuantityIsAdjusted()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.IsImmediatelyPicked = false;
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
@@ -238,11 +238,11 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)mechelenAddress.ShipmentsWhereShipToAddress[0];
+            var shipment = (CustomerShipment)mechelenAddress.ShipmentsWhereShipToAddress.ElementAt(0);
             shipment.Pick();
             this.Transaction.Derive();
 
-            var pickList = good1.Part.InventoryItemsWherePart[0].PickListItemsWhereInventoryItem[0].PickListWherePickListItem;
+            var pickList = good1.Part.InventoryItemsWherePart.ElementAt(0).PickListItemsWhereInventoryItem.ElementAt(0).PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
 
             //// item3: only 4 out of 5 are actually picked
@@ -255,10 +255,10 @@ namespace Allors.Database.Domain.Tests
                 }
             }
 
-            var itemIssuance = adjustedPicklistItem.ItemIssuancesWherePickListItem[0];
-            var shipmentItem = adjustedPicklistItem.ItemIssuancesWherePickListItem[0].ShipmentItem;
+            var itemIssuance = adjustedPicklistItem.ItemIssuancesWherePickListItem.ElementAt(0);
+            var shipmentItem = adjustedPicklistItem.ItemIssuancesWherePickListItem.ElementAt(0).ShipmentItem;
 
-            Assert.Equal(2, shipment.ShipmentItems.Count);
+            Assert.Equal(2, shipment.ShipmentItems.Count());
             Assert.Equal(5, itemIssuance.Quantity);
             Assert.Equal(5, shipmentItem.Quantity);
             Assert.Equal(5, item3.QuantityPendingShipment);
@@ -272,7 +272,7 @@ namespace Allors.Database.Domain.Tests
             // A new shipment item is created with quantity 1 and QuantityPendingShipment remains 5
             Assert.Equal(4, itemIssuance.Quantity);
             Assert.Equal(4, shipmentItem.Quantity);
-            Assert.Equal(3, shipment.ShipmentItems.Count);
+            Assert.Equal(3, shipment.ShipmentItems.Count());
             Assert.Equal(1, shipment.ShipmentItems.Last().Quantity);
             Assert.Equal(5, item3.QuantityPendingShipment);
         }
@@ -280,7 +280,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenSalesOrder_WhenShipmentIsCreated_ThenOrderItemsAreAddedToPickList()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.IsImmediatelyPicked = false;
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
@@ -335,8 +335,8 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var good1Inventory = good1.Part.InventoryItemsWherePart.First;
-            var good2Inventory = good2.Part.InventoryItemsWherePart.First;
+            var good1Inventory = good1.Part.InventoryItemsWherePart.FirstOrDefault();
+            var good2Inventory = good2.Part.InventoryItemsWherePart.FirstOrDefault();
 
             var order = new SalesOrderBuilder(this.Transaction)
                 .WithBillToCustomer(customer)
@@ -365,28 +365,26 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)mechelenAddress.ShipmentsWhereShipToAddress[0];
+            var shipment = (CustomerShipment)mechelenAddress.ShipmentsWhereShipToAddress.ElementAt(0);
             shipment.Pick();
             this.Transaction.Derive();
 
-            var pickList = good1.Part.InventoryItemsWherePart[0].PickListItemsWhereInventoryItem[0]
+            var pickList = good1.Part.InventoryItemsWherePart.ElementAt(0).PickListItemsWhereInventoryItem.ElementAt(0)
                 .PickListWherePickListItem;
 
-            Assert.Equal(2, pickList.PickListItems.Count);
+            Assert.Equal(2, pickList.PickListItems.Count());
 
-            var extent1 = pickList.PickListItems;
-            extent1.Filter.AddEquals(this.M.PickListItem.InventoryItem, good1Inventory);
-            Assert.Equal(3, extent1.First.Quantity);
+            var extent1 = pickList.PickListItems.Where(v => Equals(good1Inventory, v.InventoryItem));
+            Assert.Equal(3, extent1.First().Quantity);
 
-            var extent2 = pickList.PickListItems;
-            extent2.Filter.AddEquals(this.M.PickListItem.InventoryItem, good2Inventory);
-            Assert.Equal(5, extent2.First.Quantity);
+            var extent2 = pickList.PickListItems.Where(v => Equals(good2Inventory, v.InventoryItem));
+            Assert.Equal(5, extent2.First().Quantity);
         }
 
         [Fact]
         public void GivenMultipleOrders_WhenCombinedPickListIsPicked_ThenSingleShipmentIsPickedState()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.IsImmediatelyPicked = false;
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
@@ -489,11 +487,11 @@ namespace Allors.Database.Domain.Tests
             order2.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)mechelenAddress.ShipmentsWhereShipToAddress[0];
+            var shipment = (CustomerShipment)mechelenAddress.ShipmentsWhereShipToAddress.ElementAt(0);
             shipment.Pick();
             this.Transaction.Derive();
 
-            var pickList = good1.Part.InventoryItemsWherePart[0].PickListItemsWhereInventoryItem[0]
+            var pickList = good1.Part.InventoryItemsWherePart.ElementAt(0).PickListItemsWhereInventoryItem.ElementAt(0)
                 .PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
 
@@ -503,7 +501,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Single(customer.ShipmentsWhereShipToParty);
 
-            var customerShipment = (CustomerShipment)customer.ShipmentsWhereShipToParty.First;
+            var customerShipment = (CustomerShipment)customer.ShipmentsWhereShipToParty.FirstOrDefault();
             Assert.Equal(new ShipmentStates(this.Transaction).Picked, customerShipment.ShipmentState);
         }
 
@@ -513,7 +511,7 @@ namespace Allors.Database.Domain.Tests
             var store1 = new Stores(this.Transaction).FindBy(this.M.Store.Name, "store");
 
             var store2 = new StoreBuilder(this.Transaction).WithName("second store")
-                .WithDefaultFacility(new Facilities(this.Transaction).Extent().First)
+                .WithDefaultFacility(new Facilities(this.Transaction).Extent().FirstOrDefault())
                 .WithDefaultShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .WithDefaultCarrier(new Carriers(this.Transaction).Fedex)
                 .WithSalesOrderNumberPrefix("")
@@ -616,11 +614,11 @@ namespace Allors.Database.Domain.Tests
             var store1PickList = customer.PickListsWhereShipToParty.FirstOrDefault(v => v.Store.Equals(store1));
             var store2PickList = customer.PickListsWhereShipToParty.FirstOrDefault(v => v.Store.Equals(store2));
 
-            Assert.Equal(2, customer.PickListsWhereShipToParty.Count);
+            Assert.Equal(2, customer.PickListsWhereShipToParty.Count());
             Assert.NotNull(store1PickList);
-            Assert.Equal(3, store1PickList.PickListItems[0].Quantity);
+            Assert.Equal(3, store1PickList.PickListItems.ElementAt(0).Quantity);
             Assert.NotNull(store2PickList);
-            Assert.Equal(5, store2PickList.PickListItems[0].Quantity);
+            Assert.Equal(5, store2PickList.PickListItems.ElementAt(0).Quantity);
         }
     }
 
@@ -631,7 +629,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedStoreDerivePickListState()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsImmediatelyPicked = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
             var pickList = new PickListBuilder(this.Transaction).Build();
             this.Transaction.Derive();
 
@@ -649,7 +647,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPickList_WhenObjectStateIsCreated_ThenCheckTransitions()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.IsImmediatelyPicked = false;
 
             User user = this.Administrator;
@@ -666,7 +664,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPickList_WhenObjectStateIsCancelled_ThenCheckTransitions()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.IsImmediatelyPicked = false;
 
             User user = this.OrderProcessor;
@@ -688,7 +686,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPickList_WhenObjectStateIsPicked_ThenCheckTransitions()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.IsImmediatelyPicked = false;
 
             User user = this.OrderProcessor;

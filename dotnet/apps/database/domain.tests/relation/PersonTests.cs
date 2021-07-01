@@ -52,7 +52,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(contact, contact.CurrentOrganisationContactRelationships[0].Contact);
+            Assert.Equal(contact, contact.CurrentOrganisationContactRelationships.ElementAt(0).Contact);
             Assert.Empty(contact.InactiveOrganisationContactRelationships);
         }
 
@@ -76,7 +76,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(contact, contact.InactiveOrganisationContactRelationships[0].Contact);
+            Assert.Equal(contact, contact.InactiveOrganisationContactRelationships.ElementAt(0).Contact);
             Assert.Empty(contact.CurrentOrganisationContactRelationships);
         }
 
@@ -84,7 +84,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenPerson_WhenEmployed_ThenTimeSheetSynced()
         {
             var person = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Employee").Build();
-            var employer = new InternalOrganisations(this.Transaction).Extent().First;
+            var employer = new InternalOrganisations(this.Transaction).Extent().FirstOrDefault();
 
             var employment = new EmploymentBuilder(this.Transaction)
                 .WithEmployee(person)
@@ -152,7 +152,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(2, contact.CurrentOrganisationContactMechanisms.Count);
+            Assert.Equal(2, contact.CurrentOrganisationContactMechanisms.Count());
             Assert.Contains(contactMechanism1, contact.CurrentOrganisationContactMechanisms);
             Assert.Contains(contactMechanism2, contact.CurrentOrganisationContactMechanisms);
         }

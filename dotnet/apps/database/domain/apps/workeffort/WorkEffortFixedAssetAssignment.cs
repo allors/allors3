@@ -5,6 +5,8 @@
 
 namespace Allors.Database.Domain
 {
+    using System.Linq;
+
     public partial class WorkEffortFixedAssetAssignment
     {
         public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)

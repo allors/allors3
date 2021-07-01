@@ -8,6 +8,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Xunit;
 
     public class InternalOrganisationTests : DomainTest, IClassFixture<Fixture>
@@ -17,7 +18,7 @@ namespace Allors.Database.Domain.Tests
 
         public InternalOrganisationTests(Fixture fixture) : base(fixture)
         {
-            this.ownBankAccount = this.Transaction.Extent<OwnBankAccount>().First;
+            this.ownBankAccount = this.Transaction.Extent<OwnBankAccount>().FirstOrDefault();
 
             this.billingAddress = new WebAddressBuilder(this.Transaction).WithElectronicAddressString("billfrom").Build();
 
@@ -256,7 +257,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenInternalOrganisation_ActiveCustomers_AreDerived()
         {
-            var activeCustomersBefore = this.InternalOrganisation.ActiveCustomers.Count;
+            var activeCustomersBefore = this.InternalOrganisation.ActiveCustomers.Count();
 
             var acme = new OrganisationBuilder(this.Transaction).WithName("Acme").Build();
             var nike = new OrganisationBuilder(this.Transaction).WithName("Nike").Build();
@@ -275,7 +276,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.True(this.InternalOrganisation.ExistCustomerRelationshipsWhereInternalOrganisation);
             Assert.True(this.InternalOrganisation.ExistActiveCustomers);
-            Assert.Equal(activeCustomersBefore + 2, this.InternalOrganisation.ActiveCustomers.Count);
+            Assert.Equal(activeCustomersBefore + 2, this.InternalOrganisation.ActiveCustomers.Count());
 
             // Ending a RelationShip affects the ActiveCustomers
             acmeRelation.ThroughDate = this.Transaction.Now().AddDays(-1).Date;
@@ -284,7 +285,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.True(this.InternalOrganisation.ExistCustomerRelationshipsWhereInternalOrganisation);
             Assert.True(this.InternalOrganisation.ExistActiveCustomers);
-            Assert.Equal(activeCustomersBefore + 1, this.InternalOrganisation.ActiveCustomers.Count);
+            Assert.Equal(activeCustomersBefore + 1, this.InternalOrganisation.ActiveCustomers.Count());
         }
     }
 

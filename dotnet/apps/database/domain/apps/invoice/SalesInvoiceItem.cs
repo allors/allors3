@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System;
+    using System.Linq;
 
     public partial class SalesInvoiceItem
     {
@@ -28,14 +29,12 @@ namespace Allors.Database.Domain
                 {
                     return this.Part;
                 }
-                else
+
+                if (this.ExistProduct)
                 {
-                    if (this.ExistProduct)
-                    {
-                        var nonUnifiedGood = this.Product as NonUnifiedGood;
-                        var unifiedGood = this.Product as UnifiedGood;
-                        return unifiedGood ?? nonUnifiedGood?.Part;
-                    }
+                    var nonUnifiedGood = this.Product as NonUnifiedGood;
+                    var unifiedGood = this.Product as UnifiedGood;
+                    return unifiedGood ?? nonUnifiedGood?.Part;
                 }
 
                 return null;
@@ -85,41 +84,41 @@ namespace Allors.Database.Domain
 
         public void AppsDelete(DeletableDelete method)
         {
-            foreach (SalesTerm salesTerm in this.SalesTerms)
+            foreach (var salesTerm in this.SalesTerms)
             {
                 salesTerm.Delete();
             }
 
-            foreach (InvoiceVatRateItem invoiceVatRateItem in this.InvoiceVatRateItems)
+            foreach (var invoiceVatRateItem in this.InvoiceVatRateItems)
             {
                 invoiceVatRateItem.Delete();
             }
 
-            foreach (WorkEffortBilling billing in this.WorkEffortBillingsWhereInvoiceItem)
+            foreach (var billing in this.WorkEffortBillingsWhereInvoiceItem)
             {
                 billing.WorkEffort.DerivationTrigger = Guid.NewGuid();
                 billing.Delete();
             }
 
-            foreach (OrderItemBilling billing in this.OrderItemBillingsWhereInvoiceItem)
+            foreach (var billing in this.OrderItemBillingsWhereInvoiceItem)
             {
                 billing.OrderItem.DerivationTrigger = Guid.NewGuid();
                 billing.Delete();
             }
 
-            foreach (ShipmentItemBilling billing in this.ShipmentItemBillingsWhereInvoiceItem)
+            foreach (var billing in this.ShipmentItemBillingsWhereInvoiceItem)
             {
                 billing.ShipmentItem.DerivationTrigger = Guid.NewGuid();
                 billing.Delete();
             }
 
-            foreach (TimeEntryBilling billing in this.TimeEntryBillingsWhereInvoiceItem)
+            foreach (var billing in this.TimeEntryBillingsWhereInvoiceItem)
             {
                 billing.TimeEntry.WorkEffort.DerivationTrigger = Guid.NewGuid();
                 billing.Delete();
             }
 
-            foreach (ServiceEntryBilling billing in this.ServiceEntryBillingsWhereInvoiceItem)
+            foreach (var billing in this.ServiceEntryBillingsWhereInvoiceItem)
             {
                 billing.ServiceEntry.DerivationTrigger = Guid.NewGuid();
                 billing.Delete();

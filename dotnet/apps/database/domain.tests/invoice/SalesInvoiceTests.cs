@@ -169,7 +169,7 @@ namespace Allors.Database.Domain.Tests
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Transaction).SalesInvoice)
                 .Build();
 
-            Assert.Contains(ErrorMessages.PartyIsNotACustomer, this.Derive().Errors[0].Message);
+            Assert.Contains(ErrorMessages.PartyIsNotACustomer, this.Derive().Errors.ElementAt(0).Message);
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
 
@@ -244,7 +244,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenBilledFromWithoutInvoiceNumberPrefix_WhenDeriving_ThenSortableInvoiceNumberIsSet()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.RemoveSalesInvoiceNumberPrefix();
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().RemoveSalesInvoiceNumberPrefix();
             new UnifiedGoodBuilder(this.Transaction).WithSerialisedDefaults(this.InternalOrganisation).Build();
             this.Transaction.Derive();
 
@@ -261,7 +261,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenBilledFromWithInvoiceNumberPrefix_WhenDeriving_ThenSortableInvoiceNumberIsSet()
         {
             this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Transaction).EnforcedSequence;
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.SalesInvoiceNumberPrefix = "prefix-";
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().SalesInvoiceNumberPrefix = "prefix-";
             new UnifiedGoodBuilder(this.Transaction).WithSerialisedDefaults(this.InternalOrganisation).Build();
             this.Transaction.Derive();
 
@@ -278,7 +278,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenBilledFromWithParametrizedInvoiceNumberPrefix_WhenDeriving_ThenSortableInvoiceNumberIsSet()
         {
             this.InternalOrganisation.InvoiceSequence = new InvoiceSequences(this.Transaction).EnforcedSequence;
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.SalesInvoiceNumberPrefix = "prefix-{year}-";
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().SalesInvoiceNumberPrefix = "prefix-{year}-";
             new UnifiedGoodBuilder(this.Transaction).WithSerialisedDefaults(this.InternalOrganisation).Build();
             this.Transaction.Derive();
 
@@ -327,7 +327,7 @@ namespace Allors.Database.Domain.Tests
             invoice1.Send();
 
             Assert.False(store.ExistSalesInvoiceNumberCounter);
-            Assert.Equal(this.Transaction.Now().Year, store.FiscalYearsStoreSequenceNumbers.First.FiscalYear);
+            Assert.Equal(this.Transaction.Now().Year, store.FiscalYearsStoreSequenceNumbers.First().FiscalYear);
             Assert.Equal("1", invoice1.InvoiceNumber);
 
             var invoice2 = new SalesInvoiceBuilder(this.Transaction)
@@ -342,7 +342,7 @@ namespace Allors.Database.Domain.Tests
             invoice2.Send();
 
             Assert.False(store.ExistSalesInvoiceNumberCounter);
-            Assert.Equal(this.Transaction.Now().Year, store.FiscalYearsStoreSequenceNumbers.First.FiscalYear);
+            Assert.Equal(this.Transaction.Now().Year, store.FiscalYearsStoreSequenceNumbers.First().FiscalYear);
             Assert.Equal("2", invoice2.InvoiceNumber);
         }
 
@@ -839,7 +839,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Single(invoice.Customers);
-            Assert.Equal(customer, invoice.Customers.First);
+            Assert.Equal(customer, invoice.Customers.FirstOrDefault());
         }
 
         [Fact]
@@ -864,7 +864,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(2, invoice.Customers.Count);
+            Assert.Equal(2, invoice.Customers.Count());
             Assert.Contains(billToCustomer, invoice.Customers);
             Assert.Contains(shipToCustomer, invoice.Customers);
         }
@@ -900,7 +900,7 @@ namespace Allors.Database.Domain.Tests
 
             new ReceiptBuilder(this.Transaction)
                 .WithAmount(90)
-                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.SalesInvoiceItems[0]).WithAmountApplied(90).Build())
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.SalesInvoiceItems.ElementAt(0)).WithAmountApplied(90).Build())
                 .Build();
 
             this.Transaction.Derive();
@@ -940,7 +940,7 @@ namespace Allors.Database.Domain.Tests
 
             new ReceiptBuilder(this.Transaction)
                 .WithAmount(100)
-                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.InvoiceItems[0]).WithAmountApplied(100).Build())
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.InvoiceItems.ElementAt(0)).WithAmountApplied(100).Build())
                 .Build();
 
             this.Transaction.Derive();
@@ -979,8 +979,8 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(new SalesInvoiceStates(this.Transaction).Cancelled, invoice.SalesInvoiceState);
-            Assert.Equal(new SalesInvoiceItemStates(this.Transaction).CancelledByInvoice, invoice.SalesInvoiceItems[0].SalesInvoiceItemState);
-            Assert.Equal(new SalesInvoiceItemStates(this.Transaction).CancelledByInvoice, invoice.SalesInvoiceItems[1].SalesInvoiceItemState);
+            Assert.Equal(new SalesInvoiceItemStates(this.Transaction).CancelledByInvoice, invoice.SalesInvoiceItems.ElementAt(0).SalesInvoiceItemState);
+            Assert.Equal(new SalesInvoiceItemStates(this.Transaction).CancelledByInvoice, invoice.SalesInvoiceItems.ElementAt(1).SalesInvoiceItemState);
         }
 
         [Fact]
@@ -1012,14 +1012,14 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(new SalesInvoiceStates(this.Transaction).WrittenOff, invoice.SalesInvoiceState);
-            Assert.Equal(new SalesInvoiceItemStates(this.Transaction).WrittenOff, invoice.SalesInvoiceItems[0].SalesInvoiceItemState);
-            Assert.Equal(new SalesInvoiceItemStates(this.Transaction).WrittenOff, invoice.SalesInvoiceItems[1].SalesInvoiceItemState);
+            Assert.Equal(new SalesInvoiceItemStates(this.Transaction).WrittenOff, invoice.SalesInvoiceItems.ElementAt(0).SalesInvoiceItemState);
+            Assert.Equal(new SalesInvoiceItemStates(this.Transaction).WrittenOff, invoice.SalesInvoiceItems.ElementAt(1).SalesInvoiceItemState);
         }
 
         [Fact]
         public void GivenSalesOrder_WhenBillngForOrderItemsAndConfirmed_ThenInvoiceIsCreated()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.IsAutomaticallyShipped = true;
             store.IsImmediatelyPicked = true;
             store.BillingProcess = new BillingProcesses(this.Transaction).BillingForOrderItems;
@@ -1164,7 +1164,7 @@ namespace Allors.Database.Domain.Tests
                .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "sv"))
                .Build();
 
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             customer.RemoveLocale();
 
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(customer).Build();
@@ -1210,7 +1210,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedBillToCustomerPreferredCurrencyDeriveDerivedCurrency()
         {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             customer.RemoveLocale();
             customer.RemovePreferredCurrency();
 
@@ -1231,7 +1231,7 @@ namespace Allors.Database.Domain.Tests
                 .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "sv"))
                 .Build();
 
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             customer.RemoveLocale();
             customer.RemovePreferredCurrency();
 
@@ -1337,7 +1337,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Derive();
 
-            invoice.BillToCustomer = invoice.BilledFrom.ActiveCustomers.First;
+            invoice.BillToCustomer = invoice.BilledFrom.ActiveCustomers.FirstOrDefault();
             this.Derive();
 
             Assert.Equal(invoice.DerivedBillToContactMechanism, invoice.BillToCustomer.BillingAddress);
@@ -1346,7 +1346,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedBillToCustomerBillingAddressDeriveDerivedBillToContactMechanism()
         {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(customer).Build();
             this.Derive();
 
@@ -1375,7 +1375,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Derive();
 
-            invoice.BillToEndCustomer = invoice.BilledFrom.ActiveCustomers.First;
+            invoice.BillToEndCustomer = invoice.BilledFrom.ActiveCustomers.FirstOrDefault();
             this.Derive();
 
             Assert.Equal(invoice.DerivedBillToEndCustomerContactMechanism, invoice.BillToEndCustomer.BillingAddress);
@@ -1384,7 +1384,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedBillToEndCustomerBillingAddressDeriveDerivedBillToEndCustomerContactMechanism()
         {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithBillToEndCustomer(customer).Build();
             this.Derive();
 
@@ -1413,7 +1413,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Derive();
 
-            invoice.ShipToEndCustomer = invoice.BilledFrom.ActiveCustomers.First;
+            invoice.ShipToEndCustomer = invoice.BilledFrom.ActiveCustomers.FirstOrDefault();
             this.Derive();
 
             Assert.Equal(invoice.DerivedShipToEndCustomerAddress, invoice.ShipToEndCustomer.ShippingAddress);
@@ -1422,7 +1422,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipToEndCustomerShippingAddressDeriveDerivedShipToEndCustomerAddress()
         {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithShipToEndCustomer(customer).Build();
             this.Derive();
 
@@ -1451,7 +1451,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Derive();
 
-            invoice.ShipToCustomer = invoice.BilledFrom.ActiveCustomers.First;
+            invoice.ShipToCustomer = invoice.BilledFrom.ActiveCustomers.FirstOrDefault();
             this.Derive();
 
             Assert.Equal(invoice.DerivedShipToAddress, invoice.ShipToCustomer.ShippingAddress);
@@ -1460,7 +1460,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipToCustomerShippingAddressDeriveDerivedShipToAddress()
         {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithShipToCustomer(customer).Build();
             this.Derive();
 
@@ -1514,7 +1514,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedInvoiceDateDeriveVatRate()
         {
             var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
-            vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            vatRegime.VatRates.ElementAt(0).ThroughDate = this.Transaction.Now().AddDays(-1).Date;
             this.Derive();
 
             var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
@@ -1547,7 +1547,7 @@ namespace Allors.Database.Domain.Tests
 
             invoice.BilledFrom = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
 
-            Assert.Contains(ErrorMessages.InternalOrganisationChanged, this.Derive().Errors[0].Message);
+            Assert.Contains(ErrorMessages.InternalOrganisationChanged, this.Derive().Errors.ElementAt(0).Message);
         }
 
         [Fact]
@@ -1556,14 +1556,14 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.Equal(invoice.Store, new Stores(this.Transaction).Extent().First);
+            Assert.Equal(invoice.Store, new Stores(this.Transaction).Extent().FirstOrDefault());
         }
 
         [Fact]
         public void ChangedStoreDeriveInvoiceNumber()
         {
             var invoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            var number = new Stores(this.Transaction).Extent().First.SalesInvoiceTemporaryCounter.Value;
+            var number = new Stores(this.Transaction).Extent().First().SalesInvoiceTemporaryCounter.Value;
 
             this.Derive();
 
@@ -1574,7 +1574,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedStoreDeriveSortableInvoiceNumber()
         {
             var invoice = new SalesInvoiceBuilder(this.Transaction).Build();
-            var number = new Stores(this.Transaction).Extent().First.SalesInvoiceTemporaryCounter.Value;
+            var number = new Stores(this.Transaction).Extent().First().SalesInvoiceTemporaryCounter.Value;
 
             this.Derive();
 
@@ -1607,14 +1607,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DeriveCustomers()
         {
-            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
+            var customer1 = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             var customer2 = this.InternalOrganisation.ActiveCustomers.Last();
 
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(customer1).WithShipToCustomer(customer2).Build();
 
             this.Derive();
 
-            Assert.Equal(2, invoice.Customers.Count);
+            Assert.Equal(2, invoice.Customers.Count());
             Assert.Contains(customer1, invoice.Customers);
             Assert.Contains(customer2, invoice.Customers);
         }
@@ -1622,8 +1622,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ValidateBillToCustomerIsActiveCustomer()
         {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Transaction.Now().AddDays(-1);
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
+            customer.CustomerRelationshipsWhereCustomer.First().ThroughDate = this.Transaction.Now().AddDays(-1);
 
             this.Derive();
 
@@ -1636,8 +1636,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ValidateShipToCustomerIsActiveCustomer()
         {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
-            customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Transaction.Now().AddDays(-1);
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
+            customer.CustomerRelationshipsWhereCustomer.First().ThroughDate = this.Transaction.Now().AddDays(-1);
 
             this.Derive();
 
@@ -1704,7 +1704,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedBillToCustomerDeriveCustomers()
         {
-            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
+            var customer1 = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             var customer2 = this.InternalOrganisation.ActiveCustomers.Last();
 
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(customer1).Build();
@@ -1721,7 +1721,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipToCustomerDeriveCustomers()
         {
-            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
+            var customer1 = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             var customer2 = this.InternalOrganisation.ActiveCustomers.Last();
 
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithShipToCustomer(customer1).Build();
@@ -1738,10 +1738,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedCustomerRelationshipFromDateValidateBillToCustomerIsActiveCustomer()
         {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(customer).Build();
 
-            customer.CustomerRelationshipsWhereCustomer.First.FromDate = invoice.InvoiceDate.AddDays(+1);
+            customer.CustomerRelationshipsWhereCustomer.First().FromDate = invoice.InvoiceDate.AddDays(+1);
             var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
         }
@@ -1749,10 +1749,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedCustomerRelationshipThroughDateValidateBillToCustomerIsActiveCustomer()
         {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(customer).Build();
 
-            customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Transaction.Now().AddDays(-1);
+            customer.CustomerRelationshipsWhereCustomer.First().ThroughDate = this.Transaction.Now().AddDays(-1);
             var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
         }
@@ -1760,10 +1760,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedCustomerRelationshipFromDateValidateShipToCustomerIsActiveCustomer()
         {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithShipToCustomer(customer).Build();
 
-            customer.CustomerRelationshipsWhereCustomer.First.FromDate = invoice.InvoiceDate.AddDays(+1);
+            customer.CustomerRelationshipsWhereCustomer.First().FromDate = invoice.InvoiceDate.AddDays(+1);
             var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
         }
@@ -1771,10 +1771,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedCustomerRelationshipThroughDateValidateShipToCustomerIsActiveCustomer()
         {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithShipToCustomer(customer).Build();
 
-            customer.CustomerRelationshipsWhereCustomer.First.ThroughDate = this.Transaction.Now().AddDays(-1);
+            customer.CustomerRelationshipsWhereCustomer.First().ThroughDate = this.Transaction.Now().AddDays(-1);
             var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
         }
@@ -1782,13 +1782,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedInvoiceDateValidateBillToCustomerIsActiveCustomer()
         {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithBillToCustomer(customer).Build();
 
             var errors = this.Derive().Errors.ToList();
             Assert.DoesNotContain(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
 
-            invoice.InvoiceDate = customer.CustomerRelationshipsWhereCustomer.First.FromDate.AddDays(-1);
+            invoice.InvoiceDate = customer.CustomerRelationshipsWhereCustomer.First().FromDate.AddDays(-1);
             errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
         }
@@ -1796,13 +1796,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedInvoiceDateValidateShipToCustomerIsActiveCustomer()
         {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithShipToCustomer(customer).Build();
 
             var errors = this.Derive().Errors.ToList();
             Assert.DoesNotContain(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
 
-            invoice.InvoiceDate = customer.CustomerRelationshipsWhereCustomer.First.FromDate.AddDays(-1);
+            invoice.InvoiceDate = customer.CustomerRelationshipsWhereCustomer.First().FromDate.AddDays(-1);
             errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.PartyIsNotACustomer));
         }
@@ -1828,7 +1828,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedOrderItemBillingInvoiceItemDeriveSalesOrders()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Transaction).BillingForOrderItems;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Transaction).BillingForOrderItems;
 
             var salesOrder = this.InternalOrganisation.CreateB2BSalesOrder(this.Transaction.Faker());
             this.Transaction.Derive();
@@ -1845,7 +1845,7 @@ namespace Allors.Database.Domain.Tests
             salesOrder.Invoice();
             this.Transaction.Derive();
 
-            var invoice = salesOrder.SalesInvoicesWhereSalesOrder.First;
+            var invoice = salesOrder.SalesInvoicesWhereSalesOrder.FirstOrDefault();
 
             Assert.Single(invoice.SalesOrders);
         }
@@ -1853,7 +1853,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedShipmentItemBillingInvoiceItemDeriveSalesOrders()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Transaction).BillingForShipmentItems;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Transaction).BillingForShipmentItems;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
@@ -1891,7 +1891,7 @@ namespace Allors.Database.Domain.Tests
             shipment.Invoice();
             this.Transaction.Derive();
 
-            var invoice = order.SalesInvoicesWhereSalesOrder.First;
+            var invoice = order.SalesInvoicesWhereSalesOrder.FirstOrDefault();
 
             Assert.Single(invoice.SalesOrders);
         }
@@ -1899,7 +1899,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedShipmentItemBillingInvoiceItemDeriveShipments()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Transaction).BillingForShipmentItems;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Transaction).BillingForShipmentItems;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateShipmentPackage = true;
             this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPicked = true;
@@ -1937,7 +1937,7 @@ namespace Allors.Database.Domain.Tests
             shipment.Invoice();
             this.Transaction.Derive();
 
-            var invoice = shipment.SalesInvoicesWhereShipment.First;
+            var invoice = shipment.SalesInvoicesWhereShipment.FirstOrDefault();
 
             Assert.Single(invoice.Shipments);
         }
@@ -1966,7 +1966,7 @@ namespace Allors.Database.Domain.Tests
 
             new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workTask)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(1)
                 .Build();
 
@@ -1976,7 +1976,7 @@ namespace Allors.Database.Domain.Tests
             workTask.Invoice();
             this.Transaction.Derive();
 
-            var invoice = workTask.SalesInvoicesWhereWorkEffort.First;
+            var invoice = workTask.SalesInvoicesWhereWorkEffort.FirstOrDefault();
 
             Assert.Single(invoice.WorkEfforts);
         }
@@ -2012,7 +2012,7 @@ namespace Allors.Database.Domain.Tests
         //    timeEntry.Invoice();
         //    this.Transaction.Derive();
 
-        //    var invoice = workTask.SalesInvoicesWhereWorkEffort.First;
+        //    var invoice = workTask.SalesInvoicesWhereWorkEffort.FirstOrDefault();
 
         //    Assert.Single(invoice.WorkEfforts);
         //}
@@ -2349,7 +2349,7 @@ namespace Allors.Database.Domain.Tests
             invoice.AddSalesInvoiceItem(invoiceItem2);
             this.Transaction.Derive();
 
-            Assert.Equal(2, invoice.ValidInvoiceItems.Count);
+            Assert.Equal(2, invoice.ValidInvoiceItems.Count());
 
             invoiceItem2.AppsWriteOff();  //user can do this by reopening the invoice
             this.Transaction.Derive();
@@ -2397,10 +2397,10 @@ namespace Allors.Database.Domain.Tests
             Assert.True(invoice.TotalIncVat > 0);
             var totalIncVatBefore = invoice.TotalIncVat;
 
-            invoice.SalesInvoiceItems.First.AppsWriteOff();  //user can do this by reopening the invoice
+            invoice.SalesInvoiceItems.First().AppsWriteOff();  //user can do this by reopening the invoice
             this.Transaction.Derive();
 
-            Assert.Equal(invoice.TotalIncVat, totalIncVatBefore - invoice.SalesInvoiceItems.First.TotalIncVat);
+            Assert.Equal(invoice.TotalIncVat, totalIncVatBefore - invoice.SalesInvoiceItems.First().TotalIncVat);
         }
 
         [Fact]
@@ -2651,7 +2651,7 @@ namespace Allors.Database.Domain.Tests
             var theBad = new CustomOrganisationClassificationBuilder(this.Transaction).WithName("bad customer").Build();
             var product = new NonUnifiedGoodBuilder(this.Transaction).Build();
 
-            var customer1 = this.InternalOrganisation.ActiveCustomers.First;
+            var customer1 = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             customer1.AddPartyClassification(theGood);
 
             var customer2 = this.InternalOrganisation.ActiveCustomers.Last();
@@ -3275,7 +3275,7 @@ namespace Allors.Database.Domain.Tests
         ////    Person administrator = new PersonBuilder(this.Transaction).WithUserName("administrator").Build();
         ////    securityPopulation.CoreAdministrators.AddMember(administrator);
 
-        ////    Thread.CurrentPrincipal = new GenericPrincipal(new GenericIdentity("administrator", "Forms"), new string[0]);
+        ////    Thread.CurrentPrincipal = new GenericPrincipal(new GenericIdentity("administrator", "Forms"), new string.ElementAt(0));
         ////    SalesInvoice invoice = new SalesInvoiceBuilder(this.Transaction)
         ////        .WithInvoiceStatus(new InvoiceStatusBuilder(this.Transaction).WithObjectState(new Invoices(this.Transaction).Received).Build())
         ////        .Build();
@@ -3320,7 +3320,7 @@ namespace Allors.Database.Domain.Tests
             invoice.Send();
             this.Transaction.Derive();
 
-            var invoiceItem = invoice.SalesInvoiceItems[0];
+            var invoiceItem = invoice.SalesInvoiceItems.ElementAt(0);
             var value = invoiceItem.TotalIncVat;
 
             new ReceiptBuilder(this.Transaction)
@@ -3376,7 +3376,7 @@ namespace Allors.Database.Domain.Tests
 
             new ReceiptBuilder(this.Transaction)
                 .WithAmount(90)
-                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.SalesInvoiceItems[0]).WithAmountApplied(90).Build())
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice.SalesInvoiceItems.ElementAt(0)).WithAmountApplied(90).Build())
                 .Build();
 
             this.Transaction.Derive();

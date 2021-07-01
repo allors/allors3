@@ -6,6 +6,8 @@
 
 namespace Allors.Database.Domain
 {
+    using System.Linq;
+
     public partial class NonSerialisedInventoryItem
     {
         // TODO: Cache
@@ -39,7 +41,7 @@ namespace Allors.Database.Domain
             }
             else
             {
-                foreach (InventoryItemTransaction inventoryTransaction in this.InventoryItemTransactionsWhereInventoryItem)
+                foreach (var inventoryTransaction in this.InventoryItemTransactionsWhereInventoryItem)
                 {
                     var reason = inventoryTransaction.Reason;
 
@@ -53,11 +55,11 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                foreach (PickListItem pickListItem in this.PickListItemsWhereInventoryItem)
+                foreach (var pickListItem in this.PickListItemsWhereInventoryItem)
                 {
                     if (pickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(this.Strategy.Transaction).Picked))
                     {
-                        foreach (ItemIssuance itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
+                        foreach (var itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
                         {
                             if (!itemIssuance.ShipmentItem.ShipmentItemState.IsShipped)
                             {
@@ -75,7 +77,7 @@ namespace Allors.Database.Domain
         {
             var quantityCommittedOut = 0M;
 
-            foreach (InventoryItemTransaction inventoryItemTransaction in this.InventoryItemTransactionsWhereInventoryItem)
+            foreach (var inventoryItemTransaction in this.InventoryItemTransactionsWhereInventoryItem)
             {
                 var reason = inventoryItemTransaction.Reason;
 
@@ -89,11 +91,11 @@ namespace Allors.Database.Domain
                 }
             }
 
-            foreach (PickListItem pickListItem in this.PickListItemsWhereInventoryItem)
+            foreach (var pickListItem in this.PickListItemsWhereInventoryItem)
             {
                 if (pickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(this.Strategy.Transaction).Picked))
                 {
-                    foreach (ItemIssuance itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
+                    foreach (var itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
                     {
                         if (!itemIssuance.ShipmentItem.ShipmentItemState.IsShipped)
                         {

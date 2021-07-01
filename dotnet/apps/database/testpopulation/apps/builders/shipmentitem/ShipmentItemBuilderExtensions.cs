@@ -18,10 +18,10 @@ namespace Allors.Database.Domain.TestPopulation
             var good = internalOrganization.CreateUnifiedWithGoodInventoryAvailableForSale(faker);
             var serializedItem = good.SerialisedItems.First(v => v.AvailableForSale.Equals(true));
 
-            @this.WithGood(good);
-            @this.WithSerialisedItem(serializedItem);
-            @this.WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()));
-            @this.WithQuantity(1);
+            @this.WithGood(good)
+                .WithSerialisedItem(serializedItem)
+                .WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()))
+                .WithQuantity(1);
 
             return @this;
         }

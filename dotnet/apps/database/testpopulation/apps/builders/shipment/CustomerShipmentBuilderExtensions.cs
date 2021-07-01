@@ -15,27 +15,26 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var faker = @this.Transaction.Faker();
 
-            var customer = faker.Random.ListItem(internalOrganisation.ActiveCustomers);
+            var customer = faker.Random.ListItem(internalOrganisation.ActiveCustomers.ToArray());
             var shipmentItem = new ShipmentItemBuilder(@this.Transaction).WithSerializedUnifiedGoodDefaults(internalOrganisation).Build();
 
-            @this.WithShipFromParty(internalOrganisation);
-            @this.WithShipFromContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault());
-            @this.WithShipToParty(customer);
-            @this.WithShipToContactPerson(customer.CurrentContacts.FirstOrDefault());
-            @this.WithShipmentMethod(faker.Random.ListItem(@this.Transaction.Extent<ShipmentMethod>()));
-            @this.WithCarrier(faker.Random.ListItem(@this.Transaction.Extent<Carrier>()));
-            @this.WithEstimatedReadyDate(@this.Transaction.Now());
-            @this.WithEstimatedShipDate(faker.Date.Between(start: @this.Transaction.Now(), end: @this.Transaction.Now().AddDays(5)));
-            @this.WithLatestCancelDate(faker.Date.Between(start: @this.Transaction.Now(), end: @this.Transaction.Now().AddDays(2)));
-            @this.WithEstimatedArrivalDate(faker.Date.Between(start: @this.Transaction.Now().AddDays(6), end: @this.Transaction.Now().AddDays(10)));
+            @this.WithShipFromParty(internalOrganisation)
+                .WithShipFromContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault())
+                .WithShipToParty(customer)
+                .WithShipToContactPerson(customer.CurrentContacts.FirstOrDefault())
+                .WithShipmentMethod(faker.Random.ListItem(@this.Transaction.Extent<ShipmentMethod>()))
+                .WithCarrier(faker.Random.ListItem(@this.Transaction.Extent<Carrier>()))
+                .WithEstimatedReadyDate(@this.Transaction.Now())
+                .WithEstimatedShipDate(faker.Date.Between(start: @this.Transaction.Now(), end: @this.Transaction.Now().AddDays(5)))
+                .WithLatestCancelDate(faker.Date.Between(start: @this.Transaction.Now(), end: @this.Transaction.Now().AddDays(2)))
+                .WithEstimatedArrivalDate(faker.Date.Between(start: @this.Transaction.Now().AddDays(6), end: @this.Transaction.Now().AddDays(10)))
+                .WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build())
+                .WithEstimatedShipCost(faker.Finance.Amount(100, 1000, 2))
+                .WithHandlingInstruction(faker.Lorem.Paragraph())
+                .WithComment(faker.Lorem.Sentence())
+                .WithShipmentItem(shipmentItem);
 
-            @this.WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
-            @this.WithEstimatedShipCost(faker.Finance.Amount(100, 1000, 2));
-            @this.WithHandlingInstruction(faker.Lorem.Paragraph());
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithShipmentItem(shipmentItem);
-
-            foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
+            foreach (var additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
             {
                 @this.WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
             }

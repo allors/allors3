@@ -25,7 +25,10 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseInvoice>().Where(v => v.PurchaseInvoiceState.IsCreated))
             {
-                @this.PurchaseOrders = @this.InvoiceItems.SelectMany(v => v.OrderItemBillingsWhereInvoiceItem).Select(v => v.OrderItem.OrderWhereValidOrderItem).ToArray();
+                @this.PurchaseOrders = @this.InvoiceItems
+                    .SelectMany(v => v.OrderItemBillingsWhereInvoiceItem)
+                    .Select(v => v.OrderItem.OrderWhereValidOrderItem)
+                    .OfType<PurchaseOrder>();
             }
         }
     }

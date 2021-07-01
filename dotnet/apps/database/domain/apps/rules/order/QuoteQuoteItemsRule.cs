@@ -26,7 +26,7 @@ namespace Allors.Database.Domain
             {
                 @this.ValidQuoteItems = @this.QuoteItems.Where(v => v.IsValid).ToArray();
 
-                foreach (QuoteItem quoteItem in @this.QuoteItems)
+                foreach (var quoteItem in @this.QuoteItems)
                 {
                     quoteItem.Sync(@this);
                 }

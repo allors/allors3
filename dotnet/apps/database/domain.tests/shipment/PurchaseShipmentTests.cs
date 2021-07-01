@@ -249,25 +249,25 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipFromPartyDeriveShipFromAddress()
         {
             var shipment = new PurchaseShipmentBuilder(this.Transaction)
-                .WithShipFromParty(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithShipFromParty(this.InternalOrganisation.ActiveSuppliers.FirstOrDefault())
                 .Build();
             this.Derive();
 
-            Assert.Equal(this.InternalOrganisation.ActiveSuppliers.First.ShippingAddress, shipment.ShipFromAddress);
+            Assert.Equal(this.InternalOrganisation.ActiveSuppliers.First().ShippingAddress, shipment.ShipFromAddress);
         }
 
         [Fact]
         public void ChangedShipFromAddressDeriveShipFromAddress()
         {
             var shipment = new PurchaseShipmentBuilder(this.Transaction)
-                .WithShipFromParty(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithShipFromParty(this.InternalOrganisation.ActiveSuppliers.FirstOrDefault())
                 .Build();
             this.Derive();
 
             shipment.RemoveShipFromAddress();
             this.Derive();
 
-            Assert.Equal(this.InternalOrganisation.ActiveSuppliers.First.ShippingAddress, shipment.ShipFromAddress);
+            Assert.Equal(this.InternalOrganisation.ActiveSuppliers.First().ShippingAddress, shipment.ShipFromAddress);
         }
     }
 

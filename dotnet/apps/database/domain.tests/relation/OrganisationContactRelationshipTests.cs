@@ -80,7 +80,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(2, usergroup.Members.Count);
+            Assert.Equal(2, usergroup.Members.Count());
             Assert.Contains(secondRelationship.Contact, usergroup.Members);
         }
 

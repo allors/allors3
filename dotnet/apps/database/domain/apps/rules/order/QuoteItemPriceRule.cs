@@ -44,7 +44,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<QuoteItem>())
             {
-                var quote = @this.QuoteWhereQuoteItem?? @this.QuoteItemWhereQuotedWithFeature?.QuoteWhereQuoteItem;
+                var quote = @this.QuoteWhereQuoteItem ?? @this.QuoteItemWhereQuotedWithFeature?.QuoteWhereQuoteItem;
 
                 if (quote != null)
                 {
@@ -80,17 +80,12 @@ namespace Allors.Database.Domain
 
                     var unitBasePrice = priceComponents.OfType<BasePrice>()
                         .Where(v => @this.ExistProduct
-                                    && @this.QuotedWithFeatures.Count > 0
+                                    && @this.QuotedWithFeatures.Any()
                                     && v.ExistProduct
                                     && v.ExistProductFeature
                                     && v.Product.Equals(@this.Product)
-                                    && @this.QuotedWithFeatures.Contains(v.ProductFeature))
-                        .Min(v => v.Price);
-
-                    if (unitBasePrice == null)
-                    {
-                        unitBasePrice = priceComponents.OfType<BasePrice>().Min(v => v.Price);
-                    }
+                                    && @this.QuotedWithFeatures.Any(w => Equals(w.ProductFeature, v.ProductFeature)))  // TODO: Martien review
+                        .Min(v => v.Price) ?? priceComponents.OfType<BasePrice>().Min(v => v.Price);
 
                     // Calculate Unit Price (with Discounts and Surcharges)
                     if (@this.AssignedUnitPrice.HasValue)
@@ -145,7 +140,7 @@ namespace Allors.Database.Domain
                         validation.AddError(@this, @this.Meta.UnitPrice, ErrorMessages.UnitPriceRequired);
                     }
 
-                    foreach (QuoteItem featureItem in @this.QuotedWithFeatures)
+                    foreach (var featureItem in @this.QuotedWithFeatures)
                     {
                         @this.UnitBasePrice += featureItem.UnitBasePrice;
                         @this.UnitPrice += featureItem.UnitPrice;

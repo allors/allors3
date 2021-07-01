@@ -6,6 +6,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Xunit;
 
     public class CustomerReturnRuleTests : DomainTest, IClassFixture<Fixture>
@@ -63,25 +64,25 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipFromPartyDeriveShipFromAddress()
         {
             var shipment = new CustomerReturnBuilder(this.Transaction)
-                .WithShipFromParty(this.InternalOrganisation.ActiveCustomers.First)
+                .WithShipFromParty(this.InternalOrganisation.ActiveCustomers.FirstOrDefault())
                 .Build();
             this.Derive();
 
-            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipFromAddress);
+            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First().ShippingAddress, shipment.ShipFromAddress);
         }
 
         [Fact]
         public void ChangedShipFromAddressDeriveShipFromAddress()
         {
             var shipment = new CustomerReturnBuilder(this.Transaction)
-                .WithShipFromParty(this.InternalOrganisation.ActiveCustomers.First)
+                .WithShipFromParty(this.InternalOrganisation.ActiveCustomers.FirstOrDefault())
                 .Build();
             this.Derive();
 
             shipment.RemoveShipFromAddress();
             this.Derive();
 
-            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipFromAddress);
+            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First().ShippingAddress, shipment.ShipFromAddress);
         }
 
         [Fact]

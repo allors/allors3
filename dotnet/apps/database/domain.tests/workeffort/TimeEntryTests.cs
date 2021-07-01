@@ -480,7 +480,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartyPartyRateDeriveBillingRate()
         {
-            var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.First).Build();
+            var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.FirstOrDefault()).Build();
             this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
@@ -497,7 +497,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            this.InternalOrganisation.ActiveCustomers.First.AddPartyRate(partyRate);
+            this.InternalOrganisation.ActiveCustomers.First().AddPartyRate(partyRate);
             this.Derive();
 
             Assert.Equal(10, timeEntry.BillingRate);
@@ -506,14 +506,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartyRateRateTypeDeriveBillingRate()
         {
-            var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.First).Build();
+            var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.FirstOrDefault()).Build();
             this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Hour)
                 .WithRate(10)
                 .Build();
-            this.InternalOrganisation.ActiveCustomers.First.AddPartyRate(partyRate);
+            this.InternalOrganisation.ActiveCustomers.First().AddPartyRate(partyRate);
             this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
@@ -532,14 +532,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartyRateFrequencyDeriveBillingRate()
         {
-            var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.First).Build();
+            var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.FirstOrDefault()).Build();
             this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithRate(10)
                 .Build();
-            this.InternalOrganisation.ActiveCustomers.First.AddPartyRate(partyRate);
+            this.InternalOrganisation.ActiveCustomers.First().AddPartyRate(partyRate);
             this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
@@ -558,14 +558,14 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartyRateRateDeriveBillingRate()
         {
-            var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.First).Build();
+            var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.FirstOrDefault()).Build();
             this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
                 .WithFrequency(new TimeFrequencies(this.Transaction).Day)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .Build();
-            this.InternalOrganisation.ActiveCustomers.First.AddPartyRate(partyRate);
+            this.InternalOrganisation.ActiveCustomers.First().AddPartyRate(partyRate);
             this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
@@ -584,7 +584,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartyRateFromDateDeriveBillingRate()
         {
-            var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.First).Build();
+            var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.FirstOrDefault()).Build();
             this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
@@ -593,7 +593,7 @@ namespace Allors.Database.Domain.Tests
                 .WithFromDate(this.Transaction.Now().AddDays(1))
                 .WithRate(10)
                 .Build();
-            this.InternalOrganisation.ActiveCustomers.First.AddPartyRate(partyRate);
+            this.InternalOrganisation.ActiveCustomers.First().AddPartyRate(partyRate);
             this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
@@ -612,7 +612,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartyRateThroughDateDeriveBillingRate()
         {
-            var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.First).Build();
+            var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.FirstOrDefault()).Build();
             this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
@@ -622,7 +622,7 @@ namespace Allors.Database.Domain.Tests
                 .WithThroughDate(this.Transaction.Now().AddDays(-1))
                 .WithRate(10)
                 .Build();
-            this.InternalOrganisation.ActiveCustomers.First.AddPartyRate(partyRate);
+            this.InternalOrganisation.ActiveCustomers.First().AddPartyRate(partyRate);
             this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)
@@ -641,7 +641,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedFromDateDeriveBillingRate()
         {
-            var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.First).Build();
+            var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation.ActiveCustomers.FirstOrDefault()).Build();
             this.Derive();
 
             var partyRate = new PartyRateBuilder(this.Transaction)
@@ -649,7 +649,7 @@ namespace Allors.Database.Domain.Tests
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
                 .WithRate(10)
                 .Build();
-            this.InternalOrganisation.ActiveCustomers.First.AddPartyRate(partyRate);
+            this.InternalOrganisation.ActiveCustomers.First().AddPartyRate(partyRate);
             this.Derive();
 
             var timeEntry = new TimeEntryBuilder(this.Transaction)

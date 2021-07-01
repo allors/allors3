@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
                 {
                     var existingLocalisedtexts = @this.LocalisedValues.ToDictionary(d => d.Locale);
 
-                    foreach (Locale locale in @this.Strategy.Transaction.GetSingleton().AdditionalLocales)
+                    foreach (var locale in @this.Strategy.Transaction.GetSingleton().AdditionalLocales)
                     {
                         if (existingLocalisedtexts.TryGetValue(locale, out var localisedText))
                         {

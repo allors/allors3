@@ -6,6 +6,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Xunit;
 
     public class CommunicationTaskRuleTests : DomainTest, IClassFixture<Fixture>
@@ -36,7 +37,7 @@ namespace Allors.Database.Domain.Tests
             commEvent.Subject = "changed";
             this.Derive();
 
-            Assert.Equal(commEvent.WorkItemDescription, commEvent.CommunicationTasksWhereCommunicationEvent.First.Title);
+            Assert.Equal(commEvent.WorkItemDescription, commEvent.CommunicationTasksWhereCommunicationEvent.First().Title);
         }
 
         [Fact]
@@ -45,7 +46,7 @@ namespace Allors.Database.Domain.Tests
             var phoneComEvent = new PhoneCommunicationBuilder(this.Transaction).WithScheduledStart(this.Transaction.Now()).Build();
             this.Derive();
 
-            var task = phoneComEvent.CommunicationTasksWhereCommunicationEvent[0];
+            var task = phoneComEvent.CommunicationTasksWhereCommunicationEvent.ElementAt(0);
 
             phoneComEvent.ActualEnd = this.Transaction.Now();
             this.Derive();
@@ -63,11 +64,11 @@ namespace Allors.Database.Domain.Tests
         public void OnChangedCommunicationEventDeriveParticipants()
         {
             var communicationEvent = new PhoneCommunicationBuilder(this.Transaction)
-                .WithFromParty(this.InternalOrganisation.CurrentContacts.First)
+                .WithFromParty(this.InternalOrganisation.CurrentContacts.FirstOrDefault())
                 .WithScheduledStart(this.Transaction.Now()).Build();
             this.Derive();
 
-            var task = communicationEvent.CommunicationTasksWhereCommunicationEvent.First;
+            var task = communicationEvent.CommunicationTasksWhereCommunicationEvent.FirstOrDefault();
 
             communicationEvent.ActualEnd = this.Transaction.Now();
             this.Derive();
@@ -82,12 +83,12 @@ namespace Allors.Database.Domain.Tests
                 .WithScheduledStart(this.Transaction.Now()).Build();
             this.Derive();
 
-            var task = communicationEvent.CommunicationTasksWhereCommunicationEvent.First;
+            var task = communicationEvent.CommunicationTasksWhereCommunicationEvent.FirstOrDefault();
 
-            communicationEvent.FromParty = this.InternalOrganisation.CurrentContacts.First;
+            communicationEvent.FromParty = this.InternalOrganisation.CurrentContacts.FirstOrDefault();
             this.Derive();
 
-            Assert.Contains(this.InternalOrganisation.CurrentContacts.First, task.Participants);
+            Assert.Contains(this.InternalOrganisation.CurrentContacts.FirstOrDefault(), task.Participants);
         }
 
         [Fact]
@@ -97,12 +98,12 @@ namespace Allors.Database.Domain.Tests
                 .WithScheduledStart(this.Transaction.Now()).Build();
             this.Derive();
 
-            var task = communicationEvent.CommunicationTasksWhereCommunicationEvent.First;
+            var task = communicationEvent.CommunicationTasksWhereCommunicationEvent.FirstOrDefault();
 
-            communicationEvent.ToParty = this.InternalOrganisation.CurrentContacts.First;
+            communicationEvent.ToParty = this.InternalOrganisation.CurrentContacts.FirstOrDefault();
             this.Derive();
 
-            Assert.Contains(this.InternalOrganisation.CurrentContacts.First, task.Participants);
+            Assert.Contains(this.InternalOrganisation.CurrentContacts.FirstOrDefault(), task.Participants);
         }
     }
 }

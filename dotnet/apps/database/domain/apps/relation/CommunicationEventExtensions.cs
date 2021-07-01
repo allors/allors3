@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
 
         public static void AppsDelete(this CommunicationEvent @this, DeletableDelete method)
         {
-            foreach (Task task in @this.TasksWhereWorkItem)
+            foreach (var task in @this.TasksWhereWorkItem)
             {
                 task.Delete();
             }

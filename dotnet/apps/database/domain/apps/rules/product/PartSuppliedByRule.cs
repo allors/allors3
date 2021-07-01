@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<Part>())
             {
                 @this.RemoveSuppliedBy();
-                foreach (SupplierOffering supplierOffering in @this.SupplierOfferingsWherePart)
+                foreach (var supplierOffering in @this.SupplierOfferingsWherePart)
                 {
                     if (supplierOffering.FromDate <= @this.Transaction().Now()
                         && (!supplierOffering.ExistThroughDate || supplierOffering.ThroughDate >= @this.Transaction().Now()))

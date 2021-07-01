@@ -121,7 +121,7 @@ namespace Allors.Database.Domain.Tests
             var varianceReasons = new InventoryTransactionReasons(this.Transaction);
             var contactMechanisms = new ContactMechanismPurposes(this.Transaction);
 
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.IsImmediatelyPicked = false;
 
             var vatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
@@ -444,7 +444,7 @@ namespace Allors.Database.Domain.Tests
         //        .WithCurrentObjectState(new NonSerialisedInventoryItemStates(this.DatabaseTransaction).SlightlyDamaged)
         //        .Build();
 
-        // var partItem = (NonSerialisedInventoryItem)rawMaterial.InventoryItemsWherePart[0];
+        // var partItem = (NonSerialisedInventoryItem)rawMaterial.InventoryItemsWherePart.ElementAt(0);
 
         // new SupplierOfferingBuilder(this.DatabaseTransaction)
         //        .WithProduct(good)
@@ -460,7 +460,7 @@ namespace Allors.Database.Domain.Tests
 
         // var extent = preparedExtent.Execute(valueByParameter);
 
-        // Assert.Equal(3, extent.Count);
+        // Assert.Equal(3, extent.Count());
         // Assert.Contains(goodItem, extent);
         // Assert.Contains(damagedItem, extent);
         // Assert.Contains(partItem, extent);
@@ -469,7 +469,7 @@ namespace Allors.Database.Domain.Tests
 
         // extent = preparedExtent.Execute(valueByParameter);
 
-        // Assert.Single(extent.Count);
+        // Assert.Single(extent.Count());
         // Assert.Contains(damagedItem, extent);
 
         // valueByParameter.Clear();
@@ -477,7 +477,7 @@ namespace Allors.Database.Domain.Tests
 
         // extent = preparedExtent.Execute(valueByParameter);
 
-        // Assert.Equal(2, extent.Count);
+        // Assert.Equal(2, extent.Count());
         // Assert.Contains(goodItem, extent);
         // Assert.Contains(damagedItem, extent);
         // }
@@ -769,7 +769,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderPurchaseOrderItemDeriveQuantityExpectedIn()
         {
             var part = new NonUnifiedPartBuilder(this.Transaction)
-                .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
+                .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.FirstOrDefault())
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
                 .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                 .Build();
@@ -787,14 +787,14 @@ namespace Allors.Database.Domain.Tests
             purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
             this.Derive();
 
-            Assert.Equal(1, ((NonSerialisedInventoryItem)part.InventoryItemsWherePart.First).QuantityExpectedIn);
+            Assert.Equal(1, ((NonSerialisedInventoryItem)part.InventoryItemsWherePart.FirstOrDefault()).QuantityExpectedIn);
         }
 
         [Fact]
         public void ChangedPurchaseOrderItemPurchaseOrderItemStateDeriveQuantityExpectedIn()
         {
             var part = new NonUnifiedPartBuilder(this.Transaction)
-                .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
+                .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.FirstOrDefault())
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
                 .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                 .Build();
@@ -814,14 +814,14 @@ namespace Allors.Database.Domain.Tests
             purchaseOrderItem.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Transaction).Cancelled;
             this.Derive();
 
-            Assert.Equal(0, ((NonSerialisedInventoryItem)part.InventoryItemsWherePart.First).QuantityExpectedIn);
+            Assert.Equal(0, ((NonSerialisedInventoryItem)part.InventoryItemsWherePart.FirstOrDefault()).QuantityExpectedIn);
         }
 
         [Fact]
         public void ChangedPurchaseOrderItemQuantityOrderedDeriveQuantityExpectedIn()
         {
             var part = new NonUnifiedPartBuilder(this.Transaction)
-                .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
+                .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.FirstOrDefault())
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Transaction).Piece)
                 .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
                 .Build();
@@ -842,7 +842,7 @@ namespace Allors.Database.Domain.Tests
             purchaseOrderItem.QuantityOrdered = 2;
             this.Derive();
 
-            Assert.Equal(2, ((NonSerialisedInventoryItem)part.InventoryItemsWherePart.First).QuantityExpectedIn);
+            Assert.Equal(2, ((NonSerialisedInventoryItem)part.InventoryItemsWherePart.FirstOrDefault()).QuantityExpectedIn);
         }
     }
 }

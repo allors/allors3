@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
 
         public static void AppsDelete(this Payment @this, DeletableDelete method)
         {
-            foreach (PaymentApplication paymentApplication in @this.PaymentApplications)
+            foreach (var paymentApplication in @this.PaymentApplications)
             {
                 paymentApplication.Delete();
             }

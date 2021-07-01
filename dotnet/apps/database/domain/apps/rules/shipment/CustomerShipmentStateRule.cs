@@ -41,7 +41,7 @@ namespace Allors.Database.Domain
                         && !@this.ShipmentState.Equals(new ShipmentStates(@this.Transaction()).Cancelled))
                     {
                         var canCancel = true;
-                        foreach (ShipmentItem shipmentItem in @this.ShipmentItems)
+                        foreach (var shipmentItem in @this.ShipmentItems)
                         {
                             if (shipmentItem.Quantity > 0)
                             {
@@ -59,7 +59,7 @@ namespace Allors.Database.Domain
                     if (@this.ShipmentState.IsPicking && @this.ShipToParty.ExistPickListsWhereShipToParty)
                     {
                         var isPicked = true;
-                        foreach (PickList pickList in @this.ShipToParty.PickListsWhereShipToParty)
+                        foreach (var pickList in @this.ShipToParty.PickListsWhereShipToParty)
                         {
                             if (@this.Store.Equals(pickList.Store) &&
                                 !pickList.PickListState.Equals(new PickListStates(@this.Transaction()).Picked))
@@ -78,10 +78,10 @@ namespace Allors.Database.Domain
                     {
                         var totalShippingQuantity = 0M;
                         var totalPackagedQuantity = 0M;
-                        foreach (ShipmentItem shipmentItem in @this.ShipmentItems)
+                        foreach (var shipmentItem in @this.ShipmentItems)
                         {
                             totalShippingQuantity += shipmentItem.Quantity;
-                            foreach (PackagingContent packagingContent in shipmentItem.PackagingContentsWhereShipmentItem)
+                            foreach (var packagingContent in shipmentItem.PackagingContentsWhereShipmentItem)
                             {
                                 totalPackagedQuantity += packagingContent.Quantity;
                             }

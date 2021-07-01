@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
             {
                 if (this.ExistTakenViaSupplier && this.ExistOrderedBy)
                 {
-                    var supplierRelationship = ((Organisation)this.TakenViaSupplier).SupplierRelationshipsWhereSupplier.FirstOrDefault(v => v.InternalOrganisation.Equals(this.OrderedBy));
+                    var supplierRelationship = this.TakenViaSupplier.SupplierRelationshipsWhereSupplier.FirstOrDefault(v => v.InternalOrganisation.Equals(this.OrderedBy));
                     if (supplierRelationship != null
                         && supplierRelationship.NeedsApproval
                         && supplierRelationship.ApprovalThresholdLevel1.HasValue
@@ -44,7 +44,7 @@ namespace Allors.Database.Domain
             {
                 if (this.ExistTakenViaSupplier && this.ExistOrderedBy)
                 {
-                    var supplierRelationship = ((Organisation)this.TakenViaSupplier).SupplierRelationshipsWhereSupplier.FirstOrDefault(v => v.InternalOrganisation.Equals(this.OrderedBy));
+                    var supplierRelationship = this.TakenViaSupplier.SupplierRelationshipsWhereSupplier.FirstOrDefault(v => v.InternalOrganisation.Equals(this.OrderedBy));
                     if (supplierRelationship != null
                         && supplierRelationship.NeedsApproval
                         && supplierRelationship.ApprovalThresholdLevel2.HasValue
@@ -119,12 +119,12 @@ namespace Allors.Database.Domain
         {
             if (this.IsDeletable)
             {
-                foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
+                foreach (var orderAdjustment in this.OrderAdjustments)
                 {
                     orderAdjustment.Delete();
                 }
 
-                foreach (PurchaseOrderItem item in this.PurchaseOrderItems)
+                foreach (var item in this.PurchaseOrderItems)
                 {
                     item.Delete();
                 }
@@ -358,7 +358,7 @@ namespace Allors.Database.Domain
                     .WithPurchaseInvoiceType(new PurchaseInvoiceTypes(this.Transaction()).PurchaseInvoice)
                     .Build();
 
-                foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
+                foreach (var orderAdjustment in this.OrderAdjustments)
                 {
                     OrderAdjustment newAdjustment = null;
                     if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))

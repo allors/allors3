@@ -19,9 +19,9 @@ namespace Allors.Database.Domain
         {
             int? customerPaymentNetDays = null;
 
-            foreach (Agreement agreement in @this.Agreements)
+            foreach (var agreement in @this.Agreements)
             {
-                foreach (AgreementTerm term in agreement.AgreementTerms)
+                foreach (var term in agreement.AgreementTerms)
                 {
                     if (term.TermType.Equals(new InvoiceTermTypes(@this.Strategy.Transaction).PaymentNetDays))
                     {

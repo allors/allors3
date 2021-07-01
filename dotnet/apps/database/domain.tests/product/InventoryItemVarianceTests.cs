@@ -20,7 +20,7 @@ namespace Allors.Database.Domain.Tests
             var unknown = new InventoryTransactionReasons(this.Transaction).Unknown;
             var vatRate21 = new VatRateBuilder(this.Transaction).WithRate(21).Build();
             var piece = new UnitsOfMeasure(this.Transaction).Piece;
-            var category = this.Transaction.Extent<ProductCategory>().First;
+            var category = this.Transaction.Extent<ProductCategory>().FirstOrDefault();
 
             var finishedGood = this.CreatePart("FG1", nonSerialized);
 

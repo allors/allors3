@@ -59,7 +59,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.Contains(nonUnifiedPart.ProductIdentifications.First.Identification, nonUnifiedPart.Name);
+            Assert.Contains(nonUnifiedPart.ProductIdentifications.First().Identification, nonUnifiedPart.Name);
         }
 
         [Fact]
@@ -120,12 +120,12 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             new SupplierOfferingBuilder(this.Transaction)
-                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.FirstOrDefault())
                 .WithPart(nonUnifiedPart)
                 .Build();
             this.Derive();
 
-            Assert.Contains(this.InternalOrganisation.ActiveSuppliers.First.PartyName, nonUnifiedPart.SearchString);
+            Assert.Contains(this.InternalOrganisation.ActiveSuppliers.First().PartyName, nonUnifiedPart.SearchString);
         }
 
         [Fact]

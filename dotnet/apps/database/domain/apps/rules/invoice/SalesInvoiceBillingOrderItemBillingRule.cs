@@ -26,9 +26,9 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SalesInvoice>())
             {
-                foreach (SalesInvoiceItem salesInvoiceItem in @this.SalesInvoiceItems)
+                foreach (var salesInvoiceItem in @this.SalesInvoiceItems)
                 {
-                    foreach (OrderItemBilling orderItemBilling in salesInvoiceItem.OrderItemBillingsWhereInvoiceItem)
+                    foreach (var orderItemBilling in salesInvoiceItem.OrderItemBillingsWhereInvoiceItem)
                     {
                         if (orderItemBilling.OrderItem is SalesOrderItem salesOrderItem
                             && !@this.SalesOrders.Contains(salesOrderItem.SalesOrderWhereSalesOrderItem))

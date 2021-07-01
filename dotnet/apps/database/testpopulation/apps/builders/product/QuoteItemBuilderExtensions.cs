@@ -6,6 +6,8 @@
 
 namespace Allors.Database.Domain.TestPopulation
 {
+    using System.Linq;
+
     public static partial class QuoteItemBuilderExtensions
     {
         public static QuoteItemBuilder WithSerializedDefaults(this QuoteItemBuilder @this, Organisation internalOrganisation)
@@ -14,16 +16,16 @@ namespace Allors.Database.Domain.TestPopulation
 
             var serializedProduct = new UnifiedGoodBuilder(@this.Transaction).WithSerialisedDefaults(internalOrganisation).Build();
 
-            @this.WithDetails(faker.Lorem.Sentence());
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithEstimatedDeliveryDate(@this.Transaction.Now().AddDays(5));
-            @this.WithInvoiceItemType(new InvoiceItemTypes(@this.Transaction).ProductItem);
-            @this.WithProduct(serializedProduct);
-            @this.WithSerialisedItem(serializedProduct.SerialisedItems.First);
-            @this.WithUnitOfMeasure(new UnitsOfMeasure(@this.Transaction).Piece);
-            @this.WithAssignedUnitPrice(faker.Random.UInt());
-            @this.WithQuantity(1);
+            @this.WithDetails(faker.Lorem.Sentence())
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithEstimatedDeliveryDate(@this.Transaction.Now().AddDays(5))
+                .WithInvoiceItemType(new InvoiceItemTypes(@this.Transaction).ProductItem)
+                .WithProduct(serializedProduct)
+                .WithSerialisedItem(serializedProduct.SerialisedItems.FirstOrDefault())
+                .WithUnitOfMeasure(new UnitsOfMeasure(@this.Transaction).Piece)
+                .WithAssignedUnitPrice(faker.Random.UInt())
+                .WithQuantity(1);
             return @this;
         }
     }

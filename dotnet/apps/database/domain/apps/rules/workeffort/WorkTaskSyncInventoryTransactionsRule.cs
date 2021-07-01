@@ -32,14 +32,14 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<WorkTask>())
             {
-                foreach (WorkEffortInventoryAssignment inventoryAssignment in @this.WorkEffortInventoryAssignmentsWhereAssignment)
+                foreach (var inventoryAssignment in @this.WorkEffortInventoryAssignmentsWhereAssignment)
                 {
-                    foreach (InventoryTransactionReason createReason in @this.WorkEffortState.InventoryTransactionReasonsToCreate)
+                    foreach (var createReason in @this.WorkEffortState.InventoryTransactionReasonsToCreate)
                     {
                         SyncInventoryTransactions(validation, inventoryAssignment, inventoryAssignment.InventoryItem, inventoryAssignment.Quantity, createReason, false);
                     }
 
-                    foreach (InventoryTransactionReason cancelReason in @this.WorkEffortState.InventoryTransactionReasonsToCancel)
+                    foreach (var cancelReason in @this.WorkEffortState.InventoryTransactionReasonsToCancel)
                     {
                         SyncInventoryTransactions(validation,inventoryAssignment, inventoryAssignment.InventoryItem, inventoryAssignment.Quantity, cancelReason, true);
                     }

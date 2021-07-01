@@ -26,9 +26,9 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SalesInvoice>())
             {
-                foreach (SalesInvoiceItem salesInvoiceItem in @this.SalesInvoiceItems)
+                foreach (var salesInvoiceItem in @this.SalesInvoiceItems)
                 {
-                    foreach (TimeEntryBilling timeEntryBilling in salesInvoiceItem.TimeEntryBillingsWhereInvoiceItem)
+                    foreach (var timeEntryBilling in salesInvoiceItem.TimeEntryBillingsWhereInvoiceItem)
                     {
                         if (!@this.WorkEfforts.Contains(timeEntryBilling.TimeEntry.WorkEffort))
                         {

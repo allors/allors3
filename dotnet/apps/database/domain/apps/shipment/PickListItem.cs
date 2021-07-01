@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     {
         public void AppsDelete(PickListItemDelete method)
         {
-            foreach (ItemIssuance itemIssuance in this.ItemIssuancesWherePickListItem)
+            foreach (var itemIssuance in this.ItemIssuancesWherePickListItem)
             {
                 itemIssuance.Delete();
             }

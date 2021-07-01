@@ -48,7 +48,7 @@ namespace Allors.Database.Domain.Tests
             // Re-arrange
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(10)
                 .Build();
 
@@ -59,7 +59,7 @@ namespace Allors.Database.Domain.Tests
             var transactions = inventoryAssignment.InventoryItemTransactions;
 
             Assert.Single(transactions);
-            var transaction = transactions[0];
+            var transaction = transactions.ElementAt(0);
             Assert.Equal(part, transaction.Part);
             Assert.Equal(10, transaction.Quantity);
             Assert.Equal(reasons.Consumption, transaction.Reason);
@@ -108,7 +108,7 @@ namespace Allors.Database.Domain.Tests
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part1.InventoryItemsWherePart.First)
+                .WithInventoryItem(part1.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(10)
                 .Build();
 
@@ -119,12 +119,12 @@ namespace Allors.Database.Domain.Tests
             var transactions = inventoryAssignment.InventoryItemTransactions.ToArray();
 
             Assert.Single(transactions);
-            Assert.Equal(part1, transactions[0].Part);
-            Assert.Equal(10, transactions[0].Quantity);
-            Assert.Equal(reasons.Consumption, transactions[0].Reason);
+            Assert.Equal(part1, transactions.ElementAt(0).Part);
+            Assert.Equal(10, transactions.ElementAt(0).Quantity);
+            Assert.Equal(reasons.Consumption, transactions.ElementAt(0).Reason);
 
             // Re-arrange
-            inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.First;
+            inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.FirstOrDefault();
 
             // Act
             this.Transaction.Derive(true);
@@ -169,7 +169,7 @@ namespace Allors.Database.Domain.Tests
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(10)
                 .Build();
 
@@ -182,7 +182,7 @@ namespace Allors.Database.Domain.Tests
             // Assert
             var transactions = inventoryAssignment.InventoryItemTransactions;
 
-            Assert.Equal(2, transactions.Count);
+            Assert.Equal(2, transactions.Count());
 
             var consumption = transactions.First(t => t.Reason.Equals(reasons.Consumption) && t.Quantity > 0);
             var consumptionCancellation = transactions.First(t => t.Reason.Equals(reasons.Consumption) && t.Quantity < 0);
@@ -218,7 +218,7 @@ namespace Allors.Database.Domain.Tests
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(10)
                 .Build();
 
@@ -269,7 +269,7 @@ namespace Allors.Database.Domain.Tests
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(10)
                 .Build();
 
@@ -287,7 +287,7 @@ namespace Allors.Database.Domain.Tests
             var consumption = transactions.First(t => t.Reason.Equals(reasons.Consumption) && t.Quantity > 0);
             var consumptionCancellation = transactions.First(t => t.Reason.Equals(reasons.Consumption) && t.Quantity < 0);
 
-            Assert.Equal(2, transactions.Count);
+            Assert.Equal(2, transactions.Count());
 
             Assert.Equal(10, consumption.Quantity);
             Assert.Equal(-10, consumptionCancellation.Quantity);
@@ -335,14 +335,14 @@ namespace Allors.Database.Domain.Tests
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part1.InventoryItemsWherePart.First)
+                .WithInventoryItem(part1.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(10)
                 .Build();
 
             this.Transaction.Derive(true);
 
             // Act
-            inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.First;
+            inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.FirstOrDefault();
             inventoryAssignment.Quantity = 5;
 
             workEffort.Complete();
@@ -402,7 +402,7 @@ namespace Allors.Database.Domain.Tests
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part1.InventoryItemsWherePart.First)
+                .WithInventoryItem(part1.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(10)
                 .Build();
 
@@ -415,7 +415,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(true);
 
             // Act
-            inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.First;
+            inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.FirstOrDefault();
             inventoryAssignment.Quantity = 4;
 
             this.Transaction.Derive(true);
@@ -463,7 +463,7 @@ namespace Allors.Database.Domain.Tests
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(5)
                 .Build();
 
@@ -493,7 +493,7 @@ namespace Allors.Database.Domain.Tests
             // Assert
             consumptions = inventoryAssignment.InventoryItemTransactions.Where(t => t.Reason.Equals(reasons.Consumption));
 
-            Assert.Equal(2, inventoryAssignment.InventoryItemTransactions.Count);
+            Assert.Equal(2, inventoryAssignment.InventoryItemTransactions.Count());
 
             Assert.Equal(10, consumptions.Sum(r => r.Quantity));
             Assert.Equal(10, part.QuantityOnHand);
@@ -527,7 +527,7 @@ namespace Allors.Database.Domain.Tests
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part1.InventoryItemsWherePart.First)
+                .WithInventoryItem(part1.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(1)
                 .Build();
             this.Derive();
@@ -535,7 +535,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(2, part1.QuantityOnHand);
             Assert.Equal(3, part2.QuantityOnHand);
 
-            inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.First;
+            inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.FirstOrDefault();
             this.Derive();
 
             Assert.Equal(3, part1.QuantityOnHand);
@@ -566,7 +566,7 @@ namespace Allors.Database.Domain.Tests
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part1.InventoryItemsWherePart.First)
+                .WithInventoryItem(part1.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(2)
                 .Build();
             this.Derive();
@@ -593,7 +593,7 @@ namespace Allors.Database.Domain.Tests
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(2)
                 .Build();
             this.Derive();
@@ -616,7 +616,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(2)
                 .Build();
             this.Derive();
@@ -634,7 +634,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(2)
                 .Build();
             this.Derive();
@@ -668,7 +668,7 @@ namespace Allors.Database.Domain.Tests
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(2)
                 .Build();
             this.Derive();
@@ -699,7 +699,7 @@ namespace Allors.Database.Domain.Tests
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
                 .WithQuantity(2)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .Build();
             this.Derive();
 

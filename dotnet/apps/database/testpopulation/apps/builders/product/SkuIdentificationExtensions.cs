@@ -12,8 +12,8 @@ namespace Allors.Database.Domain.TestPopulation
         public static SkuIdentificationBuilder WithDefaults(this SkuIdentificationBuilder @this)
         {
             var faker = @this.Transaction.Faker();
-            @this.WithIdentification(faker.Random.AlphaNumeric(7));
-            @this.WithProductIdentificationType(new ProductIdentificationTypes(@this.Transaction).Sku);
+            @this.WithIdentification(faker.Random.AlphaNumeric(7))
+                .WithProductIdentificationType(new ProductIdentificationTypes(@this.Transaction).Sku);
             return @this;
         }
     }

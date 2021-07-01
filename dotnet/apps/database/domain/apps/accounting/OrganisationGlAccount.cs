@@ -26,9 +26,9 @@ namespace Allors.Database.Domain
                 return true;
             }
 
-            foreach (OrganisationGlAccountBalance organisationGlAccountBalance in this.OrganisationGlAccountBalancesWhereOrganisationGlAccount)
+            foreach (var organisationGlAccountBalance in this.OrganisationGlAccountBalancesWhereOrganisationGlAccount)
             {
-                foreach (AccountingTransactionDetail accountingTransactionDetail in organisationGlAccountBalance.OrganisationGlAccount.AccountingTransactionDetailsWhereOrganisationGlAccount)
+                foreach (var accountingTransactionDetail in organisationGlAccountBalance.OrganisationGlAccount.AccountingTransactionDetailsWhereOrganisationGlAccount)
                 {
                     if (accountingTransactionDetail.AccountingTransactionWhereAccountingTransactionDetail.AccountingTransactionNumber.AccountingTransactionType.Equals(new AccountingTransactionTypes(this.Strategy.Transaction).BankStatement))
                     {

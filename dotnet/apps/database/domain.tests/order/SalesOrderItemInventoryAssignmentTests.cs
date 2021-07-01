@@ -87,10 +87,10 @@ namespace Allors.Database.Domain.Tests
         {
             Assert.True(this.salesOrderItem.SalesOrderItemState.IsInProcess);
             Assert.Single(this.salesOrderItem.SalesOrderItemInventoryAssignments);
-            var transactions = this.salesOrderItem.SalesOrderItemInventoryAssignments.First.InventoryItemTransactions;
+            var transactions = this.salesOrderItem.SalesOrderItemInventoryAssignments.First().InventoryItemTransactions;
 
             Assert.Single(transactions);
-            var transaction = transactions[0];
+            var transaction = transactions.ElementAt(0);
             Assert.Equal(this.part, transaction.Part);
             Assert.Equal(3, transaction.Quantity);
             Assert.Equal(this.reasons.Reservation, transaction.Reason);
@@ -98,8 +98,8 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(3, this.salesOrderItem.QuantityReserved);
             Assert.Equal(3, this.salesOrderItem.QuantityCommittedOut);
 
-            Assert.Equal(3, ((NonSerialisedInventoryItem)this.part.InventoryItemsWherePart.First()).QuantityCommittedOut);
-            Assert.Equal(11, ((NonSerialisedInventoryItem)this.part.InventoryItemsWherePart.First()).QuantityOnHand);
+            Assert.Equal(3, ((NonSerialisedInventoryItem)this.part.InventoryItemsWherePart.FirstOrDefault()).QuantityCommittedOut);
+            Assert.Equal(11, ((NonSerialisedInventoryItem)this.part.InventoryItemsWherePart.FirstOrDefault()).QuantityOnHand);
 
             Assert.Equal(3, this.part.QuantityCommittedOut);
             Assert.Equal(11, this.part.QuantityOnHand);
@@ -128,7 +128,7 @@ namespace Allors.Database.Domain.Tests
         //    this.Transaction.Derive();
 
         //    Assert.True(this.salesOrderItem.SalesOrderItemState.InProcess);
-        //    Assert.Equal(2, this.salesOrderItem.SalesOrderItemInventoryAssignments.Count);
+        //    Assert.Equal(2, this.salesOrderItem.SalesOrderItemInventoryAssignments.Count());
 
         //    var previousInventoryItem = (NonSerialisedInventoryItem)this.part.InventoryItemsWherePart.FirstOrDefault(v => v.Facility.Name.Equals("facility"));
         //    var currentInventoryItem = this.salesOrderItem.ReservedFromNonSerialisedInventoryItem;
@@ -154,7 +154,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var transaction = this.salesOrderItem.SalesOrderItemInventoryAssignments.First.InventoryItemTransactions.Last();
+            var transaction = this.salesOrderItem.SalesOrderItemInventoryAssignments.First().InventoryItemTransactions.Last();
             Assert.Equal(this.part, transaction.Part);
             Assert.Equal(3, transaction.Quantity);
             Assert.Equal(this.reasons.Reservation, transaction.Reason);

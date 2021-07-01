@@ -26,9 +26,9 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<CustomerShipment>())
             {
                 var shipmentValue = 0M;
-                foreach (ShipmentItem shipmentItem in @this.ShipmentItems)
+                foreach (var shipmentItem in @this.ShipmentItems)
                 {
-                    foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
+                    foreach (var orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
                     {
                         shipmentValue += orderShipment.Quantity * orderShipment.OrderItem.UnitPrice;
                     }

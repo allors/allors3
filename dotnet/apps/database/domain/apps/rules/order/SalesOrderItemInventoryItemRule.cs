@@ -55,20 +55,15 @@ namespace Allors.Database.Domain
                             }
                             else
                             {
-                                var inventoryItems = @this.Part.InventoryItemsWherePart;
-                                inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, salesOrder.OriginFacility);
+                                var inventoryItems = @this.Part.InventoryItemsWherePart.Where(v => Equals(salesOrder.OriginFacility, v.Facility));
                                 @this.ReservedFromSerialisedInventoryItem = inventoryItems.FirstOrDefault() as SerialisedInventoryItem;
                             }
                         }
                     }
-                    else
+                    else if (!@this.ExistReservedFromNonSerialisedInventoryItem)
                     {
-                        if (!@this.ExistReservedFromNonSerialisedInventoryItem)
-                        {
-                            var inventoryItems = @this.Part.InventoryItemsWherePart;
-                            inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, salesOrder.OriginFacility);
-                            @this.ReservedFromNonSerialisedInventoryItem = inventoryItems.FirstOrDefault() as NonSerialisedInventoryItem;
-                        }
+                        var inventoryItems = @this.Part.InventoryItemsWherePart.Where(v => Equals(salesOrder.OriginFacility, v.Facility));
+                        @this.ReservedFromNonSerialisedInventoryItem = inventoryItems.FirstOrDefault() as NonSerialisedInventoryItem;
                     }
                 }
 

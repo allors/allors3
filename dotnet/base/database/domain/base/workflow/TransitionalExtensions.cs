@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
                 var objectState = @this.Strategy.GetCompositeRole(transitionalConfiguration.ObjectState);
                 var lastObjectState = @this.Strategy.GetCompositeRole(transitionalConfiguration.LastObjectState);
 
-                if (objectState != null && !objectState.Equals(lastObjectState))
+                if (objectState?.Equals(lastObjectState) == false)
                 {
                     @this.Strategy.SetCompositeRole(transitionalConfiguration.PreviousObjectState, lastObjectState);
                 }
@@ -41,6 +41,6 @@ namespace Allors.Database.Domain
         }
 
         public static bool HasChangedStates(this Transitional @this) =>
-            @this.LastObjectStates.Count != @this.ObjectStates.Count || @this.LastObjectStates.Except(@this.ObjectStates).Count() != 0;
+            @this.LastObjectStates.Count() != @this.ObjectStates.Count() || @this.LastObjectStates.Except(@this.ObjectStates).Any();
     }
 }

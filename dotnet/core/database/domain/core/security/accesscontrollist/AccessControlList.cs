@@ -119,28 +119,28 @@ namespace Allors.Database.Domain
                 {
                     var delegatedAccess = controlledObject.DelegateAccess();
                     securityTokens = delegatedAccess.SecurityTokens;
-                    if (securityTokens != null && securityTokens.Any(v => v == null))
+                    if (securityTokens?.Any(v => v == null) == true)
                     {
                         securityTokens = securityTokens.Where(v => v != null).ToArray();
                     }
 
                     var delegatedAccessDeniedPermissions = delegatedAccess.DeniedPermissions;
-                    if (delegatedAccessDeniedPermissions != null && delegatedAccessDeniedPermissions.Length > 0)
+                    if (delegatedAccessDeniedPermissions?.Length > 0)
                     {
-                        this.deniedPermissions = this.Object.DeniedPermissions.Count > 0 ?
+                        this.deniedPermissions = this.Object.DeniedPermissions.Any() ?
                                                      new HashSet<long>(this.Object.DeniedPermissions.Union(delegatedAccessDeniedPermissions).Select(v => v.Id)) :
                                                      new HashSet<long>(delegatedAccessDeniedPermissions.Select(v => v.Id));
                     }
-                    else if (this.Object.DeniedPermissions.Count > 0)
+                    else if (this.Object.DeniedPermissions.Any())
                     {
                         this.deniedPermissions = new HashSet<long>(this.Object.DeniedPermissions.Select(v => v.Id));
                     }
                 }
                 else
                 {
-                    securityTokens = this.Object.SecurityTokens;
+                    securityTokens = this.Object.SecurityTokens.ToArray();
 
-                    if (this.Object.DeniedPermissions.Count > 0)
+                    if (this.Object.DeniedPermissions.Any())
                     {
                         this.deniedPermissions = new HashSet<long>(this.Object.DeniedPermissions.Select(v => v.Id));
                     }

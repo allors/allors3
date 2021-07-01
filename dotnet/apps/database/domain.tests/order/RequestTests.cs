@@ -82,7 +82,7 @@ namespace Allors.Database.Domain.Tests
             var request = new RequestForQuoteBuilder(this.Transaction).Build();
             this.Derive();
 
-            request.Originator = this.InternalOrganisation.ActiveCustomers.First;
+            request.Originator = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             this.Derive();
 
             Assert.True(request.RequestState.IsSubmitted);
@@ -96,7 +96,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             request.Originator = customer;
             this.Derive();
 
@@ -111,7 +111,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             request.Originator = customer;
             this.Derive();
 
@@ -163,7 +163,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedOriginatorDeriveDerivedCurrency()
         {
             var swedishKrona = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "SEK");
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             customer.PreferredCurrency = swedishKrona;
             this.Derive();
 
@@ -179,7 +179,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedOriginatorPreferredCurrencyDeriveDerivedCurrency()
         {
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
 
             var request = new RequestForQuoteBuilder(this.Transaction).WithOriginator(customer).Build();
             this.Derive();

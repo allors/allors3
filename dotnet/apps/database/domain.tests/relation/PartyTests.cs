@@ -18,7 +18,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPartyWithOpenOrders_WhenDeriving_ThenOpenOrderAmountIsUpdated()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.IsImmediatelyPicked = false;
 
             var organisation = new OrganisationBuilder(this.Transaction).WithName("customer").Build();

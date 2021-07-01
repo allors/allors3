@@ -22,7 +22,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPaymentApplication_WhenDeriving_ThenAmountAppliedCannotBeLargerThenAmountReceived()
         {
-            var contactMechanism = new ContactMechanisms(this.Transaction).Extent().First;
+            var contactMechanism = new ContactMechanisms(this.Transaction).Extent().FirstOrDefault();
             var good = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
 
             var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
@@ -46,7 +46,7 @@ namespace Allors.Database.Domain.Tests
 
             var paymentApplication = new PaymentApplicationBuilder(this.Transaction)
                 .WithAmountApplied(200)
-                .WithInvoiceItem(invoice.InvoiceItems[0])
+                .WithInvoiceItem(invoice.InvoiceItems.ElementAt(0))
                 .Build();
 
             this.Transaction.Derive();

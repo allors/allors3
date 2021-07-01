@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain.TestPopulation
 {
     using System;
+    using System.Linq;
     using Domain;
 
     public static class WorkEffortExtensions
@@ -22,7 +23,7 @@ namespace Allors.Database.Domain.TestPopulation
 
             return new WorkEffortInventoryAssignmentBuilder(@this.Transaction())
                 .WithAssignment(@this)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(quantity)
                 .Build();
         }

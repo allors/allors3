@@ -19,13 +19,13 @@ namespace Allors.Database.Domain.TestPopulation
                 invoiceItemTypes.Where(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId) || v.UniqueId.Equals(InvoiceItemTypes.PartItemId)).ToList())
                 .ToList();
 
-            @this.WithDescription(faker.Lorem.Sentences(2));
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithInvoiceItemType(faker.Random.ListItem(otherInvoiceItemTypes));
-            @this.WithMessage(faker.Lorem.Sentence());
-            @this.WithQuantity(1);
-            @this.WithAssignedUnitPrice(faker.Random.UInt(1, 100));
+            @this.WithDescription(faker.Lorem.Sentences(2))
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithInvoiceItemType(faker.Random.ListItem(otherInvoiceItemTypes))
+                .WithMessage(faker.Lorem.Sentence())
+                .WithQuantity(1)
+                .WithAssignedUnitPrice(faker.Random.UInt(1, 100));
 
             return @this;
         }
@@ -34,22 +34,22 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var m = @this.Transaction.Database.Services().M;
             var faker = @this.Transaction.Faker();
-            var invoiceItemType = @this.Transaction.Extent<InvoiceItemType>().Where(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId)).FirstOrDefault();
+            var invoiceItemType = @this.Transaction.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId));
 
             var unifiedGoodExtent = @this.Transaction.Extent<UnifiedGood>();
             unifiedGoodExtent.Filter.AddEquals(m.UnifiedGood.InventoryItemKind, new InventoryItemKinds(@this.Transaction).Serialised);
             var serializedProduct = unifiedGoodExtent.First();
 
-            @this.WithDescription(faker.Lorem.Sentences(2));
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithInvoiceItemType(invoiceItemType);
-            @this.WithProduct(serializedProduct);
-            @this.WithSerialisedItem(serializedProduct.SerialisedItems.First);
-            @this.WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()));
-            @this.WithMessage(faker.Lorem.Sentence());
-            @this.WithQuantity(1);
-            @this.WithAssignedUnitPrice(faker.Random.UInt(1, 100));
+            @this.WithDescription(faker.Lorem.Sentences(2))
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithInvoiceItemType(invoiceItemType)
+                .WithProduct(serializedProduct)
+                .WithSerialisedItem(serializedProduct.SerialisedItems.FirstOrDefault())
+                .WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()))
+                .WithMessage(faker.Lorem.Sentence())
+                .WithQuantity(1)
+                .WithAssignedUnitPrice(faker.Random.UInt(1, 100));
 
             return @this;
         }
@@ -58,22 +58,22 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var m = @this.Transaction.Database.Services().M;
             var faker = @this.Transaction.Faker();
-            var invoiceItemType = @this.Transaction.Extent<InvoiceItemType>().Where(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId)).FirstOrDefault();
+            var invoiceItemType = @this.Transaction.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId));
 
             var unifiedGoodExtent = @this.Transaction.Extent<UnifiedGood>();
             unifiedGoodExtent.Filter.AddEquals(m.UnifiedGood.InventoryItemKind, new InventoryItemKinds(@this.Transaction).Serialised);
             var serializedPart = unifiedGoodExtent.First();
 
-            @this.WithDescription(faker.Lorem.Sentences(2));
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithInvoiceItemType(invoiceItemType);
-            @this.WithProduct(serializedPart);
-            @this.WithSerialisedItem(serializedPart.SerialisedItems.First);
-            @this.WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()));
-            @this.WithMessage(faker.Lorem.Sentence());
-            @this.WithQuantity(1);
-            @this.WithAssignedUnitPrice(faker.Random.UInt(1, 100));
+            @this.WithDescription(faker.Lorem.Sentences(2))
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithInvoiceItemType(invoiceItemType)
+                .WithProduct(serializedPart)
+                .WithSerialisedItem(serializedPart.SerialisedItems.FirstOrDefault())
+                .WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()))
+                .WithMessage(faker.Lorem.Sentence())
+                .WithQuantity(1)
+                .WithAssignedUnitPrice(faker.Random.UInt(1, 100));
 
             return @this;
         }

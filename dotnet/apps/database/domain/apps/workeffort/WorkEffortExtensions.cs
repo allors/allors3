@@ -99,7 +99,7 @@ namespace Allors.Database.Domain
                     .Build();
 
                 CreateInvoiceItems(@this, salesInvoice);
-                foreach (WorkEffort childWorkEffort in @this.Children)
+                foreach (var childWorkEffort in @this.Children)
                 {
                     CreateInvoiceItems(childWorkEffort, salesInvoice);
                 }
@@ -141,7 +141,7 @@ namespace Allors.Database.Domain
                 }
             }
 
-            foreach (WorkEffortInventoryAssignment workEffortInventoryAssignment in @this.WorkEffortInventoryAssignmentsWhereAssignment)
+            foreach (var workEffortInventoryAssignment in @this.WorkEffortInventoryAssignmentsWhereAssignment)
             {
                 var part = workEffortInventoryAssignment.InventoryItem.Part;
 
@@ -163,7 +163,7 @@ namespace Allors.Database.Domain
                     .Build();
             }
 
-            foreach (WorkEffortSalesInvoiceItemAssignment workEffortSalesInvoiceItemAssignment in @this.WorkEffortSalesInvoiceItemAssignmentsWhereAssignment)
+            foreach (var workEffortSalesInvoiceItemAssignment in @this.WorkEffortSalesInvoiceItemAssignmentsWhereAssignment)
             {
                 var clone = workEffortSalesInvoiceItemAssignment.SalesInvoiceItem.Clone();
 

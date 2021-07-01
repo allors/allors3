@@ -29,12 +29,12 @@ namespace Allors.Database.Domain
                 var state = salesOrderItem.SalesOrderItemState;
                 var inventoryItemChanged = @this.ExistCurrentVersion && !Equals(@this.CurrentVersion.InventoryItem, @this.InventoryItem);
 
-                foreach (InventoryTransactionReason createReason in state.InventoryTransactionReasonsToCreate)
+                foreach (var createReason in state.InventoryTransactionReasonsToCreate)
                 {
                     SyncInventoryTransactions(@this, @this.InventoryItem, @this.Quantity, createReason, false);
                 }
 
-                foreach (InventoryTransactionReason cancelReason in state.InventoryTransactionReasonsToCancel)
+                foreach (var cancelReason in state.InventoryTransactionReasonsToCancel)
                 {
                     SyncInventoryTransactions(@this, @this.InventoryItem, @this.Quantity, cancelReason, true);
                 }
@@ -46,12 +46,12 @@ namespace Allors.Database.Domain
                     var previousQuantity = @this.CurrentVersion.Quantity;
                     state = salesOrderItem.PreviousSalesOrderItemState ?? salesOrderItem.SalesOrderItemState;
 
-                    foreach (InventoryTransactionReason createReason in state.InventoryTransactionReasonsToCreate)
+                    foreach (var createReason in state.InventoryTransactionReasonsToCreate)
                     {
                         SyncInventoryTransactions(@this, previousInventoryItem, previousQuantity, createReason, true);
                     }
 
-                    foreach (InventoryTransactionReason cancelReason in state.InventoryTransactionReasonsToCancel)
+                    foreach (var cancelReason in state.InventoryTransactionReasonsToCancel)
                     {
                         SyncInventoryTransactions(@this, previousInventoryItem, previousQuantity, cancelReason, true);
                     }

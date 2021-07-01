@@ -343,11 +343,8 @@ namespace Allors.Database.Domain
 
             var m = @this.Strategy.Transaction.Database.Services().M;
 
-            var suplierRelationships = @this.SupplierRelationshipsWhereInternalOrganisation;
-            suplierRelationships.Filter.AddEquals(m.SupplierRelationship.Supplier, supplier);
-
-            return suplierRelationships.Any(relationship => relationship.FromDate.Date <= date
-                                                             && (!relationship.ExistThroughDate || relationship.ThroughDate >= date));
+            var supplierRelationships = @this.SupplierRelationshipsWhereInternalOrganisation.Where(v => Equals(supplier, v.Supplier));
+            return supplierRelationships.Any(relationship => relationship.FromDate.Date <= date && (!relationship.ExistThroughDate || relationship.ThroughDate >= date));
         }
 
         public static bool AppsIsActiveSubcontractor(this InternalOrganisation @this, Organisation subcontractor, DateTime? date)
@@ -357,11 +354,7 @@ namespace Allors.Database.Domain
                 return false;
             }
 
-            var m = @this.Strategy.Transaction.Database.Services().M;
-
-            var subcontractorRelationships = @this.SubContractorRelationshipsWhereContractor;
-            subcontractorRelationships.Filter.AddEquals(m.SubContractorRelationship.SubContractor, subcontractor);
-
+            var subcontractorRelationships = @this.SubContractorRelationshipsWhereContractor.Where(v => Equals(subcontractor, v.SubContractor));
             return subcontractorRelationships.Any(relationship => relationship.FromDate.Date <= date
                                                              && (!relationship.ExistThroughDate || relationship.ThroughDate >= date));
         }

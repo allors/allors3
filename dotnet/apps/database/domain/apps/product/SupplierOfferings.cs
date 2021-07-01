@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
             if (supplier != null)
             {
-                foreach (SupplierOffering supplierOffering in supplier.SupplierOfferingsWhereSupplier)
+                foreach (var supplierOffering in supplier.SupplierOfferingsWhereSupplier)
                 {
                     if (supplierOffering.ExistPart && supplierOffering.Part.Equals(part))
                     {

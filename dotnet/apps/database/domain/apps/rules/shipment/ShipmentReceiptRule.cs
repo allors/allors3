@@ -30,10 +30,9 @@ namespace Allors.Database.Domain
             {
                 if (@this.ExistOrderItem && @this.ExistShipmentItem)
                 {
-                    var orderShipmentsWhereShipmentItem = @this.ShipmentItem.OrderShipmentsWhereShipmentItem;
-                    orderShipmentsWhereShipmentItem.Filter.AddEquals(this.M.OrderShipment.OrderItem, @this.OrderItem);
+                    var shipment = @this.ShipmentItem.OrderShipmentsWhereShipmentItem.FirstOrDefault(v => Equals(@this.OrderItem, v.OrderItem));
 
-                    if (orderShipmentsWhereShipmentItem.First == null)
+                    if (shipment == null)
                     {
                         new OrderShipmentBuilder(@this.Strategy.Transaction)
                             .WithOrderItem(@this.OrderItem)
@@ -43,7 +42,7 @@ namespace Allors.Database.Domain
                     }
                     else
                     {
-                        orderShipmentsWhereShipmentItem.First.Quantity += @this.QuantityAccepted;
+                        shipment.Quantity += @this.QuantityAccepted;
                     }
                 }
 
@@ -51,10 +50,9 @@ namespace Allors.Database.Domain
                 {
                     if (@this.ShipmentItem.ExistSerialisedItem)
                     {
-                        var inventoryItems = @this.ShipmentItem.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem;
-                        inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, @this.Facility);
-                        inventoryItems.Filter.AddEquals(this.M.SerialisedInventoryItem.SerialisedInventoryItemState, new SerialisedInventoryItemStates(@this.Transaction()).Good);
-                        @this.InventoryItem = inventoryItems.First;
+                        var good = new SerialisedInventoryItemStates(@this.Transaction()).Good;
+
+                        @this.InventoryItem = @this.ShipmentItem.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem.FirstOrDefault(v => Equals(@this.Facility, v.Facility) && Equals(good, v.SerialisedInventoryItemState));
 
                         if (!@this.ExistInventoryItem)
                         {
@@ -69,10 +67,7 @@ namespace Allors.Database.Domain
 
                     if (@this.ShipmentItem.ExistPart && @this.ShipmentItem.Part.InventoryItemKind.IsNonSerialised)
                     {
-                        var inventoryItems = @this.ShipmentItem.Part.InventoryItemsWherePart;
-                        inventoryItems.Filter.AddEquals(this.M.InventoryItem.Facility, @this.Facility);
-                        //inventoryItems.Filter.AddEquals(M.NonSerialisedInventoryItem.NonSerialisedInventoryItemState, new NonSerialisedInventoryItemStates(this.Transaction()).Good);
-                        @this.InventoryItem = inventoryItems.First;
+                        @this.InventoryItem = @this.ShipmentItem.Part.InventoryItemsWherePart.FirstOrDefault(v => Equals(@this.Facility, v.Facility));
 
                         if (!@this.ExistInventoryItem)
                         {

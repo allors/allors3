@@ -34,7 +34,7 @@ namespace Allors.Database.Domain
                 @this.QuantityCommittedOut = 0;
                 @this.QuantityExpectedIn = 0;
 
-                foreach (InventoryItem inventoryItem in @this.InventoryItemsWherePart)
+                foreach (var inventoryItem in @this.InventoryItemsWherePart)
                 {
                     if (inventoryItem is NonSerialisedInventoryItem nonSerialisedInventoryItem)
                     {
@@ -53,7 +53,7 @@ namespace Allors.Database.Domain
                 var quantityOnHand = 0M;
                 var totalCost = 0M;
 
-                foreach (InventoryItemTransaction inventoryTransaction in @this.InventoryItemTransactionsWherePart)
+                foreach (var inventoryTransaction in @this.InventoryItemTransactionsWherePart)
                 {
                     var reason = inventoryTransaction.Reason;
 

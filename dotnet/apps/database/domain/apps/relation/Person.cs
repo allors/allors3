@@ -133,22 +133,22 @@ namespace Allors.Database.Domain
                 return;
             }
 
-            foreach (OrganisationContactRelationship deletable in this.OrganisationContactRelationshipsWhereContact)
+            foreach (var deletable in this.OrganisationContactRelationshipsWhereContact)
             {
                 deletable.Delete();
             }
 
-            foreach (ProfessionalServicesRelationship deletable in this.ProfessionalServicesRelationshipsWhereProfessional)
+            foreach (var deletable in this.ProfessionalServicesRelationshipsWhereProfessional)
             {
                 deletable.Delete();
             }
 
-            foreach (PartyFinancialRelationship deletable in this.PartyFinancialRelationshipsWhereFinancialParty)
+            foreach (var deletable in this.PartyFinancialRelationshipsWhereFinancialParty)
             {
                 deletable.Delete();
             }
 
-            foreach (PartyContactMechanism deletable in this.PartyContactMechanisms)
+            foreach (var deletable in this.PartyContactMechanisms)
             {
                 var contactmechanism = deletable.ContactMechanism;
 
@@ -160,12 +160,12 @@ namespace Allors.Database.Domain
                 }
             }
 
-            foreach (CommunicationEvent deletable in this.CommunicationEventsWhereInvolvedParty)
+            foreach (var deletable in this.CommunicationEventsWhereInvolvedParty)
             {
                 deletable.Delete();
             }
 
-            foreach (OrganisationContactRelationship deletable in this.OrganisationContactRelationshipsWhereContact)
+            foreach (var deletable in this.OrganisationContactRelationshipsWhereContact)
             {
                 deletable.Delete();
             }

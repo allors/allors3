@@ -39,9 +39,9 @@ namespace Allors.Database.Domain
                     @this.AddCollectionMethod(@this.DefaultCollectionMethod);
                 }
 
-                if (!@this.ExistDefaultCollectionMethod && @this.CollectionMethods.Count == 1)
+                if (!@this.ExistDefaultCollectionMethod && @this.CollectionMethods.Count() == 1)
                 {
-                    @this.DefaultCollectionMethod = @this.CollectionMethods.First;
+                    @this.DefaultCollectionMethod = @this.CollectionMethods.FirstOrDefault();
                 }
 
                 if (!@this.ExistDefaultCollectionMethod && @this.InternalOrganisation.ExistDefaultCollectionMethod)

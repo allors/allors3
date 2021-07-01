@@ -71,16 +71,16 @@ namespace Allors.Database.Domain.Print.ProductQuoteModel
                     imageByImageName.Add(this.PrimaryPhotoName, serialisedItem.PrimaryPhoto.MediaContent.Data);
                 }
 
-                if (serialisedItem.AdditionalPhotos.Count > 0)
+                if (serialisedItem.AdditionalPhotos.Any())
                 {
                     this.SecondaryPhotoName1 = $"{item.Id}_secondaryPhoto1";
-                    imageByImageName.Add(this.SecondaryPhotoName1, serialisedItem.AdditionalPhotos[0].MediaContent.Data);
+                    imageByImageName.Add(this.SecondaryPhotoName1, serialisedItem.AdditionalPhotos.ElementAt(0).MediaContent.Data);
                 }
 
-                if (serialisedItem.AdditionalPhotos.Count > 1)
+                if (serialisedItem.AdditionalPhotos.Count() > 1)
                 {
                     this.SecondaryPhotoName2 = $"{item.Id}_secondaryPhoto2";
-                    imageByImageName.Add(this.SecondaryPhotoName2, serialisedItem.AdditionalPhotos[1].MediaContent.Data);
+                    imageByImageName.Add(this.SecondaryPhotoName2, serialisedItem.AdditionalPhotos.ElementAt(1).MediaContent.Data);
                 }
             }
             else if (product != null)
@@ -93,16 +93,16 @@ namespace Allors.Database.Domain.Print.ProductQuoteModel
                     imageByImageName.Add(this.PrimaryPhotoName, product.PrimaryPhoto.MediaContent.Data);
                 }
 
-                if (product.Photos.Count > 0)
+                if (product.Photos.Any())
                 {
                     this.SecondaryPhotoName1 = $"{item.Id}_secondaryPhoto1";
-                    imageByImageName.Add(this.SecondaryPhotoName1, product.Photos[0].MediaContent.Data);
+                    imageByImageName.Add(this.SecondaryPhotoName1, product.Photos.ElementAt(0).MediaContent.Data);
                 }
 
-                if (product.Photos.Count > 1)
+                if (product.Photos.Count() > 1)
                 {
                     this.SecondaryPhotoName2 = $"{item.Id}_secondaryPhoto2";
-                    imageByImageName.Add(this.SecondaryPhotoName2, product.Photos[1].MediaContent.Data);
+                    imageByImageName.Add(this.SecondaryPhotoName2, product.Photos.ElementAt(1).MediaContent.Data);
                 }
             }
         }

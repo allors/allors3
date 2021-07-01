@@ -6,24 +6,26 @@
 
 namespace Allors.Database.Domain.TestPopulation
 {
+    using System.Linq;
+
     public static partial class PurchaseOrderItemBuilderExtensions
     {
         public static PurchaseOrderItemBuilder WithSerializedPartDefaults(this PurchaseOrderItemBuilder @this, Part unifiedGood, SerialisedItem serialisedItem, Organisation internalOrganisation)
         {
             var faker = @this.Transaction.Faker();
 
-            @this.WithDescription(faker.Lorem.Sentences(2));
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithInvoiceItemType(new InvoiceItemTypes(@this.Transaction).ProductItem);
-            @this.WithPart(unifiedGood);
-            @this.WithStoredInFacility(faker.Random.ListItem(internalOrganisation.FacilitiesWhereOwner));
-            @this.WithAssignedUnitPrice(faker.Random.UInt(5, 10));
-            @this.WithSerialisedItem(serialisedItem);
-            @this.WithQuantityOrdered(1);
-            @this.WithAssignedDeliveryDate(@this.Transaction.Now().AddDays(5));
-            @this.WithShippingInstruction(faker.Lorem.Sentences(3));
-            @this.WithMessage(faker.Lorem.Sentence());
+            @this.WithDescription(faker.Lorem.Sentences(2))
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithInvoiceItemType(new InvoiceItemTypes(@this.Transaction).ProductItem)
+                .WithPart(unifiedGood)
+                .WithStoredInFacility(faker.Random.ListItem(internalOrganisation.FacilitiesWhereOwner.ToArray()))
+                .WithAssignedUnitPrice(faker.Random.UInt(5, 10))
+                .WithSerialisedItem(serialisedItem)
+                .WithQuantityOrdered(1)
+                .WithAssignedDeliveryDate(@this.Transaction.Now().AddDays(5))
+                .WithShippingInstruction(faker.Lorem.Sentences(3))
+                .WithMessage(faker.Lorem.Sentence());
 
             return @this;
         }
@@ -32,17 +34,17 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var faker = @this.Transaction.Faker();
 
-            @this.WithDescription(faker.Lorem.Sentences(2));
-            @this.WithInvoiceItemType(new InvoiceItemTypes(@this.Transaction).PartItem);
-            @this.WithPart(nonUnifiedPart);
-            @this.WithStoredInFacility(faker.Random.ListItem(internalOrganisation.FacilitiesWhereOwner));
-            @this.WithAssignedUnitPrice(faker.Random.UInt(5, 10));
-            @this.WithQuantityOrdered(faker.Random.UInt(5, 15));
-            @this.WithAssignedDeliveryDate(@this.Transaction.Now().AddDays(5));
-            @this.WithShippingInstruction(faker.Lorem.Sentences(3));
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithMessage(faker.Lorem.Sentence());
+            @this.WithDescription(faker.Lorem.Sentences(2))
+                .WithInvoiceItemType(new InvoiceItemTypes(@this.Transaction).PartItem)
+                .WithPart(nonUnifiedPart)
+                .WithStoredInFacility(faker.Random.ListItem(internalOrganisation.FacilitiesWhereOwner.ToArray()))
+                .WithAssignedUnitPrice(faker.Random.UInt(5, 10))
+                .WithQuantityOrdered(faker.Random.UInt(5, 15))
+                .WithAssignedDeliveryDate(@this.Transaction.Now().AddDays(5))
+                .WithShippingInstruction(faker.Lorem.Sentences(3))
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithMessage(faker.Lorem.Sentence());
 
             return @this;
         }

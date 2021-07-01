@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System;
+    using System.Linq;
 
     public partial class SalesOrderItem
     {
@@ -97,7 +98,7 @@ namespace Allors.Database.Domain
 
         public void AppsDelete(SalesOrderItemDelete method)
         {
-            foreach (SalesTerm salesTerm in this.SalesTerms)
+            foreach (var salesTerm in this.SalesTerms)
             {
                 salesTerm.Delete();
             }

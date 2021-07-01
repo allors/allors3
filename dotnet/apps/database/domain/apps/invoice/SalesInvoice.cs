@@ -63,7 +63,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        public InvoiceItem[] InvoiceItems => this.SalesInvoiceItems;
+        public InvoiceItem[] InvoiceItems => this.SalesInvoiceItems.ToArray();
 
         public void AppsOnBuild(ObjectOnBuild method)
         {
@@ -128,7 +128,7 @@ namespace Allors.Database.Domain
 
             this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Transaction).NotPaid;
 
-            foreach (SalesInvoiceItem salesInvoiceItem in this.SalesInvoiceItems)
+            foreach (var salesInvoiceItem in this.SalesInvoiceItems)
             {
                 salesInvoiceItem.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Transaction).NotPaid;
                 salesInvoiceItem.DerivationTrigger = Guid.NewGuid();
@@ -196,7 +196,7 @@ namespace Allors.Database.Domain
                     .WithInternalComment(this.InternalComment)
                     .Build();
 
-                foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
+                foreach (var orderAdjustment in this.OrderAdjustments)
                 {
                     OrderAdjustment newAdjustment = null;
                     if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
@@ -229,7 +229,7 @@ namespace Allors.Database.Domain
                     purchaseInvoice.AddOrderAdjustment(newAdjustment);
                 }
 
-                foreach (SalesInvoiceItem salesInvoiceItem in this.SalesInvoiceItems)
+                foreach (var salesInvoiceItem in this.SalesInvoiceItems)
                 {
                     var invoiceItem = new PurchaseInvoiceItemBuilder(this.Strategy.Transaction)
                         .WithInvoiceItemType(salesInvoiceItem.InvoiceItemType)
@@ -303,7 +303,7 @@ namespace Allors.Database.Domain
                 .WithBillingAccount(this.BillingAccount)
                 .Build();
 
-            foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
+            foreach (var orderAdjustment in this.OrderAdjustments)
             {
                 OrderAdjustment newAdjustment = null;
                 if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
@@ -336,7 +336,7 @@ namespace Allors.Database.Domain
                 salesInvoice.AddOrderAdjustment(newAdjustment);
             }
 
-            foreach (SalesInvoiceItem salesInvoiceItem in this.SalesInvoiceItems)
+            foreach (var salesInvoiceItem in this.SalesInvoiceItems)
             {
                 var invoiceItem = new SalesInvoiceItemBuilder(this.Strategy.Transaction)
                     .WithInvoiceItemType(salesInvoiceItem.InvoiceItemType)
@@ -357,7 +357,7 @@ namespace Allors.Database.Domain
                 invoiceItem.ProductFeatures = salesInvoiceItem.ProductFeatures;
                 salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-                foreach (SalesTerm salesTerm in salesInvoiceItem.SalesTerms)
+                foreach (var salesTerm in salesInvoiceItem.SalesTerms)
                 {
                     if (salesTerm.GetType().Name == typeof(IncoTerm).Name)
                     {
@@ -388,7 +388,7 @@ namespace Allors.Database.Domain
                 }
             }
 
-            foreach (SalesTerm salesTerm in this.SalesTerms)
+            foreach (var salesTerm in this.SalesTerms)
             {
                 if (salesTerm.GetType().Name == typeof(IncoTerm).Name)
                 {
@@ -453,7 +453,7 @@ namespace Allors.Database.Domain
                 .WithBillingAccount(this.BillingAccount)
                 .Build();
 
-            foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
+            foreach (var orderAdjustment in this.OrderAdjustments)
             {
                 OrderAdjustment newAdjustment = null;
                 if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
@@ -485,7 +485,7 @@ namespace Allors.Database.Domain
                 creditNote.AddOrderAdjustment(newAdjustment);
             }
 
-            foreach (SalesInvoiceItem salesInvoiceItem in this.SalesInvoiceItems)
+            foreach (var salesInvoiceItem in this.SalesInvoiceItems)
             {
                 var invoiceItem = new SalesInvoiceItemBuilder(this.Strategy.Transaction)
                     .WithInvoiceItemType(salesInvoiceItem.InvoiceItemType)
@@ -505,7 +505,7 @@ namespace Allors.Database.Domain
                 invoiceItem.ProductFeatures = salesInvoiceItem.ProductFeatures;
                 creditNote.AddSalesInvoiceItem(invoiceItem);
 
-                foreach (WorkEffortBilling workEffortBilling in salesInvoiceItem.WorkEffortBillingsWhereInvoiceItem)
+                foreach (var workEffortBilling in salesInvoiceItem.WorkEffortBillingsWhereInvoiceItem)
                 {
                     new WorkEffortBillingBuilder(this.Strategy.Transaction)
                         .WithWorkEffort(workEffortBilling.WorkEffort)
@@ -525,17 +525,17 @@ namespace Allors.Database.Domain
         {
             if (this.IsDeletable)
             {
-                foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
+                foreach (var orderAdjustment in this.OrderAdjustments)
                 {
                     orderAdjustment.Delete();
                 }
 
-                foreach (SalesInvoiceItem salesInvoiceItem in this.SalesInvoiceItems)
+                foreach (var salesInvoiceItem in this.SalesInvoiceItems)
                 {
                     salesInvoiceItem.Delete();
                 }
 
-                foreach (SalesTerm salesTerm in this.SalesTerms)
+                foreach (var salesTerm in this.SalesTerms)
                 {
                     salesTerm.Delete();
                 }

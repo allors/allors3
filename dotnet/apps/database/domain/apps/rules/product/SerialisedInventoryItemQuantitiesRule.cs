@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
                 }
                 else
                 {
-                    foreach (InventoryItemTransaction inventoryTransaction in @this.InventoryItemTransactionsWhereInventoryItem)
+                    foreach (var inventoryTransaction in @this.InventoryItemTransactionsWhereInventoryItem)
                     {
                         var reason = inventoryTransaction.Reason;
 
@@ -51,11 +51,11 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                foreach (PickListItem pickListItem in @this.PickListItemsWhereInventoryItem)
+                foreach (var pickListItem in @this.PickListItemsWhereInventoryItem)
                 {
                     if (pickListItem.PickListWherePickListItem.PickListState.Equals(new PickListStates(@this.Strategy.Transaction).Picked))
                     {
-                        foreach (ItemIssuance itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
+                        foreach (var itemIssuance in pickListItem.ItemIssuancesWherePickListItem)
                         {
                             if (!itemIssuance.ShipmentItem.ShipmentItemState.IsShipped)
                             {

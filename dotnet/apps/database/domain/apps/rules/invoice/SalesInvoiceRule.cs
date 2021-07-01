@@ -26,7 +26,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SalesInvoice>())
             {
-                foreach (SalesInvoiceItem invoiceItem in @this.SalesInvoiceItems)
+                foreach (var invoiceItem in @this.SalesInvoiceItems)
                 {
                     invoiceItem.Sync(@this);
                 }

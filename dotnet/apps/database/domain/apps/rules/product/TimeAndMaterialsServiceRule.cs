@@ -45,7 +45,7 @@ namespace Allors.Database.Domain
 
                     foreach (Service variant in @this.Variants)
                     {
-                        foreach (PriceComponent priceComponent in priceComponents)
+                        foreach (var priceComponent in priceComponents)
                         {
                             variant.AddVirtualProductPriceComponent(priceComponent);
 

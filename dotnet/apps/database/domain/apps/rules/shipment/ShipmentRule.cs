@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<Shipment>())
             {
-                foreach (ShipmentItem shipmentItem in @this.ShipmentItems)
+                foreach (var shipmentItem in @this.ShipmentItems)
                 {
                     shipmentItem.Sync(@this);
                 }

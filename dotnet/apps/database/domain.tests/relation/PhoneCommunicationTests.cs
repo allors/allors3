@@ -6,6 +6,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Xunit;
 
     public class PhoneCommunicationTests : DomainTest, IClassFixture<Fixture>
@@ -73,7 +74,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(3, communication.InvolvedParties.Count);
+            Assert.Equal(3, communication.InvolvedParties.Count());
             Assert.Contains(owner, communication.InvolvedParties);
             Assert.Contains(caller, communication.InvolvedParties);
             Assert.Contains(receiver, communication.InvolvedParties);

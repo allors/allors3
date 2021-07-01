@@ -212,7 +212,7 @@ namespace Allors.Database.Domain.Tests
 
             new ReceiptBuilder(this.Transaction)
                 .WithAmount(50)
-                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice1.SalesInvoiceItems[0]).WithAmountApplied(50).Build())
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice1.SalesInvoiceItems.ElementAt(0)).WithAmountApplied(50).Build())
                 .Build();
 
             this.Transaction.Derive();
@@ -221,7 +221,7 @@ namespace Allors.Database.Domain.Tests
 
             new ReceiptBuilder(this.Transaction)
                 .WithAmount(200)
-                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice2.SalesInvoiceItems[0]).WithAmountApplied(200).Build())
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice2.SalesInvoiceItems.ElementAt(0)).WithAmountApplied(200).Build())
                 .Build();
 
             this.Transaction.Derive();
@@ -230,7 +230,7 @@ namespace Allors.Database.Domain.Tests
 
             new ReceiptBuilder(this.Transaction)
                 .WithAmount(50)
-                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice1.SalesInvoiceItems[0]).WithAmountApplied(50).Build())
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice1.SalesInvoiceItems.ElementAt(0)).WithAmountApplied(50).Build())
                 .Build();
 
             this.Transaction.Derive();
@@ -280,7 +280,7 @@ namespace Allors.Database.Domain.Tests
 
             new ReceiptBuilder(this.Transaction)
                 .WithAmount(20)
-                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice1.SalesInvoiceItems[0]).WithAmountApplied(20).Build())
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoiceItem(invoice1.SalesInvoiceItems.ElementAt(0)).WithAmountApplied(20).Build())
                 .Build();
 
             this.Transaction.Derive();

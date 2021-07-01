@@ -15,23 +15,23 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var faker = @this.Transaction.Faker();
 
-            var customer = internalOrganisation.ActiveCustomers.Where(v => v.GetType().Name == typeof(Organisation).Name).FirstOrDefault();
+            var customer = internalOrganisation.ActiveCustomers.FirstOrDefault(v => v.GetType().Name == nameof(Organisation));
 
-            @this.WithTakenBy(internalOrganisation);
-            @this.WithExecutedBy(internalOrganisation);
-            @this.WithCustomer(customer);
-            @this.WithFacility(faker.Random.ListItem(internalOrganisation.FacilitiesWhereOwner));
-            @this.WithContactPerson(customer.CurrentContacts.FirstOrDefault());
-            @this.WithName(string.Join(" ", faker.Lorem.Words(3)));
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithWorkDone(faker.Lorem.Sentence());
-            @this.WithPriority(faker.Random.ListItem(@this.Transaction.Extent<Priority>()));
-            @this.WithWorkEffortPurpose(faker.Random.ListItem(@this.Transaction.Extent<WorkEffortPurpose>()));
-            @this.WithScheduledStart(@this.Transaction.Now().AddDays(7));
-            @this.WithScheduledCompletion(@this.Transaction.Now().AddDays(10));
-            @this.WithEstimatedHours(faker.Random.Int(7, 30));
-            @this.WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
+            @this.WithTakenBy(internalOrganisation)
+                .WithExecutedBy(internalOrganisation)
+                .WithCustomer(customer)
+                .WithFacility(faker.Random.ListItem(internalOrganisation.FacilitiesWhereOwner.ToArray()))
+                .WithContactPerson(customer.CurrentContacts.FirstOrDefault())
+                .WithName(string.Join(" ", faker.Lorem.Words(3)))
+                .WithDescription(faker.Lorem.Sentence())
+                .WithComment(faker.Lorem.Sentence())
+                .WithWorkDone(faker.Lorem.Sentence())
+                .WithPriority(faker.Random.ListItem(@this.Transaction.Extent<Priority>()))
+                .WithWorkEffortPurpose(faker.Random.ListItem(@this.Transaction.Extent<WorkEffortPurpose>()))
+                .WithScheduledStart(@this.Transaction.Now().AddDays(7))
+                .WithScheduledCompletion(@this.Transaction.Now().AddDays(10))
+                .WithEstimatedHours(faker.Random.Int(7, 30))
+                .WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
 
             return @this;
         }
@@ -42,20 +42,20 @@ namespace Allors.Database.Domain.TestPopulation
 
             var otherInternalOrganization = @this.Transaction.Extent<Organisation>().Except(new List<Organisation> { internalOrganisation }).FirstOrDefault();
 
-            @this.WithTakenBy(internalOrganisation);
-            @this.WithExecutedBy(internalOrganisation);
-            @this.WithCustomer(otherInternalOrganization);
-            @this.WithFacility(faker.Random.ListItem(internalOrganisation.FacilitiesWhereOwner));
-            @this.WithName(string.Join(" ", faker.Lorem.Words(3)));
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithWorkDone(faker.Lorem.Sentence());
-            @this.WithPriority(faker.Random.ListItem(@this.Transaction.Extent<Priority>()));
-            @this.WithWorkEffortPurpose(faker.Random.ListItem(@this.Transaction.Extent<WorkEffortPurpose>()));
-            @this.WithScheduledStart(@this.Transaction.Now().AddDays(7));
-            @this.WithScheduledCompletion(@this.Transaction.Now().AddDays(10));
-            @this.WithEstimatedHours(faker.Random.Int(7, 30));
-            @this.WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
+            @this.WithTakenBy(internalOrganisation)
+                .WithExecutedBy(internalOrganisation)
+                .WithCustomer(otherInternalOrganization)
+                .WithFacility(faker.Random.ListItem(internalOrganisation.FacilitiesWhereOwner.ToArray()))
+                .WithName(string.Join(" ", faker.Lorem.Words(3)))
+                .WithDescription(faker.Lorem.Sentence())
+                .WithComment(faker.Lorem.Sentence())
+                .WithWorkDone(faker.Lorem.Sentence())
+                .WithPriority(faker.Random.ListItem(@this.Transaction.Extent<Priority>()))
+                .WithWorkEffortPurpose(faker.Random.ListItem(@this.Transaction.Extent<WorkEffortPurpose>()))
+                .WithScheduledStart(@this.Transaction.Now().AddDays(7))
+                .WithScheduledCompletion(@this.Transaction.Now().AddDays(10))
+                .WithEstimatedHours(faker.Random.Int(7, 30))
+                .WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
 
             return @this;
         }

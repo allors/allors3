@@ -34,34 +34,34 @@ namespace Allors.Database.Domain.TestPopulation
             var shipToContact = shipToCustomer.CurrentContacts.FirstOrDefault();
             var paymentMethod = faker.Random.ListItem(@this.Transaction.Extent<PaymentMethod>());
 
-            @this.WithPartiallyShip(true);
-            @this.WithCustomerReference(faker.Random.Words(10));
-            @this.WithTakenBy(sellerOrganisation);
-            @this.WithAssignedTakenByContactMechanism(sellerOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithTakenByContactPerson(sellerOrganisation.CurrentContacts.FirstOrDefault());
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithBillToCustomer(billToCustomer);
-            @this.WithAssignedBillToContactMechanism(billToCustomer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithBillToContactPerson(billToCustomer.CurrentContacts.FirstOrDefault());
-            @this.WithBillToEndCustomer(endCustomer);
-            @this.WithAssignedBillToEndCustomerContactMechanism(endCustomer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithBillToEndCustomerContactPerson(endContact);
-            @this.WithShipToEndCustomer(endCustomer);
-            @this.WithAssignedShipToEndCustomerAddress(endCustomer.ShippingAddress);
-            @this.WithShipToEndCustomerContactPerson(endContact);
-            @this.WithShipToCustomer(shipToCustomer);
-            @this.WithAssignedShipToAddress(shipToCustomer.ShippingAddress);
-            @this.WithAssignedShipFromAddress(sellerOrganisation.ShippingAddress);
-            @this.WithShipToContactPerson(shipToContact);
-            @this.WithAssignedPaymentMethod(paymentMethod);
-            @this.WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithPartiallyShip(true)
+                .WithCustomerReference(faker.Random.Words(10))
+                .WithTakenBy(sellerOrganisation)
+                .WithAssignedTakenByContactMechanism(sellerOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithTakenByContactPerson(sellerOrganisation.CurrentContacts.FirstOrDefault())
+                .WithDescription(faker.Lorem.Sentence())
+                .WithComment(faker.Lorem.Sentence())
+                .WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithBillToCustomer(billToCustomer)
+                .WithAssignedBillToContactMechanism(billToCustomer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithBillToContactPerson(billToCustomer.CurrentContacts.FirstOrDefault())
+                .WithBillToEndCustomer(endCustomer)
+                .WithAssignedBillToEndCustomerContactMechanism(endCustomer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithBillToEndCustomerContactPerson(endContact)
+                .WithShipToEndCustomer(endCustomer)
+                .WithAssignedShipToEndCustomerAddress(endCustomer.ShippingAddress)
+                .WithShipToEndCustomerContactPerson(endContact)
+                .WithShipToCustomer(shipToCustomer)
+                .WithAssignedShipToAddress(shipToCustomer.ShippingAddress)
+                .WithAssignedShipFromAddress(sellerOrganisation.ShippingAddress)
+                .WithShipToContactPerson(shipToContact)
+                .WithAssignedPaymentMethod(paymentMethod)
+                .WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build())
+                .WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build())
+                .WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
 
-            foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
+            foreach (var additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
             {
                 @this.WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
             }
@@ -84,28 +84,28 @@ namespace Allors.Database.Domain.TestPopulation
             var shipToContact = shipToCustomer is Person shipToContactPerson ? shipToContactPerson : shipToCustomer.CurrentContacts.FirstOrDefault();
             var paymentMethod = faker.Random.ListItem(@this.Transaction.Extent<PaymentMethod>());
 
-            @this.WithPartiallyShip(true);
-            @this.WithCustomerReference(faker.Random.Words(10));
-            @this.WithTakenBy(sellerOrganisation);
-            @this.WithAssignedTakenByContactMechanism(sellerOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithTakenByContactPerson(sellerOrganisation.CurrentContacts.FirstOrDefault());
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithBillToCustomer(billToCustomer);
-            @this.WithAssignedBillToContactMechanism(billToCustomer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithBillToContactPerson(billToCustomer.CurrentContacts.FirstOrDefault());
-            @this.WithShipToCustomer(shipToCustomer);
-            @this.WithAssignedShipToAddress(shipToCustomer.ShippingAddress);
-            @this.WithAssignedShipFromAddress(sellerOrganisation.ShippingAddress);
-            @this.WithShipToContactPerson(shipToContact);
-            @this.WithAssignedPaymentMethod(paymentMethod);
-            @this.WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithPartiallyShip(true)
+                .WithCustomerReference(faker.Random.Words(10))
+                .WithTakenBy(sellerOrganisation)
+                .WithAssignedTakenByContactMechanism(sellerOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithTakenByContactPerson(sellerOrganisation.CurrentContacts.FirstOrDefault())
+                .WithDescription(faker.Lorem.Sentence())
+                .WithComment(faker.Lorem.Sentence())
+                .WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithBillToCustomer(billToCustomer)
+                .WithAssignedBillToContactMechanism(billToCustomer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithBillToContactPerson(billToCustomer.CurrentContacts.FirstOrDefault())
+                .WithShipToCustomer(shipToCustomer)
+                .WithAssignedShipToAddress(shipToCustomer.ShippingAddress)
+                .WithAssignedShipFromAddress(sellerOrganisation.ShippingAddress)
+                .WithShipToContactPerson(shipToContact)
+                .WithAssignedPaymentMethod(paymentMethod)
+                .WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build())
+                .WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build())
+                .WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
 
-            foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
+            foreach (var additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
             {
                 @this.WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
             }
@@ -127,26 +127,26 @@ namespace Allors.Database.Domain.TestPopulation
             var billToCustomer = shipToCustomer;
             var paymentMethod = faker.Random.ListItem(@this.Transaction.Extent<PaymentMethod>());
 
-            @this.WithPartiallyShip(true);
-            @this.WithCustomerReference(faker.Random.Words(16));
-            @this.WithTakenBy(sellerOrganisation);
-            @this.WithAssignedTakenByContactMechanism(sellerOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithTakenByContactPerson(sellerOrganisation.CurrentContacts.FirstOrDefault());
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithComment(faker.Lorem.Sentence());
-            @this.WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
-            @this.WithInternalComment(faker.Lorem.Sentence());
-            @this.WithBillToCustomer(billToCustomer);
-            @this.WithAssignedBillToContactMechanism(billToCustomer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
-            @this.WithShipToCustomer(shipToCustomer);
-            @this.WithAssignedShipToAddress(shipToCustomer.ShippingAddress);
-            @this.WithAssignedShipFromAddress(sellerOrganisation.ShippingAddress);
-            @this.WithAssignedPaymentMethod(paymentMethod);
-            @this.WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build());
-            @this.WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
+            @this.WithPartiallyShip(true)
+                .WithCustomerReference(faker.Random.Words(16))
+                .WithTakenBy(sellerOrganisation)
+                .WithAssignedTakenByContactMechanism(sellerOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithTakenByContactPerson(sellerOrganisation.CurrentContacts.FirstOrDefault())
+                .WithDescription(faker.Lorem.Sentence())
+                .WithComment(faker.Lorem.Sentence())
+                .WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithBillToCustomer(billToCustomer)
+                .WithAssignedBillToContactMechanism(billToCustomer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithShipToCustomer(shipToCustomer)
+                .WithAssignedShipToAddress(shipToCustomer.ShippingAddress)
+                .WithAssignedShipFromAddress(sellerOrganisation.ShippingAddress)
+                .WithAssignedPaymentMethod(paymentMethod)
+                .WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build())
+                .WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build())
+                .WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
 
-            foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
+            foreach (var additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
             {
                 @this.WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
             }

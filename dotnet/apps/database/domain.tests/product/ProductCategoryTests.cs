@@ -68,25 +68,25 @@ namespace Allors.Database.Domain.Tests
             Assert.False(productCategory1.ExistProductCategoriesWhereDescendant);
             Assert.False(productCategory2.ExistProductCategoriesWhereDescendant);
 
-            Assert.Equal(2, productCategory11.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(2, productCategory11.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory1, productCategory11.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory11.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(2, productCategory12.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(2, productCategory12.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory1, productCategory12.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory12.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(3, productCategory111.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(3, productCategory111.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory11, productCategory111.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory111.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory111.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(3, productCategory121.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(3, productCategory121.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory12, productCategory121.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory121.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory121.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(3, productCategory122.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(3, productCategory122.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory12, productCategory122.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory122.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory122.ProductCategoriesWhereDescendant);
@@ -167,25 +167,25 @@ namespace Allors.Database.Domain.Tests
             Assert.False(productCategory1.ExistProductCategoriesWhereDescendant);
             Assert.False(productCategory2.ExistProductCategoriesWhereDescendant);
 
-            Assert.Equal(2, productCategory11.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(2, productCategory11.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory1, productCategory11.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory11.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(2, productCategory12.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(2, productCategory12.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory1, productCategory12.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory12.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(3, productCategory111.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(3, productCategory111.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory11, productCategory111.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory111.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory111.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(3, productCategory121.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(3, productCategory121.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory12, productCategory121.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory121.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory121.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(3, productCategory122.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(3, productCategory122.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory12, productCategory122.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory122.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory122.ProductCategoriesWhereDescendant);
@@ -201,27 +201,27 @@ namespace Allors.Database.Domain.Tests
             Assert.False(productCategory2.ExistProductCategoriesWhereDescendant);
             Assert.False(productCategory3.ExistProductCategoriesWhereDescendant);
 
-            Assert.Equal(3, productCategory11.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(3, productCategory11.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory1, productCategory11.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory11.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory3, productCategory11.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(2, productCategory12.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(2, productCategory12.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory1, productCategory12.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory12.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(4, productCategory111.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(4, productCategory111.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory11, productCategory111.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory111.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory111.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory3, productCategory111.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(3, productCategory121.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(3, productCategory121.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory12, productCategory121.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory121.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory121.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(3, productCategory122.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(3, productCategory122.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory12, productCategory122.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory122.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory122.ProductCategoriesWhereDescendant);
@@ -238,30 +238,30 @@ namespace Allors.Database.Domain.Tests
             Assert.False(productCategory2.ExistProductCategoriesWhereDescendant);
             Assert.False(productCategory3.ExistProductCategoriesWhereDescendant);
 
-            Assert.Equal(3, productCategory11.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(3, productCategory11.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory1, productCategory11.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory11.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory3, productCategory11.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(2, productCategory12.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(2, productCategory12.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory1, productCategory12.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory12.ProductCategoriesWhereDescendant);
 
             Assert.Single(productCategory13.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory13.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(4, productCategory111.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(4, productCategory111.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory11, productCategory111.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory111.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory111.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory3, productCategory111.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(3, productCategory121.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(3, productCategory121.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory12, productCategory121.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory121.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory121.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(4, productCategory122.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(4, productCategory122.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory12, productCategory122.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory13, productCategory122.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory122.ProductCategoriesWhereDescendant);
@@ -305,25 +305,25 @@ namespace Allors.Database.Domain.Tests
             Assert.False(productCategory1.ExistProductCategoriesWhereDescendant);
             Assert.False(productCategory2.ExistProductCategoriesWhereDescendant);
 
-            Assert.Equal(2, productCategory11.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(2, productCategory11.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory1, productCategory11.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory11.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(2, productCategory12.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(2, productCategory12.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory1, productCategory12.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory12.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(3, productCategory111.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(3, productCategory111.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory11, productCategory111.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory111.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory111.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(3, productCategory121.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(3, productCategory121.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory12, productCategory121.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory121.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory121.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(3, productCategory122.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(3, productCategory122.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory12, productCategory122.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory122.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory122.ProductCategoriesWhereDescendant);
@@ -338,20 +338,20 @@ namespace Allors.Database.Domain.Tests
             Assert.Single(productCategory11.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory11.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(2, productCategory12.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(2, productCategory12.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory1, productCategory12.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory12.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(2, productCategory111.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(2, productCategory111.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory11, productCategory111.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory111.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(3, productCategory121.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(3, productCategory121.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory12, productCategory121.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory121.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory121.ProductCategoriesWhereDescendant);
 
-            Assert.Equal(3, productCategory122.ProductCategoriesWhereDescendant.Count);
+            Assert.Equal(3, productCategory122.ProductCategoriesWhereDescendant.Count());
             Assert.Contains(productCategory12, productCategory122.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory1, productCategory122.ProductCategoriesWhereDescendant);
             Assert.Contains(productCategory2, productCategory122.ProductCategoriesWhereDescendant);
@@ -390,7 +390,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(2, productCategory1.Children.Count);
+            Assert.Equal(2, productCategory1.Children.Count());
             Assert.Contains(productCategory11, productCategory1.Children);
             Assert.Contains(productCategory12, productCategory1.Children);
 
@@ -400,7 +400,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Single(productCategory11.Children);
             Assert.Contains(productCategory111, productCategory11.Children);
 
-            Assert.Equal(2, productCategory12.Children.Count);
+            Assert.Equal(2, productCategory12.Children.Count());
             Assert.Contains(productCategory121, productCategory12.Children);
             Assert.Contains(productCategory122, productCategory12.Children);
 
@@ -540,7 +540,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(6, productCategory1.AllProducts.Count);
+            Assert.Equal(6, productCategory1.AllProducts.Count());
             Assert.Contains(good1, productCategory1.AllProducts);
             Assert.Contains(good11, productCategory1.AllProducts);
             Assert.Contains(good12, productCategory1.AllProducts);
@@ -548,17 +548,17 @@ namespace Allors.Database.Domain.Tests
             Assert.Contains(good121, productCategory1.AllProducts);
             Assert.Contains(good122, productCategory1.AllProducts);
 
-            Assert.Equal(4, productCategory2.AllProducts.Count);
+            Assert.Equal(4, productCategory2.AllProducts.Count());
             Assert.Contains(good2, productCategory2.AllProducts);
             Assert.Contains(good12, productCategory2.AllProducts);
             Assert.Contains(good121, productCategory2.AllProducts);
             Assert.Contains(good122, productCategory2.AllProducts);
 
-            Assert.Equal(2, productCategory11.AllProducts.Count);
+            Assert.Equal(2, productCategory11.AllProducts.Count());
             Assert.Contains(good11, productCategory11.AllProducts);
             Assert.Contains(good111, productCategory11.AllProducts);
 
-            Assert.Equal(3, productCategory12.AllProducts.Count);
+            Assert.Equal(3, productCategory12.AllProducts.Count());
             Assert.Contains(good12, productCategory12.AllProducts);
             Assert.Contains(good121, productCategory12.AllProducts);
             Assert.Contains(good122, productCategory12.AllProducts);
@@ -736,7 +736,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(6, productCategory1.AllSerialisedItemsForSale.Count);
+            Assert.Equal(6, productCategory1.AllSerialisedItemsForSale.Count());
             Assert.Contains(serialisedItem1, productCategory1.AllSerialisedItemsForSale);
             Assert.Contains(serialisedItem11, productCategory1.AllSerialisedItemsForSale);
             Assert.Contains(serialisedItem12, productCategory1.AllSerialisedItemsForSale);
@@ -744,18 +744,18 @@ namespace Allors.Database.Domain.Tests
             Assert.Contains(serialisedItem121, productCategory1.AllSerialisedItemsForSale);
             Assert.Contains(serialisedItem122, productCategory1.AllSerialisedItemsForSale);
 
-            Assert.Equal(5, productCategory2.AllSerialisedItemsForSale.Count);
+            Assert.Equal(5, productCategory2.AllSerialisedItemsForSale.Count());
             Assert.Contains(serialisedItem2a, productCategory2.AllSerialisedItemsForSale);
             Assert.Contains(serialisedItem2b, productCategory2.AllSerialisedItemsForSale);
             Assert.Contains(serialisedItem12, productCategory2.AllSerialisedItemsForSale);
             Assert.Contains(serialisedItem121, productCategory2.AllSerialisedItemsForSale);
             Assert.Contains(serialisedItem122, productCategory2.AllSerialisedItemsForSale);
 
-            Assert.Equal(2, productCategory11.AllSerialisedItemsForSale.Count);
+            Assert.Equal(2, productCategory11.AllSerialisedItemsForSale.Count());
             Assert.Contains(serialisedItem11, productCategory11.AllSerialisedItemsForSale);
             Assert.Contains(serialisedItem111, productCategory11.AllSerialisedItemsForSale);
 
-            Assert.Equal(3, productCategory12.AllSerialisedItemsForSale.Count);
+            Assert.Equal(3, productCategory12.AllSerialisedItemsForSale.Count());
             Assert.Contains(serialisedItem12, productCategory12.AllSerialisedItemsForSale);
             Assert.Contains(serialisedItem121, productCategory12.AllSerialisedItemsForSale);
             Assert.Contains(serialisedItem122, productCategory12.AllSerialisedItemsForSale);
@@ -784,7 +784,7 @@ namespace Allors.Database.Domain.Tests
                                 .WithIdentification("1")
                                 .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                             .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
-                            .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
+                            .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.FirstOrDefault())
                             .Build())
                 .Build();
 
@@ -805,7 +805,7 @@ namespace Allors.Database.Domain.Tests
                                 .WithIdentification("2")
                                 .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                             .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
-                            .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
+                            .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.FirstOrDefault())
                             .Build())
                 .Build();
 
@@ -826,7 +826,7 @@ namespace Allors.Database.Domain.Tests
                                 .WithIdentification("3")
                                 .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                             .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
-                            .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
+                            .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.FirstOrDefault())
                             .Build())
                 .Build();
 
@@ -843,7 +843,7 @@ namespace Allors.Database.Domain.Tests
                                 .WithIdentification("4")
                                 .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                             .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
-                            .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
+                            .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.FirstOrDefault())
                             .Build())
                 .Build();
 
@@ -860,7 +860,7 @@ namespace Allors.Database.Domain.Tests
                                 .WithIdentification("5")
                                 .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                             .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
-                            .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
+                            .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.FirstOrDefault())
                             .Build())
                 .Build();
 
@@ -877,7 +877,7 @@ namespace Allors.Database.Domain.Tests
                                 .WithIdentification("6")
                                 .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                             .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
-                            .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
+                            .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.FirstOrDefault())
                             .Build())
                 .Build();
 
@@ -894,7 +894,7 @@ namespace Allors.Database.Domain.Tests
                                 .WithIdentification("7")
                                 .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                             .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised)
-                            .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.First)
+                            .WithDefaultFacility(this.InternalOrganisation.FacilitiesWhereOwner.FirstOrDefault())
                             .Build())
                 .Build();
 
@@ -948,13 +948,13 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Transaction.Derive();
 
-            Assert.Equal(6, productCategory1.AllNonSerialisedInventoryItemsForSale.Count);
+            Assert.Equal(6, productCategory1.AllNonSerialisedInventoryItemsForSale.Count());
 
-            Assert.Equal(5, productCategory2.AllNonSerialisedInventoryItemsForSale.Count);
+            Assert.Equal(5, productCategory2.AllNonSerialisedInventoryItemsForSale.Count());
 
-            Assert.Equal(2, productCategory11.AllNonSerialisedInventoryItemsForSale.Count);
+            Assert.Equal(2, productCategory11.AllNonSerialisedInventoryItemsForSale.Count());
 
-            Assert.Equal(3, productCategory12.AllNonSerialisedInventoryItemsForSale.Count);
+            Assert.Equal(3, productCategory12.AllNonSerialisedInventoryItemsForSale.Count());
 
             Assert.Single(productCategory111.AllNonSerialisedInventoryItemsForSale);
 
@@ -1082,7 +1082,7 @@ namespace Allors.Database.Domain.Tests
             var productCategory12 = new ProductCategoryBuilder(this.Transaction).WithSecondaryParent(productCategory1).Build();
             this.Derive();
 
-            Assert.Equal(2, productCategory1.Children.Count);
+            Assert.Equal(2, productCategory1.Children.Count());
             Assert.Contains(productCategory11, productCategory1.Children);
             Assert.Contains(productCategory12, productCategory1.Children);
         }
@@ -1103,7 +1103,7 @@ namespace Allors.Database.Domain.Tests
             productCategory111.PrimaryParent = productCategory11;
             this.Derive();
 
-            Assert.Equal(2, productCategory1.Descendants.Count);
+            Assert.Equal(2, productCategory1.Descendants.Count());
             Assert.Contains(productCategory11, productCategory1.Descendants);
             Assert.Contains(productCategory111, productCategory1.Descendants);
         }
@@ -1128,13 +1128,13 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            Assert.Equal(3, productCategory1.AllProducts.Count);
+            Assert.Equal(3, productCategory1.AllProducts.Count());
 
             var good = new NonUnifiedGoodBuilder(this.Transaction).Build();
             productCategory111.AddProduct(good);
             this.Derive();
 
-            Assert.Equal(4, productCategory1.AllProducts.Count);
+            Assert.Equal(4, productCategory1.AllProducts.Count());
             Assert.Contains(good, productCategory1.AllProducts);
         }
 
@@ -1164,7 +1164,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            Assert.Equal(3, productCategory1.AllParts.Count);
+            Assert.Equal(3, productCategory1.AllParts.Count());
 
             var good = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
@@ -1172,7 +1172,7 @@ namespace Allors.Database.Domain.Tests
             productCategory111.AddProduct(good);
             this.Derive();
 
-            Assert.Equal(4, productCategory1.AllParts.Count);
+            Assert.Equal(4, productCategory1.AllParts.Count());
             Assert.Contains(good.Part, productCategory1.AllParts);
         }
 
@@ -1208,7 +1208,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            Assert.Equal(3, productCategory1.AllSerialisedItemsForSale.Count);
+            Assert.Equal(3, productCategory1.AllSerialisedItemsForSale.Count());
 
             var good = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithPart(new NonUnifiedPartBuilder(this.Transaction)
@@ -1218,8 +1218,8 @@ namespace Allors.Database.Domain.Tests
             productCategory111.AddProduct(good);
             this.Derive();
 
-            Assert.Equal(4, productCategory1.AllSerialisedItemsForSale.Count);
-            Assert.Contains(good.Part.SerialisedItems[0], productCategory1.AllSerialisedItemsForSale);
+            Assert.Equal(4, productCategory1.AllSerialisedItemsForSale.Count());
+            Assert.Contains(good.Part.SerialisedItems.ElementAt(0), productCategory1.AllSerialisedItemsForSale);
         }
 
         [Fact]
@@ -1254,7 +1254,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            Assert.Equal(3, productCategory1.AllNonSerialisedInventoryItemsForSale.Count);
+            Assert.Equal(3, productCategory1.AllNonSerialisedInventoryItemsForSale.Count());
 
             var good = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithPart(new NonUnifiedPartBuilder(this.Transaction)
@@ -1264,8 +1264,8 @@ namespace Allors.Database.Domain.Tests
             productCategory111.AddProduct(good);
             this.Derive();
 
-            Assert.Equal(4, productCategory1.AllNonSerialisedInventoryItemsForSale.Count);
-            Assert.Contains(good.Part.InventoryItemsWherePart[0], productCategory1.AllNonSerialisedInventoryItemsForSale);
+            Assert.Equal(4, productCategory1.AllNonSerialisedInventoryItemsForSale.Count());
+            Assert.Contains(good.Part.InventoryItemsWherePart.ElementAt(0), productCategory1.AllNonSerialisedInventoryItemsForSale);
         }
     }
 }

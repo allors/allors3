@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
             this.QuoteState = new QuoteStates(this.Strategy.Transaction).Ordered;
 
             var quoteItemStates = new QuoteItemStates(this.Transaction());
-            foreach (QuoteItem quoteItem in this.QuoteItems)
+            foreach (var quoteItem in this.QuoteItems)
             {
                 if (Equals(quoteItem.QuoteItemState, quoteItemStates.Accepted))
                 {

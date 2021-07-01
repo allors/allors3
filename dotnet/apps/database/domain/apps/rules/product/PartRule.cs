@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistProductType)
                 {
-                    foreach (SerialisedItemCharacteristicType characteristicType in @this.ProductType.SerialisedItemCharacteristicTypes)
+                    foreach (var characteristicType in @this.ProductType.SerialisedItemCharacteristicTypes)
                     {
                         var characteristic = @this.SerialisedItemCharacteristics.FirstOrDefault(v => Equals(v.SerialisedItemCharacteristicType, characteristicType));
                         if (characteristic == null)

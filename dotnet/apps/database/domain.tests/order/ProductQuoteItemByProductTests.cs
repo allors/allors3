@@ -6,6 +6,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Xunit;
 
     public class ProductQuoteItemByProductTests : DomainTest, IClassFixture<Fixture>
@@ -24,7 +25,7 @@ namespace Allors.Database.Domain.Tests
             quote.AddQuoteItem(quoteItem);
             this.Derive();
 
-            Assert.Equal(1, quote.ProductQuoteItemsByProduct.First.QuantityOrdered);
+            Assert.Equal(1, quote.ProductQuoteItemsByProduct.First().QuantityOrdered);
         }
 
         [Fact]
@@ -39,7 +40,7 @@ namespace Allors.Database.Domain.Tests
             quote.AddQuoteItem(quoteItem);
             this.Derive();
 
-            Assert.Equal(1, quote.ProductQuoteItemsByProduct.First.ValueOrdered);
+            Assert.Equal(1, quote.ProductQuoteItemsByProduct.First().ValueOrdered);
         }
 
         [Fact]
@@ -58,7 +59,7 @@ namespace Allors.Database.Domain.Tests
             QuoteItem.Product = product2;
             this.Derive();
 
-            Assert.Equal(0, product1.ProductQuoteItemByProductsWhereProduct.First.ValueOrdered);
+            Assert.Equal(0, product1.ProductQuoteItemByProductsWhereProduct.First().ValueOrdered);
         }
     }
 }

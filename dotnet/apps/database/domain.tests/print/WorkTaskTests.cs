@@ -43,13 +43,13 @@ namespace Allors.Database.Domain.Tests.Print
             //// Work Effort Data
             var salesPerson = new PersonBuilder(this.Transaction).WithFirstName("Sales").WithLastName("Person").Build();
             var salesOrder = this.CreateSalesOrder(customer, organisation);
-            var workOrder = this.CreateWorkEffort(organisation, customer, customerContact, salesOrder.SalesOrderItems.First);
+            var workOrder = this.CreateWorkEffort(organisation, customer, customerContact, salesOrder.SalesOrderItems.FirstOrDefault());
             var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
             var employment = new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(organisation).Build();
 
             this.Transaction.Derive(true);
 
-            var salesOrderItem = salesOrder.SalesOrderItems.First;
+            var salesOrderItem = salesOrder.SalesOrderItems.FirstOrDefault();
             salesOrder.AddValidOrderItem(salesOrderItem);
 
             //// Work Effort Inventory Assignmets
@@ -115,7 +115,7 @@ namespace Allors.Database.Domain.Tests.Print
 
             return new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workOrder)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(quantity)
                 .Build();
         }
@@ -164,7 +164,7 @@ namespace Allors.Database.Domain.Tests.Print
             new WorkTaskBuilder(this.Transaction)
             .WithName("Task")
             .WithTakenBy(takenBy)
-            .WithFacility(new Facilities(this.Transaction).Extent().First)
+            .WithFacility(new Facilities(this.Transaction).Extent().FirstOrDefault())
             .WithCustomer(customer)
             .WithContactPerson(contact)
             .WithWorkEffortPurpose(new WorkEffortPurposes(this.Transaction).Maintenance)

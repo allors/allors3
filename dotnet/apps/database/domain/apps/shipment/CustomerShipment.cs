@@ -24,17 +24,17 @@ namespace Allors.Database.Domain
                     return false;
                 }
 
-                var picklists = this.ShipToParty?.PickListsWhereShipToParty;
-                picklists?.Filter.AddEquals(this.M.PickList.Store, this.Store);
-                picklists?.Filter.AddNot().AddEquals(this.M.PickList.PickListState, new PickListStates(this.Strategy.Transaction).Picked);
-                if (picklists?.First != null)
+                var picked = new PickListStates(this.Strategy.Transaction).Picked;
+
+                var picklist = this.ShipToParty?.PickListsWhereShipToParty.FirstOrDefault(v => Equals(this.Store, v.Store) && Equals(picked, v.PickListState));
+                if (picklist != null)
                 {
                     return false;
                 }
 
-                foreach (ShipmentItem shipmentItem in this.ShipmentItems)
+                foreach (var shipmentItem in this.ShipmentItems)
                 {
-                    foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
+                    foreach (var orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
                     {
                         if (orderShipment.OrderItem is SalesOrderItem salesOrderItem
                             && salesOrderItem.SalesOrderWhereSalesOrderItem.SalesOrderState.Equals(new SalesOrderStates(this.Strategy.Transaction).OnHold))
@@ -54,11 +54,9 @@ namespace Allors.Database.Domain
         {
             get
             {
-                var pickLists = this.ShipToParty.PickListsWhereShipToParty;
-                pickLists.Filter.AddEquals(this.M.PickList.Store, this.Store);
-                pickLists.Filter.AddNot().AddEquals(this.M.PickList.PickListState, new PickListStates(this.Transaction()).Picked);
+                var picked = new PickListStates(this.Transaction()).Picked;
 
-                return pickLists.FirstOrDefault();
+                return this.ShipToParty.PickListsWhereShipToParty.FirstOrDefault(v => Equals(this.Store, v.Store) && !Equals(picked, v.PickListState));
             }
         }
 
@@ -136,7 +134,7 @@ namespace Allors.Database.Domain
         {
             this.CreatePickList();
 
-            foreach (ShipmentItem shipmentItem in this.ShipmentItems)
+            foreach (var shipmentItem in this.ShipmentItems)
             {
                 shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Transaction()).Picking;
             }
@@ -193,20 +191,20 @@ namespace Allors.Database.Domain
                 this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Shipped;
                 this.EstimatedShipDate = this.Transaction().Now().Date;
 
-                foreach (ShipmentItem shipmentItem in this.ShipmentItems)
+                foreach (var shipmentItem in this.ShipmentItems)
                 {
                     shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Transaction()).Shipped;
 
-                    foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
+                    foreach (var orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
                     {
-                        foreach (SalesOrderItemInventoryAssignment salesOrderItemInventoryAssignment in ((SalesOrderItem)orderShipment.OrderItem).SalesOrderItemInventoryAssignments)
+                        foreach (var salesOrderItemInventoryAssignment in ((SalesOrderItem)orderShipment.OrderItem).SalesOrderItemInventoryAssignments)
                         {
                             // Quantity is used to calculate QuantityReserved (via inventoryItemTransactions)
                             salesOrderItemInventoryAssignment.Quantity -= orderShipment.Quantity;
                         }
                     }
 
-                    foreach (InventoryItem inventoryItem in shipmentItem.ReservedFromInventoryItems)
+                    foreach (var inventoryItem in shipmentItem.ReservedFromInventoryItems)
                     {
                         if (inventoryItem.Part.InventoryItemKind.IsSerialised)
                         {
@@ -246,9 +244,9 @@ namespace Allors.Database.Domain
                 var invoiceByOrder = new Dictionary<SalesOrder, SalesInvoice>();
                 var costsInvoiced = false;
 
-                foreach (ShipmentItem shipmentItem in this.ShipmentItems)
+                foreach (var shipmentItem in this.ShipmentItems)
                 {
-                    foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
+                    foreach (var orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
                     {
                         var salesOrder = orderShipment.OrderItem.OrderWhereValidOrderItem as SalesOrder;
 
@@ -282,7 +280,7 @@ namespace Allors.Database.Domain
 
                             invoiceByOrder.Add(salesOrder, salesInvoice);
 
-                            foreach (OrderAdjustment orderAdjustment in salesOrder.OrderAdjustments)
+                            foreach (var orderAdjustment in salesOrder.OrderAdjustments)
                             {
                                 OrderAdjustment newAdjustment = null;
                                 if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
@@ -325,7 +323,7 @@ namespace Allors.Database.Domain
                                 }
                             }
 
-                            foreach (SalesTerm salesTerm in salesOrder.SalesTerms)
+                            foreach (var salesTerm in salesOrder.SalesTerms)
                             {
                                 if (salesTerm.GetType().Name == typeof(IncoTerm).Name)
                                 {
@@ -401,7 +399,7 @@ namespace Allors.Database.Domain
                 inventoryAssignment.Quantity = orderItem.QuantityCommittedOut - correction;
             }
 
-            foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
+            foreach (var orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
             {
                 if (orderShipment.OrderItem.Equals(orderItem) && remainingCorrection > 0)
                 {
@@ -420,7 +418,7 @@ namespace Allors.Database.Domain
                     shipmentItem.Quantity -= quantity;
 
                     var itemIssuanceCorrection = quantity;
-                    foreach (ItemIssuance itemIssuance in shipmentItem.ItemIssuancesWhereShipmentItem)
+                    foreach (var itemIssuance in shipmentItem.ItemIssuancesWhereShipmentItem)
                     {
                         decimal subQuantity;
                         if (itemIssuance.Quantity < itemIssuanceCorrection)
@@ -446,9 +444,9 @@ namespace Allors.Database.Domain
 
             if (shipmentItem.Quantity == 0)
             {
-                foreach (OrderShipment orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
+                foreach (var orderShipment in shipmentItem.OrderShipmentsWhereShipmentItem)
                 {
-                    foreach (ItemIssuance itemIssuance in orderShipment.ShipmentItem.ItemIssuancesWhereShipmentItem)
+                    foreach (var itemIssuance in orderShipment.ShipmentItem.ItemIssuancesWhereShipmentItem)
                     {
                         if (!itemIssuance.PickListItem.PickListWherePickListItem.ExistPicker && itemIssuance.Quantity == 0)
                         {
@@ -484,7 +482,7 @@ namespace Allors.Database.Domain
                                 || v.ShipmentItemState.Equals(new ShipmentItemStates(this.Transaction()).Picking)))
                 {
                     var quantityIssued = 0M;
-                    foreach (ItemIssuance itemIssuance in shipmentItem.ItemIssuancesWhereShipmentItem)
+                    foreach (var itemIssuance in shipmentItem.ItemIssuancesWhereShipmentItem)
                     {
                         quantityIssued += itemIssuance.Quantity;
                     }
@@ -504,7 +502,7 @@ namespace Allors.Database.Domain
                     var inventoryItems = part.InventoryItemsWherePart.Where(v => facilities.Contains(v.Facility));
                     SerialisedInventoryItem issuedFromSerializedInventoryItem = null;
 
-                    foreach (InventoryItem inventoryItem in shipmentItem.ReservedFromInventoryItems)
+                    foreach (var inventoryItem in shipmentItem.ReservedFromInventoryItems)
                     {
                         // shipment item originates from sales order. Sales order item has only 1 ReservedFromInventoryItem.
                         // Foreach loop wil execute once.

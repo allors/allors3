@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                foreach (ShipmentItem shipmentItem in @this.ShipmentItemsWhereSerialisedItem)
+                foreach (var shipmentItem in @this.ShipmentItemsWhereSerialisedItem)
                 {
                     var shipment = shipmentItem.ShipmentWhereShipmentItem;
 

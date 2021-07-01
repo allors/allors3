@@ -28,33 +28,33 @@ namespace Allors.Database.Domain
             && !this.ExistOrderRequirementCommitmentsWhereOrderItem
             && !this.ExistWorkEffortsWhereOrderItemFulfillment;
 
-        public string SupplierReference
-        {
-            get
-            {
-                Extent<SupplierOffering> offerings = null;
+        //public string SupplierReference
+        //{
+        //    get
+        //    {
+        //        Extent<SupplierOffering> offerings = null;
 
-                if (this.ExistPart)
-                {
-                    offerings = this.Part.SupplierOfferingsWherePart;
-                }
+        //        if (this.ExistPart)
+        //        {
+        //            offerings = this.Part.SupplierOfferingsWherePart;
+        //        }
 
-                if (offerings != null)
-                {
-                    offerings.Filter.AddEquals(this.M.SupplierOffering.Supplier, this.PurchaseOrderWherePurchaseOrderItem.TakenViaSupplier);
-                    foreach (SupplierOffering offering in offerings)
-                    {
-                        if (offering.FromDate <= this.PurchaseOrderWherePurchaseOrderItem.OrderDate &&
-                            (!offering.ExistThroughDate || offering.ThroughDate >= this.PurchaseOrderWherePurchaseOrderItem.OrderDate))
-                        {
-                            return offering.SupplierProductId;
-                        }
-                    }
-                }
+        //        if (offerings != null)
+        //        {
+        //            offerings.Filter.AddEquals(this.M.SupplierOffering.Supplier, this.PurchaseOrderWherePurchaseOrderItem.TakenViaSupplier);
+        //            foreach (SupplierOffering offering in offerings)
+        //            {
+        //                if (offering.FromDate <= this.PurchaseOrderWherePurchaseOrderItem.OrderDate &&
+        //                    (!offering.ExistThroughDate || offering.ThroughDate >= this.PurchaseOrderWherePurchaseOrderItem.OrderDate))
+        //                {
+        //                    return offering.SupplierProductId;
+        //                }
+        //            }
+        //        }
 
-                return string.Empty;
-            }
-        }
+        //        return string.Empty;
+        //    }
+        //}
 
         public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
         {
@@ -97,7 +97,7 @@ namespace Allors.Database.Domain
             {
                 this.StoredInFacility = this.PurchaseOrderWherePurchaseOrderItem?.StoredInFacility;
 
-                if (!this.ExistStoredInFacility && this.PurchaseOrderWherePurchaseOrderItem?.OrderedBy?.StoresWhereInternalOrganisation.Count == 1)
+                if (!this.ExistStoredInFacility && this.PurchaseOrderWherePurchaseOrderItem?.OrderedBy?.StoresWhereInternalOrganisation.Count() == 1)
                 {
                     this.StoredInFacility = this.PurchaseOrderWherePurchaseOrderItem.OrderedBy.StoresWhereInternalOrganisation.Single().DefaultFacility;
                 }

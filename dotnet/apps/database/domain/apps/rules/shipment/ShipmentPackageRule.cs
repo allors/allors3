@@ -36,9 +36,9 @@ namespace Allors.Database.Domain
 
                 if (shipment!= null && shipment.Store.AutoGenerateShipmentPackage)
                 {
-                    foreach (ShipmentItem shipmentItem in shipment.ShipmentItems)
+                    foreach (var shipmentItem in shipment.ShipmentItems)
                     {
-                        foreach (ItemIssuance itemIssuance in shipmentItem.ItemIssuancesWhereShipmentItem)
+                        foreach (var itemIssuance in shipmentItem.ItemIssuancesWhereShipmentItem)
                         {
                             if (itemIssuance.PickListItem.PickListWherePickListItem.PickListState.IsPicked
                                 && @this.PackagingContents.FirstOrDefault(v => v.ShipmentItem.Equals(itemIssuance.ShipmentItem)) == null)

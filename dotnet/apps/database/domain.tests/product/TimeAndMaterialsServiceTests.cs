@@ -7,6 +7,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Xunit;
 
     public class TimeAndMaterialsServiceRuleTests : DomainTest, IClassFixture<Fixture>
@@ -32,7 +33,7 @@ namespace Allors.Database.Domain.Tests
             service.AddVariant(variant);
             this.Derive();
 
-            Assert.Equal(variant.VirtualProductPriceComponents.First, pricecomponent);
+            Assert.Equal(variant.VirtualProductPriceComponents.FirstOrDefault(), pricecomponent);
         }
 
         [Fact]
@@ -76,7 +77,7 @@ namespace Allors.Database.Domain.Tests
             service.AddVariant(variant);
             this.Derive();
 
-            Assert.Equal(variant.BasePrices.First, pricecomponent);
+            Assert.Equal(variant.BasePrices.FirstOrDefault(), pricecomponent);
         }
 
         [Fact]
@@ -95,7 +96,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            Assert.Equal(variantService.VirtualProductPriceComponents.First, pricecomponent);
+            Assert.Equal(variantService.VirtualProductPriceComponents.FirstOrDefault(), pricecomponent);
         }
     }
 }

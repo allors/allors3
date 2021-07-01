@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Xunit;
 
     public class SingletonTests : DomainTest, IClassFixture<Fixture>
@@ -23,7 +24,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenNewAdditionaleLocale_WhenDeriving_ThenLocalesIsDerived()
         {
             var singleton = this.Transaction.GetSingleton();
-            var localeCount = singleton.Locales.Count;
+            var localeCount = singleton.Locales.Count();
 
             singleton.AddAdditionalLocale(new Locales(this.Transaction).EnglishUnitedStates);
 
@@ -31,7 +32,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(singleton.DefaultLocale, singleton.Locales);
             Assert.Contains(new Locales(this.Transaction).EnglishUnitedStates, singleton.Locales);
-            Assert.Equal(localeCount + 1, singleton.Locales.Count);
+            Assert.Equal(localeCount + 1, singleton.Locales.Count());
         }
     }
 }

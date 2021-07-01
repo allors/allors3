@@ -195,7 +195,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(2, this.supplierRelationship.Supplier.ContactsUserGroup.Members.Count);
+            Assert.Equal(2, this.supplierRelationship.Supplier.ContactsUserGroup.Members.Count());
             Assert.Contains(this.contact, this.supplierRelationship.Supplier.ContactsUserGroup.Members);
             Assert.Contains(contact2, this.supplierRelationship.Supplier.ContactsUserGroup.Members);
 

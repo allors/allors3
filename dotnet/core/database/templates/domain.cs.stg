@@ -267,7 +267,7 @@ $if(associationType._.IsMany)$
 		{
 			get
 			{
-				return (System.Collections.Generic.IEnumerable<$associationType._.ObjectType.Name$>)Strategy.GetCompositeAssociations(Meta.$associationType._.Name$);
+				return Strategy.GetCompositeAssociations<$associationType._.ObjectType.Name$>(Meta.$associationType._.Name$);
 			}
 		}
 
@@ -332,7 +332,7 @@ $if(roleClass._.IsMany)$
 		{
 			get
 			{
-				return (System.Collections.Generic.IEnumerable<$roleClass_ObjectType(roleClass)$>)Strategy.GetCompositeRoles(Meta.$roleClass._.Name$);
+				return Strategy.GetCompositeRoles<$roleClass_ObjectType(roleClass)$>(Meta.$roleClass._.Name$);
 			}
 			set
 			{

@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Domain;
     using Xunit;
 
@@ -139,7 +140,7 @@ namespace Allors.Database.Domain.Tests
 
             c1B.Merge(c1A);
 
-            Assert.Equal(5, c1A.C1C2One2Manies.Count);
+            Assert.Equal(5, c1A.C1C2One2Manies.Count());
         }
 
         [Fact]
@@ -173,7 +174,7 @@ namespace Allors.Database.Domain.Tests
 
             c1B.Merge(c1A);
 
-            Assert.Equal(2, c1A.C1C2Many2Manies.Count);
+            Assert.Equal(2, c1A.C1C2Many2Manies.Count());
         }
 
         [Fact(Skip = "TODO: Koen")]

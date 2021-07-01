@@ -131,7 +131,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.submitPermission, requestForQuote.DeniedPermissions);
 
-            requestForQuote.Originator = this.InternalOrganisation.ActiveCustomers.First;
+            requestForQuote.Originator = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             this.Derive();
 
             Assert.DoesNotContain(this.submitPermission, requestForQuote.DeniedPermissions);

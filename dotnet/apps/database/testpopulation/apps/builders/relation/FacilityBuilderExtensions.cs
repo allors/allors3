@@ -13,17 +13,17 @@ namespace Allors.Database.Domain.TestPopulation
         public static FacilityBuilder WithDefaults(this FacilityBuilder @this, Organisation internalOrganisation)
         {
             var faker = @this.Transaction.Faker();
-            var customer = faker.Random.ListItem(internalOrganisation.ActiveCustomers);
+            var customer = faker.Random.ListItem(internalOrganisation.ActiveCustomers.ToArray());
             var postalAddress = new PostalAddressBuilder(@this.Transaction).WithDefaults().Build();
 
-            @this.WithName(faker.Name.FullName());
-            @this.WithDescription(faker.Lorem.Sentence());
-            @this.WithLatitude(faker.Address.Latitude());
-            @this.WithLongitude(faker.Address.Longitude());
-            @this.WithOwner(internalOrganisation);
-            @this.WithSquareFootage(faker.Random.Decimal(100, 10000));
-            @this.WithFacilityType(faker.Random.ListItem(@this.Transaction.Extent<FacilityType>()));
-            @this.WithFacilityContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
+            @this.WithName(faker.Name.FullName())
+                .WithDescription(faker.Lorem.Sentence())
+                .WithLatitude(faker.Address.Latitude())
+                .WithLongitude(faker.Address.Longitude())
+                .WithOwner(internalOrganisation)
+                .WithSquareFootage(faker.Random.Decimal(100, 10000))
+                .WithFacilityType(faker.Random.ListItem(@this.Transaction.Extent<FacilityType>()))
+                .WithFacilityContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault());
 
             return @this;
         }

@@ -49,7 +49,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(true);
 
             // Assert
-            var partyAssignment = workOrder.WorkEffortPartyAssignmentsWhereAssignment.First;
+            var partyAssignment = workOrder.WorkEffortPartyAssignmentsWhereAssignment.FirstOrDefault();
 
             Assert.Equal(workOrder, partyAssignment.Assignment);
             Assert.Equal(employee, partyAssignment.Party);

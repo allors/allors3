@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
             new TransitionalConfiguration(this.M.PurchaseInvoice, this.M.PurchaseInvoice.PurchaseInvoiceState),
         };
 
-        public InvoiceItem[] InvoiceItems => this.PurchaseInvoiceItems;
+        public InvoiceItem[] InvoiceItems => this.PurchaseInvoiceItems.ToArray();
 
         public Task[] OpenTasks => this.TasksWhereWorkItem.Where(v => !v.ExistDateClosed).ToArray();
 
@@ -29,17 +29,10 @@ namespace Allors.Database.Domain
         {
             get
             {
-                if (this.PurchaseOrders.Count > 0)
+                if (this.PurchaseOrders.Any())
                 {
                     var orderTotal = this.PurchaseInvoiceItems.SelectMany(v => v.OrderItemBillingsWhereInvoiceItem).Select(o => o.OrderItem).Sum(i => i.TotalExVat);
-                    if (this.TotalExVat > this.ActualInvoiceAmount)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return this.TotalExVat > this.ActualInvoiceAmount;
                 }
 
                 return true;
@@ -196,9 +189,9 @@ namespace Allors.Database.Domain
                             .Build();
                     }
 
-                    foreach (OrderItemBilling orderItemBilling in purchaseInvoiceItem.OrderItemBillingsWhereInvoiceItem)
+                    foreach (var orderItemBilling in purchaseInvoiceItem.OrderItemBillingsWhereInvoiceItem)
                     {
-                        foreach (ShipmentReceipt receipt in orderItemBilling.OrderItem.ShipmentReceiptsWhereOrderItem)
+                        foreach (var receipt in orderItemBilling.OrderItem.ShipmentReceiptsWhereOrderItem)
                         {
                             receipt.ShipmentItem.InventoryItemTransactionWhereShipmentItem.Cost = purchaseInvoiceItem.UnitBasePrice;
                         }
@@ -230,17 +223,17 @@ namespace Allors.Database.Domain
         {
             if (this.IsDeletable)
             {
-                foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
+                foreach (var orderAdjustment in this.OrderAdjustments)
                 {
                     orderAdjustment.Delete();
                 }
 
-                foreach (PurchaseInvoiceItem invoiceItem in this.PurchaseInvoiceItems)
+                foreach (var invoiceItem in this.PurchaseInvoiceItems)
                 {
                     invoiceItem.Delete();
                 }
 
-                foreach (SalesTerm salesTerm in this.SalesTerms)
+                foreach (var salesTerm in this.SalesTerms)
                 {
                     salesTerm.Delete();
                 }
@@ -268,7 +261,7 @@ namespace Allors.Database.Domain
                 .WithInternalComment(this.InternalComment)
                 .Build();
 
-            foreach (OrderAdjustment orderAdjustment in this.OrderAdjustments)
+            foreach (var orderAdjustment in this.OrderAdjustments)
             {
                 OrderAdjustment newAdjustment = null;
                 if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
@@ -301,7 +294,7 @@ namespace Allors.Database.Domain
                 salesInvoice.AddOrderAdjustment(newAdjustment);
             }
 
-            foreach (PurchaseInvoiceItem purchaseInvoiceItem in this.PurchaseInvoiceItems)
+            foreach (var purchaseInvoiceItem in this.PurchaseInvoiceItems)
             {
                 var invoiceItem = new SalesInvoiceItemBuilder(this.Strategy.Transaction)
                     .WithInvoiceItemType(purchaseInvoiceItem.InvoiceItemType)
@@ -317,7 +310,7 @@ namespace Allors.Database.Domain
                 salesInvoice.AddSalesInvoiceItem(invoiceItem);
             }
 
-            var internalOrganisation = (InternalOrganisation)salesInvoice.BilledFrom;
+            var internalOrganisation = salesInvoice.BilledFrom;
             if (!internalOrganisation.ActiveCustomers.Contains(salesInvoice.BillToCustomer))
             {
                 new CustomerRelationshipBuilder(this.Strategy.Transaction)

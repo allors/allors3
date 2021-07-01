@@ -12,7 +12,7 @@ namespace Allors.Database.Domain
             get
             {
                 var total = 0M;
-                foreach (PackagingContent packagingContent in this.PackagingContents)
+                foreach (var packagingContent in this.PackagingContents)
                 {
                     total += packagingContent.Quantity;
                 }
@@ -34,7 +34,7 @@ namespace Allors.Database.Domain
             var highestNumber = 0;
             if (this.ExistShipmentWhereShipmentPackage)
             {
-                foreach (ShipmentPackage shipmentPackageShipmentWhereShipmentPackage in this.ShipmentWhereShipmentPackage.ShipmentPackages)
+                foreach (var shipmentPackageShipmentWhereShipmentPackage in this.ShipmentWhereShipmentPackage.ShipmentPackages)
                 {
                     if (shipmentPackageShipmentWhereShipmentPackage.ExistSequenceNumber && shipmentPackageShipmentWhereShipmentPackage.SequenceNumber > highestNumber)
                     {

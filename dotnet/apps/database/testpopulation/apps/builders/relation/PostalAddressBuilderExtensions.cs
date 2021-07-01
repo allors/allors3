@@ -14,14 +14,14 @@ namespace Allors.Database.Domain.TestPopulation
             var m = @this.Transaction.Database.Services().M;
             var faker = @this.Transaction.Faker();
 
-            @this.WithAddress1(faker.Address.StreetAddress());
-            @this.WithAddress2(faker.Address.SecondaryAddress());
-            @this.WithAddress3(faker.Address.BuildingNumber());
-            @this.WithPostalCode(faker.Address.ZipCode());
-            @this.WithLocality(faker.Address.City());
-            @this.WithCountry(new Countries(@this.Transaction).FindBy(m.Country.IsoCode, faker.Address.CountryCode()));
-            @this.WithLatitude(faker.Address.Latitude());
-            @this.WithLongitude(faker.Address.Longitude());
+            @this.WithAddress1(faker.Address.StreetAddress())
+                .WithAddress2(faker.Address.SecondaryAddress())
+                .WithAddress3(faker.Address.BuildingNumber())
+                .WithPostalCode(faker.Address.ZipCode())
+                .WithLocality(faker.Address.City())
+                .WithCountry(new Countries(@this.Transaction).FindBy(m.Country.IsoCode, faker.Address.CountryCode()))
+                .WithLatitude(faker.Address.Latitude())
+                .WithLongitude(faker.Address.Longitude());
 
             return @this;
         }

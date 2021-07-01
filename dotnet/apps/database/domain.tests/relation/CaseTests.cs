@@ -6,6 +6,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Xunit;
 
     public class CaseTests : DomainTest, IClassFixture<Fixture>
@@ -47,7 +48,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(2, complaint.AllVersions.Count);
+            Assert.Equal(2, complaint.AllVersions.Count());
             Assert.Equal(new CaseStates(this.Transaction).Closed, complaint.CaseState);
         }
     }

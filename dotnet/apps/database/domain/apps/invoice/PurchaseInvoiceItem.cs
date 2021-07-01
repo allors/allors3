@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System;
+    using System.Linq;
 
     public partial class PurchaseInvoiceItem
     {
@@ -53,7 +54,7 @@ namespace Allors.Database.Domain
             if (this.PurchaseInvoiceWherePurchaseInvoiceItem.PurchaseInvoiceState.IsCreated)
             {
                 this.PurchaseInvoiceWherePurchaseInvoiceItem.RemovePurchaseInvoiceItem(this);
-                foreach (OrderItemBilling orderItemBilling in this.OrderItemBillingsWhereInvoiceItem)
+                foreach (var orderItemBilling in this.OrderItemBillingsWhereInvoiceItem)
                 {
                     orderItemBilling.OrderItem.DerivationTrigger = Guid.NewGuid();
                     orderItemBilling.Delete();

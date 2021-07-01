@@ -133,7 +133,7 @@ namespace Allors.Database.Domain
                 var miscellaneousVat = 0M;
                 var miscellaneousIrpf = 0M;
 
-                foreach (OrderAdjustment orderAdjustment in @this.OrderAdjustments)
+                foreach (var orderAdjustment in @this.OrderAdjustments)
                 {
                     if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
                     {
@@ -281,7 +281,7 @@ namespace Allors.Database.Domain
                     currentGenericOrProductOrFeaturePriceComponents.AddRange(salesInvoiceItem.Product.GetPriceComponents(currentPriceComponents));
                 }
 
-                foreach (ProductFeature productFeature in salesInvoiceItem.ProductFeatures)
+                foreach (var productFeature in salesInvoiceItem.ProductFeatures)
                 {
                     currentGenericOrProductOrFeaturePriceComponents.AddRange(productFeature.GetPriceComponents(salesInvoiceItem.Product, currentPriceComponents));
                 }
@@ -300,17 +300,13 @@ namespace Allors.Database.Domain
 
                 var unitBasePrice = priceComponents.OfType<BasePrice>()
                     .Where(v => salesInvoiceItem.ExistProduct
-                                && salesInvoiceItem.ProductFeatures.Count > 0
+                                && salesInvoiceItem.ProductFeatures.Any()
                                 && v.ExistProduct
                                 && v.ExistProductFeature
                                 && v.Product.Equals(salesInvoiceItem.Product)
                                 && salesInvoiceItem.ProductFeatures.Contains(v.ProductFeature))
-                    .Min(v => v.Price);
-
-                if (unitBasePrice == null)
-                {
-                    unitBasePrice = priceComponents.OfType<BasePrice>().Min(v => v.Price);
-                }
+                    .Min(v => v.Price)
+                                    ?? priceComponents.OfType<BasePrice>().Min(v => v.Price);
 
                 // Calculate Unit Price (with Discounts and Surcharges)
                 if (salesInvoiceItem.AssignedUnitPrice.HasValue)

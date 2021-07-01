@@ -8,6 +8,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Xunit;
 
     public class OrganisationTests : DomainTest, IClassFixture<Fixture>
@@ -49,7 +50,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(contact.CurrentOrganisationContactRelationships[0].Organisation, organisation);
+            Assert.Equal(contact.CurrentOrganisationContactRelationships.ElementAt(0).Organisation, organisation);
             Assert.Empty(contact.InactiveOrganisationContactRelationships);
         }
 
@@ -73,7 +74,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(contact.InactiveOrganisationContactRelationships[0].Organisation, organisation);
+            Assert.Equal(contact.InactiveOrganisationContactRelationships.ElementAt(0).Organisation, organisation);
             Assert.Empty(contact.CurrentOrganisationContactRelationships);
         }
     }

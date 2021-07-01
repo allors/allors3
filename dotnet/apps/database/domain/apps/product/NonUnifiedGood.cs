@@ -37,27 +37,27 @@ namespace Allors.Database.Domain
         {
             if (this.IsDeletable)
             {
-                foreach (ProductIdentification productIdentification in this.ProductIdentifications)
+                foreach (var productIdentification in this.ProductIdentifications)
                 {
                     productIdentification.Delete();
                 }
 
-                foreach (LocalisedText localisedText in this.LocalisedNames)
+                foreach (var localisedText in this.LocalisedNames)
                 {
                     localisedText.Delete();
                 }
 
-                foreach (LocalisedText localisedText in this.LocalisedDescriptions)
+                foreach (var localisedText in this.LocalisedDescriptions)
                 {
                     localisedText.Delete();
                 }
 
-                foreach (PriceComponent priceComponent in this.VirtualProductPriceComponents)
+                foreach (var priceComponent in this.VirtualProductPriceComponents)
                 {
                     priceComponent.Delete();
                 }
 
-                foreach (EstimatedProductCost estimatedProductCosts in this.EstimatedProductCosts)
+                foreach (var estimatedProductCosts in this.EstimatedProductCosts)
                 {
                     estimatedProductCosts.Delete();
                 }

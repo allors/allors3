@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<Country>())
             {
-                foreach (VatRegime vatRegime in @this.VatRegimesWhereCountry)
+                foreach (var vatRegime in @this.VatRegimesWhereCountry)
                 {
                     var previousCountry = vatRegime.CurrentVersion?.Country;
                     if (previousCountry != null && previousCountry != vatRegime.Country)

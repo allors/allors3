@@ -562,7 +562,7 @@ namespace Allors.Database.Domain.Tests
             order.AssignedVatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
             this.Derive();
 
-            Assert.Equal(orderItem.VatRate, order.AssignedVatRegime.VatRates[0]);
+            Assert.Equal(orderItem.VatRate, order.AssignedVatRegime.VatRates.ElementAt(0));
         }
 
         [Fact]
@@ -607,14 +607,14 @@ namespace Allors.Database.Domain.Tests
             order.AssignedIrpfRegime = new IrpfRegimes(this.Transaction).Assessable15;
             this.Derive();
 
-            Assert.Equal(orderItem.IrpfRate, order.AssignedIrpfRegime.IrpfRates[0]);
+            Assert.Equal(orderItem.IrpfRate, order.AssignedIrpfRegime.IrpfRates.ElementAt(0));
         }
 
         [Fact]
         public void ChangedPurchaseOrderOrderDateDeriveVatRate()
         {
             var vatRegime = new VatRegimes(this.Transaction).SpainReduced;
-            vatRegime.VatRates[0].ThroughDate = this.Transaction.Now().AddDays(-1).Date;
+            vatRegime.VatRates.ElementAt(0).ThroughDate = this.Transaction.Now().AddDays(-1).Date;
             this.Derive();
 
             var newVatRate = new VatRateBuilder(this.Transaction).WithFromDate(this.Transaction.Now().Date).WithRate(11).Build();
@@ -1196,7 +1196,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantityAccepted(3)
                 .WithShipmentItem(shipmentItem)
                 .WithOrderItem(item)
-                .WithInventoryItem(this.finishedGood.InventoryItemsWherePart.First)
+                .WithInventoryItem(this.finishedGood.InventoryItemsWherePart.FirstOrDefault())
                 .WithFacility(shipmentItem.StoredInFacility)
                 .Build();
             this.Transaction.Derive();
@@ -1378,7 +1378,7 @@ namespace Allors.Database.Domain.Tests
             this.order.QuickReceive();
             this.Transaction.Derive();
 
-            var shipment = (PurchaseShipment)item.OrderShipmentsWhereOrderItem.First.ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (PurchaseShipment)item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
             shipment.Receive();
             this.Transaction.Derive();
 
@@ -1418,7 +1418,7 @@ namespace Allors.Database.Domain.Tests
             this.order.QuickReceive();
             this.Transaction.Derive();
 
-            var shipment = (PurchaseShipment)item.OrderShipmentsWhereOrderItem.First.ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (PurchaseShipment)item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
             shipment.Receive();
             this.Transaction.Derive();
 
@@ -1501,7 +1501,7 @@ namespace Allors.Database.Domain.Tests
                 .WithShipmentItem(shipmentItem)
                 .WithOrderItem(item)
                 .WithFacility(shipmentItem.StoredInFacility)
-                .WithInventoryItem(this.finishedGood.InventoryItemsWherePart.First)
+                .WithInventoryItem(this.finishedGood.InventoryItemsWherePart.FirstOrDefault())
                 .Build();
             this.Transaction.Derive();
 

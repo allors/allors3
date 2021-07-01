@@ -54,7 +54,7 @@ namespace Allors.Database.Domain
                 if (@this.ShipmentWhereShipmentItem is CustomerShipment)
                 {
                     @this.QuantityPicked = 0;
-                    foreach (ItemIssuance itemIssuance in @this.ItemIssuancesWhereShipmentItem)
+                    foreach (var itemIssuance in @this.ItemIssuancesWhereShipmentItem)
                     {
                         if (itemIssuance.PickListItem.PickListWherePickListItem.PickListState.IsPicked)
                         {
@@ -65,7 +65,7 @@ namespace Allors.Database.Domain
                     if (@this.ShipmentWhereShipmentItem.ShipmentState.IsShipped)
                     {
                         @this.QuantityShipped = 0;
-                        foreach (ItemIssuance itemIssuance in @this.ItemIssuancesWhereShipmentItem)
+                        foreach (var itemIssuance in @this.ItemIssuancesWhereShipmentItem)
                         {
                             @this.QuantityShipped += itemIssuance.Quantity;
                         }

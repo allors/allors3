@@ -38,52 +38,52 @@ namespace Allors.Database.Domain
         {
             if (this.IsDeletable)
             {
-                foreach (LocalisedText deletable in this.LocalisedComments)
+                foreach (var deletable in this.LocalisedComments)
                 {
                     deletable.Delete();
                 }
 
-                foreach (LocalisedText deletable in this.LocalisedNames)
+                foreach (var deletable in this.LocalisedNames)
                 {
                     deletable.Delete();
                 }
 
-                foreach (LocalisedText deletable in this.LocalisedDescriptions)
+                foreach (var deletable in this.LocalisedDescriptions)
                 {
                     deletable.Delete();
                 }
 
-                foreach (LocalisedText deletable in this.LocalisedKeywords)
+                foreach (var deletable in this.LocalisedKeywords)
                 {
                     deletable.Delete();
                 }
 
-                foreach (Media deletable in this.PublicElectronicDocuments)
+                foreach (var deletable in this.PublicElectronicDocuments)
                 {
                     deletable.Delete();
                 }
 
-                foreach (Media deletable in this.PublicLocalisedElectronicDocuments)
+                foreach (var deletable in this.PublicLocalisedElectronicDocuments)
                 {
                     deletable.Delete();
                 }
 
-                foreach (Media deletable in this.PrivateElectronicDocuments)
+                foreach (var deletable in this.PrivateElectronicDocuments)
                 {
                     deletable.Delete();
                 }
 
-                foreach (Media deletable in this.PrivateLocalisedElectronicDocuments)
+                foreach (var deletable in this.PrivateLocalisedElectronicDocuments)
                 {
                     deletable.Delete();
                 }
 
-                foreach (SerialisedItemCharacteristic deletable in this.SerialisedItemCharacteristics)
+                foreach (var deletable in this.SerialisedItemCharacteristics)
                 {
                     deletable.Delete();
                 }
 
-                foreach (SerialisedItemVersion version in this.AllVersions)
+                foreach (var version in this.AllVersions)
                 {
                     version.Delete();
                 }

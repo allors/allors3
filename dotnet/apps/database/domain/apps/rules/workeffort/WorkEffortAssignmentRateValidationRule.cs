@@ -14,8 +14,7 @@ namespace Allors.Database.Domain
 
     public class WorkEffortAssignmentRateValidationRule : Rule
     {
-        public WorkEffortAssignmentRateValidationRule(MetaPopulation m) : base(m, new Guid("a733672e-cbd8-4816-b628-0ab9bdd55703")) =>
-            this.Patterns = new Pattern[]
+        public WorkEffortAssignmentRateValidationRule(MetaPopulation m) : base(m, new Guid("a733672e-cbd8-4816-b628-0ab9bdd55703")) => this.Patterns = new Pattern[]
         {
             m.WorkEffortAssignmentRate.RolePattern(v => v.WorkEffortPartyAssignment),
             m.WorkEffortAssignmentRate.RolePattern(v => v.RateType),
@@ -30,9 +29,8 @@ namespace Allors.Database.Domain
             {
                 if (@this.ExistWorkEffort && @this.ExistRateType)
                 {
-                    var extent = @this.WorkEffort.WorkEffortAssignmentRatesWhereWorkEffort;
-                    extent.Filter.AddEquals(@this.M.WorkEffortAssignmentRate.RateType, @this.RateType);
-                    if (extent.Count > 1)
+                    var workEfforts = @this.WorkEffort.WorkEffortAssignmentRatesWhereWorkEffort.Where(v => Equals(@this.RateType, v.RateType));
+                    if (workEfforts.Count() > 1)
                     {
                         validation.AddError(@this, @this.Meta.RateType, ErrorMessages.WorkEffortRateError);
                     }

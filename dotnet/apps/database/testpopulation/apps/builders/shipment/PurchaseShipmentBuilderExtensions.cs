@@ -15,22 +15,21 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var faker = @this.Transaction.Faker();
 
-            var supplier = faker.Random.ListItem(internalOrganisation.ActiveSuppliers);
+            var supplier = faker.Random.ListItem(internalOrganisation.ActiveSuppliers.ToArray());
 
-            @this.WithShipFromParty(supplier);
-            @this.WithShipFromContactPerson(supplier.CurrentContacts.FirstOrDefault());
-            @this.WithShipToParty(internalOrganisation);
-            @this.WithShipToContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault());
-            @this.WithShipmentMethod(faker.Random.ListItem(@this.Transaction.Extent<ShipmentMethod>()));
-            @this.WithCarrier(faker.Random.ListItem(@this.Transaction.Extent<Carrier>()));
-            @this.WithEstimatedShipDate(faker.Date.Between(start: @this.Transaction.Now(), end: @this.Transaction.Now().AddDays(5)));
-            @this.WithEstimatedArrivalDate(faker.Date.Between(start: @this.Transaction.Now().AddDays(6), end: @this.Transaction.Now().AddDays(10)));
+            @this.WithShipFromParty(supplier)
+                .WithShipFromContactPerson(supplier.CurrentContacts.FirstOrDefault())
+                .WithShipToParty(internalOrganisation)
+                .WithShipToContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault())
+                .WithShipmentMethod(faker.Random.ListItem(@this.Transaction.Extent<ShipmentMethod>()))
+                .WithCarrier(faker.Random.ListItem(@this.Transaction.Extent<Carrier>()))
+                .WithEstimatedShipDate(faker.Date.Between(start: @this.Transaction.Now(), end: @this.Transaction.Now().AddDays(5)))
+                .WithEstimatedArrivalDate(faker.Date.Between(start: @this.Transaction.Now().AddDays(6), end: @this.Transaction.Now().AddDays(10)))
+                .WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build())
+                .WithEstimatedShipCost(faker.Finance.Amount(100, 1000, 2))
+                .WithComment(faker.Lorem.Sentence());
 
-            @this.WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
-            @this.WithEstimatedShipCost(faker.Finance.Amount(100, 1000, 2));
-            @this.WithComment(faker.Lorem.Sentence());
-
-            foreach (Locale additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
+            foreach (var additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
             {
                 @this.WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
             }

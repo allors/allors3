@@ -7,6 +7,7 @@
 namespace Allors.Database.Meta
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     /// <summary>
@@ -80,7 +81,7 @@ namespace Allors.Database.Meta
 
             if (this.IsMany)
             {
-                var extent = (Extent)association;
+                var extent = (IEnumerable<IObject>)association;
                 return extent.Where(v => ofType.IsAssignableFrom(v.Strategy.Class));
             }
 

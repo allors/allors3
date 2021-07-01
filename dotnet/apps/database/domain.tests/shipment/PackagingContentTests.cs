@@ -61,13 +61,13 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)mechelenAddress.ShipmentsWhereShipToAddress[0];
+            var shipment = (CustomerShipment)mechelenAddress.ShipmentsWhereShipToAddress.ElementAt(0);
 
             var package = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(package);
             package.AddPackagingContent(new PackagingContentBuilder(this.Transaction)
-                                            .WithShipmentItem(shipment.ShipmentItems[0])
-                                            .WithQuantity(shipment.ShipmentItems[0].Quantity + 1)
+                                            .WithShipmentItem(shipment.ShipmentItems.ElementAt(0))
+                                            .WithQuantity(shipment.ShipmentItems.ElementAt(0).Quantity + 1)
                                             .Build());
 
             Assert.True(this.Derive().HasErrors);
@@ -118,11 +118,11 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)mechelenAddress.ShipmentsWhereShipToAddress[0];
+            var shipment = (CustomerShipment)mechelenAddress.ShipmentsWhereShipToAddress.ElementAt(0);
             shipment.Pick();
             this.Transaction.Derive();
 
-            var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
+            var pickList = shipment.ShipmentItems.ElementAt(0).ItemIssuancesWhereShipmentItem.ElementAt(0).PickListItem.PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
             pickList.SetPicked();
 

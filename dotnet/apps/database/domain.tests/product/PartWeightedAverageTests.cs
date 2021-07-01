@@ -26,8 +26,8 @@ namespace Allors.Database.Domain.Tests
                 .WithOwner(this.InternalOrganisation)
                 .Build();
 
-            var supplier = this.InternalOrganisation.ActiveSuppliers.First;
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var supplier = this.InternalOrganisation.ActiveSuppliers.FirstOrDefault();
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
 
             var part = new UnifiedGoodBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
             this.Transaction.Derive();
@@ -127,7 +127,7 @@ namespace Allors.Database.Domain.Tests
             salesOrder.Ship();
             this.Transaction.Derive();
 
-            var customerShipment = salesItem1.OrderShipmentsWhereOrderItem.First.ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
+            var customerShipment = salesItem1.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
 
             customerShipment.Pick();
             this.Transaction.Derive();
@@ -172,7 +172,7 @@ namespace Allors.Database.Domain.Tests
             salesOrder.Ship();
             this.Transaction.Derive();
 
-            var customerShipment2 = salesItem2.OrderShipmentsWhereOrderItem.First.ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
+            var customerShipment2 = salesItem2.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
 
             customerShipment2.Pick();
             this.Transaction.Derive();
@@ -224,7 +224,7 @@ namespace Allors.Database.Domain.Tests
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(65)
                 .Build();
 
@@ -245,7 +245,7 @@ namespace Allors.Database.Domain.Tests
             // Use 35 items in a workorder
             inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(35)
                 .Build();
 
@@ -495,8 +495,8 @@ namespace Allors.Database.Domain.Tests
                 .WithOwner(this.InternalOrganisation)
                 .Build();
 
-            var supplier = this.InternalOrganisation.ActiveSuppliers.First;
-            var customer = this.InternalOrganisation.ActiveCustomers.First;
+            var supplier = this.InternalOrganisation.ActiveSuppliers.FirstOrDefault();
+            var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
 
             var part = new NonUnifiedPartBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
             var good = new NonUnifiedGoodBuilder(this.Transaction)
@@ -602,7 +602,7 @@ namespace Allors.Database.Domain.Tests
             salesOrder.Ship();
             this.Transaction.Derive();
 
-            var customerShipment = salesItem1.OrderShipmentsWhereOrderItem.First.ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
+            var customerShipment = salesItem1.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
 
             customerShipment.Pick();
             this.Transaction.Derive();
@@ -647,7 +647,7 @@ namespace Allors.Database.Domain.Tests
             salesOrder.Ship();
             this.Transaction.Derive();
 
-            var customerShipment2 = salesItem2.OrderShipmentsWhereOrderItem.First.ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
+            var customerShipment2 = salesItem2.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
 
             customerShipment2.Pick();
             this.Transaction.Derive();
@@ -699,7 +699,7 @@ namespace Allors.Database.Domain.Tests
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(65)
                 .Build();
 
@@ -720,7 +720,7 @@ namespace Allors.Database.Domain.Tests
             // Use 35 items in a workorder
             inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(part.InventoryItemsWherePart.First)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(35)
                 .Build();
 

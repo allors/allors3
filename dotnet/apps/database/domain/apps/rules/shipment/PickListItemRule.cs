@@ -36,10 +36,10 @@ namespace Allors.Database.Domain
                     var quantityProcessed = @this.ItemIssuancesWherePickListItem.SelectMany(v => v.ShipmentItem.OrderShipmentsWhereShipmentItem).Sum(v => v.Quantity);
                     var diff = quantityProcessed - @this.QuantityPicked;
 
-                    foreach (ItemIssuance itemIssuance in @this.ItemIssuancesWherePickListItem)
+                    foreach (var itemIssuance in @this.ItemIssuancesWherePickListItem)
                     {
                         itemIssuance.IssuanceDateTime = @this.Transaction().Now();
-                        foreach (OrderShipment orderShipment in itemIssuance.ShipmentItem.OrderShipmentsWhereShipmentItem)
+                        foreach (var orderShipment in itemIssuance.ShipmentItem.OrderShipmentsWhereShipmentItem)
                         {
                             if (orderShipment.OrderItem is SalesOrderItem salesOrderItem)
                             {

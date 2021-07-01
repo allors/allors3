@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
         
         public static void BaseDelete(this Task @this, DeletableDelete _)
         {
-            foreach (TaskAssignment taskAssignment in @this.TaskAssignmentsWhereTask)
+            foreach (var taskAssignment in @this.TaskAssignmentsWhereTask)
             {
                 taskAssignment.Delete();
             }

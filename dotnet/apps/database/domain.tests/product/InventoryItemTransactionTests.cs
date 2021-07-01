@@ -112,7 +112,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            Assert.Equal(part.InventoryItemsWherePart.First, inventoryItemTransaction.InventoryItem);
+            Assert.Equal(part.InventoryItemsWherePart.FirstOrDefault(), inventoryItemTransaction.InventoryItem);
         }
 
         [Fact]
@@ -128,7 +128,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            Assert.Equal(part.InventoryItemsWherePart.First, inventoryItemTransaction.InventoryItem);
+            Assert.Equal(part.InventoryItemsWherePart.FirstOrDefault(), inventoryItemTransaction.InventoryItem);
         }
 
         [Fact]
@@ -152,8 +152,8 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            Assert.True(part.InventoryItemsWherePart.Count == 1);
-            Assert.Equal(part.InventoryItemsWherePart.First, inventoryItemTransaction.InventoryItem);
+            Assert.True(part.InventoryItemsWherePart.Count() == 1);
+            Assert.Equal(part.InventoryItemsWherePart.FirstOrDefault(), inventoryItemTransaction.InventoryItem);
         }
 
         [Fact]
@@ -174,8 +174,8 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            Assert.True(part.InventoryItemsWherePart.Count == 1);
-            Assert.Equal(part.InventoryItemsWherePart.First, inventoryItemTransaction.InventoryItem);
+            Assert.True(part.InventoryItemsWherePart.Count() == 1);
+            Assert.Equal(part.InventoryItemsWherePart.FirstOrDefault(), inventoryItemTransaction.InventoryItem);
         }
 
         [Fact]

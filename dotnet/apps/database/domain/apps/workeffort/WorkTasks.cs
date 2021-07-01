@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
 
             var workTasks = new WorkTasks(transaction).Extent();
             workTasks.Filter.AddEquals(m.WorkEffort.WorkEffortState, new WorkEffortStates(transaction).Completed);
-            workTasks.Filter.AddContainedIn(m.WorkEffort.Customer, (Extent)customers);
+            workTasks.Filter.AddContainedIn(m.WorkEffort.Customer, customers);
 
             var workTasksByCustomer = workTasks.Select(v => v.Customer).Distinct()
                 .ToDictionary(v => v, v => v.WorkEffortsWhereCustomer.Where(w => w.WorkEffortState.Equals(new WorkEffortStates(transaction).Completed)).ToArray());
@@ -91,7 +91,7 @@ namespace Allors.Database.Domain
                                     salesInvoice.CustomerReference += $", {workEffort.WorkEffortNumber}";
                                 }
 
-                                foreach (WorkEffortInventoryAssignment inventoryAssignment in workEffort.WorkEffortInventoryAssignmentsWhereAssignment)
+                                foreach (var inventoryAssignment in workEffort.WorkEffortInventoryAssignmentsWhereAssignment)
                                 {
                                     var part = inventoryAssignment.InventoryItem.Part;
 
@@ -110,7 +110,7 @@ namespace Allors.Database.Domain
                                         .Build();
                                 }
 
-                                foreach (WorkEffortPurchaseOrderItemAssignment purchaseOrderItemAssignment in workEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment)
+                                foreach (var purchaseOrderItemAssignment in workEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment)
                                 {
                                     var invoiceItem = new SalesInvoiceItemBuilder(transaction)
                                         .WithInvoiceItemType(new InvoiceItemTypes(transaction).Service)

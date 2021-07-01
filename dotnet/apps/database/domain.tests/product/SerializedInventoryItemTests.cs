@@ -31,7 +31,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive(true);
             this.Transaction.Commit();
 
-            var builder = new SerialisedInventoryItemBuilder(this.Transaction).WithFacility(this.InternalOrganisation.FacilitiesWhereOwner.First).WithPart(part);
+            var builder = new SerialisedInventoryItemBuilder(this.Transaction).WithFacility(this.InternalOrganisation.FacilitiesWhereOwner.FirstOrDefault()).WithPart(part);
             builder.Build();
 
             // Act

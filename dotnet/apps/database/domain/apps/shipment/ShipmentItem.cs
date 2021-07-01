@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System;
+    using System.Linq;
 
     public partial class ShipmentItem
     {
@@ -41,7 +42,7 @@ namespace Allors.Database.Domain
         {
             if (this.ExistItemIssuancesWhereShipmentItem)
             {
-                foreach (ItemIssuance itemIssuance in this.ItemIssuancesWhereShipmentItem)
+                foreach (var itemIssuance in this.ItemIssuancesWhereShipmentItem)
                 {
                     itemIssuance.Delete();
                 }

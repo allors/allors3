@@ -6,6 +6,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Xunit;
 
     public class EngagementTests : DomainTest, IClassFixture<Fixture>
@@ -56,7 +57,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedBillToPartyDeriveBillToContactMechanism()
         {
-            var billToParty = this.InternalOrganisation.ActiveCustomers[0];
+            var billToParty = this.InternalOrganisation.ActiveCustomers.ElementAt(0);
 
             var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
                 .WithUseAsDefault(true)
@@ -79,7 +80,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPlacingPartyDerivePlacingContactMechanism()
         {
-            var placingParty = this.InternalOrganisation.ActiveCustomers[0];
+            var placingParty = this.InternalOrganisation.ActiveCustomers.ElementAt(0);
 
             var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
                 .WithUseAsDefault(true)

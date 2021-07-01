@@ -55,7 +55,7 @@ namespace Allors.Database.Domain
                     // QuantityExpectedIn
                     var quantityExpectedIn = 0M;
 
-                    foreach (PurchaseOrderItem purchaseOrderItem in @this.Part.PurchaseOrderItemsWherePart)
+                    foreach (var purchaseOrderItem in @this.Part.PurchaseOrderItemsWherePart)
                     {
                         var facility = purchaseOrderItem.StoredInFacility;
                         if ((purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Transaction).InProcess)
@@ -95,19 +95,19 @@ namespace Allors.Database.Domain
             var salesOrderItems = nonSerialisedInventoryItem.Strategy.Transaction.Extent<SalesOrderItem>();
             salesOrderItems.Filter.AddEquals(this.M.SalesOrderItem.SalesOrderItemState, new SalesOrderItemStates(nonSerialisedInventoryItem.Strategy.Transaction).InProcess);
             salesOrderItems.AddSort(this.M.OrderItem.DerivedDeliveryDate, SortDirection.Ascending);
-            var nonUnifiedGoods = nonSerialisedInventoryItem.Part.NonUnifiedGoodsWherePart;
+            var nonUnifiedGoods = nonSerialisedInventoryItem.Part.NonUnifiedGoodsWherePart.ToArray();
             var unifiedGood = nonSerialisedInventoryItem.Part as UnifiedGood;
 
-            if (nonUnifiedGoods.Count > 0 || unifiedGood != null)
+            if (nonUnifiedGoods.Length > 0 || unifiedGood != null)
             {
                 if (unifiedGood != null)
                 {
                     salesOrderItems.Filter.AddEquals(this.M.SalesOrderItem.Product, unifiedGood);
                 }
 
-                if (nonUnifiedGoods.Count > 0)
+                if (nonUnifiedGoods.Length > 0)
                 {
-                    salesOrderItems.Filter.AddContainedIn(this.M.SalesOrderItem.Product, (Extent)nonUnifiedGoods);
+                    salesOrderItems.Filter.AddContainedIn(this.M.SalesOrderItem.Product, nonUnifiedGoods);
                 }
 
                 salesOrderItems = nonSerialisedInventoryItem.Strategy.Transaction.Instantiate(salesOrderItems);

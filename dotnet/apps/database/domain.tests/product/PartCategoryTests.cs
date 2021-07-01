@@ -101,7 +101,7 @@ namespace Allors.Database.Domain.Tests
             var partCategory12 = new PartCategoryBuilder(this.Transaction).WithSecondaryParent(partCategory1).Build();
             this.Derive();
 
-            Assert.Equal(2, partCategory1.Children.Count);
+            Assert.Equal(2, partCategory1.Children.Count());
             Assert.Contains(partCategory11, partCategory1.Children);
             Assert.Contains(partCategory12, partCategory1.Children);
         }
@@ -122,7 +122,7 @@ namespace Allors.Database.Domain.Tests
             partCategory111.PrimaryParent = partCategory11;
             this.Derive();
 
-            Assert.Equal(2, partCategory1.Descendants.Count);
+            Assert.Equal(2, partCategory1.Descendants.Count());
             Assert.Contains(partCategory11, partCategory1.Descendants);
             Assert.Contains(partCategory111, partCategory1.Descendants);
         }

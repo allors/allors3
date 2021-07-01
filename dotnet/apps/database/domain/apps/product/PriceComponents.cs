@@ -63,7 +63,7 @@ namespace Allors.Database.Domain
 
                 if (postalAddress != null)
                 {
-                    foreach (GeographicBoundary geographicBoundary in postalAddress.PostalAddressBoundaries)
+                    foreach (var geographicBoundary in postalAddress.PostalAddressBoundaries)
                     {
                         if (geographicBoundary.Equals(priceComponent.GeographicBoundary))
                         {
@@ -77,7 +77,7 @@ namespace Allors.Database.Domain
             {
                 withPartyClassification = true;
 
-                foreach (PartyClassification partyClassification in customer.PartyClassifications)
+                foreach (var partyClassification in customer.PartyClassifications)
                 {
                     if (partyClassification.Equals(priceComponent.PartyClassification))
                     {
@@ -90,7 +90,7 @@ namespace Allors.Database.Domain
             {
                 withProductCategory = true;
 
-                foreach (ProductCategory productCategory in product.ProductCategoriesWhereProduct)
+                foreach (var productCategory in product.ProductCategoriesWhereProduct)
                 {
                     if (productCategory.Equals(priceComponent.ProductCategory))
                     {
@@ -100,9 +100,9 @@ namespace Allors.Database.Domain
 
                 if (productCategoryValid == false)
                 {
-                    foreach (ProductCategory productCategory in product.ProductCategoriesWhereProduct)
+                    foreach (var productCategory in product.ProductCategoriesWhereProduct)
                     {
-                        foreach (ProductCategory ancestor in productCategory.ProductCategoriesWhereDescendant)
+                        foreach (var ancestor in productCategory.ProductCategoriesWhereDescendant)
                         {
                             if (ancestor.Equals(priceComponent.ProductCategory))
                             {

@@ -20,25 +20,25 @@ namespace Allors.Database.Domain.Tests
 
         // new ChartOfAccountsImport(this.DatabaseTransaction).ImportChartOfAccounts(filepath);
 
-        // Assert.Single(new GeneralLedgerAccounts(this.DatabaseTransaction).Extent().Count);
+        // Assert.Single(new GeneralLedgerAccounts(this.DatabaseTransaction).Extent().Count());
         //    Assert.Single(this.DatabaseTransaction.Extent<GeneralLedgerAccount>().Count);
         //    Assert.Single(this.DatabaseTransaction.Extent<ChartOfAccounts>().Count);
         //    Assert.Single(this.DatabaseTransaction.Extent<GeneralLedgerAccountClassification>().Count);
         //    Assert.Single(this.DatabaseTransaction.Extent<GeneralLedgerAccountType>().Count);
         //    Assert.Equal(0, this.DatabaseTransaction.Extent<CostCenter>().Count);
 
-        // var chartOfAccounts = (ChartOfAccounts)this.DatabaseTransaction.Extent<ChartOfAccounts>().First;
+        // var chartOfAccounts = (ChartOfAccounts)this.DatabaseTransaction.Extent<ChartOfAccounts>().FirstOrDefault();
         //    Assert.Equal("Minimum Algemeen Rekeningenstelsel", chartOfAccounts.Name);
-        //    Assert.Single(chartOfAccounts.GeneralLedgerAccounts.Count);
+        //    Assert.Single(chartOfAccounts.GeneralLedgerAccounts.Count());
 
-        // var generalLedgerAccountClassification = (GeneralLedgerAccountClassification)this.DatabaseTransaction.Extent<GeneralLedgerAccountClassification>().First;
+        // var generalLedgerAccountClassification = (GeneralLedgerAccountClassification)this.DatabaseTransaction.Extent<GeneralLedgerAccountClassification>().FirstOrDefault();
         //    Assert.Equal("Kapitaal", generalLedgerAccountClassification.Description);
         //    Assert.False(generalLedgerAccountClassification.ExistParent);
 
-        // var generalLedgerAccountType = (GeneralLedgerAccountType)this.DatabaseTransaction.Extent<GeneralLedgerAccountType>().First;
+        // var generalLedgerAccountType = (GeneralLedgerAccountType)this.DatabaseTransaction.Extent<GeneralLedgerAccountType>().FirstOrDefault();
         //    Assert.Equal("Eigen vermogen, voorzieningen voor risico's en kosten en schulden op langer dan een jaar", generalLedgerAccountType.Description);
 
-        // var generalLedgerAccount = (GeneralLedgerAccount)this.DatabaseTransaction.Extent<GeneralLedgerAccount>().First;
+        // var generalLedgerAccount = (GeneralLedgerAccount)this.DatabaseTransaction.Extent<GeneralLedgerAccount>().FirstOrDefault();
         //    Assert.Equal("100000", generalLedgerAccount.AccountNumber);
         //    Assert.True(generalLedgerAccount.BalanceSheetAccount);
         //    Assert.False(generalLedgerAccount.CashAccount);
@@ -67,21 +67,21 @@ namespace Allors.Database.Domain.Tests
 
         // new ChartOfAccountsImport(this.DatabaseTransaction).ImportChartOfAccounts(filepath);
 
-        // Assert.Single(new GeneralLedgerAccounts(this.DatabaseTransaction).Extent().Count);
+        // Assert.Single(new GeneralLedgerAccounts(this.DatabaseTransaction).Extent().Count());
         //    Assert.Single(this.DatabaseTransaction.Extent<GeneralLedgerAccount>().Count);
         //    Assert.Single(this.DatabaseTransaction.Extent<ChartOfAccounts>().Count);
         //    Assert.Equal(3, this.DatabaseTransaction.Extent<GeneralLedgerAccountClassification>().Count);
         //    Assert.Single(this.DatabaseTransaction.Extent<GeneralLedgerAccountType>().Count);
         //    Assert.Equal(0, this.DatabaseTransaction.Extent<CostCenter>().Count);
 
-        // var chartOfAccounts = (ChartOfAccounts)this.DatabaseTransaction.Extent<ChartOfAccounts>().First;
+        // var chartOfAccounts = (ChartOfAccounts)this.DatabaseTransaction.Extent<ChartOfAccounts>().FirstOrDefault();
         //    Assert.Equal("Minimum Algemeen Rekeningenstelsel", chartOfAccounts.Name);
-        //    Assert.Single(chartOfAccounts.GeneralLedgerAccounts.Count);
+        //    Assert.Single(chartOfAccounts.GeneralLedgerAccounts.Count());
 
         // var generalLedgerAccountClassifications = this.DatabaseTransaction.Extent<GeneralLedgerAccountClassification>();
         //    generalLedgerAccountClassifications.Filter.AddEquals(GeneralLedgerAccountClassifications.Meta.Description, "Verworpen uitgaven");
 
-        // var generalLedgerAccountClassification = (GeneralLedgerAccountClassification)generalLedgerAccountClassifications.First;
+        // var generalLedgerAccountClassification = (GeneralLedgerAccountClassification)generalLedgerAccountClassifications.FirstOrDefault();
         //    Assert.True(generalLedgerAccountClassification.ExistParent);
 
         // var parent = generalLedgerAccountClassification.Parent;
@@ -92,10 +92,10 @@ namespace Allors.Database.Domain.Tests
         //    Assert.Equal("Diensten en diverse goederen", grandParent.Description);
         //    Assert.False(grandParent.ExistParent);
 
-        // var generalLedgerAccountType = (GeneralLedgerAccountType)this.DatabaseTransaction.Extent<GeneralLedgerAccountType>().First;
+        // var generalLedgerAccountType = (GeneralLedgerAccountType)this.DatabaseTransaction.Extent<GeneralLedgerAccountType>().FirstOrDefault();
         //    Assert.Equal("Kosten", generalLedgerAccountType.Description);
 
-        // var generalLedgerAccount = (GeneralLedgerAccount)this.DatabaseTransaction.Extent<GeneralLedgerAccount>().First;
+        // var generalLedgerAccount = (GeneralLedgerAccount)this.DatabaseTransaction.Extent<GeneralLedgerAccount>().FirstOrDefault();
         //    Assert.Equal("617910", generalLedgerAccount.AccountNumber);
         //    Assert.False(generalLedgerAccount.BalanceSheetAccount);
         //    Assert.False(generalLedgerAccount.CashAccount);
@@ -124,35 +124,35 @@ namespace Allors.Database.Domain.Tests
 
         // new ChartOfAccountsImport(this.DatabaseTransaction).ImportChartOfAccounts(filepath);
 
-        // Assert.Single(new GeneralLedgerAccounts(this.DatabaseTransaction).Extent().Count);
+        // Assert.Single(new GeneralLedgerAccounts(this.DatabaseTransaction).Extent().Count());
         //    Assert.Single(this.DatabaseTransaction.Extent<GeneralLedgerAccount>().Count);
         //    Assert.Single(this.DatabaseTransaction.Extent<ChartOfAccounts>().Count);
         //    Assert.Single(this.DatabaseTransaction.Extent<GeneralLedgerAccountClassification>().Count);
         //    Assert.Single(this.DatabaseTransaction.Extent<GeneralLedgerAccountType>().Count);
         //    Assert.Single(this.DatabaseTransaction.Extent<CostCenter>().Count);
 
-        // var chartOfAccounts = (ChartOfAccounts)this.DatabaseTransaction.Extent<ChartOfAccounts>().First;
+        // var chartOfAccounts = (ChartOfAccounts)this.DatabaseTransaction.Extent<ChartOfAccounts>().FirstOrDefault();
         //    Assert.Equal("Minimum Algemeen Rekeningenstelsel", chartOfAccounts.Name);
-        //    Assert.Single(chartOfAccounts.GeneralLedgerAccounts.Count);
+        //    Assert.Single(chartOfAccounts.GeneralLedgerAccounts.Count());
 
-        // var generalLedgerAccountClassification = (GeneralLedgerAccountClassification)this.DatabaseTransaction.Extent<GeneralLedgerAccountClassification>().First;
+        // var generalLedgerAccountClassification = (GeneralLedgerAccountClassification)this.DatabaseTransaction.Extent<GeneralLedgerAccountClassification>().FirstOrDefault();
         //    Assert.Equal("Kapitaal", generalLedgerAccountClassification.Description);
         //    Assert.False(generalLedgerAccountClassification.ExistParent);
 
-        // var generalLedgerAccountType = (GeneralLedgerAccountType)this.DatabaseTransaction.Extent<GeneralLedgerAccountType>().First;
+        // var generalLedgerAccountType = (GeneralLedgerAccountType)this.DatabaseTransaction.Extent<GeneralLedgerAccountType>().FirstOrDefault();
         //    Assert.Equal("Eigen vermogen, voorzieningen voor risico's en kosten en schulden op langer dan een jaar", generalLedgerAccountType.Description);
 
-        // var costCenter = (CostCenter)this.DatabaseTransaction.Extent<CostCenter>().First;
+        // var costCenter = (CostCenter)this.DatabaseTransaction.Extent<CostCenter>().FirstOrDefault();
         //    Assert.Equal("Misc", costCenter.Name);
 
-        // var generalLedgerAccount = (GeneralLedgerAccount)this.DatabaseTransaction.Extent<GeneralLedgerAccount>().First;
+        // var generalLedgerAccount = (GeneralLedgerAccount)this.DatabaseTransaction.Extent<GeneralLedgerAccount>().FirstOrDefault();
         //    Assert.Equal("100000", generalLedgerAccount.AccountNumber);
         //    Assert.True(generalLedgerAccount.BalanceSheetAccount);
         //    Assert.False(generalLedgerAccount.CashAccount);
         //    Assert.Equal(chartOfAccounts, generalLedgerAccount.ChartOfAccountsWhereGeneralLedgerAccount);
         //    Assert.True(generalLedgerAccount.CostCenterAccount);
         //    Assert.False(generalLedgerAccount.CostCenterRequired);
-        //    Assert.Equal(costCenter, generalLedgerAccount.CostCentersAllowed.First);
+        //    Assert.Equal(costCenter, generalLedgerAccount.CostCentersAllowed.FirstOrDefault());
         //    Assert.False(generalLedgerAccount.CostUnitAccount);
         //    Assert.False(generalLedgerAccount.CostUnitRequired);
         //    Assert.False(generalLedgerAccount.ExistCostUnitsAllowed);

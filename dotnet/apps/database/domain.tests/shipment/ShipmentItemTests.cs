@@ -30,7 +30,7 @@ namespace Allors.Database.Domain.Tests
 
             var shipment = new PurchaseShipmentBuilder(this.Transaction)
                 .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
-                .WithShipFromParty(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithShipFromParty(this.InternalOrganisation.ActiveSuppliers.FirstOrDefault())
                 .WithCreationDate(this.Transaction.Now())
                 .Build();
 
@@ -262,7 +262,7 @@ namespace Allors.Database.Domain.Tests
             shipment.AddShipmentItem(shipmentItem);
             this.Derive();
 
-            shipment.ShipToFacility = this.InternalOrganisation.FacilitiesWhereOwner.First;
+            shipment.ShipToFacility = this.InternalOrganisation.FacilitiesWhereOwner.FirstOrDefault();
             this.Derive();
 
             Assert.Equal(shipment.ShipToFacility, shipmentItem.StoredInFacility);
@@ -421,7 +421,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(new ShipmentItemStates(this.Transaction).Picking, shipmentItem.ShipmentItemState);
             Assert.False(acl.CanExecute(this.M.ShipmentItem.Delete));
 
-            var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
+            var pickList = shipment.ShipmentItems.ElementAt(0).ItemIssuancesWhereShipmentItem.ElementAt(0).PickListItem.PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
 
             pickList.SetPicked();

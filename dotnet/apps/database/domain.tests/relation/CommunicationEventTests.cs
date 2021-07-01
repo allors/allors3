@@ -104,7 +104,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(3, communication.InvolvedParties.Count);
+            Assert.Equal(3, communication.InvolvedParties.Count());
             Assert.Contains(owner, communication.InvolvedParties);
             Assert.Contains(participant1, communication.InvolvedParties);
             Assert.Contains(participant2, communication.InvolvedParties);
@@ -131,7 +131,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(4, communication.InvolvedParties.Count);
+            Assert.Equal(4, communication.InvolvedParties.Count());
             Assert.Contains(owner, communication.InvolvedParties);
             Assert.Contains(participant, communication.InvolvedParties);
             Assert.Contains(contact, communication.InvolvedParties);
@@ -158,7 +158,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(4, communication.InvolvedParties.Count);
+            Assert.Equal(4, communication.InvolvedParties.Count());
             Assert.Contains(owner, communication.InvolvedParties);
             Assert.Contains(participant1, communication.InvolvedParties);
             Assert.Contains(contact, communication.InvolvedParties);
@@ -168,7 +168,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(3, communication.InvolvedParties.Count);
+            Assert.Equal(3, communication.InvolvedParties.Count());
             Assert.Contains(owner, communication.InvolvedParties);
             Assert.Contains(participant1, communication.InvolvedParties);
             Assert.Contains(participant2, communication.InvolvedParties);

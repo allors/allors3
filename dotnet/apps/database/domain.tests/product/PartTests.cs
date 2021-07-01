@@ -39,7 +39,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Single(finishedGood.InventoryItemsWherePart);
-            Assert.Equal(new Facilities(this.Transaction).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Transaction).Warehouse), finishedGood.InventoryItemsWherePart.First.Facility);
+            Assert.Equal(new Facilities(this.Transaction).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Transaction).Warehouse), finishedGood.InventoryItemsWherePart.First().Facility);
         }
 
         [Fact]
@@ -112,7 +112,7 @@ namespace Allors.Database.Domain.Tests
             nonUnifiedPart.ProductType = productType;
             this.Derive();
 
-            Assert.Equal(characteristicType, nonUnifiedPart.SerialisedItemCharacteristics.First.SerialisedItemCharacteristicType);
+            Assert.Equal(characteristicType, nonUnifiedPart.SerialisedItemCharacteristics.First().SerialisedItemCharacteristicType);
         }
 
         [Fact]
@@ -130,7 +130,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
             this.Derive();
 
-            Assert.Equal(characteristicType, nonUnifiedPart.SerialisedItemCharacteristics.First.SerialisedItemCharacteristicType);
+            Assert.Equal(characteristicType, nonUnifiedPart.SerialisedItemCharacteristics.First().SerialisedItemCharacteristicType);
         }
     }
 
@@ -144,7 +144,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
             this.Derive();
 
-            ((NonSerialisedInventoryItem)nonUnifiedPart.InventoryItemsWherePart.First).QuantityOnHand = 1;
+            ((NonSerialisedInventoryItem)nonUnifiedPart.InventoryItemsWherePart.FirstOrDefault()).QuantityOnHand = 1;
             this.Derive();
 
             Assert.Equal(1, nonUnifiedPart.QuantityOnHand);
@@ -174,7 +174,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
             this.Derive();
 
-            ((NonSerialisedInventoryItem)nonUnifiedPart.InventoryItemsWherePart.First).AvailableToPromise = 1;
+            ((NonSerialisedInventoryItem)nonUnifiedPart.InventoryItemsWherePart.FirstOrDefault()).AvailableToPromise = 1;
             this.Derive();
 
             Assert.Equal(1, nonUnifiedPart.AvailableToPromise);
@@ -217,7 +217,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(0, nonUnifiedPart.AvailableToPromise);
 
-            serialisedItem.SerialisedInventoryItemsWhereSerialisedItem.First.SerialisedInventoryItemState = new SerialisedInventoryItemStates(this.Transaction).Good;
+            serialisedItem.SerialisedInventoryItemsWhereSerialisedItem.First().SerialisedInventoryItemState = new SerialisedInventoryItemStates(this.Transaction).Good;
             this.Derive();
 
             Assert.Equal(1, nonUnifiedPart.AvailableToPromise);
@@ -229,7 +229,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
             this.Derive();
 
-            ((NonSerialisedInventoryItem)nonUnifiedPart.InventoryItemsWherePart.First).QuantityCommittedOut = 1;
+            ((NonSerialisedInventoryItem)nonUnifiedPart.InventoryItemsWherePart.FirstOrDefault()).QuantityCommittedOut = 1;
             this.Derive();
 
             Assert.Equal(1, nonUnifiedPart.QuantityCommittedOut);
@@ -241,7 +241,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
             this.Derive();
 
-            ((NonSerialisedInventoryItem)nonUnifiedPart.InventoryItemsWherePart.First).QuantityExpectedIn = 1;
+            ((NonSerialisedInventoryItem)nonUnifiedPart.InventoryItemsWherePart.FirstOrDefault()).QuantityExpectedIn = 1;
             this.Derive();
 
             Assert.Equal(1, nonUnifiedPart.QuantityExpectedIn);

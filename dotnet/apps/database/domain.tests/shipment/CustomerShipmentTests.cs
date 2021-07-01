@@ -63,7 +63,7 @@ namespace Allors.Database.Domain.Tests
 
             var shipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipToParty(customer)
-                .WithShipToAddress(new PostalAddresses(this.Transaction).Extent().First)
+                .WithShipToAddress(new PostalAddresses(this.Transaction).Extent().FirstOrDefault())
                 .WithShipmentMethod(new ShipmentMethods(this.Transaction).Boat)
                 .Build();
 
@@ -153,7 +153,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenShipFromWithoutShipmentNumberPrefix_WhenDeriving_ThenSortableShipmentNumberIsSet()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.RemoveCustomerShipmentNumberPrefix();
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().RemoveCustomerShipmentNumberPrefix();
             this.Transaction.Derive();
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
@@ -173,7 +173,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenShipFromWithShipmentNumberPrefix_WhenDeriving_ThenSortableShipmentNumberIsSet()
         {
             this.InternalOrganisation.CustomerShipmentSequence = new CustomerShipmentSequences(this.Transaction).EnforcedSequence;
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.CustomerShipmentNumberPrefix = "prefix-";
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().CustomerShipmentNumberPrefix = "prefix-";
             this.Transaction.Derive();
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
@@ -220,7 +220,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCustomerShipment_WhenAllItemsArePutIntoShipmentPackages_ThenShipmentStateIsPacked()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.IsImmediatelyPicked = false;
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
@@ -266,12 +266,12 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)mechelenAddress.ShipmentsWhereShipToAddress[0];
+            var shipment = (CustomerShipment)mechelenAddress.ShipmentsWhereShipToAddress.ElementAt(0);
 
             shipment.Pick();
             this.Transaction.Derive();
 
-            customer.PickListsWhereShipToParty.First.SetPicked();
+            customer.PickListsWhereShipToParty.First().SetPicked();
 
             var package = new ShipmentPackageBuilder(this.Transaction).Build();
             shipment.AddShipmentPackage(package);
@@ -290,8 +290,8 @@ namespace Allors.Database.Domain.Tests
         public void GivenCustomerShipment_WhenAddingAndRemovingPackages_ThenPackageSequenceNumberIsRecalculated()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction)
-                .WithShipToAddress(new PostalAddresses(this.Transaction).Extent().First)
-                .WithShipToParty(new Organisations(this.Transaction).Extent().First)
+                .WithShipToAddress(new PostalAddresses(this.Transaction).Extent().FirstOrDefault())
+                .WithShipToParty(new Organisations(this.Transaction).Extent().FirstOrDefault())
                 .WithShipmentMethod(new ShipmentMethods(this.Transaction).Boat)
                 .Build();
 
@@ -349,7 +349,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCustomerShipment_WhenDeriving_ThenTotalShipmentValueIsCalculated()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.ShipmentThreshold = 100;
             var good1 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
             var good2 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good2");
@@ -391,7 +391,7 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)item1.OrderShipmentsWhereOrderItem[0].ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (CustomerShipment)item1.OrderShipmentsWhereOrderItem.ElementAt(0).ShipmentItem.ShipmentWhereShipmentItem;
             Assert.Equal(75, shipment.ShipmentValue);
 
             var item2 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good1).WithQuantityOrdered(10).WithAssignedUnitPrice(10).Build();
@@ -407,7 +407,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenShipmentThreshold_WhenNewCustomerShipmentIsBelowThreshold_ThenShipmentIsSetOnHold()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.ShipmentThreshold = 100;
             store.IsImmediatelyPicked = false;
 
@@ -448,7 +448,7 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem[0].ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem.ElementAt(0).ShipmentItem.ShipmentWhereShipmentItem;
 
             Assert.Equal(new ShipmentStates(this.Transaction).OnHold, shipment.ShipmentState);
         }
@@ -456,7 +456,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCustomerShipment_WhenShipmentValueFallsBelowThreshold_ThenShipmentAndPendigPickListAreSetOnHold()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.ShipmentThreshold = 100;
             store.IsImmediatelyPicked = false;
 
@@ -497,7 +497,7 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem[0].ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem.ElementAt(0).ShipmentItem.ShipmentWhereShipmentItem;
 
             this.Transaction.Derive();
 
@@ -507,7 +507,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCustomerShipmentOnHold_WhenShipmentValueRisesAboveThreshold_ThenShipmentIsReleased()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.ShipmentThreshold = 100;
             store.IsImmediatelyPicked = false;
 
@@ -551,7 +551,7 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem[0].ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem.ElementAt(0).ShipmentItem.ShipmentWhereShipmentItem;
 
             Assert.Equal(new ShipmentStates(this.Transaction).OnHold, shipment.ShipmentState);
 
@@ -603,12 +603,12 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem[0].ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem.ElementAt(0).ShipmentItem.ShipmentWhereShipmentItem;
 
             shipment.Pick();
             this.Transaction.Derive();
 
-            var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
+            var pickList = shipment.ShipmentItems.ElementAt(0).ItemIssuancesWhereShipmentItem.ElementAt(0).PickListItem.PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
 
             pickList.SetPicked();
@@ -642,7 +642,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCustomerShipmentOnHold_WhenShipmentIsReleased_ThenShipmentObjecStateIsSetToCreated()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.ShipmentThreshold = 100;
             store.IsImmediatelyPicked = false;
 
@@ -682,7 +682,7 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem[0].ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem.ElementAt(0).ShipmentItem.ShipmentWhereShipmentItem;
 
             this.Transaction.Derive();
 
@@ -698,7 +698,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCustomerShipmentOnHoldWithPickedPickList_WhenShipmentIsReleased_ThenShipmentObjecStateIsSetToPicked()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.ShipmentThreshold = 100;
 
             var good1 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
@@ -737,12 +737,12 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem[0].ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem.ElementAt(0).ShipmentItem.ShipmentWhereShipmentItem;
 
             shipment.Pick();
             this.Transaction.Derive();
 
-            var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
+            var pickList = shipment.ShipmentItems.ElementAt(0).ItemIssuancesWhereShipmentItem.ElementAt(0).PickListItem.PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
 
             pickList.SetPicked();
@@ -767,7 +767,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCustomerShipmentOnHoldWithAllItemsPacked_WhenShipmentIsReleased_ThenShipmentObjecStateIsSetToPacked()
         {
-            var store = this.Transaction.Extent<Store>().First;
+            var store = this.Transaction.Extent<Store>().FirstOrDefault();
             store.ShipmentThreshold = 100;
 
             var good1 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
@@ -807,12 +807,12 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem[0].ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem.ElementAt(0).ShipmentItem.ShipmentWhereShipmentItem;
 
             shipment.Pick();
             this.Transaction.Derive();
 
-            var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
+            var pickList = shipment.ShipmentItems.ElementAt(0).ItemIssuancesWhereShipmentItem.ElementAt(0).PickListItem.PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
 
             pickList.SetPicked();
@@ -841,7 +841,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenCustomerBuyingFromDifferentStores_WhenShipping_ThenDifferentShipmentIsCreatedForEachStore()
         {
             new StoreBuilder(this.Transaction).WithName("second store")
-                .WithDefaultFacility(new Facilities(this.Transaction).Extent().First)
+                .WithDefaultFacility(new Facilities(this.Transaction).Extent().FirstOrDefault())
                 .WithDefaultShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .WithDefaultCarrier(new Carriers(this.Transaction).Fedex)
                 .WithSalesOrderNumberPrefix("")
@@ -932,7 +932,7 @@ namespace Allors.Database.Domain.Tests
             order3.Accept();
             this.Transaction.Derive();
 
-            Assert.Equal(2, customer.ShipmentsWhereShipToParty.Count);
+            Assert.Equal(2, customer.ShipmentsWhereShipToParty.Count());
         }
 
         [Fact]
@@ -984,12 +984,12 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)item1.OrderShipmentsWhereOrderItem[0].ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (CustomerShipment)item1.OrderShipmentsWhereOrderItem.ElementAt(0).ShipmentItem.ShipmentWhereShipmentItem;
 
             shipment.Pick();
             this.Transaction.Derive();
 
-            var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
+            var pickList = shipment.ShipmentItems.ElementAt(0).ItemIssuancesWhereShipmentItem.ElementAt(0).PickListItem.PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
 
             pickList.SetPicked();
@@ -1009,7 +1009,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             var salesInvoiceitem =
-                (SalesInvoiceItem)shipment.ShipmentItems[0].ShipmentItemBillingsWhereShipmentItem[0].InvoiceItem;
+                (SalesInvoiceItem)shipment.ShipmentItems.ElementAt(0).ShipmentItemBillingsWhereShipmentItem.ElementAt(0).InvoiceItem;
             var invoice = salesInvoiceitem.SalesInvoiceWhereSalesInvoiceItem;
 
             Assert.NotNull(invoice);
@@ -1053,7 +1053,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var inventory = good.InventoryItemsWherePart.First as NonSerialisedInventoryItem;
+            var inventory = good.InventoryItemsWherePart.FirstOrDefault() as NonSerialisedInventoryItem;
 
             Assert.Equal(100, good.QuantityOnHand);
             Assert.Equal(100, good.AvailableToPromise);
@@ -1064,7 +1064,7 @@ namespace Allors.Database.Domain.Tests
             shipment.Pick();
             this.Transaction.Derive();
 
-            var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
+            var pickList = shipment.ShipmentItems.ElementAt(0).ItemIssuancesWhereShipmentItem.ElementAt(0).PickListItem.PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
 
             pickList.SetPicked();
@@ -1146,13 +1146,13 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem[0].ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem.ElementAt(0).ShipmentItem.ShipmentWhereShipmentItem;
 
             shipment.Pick();
 
             this.Transaction.Derive();
 
-            var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
+            var pickList = shipment.ShipmentItems.ElementAt(0).ItemIssuancesWhereShipmentItem.ElementAt(0).PickListItem.PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
 
             pickList.SetPicked();
@@ -1223,12 +1223,12 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem[0].ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem.ElementAt(0).ShipmentItem.ShipmentWhereShipmentItem;
 
             shipment.Pick();
             this.Transaction.Derive();
 
-            var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
+            var pickList = shipment.ShipmentItems.ElementAt(0).ItemIssuancesWhereShipmentItem.ElementAt(0).PickListItem.PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
             pickList.SetPicked();
 
@@ -1317,12 +1317,12 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem[0].ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (CustomerShipment)item.OrderShipmentsWhereOrderItem.ElementAt(0).ShipmentItem.ShipmentWhereShipmentItem;
 
             shipment.Pick();
             this.Transaction.Derive();
 
-            var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
+            var pickList = shipment.ShipmentItems.ElementAt(0).ItemIssuancesWhereShipmentItem.ElementAt(0).PickListItem.PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
 
             pickList.SetPicked();
@@ -1343,7 +1343,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var invoice = customer.SalesInvoicesWhereBillToCustomer.First;
+            var invoice = customer.SalesInvoicesWhereBillToCustomer.FirstOrDefault();
             Assert.Equal(15M, invoice.TotalShippingAndHandling);
         }
 
@@ -1364,9 +1364,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedStoreDeriveShipmentNumber()
         {
-            var store = this.InternalOrganisation.StoresWhereInternalOrganisation.First;
+            var store = this.InternalOrganisation.StoresWhereInternalOrganisation.FirstOrDefault();
             store.RemoveCustomerShipmentNumberPrefix();
-            var number = this.InternalOrganisation.StoresWhereInternalOrganisation.First.CustomerShipmentNumberCounter.Value;
+            var number = this.InternalOrganisation.StoresWhereInternalOrganisation.First().CustomerShipmentNumberCounter.Value;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithStore(store).Build();
             this.Derive();
@@ -1377,7 +1377,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedStoreDeriveSortableShipmentNumber()
         {
-            var store = this.InternalOrganisation.StoresWhereInternalOrganisation.First;
+            var store = this.InternalOrganisation.StoresWhereInternalOrganisation.FirstOrDefault();
             var number = store.CustomerShipmentNumberCounter.Value;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithStore(store).Build();
@@ -1390,25 +1390,25 @@ namespace Allors.Database.Domain.Tests
         public void ChangedShipToPartyDeriveShipToAddress()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction)
-                .WithShipToParty(this.InternalOrganisation.ActiveCustomers.First)
+                .WithShipToParty(this.InternalOrganisation.ActiveCustomers.FirstOrDefault())
                 .Build();
             this.Derive();
 
-            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipToAddress);
+            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First().ShippingAddress, shipment.ShipToAddress);
         }
 
         [Fact]
         public void ChangedShipToAddressDeriveShipToAddress()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction)
-                .WithShipToParty(this.InternalOrganisation.ActiveCustomers.First)
+                .WithShipToParty(this.InternalOrganisation.ActiveCustomers.FirstOrDefault())
                 .Build();
             this.Derive();
 
             shipment.RemoveShipToAddress();
             this.Derive();
 
-            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First.ShippingAddress, shipment.ShipToAddress);
+            Assert.Equal(this.InternalOrganisation.ActiveCustomers.First().ShippingAddress, shipment.ShipToAddress);
         }
 
         [Fact]
@@ -1439,8 +1439,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipmentStateCreateInvoice()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsAutomaticallyShipped = true;
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.BillingProcess = new BillingProcesses(this.Transaction).BillingForShipmentItems;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsAutomaticallyShipped = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().BillingProcess = new BillingProcesses(this.Transaction).BillingForShipmentItems;
 
             var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
             this.Derive();
@@ -1655,7 +1655,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipmentStateDeriveShipmentStatePacked()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsImmediatelyPacked = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipToParty(new PersonBuilder(this.Transaction).Build())
@@ -1687,7 +1687,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedQuantityDeriveShipmentStatePacked()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsImmediatelyPacked = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipmentState(new ShipmentStates(this.Transaction).Picked)
@@ -1720,7 +1720,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPackagingContentQuantityDeriveShipmentStatePacked()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsImmediatelyPacked = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsImmediatelyPacked = true;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipmentState(new ShipmentStates(this.Transaction).Picked)
@@ -1750,7 +1750,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipmentValueDeriveShipmentStateOnHold()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 10;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().ShipmentThreshold = 10;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipmentValue(10).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
             this.Derive();
@@ -1770,7 +1770,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedStoreShipmentThresholdDeriveShipmentStateOnHold()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 10;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().ShipmentThreshold = 10;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipmentValue(10).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
             this.Derive();
@@ -1781,7 +1781,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.NotEqual(new ShipmentStates(this.Transaction).OnHold, shipment.ShipmentState);
 
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 11;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().ShipmentThreshold = 11;
             this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).OnHold, shipment.ShipmentState);
@@ -1790,7 +1790,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedReleasedManuallyDeriveShipmentStateOnHold()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 10;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().ShipmentThreshold = 10;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipmentValue(9).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
             this.Derive();
@@ -1810,7 +1810,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipmentValueDeriveShipmentStateCreated()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 10;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().ShipmentThreshold = 10;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipmentValue(9).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
             this.Derive();
@@ -1830,7 +1830,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedStoreShipmentThresholdDeriveShipmentStateCreated()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 10;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().ShipmentThreshold = 10;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipmentValue(9).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
             this.Derive();
@@ -1841,7 +1841,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(new ShipmentStates(this.Transaction).OnHold, shipment.ShipmentState);
 
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.ShipmentThreshold = 9;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().ShipmentThreshold = 9;
             this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Created, shipment.ShipmentState);
@@ -1939,7 +1939,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedShipmentStateDeriveShipmentState()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsAutomaticallyShipped = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsAutomaticallyShipped = true;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
             this.Derive();
@@ -1964,7 +1964,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPicklistPickListStateDeriveShipmentState()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsAutomaticallyShipped = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsAutomaticallyShipped = true;
 
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
             this.Derive();
@@ -1994,7 +1994,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedSalesOrderSalesOrderStateDeriveShipmentState()
         {
-            this.InternalOrganisation.StoresWhereInternalOrganisation.First.IsAutomaticallyShipped = true;
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().IsAutomaticallyShipped = true;
 
             var salesOrder = new SalesOrderBuilder(this.Transaction).Build();
             this.Derive();
@@ -2144,12 +2144,12 @@ namespace Allors.Database.Domain.Tests
             order.Accept();
             this.Transaction.Derive();
 
-            var shipment = (CustomerShipment)item1.OrderShipmentsWhereOrderItem[0].ShipmentItem.ShipmentWhereShipmentItem;
+            var shipment = (CustomerShipment)item1.OrderShipmentsWhereOrderItem.ElementAt(0).ShipmentItem.ShipmentWhereShipmentItem;
 
             shipment.Pick();
             this.Transaction.Derive();
 
-            var pickList = shipment.ShipmentItems[0].ItemIssuancesWhereShipmentItem[0].PickListItem.PickListWherePickListItem;
+            var pickList = shipment.ShipmentItems.ElementAt(0).ItemIssuancesWhereShipmentItem.ElementAt(0).PickListItem.PickListWherePickListItem;
             pickList.Picker = this.OrderProcessor;
 
             pickList.SetPicked();

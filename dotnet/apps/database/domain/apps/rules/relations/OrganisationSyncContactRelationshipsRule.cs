@@ -34,7 +34,7 @@ namespace Allors.Database.Domain
                 transaction.Prefetch(@this.PrefetchPolicy);
 
                 var partyContactMechanisms = @this.PartyContactMechanisms?.ToArray();
-                foreach (OrganisationContactRelationship organisationContactRelationship in @this.OrganisationContactRelationshipsWhereOrganisation)
+                foreach (var organisationContactRelationship in @this.OrganisationContactRelationshipsWhereOrganisation)
                 {
                     organisationContactRelationship.Contact?.Sync(partyContactMechanisms);
                 }

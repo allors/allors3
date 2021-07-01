@@ -6,6 +6,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
     using Xunit;
 
     public class UnifiedGoodRuleTests : DomainTest, IClassFixture<Fixture>
@@ -43,11 +44,11 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             new SupplierOfferingBuilder(this.Transaction)
-                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.First)
+                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.FirstOrDefault())
                 .WithPart(unifiedGood).Build();
             this.Derive();
 
-            Assert.Contains(this.InternalOrganisation.ActiveSuppliers.First.PartyName, unifiedGood.SearchString);
+            Assert.Contains(this.InternalOrganisation.ActiveSuppliers.First().PartyName, unifiedGood.SearchString);
         }
 
         [Fact]
@@ -129,7 +130,7 @@ namespace Allors.Database.Domain.Tests
             unifiedGood.AddVariant(variantGood);
             this.Derive();
 
-            Assert.Equal(variantGood.VirtualProductPriceComponents.First, pricecomponent);
+            Assert.Equal(variantGood.VirtualProductPriceComponents.FirstOrDefault(), pricecomponent);
         }
 
         [Fact]
@@ -173,7 +174,7 @@ namespace Allors.Database.Domain.Tests
             unifiedGood.AddVariant(variantGood);
             this.Derive();
 
-            Assert.Equal(variantGood.BasePrices.First, pricecomponent);
+            Assert.Equal(variantGood.BasePrices.FirstOrDefault(), pricecomponent);
         }
 
         [Fact]
@@ -192,7 +193,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            Assert.Equal(variantGood.VirtualProductPriceComponents.First, pricecomponent);
+            Assert.Equal(variantGood.VirtualProductPriceComponents.FirstOrDefault(), pricecomponent);
         }
     }
 

@@ -9,6 +9,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System;
+    using System.Linq;
     using Xunit;
 
     public class StoreTests : DomainTest, IClassFixture<Fixture>
@@ -101,7 +102,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Single(store.CollectionMethods);
-            Assert.Equal(ownBankAccount, store.CollectionMethods.First);
+            Assert.Equal(ownBankAccount, store.CollectionMethods.FirstOrDefault());
         }
 
         [Fact]

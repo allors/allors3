@@ -37,12 +37,12 @@ namespace Allors.Database.Domain
                     var state = @this.CurrentVersion.Assignment.PreviousWorkEffortState ??
                             @this.CurrentVersion.Assignment.WorkEffortState;
 
-                    foreach (InventoryTransactionReason createReason in state.InventoryTransactionReasonsToCreate)
+                    foreach (var createReason in state.InventoryTransactionReasonsToCreate)
                     {
                         this.SyncInventoryTransactions(@this, validation, previousInventoryItem, previousQuantity, createReason, true);
                     }
 
-                    foreach (InventoryTransactionReason cancelReason in state.InventoryTransactionReasonsToCancel)
+                    foreach (var cancelReason in state.InventoryTransactionReasonsToCancel)
                     {
                         this.SyncInventoryTransactions(@this, validation, previousInventoryItem, previousQuantity, cancelReason, true);
                     }

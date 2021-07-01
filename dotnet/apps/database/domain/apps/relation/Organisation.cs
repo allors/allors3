@@ -140,12 +140,12 @@ namespace Allors.Database.Domain
         {
             if (this.IsDeletable)
             {
-                foreach (PartyFinancialRelationship deletable in this.PartyFinancialRelationshipsWhereFinancialParty)
+                foreach (var deletable in this.PartyFinancialRelationshipsWhereFinancialParty)
                 {
                     deletable.Delete();
                 }
 
-                foreach (PartyContactMechanism deletable in this.PartyContactMechanisms)
+                foreach (var deletable in this.PartyContactMechanisms)
                 {
                     var contactmechanism = deletable.ContactMechanism;
 
@@ -157,52 +157,52 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                foreach (OrganisationContactRelationship deletable in this.OrganisationContactRelationshipsWhereOrganisation)
+                foreach (var deletable in this.OrganisationContactRelationshipsWhereOrganisation)
                 {
                     deletable.Contact.Delete();
                 }
 
-                foreach (PriceComponent deletable in this.PriceComponentsWherePricedBy)
+                foreach (var deletable in this.PriceComponentsWherePricedBy)
                 {
                     deletable.Delete();
                 }
 
-                foreach (CommunicationEvent deletable in this.CommunicationEventsWhereInvolvedParty)
+                foreach (var deletable in this.CommunicationEventsWhereInvolvedParty)
                 {
                     deletable.Delete();
                 }
 
-                foreach (CustomerRelationship deletable in this.CustomerRelationshipsWhereCustomer)
+                foreach (var deletable in this.CustomerRelationshipsWhereCustomer)
                 {
                     deletable.Delete();
                 }
 
-                foreach (OrganisationRollUp deletable in this.OrganisationRollUpsWhereChild)
+                foreach (var deletable in this.OrganisationRollUpsWhereChild)
                 {
                     deletable.Delete();
                 }
 
-                foreach (PartyFixedAssetAssignment deletable in this.PartyFixedAssetAssignmentsWhereParty)
+                foreach (var deletable in this.PartyFixedAssetAssignmentsWhereParty)
                 {
                     deletable.Delete();
                 }
 
-                foreach (ProfessionalServicesRelationship deletable in this.ProfessionalServicesRelationshipsWhereProfessionalServicesProvider)
+                foreach (var deletable in this.ProfessionalServicesRelationshipsWhereProfessionalServicesProvider)
                 {
                     deletable.Delete();
                 }
 
-                foreach (SubContractorRelationship deletable in this.SubContractorRelationshipsWhereSubContractor)
+                foreach (var deletable in this.SubContractorRelationshipsWhereSubContractor)
                 {
                     deletable.Delete();
                 }
 
-                foreach (SupplierRelationship deletable in this.SupplierRelationshipsWhereSupplier)
+                foreach (var deletable in this.SupplierRelationshipsWhereSupplier)
                 {
                     deletable.Delete();
                 }
 
-                foreach (SupplierOffering deletable in this.SupplierOfferingsWhereSupplier)
+                foreach (var deletable in this.SupplierOfferingsWhereSupplier)
                 {
                     deletable.Delete();
                 }

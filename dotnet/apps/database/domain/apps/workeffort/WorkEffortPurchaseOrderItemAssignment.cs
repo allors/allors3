@@ -5,6 +5,8 @@
 
 namespace Allors.Database.Domain
 {
+    using System.Linq;
+
     public partial class WorkEffortPurchaseOrderItemAssignment
     {
         public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)

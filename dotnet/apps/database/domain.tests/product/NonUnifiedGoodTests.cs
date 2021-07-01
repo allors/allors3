@@ -38,7 +38,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.Contains(nonUnifiedGood.ProductIdentifications.First.Identification, nonUnifiedGood.SearchString);
+            Assert.Contains(nonUnifiedGood.ProductIdentifications.First().Identification, nonUnifiedGood.SearchString);
         }
 
         [Fact]
@@ -84,7 +84,7 @@ namespace Allors.Database.Domain.Tests
             nonUnifiedGood.AddVariant(variantGood);
             this.Derive();
 
-            Assert.Equal(variantGood.VirtualProductPriceComponents.First, pricecomponent);
+            Assert.Equal(variantGood.VirtualProductPriceComponents.FirstOrDefault(), pricecomponent);
         }
 
         [Fact]
@@ -128,7 +128,7 @@ namespace Allors.Database.Domain.Tests
             nonUnifiedGood.AddVariant(variantGood);
             this.Derive();
 
-            Assert.Equal(variantGood.BasePrices.First, pricecomponent);
+            Assert.Equal(variantGood.BasePrices.FirstOrDefault(), pricecomponent);
         }
 
         [Fact]
@@ -147,7 +147,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            Assert.Equal(variantGood.VirtualProductPriceComponents.First, pricecomponent);
+            Assert.Equal(variantGood.VirtualProductPriceComponents.FirstOrDefault(), pricecomponent);
         }
     }
 

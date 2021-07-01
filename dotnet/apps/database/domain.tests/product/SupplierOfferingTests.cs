@@ -66,7 +66,7 @@ namespace Allors.Database.Domain.Tests
 
             var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
             var internalOrganisation = this.InternalOrganisation;
-            var before = settings.DefaultFacility.InventoryItemsWhereFacility.Count;
+            var before = settings.DefaultFacility.InventoryItemsWhereFacility.Count();
 
             var secondFacility = new FacilityBuilder(this.Transaction)
                 .WithFacilityType(new FacilityTypes(this.Transaction).Warehouse)
@@ -104,8 +104,8 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(2, good.Part.InventoryItemsWherePart.Count);
-            Assert.Equal(before + 1, settings.DefaultFacility.InventoryItemsWhereFacility.Count);
+            Assert.Equal(2, good.Part.InventoryItemsWherePart.Count());
+            Assert.Equal(before + 1, settings.DefaultFacility.InventoryItemsWhereFacility.Count());
             Assert.Single(secondFacility.InventoryItemsWhereFacility);
         }
 
@@ -114,7 +114,7 @@ namespace Allors.Database.Domain.Tests
         {
             var settings = this.Transaction.GetSingleton().Settings;
             var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
-            var before = settings.DefaultFacility.InventoryItemsWhereFacility.Count;
+            var before = settings.DefaultFacility.InventoryItemsWhereFacility.Count();
 
             var secondFacility = new FacilityBuilder(this.Transaction)
                 .WithFacilityType(new FacilityTypes(this.Transaction).Warehouse)
@@ -152,8 +152,8 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(2, good.Part.InventoryItemsWherePart.Count);
-            Assert.Equal(before + 1, settings.DefaultFacility.InventoryItemsWhereFacility.Count);
+            Assert.Equal(2, good.Part.InventoryItemsWherePart.Count());
+            Assert.Equal(before + 1, settings.DefaultFacility.InventoryItemsWhereFacility.Count());
             Assert.Single(secondFacility.InventoryItemsWhereFacility);
         }
 
@@ -260,7 +260,7 @@ namespace Allors.Database.Domain.Tests
 
             var workEffortInventoryAssignement = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
-                .WithInventoryItem(finishedGood.InventoryItemsWherePart.First())
+                .WithInventoryItem(finishedGood.InventoryItemsWherePart.FirstOrDefault())
                 .WithQuantity(1)
                 .Build();
 

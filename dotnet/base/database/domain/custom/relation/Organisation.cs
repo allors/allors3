@@ -6,25 +6,25 @@
 
 namespace Allors.Database.Domain
 {
+    using System.Linq;
+
     public partial class Organisation
     {
         public void CustomToggleCanWrite(OrganisationToggleCanWrite method)
         {
-            if (this.DeniedPermissions.Count != 0)
+            if (this.DeniedPermissions.Any())
             {
                 this.RemoveDeniedPermissions();
             }
             else
             {
                 var permissions = new Permissions(this.strategy.Transaction);
-                var deniedPermissions = new[]
+                this.DeniedPermissions = (new[]
                 {
                     permissions.Get(this.Meta, this.Meta.Name, Operations.Write),
                     permissions.Get(this.Meta, this.Meta.Owner, Operations.Write),
                     permissions.Get(this.Meta, this.Meta.Employees, Operations.Write),
-                };
-
-                this.DeniedPermissions = deniedPermissions;
+                });
             }
 
             this.Address = this.MainAddress;
