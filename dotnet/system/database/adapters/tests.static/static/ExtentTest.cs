@@ -3241,27 +3241,6 @@ namespace Allors.Database.Adapters
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
 
-                // Shortcut
-                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                secondExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                extent = this.Transaction.Except(firstExtent, secondExtent);
-
-                Assert.Empty(extent);
-                this.AssertC1(extent, false, false, false, false);
-                this.AssertC2(extent, false, false, false, false);
-                this.AssertC3(extent, false, false, false, false);
-                this.AssertC4(extent, false, false, false, false);
-
-                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                secondExtent = this.c1C.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                extent = this.Transaction.Except(firstExtent, secondExtent);
-
-                Assert.Single(extent);
-                this.AssertC1(extent, false, true, false, false);
-                this.AssertC2(extent, false, false, false, false);
-                this.AssertC3(extent, false, false, false, false);
-                this.AssertC4(extent, false, false, false, false);
-
                 // Different Classes
                 firstExtent = this.Transaction.Extent(m.C1);
                 secondExtent = this.Transaction.Extent(m.C2);
@@ -3416,27 +3395,6 @@ namespace Allors.Database.Adapters
 
                 Assert.Equal(2, extent.Count);
                 this.AssertC1(extent, false, false, true, true);
-                this.AssertC2(extent, false, false, false, false);
-                this.AssertC3(extent, false, false, false, false);
-                this.AssertC4(extent, false, false, false, false);
-
-                // Shortcut
-                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                secondExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                extent = this.Transaction.Intersect(firstExtent, secondExtent);
-
-                Assert.Single(extent);
-                this.AssertC1(extent, false, true, false, false);
-                this.AssertC2(extent, false, false, false, false);
-                this.AssertC3(extent, false, false, false, false);
-                this.AssertC4(extent, false, false, false, false);
-
-                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                secondExtent = this.c1C.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                extent = this.Transaction.Intersect(firstExtent, secondExtent);
-
-                Assert.Empty(extent);
-                this.AssertC1(extent, false, false, false, false);
                 this.AssertC2(extent, false, false, false, false);
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
@@ -14338,25 +14296,7 @@ namespace Allors.Database.Adapters
                     this.AssertC2(extent, false, false, false, false);
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
-
-                    // Shortcut
-                    inExtent = this.c1C.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-
-                    // if (useOperator)
-                    // {
-                    // var inExtentA = c1_1.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                    // var inExtentB = c1_1.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                    // inExtent = Transaction.Union(inExtentA, inExtentB);
-                    // }
-                    extent = this.Transaction.Extent(m.C1);
-                    extent.Filter.AddContainedIn(m.C1.C1C1many2manies, inExtent);
-
-                    Assert.Equal(2, extent.Count);
-                    this.AssertC1(extent, false, false, true, true);
-                    this.AssertC2(extent, false, false, false, false);
-                    this.AssertC3(extent, false, false, false, false);
-                    this.AssertC4(extent, false, false, false, false);
-
+                    
                     // ContainedIn Extent over Interface
                     // Empty
                     inExtent = this.Transaction.Extent(m.I12);
@@ -16764,28 +16704,7 @@ namespace Allors.Database.Adapters
                 this.AssertC2(extent, false, false, false, false);
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
-
-                // Shortcut
-                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                secondExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                extent = this.Transaction.Union(firstExtent, secondExtent);
-
-                Assert.Single(extent);
-                this.AssertC1(extent, false, true, false, false);
-                this.AssertC2(extent, false, false, false, false);
-                this.AssertC3(extent, false, false, false, false);
-                this.AssertC4(extent, false, false, false, false);
-
-                firstExtent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                secondExtent = this.c1C.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                extent = this.Transaction.Union(firstExtent, secondExtent);
-
-                Assert.Equal(3, extent.Count);
-                this.AssertC1(extent, false, true, true, true);
-                this.AssertC2(extent, false, false, false, false);
-                this.AssertC3(extent, false, false, false, false);
-                this.AssertC4(extent, false, false, false, false);
-
+                
                 // Different Classes
                 firstExtent = this.Transaction.Extent(m.C1);
                 secondExtent = this.Transaction.Extent(m.C2);
@@ -17135,50 +17054,7 @@ namespace Allors.Database.Adapters
         {
             // TODO:
         }
-
-        [Fact]
-        public void Shortcut()
-        {
-            foreach (var init in this.Inits)
-            {
-                init();
-                this.Populate();
-                var m = this.Transaction.Database.Context().M;
-
-                // Sortcut
-                // Shortcut
-                var extent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-
-                Assert.Single(extent);
-                this.AssertC1(extent, false, true, false, false);
-                this.AssertC2(extent, false, false, false, false);
-                this.AssertC3(extent, false, false, false, false);
-                this.AssertC4(extent, false, false, false, false);
-
-                // With Filter
-                // Shortcut
-                extent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                extent.Filter.AddEquals(m.C1.C1AllorsString, "ᴀbracadabra");
-
-                Assert.Empty(extent);
-                this.AssertC1(extent, false, false, false, false);
-                this.AssertC2(extent, false, false, false, false);
-                this.AssertC3(extent, false, false, false, false);
-                this.AssertC4(extent, false, false, false, false);
-
-                // With Sort
-                // Shortcut
-                extent = this.c1B.Strategy.GetCompositeRoles(m.C1.C1C1one2manies);
-                extent.AddSort(m.C1.C1AllorsInteger);
-
-                Assert.Single(extent);
-                this.AssertC1(extent, false, true, false, false);
-                this.AssertC2(extent, false, false, false, false);
-                this.AssertC3(extent, false, false, false, false);
-                this.AssertC4(extent, false, false, false, false);
-            }
-        }
-
+        
         [Fact]
         public void RoleContainsMany2ManyAndContained()
         {

@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Adapters.Memory
 {
+    using System.Linq;
     using Adapters;
     using Meta;
 
@@ -22,21 +23,6 @@ namespace Allors.Database.Adapters.Memory
             this.containedObject = containedObject;
         }
 
-        internal override ThreeValuedLogic Evaluate(Strategy strategy)
-        {
-            var associations = strategy.GetCompositeAssociations(this.associationType);
-            if (associations != null)
-            {
-                foreach (var association in associations)
-                {
-                    if (association.Equals(this.containedObject))
-                    {
-                        return ThreeValuedLogic.True;
-                    }
-                }
-            }
-
-            return ThreeValuedLogic.False;
-        }
+        internal override ThreeValuedLogic Evaluate(Strategy strategy) => strategy.GetCompositeAssociations<IObject>(this.associationType).Contains(this.containedObject) ? ThreeValuedLogic.True : ThreeValuedLogic.False;
     }
 }

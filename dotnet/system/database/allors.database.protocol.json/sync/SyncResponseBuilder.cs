@@ -61,11 +61,8 @@ namespace Allors.Database.Protocol.Json
                 }
                 else
                 {
-                    var roles = @object.Strategy.GetCompositeRoles(roleType);
-                    if (roles.Count > 0)
-                    {
-                        syncResponseRole.c = roles.Select(roleObject => roleObject.Id).ToArray();
-                    }
+                    var roles = @object.Strategy.GetCompositeRoles<IObject>(roleType);
+                    syncResponseRole.c = roles.Select(roleObject => roleObject.Id).ToArray();
                 }
 
                 return syncResponseRole;

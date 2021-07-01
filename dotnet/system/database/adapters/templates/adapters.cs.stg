@@ -55,7 +55,7 @@ $interface._.exclusiveDatabaseRoleTypes:{roleType|$interfaceExclusiveRoleTypes_B
 interfaceExclusiveAssociationType_Interface() ::= <<
 $\n$
 $if(associationType._.IsMany)$
-		global::Allors.Database.Extent<$associationType._.ObjectType.Name$> $associationType._.PluralName$
+		System.Collections.Generic.IEnumerable<$associationType._.ObjectType.Name$> $associationType._.PluralName$
 		{
 			get;
 		}
@@ -91,7 +91,7 @@ $if(roleType._.ObjectType.IsUnit)$
 		void Remove$roleType._.SingularName$();
 $else$
 $if(roleType._.IsMany)$
-		global::Allors.Database.Extent<$roleType_ObjectType(roleType)$> $roleType._.PluralName$
+		System.Collections.Generic.IEnumerable<$roleType_ObjectType(roleType)$> $roleType._.PluralName$
 		{
 			get;
 			set;
@@ -222,11 +222,11 @@ $class._.MethodTypes:{methodType|$classMethodType_Method()$}$
 classAssociationType_Class() ::= <<
 $\n$
 $if(associationType._.IsMany)$
-		virtual public global::Allors.Database.Extent<$associationType._.ObjectType.Name$> $associationType._.PluralName$
+		virtual public System.Collections.Generic.IEnumerable<$associationType._.ObjectType.Name$> $associationType._.PluralName$
 		{
 			get
 			{
-				return Strategy.GetCompositeAssociations(Meta.$associationType._.Name$);
+				return Strategy.GetCompositeAssociations<$associationType._.ObjectType.Name$>(Meta.$associationType._.Name$);
 			}
 		}
 
@@ -284,11 +284,11 @@ $if(roleClass.ObjectType.IsUnit)$
 		}
 $else$
 $if(roleClass.IsMany)$
-		virtual public global::Allors.Database.Extent<$roleClass_ObjectType(roleClass)$> $roleClass.PluralName$
+		virtual public System.Collections.Generic.IEnumerable<$roleClass_ObjectType(roleClass)$> $roleClass.PluralName$
 		{
 			get
 			{
-				return Strategy.GetCompositeRoles(Meta.$roleClass.Name$);
+				return Strategy.GetCompositeRoles<$roleClass_ObjectType(roleClass)$>(Meta.$roleClass.Name$);
 			}
 			set
 			{

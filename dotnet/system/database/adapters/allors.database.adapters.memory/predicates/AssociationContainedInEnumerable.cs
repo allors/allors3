@@ -29,10 +29,9 @@ namespace Allors.Database.Adapters.Memory
 
             if (this.associationType.IsMany)
             {
-                var associations = strategy.GetCompositeAssociations(this.associationType);
-                foreach (var assoc in associations)
+                foreach (var assoc in strategy.GetCompositeAssociations<IObject>(this.associationType))
                 {
-                    if (containing.Contains((IObject)assoc))
+                    if (containing.Contains(assoc))
                     {
                         return ThreeValuedLogic.True;
                     }

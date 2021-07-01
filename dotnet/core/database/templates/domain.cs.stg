@@ -2,7 +2,7 @@ delimiters "$", "$"
 
 TemplateId() ::= <<17ED40F8-BDF8-4A7C-9AE9-1C4D2AD6BA2B>>
 TemplateName() ::= <<Allors C# Domain>>
-TemplateVersion() ::= <<3.0.3>>
+TemplateVersion() ::= <<3.0.4>>
 TemplateAllors() ::= <<1.0>>
 TemplateConfiguration(meta) ::= <<
 $!
@@ -58,7 +58,7 @@ $objectType_Plural()$
 interfaceExclusiveAssociationType_Interface() ::= <<
 $\n$
 $if(associationType._.IsMany)$
-		global::Allors.Database.Extent<$associationType._.ObjectType.Name$> $associationType._.PluralName$
+		System.Collections.Generic.IEnumerable<$associationType._.ObjectType.Name$> $associationType._.PluralName$
 		{
 			get;
 		}
@@ -99,7 +99,7 @@ $if(roleType._.IsMany)$
 			get;
 		}
 
-		global::Allors.Database.Extent<$roleType_ObjectType(roleType)$> $roleType._.PluralName$
+		System.Collections.Generic.IEnumerable<$roleType_ObjectType(roleType)$> $roleType._.PluralName$
 		{
 			get;
 			set;
@@ -263,11 +263,11 @@ $endif$
 classAssociationType_Class() ::= <<
 $\n$
 $if(associationType._.IsMany)$
-		public global::Allors.Database.Extent<$associationType._.ObjectType.Name$> $associationType._.PluralName$
+		public System.Collections.Generic.IEnumerable<$associationType._.ObjectType.Name$> $associationType._.PluralName$
 		{
 			get
 			{
-				return Strategy.GetCompositeAssociations(Meta.$associationType._.Name$);
+				return (System.Collections.Generic.IEnumerable<$associationType._.ObjectType.Name$>)Strategy.GetCompositeAssociations(Meta.$associationType._.Name$);
 			}
 		}
 
@@ -328,11 +328,11 @@ $if(roleClass._.ObjectType.IsUnit)$
 		}
 $else$
 $if(roleClass._.IsMany)$
-		public global::Allors.Database.Extent<$roleClass_ObjectType(roleClass)$> $roleClass._.PluralName$
+		public System.Collections.Generic.IEnumerable<$roleClass_ObjectType(roleClass)$> $roleClass._.PluralName$
 		{
 			get
 			{
-				return Strategy.GetCompositeRoles(Meta.$roleClass._.Name$);
+				return (System.Collections.Generic.IEnumerable<$roleClass_ObjectType(roleClass)$>)Strategy.GetCompositeRoles(Meta.$roleClass._.Name$);
 			}
 			set
 			{

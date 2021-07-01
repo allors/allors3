@@ -69,165 +69,165 @@ namespace Allors.Database
         /// <summary>
         /// Gets a value indicating whether the composite role exists.
         /// </summary>
-        /// <param name="relationType">The relation type.</param>
+        /// <param name="roleType">The relation type.</param>
         /// <returns><c>true</c>if the composite role exists; otherwise,<c>false</c>. </returns>
-        bool ExistRole(IRoleType relationType);
+        bool ExistRole(IRoleType roleType);
 
         /// <summary>
         /// Gets the role.
         /// </summary>
-        /// <param name="relationType">Type of the relation.</param>
+        /// <param name="roleType">Type of the relation.</param>
         /// <returns>The role object.</returns>
-        object GetRole(IRoleType relationType);
+        object GetRole(IRoleType roleType);
 
         /// <summary>
         /// Sets the role.
         /// </summary>
-        /// <param name="relationType">Type of the relation.</param>
+        /// <param name="roleType">Type of the relation.</param>
         /// <param name="value">The value.</param>
-        void SetRole(IRoleType relationType, object value);
+        void SetRole(IRoleType roleType, object value);
 
         /// <summary>
         /// Removes the role.
         /// </summary>
-        /// <param name="relationType">Type of the relation.</param>
-        void RemoveRole(IRoleType relationType);
+        /// <param name="roleType">Type of the relation.</param>
+        void RemoveRole(IRoleType roleType);
 
         /// <summary>
         /// Gets a value indicating whether the unit role exists.
         /// </summary>
-        /// <param name="relationType">The relation type.</param>
+        /// <param name="roleType">The relation type.</param>
         /// <returns><c>true</c>if the unit role exists; otherwise,<c>false</c>. </returns>
-        bool ExistUnitRole(IRoleType relationType);
+        bool ExistUnitRole(IRoleType roleType);
 
         /// <summary>
         /// Gets the unit role.
         /// </summary>
-        /// <param name="relationType">Type of the relation.</param>
+        /// <param name="roleType">Type of the relation.</param>
         /// <returns>The role object.</returns>
-        object GetUnitRole(IRoleType relationType);
+        object GetUnitRole(IRoleType roleType);
 
         /// <summary>
         /// Sets the unit role.
         /// </summary>
-        /// <param name="relationType">Type of the relation.</param>
+        /// <param name="roleType">Type of the relation.</param>
         /// <param name="unit">The unit .</param>
-        void SetUnitRole(IRoleType relationType, object unit);
+        void SetUnitRole(IRoleType roleType, object unit);
 
         /// <summary>
         /// Removes the unit role.
         /// </summary>
-        /// <param name="relationType">Type of the relation.</param>
-        void RemoveUnitRole(IRoleType relationType);
+        /// <param name="roleType">Type of the relation.</param>
+        void RemoveUnitRole(IRoleType roleType);
 
         /// <summary>
         /// Gets a value indicating whether the composite role exists.
         /// </summary>
-        /// <param name="relationType">The relation type.</param>
+        /// <param name="roleType">The relation type.</param>
         /// <returns><c>true</c>if the composite role exists; otherwise,<c>false</c>. </returns>
-        bool ExistCompositeRole(IRoleType relationType);
+        bool ExistCompositeRole(IRoleType roleType);
 
         /// <summary>
         /// Gets the composite role.
         /// </summary>
-        /// <param name="relationType">Type of the relation.</param>
+        /// <param name="roleType">Type of the relation.</param>
         /// <returns>The role object.</returns>
-        IObject GetCompositeRole(IRoleType relationType);
+        IObject GetCompositeRole(IRoleType roleType);
 
         /// <summary>
         /// Sets the composite role.
         /// </summary>
-        /// <param name="relationType">Type of the relation.</param>
+        /// <param name="roleType">Type of the relation.</param>
         /// <param name="newRole">The role.</param>
-        void SetCompositeRole(IRoleType relationType, IObject newRole);
+        void SetCompositeRole(IRoleType roleType, IObject newRole);
 
         /// <summary>
         /// Removes the composite role.
         /// </summary>
-        /// <param name="relationType">Type of the relation.</param>
-        void RemoveCompositeRole(IRoleType relationType);
+        /// <param name="roleType">Type of the relation.</param>
+        void RemoveCompositeRole(IRoleType roleType);
 
         /// <summary>
         /// Gets a value indicating whether the composite roles exists.
         /// </summary>
-        /// <param name="relationType">The relation type.</param>
+        /// <param name="roleType">The relation type.</param>
         /// <returns><c>true</c>if the composite role exists; otherwise,<c>false</c>. </returns>
-        bool ExistCompositeRoles(IRoleType relationType);
+        bool ExistCompositeRoles(IRoleType roleType);
 
         /// <summary>
         /// Gets the composite roles.
         /// </summary>
-        /// <param name="relationType">Type of the relation.</param>
+        /// <param name="roleType">Type of the relation.</param>
         /// <returns>The role objects.</returns>
-        Extent GetCompositeRoles(IRoleType relationType);
+        IEnumerable<T> GetCompositeRoles<T>(IRoleType roleType) where T : IObject;
 
         /// <summary>
         /// Adds the composite role.
         /// </summary>
-        /// <param name="relationType">The relation type..</param>
+        /// <param name="roleType">The relation type..</param>
         /// <param name="role">The role.</param>
-        void AddCompositeRole(IRoleType relationType, IObject role);
+        void AddCompositeRole(IRoleType roleType, IObject role);
 
         /// <summary>
         /// Removes the composite role.
         /// </summary>
-        /// <param name="relationType">Type of the relation.</param>
+        /// <param name="roleType">Type of the relation.</param>
         /// <param name="role">The role.</param>
-        void RemoveCompositeRole(IRoleType relationType, IObject role);
+        void RemoveCompositeRole(IRoleType roleType, IObject role);
 
         /// <summary>
         /// Sets the composite roles.
         /// </summary>
-        /// <param name="relationType">Type of the relation.</param>
+        /// <param name="roleType">Type of the relation.</param>
         /// <param name="roles">The roles.</param>
-        void SetCompositeRoles(IRoleType relationType, IEnumerable<IObject> roles);
+        void SetCompositeRoles(IRoleType roleType, IEnumerable<IObject> roles);
 
         /// <summary>
         /// Removes the composite roles.
         /// </summary>
-        /// <param name="relationType">Type of the relation.</param>
-        void RemoveCompositeRoles(IRoleType relationType);
+        /// <param name="roleType">Type of the relation.</param>
+        void RemoveCompositeRoles(IRoleType roleType);
 
         /// <summary>
         /// Gets a value indicating whether the association exists.
         /// </summary>
-        /// <param name="relationType">The relation type.</param>
+        /// <param name="associationType">The relation type.</param>
         /// <returns><c>true</c>if the association exists; otherwise,<c>false</c>. </returns>
-        bool ExistAssociation(IAssociationType relationType);
+        bool ExistAssociation(IAssociationType associationType);
 
         /// <summary>
         /// Gets the association.
         /// </summary>
-        /// <param name="relationType">Type of the relation.</param>
+        /// <param name="associationType">Type of the relation.</param>
         /// <returns>The association object.</returns>
-        object GetAssociation(IAssociationType relationType);
+        object GetAssociation(IAssociationType associationType);
 
         /// <summary>
         /// Gets a value indicating whether the composite association exists.
         /// </summary>
-        /// <param name="relationType">The relation type.</param>
+        /// <param name="associationType">The relation type.</param>
         /// <returns><c>true</c>if the composite association exists; otherwise,<c>false</c>. </returns>
-        bool ExistCompositeAssociation(IAssociationType relationType);
+        bool ExistCompositeAssociation(IAssociationType associationType);
 
         /// <summary>
         /// Gets the composite association.
         /// </summary>
-        /// <param name="relationType">Type of the relation.</param>
+        /// <param name="associationType">Type of the relation.</param>
         /// <returns>The association object.</returns>
-        IObject GetCompositeAssociation(IAssociationType relationType);
+        IObject GetCompositeAssociation(IAssociationType associationType);
 
         /// <summary>
         /// Gets a value indicating whether the composite associations exists.
         /// </summary>
-        /// <param name="relationType">The relation type.</param>
+        /// <param name="associationType">The relation type.</param>
         /// <returns><c>true</c>if the composite associations exists; otherwise,<c>false</c>. </returns>
-        bool ExistCompositeAssociations(IAssociationType relationType);
+        bool ExistCompositeAssociations(IAssociationType associationType);
 
         /// <summary>
         /// Gets the composite associations.
         /// </summary>
-        /// <param name="relationType">Type of the relation.</param>
+        /// <param name="associationType">Type of the relation.</param>
         /// <returns>The association objects.</returns>
-        Extent GetCompositeAssociations(IAssociationType relationType);
+        IEnumerable<T> GetCompositeAssociations<T>(IAssociationType associationType) where T : IObject;
     }
 }

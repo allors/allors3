@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Adapters.Memory
 {
+    using System.Collections.Generic;
     using Adapters;
     using Meta;
 
@@ -26,8 +27,7 @@ namespace Allors.Database.Adapters.Memory
         {
             if (this.associationType.IsMany)
             {
-                var associations = strategy.GetCompositeAssociations(this.associationType);
-                foreach (var assoc in associations)
+                foreach (var assoc in strategy.GetCompositeAssociations<IObject>(this.associationType))
                 {
                     if (this.containingExtent.Contains(assoc))
                     {

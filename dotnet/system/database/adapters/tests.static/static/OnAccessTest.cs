@@ -7,6 +7,7 @@ namespace Allors.Database.Adapters
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Meta;
     using Tracing;
     using Xunit;
@@ -271,9 +272,9 @@ namespace Allors.Database.Adapters
 
                         mark();
 
-                        var c1aC1C2one2many = c1a.C1C2one2manies;
+                        var c1aC1C2one2many = c1a.C1C2one2manies.ToArray();
                         var c1bExistC1C2one2one = c1b.ExistC1C2one2manies;
-                        var c1cC1C2one2one = c1c.C1C2one2manies;
+                        var c1cC1C2one2one = c1c.C1C2one2manies.ToArray();
                         var c1dExistC1C2one2one = c1d.ExistC1C2one2manies;
 
                         Assert.Equal(4, list.Count);
@@ -321,9 +322,9 @@ namespace Allors.Database.Adapters
 
                         mark();
 
-                        var c1aC1C2many2many = c1a.C1C2many2manies;
+                        var c1aC1C2many2many = c1a.C1C2many2manies.ToArray();
                         var c1bExistC1C2many2one = c1b.ExistC1C2many2manies;
-                        var c1cC1C2many2one = c1c.C1C2many2manies;
+                        var c1cC1C2many2one = c1c.C1C2many2manies.ToArray();
                         var c1dExistC1C2many2one = c1d.ExistC1C2many2manies;
 
                         Assert.Equal(4, list.Count);
@@ -470,9 +471,9 @@ namespace Allors.Database.Adapters
 
                         mark();
 
-                        var c2aC1WhereC1C2many2one = c2a.C1sWhereC1C2many2one;
+                        var c2aC1WhereC1C2many2one = c2a.C1sWhereC1C2many2one.ToArray();
                         var c2bExistC1WhereC1C2many2one = c2b.ExistC1sWhereC1C2many2one;
-                        var c2cC1WhereC1C2many2one = c2c.C1sWhereC1C2many2one;
+                        var c2cC1WhereC1C2many2one = c2c.C1sWhereC1C2many2one.ToArray();
                         var c2dExistC1WhereC1C2many2one = c2d.ExistC1sWhereC1C2many2one;
 
                         Assert.Equal(4, list.Count);
@@ -521,9 +522,9 @@ namespace Allors.Database.Adapters
 
                         mark();
 
-                        var c2aC1WhereC1C2many2many = c2a.C1sWhereC1C2many2many;
+                        var c2aC1WhereC1C2many2many = c2a.C1sWhereC1C2many2many.ToArray();
                         var c2bExistC1WhereC1C2many2many = c2b.ExistC1sWhereC1C2many2many;
-                        var c2cC1WhereC1C2many2many = c2c.C1sWhereC1C2many2many;
+                        var c2cC1WhereC1C2many2many = c2c.C1sWhereC1C2many2many.ToArray();
                         var c2dExistC1WhereC1C2many2many = c2d.ExistC1sWhereC1C2many2many;
 
                         Assert.Equal(4, list.Count);

@@ -6,6 +6,7 @@
 namespace Allors.Database.Adapters
 {
     using System;
+    using System.Linq;
     using Domain;
     using Xunit;
     using IDatabase = IDatabase;
@@ -243,7 +244,7 @@ namespace Allors.Database.Adapters
 
                 transaction.Rollback();
 
-                Assert.Equal(2, c1a.C1C2one2manies.Count);
+                Assert.Equal(2, c1a.C1C2one2manies.Count());
                 Assert.Contains(c2a, c1a.C1C2one2manies.ToArray());
                 Assert.Contains(c2b, c1a.C1C2one2manies.ToArray());
             }

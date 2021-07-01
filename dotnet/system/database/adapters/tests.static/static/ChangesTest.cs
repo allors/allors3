@@ -58,7 +58,7 @@ namespace Allors.Database.Adapters
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
 
-                Assert.Equal(2, associations.Count);
+                Assert.Equal(2, associations.Count());
                 Assert.Contains(a, associations.ToArray());
                 Assert.Contains(b, associations.ToArray());
 
@@ -98,7 +98,7 @@ namespace Allors.Database.Adapters
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
 
-                Assert.Equal(2, associations.Count);
+                Assert.Equal(2, associations.Count());
                 Assert.True(associations.Contains(a));
                 Assert.True(associations.Contains(a));
 
@@ -121,7 +121,7 @@ namespace Allors.Database.Adapters
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
 
-                Assert.Equal(0, associations.Count);
+                Assert.Equal(0, associations.Count());
                 Assert.Empty(changeSet.GetRoleTypes(a));
                 Assert.Empty(changeSet.GetRoleTypes(b));
 
@@ -141,7 +141,7 @@ namespace Allors.Database.Adapters
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
 
-                Assert.Equal(2, associations.Count);
+                Assert.Equal(2, associations.Count());
                 Assert.True(associations.Contains(a));
                 Assert.True(associations.Contains(a));
 
@@ -164,7 +164,7 @@ namespace Allors.Database.Adapters
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
 
-                Assert.Equal(0, associations.Count);
+                Assert.Equal(0, associations.Count());
                 Assert.Empty(changeSet.GetRoleTypes(a));
                 Assert.Empty(changeSet.GetRoleTypes(b));
 
@@ -182,7 +182,7 @@ namespace Allors.Database.Adapters
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
 
-                Assert.Equal(0, associations.Count);
+                Assert.Equal(0, associations.Count());
                 Assert.Empty(changeSet.GetRoleTypes(a));
                 Assert.Empty(changeSet.GetRoleTypes(b));
 
@@ -202,7 +202,7 @@ namespace Allors.Database.Adapters
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
 
-                Assert.Equal(0, associations.Count);
+                Assert.Equal(0, associations.Count());
                 Assert.Empty(changeSet.GetRoleTypes(a));
                 Assert.Empty(changeSet.GetRoleTypes(b));
 
@@ -223,7 +223,7 @@ namespace Allors.Database.Adapters
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
 
-                Assert.Equal(0, associations.Count);
+                Assert.Equal(0, associations.Count());
                 Assert.Empty(changeSet.GetRoleTypes(a));
                 Assert.Empty(changeSet.GetRoleTypes(b));
 
@@ -272,7 +272,7 @@ namespace Allors.Database.Adapters
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
 
-                Assert.Equal(2, associations.Count);
+                Assert.Equal(2, associations.Count());
                 Assert.Contains(a, associations.ToArray());
                 Assert.Contains(b, associations.ToArray());
 
@@ -312,7 +312,7 @@ namespace Allors.Database.Adapters
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
 
-                Assert.Equal(2, associations.Count);
+                Assert.Equal(2, associations.Count());
                 Assert.True(associations.Contains(a));
                 Assert.True(associations.Contains(a));
 
@@ -335,7 +335,7 @@ namespace Allors.Database.Adapters
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
 
-                Assert.Equal(0, associations.Count);
+                Assert.Equal(0, associations.Count());
                 Assert.Empty(changeSet.GetRoleTypes(a));
                 Assert.Empty(changeSet.GetRoleTypes(b));
 
@@ -355,7 +355,7 @@ namespace Allors.Database.Adapters
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
 
-                Assert.Equal(2, associations.Count);
+                Assert.Equal(2, associations.Count());
                 Assert.True(associations.Contains(a));
                 Assert.True(associations.Contains(a));
 
@@ -378,7 +378,7 @@ namespace Allors.Database.Adapters
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
 
-                Assert.Equal(0, associations.Count);
+                Assert.Equal(0, associations.Count());
                 Assert.Empty(changeSet.GetRoleTypes(a));
                 Assert.Empty(changeSet.GetRoleTypes(b));
 
@@ -396,7 +396,7 @@ namespace Allors.Database.Adapters
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
 
-                Assert.Equal(0, associations.Count);
+                Assert.Equal(0, associations.Count());
                 Assert.Empty(changeSet.GetRoleTypes(a));
                 Assert.Empty(changeSet.GetRoleTypes(b));
 
@@ -416,7 +416,7 @@ namespace Allors.Database.Adapters
                 associations = changeSet.Associations;
                 roles = changeSet.Roles;
 
-                Assert.Equal(0, associations.Count);
+                Assert.Equal(0, associations.Count());
                 Assert.Empty(changeSet.GetRoleTypes(a));
                 Assert.Empty(changeSet.GetRoleTypes(b));
 
@@ -495,7 +495,7 @@ namespace Allors.Database.Adapters
                 Assert.Single(changes.Associations);
                 Assert.Contains(c1a, changes.Associations);
 
-                Assert.Equal(2, changes.Roles.Count);
+                Assert.Equal(2, changes.Roles.Count());
                 Assert.Contains(c2b, changes.Roles);
                 Assert.Contains(c2a, changes.Roles);
 
@@ -605,7 +605,7 @@ namespace Allors.Database.Adapters
                 Assert.Single(changes.Associations);
                 Assert.Contains(c1a, changes.Associations);
 
-                Assert.Equal(2, changes.Roles.Count);
+                Assert.Equal(2, changes.Roles.Count());
                 Assert.Contains(c2b, changes.Roles);
                 Assert.Contains(c2a, changes.Roles);
 
@@ -773,7 +773,7 @@ namespace Allors.Database.Adapters
 
                 changes = this.Transaction.Checkpoint();
 
-                Assert.Equal(2, changes.Associations.Count);
+                Assert.Equal(2, changes.Associations.Count());
                 Assert.Contains(c1a, changes.Associations);
                 Assert.Contains(c1b, changes.Associations);
 

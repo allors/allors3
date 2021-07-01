@@ -1124,14 +1124,14 @@ namespace Allors.Database.Adapters
             Assert.Equal("c3a", c3ACopy.I34AllorsString);
             Assert.Equal("c4a", c4ACopy.I34AllorsString);
 
-            Assert.Equal(2, c2ACopy.C1sWhereC1C2many2one.Count);
+            Assert.Equal(2, c2ACopy.C1sWhereC1C2many2one.Count());
             Assert.Empty(c2BCopy.C1sWhereC1C2many2one);
             Assert.Single(c2ACopy.C1sWhereC1C2many2many);
             Assert.Single(c2BCopy.C1sWhereC1C2many2many);
 
             foreach (S1234 allorsObject in everyObject)
             {
-                Assert.Equal(everyObject.Length, allorsObject.S1234many2manies.Count);
+                Assert.Equal(everyObject.Length, allorsObject.S1234many2manies.Count());
                 foreach (S1234 addObject in everyObject)
                 {
                     var objects = allorsObject.S1234many2manies.ToArray();

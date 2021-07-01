@@ -19,13 +19,6 @@ namespace Allors.Database.Adapters.Memory
             : base(transaction) =>
             this.objectType = objectType;
 
-        internal ExtentFiltered(StrategyExtent extent)
-            : base(extent.Transaction)
-        {
-            this.objectType = extent.ObjectType;
-            extent.UpgradeTo(this);
-        }
-
         public override ICompositePredicate Filter => this.filter ??= new And(this);
 
         public override IComposite ObjectType => this.objectType;

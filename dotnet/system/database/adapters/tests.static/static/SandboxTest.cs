@@ -81,7 +81,7 @@ namespace Allors.Database.Adapters
                 var c1B = C1.Create(this.Transaction);
                 c1A.C1C1many2one = c1B;
 
-                foreach (C1 c in c1B.C1sWhereC1C1many2one)
+                foreach (var c in c1B.C1sWhereC1C1many2one)
                 {
                     c.Strategy.Delete();
                 }

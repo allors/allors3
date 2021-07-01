@@ -8,6 +8,7 @@ namespace Allors.Database.Adapters
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Linq;
     using Meta;
     using Xunit;
     using C1 = Domain.C1;
@@ -168,7 +169,7 @@ namespace Allors.Database.Adapters
                 this.Transaction.Rollback();
 
                 Assert.Single(c1A.C1C2one2manies);
-                Assert.Equal(c2A, c1A.C1C2one2manies[0]);
+                Assert.Equal(c2A, c1A.C1C2one2manies.ElementAt(0));
             }
         }
 
@@ -966,9 +967,9 @@ namespace Allors.Database.Adapters
                 Assert.False(toC1c.Strategy.IsDeleted);
                 Assert.False(toC1d.Strategy.IsDeleted);
                 Assert.Equal(toC1c, fromC1b.C1C1one2one);
-                Assert.Equal(2, fromC1b.C1C1one2manies.Count);
+                Assert.Equal(2, fromC1b.C1C1one2manies.Count());
                 Assert.Equal(toC1c, fromC1b.C1C1many2one);
-                Assert.Equal(2, fromC1b.C1C1many2manies.Count);
+                Assert.Equal(2, fromC1b.C1C1many2manies.Count());
 
                 this.Transaction.Commit();
 
@@ -1025,9 +1026,9 @@ namespace Allors.Database.Adapters
                 Assert.False(toC2c.Strategy.IsDeleted);
                 Assert.False(toC2d.Strategy.IsDeleted);
                 Assert.Equal(toC2c, fromC1b.C1C2one2one);
-                Assert.Equal(2, fromC1b.C1C2one2manies.Count);
+                Assert.Equal(2, fromC1b.C1C2one2manies.Count());
                 Assert.Equal(toC2c, fromC1b.C1C2many2one);
-                Assert.Equal(2, fromC1b.C1C2many2manies.Count);
+                Assert.Equal(2, fromC1b.C1C2many2manies.Count());
 
                 this.Transaction.Commit();
 
@@ -1096,9 +1097,9 @@ namespace Allors.Database.Adapters
                 Assert.False(toC1c.Strategy.IsDeleted);
                 Assert.False(toC1d.Strategy.IsDeleted);
                 Assert.Equal(toC1c, fromC1b.C1C1one2one);
-                Assert.Equal(2, fromC1b.C1C1one2manies.Count);
+                Assert.Equal(2, fromC1b.C1C1one2manies.Count());
                 Assert.Equal(toC1c, fromC1b.C1C1many2one);
-                Assert.Equal(2, fromC1b.C1C1many2manies.Count);
+                Assert.Equal(2, fromC1b.C1C1many2manies.Count());
 
                 //// C1 <-> C2
 
@@ -1163,9 +1164,9 @@ namespace Allors.Database.Adapters
                 Assert.False(toC2c.Strategy.IsDeleted);
                 Assert.False(toC2d.Strategy.IsDeleted);
                 Assert.Equal(toC2c, fromC1b.C1C2one2one);
-                Assert.Equal(2, fromC1b.C1C2one2manies.Count);
+                Assert.Equal(2, fromC1b.C1C2one2manies.Count());
                 Assert.Equal(toC2c, fromC1b.C1C2many2one);
-                Assert.Equal(2, fromC1b.C1C2many2manies.Count);
+                Assert.Equal(2, fromC1b.C1C2many2manies.Count());
 
                 //// Rollback
 
@@ -1421,9 +1422,9 @@ namespace Allors.Database.Adapters
                 Assert.False(toC1c.Strategy.IsDeleted);
                 Assert.False(toC1d.Strategy.IsDeleted);
                 Assert.Equal(toC1c, fromC1b.C1C1one2one);
-                Assert.Equal(2, fromC1b.C1C1one2manies.Count);
+                Assert.Equal(2, fromC1b.C1C1one2manies.Count());
                 Assert.Equal(toC1c, fromC1b.C1C1many2one);
-                Assert.Equal(2, fromC1b.C1C1many2manies.Count);
+                Assert.Equal(2, fromC1b.C1C1many2manies.Count());
 
                 this.Transaction.Commit();
 
@@ -1493,9 +1494,9 @@ namespace Allors.Database.Adapters
                 Assert.False(toC1c.Strategy.IsDeleted);
                 Assert.False(toC1d.Strategy.IsDeleted);
                 Assert.Equal(toC1c, fromC1b.C1C1one2one);
-                Assert.Equal(2, fromC1b.C1C1one2manies.Count);
+                Assert.Equal(2, fromC1b.C1C1one2manies.Count());
                 Assert.Equal(toC1c, fromC1b.C1C1many2one);
-                Assert.Equal(2, fromC1b.C1C1many2manies.Count);
+                Assert.Equal(2, fromC1b.C1C1many2manies.Count());
 
                 this.Transaction.Commit();
 
@@ -1663,9 +1664,9 @@ namespace Allors.Database.Adapters
                 Assert.False(toC2c.Strategy.IsDeleted);
                 Assert.False(toC2d.Strategy.IsDeleted);
                 Assert.Equal(toC2c, fromC1b.C1C2one2one);
-                Assert.Equal(2, fromC1b.C1C2one2manies.Count);
+                Assert.Equal(2, fromC1b.C1C2one2manies.Count());
                 Assert.Equal(toC2c, fromC1b.C1C2many2one);
-                Assert.Equal(2, fromC1b.C1C2many2manies.Count);
+                Assert.Equal(2, fromC1b.C1C2many2manies.Count());
 
                 this.Transaction.Commit();
 
@@ -1735,9 +1736,9 @@ namespace Allors.Database.Adapters
                 Assert.False(toC2c.Strategy.IsDeleted);
                 Assert.False(toC2d.Strategy.IsDeleted);
                 Assert.Equal(toC2c, fromC1b.C1C2one2one);
-                Assert.Equal(2, fromC1b.C1C2one2manies.Count);
+                Assert.Equal(2, fromC1b.C1C2one2manies.Count());
                 Assert.Equal(toC2c, fromC1b.C1C2many2one);
-                Assert.Equal(2, fromC1b.C1C2many2manies.Count);
+                Assert.Equal(2, fromC1b.C1C2many2manies.Count());
 
                 this.Transaction.Commit();
 
@@ -3292,13 +3293,13 @@ namespace Allors.Database.Adapters
                 Assert.Equal("a", fromProxy.C1AllorsString);
                 Assert.Equal(toProxy, fromProxy.C1C1one2one);
                 Assert.Equal(toProxy, fromProxy.C1C1many2one);
-                Assert.Contains(toProxy, (C1[])fromProxy.C1C1one2manies);
-                Assert.Contains(toProxy, (C1[])fromProxy.C1C1many2manies);
+                Assert.Contains(toProxy, fromProxy.C1C1one2manies);
+                Assert.Contains(toProxy, fromProxy.C1C1many2manies);
 
                 Assert.Equal(fromProxy, toProxy.C1WhereC1C1one2one);
-                Assert.Contains(fromProxy, (C1[])toProxy.C1sWhereC1C1many2one);
+                Assert.Contains(fromProxy, toProxy.C1sWhereC1C1many2one);
                 Assert.Equal(fromProxy, toProxy.C1WhereC1C1one2many);
-                Assert.Contains(fromProxy, (C1[])toProxy.C1sWhereC1C1many2many);
+                Assert.Contains(fromProxy, toProxy.C1sWhereC1C1many2many);
 
                 from.C1AllorsString = null;
                 from.C1C1one2one = null;
@@ -3311,8 +3312,8 @@ namespace Allors.Database.Adapters
                 Assert.Null(from.C1AllorsString);
                 Assert.Null(from.C1C1one2one);
                 Assert.Null(from.C1C1many2one);
-                Assert.Empty((C1[])from.C1C1one2manies);
-                Assert.Empty((C1[])from.C1C1many2manies);
+                Assert.Empty(from.C1C1one2manies);
+                Assert.Empty(from.C1C1many2manies);
 
                 StrategyAssert.RolesExistExclusive(from);
                 StrategyAssert.AssociationsExistExclusive(to);
@@ -3466,21 +3467,21 @@ namespace Allors.Database.Adapters
                 Assert.Equal("a", fromProxy.C1AllorsString);
                 Assert.Equal(toProxy, fromProxy.C1C1one2one);
                 Assert.Equal(toProxy, fromProxy.C1C1many2one);
-                Assert.Contains(toProxy, (C1[])fromProxy.C1C1one2manies);
-                Assert.Contains(toProxy, (C1[])fromProxy.C1C1many2manies);
+                Assert.Contains(toProxy, fromProxy.C1C1one2manies);
+                Assert.Contains(toProxy, fromProxy.C1C1many2manies);
 
                 Assert.Equal(fromProxy, toProxy.C1WhereC1C1one2one);
-                Assert.Contains(fromProxy, (C1[])toProxy.C1sWhereC1C1many2one);
+                Assert.Contains(fromProxy, toProxy.C1sWhereC1C1many2one);
                 Assert.Equal(fromProxy, toProxy.C1WhereC1C1one2many);
-                Assert.Contains(fromProxy, (C1[])toProxy.C1sWhereC1C1many2many);
+                Assert.Contains(fromProxy, toProxy.C1sWhereC1C1many2many);
 
                 this.Transaction.Rollback();
 
                 Assert.Null(from.C1AllorsString);
                 Assert.Null(from.C1C1one2one);
                 Assert.Null(from.C1C1many2one);
-                Assert.Empty((C1[])from.C1C1one2manies);
-                Assert.Empty((C1[])from.C1C1many2manies);
+                Assert.Empty(from.C1C1one2manies);
+                Assert.Empty(from.C1C1many2manies);
 
                 StrategyAssert.RolesExistExclusive(from);
                 StrategyAssert.AssociationsExistExclusive(to);
@@ -4119,8 +4120,8 @@ namespace Allors.Database.Adapters
 
                 var switchC2BC = switchC1A.C1I12one2manies;
 
-                Assert.Equal(m.C2, switchC2BC[0].Strategy.Class);
-                Assert.Equal(m.C2, switchC2BC[1].Strategy.Class);
+                Assert.Equal(m.C2, switchC2BC.ElementAt(0).Strategy.Class);
+                Assert.Equal(m.C2, switchC2BC.ElementAt(1).Strategy.Class);
 
                 this.Transaction.Commit();
 
@@ -5013,7 +5014,7 @@ namespace Allors.Database.Adapters
                     }
 
                     var b = c1b.Strategy.ObjectId;
-                    var assoc = c2a.C1sWhereC1C2many2many[0].Strategy.ObjectId;
+                    var assoc = c2a.C1sWhereC1C2many2many.ElementAt(0).Strategy.ObjectId;
 
                     Assert.Contains(c1b, c2a.C1sWhereC1C2many2many);
 

@@ -6,6 +6,7 @@
 namespace Allors.Database.Adapters.Memory
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Adapters;
     using Meta;
 
@@ -27,22 +28,7 @@ namespace Allors.Database.Adapters.Memory
         {
             var containing = new HashSet<IObject>(this.containingEnumerable);
 
-            var roles = strategy.GetCompositeRoles(this.roleType);
-
-            if (roles.Count == 0)
-            {
-                return ThreeValuedLogic.False;
-            }
-
-            foreach (var role in roles)
-            {
-                if (containing.Contains((IObject)role))
-                {
-                    return ThreeValuedLogic.True;
-                }
-            }
-
-            return ThreeValuedLogic.False;
+            return strategy.GetCompositeRoles<IObject>(this.roleType).Any(role => containing.Contains(role)) ? ThreeValuedLogic.True : ThreeValuedLogic.False;
         }
     }
 }

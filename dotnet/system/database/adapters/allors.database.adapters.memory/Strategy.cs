@@ -95,7 +95,7 @@ namespace Allors.Database.Adapters.Memory
             {
                 { } unitRole when unitRole.ObjectType.IsUnit => this.GetUnitRole(roleType),
                 { } compositeRole when compositeRole.IsOne => this.GetCompositeRole(roleType),
-                _ => this.GetCompositeRoles(roleType)
+                _ => this.GetCompositeRoles<IObject>(roleType)
             };
 
         public void SetRole(IRoleType roleType, object value)
@@ -176,7 +176,7 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        public void RemoveUnitRole(IRoleType relationType) => this.SetUnitRole(relationType, null);
+        public void RemoveUnitRole(IRoleType roleType) => this.SetUnitRole(roleType, null);
 
         public bool ExistUnitRole(IRoleType roleType)
         {
@@ -235,11 +235,22 @@ namespace Allors.Database.Adapters.Memory
             return this.compositeRoleByRoleType.ContainsKey(roleType);
         }
 
-        public Allors.Database.Extent GetCompositeRoles(IRoleType roleType)
+        public IEnumerable<T> GetCompositeRoles<T>(IRoleType roleType) where T : IObject
         {
             this.AssertNotDeleted();
             this.Transaction.OnAccessCompositesRole?.Invoke(this, roleType);
-            return new ExtentSwitch(this, roleType);
+
+            this.compositesRoleByRoleType.TryGetValue(roleType, out var strategies);
+
+            if (strategies == null)
+            {
+                yield break;
+            }
+
+            foreach (var strategy in strategies.ToArray())
+            {
+                yield return (T)strategy.GetObject();
+            }
         }
 
         public void SetCompositeRoles(IRoleType roleType, IEnumerable<IObject> roles)
@@ -329,7 +340,7 @@ namespace Allors.Database.Adapters.Memory
             return roleStrategies != null;
         }
 
-        public object GetAssociation(IAssociationType associationType) => associationType.IsMany ? (object)this.GetCompositeAssociations(associationType) : this.GetCompositeAssociation(associationType);
+        public object GetAssociation(IAssociationType associationType) => associationType.IsMany ? this.GetCompositeAssociations<IObject>(associationType) : (object)this.GetCompositeAssociation(associationType);
 
         public bool ExistAssociation(IAssociationType associationType) => associationType.IsMany ? this.ExistCompositeAssociations(associationType) : this.ExistCompositeAssociation(associationType);
 
@@ -341,13 +352,24 @@ namespace Allors.Database.Adapters.Memory
             return strategy?.GetObject();
         }
 
-        public bool ExistCompositeAssociation(IAssociationType relationType) => this.GetCompositeAssociation(relationType) != null;
+        public bool ExistCompositeAssociation(IAssociationType associationType) => this.GetCompositeAssociation(associationType) != null;
 
-        public Allors.Database.Extent GetCompositeAssociations(IAssociationType associationType)
+        public IEnumerable<T> GetCompositeAssociations<T>(IAssociationType associationType) where T : IObject
         {
             this.AssertNotDeleted();
             this.Transaction.OnAccessCompositesAssociation?.Invoke(this, associationType);
-            return new ExtentSwitch(this, associationType);
+
+            this.compositesAssociationByAssociationType.TryGetValue(associationType, out var strategies);
+
+            if (strategies == null)
+            {
+                yield break;
+            }
+
+            foreach (var strategy in strategies.ToArray())
+            {
+                yield return (T)strategy.GetObject();
+            }
         }
 
         public bool ExistCompositeAssociations(IAssociationType associationType)
@@ -588,28 +610,6 @@ namespace Allors.Database.Adapters.Memory
         {
             this.unitRoleByRoleType.TryGetValue(roleType, out var unitRole);
             return unitRole;
-        }
-
-        internal List<Strategy> GetStrategies(IAssociationType associationType)
-        {
-            this.compositesAssociationByAssociationType.TryGetValue(associationType, out var strategies);
-            if (strategies == null)
-            {
-                return new List<Strategy>();
-            }
-
-            return strategies.ToList();
-        }
-
-        internal List<Strategy> GetStrategies(IRoleType roleType)
-        {
-            this.compositesRoleByRoleType.TryGetValue(roleType, out var strategies);
-            if (strategies == null)
-            {
-                return new List<Strategy>();
-            }
-
-            return strategies.ToList();
         }
 
         internal void SetCompositeRoleOne2One(IRoleType roleType, Strategy @new)

@@ -6,6 +6,8 @@
 namespace Allors.Database.Adapters
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Meta;
 
     using Xunit;
@@ -17,7 +19,14 @@ namespace Allors.Database.Adapters
             var exceptionOccured = false;
             try
             {
-                var o = allorsObject.Strategy.GetAssociation(associationType);
+                if (associationType.IsOne)
+                {
+                    allorsObject.Strategy.GetCompositeAssociation(associationType);
+                }
+                else
+                {
+                    allorsObject.Strategy.GetCompositeAssociations<IObject>(associationType).ToArray();
+                }
             }
             catch
             {
@@ -35,7 +44,14 @@ namespace Allors.Database.Adapters
             var exceptionOccured = false;
             try
             {
-                var o = allorsObject.Strategy.GetAssociation(associationType);
+                if (associationType.IsOne)
+                {
+                    allorsObject.Strategy.GetCompositeAssociation(associationType);
+                }
+                else
+                {
+                    allorsObject.Strategy.GetCompositeAssociations<IObject>(associationType).ToArray();
+                }
             }
             catch
             {
@@ -85,7 +101,14 @@ namespace Allors.Database.Adapters
             var exceptionOccured = false;
             try
             {
-                object o = allorsObject.Strategy.ExistRole(roleType);
+                if (roleType.IsOne)
+                {
+                    allorsObject.Strategy.GetRole(roleType);
+                }
+                else
+                {
+                    allorsObject.Strategy.GetCompositeRoles<IObject>(roleType).ToArray();
+                }
             }
             catch
             {
@@ -103,7 +126,14 @@ namespace Allors.Database.Adapters
             var exceptionOccured = false;
             try
             {
-                var o = allorsObject.Strategy.GetRole(roleType);
+                if (roleType.IsOne)
+                {
+                    allorsObject.Strategy.GetRole(roleType);
+                }
+                else
+                {
+                    allorsObject.Strategy.GetCompositeRoles<IObject>(roleType).ToArray();
+                }
             }
             catch
             {

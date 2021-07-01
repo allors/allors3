@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Adapters.Memory
 {
+    using System.Linq;
     using Adapters;
     using Meta;
 
@@ -22,24 +23,6 @@ namespace Allors.Database.Adapters.Memory
             this.containingExtent = containingExtent;
         }
 
-        internal override ThreeValuedLogic Evaluate(Strategy strategy)
-        {
-            var roles = strategy.GetCompositeRoles(this.roleType);
-
-            if (roles.Count == 0)
-            {
-                return ThreeValuedLogic.False;
-            }
-
-            foreach (var role in roles)
-            {
-                if (this.containingExtent.Contains(role))
-                {
-                    return ThreeValuedLogic.True;
-                }
-            }
-
-            return ThreeValuedLogic.False;
-        }
+        internal override ThreeValuedLogic Evaluate(Strategy strategy) => strategy.GetCompositeRoles<IObject>(this.roleType).Any(role => this.containingExtent.Contains(role)) ? ThreeValuedLogic.True : ThreeValuedLogic.False;
     }
 }

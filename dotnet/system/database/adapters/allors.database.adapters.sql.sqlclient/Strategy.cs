@@ -163,7 +163,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
 
             return roleType.IsMany
-                       ? (object)this.GetCompositeRoles(roleType)
+                       ? (object)this.GetCompositeRoles<IObject>(roleType)
                        : this.GetCompositeRole(roleType);
         }
 
@@ -272,12 +272,27 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        public virtual bool ExistCompositeRoles(IRoleType roleType) => this.GetCompositeRoles(roleType).Count != 0;
-
-        public virtual Allors.Database.Extent GetCompositeRoles(IRoleType roleType)
+        public virtual bool ExistCompositeRoles(IRoleType roleType)
         {
             this.AssertExist();
-            return new ExtentRoles(this, roleType);
+
+            if (this.TryGetModifiedCompositesRole(roleType, out var compositesRole))
+            {
+                return compositesRole.Count > 0;
+            }
+
+            return this.GetNonModifiedCompositeRoles(roleType).Length > 0;
+        }
+
+        public virtual IEnumerable<T> GetCompositeRoles<T>(IRoleType roleType) where T : IObject
+        {
+            this.AssertExist();
+
+            var roles = this.GetCompositesRole(roleType);
+            foreach (var reference in this.Transaction.GetOrCreateReferencesForExistingObjects(roles))
+            {
+                yield return (T)reference.Strategy.GetObject();
+            }
         }
 
         public virtual void AddCompositeRole(IRoleType roleType, IObject roleObject)
@@ -404,7 +419,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public virtual bool ExistAssociation(IAssociationType associationType) => associationType.IsMany ? this.ExistCompositeAssociations(associationType) : this.ExistCompositeAssociation(associationType);
 
-        public virtual object GetAssociation(IAssociationType associationType) => associationType.IsMany ? (object)this.GetCompositeAssociations(associationType) : this.GetCompositeAssociation(associationType);
+        public virtual object GetAssociation(IAssociationType associationType) => associationType.IsMany ? (object)this.GetCompositeAssociations<IObject>(associationType) : this.GetCompositeAssociation(associationType);
 
         public virtual bool ExistCompositeAssociation(IAssociationType associationType) => this.GetCompositeAssociation(associationType) != null;
 
@@ -415,12 +430,22 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             return association?.Strategy.GetObject();
         }
 
-        public virtual bool ExistCompositeAssociations(IAssociationType associationType) => this.GetCompositeAssociations(associationType).Count != 0;
-
-        public virtual Allors.Database.Extent GetCompositeAssociations(IAssociationType associationType)
+        public virtual bool ExistCompositeAssociations(IAssociationType associationType)
         {
             this.AssertExist();
-            return new ExtentAssociations(this, associationType);
+
+            return this.Transaction.GetAssociations(this, associationType).Length > 0;
+        }
+
+        public virtual IEnumerable<T> GetCompositeAssociations<T>(IAssociationType associationType) where T : IObject
+        {
+            this.AssertExist();
+
+            var associations = this.ExtentGetCompositeAssociations(associationType);
+            foreach (var reference in this.Transaction.GetOrCreateReferencesForExistingObjects(associations))
+            {
+                yield return (T)reference.Strategy.GetObject();
+            }
         }
 
         public override string ToString() => "[" + this.Class + ":" + this.ObjectId + "]";
@@ -441,11 +466,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         }
 
         #region Extent
-        internal int ExtentRolesGetCount(IRoleType roleType)
-        {
-            this.AssertExist();
-            return this.TryGetModifiedCompositesRole(roleType, out var compositesRole) ? compositesRole.Count : this.GetNonModifiedCompositeRoles(roleType).Length;
-        }
 
         internal void ExtentRolesCopyTo(IRoleType roleType, Array array, int index)
         {
