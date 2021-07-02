@@ -1,4 +1,4 @@
-namespace Allors.Database.Adapters.Sql.SqlClient
+namespace Allors.Database.Adapters.Sql
 {
     using System;
     using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         void AddCountParameter(int count);
 
         void AddUnitRoleParameter(IRoleType roleType, object unit);
-        
+
         void AddCompositeRoleParameter(long objectId);
 
         void AddAssociationParameter(long objectId);
@@ -29,10 +29,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         void ObjectTableParameter(IEnumerable<long> objectIds);
 
-        void UnitTableParameter(IRoleType roleType, IEnumerable<UnitRelation> relations);
+        void UnitTableParameter(IRoleType roleType, ICollection<UnitRelation> relations);
 
-        void AddCompositeRoleTableParameter(IEnumerable<CompositeRelation> relations);
-        
+        void AddCompositeRoleTableParameter(ICollection<CompositeRelation> relations);
+
         void AddAssociationTableParameter(long objectId);
 
         object ExecuteScalar();

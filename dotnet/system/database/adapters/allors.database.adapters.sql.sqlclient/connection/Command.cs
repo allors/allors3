@@ -78,9 +78,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public void ObjectTableParameter(IEnumerable<long> objectIds) => this.GetOrCreateTableParameter(Mapping.ParamNameForTableType, this.mapping.TableTypeNameForObject).Value = new ObjectDataRecord(this.mapping, objectIds);
 
-        public void UnitTableParameter(IRoleType roleType, IEnumerable<UnitRelation> relations) => this.GetOrCreateTableParameter(Mapping.ParamNameForTableType, this.mapping.GetTableTypeName(roleType)).Value = new UnitRoleDataRecords(this.mapping, roleType, relations);
+        public void UnitTableParameter(IRoleType roleType, ICollection<UnitRelation> relations) => this.GetOrCreateTableParameter(Mapping.ParamNameForTableType, this.mapping.GetTableTypeName(roleType)).Value = new UnitRoleDataRecords(this.mapping, roleType, relations);
 
-        public void AddCompositeRoleTableParameter(IEnumerable<CompositeRelation> relations) => this.GetOrCreateTableParameter(Mapping.ParamNameForTableType, this.mapping.TableTypeNameForCompositeRelation).Value = new CompositeRoleDataRecords(this.mapping, relations);
+        public void AddCompositeRoleTableParameter(ICollection<CompositeRelation> relations) => this.GetOrCreateTableParameter(Mapping.ParamNameForTableType, this.mapping.TableTypeNameForCompositeRelation).Value = new CompositeRoleDataRecords(this.mapping, relations);
 
         public void AddCompositesRoleTableParameter(IEnumerable<long> objectIds) => this.GetOrCreateTableParameter(Mapping.ParamNameForTableType, this.mapping.TableTypeNameForObject).Value = new CompositesRoleDataRecords(this.mapping, objectIds);
 

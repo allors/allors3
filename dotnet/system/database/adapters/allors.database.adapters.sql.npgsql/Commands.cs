@@ -86,7 +86,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddObjectParameter(strategy.ObjectId);
+                command.ObjectParameter(strategy.ObjectId);
 
                 this.deleteObjectByClass[@class] = command;
             }
@@ -111,7 +111,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddObjectParameter(reference.ObjectId);
+                command.ObjectParameter(reference.ObjectId);
                 this.getUnitRolesByClass[@class] = command;
             }
             else
@@ -205,7 +205,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
 
-                command.AddUnitRoleArrayParameter(roleType, relations);
+                command.UnitTableParameter(roleType, relations);
             }
             else
             {
@@ -230,7 +230,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             if (!setUnitRoleByRoleType.TryGetValue(sortedRoleTypes, out var command))
             {
                 command = this.connection.CreateCommand();
-                command.AddObjectParameter(roles.Reference.ObjectId);
+                command.ObjectParameter(roles.Reference.ObjectId);
 
                 var sql = new StringBuilder();
                 sql.Append("UPDATE " + this.Database.Mapping.TableNameForObjectByClass[exclusiveRootClass] + " SET\n");
@@ -323,7 +323,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddCompositeRoleArrayParameter(relations);
+                command.AddCompositeRoleTableParameter(relations);
                 this.setCompositeRoleByRoleType[roleType] = command;
             }
             else
@@ -388,7 +388,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddCompositeRoleArrayParameter(relations);
+                command.AddCompositeRoleTableParameter(relations);
                 this.addCompositeRoleByRoleType[roleType] = command;
             }
             else
@@ -409,7 +409,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddCompositeRoleArrayParameter(relations);
+                command.AddCompositeRoleTableParameter(relations);
                 this.removeCompositeRoleByRoleType[roleType] = command;
             }
             else
@@ -586,7 +586,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 command = this.connection.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.Text;
-                command.AddObjectParameter(objectId);
+                command.ObjectParameter(objectId);
                 this.instantiateObject = command;
             }
             else

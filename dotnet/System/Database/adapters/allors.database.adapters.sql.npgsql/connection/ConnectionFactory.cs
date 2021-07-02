@@ -5,8 +5,12 @@
 
 namespace Allors.Database.Adapters.Sql.Npgsql
 {
-    public sealed class DefaultConnectionFactory : IConnectionFactory
+    public sealed class ConnectionFactory : IConnectionFactory
     {
-        public Connection Create(Database database) => new DefaultConnection(database);
+        private readonly Database database;
+
+        public ConnectionFactory(Database database) => this.database = database;
+
+        public IConnection Create() => new Connection(this.database);
     }
 }

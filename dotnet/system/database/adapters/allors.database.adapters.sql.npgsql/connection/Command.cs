@@ -13,9 +13,9 @@ namespace Allors.Database.Adapters.Sql.Npgsql
     using global::Npgsql;
     using NpgsqlTypes;
 
-    public abstract class Command : IDisposable
+    public class Command : ICommand
     {
-        protected internal Command(Mapping mapping, NpgsqlCommand command)
+        internal Command(Mapping mapping, NpgsqlCommand command)
         {
             this.Mapping = mapping;
             this.NpgsqlCommand = command;
@@ -23,29 +23,29 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         internal NpgsqlParameterCollection Parameters => this.NpgsqlCommand.Parameters;
 
-        internal CommandType CommandType
+        public CommandType CommandType
         {
             get => this.NpgsqlCommand.CommandType;
             set => this.NpgsqlCommand.CommandType = value;
         }
 
-        internal string CommandText
+        public string CommandText
         {
             get => this.NpgsqlCommand.CommandText;
             set => this.NpgsqlCommand.CommandText = value;
         }
 
-        protected Mapping Mapping { get; }
+        public Mapping Mapping { get; }
 
-        protected NpgsqlCommand NpgsqlCommand { get; }
+        public NpgsqlCommand NpgsqlCommand { get; }
 
         public void Dispose() => this.NpgsqlCommand.Dispose();
 
-        internal NpgsqlParameter CreateParameter() => this.NpgsqlCommand.CreateParameter();
+        public NpgsqlParameter CreateParameter() => this.NpgsqlCommand.CreateParameter();
 
-        internal NpgsqlParameter GetParameter(string name) => this.NpgsqlCommand.Parameters[name];
+        public NpgsqlParameter GetParameter(string name) => this.NpgsqlCommand.Parameters[name];
 
-        internal void AddInParameter(string parameterName, object value)
+        public void AddInParameter(string parameterName, object value)
         {
             var sqlParameter = this.NpgsqlCommand.Parameters.Contains(parameterName) ? this.NpgsqlCommand.Parameters[parameterName] : null;
             if (sqlParameter == null)
@@ -70,7 +70,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
         }
 
-        internal void AddObjectParameter(long objectId)
+        public void ObjectParameter(long objectId)
         {
             var sqlParameter = this.NpgsqlCommand.CreateParameter();
             sqlParameter.ParameterName = Mapping.ParamNameForObject;
@@ -80,7 +80,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             this.NpgsqlCommand.Parameters.Add(sqlParameter);
         }
 
-        internal void AddTypeParameter(IClass @class)
+        public void AddTypeParameter(IClass @class)
         {
             var sqlParameter = this.CreateParameter();
             sqlParameter.ParameterName = Mapping.ParamNameForClass;
@@ -90,7 +90,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             this.Parameters.Add(sqlParameter);
         }
 
-        internal void AddCountParameter(int count)
+        public void AddCountParameter(int count)
         {
             var sqlParameter = this.CreateParameter();
             sqlParameter.ParameterName = Mapping.ParamNameForCount;
@@ -100,7 +100,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             this.Parameters.Add(sqlParameter);
         }
 
-        internal void AddCompositeRoleParameter(long objectId)
+        public void AddCompositeRoleParameter(long objectId)
         {
             var sqlParameter = this.CreateParameter();
             sqlParameter.ParameterName = Mapping.ParamNameForCompositeRole;
@@ -110,7 +110,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             this.Parameters.Add(sqlParameter);
         }
 
-        internal void AddAssociationParameter(long objectId)
+        public void AddAssociationParameter(long objectId)
         {
             var sqlParameter = this.CreateParameter();
             sqlParameter.ParameterName = Mapping.ParamNameForAssociation;
@@ -120,56 +120,22 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             this.Parameters.Add(sqlParameter);
         }
 
-        internal void AddObjectArrayParameter(IEnumerable<Reference> references)
+        public void ObjectTableParameter(IEnumerable<long> objectIds)
         {
-            var sqlParameter = this.CreateParameter();
-            sqlParameter.NpgsqlDbType = NpgsqlDbType.Array | Mapping.NpgsqlDbTypeForObject;
-            sqlParameter.ParameterName = this.Mapping.ObjectArrayParam.InvocationName;
-            sqlParameter.Value = references.Select(v => v.ObjectId).ToArray();
-
-            this.Parameters.Add(sqlParameter);
+            var objectParameter = this.GetOrCreateTableParameter(this.Mapping.ObjectArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject);
+            objectParameter.Value = objectIds;
         }
 
-        internal void SetObjectArrayParameter(IEnumerable<Reference> references)
+        public void UnitTableParameter(IRoleType roleType, ICollection<UnitRelation> relations)
         {
-            var objectParameter = this.GetParameter(this.Mapping.ObjectArrayParam.InvocationName);
-            objectParameter.Value = references.Select(v => v.ObjectId).ToArray();
-        }
-
-        internal void AddObjectArrayParameter(IEnumerable<long> objectIds)
-        {
-            var sqlParameter = this.CreateParameter();
-            sqlParameter.NpgsqlDbType = NpgsqlDbType.Array | Mapping.NpgsqlDbTypeForObject;
-            sqlParameter.ParameterName = this.Mapping.ObjectArrayParam.InvocationName;
-            sqlParameter.Value = objectIds.ToArray();
-
-            this.Parameters.Add(sqlParameter);
-        }
-
-        internal void SetObjectArrayParameter(IEnumerable<long> objectIds)
-        {
-            var objectParameter = this.GetParameter(this.Mapping.ObjectArrayParam.InvocationName);
-            objectParameter.Value = objectIds.ToArray();
-        }
-
-        internal void AddUnitRoleArrayParameter(IRoleType roleType, ICollection<UnitRelation> relations)
-        {
-            var objectParameter = this.CreateParameter();
-            objectParameter.NpgsqlDbType = NpgsqlDbType.Array | Mapping.NpgsqlDbTypeForObject;
-            objectParameter.ParameterName = this.Mapping.ObjectArrayParam.InvocationName;
-
-            var roleParameter = this.CreateParameter();
-            roleParameter.NpgsqlDbType = NpgsqlDbType.Array | this.Mapping.GetNpgsqlDbType(roleType);
-            roleParameter.ParameterName = this.Mapping.StringRoleArrayParam.InvocationName; // TODO: should be a shared name
+            var objectParameter = this.GetOrCreateTableParameter(this.Mapping.ObjectArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject);
+            var roleParameter = this.GetOrCreateTableParameter(this.Mapping.StringRoleArrayParam.InvocationName, this.Mapping.GetNpgsqlDbType(roleType));
 
             objectParameter.Value = relations.Select(v => v.Association).ToArray();
             roleParameter.Value = relations.Select(v => v.Role).ToArray();
-
-            this.Parameters.Add(objectParameter);
-            this.Parameters.Add(roleParameter);
         }
 
-        internal void SetUnitRoleArrayParameter(IRoleType roleType, ICollection<UnitRelation> relations)
+        public void AddCompositeRoleTableParameter(ICollection<CompositeRelation> relations)
         {
             var objectParameter = this.GetParameter(this.Mapping.ObjectArrayParam.InvocationName);
             var roleParameter = this.GetParameter(this.Mapping.StringRoleArrayParam.InvocationName); // TODO: should be a shared name
@@ -178,24 +144,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             roleParameter.Value = relations.Select(v => v.Role).ToArray();
         }
 
-        internal void AddCompositeRoleArrayParameter(ICollection<CompositeRelation> relations)
-        {
-            var objectParameter = this.CreateParameter();
-            objectParameter.NpgsqlDbType = NpgsqlDbType.Array | Mapping.NpgsqlDbTypeForObject;
-            objectParameter.ParameterName = this.Mapping.ObjectArrayParam.InvocationName;
-
-            var roleParameter = this.CreateParameter();
-            roleParameter.NpgsqlDbType = NpgsqlDbType.Array | Mapping.NpgsqlDbTypeForObject;
-            roleParameter.ParameterName = this.Mapping.StringRoleArrayParam.InvocationName; // TODO: should be a shared name
-
-            objectParameter.Value = relations.Select(v => v.Association).ToArray();
-            roleParameter.Value = relations.Select(v => v.Role).ToArray();
-
-            this.Parameters.Add(objectParameter);
-            this.Parameters.Add(roleParameter);
-        }
-
-        internal void SetCompositeRoleArrayParameter(ICollection<CompositeRelation> relations)
+        public void SetCompositeRoleArrayParameter(ICollection<CompositeRelation> relations)
         {
             var objectParameter = this.GetParameter(this.Mapping.ObjectArrayParam.InvocationName);
             var roleParameter = this.GetParameter(this.Mapping.StringRoleArrayParam.InvocationName); // TODO: should be a shared name
@@ -204,86 +153,39 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             roleParameter.Value = relations.Select(v => v.Role).ToArray();
         }
 
-        internal object ExecuteScalar()
+        public object ExecuteScalar() => this.NpgsqlCommand.ExecuteScalar();
+
+        public void ExecuteNonQuery() => this.NpgsqlCommand.ExecuteNonQuery();
+
+        public IReader ExecuteReader() => new Reader(this.NpgsqlCommand.ExecuteReader());
+
+        public object GetValue(IReader reader, int tag, int i) =>
+            tag switch
+            {
+                UnitTags.String => reader.GetString(i),
+                UnitTags.Integer => reader.GetInt32(i),
+                UnitTags.Float => reader.GetDouble(i),
+                UnitTags.Decimal => reader.GetDecimal(i),
+                UnitTags.Boolean => reader.GetBoolean(i),
+                UnitTags.DateTime => reader.GetDateTime(i),
+                UnitTags.Unique => reader.GetGuid(i),
+                UnitTags.Binary => reader.GetValue(i),
+                _ => throw new ArgumentException("Unknown Unit Tag: " + tag)
+            };
+
+        private NpgsqlParameter GetOrCreateTableParameter(string parameterName, NpgsqlDbType type)
         {
-            this.OnExecuting();
-            try
+            var objectParameter = this.GetParameter(parameterName);
+            if (objectParameter != null)
             {
-                return this.NpgsqlCommand.ExecuteScalar();
+                return objectParameter;
             }
-            finally
-            {
-                this.OnExecuted();
-            }
+
+            objectParameter = this.CreateParameter();
+            objectParameter.NpgsqlDbType = NpgsqlDbType.Array | type;
+            objectParameter.ParameterName = parameterName;
+            this.Parameters.Add(objectParameter);
+            return objectParameter;
         }
-
-        internal void ExecuteNonQuery()
-        {
-            this.OnExecuting();
-
-            try
-            {
-                this.NpgsqlCommand.ExecuteNonQuery();
-            }
-            finally
-            {
-                this.OnExecuted();
-            }
-        }
-
-        internal NpgsqlDataReader ExecuteReader()
-        {
-            this.OnExecuting();
-
-            try
-            {
-                return this.NpgsqlCommand.ExecuteReader();
-            }
-            finally
-            {
-                this.OnExecuted();
-            }
-        }
-
-        internal object GetValue(NpgsqlDataReader reader, int tag, int i)
-        {
-            switch (tag)
-            {
-                case UnitTags.String:
-                    return reader.GetString(i);
-
-                case UnitTags.Integer:
-                    return reader.GetInt32(i);
-
-                case UnitTags.Float:
-                    return reader.GetDouble(i);
-
-                case UnitTags.Decimal:
-                    return reader.GetDecimal(i);
-
-                case UnitTags.Boolean:
-                    return reader.GetBoolean(i);
-
-                case UnitTags.DateTime:
-                    return reader.GetDateTime(i);
-
-                case UnitTags.Unique:
-                    return reader.GetGuid(i);
-
-                case UnitTags.Binary:
-                    return reader.GetValue(i);
-
-                default:
-                    throw new ArgumentException("Unknown Unit Tag: " + tag);
-            }
-        }
-
-        #region Events
-
-        protected abstract void OnExecuting();
-
-        protected abstract void OnExecuted();
-
-        #endregion Events
     }
 }

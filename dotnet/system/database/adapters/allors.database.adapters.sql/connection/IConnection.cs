@@ -1,4 +1,4 @@
-namespace Allors.Database.Adapters.Sql.SqlClient
+namespace Allors.Database.Adapters.Sql
 {
     public interface IConnection
     {
