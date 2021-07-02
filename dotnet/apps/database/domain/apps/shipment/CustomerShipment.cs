@@ -26,7 +26,7 @@ namespace Allors.Database.Domain
 
                 var picked = new PickListStates(this.Strategy.Transaction).Picked;
 
-                var picklist = this.ShipToParty?.PickListsWhereShipToParty.FirstOrDefault(v => Equals(this.Store, v.Store) && Equals(picked, v.PickListState));
+                var picklist = this.ShipToParty?.PickListsWhereShipToParty.FirstOrDefault(v => Equals(this.Store, v.Store) && !Equals(picked, v.PickListState));
                 if (picklist != null)
                 {
                     return false;
