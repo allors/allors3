@@ -96,6 +96,21 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
         }
 
+        public bool TerminateBackend(string database)
+        {
+            using (var connection = this.CreateConnection())
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = $"SELECT pg_terminate_backend(procpid) FROM pg_stat_activity WHERE datname='${database}';";
+                    var count = (long)command.ExecuteScalar();
+
+                    return count != 0;
+                }
+            }
+        }
+
         public bool ExistProcedure(string procedure)
         {
             using (var connection = this.CreateConnection())

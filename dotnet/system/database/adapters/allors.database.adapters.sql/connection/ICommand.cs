@@ -33,8 +33,6 @@ namespace Allors.Database.Adapters.Sql
 
         void AddCompositeRoleTableParameter(IEnumerable<CompositeRelation> relations);
 
-        void AddAssociationTableParameter(long objectId);
-
         object ExecuteScalar();
 
         void ExecuteNonQuery();

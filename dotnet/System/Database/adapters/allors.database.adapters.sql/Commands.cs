@@ -276,7 +276,7 @@ namespace Allors.Database.Adapters.Sql
                 this.getCompositeRoleByRoleType[roleType] = command;
             }
 
-            command.AddAssociationTableParameter(reference.ObjectId);
+            command.AddAssociationParameter(reference.ObjectId);
 
             var result = command.ExecuteScalar();
             if (result == null || result == DBNull.Value)

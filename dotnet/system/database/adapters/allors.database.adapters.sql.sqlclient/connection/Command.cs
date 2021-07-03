@@ -83,9 +83,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         public void AddCompositeRoleTableParameter(IEnumerable<CompositeRelation> relations) => this.GetOrCreateTableParameter(this.mapping.ParamNameForTableType, this.mapping.TableTypeNameForCompositeRelation).Value = new CompositeRoleDataRecords(this.mapping, relations);
 
         public void AddCompositesRoleTableParameter(IEnumerable<long> objectIds) => this.GetOrCreateTableParameter(this.mapping.ParamNameForTableType, this.mapping.TableTypeNameForObject).Value = new CompositesRoleDataRecords(this.mapping, objectIds);
-
-        public void AddAssociationTableParameter(long objectId) => this.GetOrCreateParameter(this.mapping.ParamNameForAssociation, Mapping.SqlDbTypeForObject).Value = objectId;
-
+        
         public object ExecuteScalar() => this.command.ExecuteScalar();
 
         public void ExecuteNonQuery() => this.command.ExecuteNonQuery();
@@ -106,7 +104,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 _ => throw new ArgumentException("Unknown Unit Tag: " + tag)
             };
 
-        private SqlParameter GetOrCreateParameter(string parameterName, SqlDbType sqlDbType)
+        private SqlParameter GetOrCreateParameter(string parameterName, SqlDbType dbType)
         {
             var parameter = this.command.Parameters.Contains(parameterName) ? this.command.Parameters[parameterName] : null;
             if (parameter != null)
@@ -116,7 +114,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             parameter = this.command.CreateParameter();
             parameter.ParameterName = parameterName;
-            parameter.SqlDbType = sqlDbType;
+            parameter.SqlDbType = dbType;
             this.command.Parameters.Add(parameter);
 
             return parameter;

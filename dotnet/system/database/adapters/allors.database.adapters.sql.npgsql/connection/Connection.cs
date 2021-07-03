@@ -33,7 +33,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 sqlCommand.CommandTimeout = this.Database.CommandTimeout.Value;
             }
 
-            return this.CreateCommand(this.Database.Mapping, sqlCommand);
+            return this.CreateCommand((Mapping)this.Database.Mapping, sqlCommand);
         }
 
         public void Commit()

@@ -69,7 +69,7 @@ namespace Allors.Database.Adapters.Sql
 
         internal IClass Class { get; }
 
-        internal long ObjectId { get; }
+        public long ObjectId { get; }
 
         internal long Version
         {

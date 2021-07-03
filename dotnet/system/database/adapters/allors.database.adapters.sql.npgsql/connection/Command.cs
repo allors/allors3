@@ -15,149 +15,130 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
     public class Command : ICommand
     {
-        internal Command(Mapping mapping, NpgsqlCommand command)
-        {
-            this.Mapping = mapping;
-            this.NpgsqlCommand = command;
-        }
+        private readonly Mapping mapping;
 
-        internal NpgsqlParameterCollection Parameters => this.NpgsqlCommand.Parameters;
+        private readonly NpgsqlCommand command;
+
+        public Command(Mapping mapping, NpgsqlCommand command)
+        {
+            this.mapping = mapping;
+            this.command = command;
+        }
 
         public CommandType CommandType
         {
-            get => this.NpgsqlCommand.CommandType;
-            set => this.NpgsqlCommand.CommandType = value;
+            get => this.command.CommandType;
+            set => this.command.CommandType = value;
         }
 
         public string CommandText
         {
-            get => this.NpgsqlCommand.CommandText;
-            set => this.NpgsqlCommand.CommandText = value;
+            get => this.command.CommandText;
+            set => this.command.CommandText = value;
         }
 
-        public Mapping Mapping { get; }
-
-        public NpgsqlCommand NpgsqlCommand { get; }
-
-        public void Dispose() => this.NpgsqlCommand.Dispose();
-
-        public NpgsqlParameter CreateParameter() => this.NpgsqlCommand.CreateParameter();
-
-        public NpgsqlParameter GetParameter(string name) => this.NpgsqlCommand.Parameters[name];
+        public void Dispose() => this.command.Dispose();
 
         public void AddInParameter(string parameterName, object value)
         {
-            var sqlParameter = this.NpgsqlCommand.Parameters.Contains(parameterName) ? this.NpgsqlCommand.Parameters[parameterName] : null;
+            var sqlParameter = this.command.Parameters.Contains(parameterName) ? this.command.Parameters[parameterName] : null;
             if (sqlParameter == null)
             {
-                sqlParameter = this.NpgsqlCommand.CreateParameter();
+                sqlParameter = this.command.CreateParameter();
                 sqlParameter.ParameterName = parameterName;
                 if (value is DateTime)
                 {
                     sqlParameter.NpgsqlDbType = NpgsqlDbType.Timestamp;
                 }
 
-                this.NpgsqlCommand.Parameters.Add(sqlParameter);
+                this.command.Parameters.Add(sqlParameter);
             }
 
             if (value == null || value == DBNull.Value)
             {
-                this.NpgsqlCommand.Parameters[parameterName].Value = DBNull.Value;
+                this.command.Parameters[parameterName].Value = DBNull.Value;
             }
             else
             {
-                this.NpgsqlCommand.Parameters[parameterName].Value = value;
+                this.command.Parameters[parameterName].Value = value;
             }
         }
 
         public void ObjectParameter(long objectId)
         {
-            var sqlParameter = this.NpgsqlCommand.CreateParameter();
-            sqlParameter.ParameterName = Mapping.ParamNameForObject;
+            var sqlParameter = this.command.CreateParameter();
+            sqlParameter.ParameterName = this.mapping.ParamNameForObject;
             sqlParameter.NpgsqlDbType = Mapping.NpgsqlDbTypeForObject;
             sqlParameter.Value = objectId;
 
-            this.NpgsqlCommand.Parameters.Add(sqlParameter);
+            this.command.Parameters.Add(sqlParameter);
         }
 
         public void AddTypeParameter(IClass @class)
         {
-            var sqlParameter = this.CreateParameter();
-            sqlParameter.ParameterName = Mapping.ParamNameForClass;
+            var sqlParameter = this.command.CreateParameter();
+            sqlParameter.ParameterName = this.mapping.ParamNameForClass;
             sqlParameter.NpgsqlDbType = Mapping.NpgsqlDbTypeForClass;
             sqlParameter.Value = @class.Id;
 
-            this.Parameters.Add(sqlParameter);
+            this.command.Parameters.Add(sqlParameter);
         }
 
         public void AddCountParameter(int count)
         {
-            var sqlParameter = this.CreateParameter();
-            sqlParameter.ParameterName = Mapping.ParamNameForCount;
+            var sqlParameter = this.command.CreateParameter();
+            sqlParameter.ParameterName = this.mapping.ParamNameForCount;
             sqlParameter.NpgsqlDbType = Mapping.NpgsqlDbTypeForCount;
             sqlParameter.Value = count;
 
-            this.Parameters.Add(sqlParameter);
+            this.command.Parameters.Add(sqlParameter);
         }
+
+        public void AddUnitRoleParameter(IRoleType roleType, object unit) => this.GetOrCreateParameter(this.mapping.ParamNameByRoleType[roleType], this.mapping.GetNpgsqlDbType(roleType)).Value = unit ?? DBNull.Value;
 
         public void AddCompositeRoleParameter(long objectId)
         {
-            var sqlParameter = this.CreateParameter();
-            sqlParameter.ParameterName = Mapping.ParamNameForCompositeRole;
+            var sqlParameter = this.command.CreateParameter();
+            sqlParameter.ParameterName = this.mapping.ParamNameForCompositeRole;
             sqlParameter.NpgsqlDbType = Mapping.NpgsqlDbTypeForObject;
             sqlParameter.Value = objectId;
 
-            this.Parameters.Add(sqlParameter);
+            this.command.Parameters.Add(sqlParameter);
         }
 
         public void AddAssociationParameter(long objectId)
         {
-            var sqlParameter = this.CreateParameter();
-            sqlParameter.ParameterName = Mapping.ParamNameForAssociation;
+            var sqlParameter = this.command.CreateParameter();
+            sqlParameter.ParameterName = this.mapping.ParamNameForAssociation;
             sqlParameter.NpgsqlDbType = Mapping.NpgsqlDbTypeForObject;
             sqlParameter.Value = objectId;
 
-            this.Parameters.Add(sqlParameter);
+            this.command.Parameters.Add(sqlParameter);
         }
 
-        public void ObjectTableParameter(IEnumerable<long> objectIds)
-        {
-            var objectParameter = this.GetOrCreateTableParameter(this.Mapping.ObjectArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject);
-            objectParameter.Value = objectIds;
-        }
+        public void ObjectTableParameter(IEnumerable<long> objectIds) => this.GetOrCreateTableParameter(this.mapping.ObjectArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject).Value = objectIds;
 
-        public void UnitTableParameter(IRoleType roleType, ICollection<UnitRelation> relations)
+        public void UnitTableParameter(IRoleType roleType, IEnumerable<UnitRelation> relations)
         {
-            var objectParameter = this.GetOrCreateTableParameter(this.Mapping.ObjectArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject);
-            var roleParameter = this.GetOrCreateTableParameter(this.Mapping.StringRoleArrayParam.InvocationName, this.Mapping.GetNpgsqlDbType(roleType));
+            var objectParameter = this.GetOrCreateTableParameter(this.mapping.ObjectArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject);
+            var roleParameter = this.GetOrCreateTableParameter(this.mapping.StringRoleArrayParam.InvocationName, this.mapping.GetNpgsqlDbType(roleType));
 
             objectParameter.Value = relations.Select(v => v.Association).ToArray();
             roleParameter.Value = relations.Select(v => v.Role).ToArray();
         }
 
-        public void AddCompositeRoleTableParameter(ICollection<CompositeRelation> relations)
+        public void AddCompositeRoleTableParameter(IEnumerable<CompositeRelation> relations)
         {
-            var objectParameter = this.GetParameter(this.Mapping.ObjectArrayParam.InvocationName);
-            var roleParameter = this.GetParameter(this.Mapping.StringRoleArrayParam.InvocationName); // TODO: should be a shared name
+            var objectParameter = this.GetOrCreateTableParameter(this.mapping.ObjectArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject);
+            var roleParameter = this.GetOrCreateTableParameter(this.mapping.StringRoleArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject);
 
             objectParameter.Value = relations.Select(v => v.Association).ToArray();
             roleParameter.Value = relations.Select(v => v.Role).ToArray();
         }
 
-        public void SetCompositeRoleArrayParameter(ICollection<CompositeRelation> relations)
-        {
-            var objectParameter = this.GetParameter(this.Mapping.ObjectArrayParam.InvocationName);
-            var roleParameter = this.GetParameter(this.Mapping.StringRoleArrayParam.InvocationName); // TODO: should be a shared name
+        public object ExecuteScalar() => this.command.ExecuteScalar();
 
-            objectParameter.Value = relations.Select(v => v.Association).ToArray();
-            roleParameter.Value = relations.Select(v => v.Role).ToArray();
-        }
-
-        public object ExecuteScalar() => this.NpgsqlCommand.ExecuteScalar();
-
-        public void ExecuteNonQuery() => this.NpgsqlCommand.ExecuteNonQuery();
-
-        public IReader ExecuteReader() => new Reader(this.NpgsqlCommand.ExecuteReader());
+        public void ExecuteNonQuery() => this.command.ExecuteNonQuery();
 
         public object GetValue(IReader reader, int tag, int i) =>
             tag switch
@@ -170,22 +151,44 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 UnitTags.DateTime => reader.GetDateTime(i),
                 UnitTags.Unique => reader.GetGuid(i),
                 UnitTags.Binary => reader.GetValue(i),
-                _ => throw new ArgumentException("Unknown Unit Tag: " + tag)
+                _ => throw new ArgumentException("Unknown Unit Tag: " + tag),
             };
 
-        private NpgsqlParameter GetOrCreateTableParameter(string parameterName, NpgsqlDbType type)
+        public IReader ExecuteReader() => new Reader(this.command.ExecuteReader());
+
+        private NpgsqlParameter GetOrCreateParameter(string parameterName, NpgsqlDbType dbType)
         {
-            var objectParameter = this.GetParameter(parameterName);
-            if (objectParameter != null)
+            var parameter = this.command.Parameters.Contains(parameterName) ? this.command.Parameters[parameterName] : null;
+            if (parameter != null)
             {
-                return objectParameter;
+                return parameter;
             }
 
-            objectParameter = this.CreateParameter();
-            objectParameter.NpgsqlDbType = NpgsqlDbType.Array | type;
-            objectParameter.ParameterName = parameterName;
-            this.Parameters.Add(objectParameter);
-            return objectParameter;
+            parameter = this.command.CreateParameter();
+            parameter.ParameterName = parameterName;
+            parameter.NpgsqlDbType = dbType;
+            this.command.Parameters.Add(parameter);
+
+            return parameter;
         }
+
+        private NpgsqlParameter GetOrCreateTableParameter(string parameterName, NpgsqlDbType sqlDbType)
+        {
+            var parameter = this.command.Parameters.Contains(parameterName) ? this.command.Parameters[parameterName] : null;
+            if (parameter != null)
+            {
+                return parameter;
+            }
+
+            parameter = this.command.CreateParameter();
+            parameter.ParameterName = parameterName;
+            parameter.NpgsqlDbType = NpgsqlDbType.Array | sqlDbType;
+            this.command.Parameters.Add(parameter);
+
+            return parameter;
+        }
+
+        // TODO: Review
+        public void AddCompositesRoleTableParameter(IEnumerable<long> objectIds) => this.ObjectTableParameter(objectIds);
     }
 }

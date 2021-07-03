@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the IRelationTypeOneXmlWriter type.</summary>
 
-namespace Allors.Database.Adapters.Sql.Npgsql
+namespace Allors.Database.Adapters.Sql
 {
     using System;
     using System.Xml;

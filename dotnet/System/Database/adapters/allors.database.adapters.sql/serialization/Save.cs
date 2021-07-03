@@ -3,26 +3,25 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Adapters.Sql.Npgsql
+namespace Allors.Database.Adapters.Sql
 {
     using System.Collections.Generic;
-    using System.Data;
     using System.Xml;
     using Adapters;
     using Meta;
 
-    internal class Save
+    public class Save
     {
         private readonly Database database;
         private readonly XmlWriter writer;
 
-        internal Save(Database database, XmlWriter writer)
+        public Save(Database database, XmlWriter writer)
         {
             this.database = database;
             this.writer = writer;
         }
 
-        internal virtual void Execute(ManagementTransaction transaction)
+        public virtual void Execute(ManagementTransaction transaction)
         {
             var writeDocument = false;
             if (this.writer.WriteState == WriteState.Start)
@@ -58,6 +57,8 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         protected void SaveObjects(ManagementTransaction transaction)
         {
+            var mapping = this.database.Mapping;
+
             var concreteCompositeType = new List<IClass>(this.database.MetaPopulation.DatabaseClasses);
             concreteCompositeType.Sort();
             foreach (var type in concreteCompositeType)
@@ -66,20 +67,19 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
                 var sql = "SELECT " + Mapping.ColumnNameForObject + ", " + Mapping.ColumnNameForVersion + "\n";
                 sql += "FROM " + this.database.Mapping.TableNameForObjects + "\n";
-                sql += "WHERE " + Mapping.ColumnNameForClass + "=" + Mapping.ParamInvocationNameForClass + "\n";
+                sql += "WHERE " + Mapping.ColumnNameForClass + "=" + mapping.ParamNameForClass + "\n";
                 sql += "ORDER BY " + Mapping.ColumnNameForObject;
 
                 using (var command = transaction.Connection.CreateCommand())
                 {
                     command.CommandText = sql;
-                    command.CommandType = CommandType.Text;
-                    command.AddInParameter(Mapping.ParamNameForClass, type.Id);
+                    command.AddInParameter(mapping.ParamNameForClass, type.Id);
 
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            if (atLeastOne == false)
+                            if (!atLeastOne)
                             {
                                 atLeastOne = true;
 
@@ -108,7 +108,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         protected void SaveRelations(ManagementTransaction transaction)
         {
-            var exclusiverRootClassesByObjectType = new Dictionary<IObjectType, HashSet<IObjectType>>();
+            var exclusiveRootClassesByObjectType = new Dictionary<IObjectType, HashSet<IObjectType>>();
 
             var relations = new List<IRelationType>(this.database.MetaPopulation.DatabaseRelationTypes);
             relations.Sort();
@@ -124,7 +124,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     var sql = string.Empty;
                     if (roleType.ObjectType.IsUnit)
                     {
-                        if (!exclusiverRootClassesByObjectType.TryGetValue(associationType.ObjectType, out var exclusiveRootClasses))
+                        if (!exclusiveRootClassesByObjectType.TryGetValue(associationType.ObjectType, out var exclusiveRootClasses))
                         {
                             exclusiveRootClasses = new HashSet<IObjectType>();
                             foreach (var concreteClass in associationType.ObjectType.DatabaseClasses)
@@ -132,7 +132,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                                 exclusiveRootClasses.Add(concreteClass.ExclusiveDatabaseClass);
                             }
 
-                            exclusiverRootClassesByObjectType[associationType.ObjectType] = exclusiveRootClasses;
+                            exclusiveRootClassesByObjectType[associationType.ObjectType] = exclusiveRootClasses;
                         }
 
                         var first = true;
@@ -154,39 +154,35 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
                         sql += "ORDER BY " + Mapping.ColumnNameForAssociation;
                     }
+                    else if ((roleType.IsMany && associationType.IsMany) || !relation.ExistExclusiveDatabaseClasses)
+                    {
+                        sql += "SELECT " + Mapping.ColumnNameForAssociation + "," + Mapping.ColumnNameForRole + "\n";
+                        sql += "FROM " + this.database.Mapping.TableNameForRelationByRelationType[relation] + "\n";
+                        sql += "ORDER BY " + Mapping.ColumnNameForAssociation + "," + Mapping.ColumnNameForRole;
+                    }
                     else
                     {
-                        if (roleType.IsMany && associationType.IsMany || !relation.ExistExclusiveDatabaseClasses)
+                        // use foreign keys
+                        if (roleType.IsOne)
                         {
-                            sql += "SELECT " + Mapping.ColumnNameForAssociation + "," + Mapping.ColumnNameForRole + "\n";
-                            sql += "FROM " + this.database.Mapping.TableNameForRelationByRelationType[relation] + "\n";
-                            sql += "ORDER BY " + Mapping.ColumnNameForAssociation + "," + Mapping.ColumnNameForRole;
+                            sql += "SELECT " + Mapping.ColumnNameForObject + " As " + Mapping.ColumnNameForAssociation + ", " + this.database.Mapping.ColumnNameByRelationType[roleType.RelationType] + " As " + Mapping.ColumnNameForRole + "\n";
+                            sql += "FROM " + this.database.Mapping.TableNameForObjectByClass[associationType.ObjectType.ExclusiveDatabaseClass] + "\n";
+                            sql += "WHERE " + this.database.Mapping.ColumnNameByRelationType[roleType.RelationType] + " IS NOT NULL\n";
+                            sql += "ORDER BY " + Mapping.ColumnNameForAssociation;
                         }
                         else
                         {
-                            // use foreign keys
-                            if (roleType.IsOne)
-                            {
-                                sql += "SELECT " + Mapping.ColumnNameForObject + " As " + Mapping.ColumnNameForAssociation + ", " + this.database.Mapping.ColumnNameByRelationType[roleType.RelationType] + " As " + Mapping.ColumnNameForRole + "\n";
-                                sql += "FROM " + this.database.Mapping.TableNameForObjectByClass[associationType.ObjectType.ExclusiveDatabaseClass] + "\n";
-                                sql += "WHERE " + this.database.Mapping.ColumnNameByRelationType[roleType.RelationType] + " IS NOT NULL\n";
-                                sql += "ORDER BY " + Mapping.ColumnNameForAssociation;
-                            }
-                            else
-                            {
-                                // role.Many
-                                sql += "SELECT " + this.database.Mapping.ColumnNameByRelationType[associationType.RelationType] + " As " + Mapping.ColumnNameForAssociation + ", " + Mapping.ColumnNameForObject + " As " + Mapping.ColumnNameForRole + "\n";
-                                sql += "FROM " + this.database.Mapping.TableNameForObjectByClass[((IComposite)roleType.ObjectType).ExclusiveDatabaseClass] + "\n";
-                                sql += "WHERE " + this.database.Mapping.ColumnNameByRelationType[associationType.RelationType] + " IS NOT NULL\n";
-                                sql += "ORDER BY " + Mapping.ColumnNameForAssociation + "," + Mapping.ColumnNameForRole;
-                            }
+                            // role.Many
+                            sql += "SELECT " + this.database.Mapping.ColumnNameByRelationType[associationType.RelationType] + " As " + Mapping.ColumnNameForAssociation + ", " + Mapping.ColumnNameForObject + " As " + Mapping.ColumnNameForRole + "\n";
+                            sql += "FROM " + this.database.Mapping.TableNameForObjectByClass[((IComposite)roleType.ObjectType).ExclusiveDatabaseClass] + "\n";
+                            sql += "WHERE " + this.database.Mapping.ColumnNameByRelationType[associationType.RelationType] + " IS NOT NULL\n";
+                            sql += "ORDER BY " + Mapping.ColumnNameForAssociation + "," + Mapping.ColumnNameForRole;
                         }
                     }
 
                     using (var command = transaction.Connection.CreateCommand())
                     {
                         command.CommandText = sql;
-                        command.CommandType = CommandType.Text;
                         using (var reader = command.ExecuteReader())
                         {
                             if (roleType.IsMany)
@@ -199,8 +195,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                                         var r = long.Parse(reader[1].ToString());
                                         relationTypeManyXmlWriter.Write(a, r);
                                     }
-
-                                    relationTypeManyXmlWriter.Close();
                                 }
                             }
                             else
@@ -224,8 +218,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                                             relationTypeOneXmlWriter.Write(a, XmlConvert.ToString(long.Parse(r.ToString())));
                                         }
                                     }
-
-                                    relationTypeOneXmlWriter.Close();
                                 }
                             }
                         }

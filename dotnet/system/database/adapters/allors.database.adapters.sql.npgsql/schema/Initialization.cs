@@ -20,12 +20,14 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         internal Initialization(Database database)
         {
             this.database = database;
-            this.mapping = database.Mapping;
+            this.mapping = (Mapping)database.Mapping;
         }
 
         internal void Execute()
         {
             this.validation = new Validation(this.database);
+
+            this.TerminateBackend();
 
             if (this.validation.IsValid)
             {
@@ -94,6 +96,26 @@ CREATE SCHEMA " + this.database.SchemaName;
             }
         }
 
+        private void TerminateBackend()
+        {
+            using (var connection = new NpgsqlConnection(this.database.ConnectionString))
+            {
+                connection.Open();
+                try
+                {
+                    using (var command = new NpgsqlCommand($"SELECT pg_terminate_backend(procpid) FROM pg_stat_activity WHERE datname='${this.database.SchemaName}';", connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+
+        }
+
         private void TruncateTables()
         {
             using (var connection = new NpgsqlConnection(this.database.ConnectionString))
@@ -115,7 +137,7 @@ CREATE SCHEMA " + this.database.SchemaName;
                         var associationType = relationType.AssociationType;
                         var roleType = relationType.RoleType;
 
-                        if (!roleType.ObjectType.IsUnit && (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
+                        if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                         {
                             var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
                             this.TruncateTable(connection, tableName);
@@ -150,7 +172,7 @@ CREATE SCHEMA " + this.database.SchemaName;
                         var associationType = relationType.AssociationType;
                         var roleType = relationType.RoleType;
 
-                        if (!roleType.ObjectType.IsUnit && (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
+                        if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                         {
                             var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
                             this.DropTable(connection, tableName);
@@ -236,7 +258,7 @@ CREATE SCHEMA " + this.database.SchemaName;
                         var associationType = relationType.AssociationType;
                         var roleType = relationType.RoleType;
 
-                        if (!roleType.ObjectType.IsUnit && (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
+                        if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                         {
                             var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
 
@@ -362,7 +384,7 @@ $@"CREATE TABLE {tableName}(
                         {
                             var associationType = relationType.AssociationType;
                             var roleType = relationType.RoleType;
-                            if (!roleType.ObjectType.IsUnit && (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
+                            if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                             {
                                 var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
                                 var indexName = "idx_" + relationType.RoleType.SingularFullName.ToLowerInvariant() + "_" + Mapping.ColumnNameForRole.ToLowerInvariant();

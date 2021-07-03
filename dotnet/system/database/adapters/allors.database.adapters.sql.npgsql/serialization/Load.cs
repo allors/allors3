@@ -312,7 +312,7 @@ where c = '{@class.Id}'";
                 }
             }
 
-            var con = this.database.ConnectionFactory.Create(this.database);
+            var con = this.database.ConnectionFactory.Create();
             try
             {
                 foreach (var kvp in unitRelationsByClass)
@@ -324,7 +324,7 @@ where c = '{@class.Id}'";
                     var command = con.CreateCommand();
                     command.CommandText = sql;
                     command.CommandType = CommandType.StoredProcedure;
-                    command.AddUnitRoleArrayParameter(relationType.RoleType, unitRelations);
+                    command.UnitTableParameter(relationType.RoleType, unitRelations);
                     command.ExecuteNonQuery();
                 }
 
@@ -338,7 +338,7 @@ where c = '{@class.Id}'";
 
         private void LoadCompositeRelations(XmlReader reader, IRelationType relationType)
         {
-            var con = this.database.ConnectionFactory.Create(this.database);
+            var con = this.database.ConnectionFactory.Create();
             try
             {
                 var relations = new CompositeRelations(
@@ -356,7 +356,7 @@ where c = '{@class.Id}'";
                 var command = con.CreateCommand();
                 command.CommandText = sql;
                 command.CommandType = CommandType.StoredProcedure;
-                command.AddCompositeRoleArrayParameter(relations.ToArray());
+                command.AddCompositeRoleTableParameter(relations.ToArray());
                 command.ExecuteNonQuery();
 
                 con.Commit();
@@ -371,20 +371,17 @@ where c = '{@class.Id}'";
         {
             while (reader.Read())
             {
-                if (reader.IsStartElement())
+                if (reader.IsStartElement() && reader.Name.Equals(Serialization.Relation))
                 {
-                    if (reader.Name.Equals(Serialization.Relation))
+                    var a = reader.GetAttribute(Serialization.Association);
+                    var value = string.Empty;
+
+                    if (!reader.IsEmptyElement)
                     {
-                        var a = reader.GetAttribute(Serialization.Association);
-                        var value = string.Empty;
-
-                        if (!reader.IsEmptyElement)
-                        {
-                            value = reader.ReadElementContentAsString();
-                        }
-
-                        this.OnRelationNotLoaded(relationTypeId, long.Parse(a), value);
+                        value = reader.ReadElementContentAsString();
                     }
+
+                    this.OnRelationNotLoaded(relationTypeId, long.Parse(a), value);
                 }
             }
         }
@@ -393,28 +390,25 @@ where c = '{@class.Id}'";
         {
             while (reader.Read())
             {
-                if (reader.IsStartElement())
+                if (reader.IsStartElement() && reader.Name.Equals(Serialization.Relation))
                 {
-                    if (reader.Name.Equals(Serialization.Relation))
+                    var associationIdString = reader.GetAttribute(Serialization.Association);
+                    var associationId = long.Parse(associationIdString);
+                    if (string.IsNullOrEmpty(associationIdString))
                     {
-                        var associationIdString = reader.GetAttribute(Serialization.Association);
-                        var associationId = long.Parse(associationIdString);
-                        if (string.IsNullOrEmpty(associationIdString))
-                        {
-                            throw new Exception("Association id is missing");
-                        }
+                        throw new Exception("Association id is missing");
+                    }
 
-                        if (reader.IsEmptyElement)
+                    if (reader.IsEmptyElement)
+                    {
+                        this.OnRelationNotLoaded(relationTypeId, associationId, null);
+                    }
+                    else
+                    {
+                        var value = reader.ReadElementContentAsString();
+                        foreach (var r in value.Split(Serialization.ObjectsSplitterCharArray))
                         {
-                            this.OnRelationNotLoaded(relationTypeId, associationId, null);
-                        }
-                        else
-                        {
-                            var value = reader.ReadElementContentAsString();
-                            foreach (var r in value.Split(Serialization.ObjectsSplitterCharArray))
-                            {
-                                this.OnRelationNotLoaded(relationTypeId, associationId, r);
-                            }
+                            this.OnRelationNotLoaded(relationTypeId, associationId, r);
                         }
                     }
                 }

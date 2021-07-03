@@ -11,16 +11,10 @@ namespace Allors.Database.Adapters.Sql.Npgsql
     using Meta;
     using NpgsqlTypes;
 
-    public class Mapping
+    public class Mapping : Sql.Mapping
     {
-        public const string ParamFormat = "p_{0}";
-        public const string ParamInvocationFormat = ":p_{0}";
-
-        public const string ColumnNameForObject = "o";
-        public const string ColumnNameForClass = "c";
-        public const string ColumnNameForVersion = "v";
-        public const string ColumnNameForAssociation = "a";
-        public const string ColumnNameForRole = "r";
+        public override string ParamFormat => "p_{0}";
+        public string ParamInvocationFormat => ":p_{0}";
 
         public const string SqlTypeForClass = "uuid";
         public const string SqlTypeForObject = "bigint";
@@ -46,49 +40,51 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public MappingArrayParameter UniqueRoleArrayParam { get; }
         public MappingArrayParameter BinaryRoleArrayParam { get; }
 
-        public Dictionary<IRoleType, string> ParamNameByRoleType { get; }
+        public override IDictionary<IRoleType, string> ParamNameByRoleType { get; }
         public Dictionary<IRoleType, string> ParamInvocationNameByRoleType { get; }
 
-        internal static readonly string ParamNameForObject = string.Format(ParamFormat, ColumnNameForObject);
-        internal static readonly string ParamNameForClass = string.Format(ParamFormat, ColumnNameForClass);
-        internal static readonly string ParamNameForVersion = string.Format(ParamFormat, ColumnNameForVersion);
-        internal static readonly string ParamNameForAssociation = string.Format(ParamFormat, ColumnNameForAssociation);
-        internal static readonly string ParamNameForCompositeRole = string.Format(ParamFormat, ColumnNameForRole);
-        internal static readonly string ParamNameForCount = string.Format(ParamFormat, "count");
+        public override string ParamNameForObject => string.Format(ParamFormat, ColumnNameForObject);
+        public override string ParamNameForClass => string.Format(ParamFormat, ColumnNameForClass);
 
-        internal static readonly string ParamInvocationNameForObject = string.Format(ParamInvocationFormat, ColumnNameForObject);
-        internal static readonly string ParamInvocationNameForClass = string.Format(ParamInvocationFormat, ColumnNameForClass);
-        internal static readonly string ParamInvocationNameForVersion = string.Format(ParamInvocationFormat, ColumnNameForVersion);
-        internal static readonly string ParamInvocationNameForAssociation = string.Format(ParamInvocationFormat, ColumnNameForAssociation);
-        internal static readonly string ParamInvocationNameForCompositeRole = string.Format(ParamInvocationFormat, ColumnNameForRole);
-        internal static readonly string ParamInvocationNameForCount = string.Format(ParamInvocationFormat, "count");
+        internal string ParamNameForVersion => string.Format(ParamFormat, ColumnNameForVersion);
+        internal string ParamNameForAssociation => string.Format(ParamFormat, ColumnNameForAssociation);
+        internal string ParamNameForCompositeRole => string.Format(ParamFormat, ColumnNameForRole);
+        internal string ParamNameForCount => string.Format(ParamFormat, "count");
 
-        internal string TableNameForObjects { get; }
+        internal string ParamInvocationNameForObject => string.Format(ParamInvocationFormat, ColumnNameForObject);
+        internal string ParamInvocationNameForClass => string.Format(ParamInvocationFormat, ColumnNameForClass);
+        internal string ParamInvocationNameForVersion => string.Format(ParamInvocationFormat, ColumnNameForVersion);
+        internal string ParamInvocationNameForAssociation => string.Format(ParamInvocationFormat, ColumnNameForAssociation);
+        internal string ParamInvocationNameForCompositeRole => string.Format(ParamInvocationFormat, ColumnNameForRole);
+        internal string ParamInvocationNameForCount => string.Format(ParamInvocationFormat, "count");
 
-        internal Dictionary<IClass, string> TableNameForObjectByClass { get; }
-        internal Dictionary<IRelationType, string> ColumnNameByRelationType { get; }
+        public override string TableNameForObjects { get; }
+
+        public override IDictionary<IClass, string> TableNameForObjectByClass { get; }
+        public override IDictionary<IRelationType, string> ColumnNameByRelationType { get; }
         internal Dictionary<IRelationType, string> UnescapedColumnNameByRelationType { get; }
-        internal Dictionary<IRelationType, string> TableNameForRelationByRelationType { get; }
+        public override IDictionary<IRelationType, string> TableNameForRelationByRelationType { get; }
 
         internal Dictionary<IClass, string> ProcedureNameForLoadObjectByClass { get; }
-        internal Dictionary<IClass, string> ProcedureNameForCreateObjectByClass { get; }
-        internal Dictionary<IClass, string> ProcedureNameForCreateObjectsByClass { get; }
-        internal Dictionary<IClass, string> ProcedureNameForDeleteObjectByClass { get; }
-        internal Dictionary<IClass, string> ProcedureNameForGetUnitRolesByClass { get; }
-        internal Dictionary<IClass, string> ProcedureNameForPrefetchUnitRolesByClass { get; }
-        internal Dictionary<IClass, Dictionary<IRelationType, string>> ProcedureNameForSetUnitRoleByRelationTypeByClass { get; }
-        internal Dictionary<IRelationType, string> ProcedureNameForGetRoleByRelationType { get; }
-        internal Dictionary<IRelationType, string> ProcedureNameForPrefetchRoleByRelationType { get; }
-        internal Dictionary<IRelationType, string> ProcedureNameForSetRoleByRelationType { get; }
-        internal Dictionary<IRelationType, string> ProcedureNameForAddRoleByRelationType { get; }
-        internal Dictionary<IRelationType, string> ProcedureNameForRemoveRoleByRelationType { get; }
-        internal Dictionary<IRelationType, string> ProcedureNameForClearRoleByRelationType { get; }
-        internal Dictionary<IRelationType, string> ProcedureNameForGetAssociationByRelationType { get; }
-        internal Dictionary<IRelationType, string> ProcedureNameForPrefetchAssociationByRelationType { get; }
+        public override IDictionary<IClass, string> ProcedureNameForCreateObjectByClass { get; }
+        public override IDictionary<IClass, string> ProcedureNameForCreateObjectsByClass { get; }
+        public override IDictionary<IClass, string> ProcedureNameForDeleteObjectByClass { get; }
+        public override IDictionary<IClass, string> ProcedureNameForGetUnitRolesByClass { get; }
+        public override IDictionary<IClass, string> ProcedureNameForPrefetchUnitRolesByClass { get; }
+        public override IDictionary<IClass, IDictionary<IRelationType, string>> ProcedureNameForSetUnitRoleByRelationTypeByClass { get; }
+        public override IDictionary<IRelationType, string> ProcedureNameForGetRoleByRelationType { get; }
+        public override IDictionary<IRelationType, string> ProcedureNameForPrefetchRoleByRelationType { get; }
+        public override IDictionary<IRelationType, string> ProcedureNameForSetRoleByRelationType { get; }
+        public override IDictionary<IRelationType, string> ProcedureNameForAddRoleByRelationType { get; }
+        public override IDictionary<IRelationType, string> ProcedureNameForRemoveRoleByRelationType { get; }
+        public override IDictionary<IRelationType, string> ProcedureNameForClearRoleByRelationType { get; }
+        public override IDictionary<IRelationType, string> ProcedureNameForGetAssociationByRelationType { get; }
+        public override IDictionary<IRelationType, string> ProcedureNameForPrefetchAssociationByRelationType { get; }
 
-        internal string ProcedureNameForInstantiate { get; private set; }
-        internal string ProcedureNameForGetVersion { get; private set; }
-        internal string ProcedureNameForUpdateVersion { get; private set; }
+        public override string ProcedureNameForInstantiate => this.Database.SchemaName + "." + ProcedurePrefixForInstantiate;
+
+        public override string ProcedureNameForGetVersion => this.Database.SchemaName + "." + ProcedurePrefixForGetVersion;
+        public override string ProcedureNameForUpdateVersion => this.Database.SchemaName + "." + ProcedurePrefixForUpdateVersion;
 
         private const string ProcedurePrefixForInstantiate = "i";
 
@@ -197,7 +193,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 var associationType = relationType.AssociationType;
                 var roleType = relationType.RoleType;
 
-                if (!roleType.ObjectType.IsUnit && (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
+                if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                 {
                     this.TableNameForRelationByRelationType.Add(relationType, this.Database.SchemaName + "." + this.NormalizeName(relationType.RoleType.SingularFullName));
                 }
@@ -214,7 +210,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
             this.ProcedureNameForGetUnitRolesByClass = new Dictionary<IClass, string>();
             this.ProcedureNameForPrefetchUnitRolesByClass = new Dictionary<IClass, string>();
-            this.ProcedureNameForSetUnitRoleByRelationTypeByClass = new Dictionary<IClass, Dictionary<IRelationType, string>>();
+            this.ProcedureNameForSetUnitRoleByRelationTypeByClass = new Dictionary<IClass, IDictionary<IRelationType, string>>();
 
             this.ProcedureNameForGetRoleByRelationType = new Dictionary<IRelationType, string>();
             this.ProcedureNameForPrefetchRoleByRelationType = new Dictionary<IRelationType, string>();
@@ -294,7 +290,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
             foreach (var relationType in this.Database.MetaPopulation.DatabaseRelationTypes)
             {
-                if (!relationType.RoleType.ObjectType.IsUnit && (relationType.AssociationType.IsMany && relationType.RoleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
+                if (!relationType.RoleType.ObjectType.IsUnit && ((relationType.AssociationType.IsMany && relationType.RoleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                 {
                     this.ProcedureNameForPrefetchAssociationByRelationType.Add(relationType, this.Database.SchemaName + "." + ProcedurePrefixForPrefetchAssociation + relationType.RoleType.SingularFullName.ToLowerInvariant());
                     this.ProcedureNameForClearRoleByRelationType.Add(relationType, this.Database.SchemaName + "." + ProcedurePrefixForClearRole + relationType.RoleType.SingularFullName.ToLowerInvariant());
@@ -457,7 +453,7 @@ DECLARE {ParamNameForObject} {SqlTypeForObject};
 BEGIN
 
     INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
-    VALUES ({ParamNameForClass}, {(long) Allors.Version.Initial})
+    VALUES ({ParamNameForClass}, {(long)Allors.Version.Initial})
     RETURNING {ColumnNameForObject} INTO {ParamNameForObject};
 
     INSERT INTO {table} ({ColumnNameForObject},{ColumnNameForClass})
@@ -488,7 +484,7 @@ BEGIN
     WHILE COUNTER < {ParamNameForCount} LOOP
 
         INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
-        VALUES ({ParamNameForClass}, {(long) Allors.Version.Initial} )
+        VALUES ({ParamNameForClass}, {(long)Allors.Version.Initial} )
         RETURNING {ColumnNameForObject} INTO ID;
 
         INSERT INTO {this.TableNameForObjectByClass[@class.ExclusiveDatabaseClass]} ({ColumnNameForObject},{ColumnNameForClass})
@@ -1389,8 +1385,6 @@ $$;";
 
         private void UpdateVersionIds()
         {
-            this.ProcedureNameForUpdateVersion = this.Database.SchemaName + "." + ProcedurePrefixForUpdateVersion;
-
             // Update Version Ids
             var definition = $@"
 DROP FUNCTION IF EXISTS {this.ProcedureNameForUpdateVersion}({this.ObjectArrayParam.TypeName});
@@ -1408,8 +1402,6 @@ $$;";
 
         private void GetVersionIds()
         {
-            this.ProcedureNameForGetVersion = this.Database.SchemaName + "." + ProcedurePrefixForGetVersion;
-
             var objects = this.ObjectArrayParam;
             var objectsType = objects.TypeName;
 
@@ -1435,7 +1427,6 @@ $$;";
 
         private void Instantiate()
         {
-            this.ProcedureNameForInstantiate = this.Database.SchemaName + "." + ProcedurePrefixForInstantiate;
             var objects = this.ObjectArrayParam;
             var objectsType = objects.TypeName;
 

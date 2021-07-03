@@ -7,6 +7,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 {
     using System.Collections.Generic;
     using System.Text;
+    using static Mapping;
 
     public class Validation
     {
@@ -24,7 +25,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public Validation(Database database)
         {
             this.Database = database;
-            this.mapping = database.Mapping;
+            this.mapping = (Mapping)database.Mapping;
             this.Schema = new Schema(database);
 
             this.MissingTableNames = new HashSet<string>();
@@ -132,9 +133,9 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     this.InvalidTables.Add(objectsTable);
                 }
 
-                this.ValidateColumn(objectsTable, Mapping.ColumnNameForObject, Mapping.SqlTypeForObject);
-                this.ValidateColumn(objectsTable, Mapping.ColumnNameForClass, Mapping.SqlTypeForClass);
-                this.ValidateColumn(objectsTable, Mapping.ColumnNameForVersion, Mapping.SqlTypeForVersion);
+                this.ValidateColumn(objectsTable, Sql.Mapping.ColumnNameForObject, SqlTypeForObject);
+                this.ValidateColumn(objectsTable, Sql.Mapping.ColumnNameForClass, SqlTypeForClass);
+                this.ValidateColumn(objectsTable, Sql.Mapping.ColumnNameForVersion, SqlTypeForVersion);
             }
 
             // Object Tables
@@ -149,8 +150,8 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 }
                 else
                 {
-                    this.ValidateColumn(table, Mapping.ColumnNameForObject, Mapping.SqlTypeForObject);
-                    this.ValidateColumn(table, Mapping.ColumnNameForClass, Mapping.SqlTypeForClass);
+                    this.ValidateColumn(table, Sql.Mapping.ColumnNameForObject, SqlTypeForObject);
+                    this.ValidateColumn(table, Sql.Mapping.ColumnNameForClass, SqlTypeForClass);
 
                     foreach (var associationType in @class.DatabaseAssociationTypes)
                     {
@@ -162,7 +163,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                             this.ValidateColumn(
                                 table,
                                 this.Database.Mapping.ColumnNameByRelationType[relationType],
-                                Mapping.SqlTypeForObject);
+                                SqlTypeForObject);
                         }
                     }
 
@@ -175,18 +176,14 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                             this.ValidateColumn(
                                 table,
                                 this.Database.Mapping.ColumnNameByRelationType[relationType],
-                                this.Database.Mapping.GetSqlType(relationType.RoleType));
+                                this.mapping.GetSqlType(relationType.RoleType));
                         }
-                        else
+                        else if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                         {
-                            if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses
-                                && !roleType.IsMany)
-                            {
-                                this.ValidateColumn(
-                                    table,
-                                    this.Database.Mapping.ColumnNameByRelationType[relationType],
-                                    Mapping.SqlTypeForObject);
-                            }
+                            this.ValidateColumn(
+                                table,
+                                this.Database.Mapping.ColumnNameByRelationType[relationType],
+                                SqlTypeForObject);
                         }
                     }
                 }
@@ -199,7 +196,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 var roleType = relationType.RoleType;
 
                 if (!roleType.ObjectType.IsUnit &&
-                    (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
+                    ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                 {
                     var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
                     var table = this.Schema.GetTable(tableName);
@@ -215,10 +212,10 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                             this.InvalidTables.Add(table);
                         }
 
-                        this.ValidateColumn(table, Mapping.ColumnNameForAssociation, Mapping.SqlTypeForObject);
+                        this.ValidateColumn(table, Sql.Mapping.ColumnNameForAssociation, SqlTypeForObject);
 
-                        var roleSqlType = relationType.RoleType.ObjectType.IsComposite ? Mapping.SqlTypeForObject : this.mapping.GetSqlType(relationType.RoleType);
-                        this.ValidateColumn(table, Mapping.ColumnNameForRole, roleSqlType);
+                        var roleSqlType = relationType.RoleType.ObjectType.IsComposite ? SqlTypeForObject : this.mapping.GetSqlType(relationType.RoleType);
+                        this.ValidateColumn(table, Sql.Mapping.ColumnNameForRole, roleSqlType);
                     }
                 }
             }
@@ -235,12 +232,9 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 {
                     this.MissingProcedureNames.Add(procedureName);
                 }
-                else
+                else if (!procedure.IsDefinitionCompatible(procedureDefinition))
                 {
-                    if (!procedure.IsDefinitionCompatible(procedureDefinition))
-                    {
-                        this.InvalidProcedures.Add(procedure);
-                    }
+                    this.InvalidProcedures.Add(procedure);
                 }
             }
 
@@ -252,7 +246,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             var normalizedColumnName = this.mapping.NormalizeName(columnName);
             var objectColumn = table.GetColumn(normalizedColumnName);
 
-            if (objectColumn == null || !objectColumn.SqlType.Equals(sqlType))
+            if (objectColumn?.SqlType.Equals(sqlType) != true)
             {
                 this.InvalidTables.Add(table);
             }
@@ -262,7 +256,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         {
             var objectColumn = tableType.GetColumn(columnName);
 
-            if (objectColumn == null || !objectColumn.SqlType.Equals(sqlType))
+            if (objectColumn?.SqlType.Equals(sqlType) != true)
             {
                 this.InvalidTableTypes.Add(tableType);
             }

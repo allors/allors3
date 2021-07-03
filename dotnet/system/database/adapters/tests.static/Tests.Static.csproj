@@ -2,14 +2,6 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants></DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="static\sql\npgsql\**" />
-    <EmbeddedResource Remove="static\sql\npgsql\**" />
-    <None Remove="static\sql\npgsql\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
@@ -24,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Allors.Database\Allors.Database.csproj" />
     <ProjectReference Include="..\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj" />
+    <ProjectReference Include="..\allors.database.adapters.sql.npgsql\Allors.Database.Adapters.Sql.Npgsql.csproj" />
     <ProjectReference Include="..\allors.database.adapters.sql.sqlclient\Allors.Database.Adapters.Sql.SqlClient.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />

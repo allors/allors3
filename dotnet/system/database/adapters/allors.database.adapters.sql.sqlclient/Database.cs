@@ -172,14 +172,5 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 }
             }
         }
-
-        internal IEnumerable<SqlDataRecord> CreateObjectTable(IEnumerable<long> objectids) => new ObjectDataRecord(this.mapping, objectids);
-
-        internal IEnumerable<SqlDataRecord> CreateVersionedObjectTable(Dictionary<long, long> versionedObjects) => new VersionedObjectDataRecord(this.mapping, versionedObjects);
-
-        internal IEnumerable<SqlDataRecord> CreateCompositeRelationTable(IEnumerable<CompositeRelation> relations) => new CompositeRoleDataRecords(this.mapping, relations);
-
-        internal IEnumerable<SqlDataRecord> CreateUnitRelationTable(IRoleType roleType, IEnumerable<UnitRelation> relations) => new UnitRoleDataRecords(this.mapping, roleType, relations);
-
     }
 }
