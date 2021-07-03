@@ -64,27 +64,27 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        public void ObjectParameter(long objectId) => this.GetOrCreateParameter(Mapping.ParamNameForObject, Mapping.SqlDbTypeForObject).Value = objectId;
+        public void ObjectParameter(long objectId) => this.GetOrCreateParameter(this.mapping.ParamNameForObject, Mapping.SqlDbTypeForObject).Value = objectId;
 
-        public void AddTypeParameter(IClass @class) => this.GetOrCreateParameter(Mapping.ParamNameForClass, Mapping.SqlDbTypeForClass).Value = @class.Id;
+        public void AddTypeParameter(IClass @class) => this.GetOrCreateParameter(this.mapping.ParamNameForClass, Mapping.SqlDbTypeForClass).Value = @class.Id;
 
-        public void AddCountParameter(int count) => this.GetOrCreateParameter(Mapping.ParamNameForCount, Mapping.SqlDbTypeForCount).Value = count;
+        public void AddCountParameter(int count) => this.GetOrCreateParameter(this.mapping.ParamNameForCount, Mapping.SqlDbTypeForCount).Value = count;
 
         public void AddUnitRoleParameter(IRoleType roleType, object unit) => this.GetOrCreateParameter(this.mapping.ParamNameByRoleType[roleType], this.mapping.GetSqlDbType(roleType)).Value = unit ?? DBNull.Value;
 
-        public void AddCompositeRoleParameter(long objectId) => this.GetOrCreateParameter(Mapping.ParamNameForCompositeRole, Mapping.SqlDbTypeForObject).Value = objectId;
+        public void AddCompositeRoleParameter(long objectId) => this.GetOrCreateParameter(this.mapping.ParamNameForCompositeRole, Mapping.SqlDbTypeForObject).Value = objectId;
 
-        public void AddAssociationParameter(long objectId) => this.GetOrCreateParameter(Mapping.ParamNameForAssociation, Mapping.SqlDbTypeForObject).Value = objectId;
+        public void AddAssociationParameter(long objectId) => this.GetOrCreateParameter(this.mapping.ParamNameForAssociation, Mapping.SqlDbTypeForObject).Value = objectId;
 
-        public void ObjectTableParameter(IEnumerable<long> objectIds) => this.GetOrCreateTableParameter(Mapping.ParamNameForTableType, this.mapping.TableTypeNameForObject).Value = new ObjectDataRecord(this.mapping, objectIds);
+        public void ObjectTableParameter(IEnumerable<long> objectIds) => this.GetOrCreateTableParameter(this.mapping.ParamNameForTableType, this.mapping.TableTypeNameForObject).Value = new ObjectDataRecord(this.mapping, objectIds);
 
-        public void UnitTableParameter(IRoleType roleType, ICollection<UnitRelation> relations) => this.GetOrCreateTableParameter(Mapping.ParamNameForTableType, this.mapping.GetTableTypeName(roleType)).Value = new UnitRoleDataRecords(this.mapping, roleType, relations);
+        public void UnitTableParameter(IRoleType roleType, IEnumerable<UnitRelation> relations) => this.GetOrCreateTableParameter(this.mapping.ParamNameForTableType, this.mapping.GetTableTypeName(roleType)).Value = new UnitRoleDataRecords(this.mapping, roleType, relations);
 
-        public void AddCompositeRoleTableParameter(ICollection<CompositeRelation> relations) => this.GetOrCreateTableParameter(Mapping.ParamNameForTableType, this.mapping.TableTypeNameForCompositeRelation).Value = new CompositeRoleDataRecords(this.mapping, relations);
+        public void AddCompositeRoleTableParameter(IEnumerable<CompositeRelation> relations) => this.GetOrCreateTableParameter(this.mapping.ParamNameForTableType, this.mapping.TableTypeNameForCompositeRelation).Value = new CompositeRoleDataRecords(this.mapping, relations);
 
-        public void AddCompositesRoleTableParameter(IEnumerable<long> objectIds) => this.GetOrCreateTableParameter(Mapping.ParamNameForTableType, this.mapping.TableTypeNameForObject).Value = new CompositesRoleDataRecords(this.mapping, objectIds);
+        public void AddCompositesRoleTableParameter(IEnumerable<long> objectIds) => this.GetOrCreateTableParameter(this.mapping.ParamNameForTableType, this.mapping.TableTypeNameForObject).Value = new CompositesRoleDataRecords(this.mapping, objectIds);
 
-        public void AddAssociationTableParameter(long objectId) => this.GetOrCreateParameter(Mapping.ParamNameForAssociation, Mapping.SqlDbTypeForObject).Value = objectId;
+        public void AddAssociationTableParameter(long objectId) => this.GetOrCreateParameter(this.mapping.ParamNameForAssociation, Mapping.SqlDbTypeForObject).Value = objectId;
 
         public object ExecuteScalar() => this.command.ExecuteScalar();
 

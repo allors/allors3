@@ -13,15 +13,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
     using Meta;
 
-    public class Mapping
+    public class Mapping : Sql.Mapping
     {
-        public const string ParamFormat = "@{0}";
-
-        public const string ColumnNameForObject = "o";
-        public const string ColumnNameForClass = "c";
-        public const string ColumnNameForVersion = "v";
-        public const string ColumnNameForAssociation = "a";
-        public const string ColumnNameForRole = "r";
+        public override string ParamFormat => "@{0}";
 
         public const string SqlTypeForClass = "uniqueidentifier";
         public const string SqlTypeForObject = "bigint";
@@ -33,22 +27,45 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         public const SqlDbType SqlDbTypeForVersion = SqlDbType.BigInt;
         public const SqlDbType SqlDbTypeForCount = SqlDbType.Int;
 
-        public Dictionary<IRoleType, string> ParamNameByRoleType { get; }
+        public override string ParamNameForClass => string.Format(this.ParamFormat, ColumnNameForClass);
+        internal string ParamNameForVersion => string.Format(this.ParamFormat, ColumnNameForVersion);
+        internal string ParamNameForAssociation => string.Format(this.ParamFormat, ColumnNameForAssociation);
+        internal string ParamNameForCompositeRole => string.Format(this.ParamFormat, ColumnNameForRole);
+        internal string ParamNameForCount => string.Format(this.ParamFormat, "count");
+        internal string ParamNameForTableType => string.Format(this.ParamFormat, "table");
 
-        internal static readonly string ParamNameForObject = string.Format(ParamFormat, ColumnNameForObject);
-        internal static readonly string ParamNameForClass = string.Format(ParamFormat, ColumnNameForClass);
-        internal static readonly string ParamNameForVersion = string.Format(ParamFormat, ColumnNameForVersion);
-        internal static readonly string ParamNameForAssociation = string.Format(ParamFormat, ColumnNameForAssociation);
-        internal static readonly string ParamNameForCompositeRole = string.Format(ParamFormat, ColumnNameForRole);
-        internal static readonly string ParamNameForCount = string.Format(ParamFormat, "count");
-        internal static readonly string ParamNameForTableType = string.Format(ParamFormat, "table");
+        public override string TableNameForObjects { get; }
+        public override IDictionary<IClass, string> TableNameForObjectByClass { get; }
 
-        internal string TableNameForObjects { get; }
+        public override IDictionary<IRelationType, string> ColumnNameByRelationType { get; }
 
-        internal Dictionary<IClass, string> TableNameForObjectByClass { get; }
-        internal Dictionary<IRelationType, string> ColumnNameByRelationType { get; }
-        internal Dictionary<IRelationType, string> UnescapedColumnNameByRelationType { get; }
-        internal Dictionary<IRelationType, string> TableNameForRelationByRelationType { get; }
+        public override IDictionary<IRoleType, string> ParamNameByRoleType { get; }
+        public override string ParamNameForObject => string.Format(this.ParamFormat, ColumnNameForObject);
+
+        public override IDictionary<IClass, string> ProcedureNameForDeleteObjectByClass { get; }
+        public override IDictionary<IClass, string> ProcedureNameForCreateObjectsByClass { get; }
+        public override IDictionary<IClass, string> ProcedureNameForGetUnitRolesByClass { get; }
+        public override IDictionary<IClass, IDictionary<IRelationType, string>> ProcedureNameForSetUnitRoleByRelationTypeByClass { get; }
+        public override IDictionary<IRelationType, string> ProcedureNameForGetRoleByRelationType { get; }
+        public override IDictionary<IRelationType, string> ProcedureNameForSetRoleByRelationType { get; }
+        public override IDictionary<IRelationType, string> ProcedureNameForAddRoleByRelationType { get; }
+        public override IDictionary<IRelationType, string> ProcedureNameForRemoveRoleByRelationType { get; }
+        public override IDictionary<IRelationType, string> ProcedureNameForClearRoleByRelationType { get; }
+        public override IDictionary<IRelationType, string> ProcedureNameForGetAssociationByRelationType { get; }
+        public override IDictionary<IClass, string> ProcedureNameForCreateObjectByClass { get; }
+
+        public override string ProcedureNameForInstantiate => this.Database.SchemaName + "." + ProcedurePrefixForInstantiate;
+
+        public override string ProcedureNameForGetVersion => this.Database.SchemaName + "." + ProcedurePrefixForGetVersion;
+
+        public override string ProcedureNameForUpdateVersion => this.Database.SchemaName + "." + ProcedurePrefixForUpdateVersion;
+        public override IDictionary<IClass, string> ProcedureNameForPrefetchUnitRolesByClass { get; }
+        public override IDictionary<IRelationType, string> ProcedureNameForPrefetchRoleByRelationType { get; }
+        public override IDictionary<IRelationType, string> ProcedureNameForPrefetchAssociationByRelationType { get; }
+        public override IDictionary<IRelationType, string> TableNameForRelationByRelationType { get; }
+
+
+        internal IDictionary<IRelationType, string> UnescapedColumnNameByRelationType { get; }
 
         internal string TableTypeNameForObject { get; }
         internal string TableTypeNameForVersionedObject { get; }
@@ -73,24 +90,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         internal Dictionary<int, Dictionary<int, string>> TableTypeNameForDecimalRelationByScaleByPrecision { get; }
 
         internal Dictionary<IClass, string> ProcedureNameForLoadObjectByClass { get; }
-        internal Dictionary<IClass, string> ProcedureNameForCreateObjectByClass { get; }
-        internal Dictionary<IClass, string> ProcedureNameForCreateObjectsByClass { get; }
-        internal Dictionary<IClass, string> ProcedureNameForDeleteObjectByClass { get; }
-        internal Dictionary<IClass, string> ProcedureNameForGetUnitRolesByClass { get; }
-        internal Dictionary<IClass, string> ProcedureNameForPrefetchUnitRolesByClass { get; }
-        internal Dictionary<IClass, Dictionary<IRelationType, string>> ProcedureNameForSetUnitRoleByRelationTypeByClass { get; }
-        internal Dictionary<IRelationType, string> ProcedureNameForGetRoleByRelationType { get; }
-        internal Dictionary<IRelationType, string> ProcedureNameForPrefetchRoleByRelationType { get; }
-        internal Dictionary<IRelationType, string> ProcedureNameForSetRoleByRelationType { get; }
-        internal Dictionary<IRelationType, string> ProcedureNameForAddRoleByRelationType { get; }
-        internal Dictionary<IRelationType, string> ProcedureNameForRemoveRoleByRelationType { get; }
-        internal Dictionary<IRelationType, string> ProcedureNameForClearRoleByRelationType { get; }
-        internal Dictionary<IRelationType, string> ProcedureNameForGetAssociationByRelationType { get; }
-        internal Dictionary<IRelationType, string> ProcedureNameForPrefetchAssociationByRelationType { get; }
 
-        internal string ProcedureNameForInstantiate { get; private set; }
-        internal string ProcedureNameForGetVersion { get; private set; }
-        internal string ProcedureNameForUpdateVersion { get; private set; }
+
+
+
 
         private const string ProcedurePrefixForInstantiate = "i";
 
@@ -255,7 +258,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     {
                         this.ColumnNameByRelationType[relationType] = this.NormalizeName(roleType.SingularName);
                         this.UnescapedColumnNameByRelationType[relationType] = roleType.SingularName;
-                        this.ParamNameByRoleType[roleType] = string.Format(ParamFormat, roleType.SingularFullName);
+                        this.ParamNameByRoleType[roleType] = string.Format(this.ParamFormat, roleType.SingularFullName);
                     }
                     else
                     {
@@ -292,7 +295,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
             this.ProcedureNameForGetUnitRolesByClass = new Dictionary<IClass, string>();
             this.ProcedureNameForPrefetchUnitRolesByClass = new Dictionary<IClass, string>();
-            this.ProcedureNameForSetUnitRoleByRelationTypeByClass = new Dictionary<IClass, Dictionary<IRelationType, string>>();
+            this.ProcedureNameForSetUnitRoleByRelationTypeByClass = new Dictionary<IClass, IDictionary<IRelationType, string>>();
 
             this.ProcedureNameForGetRoleByRelationType = new Dictionary<IRelationType, string>();
             this.ProcedureNameForPrefetchRoleByRelationType = new Dictionary<IRelationType, string>();
@@ -431,7 +434,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             };
         }
 
-        internal string NormalizeName(string name)
+        public string NormalizeName(string name)
         {
             name = name.ToLowerInvariant();
             if (ReservedWords.Names.Contains(name))
@@ -512,13 +515,13 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             // Load Objects
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForClass} {SqlTypeForClass},
-    {ParamNameForTableType} {this.TableTypeNameForObject} READONLY
+    {this.ParamNameForClass} {SqlTypeForClass},
+    {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
     INSERT INTO {table} ({ColumnNameForClass}, {ColumnNameForObject})
-    SELECT {ParamNameForClass}, {this.TableTypeColumnNameForObject}
-    FROM {ParamNameForTableType}
+    SELECT {this.ParamNameForClass}, {this.TableTypeColumnNameForObject}
+    FROM {this.ParamNameForTableType}
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -533,20 +536,20 @@ END";
             // CreateObject
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForClass} {SqlTypeForClass}
+    {this.ParamNameForClass} {SqlTypeForClass}
 AS
 BEGIN
-    DECLARE  {ParamNameForObject} AS {SqlTypeForObject}
+    DECLARE  {this.ParamNameForObject} AS {SqlTypeForObject}
 
     INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
-    VALUES ({ParamNameForClass}, {(long) Allors.Version.Initial});
+    VALUES ({this.ParamNameForClass}, {(long)Allors.Version.Initial});
 
-    SELECT {ParamNameForObject} = SCOPE_IDENTITY();
+    SELECT {this.ParamNameForObject} = SCOPE_IDENTITY();
 
     INSERT INTO {table} ({ColumnNameForObject},{ColumnNameForClass})
-    VALUES ({ParamNameForObject},{ParamNameForClass});
+    VALUES ({this.ParamNameForObject},{this.ParamNameForClass});
 
-    SELECT {ParamNameForObject};
+    SELECT {this.ParamNameForObject};
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -561,19 +564,19 @@ END";
             // CreateObjects
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForClass} {SqlTypeForClass},
-    {ParamNameForCount} {SqlTypeForCount}
+    {this.ParamNameForClass} {SqlTypeForClass},
+    {this.ParamNameForCount} {SqlTypeForCount}
 AS
 BEGIN
     DECLARE @IDS TABLE (id INT);
     DECLARE @O INT, @COUNTER INT
 
     SET @COUNTER = 0
-    WHILE @COUNTER < {ParamNameForCount}
+    WHILE @COUNTER < {this.ParamNameForCount}
         BEGIN
 
         INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
-        VALUES ({ParamNameForClass}, {(long) Allors.Version.Initial} );
+        VALUES ({this.ParamNameForClass}, {(long)Allors.Version.Initial} );
 
         INSERT INTO @IDS(id)
         VALUES (SCOPE_IDENTITY());
@@ -582,7 +585,7 @@ BEGIN
         END
 
     INSERT INTO {table} ({ColumnNameForObject},{ColumnNameForClass})
-    SELECT ID, {ParamNameForClass} FROM @IDS;
+    SELECT ID, {this.ParamNameForClass} FROM @IDS;
 
     SELECT id FROM @IDS;
 END";
@@ -598,14 +601,14 @@ END";
 
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForObject} {SqlTypeForObject}
+    {this.ParamNameForObject} {SqlTypeForObject}
 AS
 BEGIN
     DELETE FROM {this.TableNameForObjects}
-    WHERE {ColumnNameForObject}={ParamNameForObject};
+    WHERE {ColumnNameForObject}={this.ParamNameForObject};
 
     DELETE FROM {table}
-    WHERE {ColumnNameForObject}={ParamNameForObject};
+    WHERE {ColumnNameForObject}={this.ParamNameForObject};
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -621,12 +624,12 @@ END";
             // Get Unit Roles
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForObject} AS {SqlTypeForObject}
+    {this.ParamNameForObject} AS {SqlTypeForObject}
 AS
 BEGIN
     SELECT {string.Join(", ", sortedUnitRoleTypes.Select(v => this.ColumnNameByRelationType[v.RelationType]))}
     FROM {table}
-    WHERE {ColumnNameForObject}={ParamNameForObject}
+    WHERE {ColumnNameForObject}={this.ParamNameForObject}
 END
 ";
 
@@ -643,12 +646,12 @@ END
             // Prefetch Unit Roles
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {this.TableTypeNameForObject} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
     SELECT {ColumnNameForObject}, {string.Join(", ", sortedUnitRoleTypes.Select(v => this.ColumnNameByRelationType[v.RelationType]))}
     FROM {table}
-    WHERE {ColumnNameForObject} IN (SELECT {this.TableTypeColumnNameForObject} FROM {ParamNameForTableType})
+    WHERE {ColumnNameForObject} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -664,12 +667,12 @@ END";
             // Get Composites Role (1-*) [object table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForAssociation} {SqlTypeForObject}
+    {this.ParamNameForAssociation} {SqlTypeForObject}
 AS
 BEGIN
     SELECT {ColumnNameForObject}
     FROM {table}
-    WHERE {this.ColumnNameByRelationType[relationType]}={ParamNameForAssociation}
+    WHERE {this.ColumnNameByRelationType[relationType]}={this.ParamNameForAssociation}
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -685,12 +688,12 @@ END";
             // Prefetch Composites Role (1-*) [object table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {this.TableTypeNameForObject} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
     SELECT {this.ColumnNameByRelationType[relationType]}, {ColumnNameForObject}
     FROM {table}
-    WHERE {this.ColumnNameByRelationType[relationType]} IN (SELECT {this.TableTypeColumnNameForObject} FROM {ParamNameForTableType})
+    WHERE {this.ColumnNameByRelationType[relationType]} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -706,12 +709,12 @@ END";
             // Get Composite Association (1-*) [object table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForCompositeRole} {SqlTypeForObject}
+    {this.ParamNameForCompositeRole} {SqlTypeForObject}
 AS
 BEGIN
     SELECT {this.ColumnNameByRelationType[relationType]}
     FROM {table}
-    WHERE {ColumnNameForObject}={ParamNameForCompositeRole}
+    WHERE {ColumnNameForObject}={this.ParamNameForCompositeRole}
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -727,12 +730,12 @@ END";
             // Prefetch Composite Association (1-*) [object table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {this.TableTypeNameForObject} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
     SELECT {this.ColumnNameByRelationType[relationType]}, {ColumnNameForObject}
     FROM {table}
-    WHERE {ColumnNameForObject} IN (SELECT {this.TableTypeColumnNameForObject} FROM {ParamNameForTableType})
+    WHERE {ColumnNameForObject} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -748,13 +751,13 @@ END";
             // Add Composite Role (1-*) [object table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {this.TableTypeNameForCompositeRelation} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForCompositeRelation} READONLY
 AS
 BEGIN
     UPDATE {table}
     SET {this.ColumnNameByRelationType[relationType]} = r.{this.TableTypeColumnNameForAssociation}
     FROM {table}
-    INNER JOIN {ParamNameForTableType} AS r
+    INNER JOIN {this.ParamNameForTableType} AS r
     ON {ColumnNameForObject} = r.{this.TableTypeColumnNameForRole}
 END";
 
@@ -771,13 +774,13 @@ END";
             // Remove Composite Role (1-*) [object table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {this.TableTypeNameForCompositeRelation} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForCompositeRelation} READONLY
 AS
 BEGIN
     UPDATE {table}
     SET {this.ColumnNameByRelationType[relationType]} = null
     FROM {table}
-    INNER JOIN {ParamNameForTableType} AS r
+    INNER JOIN {this.ParamNameForTableType} AS r
     ON
         {this.ColumnNameByRelationType[relationType]} = r.{this.TableTypeColumnNameForAssociation} AND
         {ColumnNameForObject} = r.{this.TableTypeColumnNameForRole}
@@ -795,13 +798,13 @@ END";
             // Clear Composites Role (1-*) [object table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {this.TableTypeNameForObject} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
     UPDATE {this.TableNameForObjectByClass[@class]}
     SET {this.ColumnNameByRelationType[relationType]} = null
     FROM {this.TableNameForObjectByClass[@class]}
-    INNER JOIN {ParamNameForTableType} AS a
+    INNER JOIN {this.ParamNameForTableType} AS a
     ON {this.ColumnNameByRelationType[relationType]} = a.{this.TableTypeColumnNameForObject}
 END";
 
@@ -838,13 +841,13 @@ END";
 
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {tableTypeName} READONLY
+    {this.ParamNameForTableType} {tableTypeName} READONLY
 AS
 BEGIN
     UPDATE {table}
     SET {this.ColumnNameByRelationType[relationType]} = r.{this.TableTypeColumnNameForRole}
     FROM {table}
-    INNER JOIN {ParamNameForTableType} AS r
+    INNER JOIN {this.ParamNameForTableType} AS r
     ON {ColumnNameForObject} = r.{this.TableTypeColumnNameForAssociation}
 END";
 
@@ -861,12 +864,12 @@ END";
             // Get Composite Role (1-1 and *-1) [object table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForAssociation} {SqlTypeForObject}
+    {this.ParamNameForAssociation} {SqlTypeForObject}
 AS
 BEGIN
     SELECT {this.ColumnNameByRelationType[relationType]}
     FROM {table}
-    WHERE {ColumnNameForObject}={ParamNameForAssociation}
+    WHERE {ColumnNameForObject}={this.ParamNameForAssociation}
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -882,12 +885,12 @@ END";
             // Prefetch Composite Role (1-1 and *-1) [object table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {this.TableTypeNameForObject} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
     SELECT  {ColumnNameForObject}, {this.ColumnNameByRelationType[relationType]}
     FROM {table}
-    WHERE {ColumnNameForObject} IN (SELECT {this.TableTypeColumnNameForObject} FROM {ParamNameForTableType})
+    WHERE {ColumnNameForObject} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -903,12 +906,12 @@ END";
             // Get Composite Association (1-1) [object table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForCompositeRole} {SqlTypeForObject}
+    {this.ParamNameForCompositeRole} {SqlTypeForObject}
 AS
 BEGIN
     SELECT {ColumnNameForObject}
     FROM {table}
-    WHERE {this.ColumnNameByRelationType[relationType]}={ParamNameForCompositeRole}
+    WHERE {this.ColumnNameByRelationType[relationType]}={this.ParamNameForCompositeRole}
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -923,12 +926,12 @@ END";
             // Prefetch Composite Association (1-1) [object table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {this.TableTypeNameForObject} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
     SELECT {ColumnNameForObject}, {this.ColumnNameByRelationType[roleType.RelationType]}
     FROM {table}
-    WHERE {this.ColumnNameByRelationType[roleType.RelationType]} IN (SELECT {this.TableTypeColumnNameForObject} FROM {ParamNameForTableType})
+    WHERE {this.ColumnNameByRelationType[roleType.RelationType]} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -944,12 +947,12 @@ END";
             // Get Composite Association (*-1) [object table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForCompositeRole} {SqlTypeForObject}
+    {this.ParamNameForCompositeRole} {SqlTypeForObject}
 AS
 BEGIN
     SELECT {ColumnNameForObject}
     FROM {table}
-    WHERE {this.ColumnNameByRelationType[relationType]}={ParamNameForCompositeRole}
+    WHERE {this.ColumnNameByRelationType[relationType]}={this.ParamNameForCompositeRole}
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -965,12 +968,12 @@ END";
             // Prefetch Composite Association (*-1) [object table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {this.TableTypeNameForObject} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
     SELECT {ColumnNameForObject}, {this.ColumnNameByRelationType[relationType]}
     FROM {table}
-    WHERE {this.ColumnNameByRelationType[relationType]} IN (SELECT {this.TableTypeColumnNameForObject} FROM {ParamNameForTableType})
+    WHERE {this.ColumnNameByRelationType[relationType]} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -985,13 +988,13 @@ END";
 
             // Set Composite Role (1-1 and *-1) [object table]
             var definition = @"CREATE PROCEDURE " + name + @"
-    " + ParamNameForTableType + @" " + this.TableTypeNameForCompositeRelation + @" READONLY
+    " + this.ParamNameForTableType + @" " + this.TableTypeNameForCompositeRelation + @" READONLY
 AS
 BEGIN
     UPDATE " + table + @"
     SET " + this.ColumnNameByRelationType[relationType] + " = r." + this.TableTypeColumnNameForRole + @"
     FROM " + table + @"
-    INNER JOIN " + ParamNameForTableType + @" AS r
+    INNER JOIN " + this.ParamNameForTableType + @" AS r
     ON " + ColumnNameForObject + " = r." + this.TableTypeColumnNameForAssociation + @"
 END";
 
@@ -1008,13 +1011,13 @@ END";
             // Clear Composite Role (1-1 and *-1) [object table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {this.TableTypeNameForObject} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
     UPDATE {table}
     SET {this.ColumnNameByRelationType[relationType]} = null
     FROM {table}
-    INNER JOIN {ParamNameForTableType} AS a
+    INNER JOIN {this.ParamNameForTableType} AS a
     ON {ColumnNameForObject} = a.{this.TableTypeColumnNameForObject}
 END";
 
@@ -1030,12 +1033,12 @@ END";
             // Get Composites Role (1-* and *-*) [relation table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForAssociation} {SqlTypeForObject}
+    {this.ParamNameForAssociation} {SqlTypeForObject}
 AS
 BEGIN
     SELECT {ColumnNameForRole}
     FROM {table}
-    WHERE {ColumnNameForAssociation}={ParamNameForAssociation}
+    WHERE {ColumnNameForAssociation}={this.ParamNameForAssociation}
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1050,12 +1053,12 @@ END";
             // Prefetch Composites Role (1-* and *-*) [relation table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {this.TableTypeNameForObject} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
     SELECT {ColumnNameForAssociation}, {ColumnNameForRole}
     FROM {table}
-    WHERE {ColumnNameForAssociation} IN (SELECT {this.TableTypeColumnNameForObject} FROM {ParamNameForTableType})
+    WHERE {ColumnNameForAssociation} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1070,12 +1073,12 @@ END";
             // Add Composite Role (1-* and *-*) [relation table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {this.TableTypeNameForCompositeRelation} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForCompositeRelation} READONLY
 AS
 BEGIN
     INSERT INTO {table} ({ColumnNameForAssociation},{ColumnNameForRole})
     SELECT {this.TableTypeColumnNameForAssociation}, {this.TableTypeColumnNameForRole}
-    FROM {ParamNameForTableType}
+    FROM {this.ParamNameForTableType}
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1090,12 +1093,12 @@ END";
             // Remove Composite Role (1-* and *-*) [relation table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {this.TableTypeNameForCompositeRelation} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForCompositeRelation} READONLY
 AS
 BEGIN
     DELETE T
     FROM {table} T
-    INNER JOIN {ParamNameForTableType} R
+    INNER JOIN {this.ParamNameForTableType} R
     ON T.{ColumnNameForAssociation} = R.{this.TableTypeColumnNameForAssociation}
     AND T.{ColumnNameForRole} = R.{this.TableTypeColumnNameForRole};
 END";
@@ -1111,12 +1114,12 @@ END";
             // Get Composite Role (1-1 and *-1) [relation table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForAssociation} {SqlTypeForObject}
+    {this.ParamNameForAssociation} {SqlTypeForObject}
 AS
 BEGIN
     SELECT {ColumnNameForRole}
     FROM {this.TableNameForRelationByRelationType[relationType]}
-    WHERE {ColumnNameForAssociation}={ParamNameForAssociation}
+    WHERE {ColumnNameForAssociation}={this.ParamNameForAssociation}
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1131,12 +1134,12 @@ END";
             // Prefetch Composite Role (1-1 and *-1) [relation table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {this.TableTypeNameForObject} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
     SELECT {ColumnNameForAssociation}, {ColumnNameForRole}
     FROM {table}
-    WHERE {ColumnNameForAssociation} IN (SELECT {this.TableTypeColumnNameForObject} FROM {ParamNameForTableType})
+    WHERE {ColumnNameForAssociation} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
             this.ProcedureDefinitionByName.Add(name, definition);
         }
@@ -1150,11 +1153,11 @@ END";
             // Set Composite Role (1-1 and *-1) [relation table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {this.TableTypeNameForCompositeRelation} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForCompositeRelation} READONLY
 AS
 BEGIN
     MERGE {table} T
-    USING {ParamNameForTableType} AS r
+    USING {this.ParamNameForTableType} AS r
     ON T.{ColumnNameForAssociation} = r.{this.TableTypeColumnNameForAssociation}
 
     WHEN MATCHED THEN
@@ -1177,12 +1180,12 @@ END";
             // Get Composite Association (1-1) [relation table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForCompositeRole} {SqlTypeForObject}
+    {this.ParamNameForCompositeRole} {SqlTypeForObject}
 AS
 BEGIN
     SELECT {ColumnNameForAssociation}
     FROM {table}
-    WHERE {ColumnNameForRole}={ParamNameForCompositeRole}
+    WHERE {ColumnNameForRole}={this.ParamNameForCompositeRole}
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1196,12 +1199,12 @@ END";
             // Prefetch Composite Association (1-1) [relation table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {this.TableTypeNameForObject} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
     SELECT {ColumnNameForAssociation},{ColumnNameForRole}
     FROM {table}
-    WHERE {ColumnNameForRole} IN (SELECT {this.TableTypeColumnNameForObject} FROM {ParamNameForTableType})
+    WHERE {ColumnNameForRole} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1216,12 +1219,12 @@ END";
             // Get Composite Association (*-1) [relation table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForCompositeRole} {SqlTypeForObject}
+    {this.ParamNameForCompositeRole} {SqlTypeForObject}
 AS
 BEGIN
     SELECT {ColumnNameForAssociation}
     FROM {table}
-    WHERE {ColumnNameForRole}={ParamNameForCompositeRole}
+    WHERE {ColumnNameForRole}={this.ParamNameForCompositeRole}
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1235,12 +1238,12 @@ END";
             // Prefetch Composite Association (*-1) [relation table]
             var definition = $@"
 CREATE PROCEDURE {name}
-   {ParamNameForTableType} {this.TableTypeNameForObject} READONLY
+   {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
     SELECT {ColumnNameForAssociation},{ColumnNameForRole}
     FROM {table}
-    WHERE {ColumnNameForRole} IN (SELECT {this.TableTypeColumnNameForObject} FROM {ParamNameForTableType})
+    WHERE {ColumnNameForRole} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1254,12 +1257,12 @@ END";
             // Clear Composite Role (1-1 and *-1) [relation table]
             var definition = $@"
 CREATE PROCEDURE {name}
-    {ParamNameForTableType} {this.TableTypeNameForObject} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
     DELETE T
     FROM {table} T
-    INNER JOIN {ParamNameForTableType} A
+    INNER JOIN {this.ParamNameForTableType} A
     ON T.{ColumnNameForAssociation} = A.{this.TableTypeColumnNameForObject}
 END";
 
@@ -1268,18 +1271,16 @@ END";
 
         private void UpdateVersionIds()
         {
-            this.ProcedureNameForUpdateVersion = this.Database.SchemaName + "." + ProcedurePrefixForUpdateVersion;
-
             // Update Version Ids
             var definition = $@"
 CREATE PROCEDURE {this.ProcedureNameForUpdateVersion}
-    {ParamNameForTableType} {this.TableTypeNameForObject} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
     UPDATE {this.TableNameForObjects}
     SET {ColumnNameForVersion} = {ColumnNameForVersion} + 1
     FROM {this.TableNameForObjects}
-    WHERE {ColumnNameForObject} IN ( SELECT {this.TableTypeColumnNameForObject} FROM {ParamNameForTableType});
+    WHERE {ColumnNameForObject} IN ( SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType});
 END
 ";
 
@@ -1288,17 +1289,15 @@ END
 
         private void GetVersionIds()
         {
-            this.ProcedureNameForGetVersion = this.Database.SchemaName + "." + ProcedurePrefixForGetVersion;
-
             // Get Version Ids
             var definition = $@"
 CREATE PROCEDURE {this.ProcedureNameForGetVersion}
-    {ParamNameForTableType} {this.TableTypeNameForObject} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
     SELECT {ColumnNameForObject}, {ColumnNameForVersion}
     FROM {this.TableNameForObjects}
-    WHERE {ColumnNameForObject} IN (SELECT {this.TableTypeColumnNameForObject} FROM {ParamNameForTableType})
+    WHERE {ColumnNameForObject} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
 
             this.ProcedureDefinitionByName.Add(this.ProcedureNameForGetVersion, definition);
@@ -1306,17 +1305,15 @@ END";
 
         private void Instantiate()
         {
-            this.ProcedureNameForInstantiate = this.Database.SchemaName + "." + ProcedurePrefixForInstantiate;
-
             // Instantiate
             var definition = $@"
 CREATE PROCEDURE {this.ProcedureNameForInstantiate}
-    {ParamNameForTableType} {this.TableTypeNameForObject} READONLY
+    {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
     SELECT {ColumnNameForObject}, {ColumnNameForClass}, {ColumnNameForVersion}
     FROM {this.TableNameForObjects}
-    WHERE {ColumnNameForObject} IN (SELECT {this.TableTypeColumnNameForObject} FROM {ParamNameForTableType})
+    WHERE {ColumnNameForObject} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
 
             this.ProcedureDefinitionByName.Add(this.ProcedureNameForInstantiate, definition);

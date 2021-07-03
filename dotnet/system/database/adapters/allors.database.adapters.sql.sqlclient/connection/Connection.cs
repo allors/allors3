@@ -33,27 +33,19 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 sqlCommand.CommandTimeout = this.Database.CommandTimeout.Value;
             }
 
-            return this.CreateCommand(this.Database.Mapping, sqlCommand);
+            return this.CreateCommand((Mapping)this.Database.Mapping, sqlCommand);
         }
 
         public void Commit()
         {
             try
             {
-                if (this.SqlTransaction != null)
-                {
-                    this.SqlTransaction.Commit();
-                }
+                this.SqlTransaction?.Commit();
             }
             finally
             {
                 this.SqlTransaction = null;
-
-                if (this.SqlConnection != null)
-                {
-                    this.SqlConnection?.Close();
-                }
-
+                this.SqlConnection?.Close();
                 this.SqlConnection = null;
             }
         }
@@ -62,20 +54,12 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         {
             try
             {
-                if (this.SqlTransaction != null)
-                {
-                    this.SqlTransaction?.Rollback();
-                }
+                this.SqlTransaction?.Rollback();
             }
             finally
             {
                 this.SqlTransaction = null;
-
-                if (this.SqlConnection != null)
-                {
-                    this.SqlConnection?.Close();
-                }
-
+                this.SqlConnection?.Close();
                 this.SqlConnection = null;
             }
         }

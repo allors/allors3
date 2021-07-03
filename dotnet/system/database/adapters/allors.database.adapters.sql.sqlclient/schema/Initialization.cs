@@ -21,7 +21,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         internal Initialization(Database database)
         {
             this.database = database;
-            this.mapping = database.Mapping;
+            this.mapping = (Mapping)database.Mapping;
         }
 
         private string ConnectionString

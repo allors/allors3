@@ -64,7 +64,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         {
             var metaPopulation = new MetaBuilder().Build();
             var scope = new DefaultDomainDatabaseServices();
-            return new Database(scope, new Configuration
+            return new Database(scope, new Sql.Configuration
             {
                 ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
                 ConnectionString = this.ConnectionString,
@@ -77,31 +77,20 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         {
             dataType = dataType.Trim().ToLowerInvariant();
 
-            switch (columnType)
+            return columnType switch
             {
-                case ColumnTypes.ObjectId:
-                    return dataType.Equals("int");
-                case ColumnTypes.TypeId:
-                    return dataType.Equals("uniqueidentifier");
-                case ColumnTypes.CacheId:
-                    return dataType.Equals("int");
-                case ColumnTypes.Binary:
-                    return dataType.Equals("varbinary");
-                case ColumnTypes.Boolean:
-                    return dataType.Equals("bit");
-                case ColumnTypes.Decimal:
-                    return dataType.Equals("decimal");
-                case ColumnTypes.Float:
-                    return dataType.Equals("float");
-                case ColumnTypes.Integer:
-                    return dataType.Equals("int");
-                case ColumnTypes.String:
-                    return dataType.Equals("nvarchar");
-                case ColumnTypes.Unique:
-                    return dataType.Equals("uniqueidentifier");
-                default:
-                    throw new Exception("Unsupported columntype " + columnType);
-            }
+                ColumnTypes.ObjectId => dataType.Equals("int"),
+                ColumnTypes.TypeId => dataType.Equals("uniqueidentifier"),
+                ColumnTypes.CacheId => dataType.Equals("int"),
+                ColumnTypes.Binary => dataType.Equals("varbinary"),
+                ColumnTypes.Boolean => dataType.Equals("bit"),
+                ColumnTypes.Decimal => dataType.Equals("decimal"),
+                ColumnTypes.Float => dataType.Equals("float"),
+                ColumnTypes.Integer => dataType.Equals("int"),
+                ColumnTypes.String => dataType.Equals("nvarchar"),
+                ColumnTypes.Unique => dataType.Equals("uniqueidentifier"),
+                _ => throw new Exception("Unsupported columntype " + columnType)
+            };
         }
 
         public void DropProcedure(string procedure)

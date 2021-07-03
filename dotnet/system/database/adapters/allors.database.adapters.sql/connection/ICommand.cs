@@ -29,9 +29,9 @@ namespace Allors.Database.Adapters.Sql
 
         void ObjectTableParameter(IEnumerable<long> objectIds);
 
-        void UnitTableParameter(IRoleType roleType, ICollection<UnitRelation> relations);
+        void UnitTableParameter(IRoleType roleType, IEnumerable<UnitRelation> relations);
 
-        void AddCompositeRoleTableParameter(ICollection<CompositeRelation> relations);
+        void AddCompositeRoleTableParameter(IEnumerable<CompositeRelation> relations);
 
         void AddAssociationTableParameter(long objectId);
 

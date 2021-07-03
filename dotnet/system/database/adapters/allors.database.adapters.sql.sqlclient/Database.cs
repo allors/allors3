@@ -7,26 +7,18 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
-    using Microsoft.Data.SqlClient;
-    using System.Linq;
     using System.Xml;
     using System.Xml.Serialization;
-    using Allors;
-    using Allors.Database.Adapters.Schema;
-    using Caching;
+    using Adapters.Schema;
     using Meta;
+    using Microsoft.Data.SqlClient;
     using Microsoft.Data.SqlClient.Server;
-    using Numbers;
 
-    public class Database : IDatabase
+    public class Database : Sql.Database
     {
-        public static readonly IsolationLevel DefaultIsolationLevel = System.Data.IsolationLevel.Snapshot;
+        private IConnectionFactory connectionFactory;
 
-        private readonly object lockObject = new object();
-        private readonly Dictionary<IObjectType, HashSet<IObjectType>> concreteClassesByObjectType;
-
-        private readonly Dictionary<IObjectType, IRoleType[]> sortedUnitRolesByObjectType;
+        private IConnectionFactory managementConnectionFactory;
 
         private Mapping mapping;
 
@@ -34,41 +26,12 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         private string validationMessage;
 
-        private IConnectionFactory connectionFactory;
+        private readonly object lockObject = new object();
 
-        private IConnectionFactory managementConnectionFactory;
-
-        private ICacheFactory cacheFactory;
-
-        public Database(IDatabaseServices state, Configuration configuration)
+        public Database(IDatabaseServices state, Configuration configuration) : base(state, configuration)
         {
-            this.Services = state;
-            if (this.Services == null)
-            {
-                throw new Exception("Services is missing");
-            }
-
-            this.ObjectFactory = configuration.ObjectFactory;
-            if (!this.ObjectFactory.MetaPopulation.IsValid)
-            {
-                throw new ArgumentException("Domain is invalid");
-            }
-
-            this.MetaPopulation = this.ObjectFactory.MetaPopulation;
-
-            this.ConnectionString = configuration.ConnectionString;
-            this.ConnectionFactory = configuration.ConnectionFactory;
-            this.ManagementConnectionFactory = configuration.ManagementConnectionFactory;
-
-            this.concreteClassesByObjectType = new Dictionary<IObjectType, HashSet<IObjectType>>();
-
-            this.CommandTimeout = configuration.CommandTimeout;
-            this.IsolationLevel = configuration.IsolationLevel;
-
-            this.sortedUnitRolesByObjectType = new Dictionary<IObjectType, IRoleType[]>();
-
-            this.CacheFactory = configuration.CacheFactory;
-            this.Cache = this.CacheFactory.CreateCache();
+            this.connectionFactory = configuration.ConnectionFactory;
+            this.managementConnectionFactory = configuration.ManagementConnectionFactory;
 
             var connectionStringBuilder = new SqlConnectionStringBuilder(this.ConnectionString);
             var applicationName = connectionStringBuilder.ApplicationName.Trim();
@@ -76,67 +39,41 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             {
                 this.Id = applicationName;
             }
+            else if (!string.IsNullOrWhiteSpace(connectionStringBuilder.InitialCatalog))
+            {
+                this.Id = connectionStringBuilder.InitialCatalog.ToLowerInvariant();
+            }
             else
             {
-                if (!string.IsNullOrWhiteSpace(connectionStringBuilder.InitialCatalog))
-                {
-                    this.Id = connectionStringBuilder.InitialCatalog.ToLowerInvariant();
-                }
-                else
-                {
-                    using var connection = new SqlConnection(this.ConnectionString);
-                    connection.Open();
-                    this.Id = connection.Database.ToLowerInvariant();
-                }
+                using var connection = new SqlConnection(this.ConnectionString);
+                connection.Open();
+                this.Id = connection.Database.ToLowerInvariant();
             }
-
-            this.SchemaName = (configuration.SchemaName ?? "allors").ToLowerInvariant();
-
-            this.Procedures = new DefaultProcedures(this.ObjectFactory.Assembly);
 
             this.Services.OnInit(this);
         }
 
-        public event ObjectNotLoadedEventHandler ObjectNotLoaded;
+        public override event ObjectNotLoadedEventHandler ObjectNotLoaded;
 
-        public event RelationNotLoadedEventHandler RelationNotLoaded;
+        public override event RelationNotLoadedEventHandler RelationNotLoaded;
 
-        public IProcedures Procedures { get; }
-
-        public IDatabaseServices Services { get; }
-
-        public IConnectionFactory ConnectionFactory
+        public override IConnectionFactory ConnectionFactory
         {
             get => this.connectionFactory ??= new ConnectionFactory(this);
 
             set => this.connectionFactory = value;
         }
 
-        public IConnectionFactory ManagementConnectionFactory
+        public override IConnectionFactory ManagementConnectionFactory
         {
             get => this.managementConnectionFactory ??= new ConnectionFactory(this);
 
             set => this.managementConnectionFactory = value;
         }
 
-        public ICacheFactory CacheFactory
-        {
-            get => this.cacheFactory;
+        public override string Id { get; }
 
-            set => this.cacheFactory = value ?? (this.cacheFactory = new DefaultCacheFactory());
-        }
-
-        public string Id { get; }
-
-        public string SchemaName { get; }
-
-        public IObjectFactory ObjectFactory { get; }
-
-        public IMetaPopulation MetaPopulation { get; }
-
-        public bool IsShared => true;
-
-        public bool IsValid
+        public override bool IsValid
         {
             get
             {
@@ -146,9 +83,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     {
                         if (!this.isValid.HasValue)
                         {
-                            var validate = this.Validate();
-                            this.validationMessage = validate.Message;
-                            return validate.IsValid;
+                            var validateResult = new Validation(this);
+                            this.isValid = validateResult.IsValid;
+                            this.validationMessage = validateResult.Message;
                         }
                     }
                 }
@@ -157,55 +94,22 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        internal string ConnectionString { get; set; }
-
-        internal string AscendingSortAppendix => null;
-
-        internal string DescendingSortAppendix => null;
-
-        internal string Except => "EXCEPT";
-
-        internal ICache Cache { get; }
-
-        internal int? CommandTimeout { get; }
-
-        internal IsolationLevel? IsolationLevel { get; }
-
-        internal Mapping Mapping
+        public override Sql.Mapping Mapping
         {
             get
             {
-                if (this.ObjectFactory.MetaPopulation != null)
+                if (this.ObjectFactory.MetaPopulation != null && this.mapping == null)
                 {
-                    if (this.mapping == null)
-                    {
-                        this.mapping = new Mapping(this);
-                    }
+                    this.mapping = new Mapping(this);
                 }
 
                 return this.mapping;
             }
         }
 
-        internal INumbers Numbers = new ArrayNumbers();
+        public override string ValidationMessage => this.validationMessage;
 
-        public ITransaction CreateTransaction()
-        {
-            var connection = this.ConnectionFactory.Create();
-            return this.CreateTransaction(connection);
-        }
-
-        public ITransaction CreateTransaction(IConnection connection)
-        {
-            if (!this.IsValid)
-            {
-                throw new Exception(this.validationMessage);
-            }
-
-            return new Transaction(this, connection, this.Services.CreateTransactionServices());
-        }
-
-        public void Init()
+        public override void Init()
         {
             try
             {
@@ -213,24 +117,13 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
             finally
             {
-                this.ResetSchema();
+                this.mapping = null;
                 this.Cache.Invalidate();
                 this.Services.OnInit(this);
             }
         }
 
-        public void Load1(XmlReader reader)
-        {
-            lock (this)
-            {
-                var xmlSerializer = new XmlSerializer(typeof(Xml));
-                var xml = (Xml)xmlSerializer.Deserialize(reader);
-                var load = new Load(this, this.ObjectNotLoaded, this.RelationNotLoaded, xml);
-                load.Execute();
-            }
-        }
-
-        public void Load(XmlReader reader)
+        public override void Load(XmlReader reader)
         {
             lock (this)
             {
@@ -242,7 +135,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     {
                         connection.Open();
 
-                        var load = new Load2(this, connection, this.ObjectNotLoaded, this.RelationNotLoaded);
+                        var load = new Load(this, connection, this.ObjectNotLoaded, this.RelationNotLoaded);
                         load.Execute(reader);
 
                         connection.Close();
@@ -263,9 +156,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        public void Save(XmlWriter writer)
+        public override void Save(XmlWriter writer)
         {
-            lock (this)
+            lock (this.lockObject)
             {
                 var transaction = new ManagementTransaction(this, this.ManagementConnectionFactory);
                 try
@@ -280,33 +173,6 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        public override string ToString() => "Population[driver=Sql, type=Connected, id=" + this.GetHashCode() + "]";
-
-        public Validation Validate()
-        {
-            var validateResult = new Validation(this);
-            this.isValid = validateResult.IsValid;
-            return validateResult;
-        }
-
-        ITransaction IDatabase.CreateTransaction() => this.CreateTransaction();
-
-        internal bool ContainsClass(IObjectType container, IObjectType containee)
-        {
-            if (container.IsClass)
-            {
-                return container.Equals(containee);
-            }
-
-            if (!this.concreteClassesByObjectType.TryGetValue(container, out var concreteClasses))
-            {
-                concreteClasses = new HashSet<IObjectType>(((IInterface)container).DatabaseClasses);
-                this.concreteClassesByObjectType[container] = concreteClasses;
-            }
-
-            return concreteClasses.Contains(containee);
-        }
-
         internal IEnumerable<SqlDataRecord> CreateObjectTable(IEnumerable<long> objectids) => new ObjectDataRecord(this.mapping, objectids);
 
         internal IEnumerable<SqlDataRecord> CreateVersionedObjectTable(Dictionary<long, long> versionedObjects) => new VersionedObjectDataRecord(this.mapping, versionedObjects);
@@ -315,21 +181,5 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         internal IEnumerable<SqlDataRecord> CreateUnitRelationTable(IRoleType roleType, IEnumerable<UnitRelation> relations) => new UnitRoleDataRecords(this.mapping, roleType, relations);
 
-        internal Type GetDomainType(IObjectType objectType) => this.ObjectFactory.GetType(objectType);
-
-        internal IRoleType[] GetSortedUnitRolesByObjectType(IObjectType objectType)
-        {
-            if (!this.sortedUnitRolesByObjectType.TryGetValue(objectType, out var sortedUnitRoles))
-            {
-                var sortedUnitRoleList = new List<IRoleType>(((IComposite)objectType).DatabaseRoleTypes.Where(r => r.ObjectType.IsUnit));
-                sortedUnitRoleList.Sort();
-                sortedUnitRoles = sortedUnitRoleList.ToArray();
-                this.sortedUnitRolesByObjectType[objectType] = sortedUnitRoles;
-            }
-
-            return sortedUnitRoles;
-        }
-
-        private void ResetSchema() => this.mapping = null;
     }
 }

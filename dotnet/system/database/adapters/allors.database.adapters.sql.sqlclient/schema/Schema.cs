@@ -16,6 +16,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public Schema(Database database)
         {
+            var mapping = (Mapping)database.Mapping;
+
             this.TableByName = new Dictionary<string, SchemaTable>();
             this.TableTypeByName = new Dictionary<string, SchemaTableType>();
             this.ProcedureByName = new Dictionary<string, SchemaProcedure>();
@@ -75,10 +77,10 @@ AND C.table_schema = @tableSchema";
                                 var numericScale = reader.IsDBNull(numericScaleOrdinal) ? (int?)null : Convert.ToInt32(reader.GetValue(numericScaleOrdinal));
 
                                 tableName = tableName.Trim().ToLowerInvariant();
-                                tableName = database.Mapping.NormalizeName(tableName);
+                                tableName = mapping.NormalizeName(tableName);
                                 var fullyQualifiedTableName = database.SchemaName + "." + tableName;
 
-                                columnName = database.Mapping.NormalizeName(columnName);
+                                columnName = mapping.NormalizeName(columnName);
 
                                 if (!this.TableByName.TryGetValue(fullyQualifiedTableName, out var table))
                                 {

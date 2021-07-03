@@ -7,8 +7,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 {
     using System.Collections.Generic;
     using System.Text;
+    using static Mapping;
 
-    public class Validation
+    public class Validation : Sql.Validation
     {
         public HashSet<string> MissingTableNames { get; }
         public HashSet<SchemaTable> InvalidTables { get; }
@@ -24,7 +25,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         public Validation(Database database)
         {
             this.Database = database;
-            this.mapping = database.Mapping;
+            this.mapping = (Mapping)database.Mapping;
             this.Schema = new Schema(database);
 
             this.MissingTableNames = new HashSet<string>();
@@ -47,13 +48,13 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 this.InvalidProcedures.Count == 0;
         }
 
-        public bool IsValid { get; }
+        public override bool IsValid { get; }
 
         public Database Database { get; }
 
         public Schema Schema { get; }
 
-        public string Message
+        public override string Message
         {
             get
             {
@@ -120,7 +121,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         private void Validate()
         {
             // Objects Table
-            var objectsTable = this.Schema.GetTable(this.Database.Mapping.TableNameForObjects);
+            var objectsTable = this.Schema.GetTable(this.mapping.TableNameForObjects);
             if (objectsTable == null)
             {
                 this.MissingTableNames.Add(this.mapping.TableNameForObjects);
@@ -132,9 +133,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     this.InvalidTables.Add(objectsTable);
                 }
 
-                this.ValidateColumn(objectsTable, Mapping.ColumnNameForObject, Mapping.SqlTypeForObject);
-                this.ValidateColumn(objectsTable, Mapping.ColumnNameForClass, Mapping.SqlTypeForClass);
-                this.ValidateColumn(objectsTable, Mapping.ColumnNameForVersion, Mapping.SqlTypeForVersion);
+                this.ValidateColumn(objectsTable, Sql.Mapping.ColumnNameForObject, SqlTypeForObject);
+                this.ValidateColumn(objectsTable, Sql.Mapping.ColumnNameForClass, SqlTypeForClass);
+                this.ValidateColumn(objectsTable, Sql.Mapping.ColumnNameForVersion, SqlTypeForVersion);
             }
 
             // Object Tables
@@ -149,8 +150,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 }
                 else
                 {
-                    this.ValidateColumn(table, Mapping.ColumnNameForObject, Mapping.SqlTypeForObject);
-                    this.ValidateColumn(table, Mapping.ColumnNameForClass, Mapping.SqlTypeForClass);
+                    this.ValidateColumn(table, Sql.Mapping.ColumnNameForObject, SqlTypeForObject);
+                    this.ValidateColumn(table, Sql.Mapping.ColumnNameForClass, SqlTypeForClass);
 
                     foreach (var associationType in @class.DatabaseAssociationTypes)
                     {
@@ -161,8 +162,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                         {
                             this.ValidateColumn(
                                 table,
-                                this.Database.Mapping.ColumnNameByRelationType[relationType],
-                                Mapping.SqlTypeForObject);
+                                this.mapping.ColumnNameByRelationType[relationType],
+                                SqlTypeForObject);
                         }
                     }
 
@@ -174,19 +175,15 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                         {
                             this.ValidateColumn(
                                 table,
-                                this.Database.Mapping.ColumnNameByRelationType[relationType],
-                                this.Database.Mapping.GetSqlType(relationType.RoleType));
+                                this.mapping.ColumnNameByRelationType[relationType],
+                                this.mapping.GetSqlType(relationType.RoleType));
                         }
-                        else
+                        else if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                         {
-                            if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses
-                                && !roleType.IsMany)
-                            {
-                                this.ValidateColumn(
-                                    table,
-                                    this.Database.Mapping.ColumnNameByRelationType[relationType],
-                                    Mapping.SqlTypeForObject);
-                            }
+                            this.ValidateColumn(
+                                table,
+                                this.mapping.ColumnNameByRelationType[relationType],
+                                SqlTypeForObject);
                         }
                     }
                 }
@@ -215,10 +212,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                             this.InvalidTables.Add(table);
                         }
 
-                        this.ValidateColumn(table, Mapping.ColumnNameForAssociation, Mapping.SqlTypeForObject);
+                        this.ValidateColumn(table, Sql.Mapping.ColumnNameForAssociation, SqlTypeForObject);
 
-                        var roleSqlType = relationType.RoleType.ObjectType.IsComposite ? Mapping.SqlTypeForObject : this.mapping.GetSqlType(relationType.RoleType);
-                        this.ValidateColumn(table, Mapping.ColumnNameForRole, roleSqlType);
+                        var roleSqlType = relationType.RoleType.ObjectType.IsComposite ? SqlTypeForObject : this.mapping.GetSqlType(relationType.RoleType);
+                        this.ValidateColumn(table, Sql.Mapping.ColumnNameForRole, roleSqlType);
                     }
                 }
             }
@@ -238,11 +235,11 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                         this.InvalidTableTypes.Add(tableType);
                     }
 
-                    this.ValidateColumn(tableType, this.mapping.TableTypeColumnNameForObject, Mapping.SqlTypeForObject);
+                    this.ValidateColumn(tableType, this.mapping.TableTypeColumnNameForObject, SqlTypeForObject);
                 }
             }
 
-            this.ValidateTableType(this.mapping.TableTypeNameForCompositeRelation, Mapping.SqlTypeForObject);
+            this.ValidateTableType(this.mapping.TableTypeNameForCompositeRelation, SqlTypeForObject);
             this.ValidateTableType(this.mapping.TableTypeNameForStringRelation, "nvarchar(max)");
             this.ValidateTableType(this.mapping.TableTypeNameForIntegerRelation, "int");
             this.ValidateTableType(this.mapping.TableTypeNameForFloatRelation, "float");
@@ -277,12 +274,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 {
                     this.MissingProcedureNames.Add(procedureName);
                 }
-                else
+                else if (!procedure.IsDefinitionCompatible(procedureDefinition))
                 {
-                    if (!procedure.IsDefinitionCompatible(procedureDefinition))
-                    {
-                        this.InvalidProcedures.Add(procedure);
-                    }
+                    this.InvalidProcedures.Add(procedure);
                 }
             }
 
@@ -303,7 +297,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     this.InvalidTableTypes.Add(tableType);
                 }
 
-                this.ValidateColumn(tableType, this.mapping.TableTypeColumnNameForAssociation, Mapping.SqlTypeForObject);
+                this.ValidateColumn(tableType, this.mapping.TableTypeColumnNameForAssociation, SqlTypeForObject);
                 this.ValidateColumn(tableType, this.mapping.TableTypeColumnNameForRole, columnType);
             }
         }
