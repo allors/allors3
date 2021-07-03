@@ -400,9 +400,7 @@ namespace Allors.Database.Adapters.Sql
 
             roleType.CompositeRoleChecks(this);
 
-            var previousRoles = this.GetCompositesRole(roleType);
-
-            foreach (var previousRole in previousRoles)
+            foreach (var previousRole in this.GetCompositesRole(roleType))
             {
                 var role = this.Transaction.State.GetOrCreateReferenceForExistingObject(previousRole, this.Transaction).Strategy;
                 if (roleType.AssociationType.IsOne)

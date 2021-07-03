@@ -27,8 +27,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         {
             this.validation = new Validation(this.database);
 
-            this.TerminateBackend();
-
             if (this.validation.IsValid)
             {
                 this.TruncateTables();
@@ -94,26 +92,6 @@ CREATE SCHEMA " + this.database.SchemaName;
                     connection.Close();
                 }
             }
-        }
-
-        private void TerminateBackend()
-        {
-            using (var connection = new NpgsqlConnection(this.database.ConnectionString))
-            {
-                connection.Open();
-                try
-                {
-                    using (var command = new NpgsqlCommand($"SELECT pg_terminate_backend(procpid) FROM pg_stat_activity WHERE datname='${this.database.SchemaName}';", connection))
-                    {
-                        command.ExecuteNonQuery();
-                    }
-                }
-                finally
-                {
-                    connection.Close();
-                }
-            }
-
         }
 
         private void TruncateTables()

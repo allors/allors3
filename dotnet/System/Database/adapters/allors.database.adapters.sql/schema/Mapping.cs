@@ -22,10 +22,12 @@ namespace Allors.Database.Adapters.Sql
         public abstract IDictionary<IClass, string> TableNameForObjectByClass { get; }
         public abstract IDictionary<IRelationType, string> TableNameForRelationByRelationType { get; }
 
-        public abstract IDictionary<IRoleType, string> ParamNameByRoleType { get; }
         public abstract string ParamNameForObject { get; }
+        public abstract string ParamInvocationNameForObject { get; }
         public abstract string ParamNameForClass { get; }
         public abstract string ParamFormat { get; }
+        public abstract IDictionary<IRoleType, string> ParamNameByRoleType { get; }
+        public abstract IDictionary<IRoleType, string> ParamInvocationNameByRoleType { get; }
 
         public abstract IDictionary<IClass, string> ProcedureNameForDeleteObjectByClass { get; }
         public abstract IDictionary<IClass, string> ProcedureNameForCreateObjectsByClass { get; }

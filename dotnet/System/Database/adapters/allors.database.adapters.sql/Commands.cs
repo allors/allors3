@@ -124,8 +124,7 @@ namespace Allors.Database.Adapters.Sql
                         object unit = null;
                         if (!reader.IsDBNull(i))
                         {
-                            var unitTypeTag = ((IUnit)roleType.ObjectType).Tag;
-                            switch (unitTypeTag)
+                            switch (((IUnit)roleType.ObjectType).Tag)
                             {
                                 case UnitTags.String:
                                     unit = reader.GetString(i);
@@ -165,8 +164,7 @@ namespace Allors.Database.Adapters.Sql
                                     break;
 
                                 case UnitTags.Binary:
-                                    var byteArray = (byte[])reader.GetValue(i);
-                                    unit = byteArray;
+                                    unit = (byte[])reader.GetValue(i);
                                     break;
 
                                 default:
@@ -234,13 +232,13 @@ namespace Allors.Database.Adapters.Sql
                     ++count;
 
                     var column = this.Database.Mapping.ColumnNameByRelationType[roleType.RelationType];
-                    sql.Append(column).Append('=').Append(this.Database.Mapping.ParamNameByRoleType[roleType]);
+                    sql.Append(column).Append('=').Append(this.Database.Mapping.ParamInvocationNameByRoleType[roleType]);
 
                     var unit = strategy.EnsureModifiedRoleByRoleType[roleType];
                     command.AddUnitRoleParameter(roleType, unit);
                 }
 
-                sql.Append("\nWHERE ").Append(Mapping.ColumnNameForObject).Append('=').Append(this.Database.Mapping.ParamNameForObject).Append('\n');
+                sql.Append("\nWHERE ").Append(Mapping.ColumnNameForObject).Append('=').Append(this.Database.Mapping.ParamInvocationNameForObject).Append('\n');
 
                 command.CommandText = sql.ToString();
                 command.ExecuteNonQuery();

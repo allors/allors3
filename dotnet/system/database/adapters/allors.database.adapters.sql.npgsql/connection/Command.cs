@@ -64,57 +64,17 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
         }
 
-        public void ObjectParameter(long objectId)
-        {
-            var sqlParameter = this.command.CreateParameter();
-            sqlParameter.ParameterName = this.mapping.ParamNameForObject;
-            sqlParameter.NpgsqlDbType = Mapping.NpgsqlDbTypeForObject;
-            sqlParameter.Value = objectId;
+        public void ObjectParameter(long objectId) => this.GetOrCreateParameter(this.mapping.ParamInvocationNameForObject, Mapping.NpgsqlDbTypeForObject).Value = objectId;
 
-            this.command.Parameters.Add(sqlParameter);
-        }
+        public void AddTypeParameter(IClass @class) => this.GetOrCreateParameter(this.mapping.ParamInvocationNameForClass, Mapping.NpgsqlDbTypeForClass).Value = @class.Id;
 
-        public void AddTypeParameter(IClass @class)
-        {
-            var sqlParameter = this.command.CreateParameter();
-            sqlParameter.ParameterName = this.mapping.ParamNameForClass;
-            sqlParameter.NpgsqlDbType = Mapping.NpgsqlDbTypeForClass;
-            sqlParameter.Value = @class.Id;
+        public void AddCountParameter(int count) => this.GetOrCreateParameter(this.mapping.ParamInvocationNameForCount, Mapping.NpgsqlDbTypeForCount).Value = count;
 
-            this.command.Parameters.Add(sqlParameter);
-        }
+        public void AddUnitRoleParameter(IRoleType roleType, object unit) => this.GetOrCreateParameter(this.mapping.ParamInvocationNameByRoleType[roleType], this.mapping.GetNpgsqlDbType(roleType)).Value = unit ?? DBNull.Value;
 
-        public void AddCountParameter(int count)
-        {
-            var sqlParameter = this.command.CreateParameter();
-            sqlParameter.ParameterName = this.mapping.ParamNameForCount;
-            sqlParameter.NpgsqlDbType = Mapping.NpgsqlDbTypeForCount;
-            sqlParameter.Value = count;
+        public void AddCompositeRoleParameter(long objectId) => this.GetOrCreateParameter(this.mapping.ParamInvocationNameForCompositeRole, Mapping.NpgsqlDbTypeForObject).Value = objectId;
 
-            this.command.Parameters.Add(sqlParameter);
-        }
-
-        public void AddUnitRoleParameter(IRoleType roleType, object unit) => this.GetOrCreateParameter(this.mapping.ParamNameByRoleType[roleType], this.mapping.GetNpgsqlDbType(roleType)).Value = unit ?? DBNull.Value;
-
-        public void AddCompositeRoleParameter(long objectId)
-        {
-            var sqlParameter = this.command.CreateParameter();
-            sqlParameter.ParameterName = this.mapping.ParamNameForCompositeRole;
-            sqlParameter.NpgsqlDbType = Mapping.NpgsqlDbTypeForObject;
-            sqlParameter.Value = objectId;
-
-            this.command.Parameters.Add(sqlParameter);
-        }
-
-        public void AddAssociationParameter(long objectId)
-        {
-            var sqlParameter = this.command.CreateParameter();
-            sqlParameter.ParameterName = this.mapping.ParamNameForAssociation;
-            sqlParameter.NpgsqlDbType = Mapping.NpgsqlDbTypeForObject;
-            sqlParameter.Value = objectId;
-
-            this.command.Parameters.Add(sqlParameter);
-        }
+        public void AddAssociationParameter(long objectId) => this.GetOrCreateParameter(this.mapping.ParamInvocationNameForAssociation, Mapping.NpgsqlDbTypeForObject).Value = objectId;
 
         public void ObjectTableParameter(IEnumerable<long> objectIds) => this.GetOrCreateTableParameter(this.mapping.ObjectArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject).Value = objectIds;
 
@@ -123,8 +83,9 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             var objectParameter = this.GetOrCreateTableParameter(this.mapping.ObjectArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject);
             var roleParameter = this.GetOrCreateTableParameter(this.mapping.StringRoleArrayParam.InvocationName, this.mapping.GetNpgsqlDbType(roleType));
 
-            objectParameter.Value = relations.Select(v => v.Association).ToArray();
-            roleParameter.Value = relations.Select(v => v.Role).ToArray();
+            var unitRelations = relations as ICollection<UnitRelation> ?? relations.ToArray();
+            objectParameter.Value = unitRelations.Select(v => v.Association).ToArray();
+            roleParameter.Value = unitRelations.Select(v => v.Role).ToArray();
         }
 
         public void AddCompositeRoleTableParameter(IEnumerable<CompositeRelation> relations)
@@ -132,8 +93,9 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             var objectParameter = this.GetOrCreateTableParameter(this.mapping.ObjectArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject);
             var roleParameter = this.GetOrCreateTableParameter(this.mapping.StringRoleArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject);
 
-            objectParameter.Value = relations.Select(v => v.Association).ToArray();
-            roleParameter.Value = relations.Select(v => v.Role).ToArray();
+            var compositeRelations = relations as ICollection<CompositeRelation> ?? relations.ToArray();
+            objectParameter.Value = compositeRelations.Select(v => v.Association).ToArray();
+            roleParameter.Value = compositeRelations.Select(v => v.Role).ToArray();
         }
 
         public object ExecuteScalar() => this.command.ExecuteScalar();

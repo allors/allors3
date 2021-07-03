@@ -41,17 +41,16 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public MappingArrayParameter BinaryRoleArrayParam { get; }
 
         public override IDictionary<IRoleType, string> ParamNameByRoleType { get; }
-        public Dictionary<IRoleType, string> ParamInvocationNameByRoleType { get; }
+        public override IDictionary<IRoleType, string> ParamInvocationNameByRoleType { get; }
 
         public override string ParamNameForObject => string.Format(ParamFormat, ColumnNameForObject);
+        public override string ParamInvocationNameForObject => string.Format(ParamInvocationFormat, ColumnNameForObject);
         public override string ParamNameForClass => string.Format(ParamFormat, ColumnNameForClass);
-
         internal string ParamNameForVersion => string.Format(ParamFormat, ColumnNameForVersion);
         internal string ParamNameForAssociation => string.Format(ParamFormat, ColumnNameForAssociation);
         internal string ParamNameForCompositeRole => string.Format(ParamFormat, ColumnNameForRole);
         internal string ParamNameForCount => string.Format(ParamFormat, "count");
 
-        internal string ParamInvocationNameForObject => string.Format(ParamInvocationFormat, ColumnNameForObject);
         internal string ParamInvocationNameForClass => string.Format(ParamInvocationFormat, ColumnNameForClass);
         internal string ParamInvocationNameForVersion => string.Format(ParamInvocationFormat, ColumnNameForVersion);
         internal string ParamInvocationNameForAssociation => string.Format(ParamInvocationFormat, ColumnNameForAssociation);
@@ -126,19 +125,19 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         {
             this.Database = database;
 
-            this.ObjectArrayParam = new MappingArrayParameter(database, "arr_o", NpgsqlDbType.Bigint);
-            this.CompositeRoleArrayParam = new MappingArrayParameter(database, "arr_r", NpgsqlDbType.Bigint);
-            this.StringRoleArrayParam = new MappingArrayParameter(database, "arr_r", NpgsqlDbType.Varchar);
-            this.StringMaxRoleArrayParam = new MappingArrayParameter(database, "arr_r", NpgsqlDbType.Text);
-            this.IntegerRoleArrayParam = new MappingArrayParameter(database, "arr_r", NpgsqlDbType.Integer);
-            this.LongRoleArrayParam = new MappingArrayParameter(database, "arr_r", NpgsqlDbType.Bigint);
-            this.DecimalRoleArrayParam = new MappingArrayParameter(database, "arr_r", NpgsqlDbType.Numeric);
-            this.DoubleRoleArrayParam = new MappingArrayParameter(database, "arr_r", NpgsqlDbType.Double);
-            this.BooleanRoleArrayParam = new MappingArrayParameter(database, "arr_r", NpgsqlDbType.Boolean);
-            this.DateRoleArrayParam = new MappingArrayParameter(database, "arr_r", NpgsqlDbType.Date);
-            this.DateTimeRoleArrayParam = new MappingArrayParameter(database, "arr_r", NpgsqlDbType.Timestamp);
-            this.UniqueRoleArrayParam = new MappingArrayParameter(database, "arr_r", NpgsqlDbType.Uuid);
-            this.BinaryRoleArrayParam = new MappingArrayParameter(database, "arr_r", NpgsqlDbType.Bytea);
+            this.ObjectArrayParam = new MappingArrayParameter(database, this, "arr_o", NpgsqlDbType.Bigint);
+            this.CompositeRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Bigint);
+            this.StringRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Varchar);
+            this.StringMaxRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Text);
+            this.IntegerRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Integer);
+            this.LongRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Bigint);
+            this.DecimalRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Numeric);
+            this.DoubleRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Double);
+            this.BooleanRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Boolean);
+            this.DateRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Date);
+            this.DateTimeRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Timestamp);
+            this.UniqueRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Uuid);
+            this.BinaryRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Bytea);
 
             // Tables
             // ------

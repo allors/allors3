@@ -96,8 +96,7 @@ namespace Allors.Database.Adapters.Sql
         {
             get
             {
-                var isUnknown = this.version == (long)Allors.Version.Unknown;
-                return isUnknown;
+                return this.version == (long)Allors.Version.Unknown;
             }
         }
 
@@ -126,8 +125,7 @@ namespace Allors.Database.Adapters.Sql
         {
             get
             {
-                var existsKnown = this.FlagExistsKnown;
-                return existsKnown;
+                return this.FlagExistsKnown;
             }
         }
 

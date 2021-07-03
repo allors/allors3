@@ -27,6 +27,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         public const SqlDbType SqlDbTypeForVersion = SqlDbType.BigInt;
         public const SqlDbType SqlDbTypeForCount = SqlDbType.Int;
 
+        public override string ParamNameForObject => string.Format(this.ParamFormat, ColumnNameForObject);
+        public override string ParamInvocationNameForObject => this.ParamNameForObject;
         public override string ParamNameForClass => string.Format(this.ParamFormat, ColumnNameForClass);
         internal string ParamNameForVersion => string.Format(this.ParamFormat, ColumnNameForVersion);
         internal string ParamNameForAssociation => string.Format(this.ParamFormat, ColumnNameForAssociation);
@@ -40,7 +42,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         public override IDictionary<IRelationType, string> ColumnNameByRelationType { get; }
 
         public override IDictionary<IRoleType, string> ParamNameByRoleType { get; }
-        public override string ParamNameForObject => string.Format(this.ParamFormat, ColumnNameForObject);
+        public override IDictionary<IRoleType, string> ParamInvocationNameByRoleType => this.ParamNameByRoleType;
 
         public override IDictionary<IClass, string> ProcedureNameForDeleteObjectByClass { get; }
         public override IDictionary<IClass, string> ProcedureNameForCreateObjectsByClass { get; }

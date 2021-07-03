@@ -12,32 +12,24 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public Fixture()
         {
             var database = typeof(T).Name;
+            var connectionString = "Server=localhost; User Id=allors; Database=postgres; Pooling=false; CommandTimeout=300";
 
-            using var connection = new NpgsqlConnection($"Server=localhost; User Id=allors; Database=postgres; Pooling=false; CommandTimeout=300");
-            connection.Open();
-            using var command = connection.CreateCommand();
-            command.CommandText = @$"
-SELECT 
-    pg_terminate_backend(pid) 
-FROM 
-    pg_stat_activity 
-WHERE 
-    -- don't kill my own connection!
-    pid <> pg_backend_pid()
-    -- don't kill the connections to other databases
-    AND datname = '${database}'
-    ;";
-            command.ExecuteNonQuery();
-            connection.Close();
+            {
+                using var connection = new NpgsqlConnection(connectionString);
+                connection.Open();
+                using var command = connection.CreateCommand();
+                command.CommandText = $"DROP DATABASE IF EXISTS {database} WITH (FORCE)";
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
 
-            connection.Open();
-            command.CommandText = $"DROP DATABASE IF EXISTS {database}";
-            command.ExecuteNonQuery();
-            connection.Close();
-
-            connection.Open();
-            command.CommandText = $"CREATE DATABASE {database}";
-            command.ExecuteNonQuery();
+            {
+                using var connection = new NpgsqlConnection(connectionString);
+                connection.Open();
+                using var command = connection.CreateCommand();
+                command.CommandText = $"CREATE DATABASE {database}";
+                command.ExecuteNonQuery();
+            }
         }
     }
 }
