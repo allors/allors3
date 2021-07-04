@@ -118,6 +118,11 @@ namespace Allors.Workspace.Adapters
                 _ => throw new ArgumentException("Unsupported Origin")
             };
 
+            if (roles == null)
+            {
+                return Array.Empty<T>();
+            }
+
             return this.Session.GetMany<T>((IEnumerable<long>)roles);
         }
 
