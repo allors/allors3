@@ -173,16 +173,13 @@ namespace Allors.Database.Adapters.Sql
             {
                 this.SetUnitRole(roleType, value);
             }
+            else if (roleType.IsMany)
+            {
+                this.SetCompositeRoles(roleType, (IEnumerable<IObject>)value);
+            }
             else
             {
-                if (roleType.IsMany)
-                {
-                    this.SetCompositeRoles(roleType, (IEnumerable<IObject>)value);
-                }
-                else
-                {
-                    this.SetCompositeRole(roleType, (IObject)value);
-                }
+                this.SetCompositeRole(roleType, (IObject)value);
             }
         }
 
@@ -192,16 +189,13 @@ namespace Allors.Database.Adapters.Sql
             {
                 this.RemoveUnitRole(roleType);
             }
+            else if (roleType.IsMany)
+            {
+                this.RemoveCompositeRoles(roleType);
+            }
             else
             {
-                if (roleType.IsMany)
-                {
-                    this.RemoveCompositeRoles(roleType);
-                }
-                else
-                {
-                    this.RemoveCompositeRole(roleType);
-                }
+                this.RemoveCompositeRole(roleType);
             }
         }
 
@@ -934,25 +928,22 @@ namespace Allors.Database.Adapters.Sql
                         unitRoles.Add(flushRole);
                     }
                 }
-                else
+                else if (flushRole.IsOne)
                 {
-                    if (flushRole.IsOne)
+                    var role = this.GetCompositeRoleInternal(flushRole);
+                    if (role != null)
                     {
-                        var role = this.GetCompositeRoleInternal(flushRole);
-                        if (role != null)
-                        {
-                            flush.SetCompositeRole(this.Reference, flushRole, role.Value);
-                        }
-                        else
-                        {
-                            flush.ClearCompositeAndCompositesRole(this.Reference, flushRole);
-                        }
+                        flush.SetCompositeRole(this.Reference, flushRole, role.Value);
                     }
                     else
                     {
-                        var roles = (CompositesRole)this.modifiedRoleByRoleType[flushRole];
-                        roles.Flush(flush, this, flushRole);
+                        flush.ClearCompositeAndCompositesRole(this.Reference, flushRole);
                     }
+                }
+                else
+                {
+                    var roles = (CompositesRole)this.modifiedRoleByRoleType[flushRole];
+                    roles.Flush(flush, this, flushRole);
                 }
             }
 
@@ -1006,30 +997,27 @@ namespace Allors.Database.Adapters.Sql
                             changedRoleTypes.Add(roleType);
                         }
                     }
-                    else
+                    else if (roleType.IsOne)
                     {
-                        if (roleType.IsOne)
+                        var role = this.GetCompositeRoleInternal(roleType);
+
+                        if (!Equals(originalRole, role))
                         {
-                            var role = this.GetCompositeRoleInternal(roleType);
-
-                            if (!Equals(originalRole, role))
-                            {
-                                changedRoleTypes ??= new HashSet<IRoleType>();
-                                changedRoleTypes.Add(roleType);
-                            }
-                        }
-                        else
-                        {
-                            var changeTracker = (ChangeTracker)originalRole;
-
-                            if (numbers.Except(changeTracker.Add, changeTracker.Remove) == null && numbers.Except(changeTracker.Remove, changeTracker.Add) == null)
-                            {
-                                continue;
-                            }
-
                             changedRoleTypes ??= new HashSet<IRoleType>();
                             changedRoleTypes.Add(roleType);
                         }
+                    }
+                    else
+                    {
+                        var changeTracker = (ChangeTracker)originalRole;
+
+                        if (numbers.Except(changeTracker.Add, changeTracker.Remove) == null && numbers.Except(changeTracker.Remove, changeTracker.Add) == null)
+                        {
+                            continue;
+                        }
+
+                        changedRoleTypes ??= new HashSet<IRoleType>();
+                        changedRoleTypes.Add(roleType);
                     }
 
                 }

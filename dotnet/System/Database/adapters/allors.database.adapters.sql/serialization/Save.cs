@@ -73,7 +73,7 @@ namespace Allors.Database.Adapters.Sql
                 using (var command = transaction.Connection.CreateCommand())
                 {
                     command.CommandText = sql;
-                    command.AddInParameter(mapping.ParamNameForClass, type.Id);
+                    command.AddInParameter(mapping.ParamInvocationNameForClass, type.Id);
 
                     using (var reader = command.ExecuteReader())
                     {

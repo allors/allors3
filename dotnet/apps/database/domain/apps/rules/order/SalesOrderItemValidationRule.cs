@@ -87,13 +87,10 @@ namespace Allors.Database.Domain
                         validation.AddError(@this, this.M.SalesOrderItem.QuantityOrdered, "QuantityOrdered is Required");
                     }
                 }
-                else
+                else if (@this.AssignedUnitPrice == 0)
                 {
-                    if (@this.AssignedUnitPrice == 0)
-                    {
-                        // TODO: Move text to Resources
-                        validation.AddError(@this, this.M.SalesOrderItem.AssignedUnitPrice, "Price is Required");
-                    }
+                    // TODO: Move text to Resources
+                    validation.AddError(@this, this.M.SalesOrderItem.AssignedUnitPrice, "Price is Required");
                 }
 
                 validation.AssertExistsAtMostOne(@this, this.M.SalesOrderItem.Product, this.M.SalesOrderItem.ProductFeature);

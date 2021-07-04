@@ -13,23 +13,19 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
     public class Mapping : Sql.Mapping
     {
-        public override string ParamFormat => "p_{0}";
         public override string ParamInvocationFormat => ":p_{0}";
 
         public const string SqlTypeForClass = "uuid";
         public const string SqlTypeForObject = "bigint";
         public const string SqlTypeForVersion = "bigint";
-        public const string SqlTypeForCount = "integer";
+        private const string SqlTypeForCount = "integer";
 
         public const NpgsqlDbType NpgsqlDbTypeForClass = NpgsqlDbType.Uuid;
         public const NpgsqlDbType NpgsqlDbTypeForObject = NpgsqlDbType.Bigint;
-        public const NpgsqlDbType NpgsqlDbTypeForVersion = NpgsqlDbType.Bigint;
         public const NpgsqlDbType NpgsqlDbTypeForCount = NpgsqlDbType.Integer;
 
-        public override string ParamNameForObject => string.Format(ParamFormat, ColumnNameForObject);
-        public override string ParamInvocationNameForObject => string.Format(ParamInvocationFormat, ColumnNameForObject);
-        public override string ParamNameForClass => string.Format(ParamFormat, ColumnNameForClass);
-        public override string ParamInvocationNameForClass => string.Format(ParamInvocationFormat, ColumnNameForClass);
+        public override string ParamInvocationNameForObject => string.Format(this.ParamInvocationFormat, ColumnNameForObject);
+        public override string ParamInvocationNameForClass => string.Format(this.ParamInvocationFormat, ColumnNameForClass);
 
         public MappingArrayParameter ObjectArrayParam { get; }
         public MappingArrayParameter CompositeRoleArrayParam { get; }
@@ -45,18 +41,19 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public MappingArrayParameter UniqueRoleArrayParam { get; }
         public MappingArrayParameter BinaryRoleArrayParam { get; }
 
-        public override IDictionary<IRoleType, string> ParamNameByRoleType { get; }
         public override IDictionary<IRoleType, string> ParamInvocationNameByRoleType { get; }
 
-        internal string ParamNameForVersion => string.Format(ParamFormat, ColumnNameForVersion);
         internal string ParamNameForAssociation => string.Format(ParamFormat, ColumnNameForAssociation);
         internal string ParamNameForCompositeRole => string.Format(ParamFormat, ColumnNameForRole);
         internal string ParamNameForCount => string.Format(ParamFormat, "count");
+        internal string ParamNameForObject => string.Format(ParamFormat, ColumnNameForObject);
+        internal string ParamNameForClass => string.Format(ParamFormat, ColumnNameForClass);
+        internal IDictionary<IRoleType, string> ParamNameByRoleType { get; }
 
-        internal string ParamInvocationNameForVersion => string.Format(ParamInvocationFormat, ColumnNameForVersion);
-        internal string ParamInvocationNameForAssociation => string.Format(ParamInvocationFormat, ColumnNameForAssociation);
-        internal string ParamInvocationNameForCompositeRole => string.Format(ParamInvocationFormat, ColumnNameForRole);
-        internal string ParamInvocationNameForCount => string.Format(ParamInvocationFormat, "count");
+        internal string ParamInvocationNameForVersion => string.Format(this.ParamInvocationFormat, ColumnNameForVersion);
+        internal string ParamInvocationNameForAssociation => string.Format(this.ParamInvocationFormat, ColumnNameForAssociation);
+        internal string ParamInvocationNameForCompositeRole => string.Format(this.ParamInvocationFormat, ColumnNameForRole);
+        internal string ParamInvocationNameForCount => string.Format(this.ParamInvocationFormat, "count");
 
         public override string TableNameForObjects { get; }
 
@@ -126,6 +123,8 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         private const string ProcedurePrefixForPrefetchAssociation = "pa_";
 
+        internal const string ParamFormat = "p_{0}";
+
         public Mapping(Database database)
         {
             this.Database = database;
@@ -177,15 +176,12 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                         this.ColumnNameByRelationType[relationType] = this.NormalizeName(roleType.SingularName);
                         this.UnescapedColumnNameByRelationType[relationType] = roleType.SingularName;
                         this.ParamNameByRoleType[roleType] = string.Format(ParamFormat, roleType.SingularFullName);
-                        this.ParamInvocationNameByRoleType[roleType] = string.Format(ParamInvocationFormat, roleType.SingularFullName);
+                        this.ParamInvocationNameByRoleType[roleType] = string.Format(this.ParamInvocationFormat, roleType.SingularFullName);
                     }
-                    else
+                    else if (!(associationType3.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                     {
-                        if (!(associationType3.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
-                        {
-                            this.ColumnNameByRelationType[relationType] = this.NormalizeName(roleType.SingularName);
-                            this.UnescapedColumnNameByRelationType[relationType] = roleType.SingularName;
-                        }
+                        this.ColumnNameByRelationType[relationType] = this.NormalizeName(roleType.SingularName);
+                        this.UnescapedColumnNameByRelationType[relationType] = roleType.SingularName;
                     }
                 }
             }
@@ -267,27 +263,24 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     {
                         this.SetUnitRoleType(@class, roleType);
                     }
-                    else
+                    else if (!(roleType.AssociationType.IsMany && roleType.IsMany) && roleType.RelationType.ExistExclusiveDatabaseClasses && roleType.IsOne)
                     {
-                        if (!(roleType.AssociationType.IsMany && roleType.IsMany) && roleType.RelationType.ExistExclusiveDatabaseClasses && roleType.IsOne)
+                        this.GetCompositeRoleObjectTable(@class, roleType);
+                        this.PrefetchCompositeRoleObjectTable(@class, roleType);
+
+                        if (roleType.AssociationType.IsOne)
                         {
-                            this.GetCompositeRoleObjectTable(@class, roleType);
-                            this.PrefetchCompositeRoleObjectTable(@class, roleType);
-
-                            if (roleType.AssociationType.IsOne)
-                            {
-                                this.GetCompositeAssociationOne2OneObjectTable(@class, roleType);
-                                this.PrefetchCompositeAssociationObjectTable(@class, roleType);
-                            }
-                            else
-                            {
-                                this.GetCompositesAssociationMany2OneObjectTable(@class, roleType);
-                                this.PrefetchCompositesAssociationMany2OneObjectTable(@class, roleType);
-                            }
-
-                            this.SetCompositeRole(@class, roleType);
-                            this.ClearCompositeRole(@class, roleType);
+                            this.GetCompositeAssociationOne2OneObjectTable(@class, roleType);
+                            this.PrefetchCompositeAssociationObjectTable(@class, roleType);
                         }
+                        else
+                        {
+                            this.GetCompositesAssociationMany2OneObjectTable(@class, roleType);
+                            this.PrefetchCompositesAssociationMany2OneObjectTable(@class, roleType);
+                        }
+
+                        this.SetCompositeRole(@class, roleType);
+                        this.ClearCompositeRole(@class, roleType);
                     }
                 }
             }
@@ -427,7 +420,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForClass},{this.ObjectArrayParam.TypeName});
 CREATE FUNCTION {name}(
-	{ParamNameForClass} {SqlTypeForClass},
+	{this.ParamNameForClass} {SqlTypeForClass},
 	{this.ObjectArrayParam} {this.ObjectArrayParam.TypeName})
     RETURNS void
     LANGUAGE sql
@@ -449,21 +442,21 @@ $$;";
             // CreateObject
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForClass});
-CREATE FUNCTION {name}({ParamNameForClass} {SqlTypeForClass})
+CREATE FUNCTION {name}({this.ParamNameForClass} {SqlTypeForClass})
     RETURNS {SqlTypeForObject}
     LANGUAGE plpgsql
 AS $$
-DECLARE {ParamNameForObject} {SqlTypeForObject};
+DECLARE {this.ParamNameForObject} {SqlTypeForObject};
 BEGIN
 
     INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
-    VALUES ({ParamNameForClass}, {(long)Allors.Version.Initial})
-    RETURNING {ColumnNameForObject} INTO {ParamNameForObject};
+    VALUES ({this.ParamNameForClass}, {(long)Allors.Version.Initial})
+    RETURNING {ColumnNameForObject} INTO {this.ParamNameForObject};
 
     INSERT INTO {table} ({ColumnNameForObject},{ColumnNameForClass})
-    VALUES ({ParamNameForObject},{ParamNameForClass});
+    VALUES ({this.ParamNameForObject},{this.ParamNameForClass});
 
-    RETURN {ParamNameForObject};
+    RETURN {this.ParamNameForObject};
 END
 $$;";
 
@@ -478,21 +471,21 @@ $$;";
             // CreateObjects
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForClass}, {SqlTypeForCount});
-CREATE FUNCTION {name}({ParamNameForClass} {SqlTypeForClass}, {ParamNameForCount} {SqlTypeForCount})
+CREATE FUNCTION {name}({this.ParamNameForClass} {SqlTypeForClass}, {this.ParamNameForCount} {SqlTypeForCount})
     RETURNS SETOF {SqlTypeForObject}
     LANGUAGE plpgsql
 AS $$
 DECLARE ID integer;
 DECLARE COUNTER integer := 0;
 BEGIN
-    WHILE COUNTER < {ParamNameForCount} LOOP
+    WHILE COUNTER < {this.ParamNameForCount} LOOP
 
         INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
-        VALUES ({ParamNameForClass}, {(long)Allors.Version.Initial} )
+        VALUES ({this.ParamNameForClass}, {(long)Allors.Version.Initial} )
         RETURNING {ColumnNameForObject} INTO ID;
 
         INSERT INTO {this.TableNameForObjectByClass[@class.ExclusiveDatabaseClass]} ({ColumnNameForObject},{ColumnNameForClass})
-        VALUES (ID,{ParamNameForClass});
+        VALUES (ID,{this.ParamNameForClass});
 
         COUNTER := COUNTER+1;
 
@@ -511,16 +504,16 @@ $$;";
             this.ProcedureNameForDeleteObjectByClass.Add(@class, name);
 
             var definition = $@"DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
-CREATE FUNCTION {name}({ParamNameForObject} {SqlTypeForObject})
+CREATE FUNCTION {name}({this.ParamNameForObject} {SqlTypeForObject})
     RETURNS void
     LANGUAGE sql
 AS $$
 
     DELETE FROM {this.TableNameForObjects}
-    WHERE {ColumnNameForObject}={ParamNameForObject};
+    WHERE {ColumnNameForObject}={this.ParamNameForObject};
 
     DELETE FROM {table}
-    WHERE {ColumnNameForObject}={ParamNameForObject};
+    WHERE {ColumnNameForObject}={this.ParamNameForObject};
 $$;
 ";
 
@@ -536,14 +529,14 @@ $$;
             // Get Unit Roles
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
-CREATE FUNCTION {name}({ParamNameForObject} {SqlTypeForObject})
+CREATE FUNCTION {name}({this.ParamNameForObject} {SqlTypeForObject})
     RETURNS TABLE
     ({string.Join(", ", sortedUnitRoleTypes.Select(v => $"{this.ColumnNameByRelationType[v.RelationType]} {this.GetSqlType(v)}"))})
     LANGUAGE sql
 AS $$
     SELECT {string.Join(", ", sortedUnitRoleTypes.Select(v => this.ColumnNameByRelationType[v.RelationType]))}
     FROM {this.TableNameForObjectByClass[@class.ExclusiveDatabaseClass]}
-    WHERE {ColumnNameForObject}={ParamNameForObject};
+    WHERE {ColumnNameForObject}={this.ParamNameForObject};
 $$;";
             this.ProcedureDefinitionByName.Add(name, definition);
         }
@@ -587,13 +580,13 @@ $$;";
             // Get Composites Role (1-*) [object table]
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
-CREATE FUNCTION {name}({ParamNameForAssociation} {SqlTypeForObject})
+CREATE FUNCTION {name}({this.ParamNameForAssociation} {SqlTypeForObject})
     RETURNS SETOF {SqlTypeForObject}
     LANGUAGE sql
 AS $$
     SELECT {ColumnNameForObject}
     FROM {table}
-    WHERE {this.ColumnNameByRelationType[relationType]}={ParamNameForAssociation};
+    WHERE {this.ColumnNameByRelationType[relationType]}={this.ParamNameForAssociation};
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -638,18 +631,18 @@ $$;";
             // Get Composite Association (1-*) [object table]
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
-CREATE FUNCTION {name}({ParamNameForCompositeRole} {SqlTypeForObject})
+CREATE FUNCTION {name}({this.ParamNameForCompositeRole} {SqlTypeForObject})
     RETURNS {SqlTypeForObject}
     LANGUAGE plpgsql
 AS $$
-DECLARE {ParamNameForAssociation} {SqlTypeForObject};
+DECLARE {this.ParamNameForAssociation} {SqlTypeForObject};
 BEGIN
     SELECT {this.ColumnNameByRelationType[relationType]}
     FROM {table}
-    WHERE {ColumnNameForObject}={ParamNameForCompositeRole}
-    INTO {ParamNameForAssociation};
+    WHERE {ColumnNameForObject}={this.ParamNameForCompositeRole}
+    INTO {this.ParamNameForAssociation};
 
-    RETURN {ParamNameForAssociation};
+    RETURN {this.ParamNameForAssociation};
 END
 $$;";
 
@@ -855,18 +848,18 @@ $$;";
             // Get Composite Role (1-1 and *-1) [object table]
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
-CREATE FUNCTION {name}({ParamNameForAssociation} {SqlTypeForObject})
+CREATE FUNCTION {name}({this.ParamNameForAssociation} {SqlTypeForObject})
     RETURNS {SqlTypeForObject}
     LANGUAGE plpgsql
 AS $$
-DECLARE {ParamNameForCompositeRole} {SqlTypeForObject};
+DECLARE {this.ParamNameForCompositeRole} {SqlTypeForObject};
 BEGIN
     SELECT {this.ColumnNameByRelationType[relationType]}
     FROM {table}
-    WHERE {ColumnNameForObject}={ParamNameForAssociation}
-    INTO {ParamNameForCompositeRole};
+    WHERE {ColumnNameForObject}={this.ParamNameForAssociation}
+    INTO {this.ParamNameForCompositeRole};
 
-    RETURN {ParamNameForCompositeRole};
+    RETURN {this.ParamNameForCompositeRole};
 END
 $$;";
 
@@ -913,18 +906,18 @@ $$;";
             // Get Composite Association (1-1) [object table]
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
-CREATE FUNCTION {name}({ParamNameForCompositeRole} {SqlTypeForObject})
+CREATE FUNCTION {name}({this.ParamNameForCompositeRole} {SqlTypeForObject})
     RETURNS {SqlTypeForObject}
     LANGUAGE plpgsql
 AS $$
-DECLARE {ParamNameForAssociation} {SqlTypeForObject};
+DECLARE {this.ParamNameForAssociation} {SqlTypeForObject};
 BEGIN
     SELECT {ColumnNameForObject}
     FROM {table}
-    WHERE {this.ColumnNameByRelationType[relationType]}={ParamNameForCompositeRole}
-    INTO {ParamNameForAssociation};
+    WHERE {this.ColumnNameByRelationType[relationType]}={this.ParamNameForCompositeRole}
+    INTO {this.ParamNameForAssociation};
 
-    RETURN {ParamNameForAssociation};
+    RETURN {this.ParamNameForAssociation};
 END
 $$;";
 
@@ -971,13 +964,13 @@ $$;";
             // Get Composite Association (*-1) [object table]
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
-CREATE FUNCTION {name}({ParamNameForCompositeRole} {SqlTypeForObject})
+CREATE FUNCTION {name}({this.ParamNameForCompositeRole} {SqlTypeForObject})
     RETURNS SETOF {SqlTypeForObject}
     LANGUAGE sql
 AS $$
     SELECT {ColumnNameForObject}
     FROM {table}
-    WHERE {this.ColumnNameByRelationType[relationType]}={ParamNameForCompositeRole};
+    WHERE {this.ColumnNameByRelationType[relationType]}={this.ParamNameForCompositeRole};
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1078,13 +1071,13 @@ $$;";
             // Get Composites Role (1-* and *-*) [relation table]
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
-CREATE FUNCTION {name}({ParamNameForAssociation} {SqlTypeForObject})
+CREATE FUNCTION {name}({this.ParamNameForAssociation} {SqlTypeForObject})
     RETURNS SETOF {SqlTypeForObject}
     LANGUAGE sql
 AS $$
     SELECT {ColumnNameForRole}
     FROM {table}
-    WHERE {ColumnNameForAssociation}={ParamNameForAssociation};
+    WHERE {ColumnNameForAssociation}={this.ParamNameForAssociation};
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1182,18 +1175,18 @@ $$;";
             // Get Composite Role (1-1 and *-1) [relation table]
             var definition =
 $@"DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
-CREATE FUNCTION {name}({ParamNameForAssociation} {SqlTypeForObject})
+CREATE FUNCTION {name}({this.ParamNameForAssociation} {SqlTypeForObject})
     RETURNS {SqlTypeForObject}
     LANGUAGE plpgsql
 AS $$
-DECLARE {ParamNameForCompositeRole} {SqlTypeForObject};
+DECLARE {this.ParamNameForCompositeRole} {SqlTypeForObject};
 BEGIN
     SELECT {ColumnNameForRole}
     FROM {table}
-    WHERE {ColumnNameForAssociation}={ParamNameForAssociation}
-    INTO {ParamNameForCompositeRole};
+    WHERE {ColumnNameForAssociation}={this.ParamNameForAssociation}
+    INTO {this.ParamNameForCompositeRole};
 
-    RETURN {ParamNameForCompositeRole};
+    RETURN {this.ParamNameForCompositeRole};
 END
 $$;";
 
@@ -1267,18 +1260,18 @@ $$;";
             // Get Composite Association (1-1) [relation table]
             var definition =
 $@"DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
-CREATE FUNCTION {name}({ParamNameForCompositeRole} {SqlTypeForObject})
+CREATE FUNCTION {name}({this.ParamNameForCompositeRole} {SqlTypeForObject})
     RETURNS {SqlTypeForObject}
     LANGUAGE plpgsql
 AS $$
-DECLARE {ParamNameForAssociation} {SqlTypeForObject};
+DECLARE {this.ParamNameForAssociation} {SqlTypeForObject};
 BEGIN
     SELECT {ColumnNameForAssociation}
     FROM {table}
-    WHERE {ColumnNameForRole}={ParamNameForCompositeRole}
-    INTO {ParamNameForAssociation};
+    WHERE {ColumnNameForRole}={this.ParamNameForCompositeRole}
+    INTO {this.ParamNameForAssociation};
 
-    RETURN {ParamNameForAssociation};
+    RETURN {this.ParamNameForAssociation};
 END
 $$;";
 
@@ -1323,13 +1316,13 @@ $$;";
             // Get Composite Association (*-1) [relation table]
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForObject});
-CREATE FUNCTION {name}({ParamNameForCompositeRole} {SqlTypeForObject})
+CREATE FUNCTION {name}({this.ParamNameForCompositeRole} {SqlTypeForObject})
     RETURNS SETOF {SqlTypeForObject}
     LANGUAGE sql
 AS $$
     SELECT {ColumnNameForAssociation}
     FROM {table}
-    WHERE {ColumnNameForRole}={ParamNameForCompositeRole}
+    WHERE {ColumnNameForRole}={this.ParamNameForCompositeRole}
 $$;";
 
             this.ProcedureDefinitionByName.Add(name, definition);

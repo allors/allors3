@@ -24,23 +24,20 @@ namespace Allors.Database.Adapters.Sql
         internal override bool BuildWhere(ExtentStatement statement, string alias)
         {
             var schema = statement.Mapping;
-            if (this.association.IsMany && this.association.RelationType.RoleType.IsMany || !this.association.RelationType.ExistExclusiveDatabaseClasses)
+            if ((this.association.IsMany && this.association.RelationType.RoleType.IsMany) || !this.association.RelationType.ExistExclusiveDatabaseClasses)
             {
                 statement.Append(" (" + this.association.SingularFullName + "_A." + Mapping.ColumnNameForAssociation + " IS NOT NULL AND ");
                 statement.Append(" " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForAssociation + "=" + this.allorsObject.Strategy.ObjectId + ")");
             }
+            else if (this.association.RelationType.RoleType.IsMany)
+            {
+                statement.Append(" (" + alias + "." + schema.ColumnNameByRelationType[this.association.RelationType] + " IS NOT NULL AND ");
+                statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.association.RelationType] + "=" + this.allorsObject.Strategy.ObjectId + ")");
+            }
             else
             {
-                if (this.association.RelationType.RoleType.IsMany)
-                {
-                    statement.Append(" (" + alias + "." + schema.ColumnNameByRelationType[this.association.RelationType] + " IS NOT NULL AND ");
-                    statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.association.RelationType] + "=" + this.allorsObject.Strategy.ObjectId + ")");
-                }
-                else
-                {
-                    statement.Append(" (" + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " IS NOT NULL AND ");
-                    statement.Append(" " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " =" + this.allorsObject.Strategy.ObjectId + ")");
-                }
+                statement.Append(" (" + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " IS NOT NULL AND ");
+                statement.Append(" " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " =" + this.allorsObject.Strategy.ObjectId + ")");
             }
 
             return this.Include;

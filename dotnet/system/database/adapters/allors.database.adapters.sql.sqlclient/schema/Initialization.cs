@@ -69,9 +69,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             connection.Open();
             try
             {
-                var cmdText = @"
-IF ((SELECT SNAPSHOT_ISOLATION_STATE FROM SYS.DATABASES WHERE NAME = '" + connection.Database + @"') = 0)
-alter Database " + connection.Database + @"
+                var cmdText = $@"
+IF ((SELECT SNAPSHOT_ISOLATION_STATE FROM SYS.DATABASES WHERE NAME = '{connection.Database}') = 0)
+alter Database {connection.Database}
 set allow_snapshot_isolation on";
                 using var command = new SqlCommand(cmdText, connection);
                 command.ExecuteNonQuery();
@@ -91,8 +91,8 @@ set allow_snapshot_isolation on";
                 connection.Open();
                 try
                 {
-                    var cmdText = @"
-CREATE SCHEMA " + this.database.SchemaName;
+                    var cmdText = $@"
+CREATE SCHEMA {this.database.SchemaName}";
                     using var command = new SqlCommand(cmdText, connection);
                     command.ExecuteNonQuery();
                 }
@@ -111,7 +111,7 @@ CREATE SCHEMA " + this.database.SchemaName;
             {
                 foreach (var name in this.validation.Schema.ProcedureByName.Keys)
                 {
-                    using var command = new SqlCommand("DROP PROCEDURE " + name, connection);
+                    using var command = new SqlCommand($"DROP PROCEDURE {name}", connection);
                     command.ExecuteNonQuery();
                 }
             }
@@ -129,7 +129,7 @@ CREATE SCHEMA " + this.database.SchemaName;
             {
                 foreach (var name in this.validation.Schema.TableTypeByName.Keys)
                 {
-                    using var command = new SqlCommand("DROP TYPE " + name, connection);
+                    using var command = new SqlCommand($"DROP TYPE {name}", connection);
                     command.ExecuteNonQuery();
                 }
             }
@@ -179,7 +179,7 @@ CREATE SCHEMA " + this.database.SchemaName;
                     var associationType = relationType.AssociationType;
                     var roleType = relationType.RoleType;
 
-                    if (!roleType.ObjectType.IsUnit && (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
+                    if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                     {
                         var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
                         this.TruncateTable(connection, tableName);
@@ -212,7 +212,7 @@ CREATE SCHEMA " + this.database.SchemaName;
                     var associationType = relationType.AssociationType;
                     var roleType = relationType.RoleType;
 
-                    if (!roleType.ObjectType.IsUnit && (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
+                    if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                     {
                         var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
                         this.DropTable(connection, tableName);
@@ -233,11 +233,11 @@ CREATE SCHEMA " + this.database.SchemaName;
             {
                 {
                     var sql = new StringBuilder();
-                    sql.Append("CREATE TABLE " + this.mapping.TableNameForObjects + "\n");
+                    sql.Append($"CREATE TABLE {this.mapping.TableNameForObjects}\n");
                     sql.Append("(\n");
-                    sql.Append(Mapping.ColumnNameForObject + " " + Mapping.SqlTypeForObject + " IDENTITY(1,1) PRIMARY KEY,\n");
-                    sql.Append(Mapping.ColumnNameForClass + " " + Mapping.SqlTypeForClass + ",\n");
-                    sql.Append(Mapping.ColumnNameForVersion + " " + Mapping.SqlTypeForVersion + "\n");
+                    sql.Append($"{Sql.Mapping.ColumnNameForObject} {Mapping.SqlTypeForObject} IDENTITY(1,1) PRIMARY KEY,\n");
+                    sql.Append($"{Sql.Mapping.ColumnNameForClass} {Mapping.SqlTypeForClass},\n");
+                    sql.Append($"{Sql.Mapping.ColumnNameForVersion} {Mapping.SqlTypeForVersion}\n");
                     sql.Append(")\n");
 
                     using var command = new SqlCommand(sql.ToString(), connection);
@@ -249,10 +249,10 @@ CREATE SCHEMA " + this.database.SchemaName;
                     var tableName = this.mapping.TableNameForObjectByClass[@class];
 
                     var sql = new StringBuilder();
-                    sql.Append("CREATE TABLE " + tableName + "\n");
+                    sql.Append($"CREATE TABLE {tableName}\n");
                     sql.Append("(\n");
-                    sql.Append(Mapping.ColumnNameForObject + " " + Mapping.SqlTypeForObject + " PRIMARY KEY,\n");
-                    sql.Append(Mapping.ColumnNameForClass + " " + Mapping.SqlTypeForClass);
+                    sql.Append($"{Sql.Mapping.ColumnNameForObject} {Mapping.SqlTypeForObject} PRIMARY KEY,\n");
+                    sql.Append($"{Sql.Mapping.ColumnNameForClass} {Mapping.SqlTypeForClass}");
 
                     foreach (var associationType in @class.DatabaseAssociationTypes)
                     {
@@ -260,7 +260,8 @@ CREATE SCHEMA " + this.database.SchemaName;
                         var roleType = relationType.RoleType;
                         if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && roleType.IsMany)
                         {
-                            sql.Append(",\n" + this.mapping.ColumnNameByRelationType[relationType] + " " + Mapping.SqlTypeForObject);
+                            sql.Append(
+                                $",\n{this.mapping.ColumnNameByRelationType[relationType]} {Mapping.SqlTypeForObject}");
                         }
                     }
 
@@ -270,14 +271,13 @@ CREATE SCHEMA " + this.database.SchemaName;
                         var associationType3 = relationType.AssociationType;
                         if (roleType.ObjectType.IsUnit)
                         {
-                            sql.Append(",\n" + this.mapping.ColumnNameByRelationType[relationType] + " " + this.mapping.GetSqlType(roleType));
+                            sql.Append(
+                                $",\n{this.mapping.ColumnNameByRelationType[relationType]} {this.mapping.GetSqlType(roleType)}");
                         }
-                        else
+                        else if (!(associationType3.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                         {
-                            if (!(associationType3.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
-                            {
-                                sql.Append(",\n" + this.mapping.ColumnNameByRelationType[relationType] + " " + Mapping.SqlTypeForObject);
-                            }
+                            sql.Append(
+                                $",\n{this.mapping.ColumnNameByRelationType[relationType]} {Mapping.SqlTypeForObject}");
                         }
                     }
 
@@ -292,7 +292,7 @@ CREATE SCHEMA " + this.database.SchemaName;
                     var associationType = relationType.AssociationType;
                     var roleType = relationType.RoleType;
 
-                    if (!roleType.ObjectType.IsUnit && (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
+                    if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                     {
                         var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
 
@@ -300,11 +300,11 @@ CREATE SCHEMA " + this.database.SchemaName;
 
                         var sql =
                             $@"CREATE TABLE {tableName}(
-    {Mapping.ColumnNameForAssociation} {Mapping.SqlTypeForObject},
-    {Mapping.ColumnNameForRole} {Mapping.SqlTypeForObject},
+    {Sql.Mapping.ColumnNameForAssociation} {Mapping.SqlTypeForObject},
+    {Sql.Mapping.ColumnNameForRole} {Mapping.SqlTypeForObject},
     {(relationType.RoleType.IsOne
-                                ? $"CONSTRAINT {primaryKeyName} PRIMARY KEY ({Mapping.ColumnNameForAssociation})\n"
-                                : $"CONSTRAINT {primaryKeyName} PRIMARY KEY ({Mapping.ColumnNameForAssociation}, {Mapping.ColumnNameForRole})\n")}
+                                ? $"CONSTRAINT {primaryKeyName} PRIMARY KEY ({Sql.Mapping.ColumnNameForAssociation})\n"
+                                : $"CONSTRAINT {primaryKeyName} PRIMARY KEY ({Sql.Mapping.ColumnNameForAssociation}, {Sql.Mapping.ColumnNameForRole})\n")}
 
 )";
 
@@ -363,7 +363,8 @@ CREATE SCHEMA " + this.database.SchemaName;
 
                             if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && roleType.IsMany)
                             {
-                                var indexName = "idx_" + @class.Name.ToLowerInvariant() + "_" + relationType.AssociationType.SingularFullName.ToLowerInvariant();
+                                var indexName =
+                                    $"idx_{@class.Name.ToLowerInvariant()}_{relationType.AssociationType.SingularFullName.ToLowerInvariant()}";
                                 this.CreateIndex(connection, indexName, relationType, tableName);
                             }
                         }
@@ -389,16 +390,15 @@ CREATE SCHEMA " + this.database.SchemaName;
                             var associationType = relationType.AssociationType;
                             if (roleType.ObjectType.IsUnit)
                             {
-                                var indexName = "idx_" + @class.Name.ToLowerInvariant() + "_" + relationType.RoleType.SingularFullName.ToLowerInvariant();
+                                var indexName =
+                                    $"idx_{@class.Name.ToLowerInvariant()}_{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
                                 this.CreateIndex(connection, indexName, relationType, tableName);
                             }
-                            else
+                            else if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                             {
-                                if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
-                                {
-                                    var indexName = "idx_" + @class.Name.ToLowerInvariant() + "_" + relationType.RoleType.SingularFullName.ToLowerInvariant();
-                                    this.CreateIndex(connection, indexName, relationType, tableName);
-                                }
+                                var indexName =
+                                    $"idx_{@class.Name.ToLowerInvariant()}_{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+                                this.CreateIndex(connection, indexName, relationType, tableName);
                             }
                         }
                     }
@@ -410,13 +410,14 @@ CREATE SCHEMA " + this.database.SchemaName;
                     {
                         var associationType = relationType.AssociationType;
                         var roleType = relationType.RoleType;
-                        if (!roleType.ObjectType.IsUnit && (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
+                        if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                         {
                             var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
-                            var indexName = "idx_" + relationType.RoleType.SingularFullName.ToLowerInvariant() + "_" + Mapping.ColumnNameForRole.ToLowerInvariant();
+                            var indexName =
+                                $"idx_{relationType.RoleType.SingularFullName.ToLowerInvariant()}_{Sql.Mapping.ColumnNameForRole.ToLowerInvariant()}";
                             var sql = new StringBuilder();
-                            sql.Append("CREATE INDEX " + indexName + "\n");
-                            sql.Append("ON " + tableName + " (" + Mapping.ColumnNameForRole + ")");
+                            sql.Append($"CREATE INDEX {indexName}\n");
+                            sql.Append($"ON {tableName} ({Sql.Mapping.ColumnNameForRole})");
                             using var command = new SqlCommand(sql.ToString(), connection);
                             command.ExecuteNonQuery();
                         }
@@ -431,7 +432,7 @@ CREATE SCHEMA " + this.database.SchemaName;
 
         private void TruncateTable(SqlConnection connection, string tableName)
         {
-            var cmdText = @"TRUNCATE TABLE " + tableName + @";";
+            var cmdText = $"TRUNCATE TABLE {tableName};";
             using var command = new SqlCommand(cmdText, connection);
             command.ExecuteNonQuery();
         }
@@ -440,7 +441,7 @@ CREATE SCHEMA " + this.database.SchemaName;
         {
             if (!this.validation.MissingTableNames.Contains(tableName))
             {
-                using var command = new SqlCommand("DROP TABLE " + tableName, connection);
+                using var command = new SqlCommand($"DROP TABLE {tableName}", connection);
                 command.ExecuteNonQuery();
             }
         }
@@ -448,8 +449,8 @@ CREATE SCHEMA " + this.database.SchemaName;
         private void CreateIndex(SqlConnection connection, string indexName, IRelationType relationType, string tableName)
         {
             var sql = new StringBuilder();
-            sql.Append("CREATE INDEX " + indexName + "\n");
-            sql.Append("ON " + tableName + " (" + this.mapping.ColumnNameByRelationType[relationType] + ")");
+            sql.Append($"CREATE INDEX {indexName}\n");
+            sql.Append($"ON {tableName} ({this.mapping.ColumnNameByRelationType[relationType]})");
             using var command = new SqlCommand(sql.ToString(), connection);
             command.ExecuteNonQuery();
         }

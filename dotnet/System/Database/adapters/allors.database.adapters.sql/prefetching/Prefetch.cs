@@ -135,16 +135,13 @@ namespace Allors.Database.Adapters.Sql
                             this.prefetcher.PrefetchCompositesAssociationObjectTable(this.references, associationType, nestedObjectIds, leafs);
                         }
                     }
+                    else if (associationType.IsOne)
+                    {
+                        this.prefetcher.PrefetchCompositeAssociationRelationTable(this.references, associationType, nestedObjectIds, leafs);
+                    }
                     else
                     {
-                        if (associationType.IsOne)
-                        {
-                            this.prefetcher.PrefetchCompositeAssociationRelationTable(this.references, associationType, nestedObjectIds, leafs);
-                        }
-                        else
-                        {
-                            this.prefetcher.PrefetchCompositesAssociationRelationTable(this.references, associationType, nestedObjectIds, leafs);
-                        }
+                        this.prefetcher.PrefetchCompositesAssociationRelationTable(this.references, associationType, nestedObjectIds, leafs);
                     }
                 }
             }

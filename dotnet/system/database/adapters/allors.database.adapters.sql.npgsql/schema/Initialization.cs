@@ -214,12 +214,9 @@ CREATE SCHEMA " + this.database.SchemaName;
                             {
                                 sql.Append(",\n" + this.mapping.ColumnNameByRelationType[relationType] + " " + this.mapping.GetSqlType(roleType));
                             }
-                            else
+                            else if (!(associationType3.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                             {
-                                if (!(associationType3.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
-                                {
-                                    sql.Append(",\n" + this.mapping.ColumnNameByRelationType[relationType] + " " + Mapping.SqlTypeForObject);
-                                }
+                                sql.Append(",\n" + this.mapping.ColumnNameByRelationType[relationType] + " " + Mapping.SqlTypeForObject);
                             }
                         }
 
@@ -344,13 +341,10 @@ $@"CREATE TABLE {tableName}(
                                     var indexName = "idx_" + @class.Name.ToLowerInvariant() + "_" + relationType.RoleType.SingularFullName.ToLowerInvariant();
                                     this.CreateIndex(connection, indexName, relationType, tableName);
                                 }
-                                else
+                                else if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                                 {
-                                    if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
-                                    {
-                                        var indexName = "idx_" + @class.Name.ToLowerInvariant() + "_" + relationType.RoleType.SingularFullName.ToLowerInvariant();
-                                        this.CreateIndex(connection, indexName, relationType, tableName);
-                                    }
+                                    var indexName = "idx_" + @class.Name.ToLowerInvariant() + "_" + relationType.RoleType.SingularFullName.ToLowerInvariant();
+                                    this.CreateIndex(connection, indexName, relationType, tableName);
                                 }
                             }
                         }

@@ -11,7 +11,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     using System.Xml;
     using Adapters;
     using Meta;
-    using Version = Allors.Version;
+    using Version = Version;
 
     public class Objects : IEnumerable<object[]>
     {

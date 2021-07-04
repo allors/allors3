@@ -29,29 +29,26 @@ namespace Allors.Database.Adapters.Sql
 
             inStatement.UseRole(this.association.RoleType);
 
-            if (this.association.IsMany && this.association.RoleType.IsMany || !this.association.RelationType.ExistExclusiveDatabaseClasses)
+            if ((this.association.IsMany && this.association.RoleType.IsMany) || !this.association.RelationType.ExistExclusiveDatabaseClasses)
             {
                 statement.Append(" (" + this.association.SingularFullName + "_A." + Mapping.ColumnNameForAssociation + " IS NOT NULL AND ");
                 statement.Append(" " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForAssociation + " IN (\n");
                 this.inExtent.BuildSql(inStatement);
                 statement.Append(" ))\n");
             }
+            else if (this.association.RoleType.IsMany)
+            {
+                statement.Append(" (" + alias + "." + schema.ColumnNameByRelationType[this.association.RelationType] + " IS NOT NULL AND ");
+                statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.association.RelationType] + " IN (\n");
+                this.inExtent.BuildSql(inStatement);
+                statement.Append(" ))\n");
+            }
             else
             {
-                if (this.association.RoleType.IsMany)
-                {
-                    statement.Append(" (" + alias + "." + schema.ColumnNameByRelationType[this.association.RelationType] + " IS NOT NULL AND ");
-                    statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.association.RelationType] + " IN (\n");
-                    this.inExtent.BuildSql(inStatement);
-                    statement.Append(" ))\n");
-                }
-                else
-                {
-                    statement.Append(" (" + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " IS NOT NULL AND ");
-                    statement.Append(" " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " IN (\n");
-                    this.inExtent.BuildSql(inStatement);
-                    statement.Append(" ))\n");
-                }
+                statement.Append(" (" + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " IS NOT NULL AND ");
+                statement.Append(" " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " IN (\n");
+                this.inExtent.BuildSql(inStatement);
+                statement.Append(" ))\n");
             }
 
             return this.Include;

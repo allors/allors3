@@ -23,7 +23,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             {
                 this.SqlConnection = new SqlConnection(this.Database.ConnectionString);
                 this.SqlConnection.Open();
-                this.SqlTransaction = this.SqlConnection.BeginTransaction(this.Database.IsolationLevel ?? Database.DefaultIsolationLevel);
+                this.SqlTransaction = this.SqlConnection.BeginTransaction(this.Database.IsolationLevel ?? Sql.Database.DefaultIsolationLevel);
             }
 
             var sqlCommand = this.SqlConnection.CreateCommand();

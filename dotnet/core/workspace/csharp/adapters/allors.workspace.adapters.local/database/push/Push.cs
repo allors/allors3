@@ -170,43 +170,40 @@ namespace Allors.Workspace.Adapters.Local
                     {
                         obj.Strategy.RemoveRole(roleType);
                     }
+                    else if (roleType.ObjectType.IsUnit)
+                    {
+                        obj.Strategy.SetUnitRole(roleType, roleValue);
+                    }
                     else
                     {
-                        if (roleType.ObjectType.IsUnit)
+                        if (relationType.RoleType.IsOne)
                         {
-                            obj.Strategy.SetUnitRole(roleType, roleValue);
-                        }
-                        else
-                        {
-                            if (relationType.RoleType.IsOne)
+                            var roleId = (long)roleValue;
+                            IObject role = null;
+
+                            if (roleId < 0)
                             {
-                                var roleId = (long)roleValue;
-                                IObject role = null;
-
-                                if (roleId < 0)
-                                {
-                                    this.ObjectByNewId.TryGetValue(roleId, out role);
-                                }
-                                else
-                                {
-                                    role = this.Transaction.Instantiate(roleId);
-                                }
-
-                                obj.Strategy.SetCompositeRole(roleType, role);
+                                this.ObjectByNewId.TryGetValue(roleId, out role);
                             }
                             else
                             {
-                                if (this.ObjectByNewId == null)
-                                {
-                                    var roles = this.Transaction.Instantiate(this.Numbers.Enumerate(roleValue));
-                                    obj.Strategy.SetCompositeRoles(roleType, this.GetRoles(roles));
-                                }
-                                else
-                                {
-                                    obj.Strategy.SetCompositeRoles(roleType, this.GetRoles(roleValue));
-                                }
-
+                                role = this.Transaction.Instantiate(roleId);
                             }
+
+                            obj.Strategy.SetCompositeRole(roleType, role);
+                        }
+                        else
+                        {
+                            if (this.ObjectByNewId == null)
+                            {
+                                var roles = this.Transaction.Instantiate(this.Numbers.Enumerate(roleValue));
+                                obj.Strategy.SetCompositeRoles(roleType, this.GetRoles(roles));
+                            }
+                            else
+                            {
+                                obj.Strategy.SetCompositeRoles(roleType, this.GetRoles(roleValue));
+                            }
+
                         }
                     }
                 }

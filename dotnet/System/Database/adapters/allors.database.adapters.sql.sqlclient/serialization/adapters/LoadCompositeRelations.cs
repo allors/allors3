@@ -79,39 +79,36 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                                             this.onRelationNotLoaded(this.relationType.Id, associationId, roleId);
                                         }
                                     }
+                                    else if (this.relationType.RoleType.IsOne)
+                                    {
+                                        var roleId = long.Parse(roleIdStringArray[0]);
+
+                                        this.classByObjectId.TryGetValue(roleId, out var roleClass);
+
+                                        if (roleClass == null || !allowedRoleClasses.Contains(roleClass))
+                                        {
+                                            this.onRelationNotLoaded(this.relationType.Id, associationId, roleIdStringArray[0]);
+                                        }
+                                        else
+                                        {
+                                            yield return new CompositeRelation(associationId, roleId);
+                                        }
+                                    }
                                     else
                                     {
-                                        if (this.relationType.RoleType.IsOne)
+                                        foreach (var roleIdString in roleIdStringArray)
                                         {
-                                            var roleId = long.Parse(roleIdStringArray[0]);
+                                            var roleId = long.Parse(roleIdString);
 
                                             this.classByObjectId.TryGetValue(roleId, out var roleClass);
 
                                             if (roleClass == null || !allowedRoleClasses.Contains(roleClass))
                                             {
-                                                this.onRelationNotLoaded(this.relationType.Id, associationId, roleIdStringArray[0]);
+                                                this.onRelationNotLoaded(this.relationType.Id, associationId, roleId.ToString());
                                             }
                                             else
                                             {
                                                 yield return new CompositeRelation(associationId, roleId);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            foreach (var roleIdString in roleIdStringArray)
-                                            {
-                                                var roleId = long.Parse(roleIdString);
-
-                                                this.classByObjectId.TryGetValue(roleId, out var roleClass);
-
-                                                if (roleClass == null || !allowedRoleClasses.Contains(roleClass))
-                                                {
-                                                    this.onRelationNotLoaded(this.relationType.Id, associationId, roleId.ToString());
-                                                }
-                                                else
-                                                {
-                                                    yield return new CompositeRelation(associationId, roleId);
-                                                }
                                             }
                                         }
                                     }

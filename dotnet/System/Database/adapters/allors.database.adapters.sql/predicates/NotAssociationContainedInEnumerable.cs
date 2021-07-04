@@ -38,7 +38,7 @@ namespace Allors.Database.Adapters.Sql
                 inStatement.Append(inObject.Id.ToString());
             }
 
-            if (this.association.IsMany && this.association.RelationType.RoleType.IsMany || !this.association.RelationType.ExistExclusiveDatabaseClasses)
+            if ((this.association.IsMany && this.association.RelationType.RoleType.IsMany) || !this.association.RelationType.ExistExclusiveDatabaseClasses)
             {
                 statement.Append(" (" + this.association.SingularFullName + "_A." + Mapping.ColumnNameForRole + " IS NULL OR ");
                 statement.Append(" NOT " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForRole + " IN (\n");
@@ -46,22 +46,19 @@ namespace Allors.Database.Adapters.Sql
                 statement.Append(inStatement.ToString());
                 statement.Append(" ))\n");
             }
+            else if (this.association.RelationType.RoleType.IsMany)
+            {
+                statement.Append(" (" + alias + "." + schema.ColumnNameByRelationType[this.association.RelationType] + " IS NULL OR ");
+                statement.Append(" NOT " + alias + "." + schema.ColumnNameByRelationType[this.association.RelationType] + " IN (\n");
+                statement.Append(inStatement.ToString());
+                statement.Append(" ))\n");
+            }
             else
             {
-                if (this.association.RelationType.RoleType.IsMany)
-                {
-                    statement.Append(" (" + alias + "." + schema.ColumnNameByRelationType[this.association.RelationType] + " IS NULL OR ");
-                    statement.Append(" NOT " + alias + "." + schema.ColumnNameByRelationType[this.association.RelationType] + " IN (\n");
-                    statement.Append(inStatement.ToString());
-                    statement.Append(" ))\n");
-                }
-                else
-                {
-                    statement.Append(" (" + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " IS NULL OR ");
-                    statement.Append(" NOT " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " IN (\n");
-                    statement.Append(inStatement.ToString());
-                    statement.Append(" ))\n");
-                }
+                statement.Append(" (" + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " IS NULL OR ");
+                statement.Append(" NOT " + this.association.SingularFullName + "_A." + Mapping.ColumnNameForObject + " IN (\n");
+                statement.Append(inStatement.ToString());
+                statement.Append(" ))\n");
             }
 
             return this.Include;

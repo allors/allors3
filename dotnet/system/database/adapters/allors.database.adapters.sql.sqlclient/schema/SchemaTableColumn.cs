@@ -35,18 +35,18 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 if (this.DataType.Equals("nvarchar"))
                 {
                     var length = this.CharacterMaximumLength == -1 ? "max" : this.CharacterMaximumLength.ToString();
-                    return "nvarchar(" + length + ")";
+                    return $"nvarchar({length})";
                 }
 
                 if (this.DataType.Equals("varbinary"))
                 {
                     var length = this.CharacterMaximumLength == -1 ? "max" : this.CharacterMaximumLength.ToString();
-                    return "varbinary(" + length + ")";
+                    return $"varbinary({length})";
                 }
 
                 if (this.DataType.Equals("decimal"))
                 {
-                    return "decimal(" + this.NumericPrecision + "," + this.numericScale + ")";
+                    return $"decimal({this.NumericPrecision},{this.numericScale})";
                 }
 
                 return this.DataType;

@@ -65,15 +65,15 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             {
                 var atLeastOne = false;
 
-                var sql = "SELECT " + Mapping.ColumnNameForObject + ", " + Mapping.ColumnNameForVersion + "\n";
-                sql += "FROM " + this.database.Mapping.TableNameForObjects + "\n";
-                sql += "WHERE " + Mapping.ColumnNameForClass + "=" + mapping.ParamNameForClass + "\n";
-                sql += "ORDER BY " + Mapping.ColumnNameForObject;
+                var sql = $"SELECT {Sql.Mapping.ColumnNameForObject}, {Sql.Mapping.ColumnNameForVersion}\n";
+                sql += $"FROM {this.database.Mapping.TableNameForObjects}\n";
+                sql += $"WHERE {Sql.Mapping.ColumnNameForClass}={mapping.ParamInvocationNameForClass}\n";
+                sql += $"ORDER BY {Sql.Mapping.ColumnNameForObject}";
 
                 using (var command = transaction.Connection.CreateCommand())
                 {
                     command.CommandText = sql;
-                    command.AddInParameter(mapping.ParamNameForClass, type.Id);
+                    command.AddInParameter(mapping.ParamInvocationNameForClass, type.Id);
 
                     using (var reader = command.ExecuteReader())
                     {
@@ -147,36 +147,45 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                                 sql += "UNION\n";
                             }
 
-                            sql += "SELECT " + Mapping.ColumnNameForObject + " As " + Mapping.ColumnNameForAssociation + ", " + this.database.Mapping.ColumnNameByRelationType[roleType.RelationType] + " As " + Mapping.ColumnNameForRole + "\n";
-                            sql += "FROM " + this.database.Mapping.TableNameForObjectByClass[(IClass)exclusiveRootClass] + "\n";
-                            sql += "WHERE " + this.database.Mapping.ColumnNameByRelationType[roleType.RelationType] + " IS NOT NULL\n";
+                            sql +=
+                                $"SELECT {Sql.Mapping.ColumnNameForObject} As {Sql.Mapping.ColumnNameForAssociation}, {this.database.Mapping.ColumnNameByRelationType[roleType.RelationType]} As {Sql.Mapping.ColumnNameForRole}\n";
+                            sql +=
+                                $"FROM {this.database.Mapping.TableNameForObjectByClass[(IClass)exclusiveRootClass]}\n";
+                            sql +=
+                                $"WHERE {this.database.Mapping.ColumnNameByRelationType[roleType.RelationType]} IS NOT NULL\n";
                         }
 
-                        sql += "ORDER BY " + Mapping.ColumnNameForAssociation;
+                        sql += $"ORDER BY {Sql.Mapping.ColumnNameForAssociation}";
                     }
                     else if ((roleType.IsMany && associationType.IsMany) || !relation.ExistExclusiveDatabaseClasses)
                     {
-                        sql += "SELECT " + Mapping.ColumnNameForAssociation + "," + Mapping.ColumnNameForRole + "\n";
-                        sql += "FROM " + this.database.Mapping.TableNameForRelationByRelationType[relation] + "\n";
-                        sql += "ORDER BY " + Mapping.ColumnNameForAssociation + "," + Mapping.ColumnNameForRole;
+                        sql += $"SELECT {Sql.Mapping.ColumnNameForAssociation},{Sql.Mapping.ColumnNameForRole}\n";
+                        sql += $"FROM {this.database.Mapping.TableNameForRelationByRelationType[relation]}\n";
+                        sql += $"ORDER BY {Sql.Mapping.ColumnNameForAssociation},{Sql.Mapping.ColumnNameForRole}";
                     }
                     else
                     {
                         // use foreign keys
                         if (roleType.IsOne)
                         {
-                            sql += "SELECT " + Mapping.ColumnNameForObject + " As " + Mapping.ColumnNameForAssociation + ", " + this.database.Mapping.ColumnNameByRelationType[roleType.RelationType] + " As " + Mapping.ColumnNameForRole + "\n";
-                            sql += "FROM " + this.database.Mapping.TableNameForObjectByClass[associationType.ObjectType.ExclusiveDatabaseClass] + "\n";
-                            sql += "WHERE " + this.database.Mapping.ColumnNameByRelationType[roleType.RelationType] + " IS NOT NULL\n";
-                            sql += "ORDER BY " + Mapping.ColumnNameForAssociation;
+                            sql +=
+                                $"SELECT {Sql.Mapping.ColumnNameForObject} As {Sql.Mapping.ColumnNameForAssociation}, {this.database.Mapping.ColumnNameByRelationType[roleType.RelationType]} As {Sql.Mapping.ColumnNameForRole}\n";
+                            sql +=
+                                $"FROM {this.database.Mapping.TableNameForObjectByClass[associationType.ObjectType.ExclusiveDatabaseClass]}\n";
+                            sql +=
+                                $"WHERE {this.database.Mapping.ColumnNameByRelationType[roleType.RelationType]} IS NOT NULL\n";
+                            sql += $"ORDER BY {Sql.Mapping.ColumnNameForAssociation}";
                         }
                         else
                         {
                             // role.Many
-                            sql += "SELECT " + this.database.Mapping.ColumnNameByRelationType[associationType.RelationType] + " As " + Mapping.ColumnNameForAssociation + ", " + Mapping.ColumnNameForObject + " As " + Mapping.ColumnNameForRole + "\n";
-                            sql += "FROM " + this.database.Mapping.TableNameForObjectByClass[((IComposite)roleType.ObjectType).ExclusiveDatabaseClass] + "\n";
-                            sql += "WHERE " + this.database.Mapping.ColumnNameByRelationType[associationType.RelationType] + " IS NOT NULL\n";
-                            sql += "ORDER BY " + Mapping.ColumnNameForAssociation + "," + Mapping.ColumnNameForRole;
+                            sql +=
+                                $"SELECT {this.database.Mapping.ColumnNameByRelationType[associationType.RelationType]} As {Sql.Mapping.ColumnNameForAssociation}, {Sql.Mapping.ColumnNameForObject} As {Sql.Mapping.ColumnNameForRole}\n";
+                            sql +=
+                                $"FROM {this.database.Mapping.TableNameForObjectByClass[((IComposite)roleType.ObjectType).ExclusiveDatabaseClass]}\n";
+                            sql +=
+                                $"WHERE {this.database.Mapping.ColumnNameByRelationType[associationType.RelationType]} IS NOT NULL\n";
+                            sql += $"ORDER BY {Sql.Mapping.ColumnNameForAssociation},{Sql.Mapping.ColumnNameForRole}";
                         }
                     }
 

@@ -197,83 +197,77 @@ namespace Allors.Database.Protocol.Json
                             var role = this.unitConvert.FromJson(unitType.Tag, pushRequestRole.u);
                             obj.Strategy.SetUnitRole(roleType, role);
                         }
-                        else
+                        else if (roleType.IsOne)
                         {
-                            if (roleType.IsOne)
+                            if (!pushRequestRole.c.HasValue)
                             {
-                                if (!pushRequestRole.c.HasValue)
-                                {
-                                    obj.Strategy.RemoveCompositeRole(roleType);
-                                }
-                                else
-                                {
-                                    var role = this.GetRole(pushRequestRole.c.Value, objectByNewId);
-                                    if (role == null)
-                                    {
-                                        pushResponse.AddMissingError(pushRequestRole.c.Value);
-                                    }
-                                    else
-                                    {
-                                        obj.Strategy.SetCompositeRole(roleType, role);
-                                    }
-                                }
+                                obj.Strategy.RemoveCompositeRole(roleType);
                             }
                             else
                             {
-                                // Add
-                                if (pushRequestRole.a != null)
+                                var role = this.GetRole(pushRequestRole.c.Value, objectByNewId);
+                                if (role == null)
                                 {
-                                    var roleIds = pushRequestRole.a;
-                                    if (roleIds.Length != 0)
+                                    pushResponse.AddMissingError(pushRequestRole.c.Value);
+                                }
+                                else
+                                {
+                                    obj.Strategy.SetCompositeRole(roleType, role);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Add
+                            if (pushRequestRole.a != null)
+                            {
+                                var roleIds = pushRequestRole.a;
+                                if (roleIds.Length != 0)
+                                {
+                                    var roles = this.GetRoles(roleIds, objectByNewId);
+                                    if (roles.Length != roleIds.Length)
                                     {
-                                        var roles = this.GetRoles(roleIds, objectByNewId);
-                                        if (roles.Length != roleIds.Length)
+                                        AddMissingRoles(roles, roleIds, pushResponse);
+                                    }
+                                    else
+                                    {
+                                        foreach (var role in roles)
                                         {
-                                            AddMissingRoles(roles, roleIds, pushResponse);
-                                        }
-                                        else
-                                        {
-                                            foreach (var role in roles)
-                                            {
-                                                obj.Strategy.AddCompositeRole(roleType, role);
-                                            }
+                                            obj.Strategy.AddCompositeRole(roleType, role);
                                         }
                                     }
                                 }
+                            }
 
-                                // Remove
-                                if (pushRequestRole.r != null)
+                            // Remove
+                            if (pushRequestRole.r != null)
+                            {
+                                var roleIds = pushRequestRole.r;
+                                if (roleIds.Length != 0)
                                 {
-                                    var roleIds = pushRequestRole.r;
-                                    if (roleIds.Length != 0)
+                                    var roles = this.GetRoles(roleIds, objectByNewId);
+                                    if (roles.Length != roleIds.Length)
                                     {
-                                        var roles = this.GetRoles(roleIds, objectByNewId);
-                                        if (roles.Length != roleIds.Length)
+                                        AddMissingRoles(roles, roleIds, pushResponse);
+                                    }
+                                    else
+                                    {
+                                        foreach (var role in roles)
                                         {
-                                            AddMissingRoles(roles, roleIds, pushResponse);
-                                        }
-                                        else
-                                        {
-                                            foreach (var role in roles)
-                                            {
-                                                obj.Strategy.RemoveCompositeRole(roleType, role);
-                                            }
+                                            obj.Strategy.RemoveCompositeRole(roleType, role);
                                         }
                                     }
                                 }
                             }
                         }
                     }
+                    else if (!ignore)
+                    {
+                        pushResponse.AddAccessError(obj);
+                    }
                     else
                     {
-                        if (!ignore)
-                        {
-                            pushResponse.AddAccessError(obj);
-                        }
-                        else
-                        {
-                            countOutstandingRoles++;
-                        }
+                        countOutstandingRoles++;
                     }
                 }
             }

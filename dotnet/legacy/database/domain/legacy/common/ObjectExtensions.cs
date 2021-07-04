@@ -18,14 +18,11 @@ namespace Allors.Database.Domain
             {
                 iteration.Schedule(@this);
             }
-            else
+            else if (!iteration.Cycle.Derivation.DerivedObjects.Contains(@this))
             {
-                if (!iteration.Cycle.Derivation.DerivedObjects.Contains(@this))
+                if (changeSet.IsCreated(@this) || changeSet.HasChangedRoles(@this))
                 {
-                    if (changeSet.IsCreated(@this) || changeSet.HasChangedRoles(@this))
-                    {
-                        iteration.Schedule(@this);
-                    }
+                    iteration.Schedule(@this);
                 }
             }
         }

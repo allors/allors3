@@ -137,8 +137,8 @@ namespace Allors.Database.Adapters
 
             var firstRole = firstObject as IRoleType;
             var secondRole = secondObject as IRoleType;
-            if (firstRole != null && !(firstRole.ObjectType is IUnit) ||
-                secondRole != null && !(secondRole.ObjectType is IUnit))
+            if ((firstRole != null && !(firstRole.ObjectType is IUnit)) ||
+                (secondRole != null && !(secondRole.ObjectType is IUnit)))
             {
                 throw new ArgumentException("AddBetween() can only be used with roles having unit types.");
             }

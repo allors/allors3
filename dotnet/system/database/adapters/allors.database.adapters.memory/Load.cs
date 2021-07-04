@@ -178,7 +178,7 @@ namespace Allors.Database.Adapters.Memory
                                 }
 
                                 skip = this.reader.IsStartElement() ||
-                                       this.reader.NodeType == XmlNodeType.EndElement && this.reader.Name.Equals(Serialization.Database);
+                                       (this.reader.NodeType == XmlNodeType.EndElement && this.reader.Name.Equals(Serialization.Database));
                             }
                         }
                         else
@@ -325,8 +325,8 @@ namespace Allors.Database.Adapters.Memory
                                 value = this.reader.ReadElementContentAsString();
 
                                 skip = this.reader.IsStartElement() ||
-                                       this.reader.NodeType == XmlNodeType.EndElement &&
-                                       this.reader.Name.Equals(Serialization.RelationTypeUnit);
+                                       (this.reader.NodeType == XmlNodeType.EndElement &&
+                                       this.reader.Name.Equals(Serialization.RelationTypeUnit));
                             }
 
                             if (strategy == null)
@@ -408,8 +408,8 @@ namespace Allors.Database.Adapters.Memory
                                 value = this.reader.ReadElementContentAsString();
 
                                 skip = this.reader.IsStartElement() ||
-                                       this.reader.NodeType == XmlNodeType.EndElement &&
-                                       this.reader.Name.Equals(Serialization.RelationTypeComposite);
+                                       (this.reader.NodeType == XmlNodeType.EndElement &&
+                                       this.reader.Name.Equals(Serialization.RelationTypeComposite));
 
                                 var roleIdsString = value;
                                 var roleIdStringArray = roleIdsString.Split(Serialization.ObjectsSplitterCharArray);
@@ -417,63 +417,60 @@ namespace Allors.Database.Adapters.Memory
                                 if (association == null ||
                                     !this.transaction.Database.ContainsClass(
                                         relationType.AssociationType.ObjectType, association.UncheckedObjectType) ||
-                                    relationType.RoleType.IsOne && roleIdStringArray.Length != 1)
+                                    (relationType.RoleType.IsOne && roleIdStringArray.Length != 1))
                                 {
                                     foreach (var roleId in roleIdStringArray)
                                     {
                                         this.transaction.Database.OnRelationNotLoaded(relationType.Id, associationId, roleId);
                                     }
                                 }
-                                else
+                                else if (relationType.RoleType.IsOne)
                                 {
-                                    if (relationType.RoleType.IsOne)
+                                    var roleIdString = long.Parse(roleIdStringArray[0]);
+                                    var roleStrategy = this.LoadInstantiateStrategy(roleIdString);
+                                    if (roleStrategy == null || !this.transaction.Database.ContainsClass((IComposite)relationType.RoleType.ObjectType, roleStrategy.UncheckedObjectType))
                                     {
-                                        var roleIdString = long.Parse(roleIdStringArray[0]);
-                                        var roleStrategy = this.LoadInstantiateStrategy(roleIdString);
-                                        if (roleStrategy == null || !this.transaction.Database.ContainsClass((IComposite)relationType.RoleType.ObjectType, roleStrategy.UncheckedObjectType))
-                                        {
-                                            this.transaction.Database.OnRelationNotLoaded(relationType.Id, associationId, roleIdStringArray[0]);
-                                        }
-                                        else
-                                        {
-                                            if (relationType.RoleType.AssociationType.IsMany)
-                                            {
-                                                association.SetCompositeRoleMany2One(relationType.RoleType, roleStrategy);
-                                            }
-                                            else
-                                            {
-                                                association.SetCompositeRoleOne2One(relationType.RoleType, roleStrategy);
-                                            }
-                                        }
+                                        this.transaction.Database.OnRelationNotLoaded(relationType.Id, associationId, roleIdStringArray[0]);
                                     }
                                     else
                                     {
-                                        var roleStrategies = new HashSet<Strategy>();
-                                        foreach (var roleIdString in roleIdStringArray)
-                                        {
-                                            var roleId = long.Parse(roleIdString);
-                                            var role = this.LoadInstantiateStrategy(roleId);
-                                            if (role == null ||
-                                                !this.transaction.Database.ContainsClass(
-                                                    (IComposite)relationType.RoleType.ObjectType,
-                                                    role.UncheckedObjectType))
-                                            {
-                                                this.transaction.Database.OnRelationNotLoaded(relationType.Id, associationId, roleId.ToString());
-                                            }
-                                            else
-                                            {
-                                                roleStrategies.Add(role);
-                                            }
-                                        }
-
                                         if (relationType.RoleType.AssociationType.IsMany)
                                         {
-                                            association.SetCompositesRolesMany2Many(relationType.RoleType, roleStrategies);
+                                            association.SetCompositeRoleMany2One(relationType.RoleType, roleStrategy);
                                         }
                                         else
                                         {
-                                            association.SetCompositesRolesOne2Many(relationType.RoleType, roleStrategies);
+                                            association.SetCompositeRoleOne2One(relationType.RoleType, roleStrategy);
                                         }
+                                    }
+                                }
+                                else
+                                {
+                                    var roleStrategies = new HashSet<Strategy>();
+                                    foreach (var roleIdString in roleIdStringArray)
+                                    {
+                                        var roleId = long.Parse(roleIdString);
+                                        var role = this.LoadInstantiateStrategy(roleId);
+                                        if (role == null ||
+                                            !this.transaction.Database.ContainsClass(
+                                                (IComposite)relationType.RoleType.ObjectType,
+                                                role.UncheckedObjectType))
+                                        {
+                                            this.transaction.Database.OnRelationNotLoaded(relationType.Id, associationId, roleId.ToString());
+                                        }
+                                        else
+                                        {
+                                            roleStrategies.Add(role);
+                                        }
+                                    }
+
+                                    if (relationType.RoleType.AssociationType.IsMany)
+                                    {
+                                        association.SetCompositesRolesMany2Many(relationType.RoleType, roleStrategies);
+                                    }
+                                    else
+                                    {
+                                        association.SetCompositesRolesOne2Many(relationType.RoleType, roleStrategies);
                                     }
                                 }
                             }

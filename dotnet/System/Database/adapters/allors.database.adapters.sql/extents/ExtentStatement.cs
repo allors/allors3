@@ -84,7 +84,7 @@ namespace Allors.Database.Adapters.Sql
                 var relationType = association.RelationType;
                 var role = relationType.RoleType;
 
-                if (association.IsMany && role.IsMany || !relationType.ExistExclusiveDatabaseClasses)
+                if ((association.IsMany && role.IsMany) || !relationType.ExistExclusiveDatabaseClasses)
                 {
                     this.Append(" LEFT OUTER JOIN " + this.Mapping.TableNameForRelationByRelationType[relationType] + " " + association.SingularFullName + "_A");
                     this.Append(" ON " + alias + "." + Mapping.ColumnNameForObject + "=" + association.SingularFullName + "_A." + Mapping.ColumnNameForRole);

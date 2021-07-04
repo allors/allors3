@@ -162,18 +162,15 @@ namespace Allors.Database.Protocol.Json
                         tree.Resolve(newObject, this.AccessControlLists, this.objects);
                     }
                 }
+                else if (existingCollection != null)
+                {
+                    existingCollection.UnionWith(filteredCollection);
+                }
                 else
                 {
-                    if (existingCollection != null)
-                    {
-                        existingCollection.UnionWith(filteredCollection);
-                    }
-                    else
-                    {
-                        var newWorkspaceCollection = new HashSet<IObject>(filteredCollection);
-                        this.collectionsByName.Add(name, newWorkspaceCollection);
-                        this.objects.UnionWith(newWorkspaceCollection);
-                    }
+                    var newWorkspaceCollection = new HashSet<IObject>(filteredCollection);
+                    this.collectionsByName.Add(name, newWorkspaceCollection);
+                    this.objects.UnionWith(newWorkspaceCollection);
                 }
             }
         }

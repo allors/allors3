@@ -26,22 +26,19 @@ namespace Allors.Database.Adapters.Sql
             {
                 statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.role.RelationType] + " IS NOT NULL");
             }
+            else if ((this.role.IsMany && this.role.RelationType.AssociationType.IsMany) || !this.role.RelationType.ExistExclusiveDatabaseClasses)
+            {
+                statement.Append(" " + this.role.SingularFullName + "_R." + Mapping.ColumnNameForRole + " IS NOT NULL");
+            }
             else
             {
-                if (this.role.IsMany && this.role.RelationType.AssociationType.IsMany || !this.role.RelationType.ExistExclusiveDatabaseClasses)
+                if (this.role.IsMany)
                 {
-                    statement.Append(" " + this.role.SingularFullName + "_R." + Mapping.ColumnNameForRole + " IS NOT NULL");
+                    statement.Append(" " + this.role.SingularFullName + "_R." + Mapping.ColumnNameForObject + " IS NOT NULL");
                 }
                 else
                 {
-                    if (this.role.IsMany)
-                    {
-                        statement.Append(" " + this.role.SingularFullName + "_R." + Mapping.ColumnNameForObject + " IS NOT NULL");
-                    }
-                    else
-                    {
-                        statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.role.RelationType] + " IS NOT NULL");
-                    }
+                    statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.role.RelationType] + " IS NOT NULL");
                 }
             }
 

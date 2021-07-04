@@ -50,30 +50,27 @@ namespace Allors.Workspace.Adapters.Remote
                     {
                         pushRequestRole.u = database.UnitConvert.ToJson(roleValue);
                     }
+                    else if (relationType.RoleType.IsOne)
+                    {
+                        pushRequestRole.c = (long?)roleValue;
+                    }
                     else
                     {
-                        if (relationType.RoleType.IsOne)
+                        if (!this.ExistDatabaseRecord)
                         {
-                            pushRequestRole.c = (long?)roleValue;
+                            pushRequestRole.a = numbers.ToArray(roleValue);
                         }
                         else
                         {
-                            if (!this.ExistDatabaseRecord)
+                            var databaseRole = (long[])this.DatabaseRecord.GetRole(relationType.RoleType);
+                            if (databaseRole == null)
                             {
                                 pushRequestRole.a = numbers.ToArray(roleValue);
                             }
                             else
                             {
-                                var databaseRole = (long[])this.DatabaseRecord.GetRole(relationType.RoleType);
-                                if (databaseRole == null)
-                                {
-                                    pushRequestRole.a = numbers.ToArray(roleValue);
-                                }
-                                else
-                                {
-                                    pushRequestRole.a = numbers.ToArray(numbers.Except(roleValue, databaseRole));
-                                    pushRequestRole.r = numbers.ToArray(numbers.Except(databaseRole, roleValue));
-                                }
+                                pushRequestRole.a = numbers.ToArray(numbers.Except(roleValue, databaseRole));
+                                pushRequestRole.r = numbers.ToArray(numbers.Except(databaseRole, roleValue));
                             }
                         }
                     }

@@ -412,7 +412,7 @@ where c = '{@class.Id}'";
             }
             else
             {
-                throw new Exception("Object not loaded: " + objectTypeId + ":" + allorsObjectId);
+                throw new Exception($"Object not loaded: {objectTypeId}:{allorsObjectId}");
             }
         }
 
@@ -425,7 +425,7 @@ where c = '{@class.Id}'";
             }
             else
             {
-                throw new Exception("Role not loaded: " + args);
+                throw new Exception($"Role not loaded: {args}");
             }
         }
 

@@ -37,24 +37,18 @@ namespace Allors.Database.Adapters.Memory
             {
                 firstValue = strategy.GetInternalizedUnitRole(firstRole);
             }
-            else
+            else if (this.roleType.ObjectType is IUnit)
             {
-                if (this.roleType.ObjectType is IUnit)
-                {
-                    firstValue = this.roleType.Normalize(this.first);
-                }
+                firstValue = this.roleType.Normalize(this.first);
             }
 
             if (this.second is IRoleType secondRole)
             {
                 secondValue = strategy.GetInternalizedUnitRole(secondRole);
             }
-            else
+            else if (this.roleType.ObjectType is IUnit)
             {
-                if (this.roleType.ObjectType is IUnit)
-                {
-                    secondValue = this.roleType.Normalize(this.second);
-                }
+                secondValue = this.roleType.Normalize(this.second);
             }
 
             if (!(strategy.GetInternalizedUnitRole(this.roleType) is IComparable comparable))

@@ -135,21 +135,18 @@ namespace Allors.Database.Adapters.Memory
                             strategy.SaveUnit(this.writer, roleType);
                         }
                     }
+                    else if (roleType.IsMany)
+                    {
+                        foreach (var strategy in strategies)
+                        {
+                            strategy.SaveComposites(this.writer, roleType);
+                        }
+                    }
                     else
                     {
-                        if (roleType.IsMany)
+                        foreach (var strategy in strategies)
                         {
-                            foreach (var strategy in strategies)
-                            {
-                                strategy.SaveComposites(this.writer, roleType);
-                            }
-                        }
-                        else
-                        {
-                            foreach (var strategy in strategies)
-                            {
-                                strategy.SaveComposite(this.writer, roleType);
-                            }
+                            strategy.SaveComposite(this.writer, roleType);
                         }
                     }
 

@@ -48,12 +48,9 @@ namespace Allors.Database.Domain
                 {
                     @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get((Class)@this.Strategy.Class, @this.Meta.Complete));
                 }
-                else
+                else if (@this.WorkEffortState.IsInProgress)
                 {
-                    if (@this.WorkEffortState.IsInProgress)
-                    {
-                        @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get((Class)@this.Strategy.Class, @this.Meta.Complete));
-                    }
+                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get((Class)@this.Strategy.Class, @this.Meta.Complete));
                 }
 
                 if (@this.WorkEffortState.IsFinished)

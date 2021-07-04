@@ -199,18 +199,15 @@ namespace Allors.Database.Adapters.Memory
             {
                 this.RemoveCompositeRole(roleType);
             }
+            else if (roleType.AssociationType.IsOne)
+            {
+                // 1-1
+                this.SetCompositeRoleOne2One(roleType, (Strategy)newRole.Strategy);
+            }
             else
             {
-                if (roleType.AssociationType.IsOne)
-                {
-                    // 1-1
-                    this.SetCompositeRoleOne2One(roleType, (Strategy)newRole.Strategy);
-                }
-                else
-                {
-                    // *-1
-                    this.SetCompositeRoleMany2One(roleType, (Strategy)newRole.Strategy);
-                }
+                // *-1
+                this.SetCompositeRoleMany2One(roleType, (Strategy)newRole.Strategy);
             }
         }
 
@@ -255,7 +252,7 @@ namespace Allors.Database.Adapters.Memory
 
         public void SetCompositeRoles(IRoleType roleType, IEnumerable<IObject> roles)
         {
-            if (roles == null || roles is ICollection<IObject> collection && collection.Count == 0)
+            if (roles == null || (roles is ICollection<IObject> collection && collection.Count == 0))
             {
                 this.RemoveCompositeRoles(roleType);
             }
@@ -407,16 +404,13 @@ namespace Allors.Database.Adapters.Memory
                                 this.RemoveCompositeRoleMany2One(roleType);
                             }
                         }
+                        else if (roleType.IsMany)
+                        {
+                            this.RemoveCompositeRolesOne2Many(roleType);
+                        }
                         else
                         {
-                            if (roleType.IsMany)
-                            {
-                                this.RemoveCompositeRolesOne2Many(roleType);
-                            }
-                            else
-                            {
-                                this.RemoveCompositeRoleOne2One(roleType);
-                            }
+                            this.RemoveCompositeRoleOne2One(roleType);
                         }
                     }
                 }
@@ -948,20 +942,17 @@ namespace Allors.Database.Adapters.Memory
                     }
                 }
             }
-            else
+            else if (!this.RollbackCompositeRoleByRoleType.ContainsKey(roleType))
             {
-                if (!this.RollbackCompositeRoleByRoleType.ContainsKey(roleType))
-                {
-                    this.compositeRoleByRoleType.TryGetValue(roleType, out var strategy);
+                this.compositeRoleByRoleType.TryGetValue(roleType, out var strategy);
 
-                    if (strategy == null)
-                    {
-                        this.RollbackCompositeRoleByRoleType[roleType] = null;
-                    }
-                    else
-                    {
-                        this.RollbackCompositeRoleByRoleType[roleType] = strategy;
-                    }
+                if (strategy == null)
+                {
+                    this.RollbackCompositeRoleByRoleType[roleType] = null;
+                }
+                else
+                {
+                    this.RollbackCompositeRoleByRoleType[roleType] = strategy;
                 }
             }
         }
@@ -984,20 +975,17 @@ namespace Allors.Database.Adapters.Memory
                     }
                 }
             }
-            else
+            else if (!this.RollbackCompositeAssociationByAssociationType.ContainsKey(associationType))
             {
-                if (!this.RollbackCompositeAssociationByAssociationType.ContainsKey(associationType))
-                {
-                    this.compositeAssociationByAssociationType.TryGetValue(associationType, out var strategy);
+                this.compositeAssociationByAssociationType.TryGetValue(associationType, out var strategy);
 
-                    if (strategy == null)
-                    {
-                        this.RollbackCompositeAssociationByAssociationType[associationType] = null;
-                    }
-                    else
-                    {
-                        this.RollbackCompositeAssociationByAssociationType[associationType] = strategy;
-                    }
+                if (strategy == null)
+                {
+                    this.RollbackCompositeAssociationByAssociationType[associationType] = null;
+                }
+                else
+                {
+                    this.RollbackCompositeAssociationByAssociationType[associationType] = strategy;
                 }
             }
         }

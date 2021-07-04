@@ -38,7 +38,7 @@ namespace Allors.Database.Adapters.Sql
                 inStatement.Append(inObject.Id);
             }
 
-            if (this.role.IsMany && this.role.RelationType.AssociationType.IsMany || !this.role.RelationType.ExistExclusiveDatabaseClasses)
+            if ((this.role.IsMany && this.role.RelationType.AssociationType.IsMany) || !this.role.RelationType.ExistExclusiveDatabaseClasses)
             {
                 statement.Append(" (" + this.role.SingularFullName + "_R." + Mapping.ColumnNameForRole + " IS NULL OR ");
                 statement.Append(" NOT " + this.role.SingularFullName + "_R." + Mapping.ColumnNameForAssociation + " IN (");
@@ -46,22 +46,19 @@ namespace Allors.Database.Adapters.Sql
                 statement.Append(inStatement.ToString());
                 statement.Append(" )))");
             }
+            else if (this.role.IsMany)
+            {
+                statement.Append(" (" + this.role.SingularFullName + "_R." + Mapping.ColumnNameForObject + " IS NULL OR ");
+                statement.Append(" NOT " + this.role.SingularFullName + "_R." + Mapping.ColumnNameForObject + " IN (");
+                statement.Append(inStatement.ToString());
+                statement.Append(" ))");
+            }
             else
             {
-                if (this.role.IsMany)
-                {
-                    statement.Append(" (" + this.role.SingularFullName + "_R." + Mapping.ColumnNameForObject + " IS NULL OR ");
-                    statement.Append(" NOT " + this.role.SingularFullName + "_R." + Mapping.ColumnNameForObject + " IN (");
-                    statement.Append(inStatement.ToString());
-                    statement.Append(" ))");
-                }
-                else
-                {
-                    statement.Append(" (" + schema.ColumnNameByRelationType[this.role.RelationType] + " IS NULL OR ");
-                    statement.Append(" NOT " + schema.ColumnNameByRelationType[this.role.RelationType] + " IN (");
-                    statement.Append(inStatement.ToString());
-                    statement.Append(" ))");
-                }
+                statement.Append(" (" + schema.ColumnNameByRelationType[this.role.RelationType] + " IS NULL OR ");
+                statement.Append(" NOT " + schema.ColumnNameByRelationType[this.role.RelationType] + " IN (");
+                statement.Append(inStatement.ToString());
+                statement.Append(" ))");
             }
 
             return this.Include;

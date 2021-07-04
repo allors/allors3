@@ -181,12 +181,9 @@ namespace Allors.Database.Adapters.Sql
 
                     nonCachedObjectIds.Add(objectId);
                 }
-                else
+                else if (!reference.Strategy.IsDeleted)
                 {
-                    if (!reference.Strategy.IsDeleted)
-                    {
-                        references.Add(reference);
-                    }
+                    references.Add(reference);
                 }
             }
 

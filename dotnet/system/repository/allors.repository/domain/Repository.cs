@@ -463,13 +463,10 @@ namespace Allors.Repository.Domain
                                 Logger.Error($"{reflectedType.Name}.{property.RoleName} should be many");
                             }
                         }
-                        else
+                        else if (property.IsRoleMany)
                         {
-                            if (property.IsRoleMany)
-                            {
-                                this.HasErrors = true;
-                                Logger.Error($"{reflectedType.Name}.{property.RoleName} should be one");
-                            }
+                            this.HasErrors = true;
+                            Logger.Error($"{reflectedType.Name}.{property.RoleName} should be one");
                         }
                     }
                 }

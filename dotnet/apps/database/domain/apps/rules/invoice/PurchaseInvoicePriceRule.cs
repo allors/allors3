@@ -61,12 +61,9 @@ namespace Allors.Database.Domain
                         purchaseInvoiceItem.UnitBasePrice = purchaseInvoiceItem.AssignedUnitPrice.Value;
                         purchaseInvoiceItem.UnitPrice = purchaseInvoiceItem.AssignedUnitPrice.Value;
                     }
-                    else
+                    else if (purchaseInvoiceItem.ExistPart)
                     {
-                        if (purchaseInvoiceItem.ExistPart)
-                        {
-                            purchaseInvoiceItem.UnitBasePrice = new SupplierOfferings(purchaseInvoiceItem.Strategy.Transaction).PurchasePrice(@this.BilledFrom, @this.InvoiceDate, purchaseInvoiceItem.Part);
-                        }
+                        purchaseInvoiceItem.UnitBasePrice = new SupplierOfferings(purchaseInvoiceItem.Strategy.Transaction).PurchasePrice(@this.BilledFrom, @this.InvoiceDate, purchaseInvoiceItem.Part);
                     }
 
                     if (purchaseInvoiceItem.ExistUnitBasePrice)

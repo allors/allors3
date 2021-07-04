@@ -125,18 +125,15 @@ namespace Allors.Database.Meta
                     validationLog.AddError(message, this, ValidationKind.Hierarchy, "Inheritance.Supertype");
                 }
             }
+            else if (this.Supertype == null)
+            {
+                var message = this.ValidationName + " has a missing Supertype";
+                validationLog.AddError(message, this, ValidationKind.Unique, "Inheritance.Supertype");
+            }
             else
             {
-                if (this.Supertype == null)
-                {
-                    var message = this.ValidationName + " has a missing Supertype";
-                    validationLog.AddError(message, this, ValidationKind.Unique, "Inheritance.Supertype");
-                }
-                else
-                {
-                    var message = this.ValidationName + " has a missing Subtype";
-                    validationLog.AddError(message, this, ValidationKind.Unique, "Inheritance.Supertype");
-                }
+                var message = this.ValidationName + " has a missing Subtype";
+                validationLog.AddError(message, this, ValidationKind.Unique, "Inheritance.Supertype");
             }
         }
     }

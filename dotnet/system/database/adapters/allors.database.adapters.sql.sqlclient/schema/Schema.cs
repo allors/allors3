@@ -78,7 +78,7 @@ AND C.table_schema = @tableSchema";
 
                                 tableName = tableName.Trim().ToLowerInvariant();
                                 tableName = mapping.NormalizeName(tableName);
-                                var fullyQualifiedTableName = database.SchemaName + "." + tableName;
+                                var fullyQualifiedTableName = $"{database.SchemaName}.{tableName}";
 
                                 columnName = mapping.NormalizeName(columnName);
 
@@ -127,7 +127,7 @@ where tt.schema_id = SCHEMA_ID(@domainSchema)";
                                 var scale = reader.IsDBNull(scaleOrdinal) ? (int?)null : Convert.ToInt32(reader.GetValue(scaleOrdinal));
 
                                 tableName = tableName.Trim().ToLowerInvariant();
-                                var fullyQualifiedTableName = database.SchemaName + "." + tableName;
+                                var fullyQualifiedTableName = $"{database.SchemaName}.{tableName}";
 
                                 if (!this.TableTypeByName.TryGetValue(fullyQualifiedTableName, out var tableType))
                                 {
@@ -160,7 +160,7 @@ WHERE routine_schema = @routineSchema";
                                 var routineName = (string)reader["routine_name"];
                                 var routineDefinition = (string)reader["routine_definition"];
                                 var lowercaseRoutineName = routineName.Trim().ToLowerInvariant();
-                                var fullyQualifiedName = database.SchemaName + "." + lowercaseRoutineName;
+                                var fullyQualifiedName = $"{database.SchemaName}.{lowercaseRoutineName}";
                                 this.ProcedureByName[fullyQualifiedName] = new SchemaProcedure(this, routineName, routineDefinition);
                             }
                         }

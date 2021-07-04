@@ -89,18 +89,15 @@ namespace Allors.Database.Domain
                     {
                         @this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(@this.Strategy.Transaction).Na;
                     }
+                    else if (@this.QuantityReceived == 0 && @this.IsReceivable)
+                    {
+                        @this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(@this.Strategy.Transaction).NotReceived;
+                    }
                     else
                     {
-                        if (@this.QuantityReceived == 0 && @this.IsReceivable)
-                        {
-                            @this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(@this.Strategy.Transaction).NotReceived;
-                        }
-                        else
-                        {
-                            @this.PurchaseOrderItemShipmentState = @this.QuantityReceived < @this.QuantityOrdered ?
-                                purchaseOrderItemShipmentStates.PartiallyReceived :
-                                purchaseOrderItemShipmentStates.Received;
-                        }
+                        @this.PurchaseOrderItemShipmentState = @this.QuantityReceived < @this.QuantityOrdered ?
+                            purchaseOrderItemShipmentStates.PartiallyReceived :
+                            purchaseOrderItemShipmentStates.Received;
                     }
 
                     // PaymentState

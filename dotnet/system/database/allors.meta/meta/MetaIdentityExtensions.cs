@@ -17,17 +17,14 @@ namespace Allors.Database.Meta
                 var message = "id on " + @this + " is required";
                 validationLog.AddError(message, @this, ValidationKind.Unique, "IMetaObject.Id");
             }
+            else if (validationLog.ExistId(@this.Id))
+            {
+                var message = "id " + @this + " is already in use";
+                validationLog.AddError(message, @this, ValidationKind.Unique, "IMetaObject.Id");
+            }
             else
             {
-                if (validationLog.ExistId(@this.Id))
-                {
-                    var message = "id " + @this + " is already in use";
-                    validationLog.AddError(message, @this, ValidationKind.Unique, "IMetaObject.Id");
-                }
-                else
-                {
-                    validationLog.AddId(@this.Id);
-                }
+                validationLog.AddId(@this.Id);
             }
         }
     }

@@ -87,23 +87,20 @@ namespace Allors.Database.Adapters.Memory
                         roleTypes.Remove(roleType);
                     }
                 }
+                else if (roleType.IsOne)
+                {
+                    var originalRole = this.OriginalCompositeRoleByRoleType[roleType];
+                    if (this.Strategy.ShouldTrim(roleType, originalRole))
+                    {
+                        roleTypes.Remove(roleType);
+                    }
+                }
                 else
                 {
-                    if (roleType.IsOne)
+                    var originalRole = this.OriginalCompositesRoleByRoleType[roleType];
+                    if (this.Strategy.ShouldTrim(roleType, originalRole))
                     {
-                        var originalRole = this.OriginalCompositeRoleByRoleType[roleType];
-                        if (this.Strategy.ShouldTrim(roleType, originalRole))
-                        {
-                            roleTypes.Remove(roleType);
-                        }
-                    }
-                    else
-                    {
-                        var originalRole = this.OriginalCompositesRoleByRoleType[roleType];
-                        if (this.Strategy.ShouldTrim(roleType, originalRole))
-                        {
-                            roleTypes.Remove(roleType);
-                        }
+                        roleTypes.Remove(roleType);
                     }
                 }
             }

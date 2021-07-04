@@ -65,7 +65,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     message.Append("Missing Tables:\n");
                     foreach (var missingTable in this.MissingTableNames)
                     {
-                        message.Append("- " + missingTable + ":\n");
+                        message.Append($"- {missingTable}:\n");
                     }
                 }
 
@@ -74,7 +74,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     message.Append("Invalid Tables:\n");
                     foreach (var invalidTable in this.InvalidTables)
                     {
-                        message.Append("- " + invalidTable.Name + ":\n");
+                        message.Append($"- {invalidTable.Name}:\n");
                     }
                 }
 
@@ -83,7 +83,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     message.Append("Missing Table Types:\n");
                     foreach (var missingTableType in this.MissingTableTypeNames)
                     {
-                        message.Append("- " + missingTableType + ":\n");
+                        message.Append($"- {missingTableType}:\n");
                     }
                 }
 
@@ -92,7 +92,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     message.Append("Invalid Table Types:\n");
                     foreach (var invalidTableType in this.InvalidTableTypes)
                     {
-                        message.Append("- " + invalidTableType.Name + ":\n");
+                        message.Append($"- {invalidTableType.Name}:\n");
                     }
                 }
 
@@ -101,7 +101,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     message.Append("Missing Procedures:\n");
                     foreach (var missingProcedure in this.MissingProcedureNames)
                     {
-                        message.Append("- " + missingProcedure + ":\n");
+                        message.Append($"- {missingProcedure}:\n");
                     }
                 }
 
@@ -110,7 +110,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     message.Append("Invalid Procedures:\n");
                     foreach (var invalidProcedure in this.InvalidProcedures)
                     {
-                        message.Append("- " + invalidProcedure.Name + ":\n");
+                        message.Append($"- {invalidProcedure.Name}:\n");
                     }
                 }
 
@@ -196,7 +196,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 var roleType = relationType.RoleType;
 
                 if (!roleType.ObjectType.IsUnit &&
-                    (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
+                    ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                 {
                     var tableName = this.mapping.TableNameForRelationByRelationType[relationType];
                     var table = this.Schema.GetTable(tableName);
@@ -247,6 +247,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.ValidateTableType(this.mapping.TableTypeNameForBooleanRelation, "bit");
             this.ValidateTableType(this.mapping.TableTypeNameForUniqueRelation, "uniqueidentifier");
             this.ValidateTableType(this.mapping.TableTypeNameForBinaryRelation, "varbinary(max)");
+
+            // TODO: Decimal?
             this.ValidateTableType(this.mapping.TableTypeNameForBinaryRelation, "varbinary(max)");
 
             // Decimal TableType
@@ -258,7 +260,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     var precision = precisionEntry.Key;
                     var scale = scaleEntry.Key;
 
-                    this.ValidateTableType(name, "decimal(" + precision + "," + scale + ")");
+                    this.ValidateTableType(name, $"decimal({precision},{scale})");
                 }
             }
 

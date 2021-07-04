@@ -41,12 +41,9 @@ namespace Allors.Database.Domain
                     this.SerialisedInventoryItemState = this.Reason?.DefaultSerialisedInventoryItemState;
                 }
             }
-            else
+            else if (!this.ExistNonSerialisedInventoryItemState)
             {
-                if (!this.ExistNonSerialisedInventoryItemState)
-                {
-                    this.NonSerialisedInventoryItemState = this.Reason?.DefaultNonSerialisedInventoryItemState;
-                }
+                this.NonSerialisedInventoryItemState = this.Reason?.DefaultNonSerialisedInventoryItemState;
             }
 
             if (!this.ExistInventoryItem && this.ExistPart)

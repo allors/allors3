@@ -82,14 +82,11 @@ namespace Allors.Database.Adapters
                         Assert.True(false); // Fail
                     }
                 }
-                else
+                else if (allorsObject.Strategy.ExistAssociation(associationType))
                 {
                     if (allorsObject.Strategy.ExistAssociation(associationType))
                     {
-                        if (allorsObject.Strategy.ExistAssociation(associationType))
-                        {
-                            Assert.True(false); // Fail
-                        }
+                        Assert.True(false); // Fail
                     }
                 }
             }
@@ -150,12 +147,9 @@ namespace Allors.Database.Adapters
                         Assert.True(false); // Fail
                     }
                 }
-                else
+                else if (allorsObject.Strategy.ExistRole(roleType))
                 {
-                    if (allorsObject.Strategy.ExistRole(roleType))
-                    {
-                        Assert.True(false); // Fail
-                    }
+                    Assert.True(false); // Fail
                 }
             }
         }

@@ -47,12 +47,9 @@ namespace Allors.Database.Domain
                     validation.AssertExistsAtMostOne(@this, this.M.QuoteItem.Product, this.M.QuoteItem.ProductFeature, this.M.QuoteItem.Deliverable, this.M.QuoteItem.WorkEffort);
                     validation.AssertExistsAtMostOne(@this, this.M.QuoteItem.SerialisedItem, this.M.QuoteItem.ProductFeature, this.M.QuoteItem.Deliverable, this.M.QuoteItem.WorkEffort);
                 }
-                else
+                else if (@this.Quantity != 1)
                 {
-                    if (@this.Quantity != 1)
-                    {
-                        @this.Quantity = 1;
-                    }
+                    @this.Quantity = 1;
                 }
 
                 if (@this.ExistSerialisedItem && @this.Quantity != 1)

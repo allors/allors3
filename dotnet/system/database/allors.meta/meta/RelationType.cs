@@ -327,18 +327,15 @@ namespace Allors.Database.Meta
                     validationLog.AddError(message, this, ValidationKind.Unique, "RelationType.Name");
                 }
             }
+            else if (this.AssociationType == null)
+            {
+                var message = this.ValidationName + " has no association type";
+                validationLog.AddError(message, this, ValidationKind.Required, "RelationType.AssociationType");
+            }
             else
             {
-                if (this.AssociationType == null)
-                {
-                    var message = this.ValidationName + " has no association type";
-                    validationLog.AddError(message, this, ValidationKind.Required, "RelationType.AssociationType");
-                }
-                else
-                {
-                    var message = this.ValidationName + " has no role type";
-                    validationLog.AddError(message, this, ValidationKind.Required, "RelationType.RoleType");
-                }
+                var message = this.ValidationName + " has no role type";
+                validationLog.AddError(message, this, ValidationKind.Required, "RelationType.RoleType");
             }
 
             this.AssociationType?.Validate(validationLog);

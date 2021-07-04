@@ -8,80 +8,84 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using System.Text;
-
     using Meta;
 
+    [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
     public class Mapping : Sql.Mapping
     {
-        public override string ParamFormat => "@{0}";
-        public override string ParamInvocationFormat => this.ParamFormat;
+        public override string ParamInvocationFormat => ParamFormat;
 
-        public const string SqlTypeForClass = "uniqueidentifier";
-        public const string SqlTypeForObject = "bigint";
-        public const string SqlTypeForVersion = "bigint";
-        public const string SqlTypeForCount = "int";
-
-        public const SqlDbType SqlDbTypeForClass = SqlDbType.UniqueIdentifier;
-        public const SqlDbType SqlDbTypeForObject = SqlDbType.BigInt;
-        public const SqlDbType SqlDbTypeForVersion = SqlDbType.BigInt;
-        public const SqlDbType SqlDbTypeForCount = SqlDbType.Int;
-
-        public override string ParamNameForObject => string.Format(this.ParamFormat, ColumnNameForObject);
         public override string ParamInvocationNameForObject => this.ParamNameForObject;
-        public override string ParamNameForClass => string.Format(this.ParamFormat, ColumnNameForClass);
         public override string ParamInvocationNameForClass => this.ParamNameForClass;
-        internal string ParamNameForVersion => string.Format(this.ParamFormat, ColumnNameForVersion);
-        internal string ParamNameForAssociation => string.Format(this.ParamFormat, ColumnNameForAssociation);
-        internal string ParamNameForCompositeRole => string.Format(this.ParamFormat, ColumnNameForRole);
-        internal string ParamNameForCount => string.Format(this.ParamFormat, "count");
-        internal string ParamNameForTableType => string.Format(this.ParamFormat, "table");
 
         public override string TableNameForObjects { get; }
-        public override IDictionary<IClass, string> TableNameForObjectByClass { get; }
+        public override IDictionary<IClass, string> TableNameForObjectByClass => this.tableNameForObjectByClass;
 
-        public override IDictionary<IRelationType, string> ColumnNameByRelationType { get; }
+        public override IDictionary<IRelationType, string> ColumnNameByRelationType => this.columnNameByRelationType;
 
-        public override IDictionary<IRoleType, string> ParamNameByRoleType { get; }
         public override IDictionary<IRoleType, string> ParamInvocationNameByRoleType => this.ParamNameByRoleType;
 
-        public override IDictionary<IClass, string> ProcedureNameForDeleteObjectByClass { get; }
-        public override IDictionary<IClass, string> ProcedureNameForCreateObjectsByClass { get; }
-        public override IDictionary<IClass, string> ProcedureNameForGetUnitRolesByClass { get; }
-        public override IDictionary<IClass, IDictionary<IRelationType, string>> ProcedureNameForSetUnitRoleByRelationTypeByClass { get; }
-        public override IDictionary<IRelationType, string> ProcedureNameForGetRoleByRelationType { get; }
-        public override IDictionary<IRelationType, string> ProcedureNameForSetRoleByRelationType { get; }
-        public override IDictionary<IRelationType, string> ProcedureNameForAddRoleByRelationType { get; }
-        public override IDictionary<IRelationType, string> ProcedureNameForRemoveRoleByRelationType { get; }
-        public override IDictionary<IRelationType, string> ProcedureNameForClearRoleByRelationType { get; }
-        public override IDictionary<IRelationType, string> ProcedureNameForGetAssociationByRelationType { get; }
-        public override IDictionary<IClass, string> ProcedureNameForCreateObjectByClass { get; }
+        public override IDictionary<IClass, string> ProcedureNameForDeleteObjectByClass => this.procedureNameForDeleteObjectByClass;
 
-        public override string ProcedureNameForInstantiate => this.Database.SchemaName + "." + ProcedurePrefixForInstantiate;
+        public override IDictionary<IClass, string> ProcedureNameForCreateObjectsByClass => this.procedureNameForCreateObjectsByClass;
 
-        public override string ProcedureNameForGetVersion => this.Database.SchemaName + "." + ProcedurePrefixForGetVersion;
+        public override IDictionary<IClass, string> ProcedureNameForGetUnitRolesByClass => this.procedureNameForGetUnitRolesByClass;
 
-        public override string ProcedureNameForUpdateVersion => this.Database.SchemaName + "." + ProcedurePrefixForUpdateVersion;
-        public override IDictionary<IClass, string> ProcedureNameForPrefetchUnitRolesByClass { get; }
-        public override IDictionary<IRelationType, string> ProcedureNameForPrefetchRoleByRelationType { get; }
-        public override IDictionary<IRelationType, string> ProcedureNameForPrefetchAssociationByRelationType { get; }
+        public override IDictionary<IClass, IDictionary<IRelationType, string>> ProcedureNameForSetUnitRoleByRelationTypeByClass => this.procedureNameForSetUnitRoleByRelationTypeByClass;
+
+        public override IDictionary<IRelationType, string> ProcedureNameForGetRoleByRelationType => this.procedureNameForGetRoleByRelationType;
+
+        public override IDictionary<IRelationType, string> ProcedureNameForSetRoleByRelationType => this.procedureNameForSetRoleByRelationType;
+
+        public override IDictionary<IRelationType, string> ProcedureNameForAddRoleByRelationType => this.procedureNameForAddRoleByRelationType;
+
+        public override IDictionary<IRelationType, string> ProcedureNameForRemoveRoleByRelationType => this.procedureNameForRemoveRoleByRelationType;
+
+        public override IDictionary<IRelationType, string> ProcedureNameForClearRoleByRelationType => this.procedureNameForClearRoleByRelationType;
+
+        public override IDictionary<IRelationType, string> ProcedureNameForGetAssociationByRelationType => this.procedureNameForGetAssociationByRelationType;
+
+        public override IDictionary<IClass, string> ProcedureNameForCreateObjectByClass => this.procedureNameForCreateObjectByClass;
+
+        public override string ProcedureNameForInstantiate { get; }
+
+        public override string ProcedureNameForGetVersion { get; }
+
+        public override string ProcedureNameForUpdateVersion { get; }
+
+        public override IDictionary<IClass, string> ProcedureNameForPrefetchUnitRolesByClass => this.procedureNameForPrefetchUnitRolesByClass;
+
+        public override IDictionary<IRelationType, string> ProcedureNameForPrefetchRoleByRelationType => this.procedureNameForPrefetchRoleByRelationType;
+
+        public override IDictionary<IRelationType, string> ProcedureNameForPrefetchAssociationByRelationType => this.procedureNameForPrefetchAssociationByRelationType;
 
         public override string StringCollation => "COLLATE Latin1_General_100_BIN2";
         public override string Ascending => "ASC";
         public override string Descending => "DESC";
 
+        public override IDictionary<IRelationType, string> TableNameForRelationByRelationType => this.tableNameForRelationByRelationType;
 
-        public override IDictionary<IRelationType, string> TableNameForRelationByRelationType { get; }
+        internal const string SqlTypeForClass = "uniqueidentifier";
+        internal const string SqlTypeForObject = "bigint";
+        internal const string SqlTypeForVersion = "bigint";
 
+        internal const SqlDbType SqlDbTypeForClass = SqlDbType.UniqueIdentifier;
+        internal const SqlDbType SqlDbTypeForObject = SqlDbType.BigInt;
+        internal const SqlDbType SqlDbTypeForCount = SqlDbType.Int;
 
-        internal IDictionary<IRelationType, string> UnescapedColumnNameByRelationType { get; }
+        internal string ParamNameForAssociation { get; }
+        internal string ParamNameForCompositeRole { get; }
+        internal string ParamNameForCount { get; }
+        internal string ParamNameForTableType { get; }
+        internal IDictionary<IRoleType, string> ParamNameByRoleType { get; }
 
         internal string TableTypeNameForObject { get; }
-        internal string TableTypeNameForVersionedObject { get; }
+        private string TableTypeNameForVersionedObject { get; }
 
         internal string TableTypeColumnNameForObject { get; }
-        internal string TableTypeColumnNameForVersion { get; }
+        private string TableTypeColumnNameForVersion { get; }
 
         internal string TableTypeNameForCompositeRelation { get; }
         internal string TableTypeNameForStringRelation { get; }
@@ -91,24 +95,19 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         internal string TableTypeNameForDateTimeRelation { get; }
         internal string TableTypeNameForUniqueRelation { get; }
         internal string TableTypeNameForBinaryRelation { get; }
-
-        internal string TableTypeNamePrefixForDecimalRelation { get; }
+        private string TableTypeNamePrefixForDecimalRelation { get; }
 
         internal string TableTypeColumnNameForAssociation { get; }
         internal string TableTypeColumnNameForRole { get; }
 
         internal Dictionary<int, Dictionary<int, string>> TableTypeNameForDecimalRelationByScaleByPrecision { get; }
 
-        internal Dictionary<IClass, string> ProcedureNameForLoadObjectByClass { get; }
+        private string ParamNameForObject { get; }
+        private string ParamNameForClass { get; }
 
-
-
-
-
-        private const string ProcedurePrefixForInstantiate = "i";
+        private const string ParamFormat = "@{0}";
 
         private const string ProcedurePrefixForGetVersion = "gv";
-        private const string ProcedurePrefixForSetVersion = "sv";
         private const string ProcedurePrefixForUpdateVersion = "uv";
 
         private const string ProcedurePrefixForCreateObject = "co_";
@@ -129,23 +128,53 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         private const string ProcedurePrefixForGetAssociation = "ga_";
         private const string ProcedurePrefixForPrefetchAssociation = "pa_";
 
+        private readonly IDictionary<IRelationType, string> tableNameForRelationByRelationType;
+        private readonly IDictionary<IRelationType, string> procedureNameForPrefetchAssociationByRelationType;
+        private readonly IDictionary<IRelationType, string> procedureNameForPrefetchRoleByRelationType;
+        private readonly IDictionary<IClass, string> procedureNameForPrefetchUnitRolesByClass;
+        private readonly IDictionary<IClass, string> procedureNameForCreateObjectByClass;
+        private readonly IDictionary<IRelationType, string> procedureNameForGetAssociationByRelationType;
+        private readonly IDictionary<IRelationType, string> procedureNameForClearRoleByRelationType;
+        private readonly IDictionary<IRelationType, string> procedureNameForRemoveRoleByRelationType;
+        private readonly IDictionary<IRelationType, string> procedureNameForAddRoleByRelationType;
+        private readonly IDictionary<IRelationType, string> procedureNameForSetRoleByRelationType;
+        private readonly IDictionary<IRelationType, string> procedureNameForGetRoleByRelationType;
+        private readonly IDictionary<IClass, IDictionary<IRelationType, string>> procedureNameForSetUnitRoleByRelationTypeByClass;
+        private readonly IDictionary<IClass, string> procedureNameForGetUnitRolesByClass;
+        private readonly IDictionary<IClass, string> procedureNameForCreateObjectsByClass;
+        private readonly IDictionary<IClass, string> procedureNameForDeleteObjectByClass;
+        private readonly IDictionary<IRelationType, string> columnNameByRelationType;
+        private readonly IDictionary<IClass, string> tableNameForObjectByClass;
+
         public Mapping(Database database)
         {
             this.Database = database;
 
+            this.ProcedureNameForInstantiate = $"{this.Database.SchemaName}.i";
+            this.ProcedureNameForGetVersion = $"{this.Database.SchemaName}.{ProcedurePrefixForGetVersion}";
+            this.ProcedureNameForUpdateVersion = $"{this.Database.SchemaName}.{ProcedurePrefixForUpdateVersion}";
+
+            this.ParamNameForAssociation = string.Format(ParamFormat, ColumnNameForAssociation);
+            this.ParamNameForCompositeRole = string.Format(ParamFormat, ColumnNameForRole);
+            this.ParamNameForCount = string.Format(ParamFormat, "count");
+            this.ParamNameForTableType = string.Format(ParamFormat, "table");
+
+            this.ParamNameForObject = string.Format(ParamFormat, ColumnNameForObject);
+            this.ParamNameForClass = string.Format(ParamFormat, ColumnNameForClass);
+
             // TableTypes
             // ----------
-            this.TableTypeNameForObject = database.SchemaName + "." + "_t_o";
-            this.TableTypeNameForVersionedObject = database.SchemaName + "." + "_t_vo";
-            this.TableTypeNameForCompositeRelation = database.SchemaName + "." + "_t_c";
-            this.TableTypeNameForStringRelation = database.SchemaName + "." + "_t_s";
-            this.TableTypeNameForIntegerRelation = database.SchemaName + "." + "_t_i";
-            this.TableTypeNameForFloatRelation = database.SchemaName + "." + "_t_f";
-            this.TableTypeNameForBooleanRelation = database.SchemaName + "." + "_t_bo";
-            this.TableTypeNameForDateTimeRelation = database.SchemaName + "." + "_t_da";
-            this.TableTypeNameForUniqueRelation = database.SchemaName + "." + "_t_u";
-            this.TableTypeNameForBinaryRelation = database.SchemaName + "." + "_t_bi";
-            this.TableTypeNamePrefixForDecimalRelation = database.SchemaName + "." + "_t_de";
+            this.TableTypeNameForObject = $"{database.SchemaName}._t_o";
+            this.TableTypeNameForVersionedObject = $"{database.SchemaName}._t_vo";
+            this.TableTypeNameForCompositeRelation = $"{database.SchemaName}._t_c";
+            this.TableTypeNameForStringRelation = $"{database.SchemaName}._t_s";
+            this.TableTypeNameForIntegerRelation = $"{database.SchemaName}._t_i";
+            this.TableTypeNameForFloatRelation = $"{database.SchemaName}._t_f";
+            this.TableTypeNameForBooleanRelation = $"{database.SchemaName}._t_bo";
+            this.TableTypeNameForDateTimeRelation = $"{database.SchemaName}._t_da";
+            this.TableTypeNameForUniqueRelation = $"{database.SchemaName}._t_u";
+            this.TableTypeNameForBinaryRelation = $"{database.SchemaName}._t_bi";
+            this.TableTypeNamePrefixForDecimalRelation = $"{database.SchemaName}._t_de";
 
             this.TableTypeColumnNameForObject = "_o";
             this.TableTypeColumnNameForVersion = "_c";
@@ -158,20 +187,20 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 var roleType = relationType.RoleType;
                 if (roleType.ObjectType.IsUnit && ((IUnit)roleType.ObjectType).IsDecimal)
                 {
-                    var precision = roleType.Precision;
-                    var scale = roleType.Scale;
+                    var precision = roleType.Precision.Value;
+                    var scale = roleType.Scale.Value;
 
-                    var tableName = this.TableTypeNamePrefixForDecimalRelation + precision + "_" + scale;
+                    var tableName = $"{this.TableTypeNamePrefixForDecimalRelation}{precision}_{scale}";
 
-                    if (!this.TableTypeNameForDecimalRelationByScaleByPrecision.TryGetValue(precision.Value, out var decimalRelationTableByScale))
+                    if (!this.TableTypeNameForDecimalRelationByScaleByPrecision.TryGetValue(precision, out var decimalRelationTableByScale))
                     {
                         decimalRelationTableByScale = new Dictionary<int, string>();
-                        this.TableTypeNameForDecimalRelationByScaleByPrecision[precision.Value] = decimalRelationTableByScale;
+                        this.TableTypeNameForDecimalRelationByScaleByPrecision[precision] = decimalRelationTableByScale;
                     }
 
-                    if (!decimalRelationTableByScale.ContainsKey(scale.Value))
+                    if (!decimalRelationTableByScale.ContainsKey(scale))
                     {
-                        decimalRelationTableByScale[scale.Value] = tableName;
+                        decimalRelationTableByScale[scale] = tableName;
                     }
                 }
             }
@@ -180,7 +209,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
              {
                  {
                      this.TableTypeNameForObject,
-                     $@"CREATE TYPE {this.TableTypeNameForObject} AS TABLE ({this.TableTypeColumnNameForObject} {SqlTypeForObject})"
+                     $"CREATE TYPE {this.TableTypeNameForObject} AS TABLE ({this.TableTypeColumnNameForObject} {SqlTypeForObject})"
                  },
                  {
                      this.TableTypeNameForVersionedObject,
@@ -188,35 +217,35 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                  },
                  {
                      this.TableTypeNameForCompositeRelation,
-                     $@"CREATE TYPE {this.TableTypeNameForCompositeRelation} AS TABLE ({this.TableTypeColumnNameForAssociation} {SqlTypeForObject}, {this.TableTypeColumnNameForRole} {SqlTypeForObject})"
+                     $"CREATE TYPE {this.TableTypeNameForCompositeRelation} AS TABLE ({this.TableTypeColumnNameForAssociation} {SqlTypeForObject}, {this.TableTypeColumnNameForRole} {SqlTypeForObject})"
                  },
                  {
                      this.TableTypeNameForStringRelation,
-                     $@"CREATE TYPE {this.TableTypeNameForStringRelation} AS TABLE ({this.TableTypeColumnNameForAssociation} {SqlTypeForObject}, {this.TableTypeColumnNameForRole} nvarchar(max))"
+                     $"CREATE TYPE {this.TableTypeNameForStringRelation} AS TABLE ({this.TableTypeColumnNameForAssociation} {SqlTypeForObject}, {this.TableTypeColumnNameForRole} nvarchar(max))"
                  },
                  {
                      this.TableTypeNameForIntegerRelation,
-                     $@"CREATE TYPE {this.TableTypeNameForIntegerRelation} AS TABLE ({this.TableTypeColumnNameForAssociation} {SqlTypeForObject}, {this.TableTypeColumnNameForRole} int)"
+                     $"CREATE TYPE {this.TableTypeNameForIntegerRelation} AS TABLE ({this.TableTypeColumnNameForAssociation} {SqlTypeForObject}, {this.TableTypeColumnNameForRole} int)"
                  },
                  {
                      this.TableTypeNameForFloatRelation,
-                     $@"CREATE TYPE {this.TableTypeNameForFloatRelation} AS TABLE ({this.TableTypeColumnNameForAssociation} {SqlTypeForObject}, {this.TableTypeColumnNameForRole} float)"
+                     $"CREATE TYPE {this.TableTypeNameForFloatRelation} AS TABLE ({this.TableTypeColumnNameForAssociation} {SqlTypeForObject}, {this.TableTypeColumnNameForRole} float)"
                  },
                  {
                      this.TableTypeNameForDateTimeRelation,
-                     $@"CREATE TYPE {this.TableTypeNameForDateTimeRelation} AS TABLE ({this.TableTypeColumnNameForAssociation} {SqlTypeForObject}, {this.TableTypeColumnNameForRole} datetime2)"
+                     $"CREATE TYPE {this.TableTypeNameForDateTimeRelation} AS TABLE ({this.TableTypeColumnNameForAssociation} {SqlTypeForObject}, {this.TableTypeColumnNameForRole} datetime2)"
                  },
                  {
                      this.TableTypeNameForBooleanRelation,
-                     $@"CREATE TYPE {this.TableTypeNameForBooleanRelation} AS TABLE ({this.TableTypeColumnNameForAssociation} {SqlTypeForObject}, {this.TableTypeColumnNameForRole} bit)"
+                     $"CREATE TYPE {this.TableTypeNameForBooleanRelation} AS TABLE ({this.TableTypeColumnNameForAssociation} {SqlTypeForObject}, {this.TableTypeColumnNameForRole} bit)"
                  },
                  {
                      this.TableTypeNameForUniqueRelation,
-                     $@"CREATE TYPE {this.TableTypeNameForUniqueRelation} AS TABLE ({this.TableTypeColumnNameForAssociation} {SqlTypeForObject}, {this.TableTypeColumnNameForRole} uniqueidentifier)"
+                     $"CREATE TYPE {this.TableTypeNameForUniqueRelation} AS TABLE ({this.TableTypeColumnNameForAssociation} {SqlTypeForObject}, {this.TableTypeColumnNameForRole} uniqueidentifier)"
                  },
                  {
                      this.TableTypeNameForBinaryRelation,
-                     $@"CREATE TYPE {this.TableTypeNameForBinaryRelation} AS TABLE ({this.TableTypeColumnNameForAssociation} {SqlTypeForObject}, {this.TableTypeColumnNameForRole} varbinary(max))"
+                     $"CREATE TYPE {this.TableTypeNameForBinaryRelation} AS TABLE ({this.TableTypeColumnNameForAssociation} {SqlTypeForObject}, {this.TableTypeColumnNameForRole} varbinary(max))"
                  },
              };
 
@@ -228,26 +257,26 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     var scale = scaleEntry.Key;
                     var decimalRelationTable = scaleEntry.Value;
 
-                    var sql = new StringBuilder();
-                    sql.Append("CREATE TYPE " + decimalRelationTable + " AS TABLE\n");
-                    sql.Append("(" + this.TableTypeColumnNameForAssociation + " " + SqlTypeForObject + ",\n");
-                    sql.Append(this.TableTypeColumnNameForRole + " DECIMAL(" + precision + "," + scale + ") )\n");
+                    var sql =
+@$"CREATE TYPE {decimalRelationTable} AS TABLE
+({this.TableTypeColumnNameForAssociation} {SqlTypeForObject},
+{this.TableTypeColumnNameForRole} DECIMAL({precision},{scale}) )
+";
 
-                    this.TableTypeDefinitionByName.Add(decimalRelationTable, sql.ToString());
+                    this.TableTypeDefinitionByName.Add(decimalRelationTable, sql);
                 }
             }
 
             // Tables
             // ------
-            this.TableNameForObjects = database.SchemaName + "." + "_o";
-            this.TableNameForObjectByClass = new Dictionary<IClass, string>();
-            this.ColumnNameByRelationType = new Dictionary<IRelationType, string>();
-            this.UnescapedColumnNameByRelationType = new Dictionary<IRelationType, string>();
+            this.TableNameForObjects = $"{database.SchemaName}._o";
+            this.tableNameForObjectByClass = new Dictionary<IClass, string>();
+            this.columnNameByRelationType = new Dictionary<IRelationType, string>();
             this.ParamNameByRoleType = new Dictionary<IRoleType, string>();
 
             foreach (var @class in this.Database.MetaPopulation.DatabaseClasses)
             {
-                this.TableNameForObjectByClass.Add(@class, this.Database.SchemaName + "." + this.NormalizeName(@class.SingularName));
+                this.tableNameForObjectByClass.Add(@class, $"{this.Database.SchemaName}.{this.NormalizeName(@class.SingularName)}");
 
                 foreach (var associationType in @class.DatabaseAssociationTypes)
                 {
@@ -255,8 +284,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     var roleType = relationType.RoleType;
                     if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && roleType.IsMany)
                     {
-                        this.ColumnNameByRelationType[relationType] = this.NormalizeName(associationType.SingularName);
-                        this.UnescapedColumnNameByRelationType[relationType] = associationType.SingularName;
+                        this.columnNameByRelationType[relationType] = this.NormalizeName(associationType.SingularName);
                     }
                 }
 
@@ -266,31 +294,26 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     var associationType3 = relationType.AssociationType;
                     if (roleType.ObjectType.IsUnit)
                     {
-                        this.ColumnNameByRelationType[relationType] = this.NormalizeName(roleType.SingularName);
-                        this.UnescapedColumnNameByRelationType[relationType] = roleType.SingularName;
-                        this.ParamNameByRoleType[roleType] = string.Format(this.ParamFormat, roleType.SingularFullName);
+                        this.columnNameByRelationType[relationType] = this.NormalizeName(roleType.SingularName);
+                        this.ParamNameByRoleType[roleType] = string.Format(ParamFormat, roleType.SingularFullName);
                     }
-                    else
+                    else if (!(associationType3.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                     {
-                        if (!(associationType3.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
-                        {
-                            this.ColumnNameByRelationType[relationType] = this.NormalizeName(roleType.SingularName);
-                            this.UnescapedColumnNameByRelationType[relationType] = roleType.SingularName;
-                        }
+                        this.columnNameByRelationType[relationType] = this.NormalizeName(roleType.SingularName);
                     }
                 }
             }
 
-            this.TableNameForRelationByRelationType = new Dictionary<IRelationType, string>();
+            this.tableNameForRelationByRelationType = new Dictionary<IRelationType, string>();
 
             foreach (var relationType in this.Database.MetaPopulation.DatabaseRelationTypes)
             {
                 var associationType = relationType.AssociationType;
                 var roleType = relationType.RoleType;
 
-                if (!roleType.ObjectType.IsUnit && (associationType.IsMany && roleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
+                if (!roleType.ObjectType.IsUnit && ((associationType.IsMany && roleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                 {
-                    this.TableNameForRelationByRelationType.Add(relationType, this.Database.SchemaName + "." + this.NormalizeName(relationType.RoleType.SingularFullName));
+                    this.tableNameForRelationByRelationType.Add(relationType, $"{this.Database.SchemaName}.{this.NormalizeName(relationType.RoleType.SingularFullName)}");
                 }
             }
 
@@ -298,23 +321,22 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             // ----------
             this.ProcedureDefinitionByName = new Dictionary<string, string>();
 
-            this.ProcedureNameForLoadObjectByClass = new Dictionary<IClass, string>();
-            this.ProcedureNameForCreateObjectByClass = new Dictionary<IClass, string>();
-            this.ProcedureNameForCreateObjectsByClass = new Dictionary<IClass, string>();
-            this.ProcedureNameForDeleteObjectByClass = new Dictionary<IClass, string>();
+            this.procedureNameForCreateObjectByClass = new Dictionary<IClass, string>();
+            this.procedureNameForCreateObjectsByClass = new Dictionary<IClass, string>();
+            this.procedureNameForDeleteObjectByClass = new Dictionary<IClass, string>();
 
-            this.ProcedureNameForGetUnitRolesByClass = new Dictionary<IClass, string>();
-            this.ProcedureNameForPrefetchUnitRolesByClass = new Dictionary<IClass, string>();
-            this.ProcedureNameForSetUnitRoleByRelationTypeByClass = new Dictionary<IClass, IDictionary<IRelationType, string>>();
+            this.procedureNameForGetUnitRolesByClass = new Dictionary<IClass, string>();
+            this.procedureNameForPrefetchUnitRolesByClass = new Dictionary<IClass, string>();
+            this.procedureNameForSetUnitRoleByRelationTypeByClass = new Dictionary<IClass, IDictionary<IRelationType, string>>();
 
-            this.ProcedureNameForGetRoleByRelationType = new Dictionary<IRelationType, string>();
-            this.ProcedureNameForPrefetchRoleByRelationType = new Dictionary<IRelationType, string>();
-            this.ProcedureNameForSetRoleByRelationType = new Dictionary<IRelationType, string>();
-            this.ProcedureNameForAddRoleByRelationType = new Dictionary<IRelationType, string>();
-            this.ProcedureNameForRemoveRoleByRelationType = new Dictionary<IRelationType, string>();
-            this.ProcedureNameForClearRoleByRelationType = new Dictionary<IRelationType, string>();
-            this.ProcedureNameForGetAssociationByRelationType = new Dictionary<IRelationType, string>();
-            this.ProcedureNameForPrefetchAssociationByRelationType = new Dictionary<IRelationType, string>();
+            this.procedureNameForGetRoleByRelationType = new Dictionary<IRelationType, string>();
+            this.procedureNameForPrefetchRoleByRelationType = new Dictionary<IRelationType, string>();
+            this.procedureNameForSetRoleByRelationType = new Dictionary<IRelationType, string>();
+            this.procedureNameForAddRoleByRelationType = new Dictionary<IRelationType, string>();
+            this.procedureNameForRemoveRoleByRelationType = new Dictionary<IRelationType, string>();
+            this.procedureNameForClearRoleByRelationType = new Dictionary<IRelationType, string>();
+            this.procedureNameForGetAssociationByRelationType = new Dictionary<IRelationType, string>();
+            this.procedureNameForPrefetchAssociationByRelationType = new Dictionary<IRelationType, string>();
 
             this.Instantiate();
             this.GetVersionIds();
@@ -358,37 +380,36 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     {
                         this.SetUnitRoleType(roleType, @class);
                     }
-                    else
+                    else if (!(roleType.AssociationType.IsMany && roleType.IsMany) && roleType.RelationType.ExistExclusiveDatabaseClasses && roleType.IsOne)
                     {
-                        if (!(roleType.AssociationType.IsMany && roleType.IsMany) && roleType.RelationType.ExistExclusiveDatabaseClasses && roleType.IsOne)
+                        this.GetCompositeRoleObjectTable(roleType, @class);
+                        this.PrefetchCompositeRoleObjectTable(roleType, @class);
+
+                        if (roleType.AssociationType.IsOne)
                         {
-                            this.GetCompositeRoleObjectTable(roleType, @class);
-                            this.PrefetchCompositeRoleObjectTable(roleType, @class);
-
-                            if (roleType.AssociationType.IsOne)
-                            {
-                                this.GetCompositeAssociationOne2OneObjectTable(roleType, @class);
-                                this.PrefetchCompositeAssociationObjectTable(roleType, @class);
-                            }
-                            else
-                            {
-                                this.GetCompositesAssociationMany2OneObjectTable(roleType, @class);
-                                this.PrefetchCompositesAssociationMany2OneObjectTable(roleType, @class);
-                            }
-
-                            this.SetCompositeRole(roleType, @class);
-                            this.ClearCompositeRole(roleType, @class);
+                            this.GetCompositeAssociationOne2OneObjectTable(roleType, @class);
+                            this.PrefetchCompositeAssociationObjectTable(roleType, @class);
                         }
+                        else
+                        {
+                            this.GetCompositesAssociationMany2OneObjectTable(roleType, @class);
+                            this.PrefetchCompositesAssociationMany2OneObjectTable(roleType, @class);
+                        }
+
+                        this.SetCompositeRole(roleType, @class);
+                        this.ClearCompositeRole(roleType, @class);
                     }
                 }
             }
 
             foreach (var relationType in this.Database.MetaPopulation.DatabaseRelationTypes)
             {
-                if (!relationType.RoleType.ObjectType.IsUnit && (relationType.AssociationType.IsMany && relationType.RoleType.IsMany || !relationType.ExistExclusiveDatabaseClasses))
+                if (!relationType.RoleType.ObjectType.IsUnit && ((relationType.AssociationType.IsMany && relationType.RoleType.IsMany) || !relationType.ExistExclusiveDatabaseClasses))
                 {
-                    this.ProcedureNameForPrefetchAssociationByRelationType.Add(relationType, this.Database.SchemaName + "." + ProcedurePrefixForPrefetchAssociation + relationType.RoleType.SingularFullName.ToLowerInvariant());
-                    this.ProcedureNameForClearRoleByRelationType.Add(relationType, this.Database.SchemaName + "." + ProcedurePrefixForClearRole + relationType.RoleType.SingularFullName.ToLowerInvariant());
+                    this.procedureNameForPrefetchAssociationByRelationType.Add(relationType,
+                        $"{this.Database.SchemaName}.{ProcedurePrefixForPrefetchAssociation}{relationType.RoleType.SingularFullName.ToLowerInvariant()}");
+                    this.procedureNameForClearRoleByRelationType.Add(relationType,
+                        $"{this.Database.SchemaName}.{ProcedurePrefixForClearRole}{relationType.RoleType.SingularFullName.ToLowerInvariant()}");
 
                     if (relationType.RoleType.IsMany)
                     {
@@ -438,9 +459,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 UnitTags.DateTime => this.TableTypeNameForDateTimeRelation,
                 UnitTags.Unique => this.TableTypeNameForUniqueRelation,
                 UnitTags.Binary => this.TableTypeNameForBinaryRelation,
-                UnitTags.Decimal => this.TableTypeNameForDecimalRelationByScaleByPrecision[roleType.Precision.Value][
-                    roleType.Scale.Value],
-                _ => throw new ArgumentException("Unknown Unit ObjectType: " + unitTypeTag)
+                UnitTags.Decimal => this.TableTypeNameForDecimalRelationByScaleByPrecision[roleType.Precision.Value][roleType.Scale.Value],
+                _ => throw new ArgumentException($"Unknown Unit ObjectType: {unitTypeTag}")
             };
         }
 
@@ -449,7 +469,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             name = name.ToLowerInvariant();
             if (ReservedWords.Names.Contains(name))
             {
-                return "[" + name + "]";
+                return $"[{name}]";
             }
 
             return name;
@@ -466,13 +486,13 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                         return "nvarchar(max)";
                     }
 
-                    return "nvarchar(" + roleType.Size + ")";
+                    return $"nvarchar({roleType.Size})";
 
                 case UnitTags.Integer:
                     return "int";
 
                 case UnitTags.Decimal:
-                    return "decimal(" + roleType.Precision + "," + roleType.Scale + ")";
+                    return $"decimal({roleType.Precision},{roleType.Scale})";
 
                 case UnitTags.Float:
                     return "float";
@@ -492,7 +512,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                         return "varbinary(max)";
                     }
 
-                    return "varbinary(" + roleType.Size + ")";
+                    return $"varbinary({roleType.Size})";
 
                 default:
                     return "!UNKNOWN VALUE TYPE!";
@@ -518,9 +538,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         private void LoadObjects(IClass @class)
         {
-            var table = this.TableNameForObjectByClass[@class];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForLoad + @class.Name.ToLowerInvariant();
-            this.ProcedureNameForLoadObjectByClass.Add(@class, name);
+            var table = this.tableNameForObjectByClass[@class];
+            var name = $"{this.Database.SchemaName}.{ProcedurePrefixForLoad}{@class.Name.ToLowerInvariant()}";
 
             // Load Objects
             var definition = $@"
@@ -539,9 +558,9 @@ END";
 
         private void CreateObject(IClass @class)
         {
-            var table = this.TableNameForObjectByClass[@class];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForCreateObject + @class.Name.ToLowerInvariant();
-            this.ProcedureNameForCreateObjectByClass.Add(@class, name);
+            var table = this.tableNameForObjectByClass[@class];
+            var name = $"{this.Database.SchemaName}.{ProcedurePrefixForCreateObject}{@class.Name.ToLowerInvariant()}";
+            this.procedureNameForCreateObjectByClass.Add(@class, name);
 
             // CreateObject
             var definition = $@"
@@ -567,15 +586,15 @@ END";
 
         private void CreateObjects(IClass @class)
         {
-            var table = this.TableNameForObjectByClass[@class.ExclusiveDatabaseClass];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForCreateObjects + @class.Name.ToLowerInvariant();
-            this.ProcedureNameForCreateObjectsByClass.Add(@class, name);
+            var table = this.tableNameForObjectByClass[@class.ExclusiveDatabaseClass];
+            var name = $"{this.Database.SchemaName}.{ProcedurePrefixForCreateObjects}{@class.Name.ToLowerInvariant()}";
+            this.procedureNameForCreateObjectsByClass.Add(@class, name);
 
             // CreateObjects
             var definition = $@"
 CREATE PROCEDURE {name}
     {this.ParamNameForClass} {SqlTypeForClass},
-    {this.ParamNameForCount} {SqlTypeForCount}
+    {this.ParamNameForCount} {"int"}
 AS
 BEGIN
     DECLARE @IDS TABLE (id INT);
@@ -605,9 +624,9 @@ END";
 
         private void DeleteObject(IClass @class)
         {
-            var table = this.TableNameForObjectByClass[@class.ExclusiveDatabaseClass];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForDeleteObject + @class.Name.ToLowerInvariant();
-            this.ProcedureNameForDeleteObjectByClass.Add(@class, name);
+            var table = this.tableNameForObjectByClass[@class.ExclusiveDatabaseClass];
+            var name = $"{this.Database.SchemaName}.{ProcedurePrefixForDeleteObject}{@class.Name.ToLowerInvariant()}";
+            this.procedureNameForDeleteObjectByClass.Add(@class, name);
 
             var definition = $@"
 CREATE PROCEDURE {name}
@@ -627,9 +646,9 @@ END";
         private void GetUnitRoles(IClass @class)
         {
             var sortedUnitRoleTypes = this.Database.GetSortedUnitRolesByObjectType(@class);
-            var table = this.TableNameForObjectByClass[@class.ExclusiveDatabaseClass];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForGetUnits + @class.Name.ToLowerInvariant();
-            this.ProcedureNameForGetUnitRolesByClass.Add(@class, name);
+            var table = this.tableNameForObjectByClass[@class.ExclusiveDatabaseClass];
+            var name = $"{this.Database.SchemaName}.{ProcedurePrefixForGetUnits}{@class.Name.ToLowerInvariant()}";
+            this.procedureNameForGetUnitRolesByClass.Add(@class, name);
 
             // Get Unit Roles
             var definition = $@"
@@ -637,7 +656,7 @@ CREATE PROCEDURE {name}
     {this.ParamNameForObject} AS {SqlTypeForObject}
 AS
 BEGIN
-    SELECT {string.Join(", ", sortedUnitRoleTypes.Select(v => this.ColumnNameByRelationType[v.RelationType]))}
+    SELECT {string.Join(", ", sortedUnitRoleTypes.Select(v => this.columnNameByRelationType[v.RelationType]))}
     FROM {table}
     WHERE {ColumnNameForObject}={this.ParamNameForObject}
 END
@@ -649,9 +668,9 @@ END
         private void PrefetchUnitRoles(IClass @class)
         {
             var sortedUnitRoleTypes = this.Database.GetSortedUnitRolesByObjectType(@class);
-            var table = this.TableNameForObjectByClass[@class.ExclusiveDatabaseClass];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchUnits + @class.Name.ToLowerInvariant();
-            this.ProcedureNameForPrefetchUnitRolesByClass.Add(@class, name);
+            var table = this.tableNameForObjectByClass[@class.ExclusiveDatabaseClass];
+            var name = $"{this.Database.SchemaName}.{ProcedurePrefixForPrefetchUnits}{@class.Name.ToLowerInvariant()}";
+            this.procedureNameForPrefetchUnitRolesByClass.Add(@class, name);
 
             // Prefetch Unit Roles
             var definition = $@"
@@ -659,7 +678,7 @@ CREATE PROCEDURE {name}
     {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
-    SELECT {ColumnNameForObject}, {string.Join(", ", sortedUnitRoleTypes.Select(v => this.ColumnNameByRelationType[v.RelationType]))}
+    SELECT {ColumnNameForObject}, {string.Join(", ", sortedUnitRoleTypes.Select(v => this.columnNameByRelationType[v.RelationType]))}
     FROM {table}
     WHERE {ColumnNameForObject} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
@@ -670,9 +689,10 @@ END";
         private void GetCompositesRoleObjectTable(IAssociationType associationType, IClass @class)
         {
             var relationType = associationType.RelationType;
-            var table = this.TableNameForObjectByClass[@class];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForGetRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForGetRoleByRelationType.Add(relationType, name);
+            var table = this.tableNameForObjectByClass[@class];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForGetRole}{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForGetRoleByRelationType.Add(relationType, name);
 
             // Get Composites Role (1-*) [object table]
             var definition = $@"
@@ -682,7 +702,7 @@ AS
 BEGIN
     SELECT {ColumnNameForObject}
     FROM {table}
-    WHERE {this.ColumnNameByRelationType[relationType]}={this.ParamNameForAssociation}
+    WHERE {this.columnNameByRelationType[relationType]}={this.ParamNameForAssociation}
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -691,9 +711,10 @@ END";
         private void PrefetchCompositesRoleObjectTable(IAssociationType associationType, IClass @class)
         {
             var relationType = associationType.RelationType;
-            var table = this.TableNameForObjectByClass[@class];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForPrefetchRoleByRelationType.Add(relationType, name);
+            var table = this.tableNameForObjectByClass[@class];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForPrefetchRole}{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForPrefetchRoleByRelationType.Add(relationType, name);
 
             // Prefetch Composites Role (1-*) [object table]
             var definition = $@"
@@ -701,9 +722,9 @@ CREATE PROCEDURE {name}
     {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
-    SELECT {this.ColumnNameByRelationType[relationType]}, {ColumnNameForObject}
+    SELECT {this.columnNameByRelationType[relationType]}, {ColumnNameForObject}
     FROM {table}
-    WHERE {this.ColumnNameByRelationType[relationType]} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
+    WHERE {this.columnNameByRelationType[relationType]} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -712,9 +733,10 @@ END";
         private void GetCompositeAssociationObjectTable(IAssociationType associationType, IClass @class)
         {
             var relationType = associationType.RelationType;
-            var table = this.TableNameForObjectByClass[@class];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForGetAssociation + @class.Name.ToLowerInvariant() + "_" + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForGetAssociationByRelationType.Add(relationType, name);
+            var table = this.tableNameForObjectByClass[@class];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForGetAssociation}{@class.Name.ToLowerInvariant()}_{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForGetAssociationByRelationType.Add(relationType, name);
 
             // Get Composite Association (1-*) [object table]
             var definition = $@"
@@ -722,7 +744,7 @@ CREATE PROCEDURE {name}
     {this.ParamNameForCompositeRole} {SqlTypeForObject}
 AS
 BEGIN
-    SELECT {this.ColumnNameByRelationType[relationType]}
+    SELECT {this.columnNameByRelationType[relationType]}
     FROM {table}
     WHERE {ColumnNameForObject}={this.ParamNameForCompositeRole}
 END";
@@ -733,9 +755,10 @@ END";
         private void PrefetchCompositeAssociationObjectTable(IAssociationType associationType, IClass @class)
         {
             var relationType = associationType.RelationType;
-            var table = this.TableNameForObjectByClass[@class];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchAssociation + @class.Name.ToLowerInvariant() + "_" + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForPrefetchAssociationByRelationType.Add(relationType, name);
+            var table = this.tableNameForObjectByClass[@class];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForPrefetchAssociation}{@class.Name.ToLowerInvariant()}_{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForPrefetchAssociationByRelationType.Add(relationType, name);
 
             // Prefetch Composite Association (1-*) [object table]
             var definition = $@"
@@ -743,7 +766,7 @@ CREATE PROCEDURE {name}
     {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
-    SELECT {this.ColumnNameByRelationType[relationType]}, {ColumnNameForObject}
+    SELECT {this.columnNameByRelationType[relationType]}, {ColumnNameForObject}
     FROM {table}
     WHERE {ColumnNameForObject} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
@@ -754,9 +777,10 @@ END";
         private void AddCompositeRoleObjectTable(IAssociationType associationType, IClass @class)
         {
             var relationType = associationType.RelationType;
-            var table = this.TableNameForObjectByClass[@class];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForAddRole + @class.Name.ToLowerInvariant() + "_" + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForAddRoleByRelationType.Add(relationType, name);
+            var table = this.tableNameForObjectByClass[@class];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForAddRole}{@class.Name.ToLowerInvariant()}_{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForAddRoleByRelationType.Add(relationType, name);
 
             // Add Composite Role (1-*) [object table]
             var definition = $@"
@@ -765,7 +789,7 @@ CREATE PROCEDURE {name}
 AS
 BEGIN
     UPDATE {table}
-    SET {this.ColumnNameByRelationType[relationType]} = r.{this.TableTypeColumnNameForAssociation}
+    SET {this.columnNameByRelationType[relationType]} = r.{this.TableTypeColumnNameForAssociation}
     FROM {table}
     INNER JOIN {this.ParamNameForTableType} AS r
     ON {ColumnNameForObject} = r.{this.TableTypeColumnNameForRole}
@@ -777,9 +801,10 @@ END";
         private void RemoveCompositeRoleObjectTable(IAssociationType associationType, IClass @class)
         {
             var relationType = associationType.RelationType;
-            var table = this.TableNameForObjectByClass[@class];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForRemoveRole + @class.Name.ToLowerInvariant() + "_" + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForRemoveRoleByRelationType.Add(relationType, name);
+            var table = this.tableNameForObjectByClass[@class];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForRemoveRole}{@class.Name.ToLowerInvariant()}_{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForRemoveRoleByRelationType.Add(relationType, name);
 
             // Remove Composite Role (1-*) [object table]
             var definition = $@"
@@ -788,11 +813,11 @@ CREATE PROCEDURE {name}
 AS
 BEGIN
     UPDATE {table}
-    SET {this.ColumnNameByRelationType[relationType]} = null
+    SET {this.columnNameByRelationType[relationType]} = null
     FROM {table}
     INNER JOIN {this.ParamNameForTableType} AS r
     ON
-        {this.ColumnNameByRelationType[relationType]} = r.{this.TableTypeColumnNameForAssociation} AND
+        {this.columnNameByRelationType[relationType]} = r.{this.TableTypeColumnNameForAssociation} AND
         {ColumnNameForObject} = r.{this.TableTypeColumnNameForRole}
 END";
 
@@ -802,8 +827,9 @@ END";
         private void ClearCompositeRoleObjectTable(IAssociationType associationType, IClass @class)
         {
             var relationType = associationType.RelationType;
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForClearRole + @class.Name.ToLowerInvariant() + "_" + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForClearRoleByRelationType.Add(relationType, name);
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForClearRole}{@class.Name.ToLowerInvariant()}_{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForClearRoleByRelationType.Add(relationType, name);
 
             // Clear Composites Role (1-*) [object table]
             var definition = $@"
@@ -811,11 +837,11 @@ CREATE PROCEDURE {name}
     {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
-    UPDATE {this.TableNameForObjectByClass[@class]}
-    SET {this.ColumnNameByRelationType[relationType]} = null
-    FROM {this.TableNameForObjectByClass[@class]}
+    UPDATE {this.tableNameForObjectByClass[@class]}
+    SET {this.columnNameByRelationType[relationType]} = null
+    FROM {this.tableNameForObjectByClass[@class]}
     INNER JOIN {this.ParamNameForTableType} AS a
-    ON {this.ColumnNameByRelationType[relationType]} = a.{this.TableTypeColumnNameForObject}
+    ON {this.columnNameByRelationType[relationType]} = a.{this.TableTypeColumnNameForObject}
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -823,30 +849,30 @@ END";
 
         private void SetUnitRoleType(IRoleType roleType, IClass @class)
         {
-            if (!this.ProcedureNameForSetUnitRoleByRelationTypeByClass.TryGetValue(@class, out var procedureNameForSetUnitRoleByRelationType))
+            if (!this.procedureNameForSetUnitRoleByRelationTypeByClass.TryGetValue(@class, out var procedureNameForSetUnitRoleByRelationType))
             {
                 procedureNameForSetUnitRoleByRelationType = new Dictionary<IRelationType, string>();
-                this.ProcedureNameForSetUnitRoleByRelationTypeByClass.Add(@class, procedureNameForSetUnitRoleByRelationType);
+                this.procedureNameForSetUnitRoleByRelationTypeByClass.Add(@class, procedureNameForSetUnitRoleByRelationType);
             }
 
             var relationType = roleType.RelationType;
             var unitTypeTag = ((IUnit)relationType.RoleType.ObjectType).Tag;
-            var table = this.TableNameForObjectByClass[@class];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForSetRole + @class.Name.ToLowerInvariant() + "_" + roleType.SingularFullName.ToLowerInvariant();
+            var table = this.tableNameForObjectByClass[@class];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForSetRole}{@class.Name.ToLowerInvariant()}_{roleType.SingularFullName.ToLowerInvariant()}";
             procedureNameForSetUnitRoleByRelationType.Add(relationType, name);
 
-            string tableTypeName = unitTypeTag switch
+            var tableTypeName = unitTypeTag switch
             {
                 UnitTags.String => this.TableTypeNameForStringRelation,
                 UnitTags.Integer => this.TableTypeNameForIntegerRelation,
                 UnitTags.Float => this.TableTypeNameForFloatRelation,
-                UnitTags.Decimal => this.TableTypeNameForDecimalRelationByScaleByPrecision[roleType.Precision.Value][
-                    roleType.Scale.Value],
+                UnitTags.Decimal => this.TableTypeNameForDecimalRelationByScaleByPrecision[roleType.Precision.Value][roleType.Scale.Value],
                 UnitTags.Boolean => this.TableTypeNameForBooleanRelation,
                 UnitTags.DateTime => this.TableTypeNameForDateTimeRelation,
                 UnitTags.Unique => this.TableTypeNameForUniqueRelation,
                 UnitTags.Binary => this.TableTypeNameForBinaryRelation,
-                _ => throw new ArgumentException("Unknown Unit ObjectType: " + roleType.ObjectType.SingularName)
+                _ => throw new ArgumentException($"Unknown Unit ObjectType: {roleType.ObjectType.SingularName}")
             };
 
             var definition = $@"
@@ -855,7 +881,7 @@ CREATE PROCEDURE {name}
 AS
 BEGIN
     UPDATE {table}
-    SET {this.ColumnNameByRelationType[relationType]} = r.{this.TableTypeColumnNameForRole}
+    SET {this.columnNameByRelationType[relationType]} = r.{this.TableTypeColumnNameForRole}
     FROM {table}
     INNER JOIN {this.ParamNameForTableType} AS r
     ON {ColumnNameForObject} = r.{this.TableTypeColumnNameForAssociation}
@@ -867,9 +893,10 @@ END";
         private void GetCompositeRoleObjectTable(IRoleType roleType, IClass @class)
         {
             var relationType = roleType.RelationType;
-            var table = this.TableNameForObjectByClass[@class];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForGetRole + roleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForGetRoleByRelationType.Add(relationType, name);
+            var table = this.tableNameForObjectByClass[@class];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForGetRole}{roleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForGetRoleByRelationType.Add(relationType, name);
 
             // Get Composite Role (1-1 and *-1) [object table]
             var definition = $@"
@@ -877,7 +904,7 @@ CREATE PROCEDURE {name}
     {this.ParamNameForAssociation} {SqlTypeForObject}
 AS
 BEGIN
-    SELECT {this.ColumnNameByRelationType[relationType]}
+    SELECT {this.columnNameByRelationType[relationType]}
     FROM {table}
     WHERE {ColumnNameForObject}={this.ParamNameForAssociation}
 END";
@@ -888,9 +915,10 @@ END";
         private void PrefetchCompositeRoleObjectTable(IRoleType roleType, IClass @class)
         {
             var relationType = roleType.RelationType;
-            var table = this.TableNameForObjectByClass[@class];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchRole + roleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForPrefetchRoleByRelationType.Add(relationType, name);
+            var table = this.tableNameForObjectByClass[@class];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForPrefetchRole}{roleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForPrefetchRoleByRelationType.Add(relationType, name);
 
             // Prefetch Composite Role (1-1 and *-1) [object table]
             var definition = $@"
@@ -898,7 +926,7 @@ CREATE PROCEDURE {name}
     {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
-    SELECT  {ColumnNameForObject}, {this.ColumnNameByRelationType[relationType]}
+    SELECT  {ColumnNameForObject}, {this.columnNameByRelationType[relationType]}
     FROM {table}
     WHERE {ColumnNameForObject} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
@@ -909,9 +937,10 @@ END";
         private void GetCompositeAssociationOne2OneObjectTable(IRoleType roleType, IClass @class)
         {
             var relationType = roleType.RelationType;
-            var table = this.TableNameForObjectByClass[@class];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForGetAssociation + @class.Name.ToLowerInvariant() + "_" + roleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForGetAssociationByRelationType.Add(relationType, name);
+            var table = this.tableNameForObjectByClass[@class];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForGetAssociation}{@class.Name.ToLowerInvariant()}_{roleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForGetAssociationByRelationType.Add(relationType, name);
 
             // Get Composite Association (1-1) [object table]
             var definition = $@"
@@ -921,7 +950,7 @@ AS
 BEGIN
     SELECT {ColumnNameForObject}
     FROM {table}
-    WHERE {this.ColumnNameByRelationType[relationType]}={this.ParamNameForCompositeRole}
+    WHERE {this.columnNameByRelationType[relationType]}={this.ParamNameForCompositeRole}
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -929,9 +958,10 @@ END";
 
         private void PrefetchCompositeAssociationObjectTable(IRoleType roleType, IClass @class)
         {
-            var table = this.TableNameForObjectByClass[@class];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchAssociation + @class.Name.ToLowerInvariant() + "_" + roleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForPrefetchAssociationByRelationType.Add(roleType.RelationType, name);
+            var table = this.tableNameForObjectByClass[@class];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForPrefetchAssociation}{@class.Name.ToLowerInvariant()}_{roleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForPrefetchAssociationByRelationType.Add(roleType.RelationType, name);
 
             // Prefetch Composite Association (1-1) [object table]
             var definition = $@"
@@ -939,9 +969,9 @@ CREATE PROCEDURE {name}
     {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
-    SELECT {ColumnNameForObject}, {this.ColumnNameByRelationType[roleType.RelationType]}
+    SELECT {ColumnNameForObject}, {this.columnNameByRelationType[roleType.RelationType]}
     FROM {table}
-    WHERE {this.ColumnNameByRelationType[roleType.RelationType]} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
+    WHERE {this.columnNameByRelationType[roleType.RelationType]} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -950,9 +980,10 @@ END";
         private void GetCompositesAssociationMany2OneObjectTable(IRoleType roleType, IClass @class)
         {
             var relationType = roleType.RelationType;
-            var table = this.TableNameForObjectByClass[@class];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForGetAssociation + @class.Name.ToLowerInvariant() + "_" + roleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForGetAssociationByRelationType.Add(relationType, name);
+            var table = this.tableNameForObjectByClass[@class];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForGetAssociation}{@class.Name.ToLowerInvariant()}_{roleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForGetAssociationByRelationType.Add(relationType, name);
 
             // Get Composite Association (*-1) [object table]
             var definition = $@"
@@ -962,7 +993,7 @@ AS
 BEGIN
     SELECT {ColumnNameForObject}
     FROM {table}
-    WHERE {this.ColumnNameByRelationType[relationType]}={this.ParamNameForCompositeRole}
+    WHERE {this.columnNameByRelationType[relationType]}={this.ParamNameForCompositeRole}
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -971,9 +1002,10 @@ END";
         private void PrefetchCompositesAssociationMany2OneObjectTable(IRoleType roleType, IClass @class)
         {
             var relationType = roleType.RelationType;
-            var table = this.TableNameForObjectByClass[@class];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchAssociation + @class.Name.ToLowerInvariant() + "_" + roleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForPrefetchAssociationByRelationType.Add(relationType, name);
+            var table = this.tableNameForObjectByClass[@class];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForPrefetchAssociation}{@class.Name.ToLowerInvariant()}_{roleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForPrefetchAssociationByRelationType.Add(relationType, name);
 
             // Prefetch Composite Association (*-1) [object table]
             var definition = $@"
@@ -981,9 +1013,9 @@ CREATE PROCEDURE {name}
     {this.ParamNameForTableType} {this.TableTypeNameForObject} READONLY
 AS
 BEGIN
-    SELECT {ColumnNameForObject}, {this.ColumnNameByRelationType[relationType]}
+    SELECT {ColumnNameForObject}, {this.columnNameByRelationType[relationType]}
     FROM {table}
-    WHERE {this.ColumnNameByRelationType[relationType]} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
+    WHERE {this.columnNameByRelationType[relationType]} IN (SELECT {this.TableTypeColumnNameForObject} FROM {this.ParamNameForTableType})
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -992,20 +1024,21 @@ END";
         private void SetCompositeRole(IRoleType roleType, IClass @class)
         {
             var relationType = roleType.RelationType;
-            var table = this.TableNameForObjectByClass[@class];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForSetRole + @class.Name.ToLowerInvariant() + "_" + roleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForSetRoleByRelationType.Add(relationType, name);
+            var table = this.tableNameForObjectByClass[@class];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForSetRole}{@class.Name.ToLowerInvariant()}_{roleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForSetRoleByRelationType.Add(relationType, name);
 
             // Set Composite Role (1-1 and *-1) [object table]
-            var definition = @"CREATE PROCEDURE " + name + @"
-    " + this.ParamNameForTableType + @" " + this.TableTypeNameForCompositeRelation + @" READONLY
+            var definition = $@"CREATE PROCEDURE {name}
+    {this.ParamNameForTableType} {this.TableTypeNameForCompositeRelation} READONLY
 AS
 BEGIN
-    UPDATE " + table + @"
-    SET " + this.ColumnNameByRelationType[relationType] + " = r." + this.TableTypeColumnNameForRole + @"
-    FROM " + table + @"
-    INNER JOIN " + this.ParamNameForTableType + @" AS r
-    ON " + ColumnNameForObject + " = r." + this.TableTypeColumnNameForAssociation + @"
+    UPDATE {table}
+    SET {this.columnNameByRelationType[relationType]} = r.{this.TableTypeColumnNameForRole}
+    FROM {table}
+    INNER JOIN {this.ParamNameForTableType} AS r
+    ON {ColumnNameForObject} = r.{this.TableTypeColumnNameForAssociation}
 END";
 
             this.ProcedureDefinitionByName.Add(name, definition);
@@ -1014,9 +1047,10 @@ END";
         private void ClearCompositeRole(IRoleType roleType, IClass @class)
         {
             var relationType = roleType.RelationType;
-            var table = this.TableNameForObjectByClass[@class];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForClearRole + @class.Name.ToLowerInvariant() + "_" + roleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForClearRoleByRelationType.Add(relationType, name);
+            var table = this.tableNameForObjectByClass[@class];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForClearRole}{@class.Name.ToLowerInvariant()}_{roleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForClearRoleByRelationType.Add(relationType, name);
 
             // Clear Composite Role (1-1 and *-1) [object table]
             var definition = $@"
@@ -1025,7 +1059,7 @@ CREATE PROCEDURE {name}
 AS
 BEGIN
     UPDATE {table}
-    SET {this.ColumnNameByRelationType[relationType]} = null
+    SET {this.columnNameByRelationType[relationType]} = null
     FROM {table}
     INNER JOIN {this.ParamNameForTableType} AS a
     ON {ColumnNameForObject} = a.{this.TableTypeColumnNameForObject}
@@ -1036,9 +1070,10 @@ END";
 
         private void GetCompositesRoleRelationTable(IRelationType relationType)
         {
-            var table = this.TableNameForRelationByRelationType[relationType];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForGetRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForGetRoleByRelationType.Add(relationType, name);
+            var table = this.tableNameForRelationByRelationType[relationType];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForGetRole}{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForGetRoleByRelationType.Add(relationType, name);
 
             // Get Composites Role (1-* and *-*) [relation table]
             var definition = $@"
@@ -1056,9 +1091,10 @@ END";
 
         private void PrefetchCompositesRoleRelationTable(IRelationType relationType)
         {
-            var table = this.TableNameForRelationByRelationType[relationType];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForPrefetchRoleByRelationType.Add(relationType, name);
+            var table = this.tableNameForRelationByRelationType[relationType];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForPrefetchRole}{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForPrefetchRoleByRelationType.Add(relationType, name);
 
             // Prefetch Composites Role (1-* and *-*) [relation table]
             var definition = $@"
@@ -1076,9 +1112,10 @@ END";
 
         private void AddCompositeRoleRelationTable(IRelationType relationType)
         {
-            var table = this.TableNameForRelationByRelationType[relationType];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForAddRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForAddRoleByRelationType.Add(relationType, name);
+            var table = this.tableNameForRelationByRelationType[relationType];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForAddRole}{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForAddRoleByRelationType.Add(relationType, name);
 
             // Add Composite Role (1-* and *-*) [relation table]
             var definition = $@"
@@ -1096,9 +1133,10 @@ END";
 
         private void RemoveCompositeRoleRelationTable(IRelationType relationType)
         {
-            var table = this.TableNameForRelationByRelationType[relationType];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForRemoveRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForRemoveRoleByRelationType.Add(relationType, name);
+            var table = this.tableNameForRelationByRelationType[relationType];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForRemoveRole}{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForRemoveRoleByRelationType.Add(relationType, name);
 
             // Remove Composite Role (1-* and *-*) [relation table]
             var definition = $@"
@@ -1118,8 +1156,9 @@ END";
 
         private void GetCompositeRoleRelationTable(IRelationType relationType)
         {
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForGetRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForGetRoleByRelationType.Add(relationType, name);
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForGetRole}{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForGetRoleByRelationType.Add(relationType, name);
 
             // Get Composite Role (1-1 and *-1) [relation table]
             var definition = $@"
@@ -1128,7 +1167,7 @@ CREATE PROCEDURE {name}
 AS
 BEGIN
     SELECT {ColumnNameForRole}
-    FROM {this.TableNameForRelationByRelationType[relationType]}
+    FROM {this.tableNameForRelationByRelationType[relationType]}
     WHERE {ColumnNameForAssociation}={this.ParamNameForAssociation}
 END";
 
@@ -1137,9 +1176,10 @@ END";
 
         private void PrefetchCompositeRoleRelationType(IRelationType relationType)
         {
-            var table = this.TableNameForRelationByRelationType[relationType];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForPrefetchRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForPrefetchRoleByRelationType.Add(relationType, name);
+            var table = this.tableNameForRelationByRelationType[relationType];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForPrefetchRole}{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForPrefetchRoleByRelationType.Add(relationType, name);
 
             // Prefetch Composite Role (1-1 and *-1) [relation table]
             var definition = $@"
@@ -1156,9 +1196,10 @@ END";
 
         private void SetCompositeRoleRelationType(IRelationType relationType)
         {
-            var table = this.TableNameForRelationByRelationType[relationType];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForSetRole + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForSetRoleByRelationType.Add(relationType, name);
+            var table = this.tableNameForRelationByRelationType[relationType];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForSetRole}{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForSetRoleByRelationType.Add(relationType, name);
 
             // Set Composite Role (1-1 and *-1) [relation table]
             var definition = $@"
@@ -1183,9 +1224,10 @@ END";
 
         private void GetCompositeAssociationRelationTable(IRelationType relationType)
         {
-            var table = this.TableNameForRelationByRelationType[relationType];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForGetAssociation + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForGetAssociationByRelationType.Add(relationType, name);
+            var table = this.tableNameForRelationByRelationType[relationType];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForGetAssociation}{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForGetAssociationByRelationType.Add(relationType, name);
 
             // Get Composite Association (1-1) [relation table]
             var definition = $@"
@@ -1203,8 +1245,8 @@ END";
 
         private void PrefetchCompositeAssociationRelationTable(IRelationType relationType)
         {
-            var table = this.TableNameForRelationByRelationType[relationType];
-            var name = this.ProcedureNameForPrefetchAssociationByRelationType[relationType];
+            var table = this.tableNameForRelationByRelationType[relationType];
+            var name = this.procedureNameForPrefetchAssociationByRelationType[relationType];
 
             // Prefetch Composite Association (1-1) [relation table]
             var definition = $@"
@@ -1222,9 +1264,10 @@ END";
 
         private void GetCompositesAssociationRelationTable(IRelationType relationType)
         {
-            var table = this.TableNameForRelationByRelationType[relationType];
-            var name = this.Database.SchemaName + "." + ProcedurePrefixForGetAssociation + relationType.RoleType.SingularFullName.ToLowerInvariant();
-            this.ProcedureNameForGetAssociationByRelationType.Add(relationType, name);
+            var table = this.tableNameForRelationByRelationType[relationType];
+            var name =
+                $"{this.Database.SchemaName}.{ProcedurePrefixForGetAssociation}{relationType.RoleType.SingularFullName.ToLowerInvariant()}";
+            this.procedureNameForGetAssociationByRelationType.Add(relationType, name);
 
             // Get Composite Association (*-1) [relation table]
             var definition = $@"
@@ -1242,8 +1285,8 @@ END";
 
         private void PrefetchCompositesAssociationRelationTable(IRelationType relationType)
         {
-            var table = this.TableNameForRelationByRelationType[relationType];
-            var name = this.ProcedureNameForPrefetchAssociationByRelationType[relationType];
+            var table = this.tableNameForRelationByRelationType[relationType];
+            var name = this.procedureNameForPrefetchAssociationByRelationType[relationType];
 
             // Prefetch Composite Association (*-1) [relation table]
             var definition = $@"
@@ -1261,8 +1304,8 @@ END";
 
         private void ClearCompositeRoleRelationTable(IRelationType relationType)
         {
-            var table = this.TableNameForRelationByRelationType[relationType];
-            var name = this.ProcedureNameForClearRoleByRelationType[relationType];
+            var table = this.tableNameForRelationByRelationType[relationType];
+            var name = this.procedureNameForClearRoleByRelationType[relationType];
 
             // Clear Composite Role (1-1 and *-1) [relation table]
             var definition = $@"

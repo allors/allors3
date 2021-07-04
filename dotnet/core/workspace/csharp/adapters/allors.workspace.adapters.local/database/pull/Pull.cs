@@ -212,18 +212,15 @@ namespace Allors.Workspace.Adapters.Local
                         tree.Resolve(newObject, this.AccessControlLists, this.DatabaseObjects);
                     }
                 }
+                else if (existingCollection != null)
+                {
+                    existingCollection.UnionWith(filteredCollection);
+                }
                 else
                 {
-                    if (existingCollection != null)
-                    {
-                        existingCollection.UnionWith(filteredCollection);
-                    }
-                    else
-                    {
-                        var newWorkspaceCollection = new HashSet<Database.IObject>(filteredCollection);
-                        this.DatabaseCollectionsByName.Add(name, newWorkspaceCollection);
-                        this.DatabaseObjects.UnionWith(newWorkspaceCollection);
-                    }
+                    var newWorkspaceCollection = new HashSet<Database.IObject>(filteredCollection);
+                    this.DatabaseCollectionsByName.Add(name, newWorkspaceCollection);
+                    this.DatabaseObjects.UnionWith(newWorkspaceCollection);
                 }
             }
         }
