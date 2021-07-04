@@ -41,7 +41,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
         }
 
-        protected string ConnectionString => $"Server=localhost; User Id=allors; Database={this.database}; Pooling=false; CommandTimeout=300";
+        protected string ConnectionString => $"Server=localhost; User Id=allors; Database={this.database}; Pooling=false; Enlist=false; CommandTimeout=300";
 
         public override IDatabase CreateDatabase()
         {

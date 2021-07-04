@@ -41,7 +41,7 @@ namespace Allors.Database.Adapters
 
                 case "NPGSQL":
 
-                    return new Sql.Npgsql.Database(this.scope, new Sql.Npgsql.Configuration
+                    return new Sql.Npgsql.Database(this.scope, new Sql.Configuration
                     {
                         ObjectFactory = this.objectFactory,
                         ConnectionString = connectionString,
@@ -50,15 +50,18 @@ namespace Allors.Database.Adapters
                     });
 
                 case "SQLCLIENT":
-                default:
 
-                    return new Sql.SqlClient.Database(this.scope, new Sql.SqlClient.Configuration
+
+                    return new Sql.SqlClient.Database(this.scope, new Sql.Configuration
                     {
                         ObjectFactory = this.objectFactory,
                         ConnectionString = connectionString,
                         IsolationLevel = this.isolationLevel,
                         CommandTimeout = this.commandTimeout,
                     });
+
+                default:
+                    throw new NotSupportedException(adapter);
             }
         }
     }

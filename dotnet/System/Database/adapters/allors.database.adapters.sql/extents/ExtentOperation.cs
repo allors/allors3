@@ -54,7 +54,7 @@ namespace Allors.Database.Adapters.Sql
                     break;
 
                 case ExtentOperations.Except:
-                    statement.Append("\n" + this.Transaction.Database.Except + "\n");
+                    statement.Append("\n" + "EXCEPT" + "\n");
                     break;
             }
 

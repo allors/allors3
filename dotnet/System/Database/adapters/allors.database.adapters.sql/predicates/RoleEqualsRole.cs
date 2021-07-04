@@ -33,7 +33,7 @@ namespace Allors.Database.Adapters.Sql
 
                 if (this.role.ObjectType.Tag == UnitTags.String)
                 {
-                    statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.role.RelationType] + " COLLATE Latin1_General_100_BIN2 =" + alias + "." + schema.ColumnNameByRelationType[this.equalsRole.RelationType] + " COLLATE Latin1_General_100_BIN2");
+                    statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.role.RelationType] + $" {schema.StringCollation} =" + alias + "." + schema.ColumnNameByRelationType[this.equalsRole.RelationType] + $" {schema.StringCollation}");
                 }
                 else
                 {

@@ -14,7 +14,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
     public class Mapping : Sql.Mapping
     {
         public override string ParamFormat => "p_{0}";
-        public string ParamInvocationFormat => ":p_{0}";
+        public override string ParamInvocationFormat => ":p_{0}";
 
         public const string SqlTypeForClass = "uuid";
         public const string SqlTypeForObject = "bigint";
@@ -30,7 +30,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public override string ParamInvocationNameForObject => string.Format(ParamInvocationFormat, ColumnNameForObject);
         public override string ParamNameForClass => string.Format(ParamFormat, ColumnNameForClass);
         public override string ParamInvocationNameForClass => string.Format(ParamInvocationFormat, ColumnNameForClass);
-        
+
         public MappingArrayParameter ObjectArrayParam { get; }
         public MappingArrayParameter CompositeRoleArrayParam { get; }
         public MappingArrayParameter StringRoleArrayParam { get; }
@@ -80,6 +80,10 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public override IDictionary<IRelationType, string> ProcedureNameForClearRoleByRelationType { get; }
         public override IDictionary<IRelationType, string> ProcedureNameForGetAssociationByRelationType { get; }
         public override IDictionary<IRelationType, string> ProcedureNameForPrefetchAssociationByRelationType { get; }
+
+        public override string StringCollation => string.Empty;
+        public override string Ascending => "ASC NULLS FIRST";
+        public override string Descending => "DESC NULLS LAST";
 
         public override string ProcedureNameForInstantiate => this.Database.SchemaName + "." + ProcedurePrefixForInstantiate;
 

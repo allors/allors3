@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Adapters.Sql.Npgsql
 {
+    using System;
     using global::Npgsql;
 
     public class Fixture<T>
@@ -14,11 +15,29 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             var database = typeof(T).Name;
             var connectionString = "Server=localhost; User Id=allors; Database=postgres; Pooling=false; CommandTimeout=300";
 
+            int version;
+
             {
+                // version 13+
                 using var connection = new NpgsqlConnection(connectionString);
                 connection.Open();
                 using var command = connection.CreateCommand();
-                command.CommandText = $"DROP DATABASE IF EXISTS {database} WITH (FORCE)";
+                command.CommandText = "SHOW server_version";
+                var scalar = command.ExecuteScalar();
+                var full = scalar.ToString();
+                var major = full.Substring(0, full.IndexOf("."));
+                version = int.Parse(major);
+                connection.Close();
+            }
+
+
+            {
+                // version 13+
+                using var connection = new NpgsqlConnection(connectionString);
+                connection.Open();
+                using var command = connection.CreateCommand();
+                var withForce = version >= 13 ? "WITH (FORCE)" : string.Empty;
+                command.CommandText = $"DROP DATABASE IF EXISTS {database} {withForce}";
                 command.ExecuteNonQuery();
                 connection.Close();
             }

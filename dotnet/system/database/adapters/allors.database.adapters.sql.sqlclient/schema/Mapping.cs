@@ -16,6 +16,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     public class Mapping : Sql.Mapping
     {
         public override string ParamFormat => "@{0}";
+        public override string ParamInvocationFormat => this.ParamFormat;
 
         public const string SqlTypeForClass = "uniqueidentifier";
         public const string SqlTypeForObject = "bigint";
@@ -65,6 +66,12 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         public override IDictionary<IClass, string> ProcedureNameForPrefetchUnitRolesByClass { get; }
         public override IDictionary<IRelationType, string> ProcedureNameForPrefetchRoleByRelationType { get; }
         public override IDictionary<IRelationType, string> ProcedureNameForPrefetchAssociationByRelationType { get; }
+
+        public override string StringCollation => "COLLATE Latin1_General_100_BIN2";
+        public override string Ascending => "ASC";
+        public override string Descending => "DESC";
+
+
         public override IDictionary<IRelationType, string> TableNameForRelationByRelationType { get; }
 
 

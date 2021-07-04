@@ -34,7 +34,7 @@ namespace Allors.Database.Adapters.Sql
         {
             if (!this.paramNameByParamValue.ContainsKey(obj))
             {
-                var param = string.Format(this.Extent.Transaction.Database.Mapping.ParamFormat, "p" + this.parameterIndex++);
+                var param = string.Format(this.Extent.Transaction.Database.Mapping.ParamInvocationFormat, "p" + this.parameterIndex++);
                 this.paramNameByParamValue[obj] = param;
                 return param;
             }

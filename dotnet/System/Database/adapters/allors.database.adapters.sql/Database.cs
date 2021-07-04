@@ -102,12 +102,6 @@ namespace Allors.Database.Adapters.Sql
 
         public string ConnectionString { get; set; }
 
-        internal string AscendingSortAppendix => null;
-
-        internal string DescendingSortAppendix => null;
-
-        internal string Except => "EXCEPT";
-
         protected internal ICache Cache { get; }
 
         public int? CommandTimeout { get; }

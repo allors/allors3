@@ -12,6 +12,7 @@ namespace Allors.Database.Adapters.Sql
         private readonly SortDirection direction;
         private readonly IRoleType roleType;
         private readonly Transaction transaction;
+        private readonly Mapping mapping;
         private ExtentSort subSorter;
 
         internal ExtentSort(Transaction transaction, IRoleType roleType, SortDirection direction)
@@ -19,6 +20,7 @@ namespace Allors.Database.Adapters.Sql
             this.transaction = transaction;
             this.roleType = roleType;
             this.direction = direction;
+            this.mapping = this.transaction.Database.Mapping;
         }
 
         internal void AddSort(IRoleType subSortIRoleType, SortDirection subSortDirection)
@@ -40,18 +42,9 @@ namespace Allors.Database.Adapters.Sql
                     ? $" ORDER BY {statement.Mapping.ColumnNameByRelationType[this.roleType.RelationType]}"
                     : $" , {statement.Mapping.ColumnNameByRelationType[this.roleType.RelationType]}");
 
-            statement.Append(this.direction == SortDirection.Ascending ? " ASC " : " DESC ");
+            statement.Append(this.direction == SortDirection.Ascending ? $" {this.mapping.Ascending} " : $" {this.mapping.Descending} ");
 
             this.subSorter?.BuildOrder(statement);
-
-            if (this.direction == SortDirection.Ascending)
-            {
-                this.AddAscendingAppendix(statement);
-            }
-            else
-            {
-                this.AddDescendingAppendix(statement);
-            }
         }
 
         internal void BuildOrder(ExtentStatement statement, string alias)
@@ -61,16 +54,9 @@ namespace Allors.Database.Adapters.Sql
                     ? $" ORDER BY {alias}.{statement.Mapping.ColumnNameByRelationType[this.roleType.RelationType]}"
                     : $" , {alias}.{statement.Mapping.ColumnNameByRelationType[this.roleType.RelationType]}");
 
-            if (this.direction == SortDirection.Ascending)
-            {
-                statement.Append(" ASC ");
-                this.AddAscendingAppendix(statement);
-            }
-            else
-            {
-                statement.Append(" DESC ");
-                this.AddDescendingAppendix(statement);
-            }
+            statement.Append(this.direction == SortDirection.Ascending
+                ? $" {this.mapping.Ascending} "
+                : $" {this.mapping.Descending} ");
 
             this.subSorter?.BuildOrder(statement, alias);
         }
@@ -85,24 +71,6 @@ namespace Allors.Database.Adapters.Sql
         {
             statement.Append($" , {alias}.{statement.Mapping.ColumnNameByRelationType[this.roleType.RelationType]} ");
             this.subSorter?.BuildSelect(statement, alias);
-        }
-
-        private void AddAscendingAppendix(ExtentStatement statement)
-        {
-            var sortAppendix = this.transaction.Database.AscendingSortAppendix;
-            if (sortAppendix != null)
-            {
-                statement.Append(sortAppendix + " ");
-            }
-        }
-
-        private void AddDescendingAppendix(ExtentStatement statement)
-        {
-            var sortAppendix = this.transaction.Database.DescendingSortAppendix;
-            if (sortAppendix != null)
-            {
-                statement.Append(sortAppendix + " ");
-            }
         }
     }
 }

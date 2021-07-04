@@ -27,6 +27,7 @@ namespace Allors.Database.Adapters.Sql
         public abstract string ParamNameForClass { get; }
         public abstract string ParamInvocationNameForClass { get; }
         public abstract string ParamFormat { get; }
+        public abstract string ParamInvocationFormat { get; }
         public abstract IDictionary<IRoleType, string> ParamNameByRoleType { get; }
         public abstract IDictionary<IRoleType, string> ParamInvocationNameByRoleType { get; }
 
@@ -47,5 +48,9 @@ namespace Allors.Database.Adapters.Sql
         public abstract IDictionary<IClass, string> ProcedureNameForPrefetchUnitRolesByClass { get; }
         public abstract IDictionary<IRelationType, string> ProcedureNameForPrefetchRoleByRelationType { get; }
         public abstract IDictionary<IRelationType, string> ProcedureNameForPrefetchAssociationByRelationType { get; }
+
+        public abstract string StringCollation { get; }
+        public abstract string Ascending { get; }
+        public abstract string Descending { get; }
     }
 }

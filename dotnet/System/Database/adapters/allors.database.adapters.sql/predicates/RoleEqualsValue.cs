@@ -19,15 +19,15 @@ namespace Allors.Database.Adapters.Sql
             extent.CheckRole(roleType);
             PredicateAssertions.ValidateRoleEquals(roleType, obj);
             this.roleType = roleType;
-            if (obj is Enum)
+            if (obj is Enum enumeration)
             {
                 if (((IUnit)roleType.ObjectType).IsInteger)
                 {
-                    this.obj = obj;
+                    this.obj = Convert.ToInt32(enumeration);
                 }
                 else
                 {
-                    throw new Exception("Role Object Type " + roleType.ObjectType.Name + " doesn't support enumerations.");
+                    throw new Exception("Role Object Type " + roleType.ObjectType.Name + " doesn't support non int enumerations.");
                 }
             }
             else

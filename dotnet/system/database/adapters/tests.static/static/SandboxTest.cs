@@ -205,10 +205,6 @@ namespace Allors.Database.Adapters
 
                 this.Profile.Transaction.Commit();
 
-                var extent = this.Transaction.Extent(m.C1);
-                extent.Filter.AddEquals(m.C1.C1AllorsString, m.C1.C1StringEquals);
-
-                Assert.Single(extent);
             }
         }
     }

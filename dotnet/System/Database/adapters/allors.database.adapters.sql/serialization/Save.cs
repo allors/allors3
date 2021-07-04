@@ -67,7 +67,7 @@ namespace Allors.Database.Adapters.Sql
 
                 var sql = "SELECT " + Mapping.ColumnNameForObject + ", " + Mapping.ColumnNameForVersion + "\n";
                 sql += "FROM " + this.database.Mapping.TableNameForObjects + "\n";
-                sql += "WHERE " + Mapping.ColumnNameForClass + "=" + mapping.ParamNameForClass + "\n";
+                sql += "WHERE " + Mapping.ColumnNameForClass + "=" + mapping.ParamInvocationNameForClass + "\n";
                 sql += "ORDER BY " + Mapping.ColumnNameForObject;
 
                 using (var command = transaction.Connection.CreateCommand())
