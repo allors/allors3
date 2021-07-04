@@ -13,56 +13,16 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
     public class Mapping : Sql.Mapping
     {
-        public override string ParamInvocationFormat => ":p_{0}";
-
-        public const string SqlTypeForClass = "uuid";
-        public const string SqlTypeForObject = "bigint";
-        public const string SqlTypeForVersion = "bigint";
-        private const string SqlTypeForCount = "integer";
-
-        public const NpgsqlDbType NpgsqlDbTypeForClass = NpgsqlDbType.Uuid;
-        public const NpgsqlDbType NpgsqlDbTypeForObject = NpgsqlDbType.Bigint;
-        public const NpgsqlDbType NpgsqlDbTypeForCount = NpgsqlDbType.Integer;
-
-        public override string ParamInvocationNameForObject => string.Format(this.ParamInvocationFormat, ColumnNameForObject);
-        public override string ParamInvocationNameForClass => string.Format(this.ParamInvocationFormat, ColumnNameForClass);
-
-        public MappingArrayParameter ObjectArrayParam { get; }
-        public MappingArrayParameter CompositeRoleArrayParam { get; }
-        public MappingArrayParameter StringRoleArrayParam { get; }
-        public MappingArrayParameter StringMaxRoleArrayParam { get; }
-        public MappingArrayParameter IntegerRoleArrayParam { get; }
-        public MappingArrayParameter LongRoleArrayParam { get; }
-        public MappingArrayParameter DecimalRoleArrayParam { get; }
-        public MappingArrayParameter DoubleRoleArrayParam { get; }
-        public MappingArrayParameter BooleanRoleArrayParam { get; }
-        public MappingArrayParameter DateRoleArrayParam { get; }
-        public MappingArrayParameter DateTimeRoleArrayParam { get; }
-        public MappingArrayParameter UniqueRoleArrayParam { get; }
-        public MappingArrayParameter BinaryRoleArrayParam { get; }
-
+        public override string ParamInvocationFormat => ParameterInvocationFormat;
+        public override string ParamInvocationNameForObject { get; }
+        public override string ParamInvocationNameForClass { get; }
         public override IDictionary<IRoleType, string> ParamInvocationNameByRoleType { get; }
 
-        internal string ParamNameForAssociation => string.Format(ParamFormat, ColumnNameForAssociation);
-        internal string ParamNameForCompositeRole => string.Format(ParamFormat, ColumnNameForRole);
-        internal string ParamNameForCount => string.Format(ParamFormat, "count");
-        internal string ParamNameForObject => string.Format(ParamFormat, ColumnNameForObject);
-        internal string ParamNameForClass => string.Format(ParamFormat, ColumnNameForClass);
-        internal IDictionary<IRoleType, string> ParamNameByRoleType { get; }
-
-        internal string ParamInvocationNameForVersion => string.Format(this.ParamInvocationFormat, ColumnNameForVersion);
-        internal string ParamInvocationNameForAssociation => string.Format(this.ParamInvocationFormat, ColumnNameForAssociation);
-        internal string ParamInvocationNameForCompositeRole => string.Format(this.ParamInvocationFormat, ColumnNameForRole);
-        internal string ParamInvocationNameForCount => string.Format(this.ParamInvocationFormat, "count");
-
         public override string TableNameForObjects { get; }
-
         public override IDictionary<IClass, string> TableNameForObjectByClass { get; }
         public override IDictionary<IRelationType, string> ColumnNameByRelationType { get; }
-        internal Dictionary<IRelationType, string> UnescapedColumnNameByRelationType { get; }
         public override IDictionary<IRelationType, string> TableNameForRelationByRelationType { get; }
 
-        internal Dictionary<IClass, string> ProcedureNameForLoadObjectByClass { get; }
         public override IDictionary<IClass, string> ProcedureNameForCreateObjectByClass { get; }
         public override IDictionary<IClass, string> ProcedureNameForCreateObjectsByClass { get; }
         public override IDictionary<IClass, string> ProcedureNameForDeleteObjectByClass { get; }
@@ -82,74 +42,100 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public override string Ascending => "ASC NULLS FIRST";
         public override string Descending => "DESC NULLS LAST";
 
-        public override string ProcedureNameForInstantiate => this.Database.SchemaName + "." + ProcedurePrefixForInstantiate;
+        public override string ProcedureNameForInstantiate { get; }
+        public override string ProcedureNameForGetVersion { get; }
+        public override string ProcedureNameForUpdateVersion { get; }
 
-        public override string ProcedureNameForGetVersion => this.Database.SchemaName + "." + ProcedurePrefixForGetVersion;
-        public override string ProcedureNameForUpdateVersion => this.Database.SchemaName + "." + ProcedurePrefixForUpdateVersion;
+        internal const string SqlTypeForClass = "uuid";
+        internal const string SqlTypeForObject = "bigint";
+        internal const string SqlTypeForVersion = "bigint";
+        private const string SqlTypeForCount = "integer";
+
+        internal const NpgsqlDbType NpgsqlDbTypeForClass = NpgsqlDbType.Uuid;
+        internal const NpgsqlDbType NpgsqlDbTypeForObject = NpgsqlDbType.Bigint;
+        internal const NpgsqlDbType NpgsqlDbTypeForCount = NpgsqlDbType.Integer;
+
+        internal MappingArrayParameter ObjectArrayParam { get; }
+        private MappingArrayParameter CompositeRoleArrayParam { get; }
+        internal MappingArrayParameter StringRoleArrayParam { get; }
+        private MappingArrayParameter StringMaxRoleArrayParam { get; }
+        private MappingArrayParameter IntegerRoleArrayParam { get; }
+        private MappingArrayParameter DecimalRoleArrayParam { get; }
+        private MappingArrayParameter DoubleRoleArrayParam { get; }
+        private MappingArrayParameter BooleanRoleArrayParam { get; }
+        private MappingArrayParameter DateTimeRoleArrayParam { get; }
+        private MappingArrayParameter UniqueRoleArrayParam { get; }
+        private MappingArrayParameter BinaryRoleArrayParam { get; }
+
+        private string ParamNameForAssociation { get; }
+        private string ParamNameForCompositeRole { get; }
+        private string ParamNameForCount { get; }
+        private string ParamNameForObject { get; }
+        private string ParamNameForClass { get; }
+
+        internal string ParamInvocationNameForAssociation { get; }
+        internal string ParamInvocationNameForCompositeRole { get; }
+        internal string ParamInvocationNameForCount { get; }
 
         private const string ProcedurePrefixForInstantiate = "i";
-
         private const string ProcedurePrefixForGetVersion = "gv";
-
-        private const string ProcedurePrefixForSetVersion = "sv";
-
         private const string ProcedurePrefixForUpdateVersion = "uv";
-
         private const string ProcedurePrefixForCreateObject = "co_";
-
         private const string ProcedurePrefixForCreateObjects = "cos_";
-
         private const string ProcedurePrefixForDeleteObject = "do_";
-
         private const string ProcedurePrefixForLoad = "l_";
-
         private const string ProcedurePrefixForGetUnits = "gu_";
-
         private const string ProcedurePrefixForPrefetchUnits = "pu_";
-
         private const string ProcedurePrefixForGetRole = "gc_";
-
         private const string ProcedurePrefixForPrefetchRole = "pc_";
-
         private const string ProcedurePrefixForSetRole = "sc_";
-
         private const string ProcedurePrefixForClearRole = "cc_";
-
         private const string ProcedurePrefixForAddRole = "ac_";
-
         private const string ProcedurePrefixForRemoveRole = "rc_";
-
         private const string ProcedurePrefixForGetAssociation = "ga_";
-
         private const string ProcedurePrefixForPrefetchAssociation = "pa_";
 
-        internal const string ParamFormat = "p_{0}";
+        internal const string ParameterFormat = "p_{0}";
+        private const string ParameterInvocationFormat = ":p_{0}";
 
         public Mapping(Database database)
         {
             this.Database = database;
+
+            this.ParamInvocationNameForObject = string.Format(ParameterInvocationFormat, ColumnNameForObject);
+            this.ParamInvocationNameForClass = string.Format(ParameterInvocationFormat, ColumnNameForClass);
+
+            this.ProcedureNameForInstantiate = this.Database.SchemaName + "." + ProcedurePrefixForInstantiate;
+            this.ProcedureNameForGetVersion = this.Database.SchemaName + "." + ProcedurePrefixForGetVersion;
+            this.ProcedureNameForUpdateVersion = this.Database.SchemaName + "." + ProcedurePrefixForUpdateVersion;
+
+            this.ParamNameForAssociation = string.Format(ParameterFormat, ColumnNameForAssociation);
+            this.ParamNameForCompositeRole = string.Format(ParameterFormat, ColumnNameForRole);
+            this.ParamNameForCount = string.Format(ParameterFormat, "count");
+            this.ParamNameForObject = string.Format(ParameterFormat, ColumnNameForObject);
+            this.ParamNameForClass = string.Format(ParameterFormat, ColumnNameForClass);
+
+            this.ParamInvocationNameForAssociation = string.Format(ParameterInvocationFormat, ColumnNameForAssociation);
+            this.ParamInvocationNameForCompositeRole = string.Format(ParameterInvocationFormat, ColumnNameForRole);
+            this.ParamInvocationNameForCount = string.Format(ParameterInvocationFormat, "count");
 
             this.ObjectArrayParam = new MappingArrayParameter(database, this, "arr_o", NpgsqlDbType.Bigint);
             this.CompositeRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Bigint);
             this.StringRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Varchar);
             this.StringMaxRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Text);
             this.IntegerRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Integer);
-            this.LongRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Bigint);
             this.DecimalRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Numeric);
             this.DoubleRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Double);
             this.BooleanRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Boolean);
-            this.DateRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Date);
             this.DateTimeRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Timestamp);
             this.UniqueRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Uuid);
             this.BinaryRoleArrayParam = new MappingArrayParameter(database, this, "arr_r", NpgsqlDbType.Bytea);
 
             // Tables
             // ------
-            this.TableNameForObjects = database.SchemaName + "." + "_o";
+            this.TableNameForObjects = database.SchemaName + "._o";
             this.TableNameForObjectByClass = new Dictionary<IClass, string>();
             this.ColumnNameByRelationType = new Dictionary<IRelationType, string>();
-            this.UnescapedColumnNameByRelationType = new Dictionary<IRelationType, string>();
-            this.ParamNameByRoleType = new Dictionary<IRoleType, string>();
             this.ParamInvocationNameByRoleType = new Dictionary<IRoleType, string>();
 
             foreach (var @class in this.Database.MetaPopulation.DatabaseClasses)
@@ -163,7 +149,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     if (!(associationType.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && roleType.IsMany)
                     {
                         this.ColumnNameByRelationType[relationType] = this.NormalizeName(associationType.SingularName);
-                        this.UnescapedColumnNameByRelationType[relationType] = associationType.SingularName;
                     }
                 }
 
@@ -174,14 +159,11 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     if (roleType.ObjectType.IsUnit)
                     {
                         this.ColumnNameByRelationType[relationType] = this.NormalizeName(roleType.SingularName);
-                        this.UnescapedColumnNameByRelationType[relationType] = roleType.SingularName;
-                        this.ParamNameByRoleType[roleType] = string.Format(ParamFormat, roleType.SingularFullName);
                         this.ParamInvocationNameByRoleType[roleType] = string.Format(this.ParamInvocationFormat, roleType.SingularFullName);
                     }
                     else if (!(associationType3.IsMany && roleType.IsMany) && relationType.ExistExclusiveDatabaseClasses && !roleType.IsMany)
                     {
                         this.ColumnNameByRelationType[relationType] = this.NormalizeName(roleType.SingularName);
-                        this.UnescapedColumnNameByRelationType[relationType] = roleType.SingularName;
                     }
                 }
             }
@@ -203,7 +185,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             // ----------
             this.ProcedureDefinitionByName = new Dictionary<string, string>();
 
-            this.ProcedureNameForLoadObjectByClass = new Dictionary<IClass, string>();
             this.ProcedureNameForCreateObjectByClass = new Dictionary<IClass, string>();
             this.ProcedureNameForCreateObjectsByClass = new Dictionary<IClass, string>();
             this.ProcedureNameForDeleteObjectByClass = new Dictionary<IClass, string>();
@@ -414,7 +395,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         {
             var table = this.TableNameForObjectByClass[@class];
             var name = this.Database.SchemaName + "." + ProcedurePrefixForLoad + @class.Name.ToLowerInvariant();
-            this.ProcedureNameForLoadObjectByClass.Add(@class, name);
 
             // Load Objects
             var definition = $@"

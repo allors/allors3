@@ -16,7 +16,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         public MappingArrayParameter(Database database, Mapping mapping, string name, NpgsqlDbType elementType)
         {
-            this.Name = string.Format(Mapping.ParamFormat, name);
+            this.Name = string.Format(Mapping.ParameterFormat, name);
             this.InvocationName = string.Format(mapping.ParamInvocationFormat, name);
             this.ElementType = elementType;
             this.TypeName = database.GetSqlType(this.ElementType) + "[]";
