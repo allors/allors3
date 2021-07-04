@@ -34,7 +34,7 @@ namespace Allors.Server.Tests
         public const string Url = "http://localhost:5000/allors/";
         public const string SetupUrl = "Test/Setup?population=full";
         public const string LoginUrl = "TestAuthentication/Token";
-       
+
         protected ApiTest()
         {
             var configurationBuilder = new ConfigurationBuilder();

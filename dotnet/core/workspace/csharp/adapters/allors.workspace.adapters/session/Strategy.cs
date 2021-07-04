@@ -118,15 +118,7 @@ namespace Allors.Workspace.Adapters
                 _ => throw new ArgumentException("Unsupported Origin")
             };
 
-            if (roles == null)
-            {
-                yield break;
-            }
-
-            foreach (var role in (IEnumerable<IObject>)roles)
-            {
-                yield return (T)role;
-            }
+            return this.Session.GetMany<T>((IEnumerable<long>)roles);
         }
 
         public void Set(IRoleType roleType, object value)
@@ -135,16 +127,13 @@ namespace Allors.Workspace.Adapters
             {
                 this.SetUnit(roleType, value);
             }
+            else if (roleType.IsOne)
+            {
+                this.SetComposite(roleType, (IObject)value);
+            }
             else
             {
-                if (roleType.IsOne)
-                {
-                    this.SetComposite(roleType, (IObject)value);
-                }
-                else
-                {
-                    this.SetComposites(roleType, (IEnumerable<IObject>)value);
-                }
+                this.SetComposites(roleType, (IEnumerable<IObject>)value);
             }
         }
 
@@ -281,16 +270,13 @@ namespace Allors.Workspace.Adapters
             {
                 this.SetUnit(roleType, null);
             }
+            else if (roleType.IsOne)
+            {
+                this.SetComposite(roleType, (IObject)null);
+            }
             else
             {
-                if (roleType.IsOne)
-                {
-                    this.SetComposite(roleType, (IObject)null);
-                }
-                else
-                {
-                    this.SetComposites(roleType, (IEnumerable<IObject>)null);
-                }
+                this.SetComposites(roleType, (IEnumerable<IObject>)null);
             }
         }
 

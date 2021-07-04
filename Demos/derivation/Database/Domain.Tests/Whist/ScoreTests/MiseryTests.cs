@@ -73,7 +73,7 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             this.Transaction.Derive();
 
             //Assert
-            Assert.Equal(4, game.Scores.Count);
+            Assert.Equal(4, game.Scores.Count());
 
         }
 

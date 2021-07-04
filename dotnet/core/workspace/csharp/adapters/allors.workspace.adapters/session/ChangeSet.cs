@@ -66,50 +66,47 @@ namespace Allors.Workspace.Adapters
                     this.AddAssociation(relationType, association);
                 }
             }
+            else if (roleType.IsOne)
+            {
+                if (Equals(current, previous))
+                {
+                    return;
+                }
+
+                if (previous != null)
+                {
+                    this.AddRole(relationType, this.Session.GetStrategy((long)previous));
+                }
+
+                if (current != null)
+                {
+                    this.AddRole(relationType, this.Session.GetStrategy((long)current));
+                }
+
+                this.AddAssociation(relationType, association);
+            }
             else
             {
-                if (roleType.IsOne)
+                var numbers = this.Session.Workspace.Numbers;
+                var hasChange = false;
+
+                var addedRoles = numbers.Except(current, previous);
+                foreach (var v in numbers.Enumerate(addedRoles))
                 {
-                    if (Equals(current, previous))
-                    {
-                        return;
-                    }
-
-                    if (previous != null)
-                    {
-                        this.AddRole(relationType, this.Session.GetStrategy((long)previous));
-                    }
-
-                    if (current != null)
-                    {
-                        this.AddRole(relationType, this.Session.GetStrategy((long)current));
-                    }
-
-                    this.AddAssociation(relationType, association);
+                    this.AddRole(relationType, this.Session.GetStrategy(v));
+                    hasChange = true;
                 }
-                else
+
+                var removedRoles = numbers.Except(previous, current);
+                foreach (var v in numbers.Enumerate(removedRoles))
                 {
-                    var numbers = this.Session.Workspace.Numbers;
-                    var hasChange = false;
+                    this.AddRole(relationType, this.Session.GetStrategy(v));
+                    hasChange = true;
+                }
 
-                    var addedRoles = numbers.Except(current, previous);
-                    foreach (var v in numbers.Enumerate(addedRoles))
-                    {
-                        this.AddRole(relationType, this.Session.GetStrategy(v));
-                        hasChange = true;
-                    }
-
-                    var removedRoles = numbers.Except(previous, current);
-                    foreach (var v in numbers.Enumerate(removedRoles))
-                    {
-                        this.AddRole(relationType, this.Session.GetStrategy(v));
-                        hasChange = true;
-                    }
-
-                    if (hasChange)
-                    {
-                        this.AddAssociation(relationType, association);
-                    }
+                if (hasChange)
+                {
+                    this.AddAssociation(relationType, association);
                 }
             }
         }
