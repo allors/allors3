@@ -76,7 +76,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         public void AddAssociationParameter(long objectId) => this.GetOrCreateParameter(this.mapping.ParamInvocationNameForAssociation, Mapping.NpgsqlDbTypeForObject).Value = objectId;
 
-        public void ObjectTableParameter(IEnumerable<long> objectIds) => this.GetOrCreateTableParameter(this.mapping.ObjectArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject).Value = objectIds;
+        public void ObjectTableParameter(IEnumerable<long> objectIds) => this.GetOrCreateTableParameter(this.mapping.ObjectArrayParam.InvocationName, Mapping.NpgsqlDbTypeForObject).Value = objectIds.ToArray();
 
         public void UnitTableParameter(IRoleType roleType, IEnumerable<UnitRelation> relations)
         {

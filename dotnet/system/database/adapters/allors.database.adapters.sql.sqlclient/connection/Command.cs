@@ -64,9 +64,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        public void ObjectParameter(long objectId) => this.GetOrCreateParameter(this.mapping.ParamNameForObject, Mapping.SqlDbTypeForObject).Value = objectId;
+        public void ObjectParameter(long objectId) => this.GetOrCreateParameter(this.mapping.ParamInvocationNameForObject, Mapping.SqlDbTypeForObject).Value = objectId;
 
-        public void AddTypeParameter(IClass @class) => this.GetOrCreateParameter(this.mapping.ParamNameForClass, Mapping.SqlDbTypeForClass).Value = @class.Id;
+        public void AddTypeParameter(IClass @class) => this.GetOrCreateParameter(this.mapping.ParamInvocationNameForClass, Mapping.SqlDbTypeForClass).Value = @class.Id;
 
         public void AddCountParameter(int count) => this.GetOrCreateParameter(this.mapping.ParamNameForCount, Mapping.SqlDbTypeForCount).Value = count;
 

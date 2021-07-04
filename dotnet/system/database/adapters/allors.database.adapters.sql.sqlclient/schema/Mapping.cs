@@ -30,6 +30,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         public override string ParamNameForObject => string.Format(this.ParamFormat, ColumnNameForObject);
         public override string ParamInvocationNameForObject => this.ParamNameForObject;
         public override string ParamNameForClass => string.Format(this.ParamFormat, ColumnNameForClass);
+        public override string ParamInvocationNameForClass => this.ParamNameForClass;
         internal string ParamNameForVersion => string.Format(this.ParamFormat, ColumnNameForVersion);
         internal string ParamNameForAssociation => string.Format(this.ParamFormat, ColumnNameForAssociation);
         internal string ParamNameForCompositeRole => string.Format(this.ParamFormat, ColumnNameForRole);

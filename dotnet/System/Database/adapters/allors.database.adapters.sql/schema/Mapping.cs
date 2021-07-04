@@ -25,6 +25,7 @@ namespace Allors.Database.Adapters.Sql
         public abstract string ParamNameForObject { get; }
         public abstract string ParamInvocationNameForObject { get; }
         public abstract string ParamNameForClass { get; }
+        public abstract string ParamInvocationNameForClass { get; }
         public abstract string ParamFormat { get; }
         public abstract IDictionary<IRoleType, string> ParamNameByRoleType { get; }
         public abstract IDictionary<IRoleType, string> ParamInvocationNameByRoleType { get; }

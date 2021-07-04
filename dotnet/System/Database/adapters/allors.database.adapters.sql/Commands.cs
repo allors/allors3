@@ -532,7 +532,7 @@ namespace Allors.Database.Adapters.Sql
                 var sql =
 @$"SELECT {Mapping.ColumnNameForClass}, {Mapping.ColumnNameForVersion}
 FROM {this.Database.Mapping.TableNameForObjects}
-WHERE {Mapping.ColumnNameForObject}={this.Database.Mapping.ParamNameForObject}
+WHERE {Mapping.ColumnNameForObject}={this.Database.Mapping.ParamInvocationNameForObject}
 ";
 
                 command = this.connection.CreateCommand();

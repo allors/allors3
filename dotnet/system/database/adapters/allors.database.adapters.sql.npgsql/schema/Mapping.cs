@@ -26,6 +26,11 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public const NpgsqlDbType NpgsqlDbTypeForVersion = NpgsqlDbType.Bigint;
         public const NpgsqlDbType NpgsqlDbTypeForCount = NpgsqlDbType.Integer;
 
+        public override string ParamNameForObject => string.Format(ParamFormat, ColumnNameForObject);
+        public override string ParamInvocationNameForObject => string.Format(ParamInvocationFormat, ColumnNameForObject);
+        public override string ParamNameForClass => string.Format(ParamFormat, ColumnNameForClass);
+        public override string ParamInvocationNameForClass => string.Format(ParamInvocationFormat, ColumnNameForClass);
+        
         public MappingArrayParameter ObjectArrayParam { get; }
         public MappingArrayParameter CompositeRoleArrayParam { get; }
         public MappingArrayParameter StringRoleArrayParam { get; }
@@ -43,15 +48,11 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public override IDictionary<IRoleType, string> ParamNameByRoleType { get; }
         public override IDictionary<IRoleType, string> ParamInvocationNameByRoleType { get; }
 
-        public override string ParamNameForObject => string.Format(ParamFormat, ColumnNameForObject);
-        public override string ParamInvocationNameForObject => string.Format(ParamInvocationFormat, ColumnNameForObject);
-        public override string ParamNameForClass => string.Format(ParamFormat, ColumnNameForClass);
         internal string ParamNameForVersion => string.Format(ParamFormat, ColumnNameForVersion);
         internal string ParamNameForAssociation => string.Format(ParamFormat, ColumnNameForAssociation);
         internal string ParamNameForCompositeRole => string.Format(ParamFormat, ColumnNameForRole);
         internal string ParamNameForCount => string.Format(ParamFormat, "count");
 
-        internal string ParamInvocationNameForClass => string.Format(ParamInvocationFormat, ColumnNameForClass);
         internal string ParamInvocationNameForVersion => string.Format(ParamInvocationFormat, ColumnNameForVersion);
         internal string ParamInvocationNameForAssociation => string.Format(ParamInvocationFormat, ColumnNameForAssociation);
         internal string ParamInvocationNameForCompositeRole => string.Format(ParamInvocationFormat, ColumnNameForRole);
