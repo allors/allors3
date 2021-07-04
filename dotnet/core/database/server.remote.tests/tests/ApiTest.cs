@@ -15,7 +15,7 @@ namespace Allors.Server.Tests
     using System.Text.Json;
     using System.Threading.Tasks;
     using Database;
-    using Database.Adapters.Sql.SqlClient;
+    using Database.Adapters.Sql;
     using Database.Domain;
     using Database.Configuration;
     using Database.Domain.Derivations.Rules.Default;
@@ -24,6 +24,7 @@ namespace Allors.Server.Tests
     using Protocol.Json.Auth;
     using Xunit;
     using C1 = Database.Domain.C1;
+    using Database = Database.Adapters.Sql.SqlClient.Database;
     using ObjectFactory = Database.ObjectFactory;
     using Path = System.IO.Path;
     using User = Database.Domain.User;
