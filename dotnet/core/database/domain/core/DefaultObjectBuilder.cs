@@ -12,7 +12,7 @@ namespace Allors.Database.Domain
 
     public static class DefaultObjectBuilder
     {
-        public static object Build(ITransaction transaction, IClass @class)
+        public static IObject Build(ITransaction transaction, IClass @class)
         {
             var metaCache = transaction.Database.Services().Get<IMetaCache>();
             var builderType = metaCache.GetBuilderType(@class);

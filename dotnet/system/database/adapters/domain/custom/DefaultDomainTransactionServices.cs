@@ -15,7 +15,7 @@ namespace Allors.Database
 
         public void Dispose() { }
 
-        public IDerive Derive => null;
+        public IDeriveService DeriveService => null;
 
         public T Get<T>() => default;
     }

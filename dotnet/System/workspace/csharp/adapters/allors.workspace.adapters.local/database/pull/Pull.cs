@@ -27,14 +27,10 @@ namespace Allors.Workspace.Adapters.Local
             var database = this.Workspace.DatabaseConnection.Database;
             this.Transaction = database.CreateTransaction();
 
-            var metaCache = database.GetService<IMetaCache>();
-
-            var user = (IUser)this.Transaction.Instantiate(this.Workspace.UserId);
-
-            this.AccessControlLists = new WorkspaceAccessControlLists(this.Workspace.DatabaseConnection.Configuration.Name, user);
-            this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.DatabaseConnection.Configuration.Name);
-            this.PreparedSelects = database.GetService<IPreparedSelects>();
-            this.PreparedExtents = database.GetService<IPreparedExtents>();
+            this.AllowedClasses = database.Services.Get<IMetaCache>().GetWorkspaceClasses(this.Workspace.DatabaseConnection.Configuration.Name);
+            this.AccessControlLists = this.Transaction.Services.Get<IWorkspaceAclsService>().Create(this.Workspace.DatabaseConnection.Configuration.Name);
+            this.PreparedSelects = database.Services.Get<IPreparedSelects>();
+            this.PreparedExtents = database.Services.Get<IPreparedExtents>();
 
             this.DatabaseObjects = new HashSet<Database.IObject>();
         }

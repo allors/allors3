@@ -6,7 +6,6 @@
 namespace Allors.Database
 {
     using System;
-    using Services;
 
     /// <summary>
     /// The Transaction Services
@@ -14,8 +13,6 @@ namespace Allors.Database
     public interface ITransactionServices : IDisposable
     {
         void OnInit(ITransaction transaction);
-
-        IDerive Derive { get; }
 
         T Get<T>();
     }

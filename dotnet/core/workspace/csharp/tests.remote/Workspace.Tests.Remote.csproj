@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
@@ -14,6 +14,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\System\workspace\csharp\adapters\allors.workspace.adapters.remote.default\Allors.Workspace.Adapters.Remote.Default.csproj" />
+    <ProjectReference Include="..\..\..\..\System\workspace\csharp\adapters\allors.workspace.adapters.remote\Allors.Workspace.Adapters.Remote.csproj" />
+    <ProjectReference Include="..\..\..\..\System\workspace\csharp\adapters\allors.workspace.adapters\Allors.Workspace.Adapters.csproj" />
     <ProjectReference Include="..\Tests\Workspace.Tests.csproj" />
   </ItemGroup>
 

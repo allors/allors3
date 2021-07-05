@@ -9,11 +9,11 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
     using Database.Services;
 
 
-    public class DefaultDerive : IDerive
+    public class DefaultDeriveService : IDeriveService
     {
         private readonly ITransaction transaction;
 
-        public DefaultDerive(ITransaction transaction) => this.transaction = transaction;
+        public DefaultDeriveService(ITransaction transaction) => this.transaction = transaction;
 
         public IValidation Derive() => this.transaction.Derive();
     }

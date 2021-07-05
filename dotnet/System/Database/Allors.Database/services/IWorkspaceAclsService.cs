@@ -5,10 +5,10 @@
 
 namespace Allors.Database.Services
 {
-    using Derivations;
+    using Security;
 
-    public interface IDerive
+    public interface IWorkspaceAclsService
     {
-        IValidation Derive();
+        IAccessControlLists Create(string workspace);
     }
 }

@@ -13,6 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\System\workspace\csharp\adapters\allors.workspace.adapters.local\Allors.Workspace.Adapters.Local.csproj" />
+    <ProjectReference Include="..\..\..\..\System\workspace\csharp\adapters\allors.workspace.adapters\Allors.Workspace.Adapters.csproj" />
     <ProjectReference Include="..\Tests\Workspace.Tests.csproj" />
   </ItemGroup>
 
