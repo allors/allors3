@@ -24,11 +24,10 @@ namespace Allors.Database.Domain
         {
             foreach (var accessControl in matches.Cast<AccessControl>())
             {
-                var permissions = accessControl.Role?.Permissions.ToArray();
-                accessControl.EffectivePermissions = permissions;
+                accessControl.EffectivePermissions = (accessControl.Role?.Permissions.ToArray());
 
                 // Invalidate cache
-                accessControl.DatabaseServices().AccessControlCache.Clear(accessControl.Id);
+                accessControl.DatabaseServices().Get<IAccessControlCache>().Clear(accessControl.Id);
             }
         }
     }

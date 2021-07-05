@@ -38,25 +38,22 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         {
             while (reader.Read())
             {
-                if (reader.NodeType.Equals(XmlNodeType.Element))
+                if (reader.NodeType.Equals(XmlNodeType.Element) && reader.Name.Equals(Serialization.Population))
                 {
-                    if (reader.Name.Equals(Serialization.Population))
+                    var version = reader.GetAttribute(Serialization.Version);
+                    if (string.IsNullOrEmpty(version))
                     {
-                        var version = reader.GetAttribute(Serialization.Version);
-                        if (string.IsNullOrEmpty(version))
-                        {
-                            throw new ArgumentException("Save population has no version.");
-                        }
-
-                        Serialization.CheckVersion(int.Parse(version));
-
-                        if (!reader.IsEmptyElement)
-                        {
-                            this.LoadPopulation(reader);
-                        }
-
-                        break;
+                        throw new ArgumentException("Save population has no version.");
                     }
+
+                    Serialization.CheckVersion(int.Parse(version));
+
+                    if (!reader.IsEmptyElement)
+                    {
+                        this.LoadPopulation(reader);
+                    }
+
+                    break;
                 }
             }
         }

@@ -6,8 +6,8 @@
 namespace Allors.Database.Domain
 {
     using System;
+    using Database.Services;
     using Meta;
-    using Domain;
 
     public static partial class ObjectExtensions
     {
@@ -16,36 +16,33 @@ namespace Allors.Database.Domain
             // TODO: Optimize
             foreach (var roleType in ((Class)@this.Strategy.Class).RoleTypes)
             {
-                if (roleType.IsRequired)
+                if (roleType.IsRequired && roleType.ObjectType is IUnit unit && !@this.Strategy.ExistRole(roleType))
                 {
-                    if (roleType.ObjectType is IUnit unit && !@this.Strategy.ExistRole(roleType))
+                    switch (unit.Tag)
                     {
-                        switch (unit.Tag)
-                        {
-                            case UnitTags.Boolean:
-                                @this.Strategy.SetUnitRole(roleType, false);
-                                break;
+                        case UnitTags.Boolean:
+                            @this.Strategy.SetUnitRole(roleType, false);
+                            break;
 
-                            case UnitTags.Decimal:
-                                @this.Strategy.SetUnitRole(roleType, 0m);
-                                break;
+                        case UnitTags.Decimal:
+                            @this.Strategy.SetUnitRole(roleType, 0m);
+                            break;
 
-                            case UnitTags.Float:
-                                @this.Strategy.SetUnitRole(roleType, 0d);
-                                break;
+                        case UnitTags.Float:
+                            @this.Strategy.SetUnitRole(roleType, 0d);
+                            break;
 
-                            case UnitTags.Integer:
-                                @this.Strategy.SetUnitRole(roleType, 0);
-                                break;
+                        case UnitTags.Integer:
+                            @this.Strategy.SetUnitRole(roleType, 0);
+                            break;
 
-                            case UnitTags.Unique:
-                                @this.Strategy.SetUnitRole(roleType, Guid.NewGuid());
-                                break;
+                        case UnitTags.Unique:
+                            @this.Strategy.SetUnitRole(roleType, Guid.NewGuid());
+                            break;
 
-                            case UnitTags.DateTime:
-                                @this.Strategy.SetUnitRole(roleType, @this.Strategy.Transaction.Now());
-                                break;
-                        }
+                        case UnitTags.DateTime:
+                            @this.Strategy.SetUnitRole(roleType, @this.Strategy.Transaction.Now());
+                            break;
                     }
                 }
             }
@@ -55,7 +52,7 @@ namespace Allors.Database.Domain
         {
             var derivation = method.Derivation;
             var @class = (Class)@this.Strategy.Class;
-            var metaService = @this.DatabaseServices().MetaCache;
+            var metaService = @this.DatabaseServices().Get<IMetaCache>();
 
             foreach (var roleType in metaService.GetRequiredRoleTypes(@class))
             {

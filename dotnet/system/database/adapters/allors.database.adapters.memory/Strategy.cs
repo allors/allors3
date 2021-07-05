@@ -634,15 +634,12 @@ namespace Allors.Database.Adapters.Memory
 
                 this.ChangeLog.OnChangingCompositeAssociation(@new, associationType, newPreviousAssociation);
 
-                if (newPreviousAssociation != null)
+                if (newPreviousAssociation != null && !this.Equals(newPreviousAssociation))
                 {
-                    if (!this.Equals(newPreviousAssociation))
-                    {
-                        this.ChangeLog.OnChangingCompositeRole(newPreviousAssociation, roleType, null, previousRole);
+                    this.ChangeLog.OnChangingCompositeRole(newPreviousAssociation, roleType, null, previousRole);
 
-                        newPreviousAssociation.Backup(roleType);
-                        newPreviousAssociation.compositeRoleByRoleType.Remove(roleType);
-                    }
+                    newPreviousAssociation.Backup(roleType);
+                    newPreviousAssociation.compositeRoleByRoleType.Remove(roleType);
                 }
 
                 // Set new role

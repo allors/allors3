@@ -10,6 +10,7 @@ namespace Allors.Database.Domain.Tests
     using Database;
     using Domain;
     using Protocol.Json;
+    using Services;
     using Xunit;
 
     public class PersistentPreparedExtentTests : DomainTest, IClassFixture<Fixture>
@@ -21,7 +22,7 @@ namespace Allors.Database.Domain.Tests
         {
             var organisations = new Organisations(this.Session).Extent().ToArray();
 
-            var extentService = this.Session.Database.Services().PreparedExtents;
+            var extentService = this.Session.Database.Services().Get<IPreparedExtents>();
             var organizationByName = extentService.Get(PersistentPreparedExtents.ByName);
 
             var arguments = new Arguments(new Dictionary<string, object>

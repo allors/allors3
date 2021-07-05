@@ -6,7 +6,7 @@
 namespace Allors.Database.Server.Controllers
 {
     using System;
-    using Services;
+    using Allors.Services;
     using Database;
     using Domain;
     using Microsoft.AspNetCore.Mvc;
@@ -48,7 +48,7 @@ namespace Allors.Database.Server.Controllers
         {
             try
             {
-                var timeService = this.Database.Services().Time;
+                var timeService = this.Database.Services().Get<ITime>();
                 timeService.Shift = new TimeSpan(days, hours, minutes, seconds);
                 return this.Ok();
             }

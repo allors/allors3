@@ -34,12 +34,9 @@ namespace Allors.Database.Protocol.Json
 
             var @class = @object.Strategy?.Class;
 
-            if (@class != null && this.pull.ObjectType is IComposite objectType)
+            if (@class != null && this.pull.ObjectType is IComposite objectType && !objectType.IsAssignableFrom(@class))
             {
-                if (!objectType.IsAssignableFrom(@class))
-                {
-                    return;
-                }
+                return;
             }
 
             if (this.pull.Results != null)

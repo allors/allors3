@@ -35,9 +35,7 @@ namespace Allors.Database.Domain
                 .WithFullfillContactMechanism(this.FullfillContactMechanism)
                 .Build();
 
-            var sourceItems = this.RequestItems.Where(i => i.RequestItemState.Equals(new RequestItemStates(this.Strategy.Transaction).Submitted)).ToArray();
-
-            foreach (var requestItem in sourceItems)
+            foreach (var requestItem in this.RequestItems.Where(i => i.RequestItemState.Equals(new RequestItemStates(this.Strategy.Transaction).Submitted)).ToArray())
             {
                 requestItem.RequestItemState = new RequestItemStates(this.Strategy.Transaction).Quoted;
 

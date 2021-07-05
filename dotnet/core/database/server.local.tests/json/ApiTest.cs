@@ -39,9 +39,9 @@ namespace Tests
 
         public ITransaction Transaction { get; private set; }
 
-        public ITime Time => this.Transaction.Database.Services().Time;
+        public ITime Time => this.Transaction.Database.Services().Get<ITime>();
 
-        public IDerivationFactory DerivationFactory => this.Transaction.Database.Services().DerivationFactory;
+        public IDerivationFactory DerivationFactory => this.Transaction.Database.Services().Get<IDerivationFactory>();
 
         public TimeSpan? TimeShift
         {
@@ -74,8 +74,7 @@ namespace Tests
         protected Stream GetResource(string name)
         {
             var assembly = this.GetType().GetTypeInfo().Assembly;
-            var resource = assembly.GetManifestResourceStream(name);
-            return resource;
+            return assembly.GetManifestResourceStream(name);
         }
 
         protected byte[] GetResourceBytes(string name)

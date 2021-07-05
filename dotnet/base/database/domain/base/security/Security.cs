@@ -14,8 +14,7 @@ namespace Allors.Database.Domain
     {
         public void Deny(IObjectType objectType, ObjectState objectState, params Operations[] operations)
         {
-            var actualOperations = operations ?? ReadWriteExecute;
-            foreach (var operation in actualOperations)
+            foreach (var operation in operations ?? ReadWriteExecute)
             {
                 Dictionary<IOperandType, Permission> permissionByOperandType;
                 switch (operation)
@@ -64,8 +63,7 @@ namespace Allors.Database.Domain
 
         public void DenyExcept(IObjectType objectType, ObjectState objectState, IEnumerable<IOperandType> excepts, params Operations[] operations)
         {
-            var actualOperations = operations ?? ReadWriteExecute;
-            foreach (var operation in actualOperations)
+            foreach (var operation in operations ?? ReadWriteExecute)
             {
                 Dictionary<IOperandType, Permission> permissionByOperandType;
                 switch (operation)

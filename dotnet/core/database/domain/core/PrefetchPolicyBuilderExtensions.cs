@@ -42,8 +42,7 @@ namespace Allors.Database.Domain
                     .WithRule(m.Object.DeniedPermissions)
                     .Build();
 
-                var delegatedAccessRoleTypes = @class.DelegatedAccessRoleTypes;
-                foreach (var delegatedAccessRoleType in delegatedAccessRoleTypes)
+                foreach (var delegatedAccessRoleType in @class.DelegatedAccessRoleTypes)
                 {
                     @this.WithRule(delegatedAccessRoleType, builder);
                 }

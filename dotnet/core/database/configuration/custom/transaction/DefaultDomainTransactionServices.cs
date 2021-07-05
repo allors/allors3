@@ -5,11 +5,12 @@
 
 namespace Allors.Database.Configuration
 {
+    using System;
     using Database;
-    using Derivations;
     using Domain;
     using Domain.Derivations.Rules.Default;
     using Microsoft.AspNetCore.Http;
+    using Services;
 
     public class DefaultDomainTransactionServices : IDomainTransactionServices
     {
@@ -30,6 +31,8 @@ namespace Allors.Database.Configuration
             get => this.httpContext.User;
             set => this.httpContext.User = value;
         }
+
+        public T Get<T>() => throw new NotSupportedException($"Service {typeof(T)} not supported");
 
         public void Dispose()
         {

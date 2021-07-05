@@ -6,6 +6,8 @@
 namespace Allors.Database.Domain.Derivations.Rules.Default
 {
     using Database.Derivations;
+    using Database.Services;
+
 
     public class DefaultDerive : IDerive
     {

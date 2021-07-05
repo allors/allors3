@@ -41,7 +41,7 @@ namespace Allors.Database.Domain.Tests
 
         public ITransaction Transaction { get; private set; }
 
-        public ITime Time => this.Transaction.Database.Services().Time;
+        public ITime Time => this.Transaction.Database.Services().Get<ITime>();
 
         public TimeSpan? TimeShift
         {

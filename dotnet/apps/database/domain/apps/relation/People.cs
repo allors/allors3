@@ -12,9 +12,7 @@ namespace Allors.Database.Domain
     {
         public static void Daily(ITransaction transaction)
         {
-            var people = new People(transaction).Extent();
-
-            foreach (Person person in people)
+            foreach (Person person in new People(transaction).Extent())
             {
                 person.DeriveRelationships();
             }

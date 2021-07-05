@@ -6,7 +6,7 @@
 namespace Allors.Protocol.Json.Api.Sync
 {
     using System.Diagnostics;
-    
+
     [DebuggerDisplay("{v} [{t}]")]
     public class SyncResponseRole
     {
@@ -16,7 +16,7 @@ namespace Allors.Protocol.Json.Api.Sync
         public int t { get; set; }
 
         /// <summary>
-        /// Collection
+        /// Collection ordered by ID
         /// </summary>
         public long[] c { get; set; }
 

@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Server.Controllers
 {
+    using Allors.Services;
     using Services;
     using Protocol.Json;
     using Microsoft.AspNetCore.Mvc;

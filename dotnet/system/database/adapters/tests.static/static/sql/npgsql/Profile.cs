@@ -118,12 +118,9 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    var sql =
-@"SELECT ROUTINE_NAME, ROUTINE_DEFINITION
+                    command.CommandText = @"SELECT ROUTINE_NAME, ROUTINE_DEFINITION
 FROM INFORMATION_SCHEMA.ROUTINES
 WHERE lower(ROUTINE_NAME) = '" + procedure.ToLower() + @"'";
-
-                    command.CommandText = sql;
                     var count = (long)command.ExecuteScalar();
 
                     return count != 0;
@@ -138,12 +135,9 @@ WHERE lower(ROUTINE_NAME) = '" + procedure.ToLower() + @"'";
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    var sql =
-@"select count(*)
+                    command.CommandText = @"select count(*)
 from information_schema.constraint_column_usage
 where lower(table_name) = '" + table.ToLowerInvariant() + "' and lower(constraint_name) = '" + table.ToLowerInvariant() + "_pk'";
-
-                    command.CommandText = sql;
                     var count = (long)command.ExecuteScalar();
 
                     return count != 0;
@@ -158,14 +152,11 @@ where lower(table_name) = '" + table.ToLowerInvariant() + "' and lower(constrain
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    var sql =
-@"SELECT count(*)
+                    command.CommandText = @"SELECT count(*)
 FROM information_schema.columns
 WHERE lower(table_name) = '" + table.ToLower() + @"'
 AND lower(column_name) = '" + column.ToLower() + @"'
 AND data_type = 'integer'";
-
-                    command.CommandText = sql;
                     var count = (long)command.ExecuteScalar();
 
                     return count != 0;
@@ -180,14 +171,11 @@ AND data_type = 'integer'";
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    var sql =
-@"SELECT count(*)
+                    command.CommandText = @"SELECT count(*)
 FROM information_schema.columns
 WHERE lower(table_name) = '" + table.ToLower() + @"'
 AND lower(column_name) = '" + column.ToLower() + @"'
 AND data_type = 'bigint'";
-
-                    command.CommandText = sql;
                     var count = (long)command.ExecuteScalar();
 
                     return count != 0;
@@ -202,14 +190,11 @@ AND data_type = 'bigint'";
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    var sql =
-@"SELECT count(*)
+                    command.CommandText = @"SELECT count(*)
 FROM information_schema.columns
 WHERE lower(table_name) = '" + table.ToLower() + @"'
 AND lower(column_name) = '" + column.ToLower() + @"'
 AND data_type = 'uuid'";
-
-                    command.CommandText = sql;
                     var count = (long)command.ExecuteScalar();
 
                     return count != 0;

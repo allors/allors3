@@ -98,8 +98,7 @@ namespace Allors.Database.Adapters.Memory
             var sortedStrategiesByRoleType = new Dictionary<IRoleType, List<Strategy>>();
             foreach (var dictionaryEntry in this.sortedNonDeletedStrategiesByObjectType)
             {
-                var strategies = dictionaryEntry.Value;
-                foreach (var strategy in strategies)
+                foreach (var strategy in dictionaryEntry.Value)
                 {
                     strategy.FillRoleForSave(sortedStrategiesByRoleType);
                 }

@@ -83,8 +83,7 @@ namespace Allors.Database.Adapters
                 unitBuffer.Append(this.random.Next(9));
             }
 
-            var unit = decimal.Parse(unitBuffer.ToString());
-            return unit;
+            return decimal.Parse(unitBuffer.ToString());
         }
 
         public double GenerateFloat() => (double)this.random.Next(int.MinValue, int.MaxValue) / this.random.Next(int.MinValue, int.MaxValue);

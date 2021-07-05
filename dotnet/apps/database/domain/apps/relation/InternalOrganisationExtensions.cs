@@ -148,15 +148,13 @@ namespace Allors.Database.Domain
                     .WithParent(semesterPeriod)
                     .Build();
 
-                var monthPeriod = new AccountingPeriodBuilder(@this.Strategy.Transaction)
+                @this.SettingsForAccounting.ActualAccountingPeriod = new AccountingPeriodBuilder(@this.Strategy.Transaction)
                     .WithPeriodNumber(1)
                     .WithFrequency(new TimeFrequencies(@this.Strategy.Transaction).Month)
                     .WithFromDate(fromDate)
                     .WithThroughDate(fromDate.AddMonths(1).AddSeconds(-1).Date)
                     .WithParent(trimesterPeriod)
                     .Build();
-
-                @this.SettingsForAccounting.ActualAccountingPeriod = monthPeriod;
             }
 
             method.StopPropagation = true;
@@ -165,8 +163,7 @@ namespace Allors.Database.Domain
 
         public static int NextSubAccountNumber(this InternalOrganisation @this)
         {
-            var next = @this.SettingsForAccounting.SubAccountCounter.NextElfProefValue();
-            return next;
+            return @this.SettingsForAccounting.SubAccountCounter.NextElfProefValue();
         }
 
         public static string NextPurchaseInvoiceNumber(this InternalOrganisation @this, int year)

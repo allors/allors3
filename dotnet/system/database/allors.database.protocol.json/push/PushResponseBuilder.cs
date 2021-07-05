@@ -68,8 +68,7 @@ namespace Allors.Database.Protocol.Json
                 if (objectIds.Length != objects.Length)
                 {
                     var existingIds = objects.Select(v => v.Id);
-                    var missingIds = objectIds.Where(v => !existingIds.Contains(v));
-                    foreach (var missingId in missingIds)
+                    foreach (var missingId in objectIds.Where(v => !existingIds.Contains(v)))
                     {
                         pushResponse.AddMissingError(missingId);
                     }
@@ -168,8 +167,7 @@ namespace Allors.Database.Protocol.Json
         private static void AddMissingRoles(IObject[] actualRoles, long[] requestedRoleIds, PushResponse pushResponse)
         {
             var actualRoleIds = actualRoles.Select(x => x.Id);
-            var missingRoleIds = requestedRoleIds.Except(actualRoleIds);
-            foreach (var missingRoleId in missingRoleIds)
+            foreach (var missingRoleId in requestedRoleIds.Except(actualRoleIds))
             {
                 pushResponse.AddMissingError(missingRoleId);
             }

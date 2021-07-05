@@ -8,13 +8,14 @@ namespace Allors.Database.Domain
     using System;
     using Meta;
     using Database;
+    using Database.Services;
 
     public static class DefaultObjectBuilder
     {
         public static object Build(ITransaction transaction, IClass @class)
         {
-            var metaService = transaction.Database.Services().MetaCache;
-            var builderType = metaService.GetBuilderType(@class);
+            var metaCache = transaction.Database.Services().Get<IMetaCache>();
+            var builderType = metaCache.GetBuilderType(@class);
             object[] parameters = { transaction };
             var builder = (IObjectBuilder)Activator.CreateInstance(builderType, parameters);
             return builder.DefaultBuild();

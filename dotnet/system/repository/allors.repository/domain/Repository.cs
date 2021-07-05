@@ -298,8 +298,7 @@ namespace Allors.Repository.Domain
             {
                 var definedType = definedTypeBySingularName[composite.SingularName];
                 var allInterfaces = definedType.GetInterfaces();
-                var directInterfaces = allInterfaces.Except(allInterfaces.SelectMany(t => t.GetInterfaces()));
-                foreach (var definedImplementedInterface in directInterfaces)
+                foreach (var definedImplementedInterface in allInterfaces.Except(allInterfaces.SelectMany(t => t.GetInterfaces())))
                 {
                     if (this.InterfaceBySingularName.TryGetValue(definedImplementedInterface.Name, out var implementedInterface))
                     {
@@ -339,8 +338,7 @@ namespace Allors.Repository.Domain
                         if (domain.PartialTypeBySingularName.TryGetValue(typeName, out var partialType))
                         {
                             var composite = this.CompositeByName[typeName];
-                            var propertyDeclarations = typeDeclaration.DescendantNodes().OfType<PropertyDeclarationSyntax>();
-                            foreach (var propertyDeclaration in propertyDeclarations)
+                            foreach (var propertyDeclaration in typeDeclaration.DescendantNodes().OfType<PropertyDeclarationSyntax>())
                             {
                                 var propertySymbol = semanticModel.GetDeclaredSymbol(propertyDeclaration);
                                 var propertyRoleName = propertySymbol.Name;
@@ -357,8 +355,7 @@ namespace Allors.Repository.Domain
                                 composite.PropertyByRoleName.Add(propertyRoleName, property);
                             }
 
-                            var methodDeclarations = typeDeclaration.DescendantNodes().OfType<MethodDeclarationSyntax>();
-                            foreach (var methodDeclaration in methodDeclarations)
+                            foreach (var methodDeclaration in typeDeclaration.DescendantNodes().OfType<MethodDeclarationSyntax>())
                             {
                                 var methodSymbol = semanticModel.GetDeclaredSymbol(methodDeclaration);
                                 var methodName = methodSymbol.Name;
@@ -390,9 +387,7 @@ namespace Allors.Repository.Domain
 
                 // Type attributes
                 {
-                    var typeAttributesByTypeName = reflectedType.GetCustomAttributes(false).Cast<Attribute>().GroupBy(v => v.GetType());
-
-                    foreach (var group in typeAttributesByTypeName)
+                    foreach (var group in reflectedType.GetCustomAttributes(false).Cast<Attribute>().GroupBy(v => v.GetType()))
                     {
                         var type = group.Key;
                         var typeName = type.Name;
@@ -474,9 +469,7 @@ namespace Allors.Repository.Domain
                 foreach (var method in composite.Methods)
                 {
                     var reflectedMethod = reflectedType.GetMethod(method.Name);
-                    var methodAttributesByType = reflectedMethod.GetCustomAttributes(false).Cast<Attribute>().GroupBy(v => v.GetType());
-
-                    foreach (var group in methodAttributesByType)
+                    foreach (var group in reflectedMethod.GetCustomAttributes(false).Cast<Attribute>().GroupBy(v => v.GetType()))
                     {
                         var attributeType = group.Key;
                         var attributeTypeName = attributeType.Name;

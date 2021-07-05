@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Server.Controllers
 {
+    using Allors.Services;
     using Domain;
     using Services;
     using Protocol.Json;

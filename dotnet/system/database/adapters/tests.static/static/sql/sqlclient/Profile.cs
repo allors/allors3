@@ -136,12 +136,10 @@ END
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    var cmdText = @"
+                    command.CommandText = @"
 SELECT COUNT(*) 
 FROM information_schema.tables 
 WHERE table_name = @tableName AND table_schema = @tableSchema";
-
-                    command.CommandText = cmdText;
 
                     command.Parameters.Add("@tableName", SqlDbType.NVarChar).Value = table;
                     command.Parameters.Add("@tableSchema", SqlDbType.NVarChar).Value = schema;
@@ -159,17 +157,13 @@ WHERE table_name = @tableName AND table_schema = @tableSchema";
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    var cmdText = @"
+                    command.CommandText = @"
 SELECT count(table_name)
 FROM information_schema.columns
 WHERE table_name = @tableName AND table_schema = @tableSchema";
-
-                    command.CommandText = cmdText;
                     command.Parameters.Add("@tableName", SqlDbType.NVarChar).Value = table;
                     command.Parameters.Add("@tableSchema", SqlDbType.NVarChar).Value = schema;
-                    var count = (int)command.ExecuteScalar();
-
-                    return count;
+                    return (int)command.ExecuteScalar();
                 }
             }
         }
@@ -181,13 +175,11 @@ WHERE table_name = @tableName AND table_schema = @tableSchema";
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    var cmdText = @"
+                    command.CommandText = @"
 SELECT data_type
 FROM information_schema.columns
 WHERE table_name = @tableName AND table_schema = @tableSchema AND
 column_name=@columnName";
-
-                    command.CommandText = cmdText;
 
                     command.Parameters.Add("@tableName", SqlDbType.NVarChar).Value = table;
                     command.Parameters.Add("@tableSchema", SqlDbType.NVarChar).Value = schema;
@@ -211,7 +203,7 @@ column_name=@columnName";
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    var cmdText = @"
+                    command.CommandText = @"
 SELECT COUNT(*)
 FROM sys.indexes AS idx
 JOIN sys.index_columns idxcol
@@ -222,8 +214,6 @@ and key_ordinal = 1 -- 1 based
 and object_name(idx.object_id) = @tableName
 and object_schema_name(idx.object_id) = @tableSchema
 and col_name(idx.object_id,idxcol.column_id) = @columnName";
-
-                    command.CommandText = cmdText;
                     command.Parameters.Add("@tableName", SqlDbType.NVarChar).Value = table;
                     command.Parameters.Add("@tableSchema", SqlDbType.NVarChar).Value = schema;
                     command.Parameters.Add("@columnName", SqlDbType.NVarChar).Value = column;
@@ -242,13 +232,11 @@ and col_name(idx.object_id,idxcol.column_id) = @columnName";
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    var cmdText = @"
+                    command.CommandText = @"
 SELECT count(*)
 FROM INFORMATION_SCHEMA.ROUTINES
 WHERE routine_schema = @routineSchema 
 AND routine_name=@routineName";
-
-                    command.CommandText = cmdText;
                     command.Parameters.Add("@routineSchema", SqlDbType.NVarChar).Value = schema;
                     command.Parameters.Add("@routineName", SqlDbType.NVarChar).Value = procedure;
 
@@ -266,15 +254,13 @@ AND routine_name=@routineName";
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    var cmdText = @"
+                    command.CommandText = @"
 SELECT count(*)
 FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
 WHERE OBJECTPROPERTY(OBJECT_ID(constraint_name), 'IsPrimaryKey') = 1
 AND table_name = @tableName 
 AND table_schema = @tableSchema 
 AND column_name=@columnName";
-
-                    command.CommandText = cmdText;
                     command.Parameters.Add("@tableName", SqlDbType.NVarChar).Value = table;
                     command.Parameters.Add("@tableSchema", SqlDbType.NVarChar).Value = schema;
                     command.Parameters.Add("@columnName", SqlDbType.NVarChar).Value = column;

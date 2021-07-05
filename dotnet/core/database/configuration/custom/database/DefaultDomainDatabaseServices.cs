@@ -6,7 +6,7 @@
 
 namespace Allors.Database.Configuration
 {
-    using Database;
+    using Domain;
     using Domain.Derivations.Rules.Default;
     using Microsoft.AspNetCore.Http;
 
@@ -14,11 +14,8 @@ namespace Allors.Database.Configuration
     {
         public DefaultDomainDatabaseServices(Engine engine, IHttpContextAccessor httpContextAccessor = null) : base(engine, httpContextAccessor) { }
 
-        public override void OnInit(IDatabase database)
-        {
-            base.OnInit(database);
+        protected override IPasswordHasher CreatePasswordHasher() => new PasswordHasher();
 
-            this.DerivationFactory = new DefaultDerivationFactory(this.Engine);
-        }
+        protected override IDerivationFactory CreateDerivationFactory() => new DefaultDerivationFactory(this.Engine);
     }
 }

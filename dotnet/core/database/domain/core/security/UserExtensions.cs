@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
         public static T SetPassword<T>(this T @this, string clearTextPassword)
             where T : User
         {
-            var passwordService = @this.Transaction().Database.Services().PasswordHasher;
+            var passwordService = @this.Transaction().Database.Services().Get<IPasswordHasher>();
             @this.UserPasswordHash = passwordService.HashPassword(@this.UserName, clearTextPassword);
             return @this;
         }
@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
                 return false;
             }
 
-            var passwordService = @this.Transaction().Database.Services().PasswordHasher;
+            var passwordService = @this.Transaction().Database.Services().Get<IPasswordHasher>();
             return passwordService.VerifyHashedPassword(@this.UserName, @this.UserPasswordHash, clearTextPassword);
         }
 

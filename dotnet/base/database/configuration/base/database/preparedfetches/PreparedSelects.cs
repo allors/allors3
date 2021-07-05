@@ -12,22 +12,22 @@ namespace Allors.Database.Configuration
     using Domain;
 
     public class PreparedSelects : IPreparedSelects
-   {
-       private readonly ConcurrentDictionary<Guid, Select> selectById;
+    {
+        private readonly ConcurrentDictionary<Guid, Select> selectById;
 
-        public PreparedSelects(IDomainDatabaseServices domainDatabaseServices)
+        public PreparedSelects(IDatabase database)
         {
-            this.DomainDatabaseServices = domainDatabaseServices;
+            this.Database = database;
             this.selectById = new ConcurrentDictionary<Guid, Select>();
         }
 
-        public IDomainDatabaseServices DomainDatabaseServices { get; }
+        public IDatabase Database { get; }
 
         public Select Get(Guid id)
         {
             if (!this.selectById.TryGetValue(id, out var select))
             {
-                var transaction = this.DomainDatabaseServices.Database.CreateTransaction();
+                var transaction = this.Database.CreateTransaction();
                 try
                 {
                     var m = transaction.Database.Services().M;
@@ -46,7 +46,7 @@ namespace Allors.Database.Configuration
                 }
                 finally
                 {
-                    if (this.DomainDatabaseServices.Database.IsShared)
+                    if (this.Database.IsShared)
                     {
                         transaction.Dispose();
                     }

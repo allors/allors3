@@ -584,12 +584,9 @@ namespace Allors.Database.Meta
             foreach (var inheritance in inheritancesBySubtype[subtype])
             {
                 var supertype = inheritance.Supertype;
-                if (supertype != null)
+                if (supertype != null && this.HasCycle(subtype, supertype, supertypes, inheritancesBySubtype))
                 {
-                    if (this.HasCycle(subtype, supertype, supertypes, inheritancesBySubtype))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 
@@ -612,12 +609,9 @@ namespace Allors.Database.Meta
                     foreach (var inheritance in currentSuperInheritances)
                     {
                         var newSupertype = inheritance.Supertype;
-                        if (newSupertype != null)
+                        if (newSupertype != null && this.HasCycle(originalSubtype, newSupertype, supertypes, inheritancesBySubtype))
                         {
-                            if (this.HasCycle(originalSubtype, newSupertype, supertypes, inheritancesBySubtype))
-                            {
-                                return true;
-                            }
+                            return true;
                         }
                     }
                 }

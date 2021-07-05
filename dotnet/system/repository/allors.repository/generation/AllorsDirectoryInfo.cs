@@ -81,13 +81,10 @@ namespace Allors.Repository.Generation
 
         private void BuildAncestors(AllorsDirectoryInfo root, List<AllorsDirectoryInfo> ancestors)
         {
-            if (!this.DirectoryInfo.FullName.Equals(this.DirectoryInfo.Root.FullName))
+            if (!this.DirectoryInfo.FullName.Equals(this.DirectoryInfo.Root.FullName) && !this.DirectoryInfo.FullName.Equals(root.DirectoryInfo.FullName))
             {
-                if (!this.DirectoryInfo.FullName.Equals(root.DirectoryInfo.FullName))
-                {
-                    ancestors.Add(this);
-                    this.Parent.BuildAncestors(root, ancestors);
-                }
+                ancestors.Add(this);
+                this.Parent.BuildAncestors(root, ancestors);
             }
         }
 

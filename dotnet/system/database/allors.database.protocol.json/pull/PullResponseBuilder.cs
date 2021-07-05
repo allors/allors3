@@ -13,6 +13,7 @@ namespace Allors.Database.Protocol.Json
     using Derivations;
     using Meta;
     using Security;
+    using Services;
 
     public class PullResponseBuilder : IProcedureContext, IProcedureOutput
     {
@@ -100,22 +101,19 @@ namespace Allors.Database.Protocol.Json
 
         public void AddObject(string name, IObject @object, Node[] tree)
         {
-            if (@object != null)
+            if (@object != null && this.AllowedClasses?.Contains(@object.Strategy.Class) == true)
             {
-                if (this.AllowedClasses?.Contains(@object.Strategy.Class) == true)
+                if (tree != null)
                 {
-                    if (tree != null)
-                    {
-                        // Prefetch
-                        var transaction = @object.Strategy.Transaction;
-                        var prefetcher = tree.BuildPrefetchPolicy();
-                        transaction.Prefetch(prefetcher, @object);
-                    }
-
-                    this.objects.Add(@object);
-                    this.objectByName[name] = @object;
-                    tree?.Resolve(@object, this.AccessControlLists, this.objects);
+                    // Prefetch
+                    var transaction = @object.Strategy.Transaction;
+                    var prefetcher = tree.BuildPrefetchPolicy();
+                    transaction.Prefetch(prefetcher, @object);
                 }
+
+                this.objects.Add(@object);
+                this.objectByName[name] = @object;
+                tree?.Resolve(@object, this.AccessControlLists, this.objects);
             }
         }
 

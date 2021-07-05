@@ -8,8 +8,8 @@ namespace Allors.Database.Configuration
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Domain;
     using Meta;
+    using Services;
 
     public class MetaCache : IMetaCache
     {
@@ -18,11 +18,8 @@ namespace Allors.Database.Configuration
         private readonly IReadOnlyDictionary<IClass, Type> builderTypeByClass;
         private readonly IReadOnlyDictionary<string, HashSet<IClass>> workspaceClassesByWorkspaceName;
 
-        public MetaCache(IDomainDatabaseServices domainDatabaseServices)
+        public MetaCache(IDatabase database)
         {
-            this.DomainDatabaseServices = domainDatabaseServices;
-
-            var database = this.DomainDatabaseServices.Database;
             var metaPopulation = (MetaPopulation)database.MetaPopulation;
             var assembly = database.ObjectFactory.Assembly;
 
@@ -31,7 +28,6 @@ namespace Allors.Database.Configuration
                     v => (IClass)v,
                     v => v.DatabaseRoleTypes
                           .Where(concreteRoleType => concreteRoleType.IsRequired)
-                          .Cast<IRoleType>()
                           .ToArray());
 
 
@@ -40,7 +36,6 @@ namespace Allors.Database.Configuration
                     v => (IClass)v,
                     v => v.DatabaseRoleTypes
                         .Where(concreteRoleType => concreteRoleType.IsUnique)
-                        .Cast<IRoleType>()
                         .ToArray());
 
             this.builderTypeByClass = metaPopulation.DatabaseClasses.
@@ -51,8 +46,6 @@ namespace Allors.Database.Configuration
             this.workspaceClassesByWorkspaceName = metaPopulation.WorkspaceNames
                 .ToDictionary(v => v, v => new HashSet<IClass>(metaPopulation.Classes.Where(w => w.WorkspaceNames.Contains(v))));
         }
-
-        public IDomainDatabaseServices DomainDatabaseServices { get; }
 
         public IRoleType[] GetRequiredRoleTypes(IClass @class) => this.requiredRoleTypesByClass[@class];
 

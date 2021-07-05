@@ -9,6 +9,7 @@ namespace Tests
     using Allors.Database.Domain;
     using Allors.Protocol.Json.Api.Security;
     using Allors.Database.Protocol.Json;
+    using Allors.Database.Services;
     using Xunit;
 
     public class SecurityAccessControlTests : ApiTest, IClassFixture<Fixture>
@@ -19,7 +20,7 @@ namespace Tests
         public void SameWorkspace()
         {
             var workspaceName = "X";
-            var meta = this.Transaction.Database.Services().MetaCache;
+            var metaCache = this.Transaction.Database.Services().Get<IMetaCache>();
             var accessControl = new AccessControls(this.Transaction).Administrator;
 
             this.SetUser("jane@example.com");
@@ -48,7 +49,7 @@ namespace Tests
             foreach (var permission in permissions)
             {
                 Assert.Contains(permission, accessControl.EffectivePermissions);
-                Assert.Contains(permission.Class, meta.GetWorkspaceClasses(workspaceName));
+                Assert.Contains(permission.Class, metaCache.GetWorkspaceClasses(workspaceName));
             }
 
             foreach (var effectivePermission in accessControl.EffectivePermissions.Where(v => v.InWorkspace(workspaceName)))
@@ -61,7 +62,7 @@ namespace Tests
         public void NoneWorkspace()
         {
             var workspaceName = "None";
-            var metaCache = this.Transaction.Database.Services().MetaCache;
+            var metaCache = this.Transaction.Database.Services().Get<IMetaCache>();
             var accessControl = new AccessControls(this.Transaction).Administrator;
 
             this.SetUser("jane@example.com");

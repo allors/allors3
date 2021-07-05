@@ -9,6 +9,7 @@ namespace Allors.Database.Configuration
     using System.Collections.Concurrent;
     using Data;
     using Meta;
+    using Services;
 
     public class PreparedExtents : IPreparedExtents
     {

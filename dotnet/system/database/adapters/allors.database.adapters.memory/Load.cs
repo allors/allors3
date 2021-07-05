@@ -32,25 +32,22 @@ namespace Allors.Database.Adapters.Memory
             while (this.reader.Read())
             {
                 // only process elements, ignore others
-                if (this.reader.NodeType.Equals(XmlNodeType.Element))
+                if (this.reader.NodeType.Equals(XmlNodeType.Element) && this.reader.Name.Equals(Serialization.Population))
                 {
-                    if (this.reader.Name.Equals(Serialization.Population))
+                    var version = this.reader.GetAttribute(Serialization.Version);
+                    if (string.IsNullOrEmpty(version))
                     {
-                        var version = this.reader.GetAttribute(Serialization.Version);
-                        if (string.IsNullOrEmpty(version))
-                        {
-                            throw new ArgumentException("Save population has no version.");
-                        }
-
-                        Serialization.CheckVersion(int.Parse(version));
-
-                        if (!this.reader.IsEmptyElement)
-                        {
-                            this.LoadPopulation();
-                        }
-
-                        break;
+                        throw new ArgumentException("Save population has no version.");
                     }
+
+                    Serialization.CheckVersion(int.Parse(version));
+
+                    if (!this.reader.IsEmptyElement)
+                    {
+                        this.LoadPopulation();
+                    }
+
+                    break;
                 }
             }
         }
@@ -156,9 +153,7 @@ namespace Allors.Database.Adapters.Memory
                                 var objectType = this.transaction.Database.ObjectFactory.GetObjectType(objectTypeId);
 
                                 var objectIdsString = this.reader.ReadElementContentAsString();
-                                var objectIdStringArray = objectIdsString.Split(Serialization.ObjectsSplitterCharArray);
-
-                                foreach (var objectIdString in objectIdStringArray)
+                                foreach (var objectIdString in objectIdsString.Split(Serialization.ObjectsSplitterCharArray))
                                 {
                                     var objectArray = objectIdString.Split(Serialization.ObjectSplitterCharArray);
 
@@ -432,16 +427,13 @@ namespace Allors.Database.Adapters.Memory
                                     {
                                         this.transaction.Database.OnRelationNotLoaded(relationType.Id, associationId, roleIdStringArray[0]);
                                     }
+                                    else if (relationType.RoleType.AssociationType.IsMany)
+                                    {
+                                        association.SetCompositeRoleMany2One(relationType.RoleType, roleStrategy);
+                                    }
                                     else
                                     {
-                                        if (relationType.RoleType.AssociationType.IsMany)
-                                        {
-                                            association.SetCompositeRoleMany2One(relationType.RoleType, roleStrategy);
-                                        }
-                                        else
-                                        {
-                                            association.SetCompositeRoleOne2One(relationType.RoleType, roleStrategy);
-                                        }
+                                        association.SetCompositeRoleOne2One(relationType.RoleType, roleStrategy);
                                     }
                                 }
                                 else
@@ -548,8 +540,7 @@ namespace Allors.Database.Adapters.Memory
                             else
                             {
                                 var value = this.reader.ReadElementContentAsString();
-                                var rs = value.Split(Serialization.ObjectsSplitterCharArray);
-                                foreach (var r in rs)
+                                foreach (var r in value.Split(Serialization.ObjectsSplitterCharArray))
                                 {
                                     this.transaction.Database.OnRelationNotLoaded(relationTypeId, associationId, r);
                                 }

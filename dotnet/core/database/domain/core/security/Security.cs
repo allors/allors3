@@ -132,8 +132,7 @@ namespace Allors.Database.Domain
         {
             if (this.roleById.TryGetValue(roleId, out var role))
             {
-                var actualOperations = operations ?? ReadWriteExecute;
-                foreach (var operation in actualOperations)
+                foreach (var operation in operations ?? ReadWriteExecute)
                 {
                     Dictionary<IOperandType, Permission> permissionByOperandType;
                     switch (operation)
@@ -169,8 +168,7 @@ namespace Allors.Database.Domain
         {
             if (this.roleById.TryGetValue(roleId, out var role))
             {
-                var actualOperations = operations ?? ReadWriteExecute;
-                foreach (var operation in actualOperations)
+                foreach (var operation in operations ?? ReadWriteExecute)
                 {
                     Dictionary<IOperandType, Permission> permissionByOperandType;
                     switch (operation)
@@ -191,12 +189,9 @@ namespace Allors.Database.Domain
                             throw new Exception("Unkown operation: " + operations);
                     }
 
-                    if (permissionByOperandType != null)
+                    if (permissionByOperandType != null && permissionByOperandType.TryGetValue(operandType, out var permission))
                     {
-                        if (permissionByOperandType.TryGetValue(operandType, out var permission))
-                        {
-                            role.AddPermission(permission);
-                        }
+                        role.AddPermission(permission);
                     }
                 }
             }
@@ -210,8 +205,7 @@ namespace Allors.Database.Domain
         {
             if (this.roleById.TryGetValue(roleId, out var role))
             {
-                var actualOperations = operations ?? ReadWriteExecute;
-                foreach (var operation in actualOperations)
+                foreach (var operation in operations ?? ReadWriteExecute)
                 {
                     Dictionary<IOperandType, Permission> permissionByOperandType;
                     switch (operation)

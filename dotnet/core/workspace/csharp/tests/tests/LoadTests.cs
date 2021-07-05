@@ -53,9 +53,7 @@ namespace Tests.Workspace
 
             var result = await session.Pull(pull);
 
-            var c1s = result.GetCollection<C1>("C1s");
-
-            foreach (var c1 in c1s)
+            foreach (var c1 in result.GetCollection<C1>("C1s"))
             {
                 foreach (var roleType in this.M.C1.DatabaseOriginRoleTypes)
                 {
@@ -92,9 +90,7 @@ namespace Tests.Workspace
 
             var result = await session.Pull(pull);
 
-            var c1s = result.GetCollection<C1>("C1s");
-
-            foreach (var c1 in c1s)
+            foreach (var c1 in result.GetCollection<C1>("C1s"))
             {
                 foreach (var roleType in this.M.C1.DatabaseOriginRoleTypes)
                 {

@@ -28,8 +28,7 @@ namespace Allors.Database.Domain
 
         public static void AssignPerformer(this Task @this)
         {
-            var currentUser = @this.Strategy.Transaction.Services().User as Person;
-            @this.Performer = currentUser;
+            @this.Performer = @this.Strategy.Transaction.Services().User as Person;
         }
 
         public static void AssignParticipants(this Task @this, IEnumerable<User> participants)

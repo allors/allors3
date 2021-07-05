@@ -20,8 +20,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var sessions = new[] { this.Transaction };
-            foreach (var session in sessions)
+            foreach (var session in new[] { this.Transaction })
             {
                 session.Commit();
 

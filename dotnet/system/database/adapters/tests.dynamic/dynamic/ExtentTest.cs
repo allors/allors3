@@ -80,8 +80,7 @@ namespace Allors.Database.Adapters
         [Trait("Category", "Dynamic")]
         public void AddEquals()
         {
-            var concreteClasses = this.GetTestTypes();
-            foreach (var concreteClass in concreteClasses)
+            foreach (var concreteClass in this.GetTestTypes())
             {
                 var extent = this.GetTransaction().Extent(concreteClass);
 
@@ -121,8 +120,7 @@ namespace Allors.Database.Adapters
         [Trait("Category", "Dynamic")]
         public void AddExist()
         {
-            var concreteClasses = this.GetTestTypes();
-            foreach (var concreteClass in concreteClasses)
+            foreach (var concreteClass in this.GetTestTypes())
             {
                 foreach (var role in concreteClass.DatabaseRoleTypes)
                 {

@@ -19,12 +19,9 @@ namespace Allors.Database
                 throw new ArgumentNullException("propertyType");
             }
 
-            if (prefetchPolicy != null)
+            if (prefetchPolicy != null && propertyType is IRoleType roleType && roleType.ObjectType.IsUnit)
             {
-                if (propertyType is IRoleType roleType && roleType.ObjectType.IsUnit)
-                {
-                    throw new ArgumentException("prefetchPolicy");
-                }
+                throw new ArgumentException("prefetchPolicy");
             }
 
             this.PropertyType = propertyType;

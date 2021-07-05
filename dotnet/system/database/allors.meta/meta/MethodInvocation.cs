@@ -29,9 +29,7 @@ namespace Allors.Database.Meta
 
             method.Executed = true;
 
-            var actions = this.Class.Actions(this.MethodType);
-
-            foreach (var action in actions)
+            foreach (var action in this.Class.Actions(this.MethodType))
             {
                 // TODO: Add test for deletion
                 if (!method.Object.Strategy.IsDeleted && !method.StopPropagation)

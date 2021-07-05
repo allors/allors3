@@ -9,6 +9,7 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Meta;
     using Database.Security;
+    using Database.Services;
 
     /// <summary>
     /// List of permissions for an object/user combination.
@@ -26,7 +27,7 @@ namespace Allors.Database.Domain
             this.AccessControlLists = accessControlLists;
             this.Object = (Object)@object;
 
-            var permissionsCache = @object.DatabaseServices().PermissionsCache;
+            var permissionsCache = @object.DatabaseServices().Get<IPermissionsCache>();
             this.permissionsCacheEntry = permissionsCache.Get(this.Object.Strategy.Class.Id);
 
             this.lazyLoaded = false;
@@ -58,12 +59,9 @@ namespace Allors.Database.Domain
 
         public bool CanRead(IRoleType roleType)
         {
-            if (this.Object != null)
+            if (this.Object != null && this.permissionsCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(roleType.RelationType.Id, out var permissionId))
             {
-                if (this.permissionsCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(roleType.RelationType.Id, out var permissionId))
-                {
-                    return this.IsPermitted(permissionId);
-                }
+                return this.IsPermitted(permissionId);
             }
 
             return false;
@@ -71,12 +69,9 @@ namespace Allors.Database.Domain
 
         public bool CanWrite(IRoleType roleType)
         {
-            if (this.Object != null)
+            if (this.Object != null && this.permissionsCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(roleType.RelationType.Id, out var permissionId))
             {
-                if (this.permissionsCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(roleType.RelationType.Id, out var permissionId))
-                {
-                    return this.IsPermitted(permissionId);
-                }
+                return this.IsPermitted(permissionId);
             }
 
             return false;
@@ -84,12 +79,9 @@ namespace Allors.Database.Domain
 
         public bool CanExecute(IMethodType methodType)
         {
-            if (this.Object != null)
+            if (this.Object != null && this.permissionsCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(methodType.Id, out var permissionId))
             {
-                if (this.permissionsCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(methodType.Id, out var permissionId))
-                {
-                    return this.IsPermitted(permissionId);
-                }
+                return this.IsPermitted(permissionId);
             }
 
             return false;

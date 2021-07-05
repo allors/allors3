@@ -84,15 +84,13 @@ namespace Allors.Database.Domain
 
         private AccountingPeriod AppsAddNextSemester(AccountingPeriod previousPeriod)
         {
-            var newSemester = new AccountingPeriodBuilder(this.Strategy.Transaction)
+            return new AccountingPeriodBuilder(this.Strategy.Transaction)
                 .WithPeriodNumber(previousPeriod.PeriodNumber + 1)
                 .WithFrequency(new TimeFrequencies(this.Strategy.Transaction).Semester)
                 .WithFromDate(previousPeriod.FromDate.AddMonths(6).Date)
                 .WithThroughDate(previousPeriod.FromDate.AddMonths(12).AddSeconds(-1).Date)
                 .WithParent(previousPeriod.Parent)
                 .Build();
-
-            return newSemester;
         }
     }
 }

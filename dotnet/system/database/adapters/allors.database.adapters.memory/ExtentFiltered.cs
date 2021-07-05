@@ -45,8 +45,7 @@ namespace Allors.Database.Adapters.Memory
             {
                 this.Strategies = new List<Strategy>();
 
-                var allStrategies = this.Transaction.GetStrategiesForExtentIncludingDeleted(this.objectType);
-                foreach (var strategy in allStrategies)
+                foreach (var strategy in this.Transaction.GetStrategiesForExtentIncludingDeleted(this.objectType))
                 {
                     if (!strategy.IsDeleted)
                     {

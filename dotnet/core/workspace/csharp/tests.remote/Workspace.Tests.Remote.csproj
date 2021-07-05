@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\adapters\allors.workspace.adapters.remote.default\Allors.Workspace.Adapters.Remote.Default.csproj" />
+    <ProjectReference Include="..\..\..\..\System\workspace\csharp\adapters\allors.workspace.adapters.remote.default\Allors.Workspace.Adapters.Remote.Default.csproj" />
     <ProjectReference Include="..\Tests\Workspace.Tests.csproj" />
   </ItemGroup>
 

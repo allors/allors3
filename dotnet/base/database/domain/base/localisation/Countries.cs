@@ -1534,8 +1534,7 @@ namespace Allors.Database.Domain
             foreach (var entry in currencyCodeByCountryCode)
             {
                 var country = this.CountryByIsoCode[entry.Key];
-                var currency = currencies.CurrencyByCode[entry.Value];
-                country.Currency = currency;
+                country.Currency = currencies.CurrencyByCode[entry.Value];
             }
         }
     }

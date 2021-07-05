@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
                     .ToArray();
 
                 // Invalidate cache
-                accessControl.DatabaseServices().AccessControlCache.Clear(accessControl.Id);
+                accessControl.DatabaseServices().Get<IAccessControlCache>().Clear(accessControl.Id);
             }
         }
     }

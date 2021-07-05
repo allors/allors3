@@ -6,7 +6,7 @@
 namespace Allors.Database
 {
     using System;
-    using Derivations;
+    using Services;
 
     /// <summary>
     /// The Transaction Services
@@ -16,5 +16,7 @@ namespace Allors.Database
         void OnInit(ITransaction transaction);
 
         IDerive Derive { get; }
+
+        T Get<T>();
     }
 }

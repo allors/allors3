@@ -11,9 +11,7 @@ namespace Allors.Database.Domain
     {
         public static void Daily(ITransaction transaction)
         {
-            var organisations = new Organisations(transaction).Extent();
-
-            foreach (Organisation organisation in organisations)
+            foreach (Organisation organisation in new Organisations(transaction).Extent())
             {
                 organisation.DeriveRelationships();
             }

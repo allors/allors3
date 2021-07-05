@@ -28,8 +28,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var sessions = new[] { this.Transaction };
-            foreach (var session in sessions)
+            foreach (var session in new[] { this.Transaction })
             {
                 session.Commit();
 
@@ -59,8 +58,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var sessions = new[] { this.Transaction };
-            foreach (var session in sessions)
+            foreach (var session in new[] { this.Transaction })
             {
                 session.Commit();
 
@@ -97,8 +95,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var sessions = new[] { this.Transaction };
-            foreach (var session in sessions)
+            foreach (var session in new[] { this.Transaction })
             {
                 session.Commit();
 
@@ -137,8 +134,7 @@ namespace Allors.Database.Domain.Tests
             new AccessControlBuilder(this.Transaction).WithSubject(anotherPerson).WithRole(databaseRole).Build();
             this.Transaction.Commit();
 
-            var sessions = new[] { this.Transaction };
-            foreach (var session in sessions)
+            foreach (var session in new[] { this.Transaction })
             {
                 session.Commit();
 
@@ -178,8 +174,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Commit();
 
-            var sessions = new[] { this.Transaction };
-            foreach (var session in sessions)
+            foreach (var session in new[] { this.Transaction })
             {
                 session.Commit();
 
@@ -214,8 +209,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var sessions = new[] { this.Transaction };
-            foreach (var session in sessions)
+            foreach (var session in new[] { this.Transaction })
             {
                 session.Commit();
 
@@ -255,8 +249,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var sessions = new[] { this.Transaction };
-            foreach (var session in sessions)
+            foreach (var session in new[] { this.Transaction })
             {
                 session.Commit();
 

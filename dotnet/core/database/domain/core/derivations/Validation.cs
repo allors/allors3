@@ -55,12 +55,9 @@ namespace Allors.Database.Domain.Derivations
 
         public void AssertNonEmptyString(IObject association, IRoleType roleType)
         {
-            if (association.Strategy.ExistRole(roleType))
+            if (association.Strategy.ExistRole(roleType) && association.Strategy.GetUnitRole(roleType).Equals(string.Empty))
             {
-                if (association.Strategy.GetUnitRole(roleType).Equals(string.Empty))
-                {
-                    this.AddError(new DerivationErrorRequired(this, association, roleType));
-                }
+                this.AddError(new DerivationErrorRequired(this, association, roleType));
             }
         }
 
@@ -72,22 +69,19 @@ namespace Allors.Database.Domain.Derivations
 
         public void AssertIsUnique(IChangeSet changeSet, IObject association, IRoleType roleType)
         {
-            if (changeSet.RoleTypesByAssociation.TryGetValue(association, out var roleTypes))
+            if (changeSet.RoleTypesByAssociation.TryGetValue(association, out var roleTypes) && roleTypes.Contains(roleType))
             {
-                if (roleTypes.Contains(roleType))
-                {
-                    var objectType = roleType.AssociationType.ObjectType;
-                    var role = association.Strategy.GetRole(roleType);
+                var objectType = roleType.AssociationType.ObjectType;
+                var role = association.Strategy.GetRole(roleType);
 
-                    if (role != null)
+                if (role != null)
+                {
+                    var transaction = association.Strategy.Transaction;
+                    var extent = transaction.Extent(objectType);
+                    extent.Filter.AddEquals(roleType, role);
+                    if (extent.Count != 1)
                     {
-                        var transaction = association.Strategy.Transaction;
-                        var extent = transaction.Extent(objectType);
-                        extent.Filter.AddEquals(roleType, role);
-                        if (extent.Count != 1)
-                        {
-                            this.AddError(new DerivationErrorUnique(this, association, roleType));
-                        }
+                        this.AddError(new DerivationErrorUnique(this, association, roleType));
                     }
                 }
             }

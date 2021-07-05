@@ -11,6 +11,7 @@ namespace Allors.Database.Protocol.Json
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Allors.Protocol.Json.Api.Pull;
+    using Allors.Services;
     using Services;
     using Data;
     using Domain;
@@ -27,9 +28,9 @@ namespace Allors.Database.Protocol.Json
 
             var scope = this.DatabaseService.Database.Services();
 
-            this.ExtentService = scope.PreparedExtents;
-            this.PreparedSelects = scope.PreparedSelects;
-            this.TreeCache = scope.TreeCache;
+            this.ExtentService = scope.Get<IPreparedExtents>();
+            this.PreparedSelects = scope.Get<IPreparedSelects>();
+            this.TreeCache = scope.Get<ITreeCache>();
             this.Logger = logger;
         }
 

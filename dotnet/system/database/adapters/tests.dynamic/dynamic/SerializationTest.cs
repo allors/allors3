@@ -91,12 +91,9 @@ namespace Allors.Database.Adapters
                     // Unit Role
                     foreach (var concreteClass in concreteClasses)
                     {
-                        IObject[] extent = saveTransaction.Extent(concreteClass);
-
-                        foreach (var allorsObject in extent)
+                        foreach (var allorsObject in (IObject[])saveTransaction.Extent(concreteClass))
                         {
-                            var roles = concreteClass.DatabaseRoleTypes.Where(v=>v.ObjectType.IsUnit);
-                            foreach (var role in roles)
+                            foreach (var role in concreteClass.DatabaseRoleTypes.Where(v=>v.ObjectType.IsUnit))
                             {
                                 var unitTypeTag = ((Unit)role.ObjectType).Tag;
                                 switch (unitTypeTag)
@@ -149,11 +146,9 @@ namespace Allors.Database.Adapters
                             }
                         }
 
-                        var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
-                        foreach (var associationType in associationTypes)
+                        foreach (var associationType in relationType.AssociationType.ObjectType.DatabaseClasses.ToArray())
                         {
-                            var associations = (ArrayList)objectsByMetaType[associationType];
-                            foreach (IObject association in associations)
+                            foreach (IObject association in (ArrayList)objectsByMetaType[associationType])
                             {
                                 IObject role = null;
                                 if (roles.Count != 0)
@@ -194,11 +189,9 @@ namespace Allors.Database.Adapters
                             }
                         }
 
-                        var associationTypes = relationType.AssociationType.ObjectType.DatabaseClasses.ToArray();
-                        foreach (var associationType in associationTypes)
+                        foreach (var associationType in relationType.AssociationType.ObjectType.DatabaseClasses.ToArray())
                         {
-                            var associations = (ArrayList)objectsByMetaType[associationType];
-                            foreach (IObject association in associations)
+                            foreach (IObject association in (ArrayList)objectsByMetaType[associationType])
                             {
                                 IObject role = null;
                                 if (roles.Count != 0)
@@ -356,9 +349,7 @@ namespace Allors.Database.Adapters
                     // Use diff
                     foreach (var concreteClass in concreteClasses)
                     {
-                        IObject[] saveExtent = saveTransaction.Extent(concreteClass);
-
-                        foreach (var saveObject in saveExtent)
+                        foreach (var saveObject in (IObject[])saveTransaction.Extent(concreteClass))
                         {
                             var loadObject = loadTransaction.Instantiate(saveObject.Strategy.ObjectId);
 

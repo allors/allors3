@@ -161,13 +161,10 @@ namespace Allors.Database.Data
                 return false;
             }
 
-            if (this.PropertyType is IRoleType roleType)
+            if (this.PropertyType is IRoleType roleType && acl.CanWrite(roleType))
             {
-                if (acl.CanWrite(roleType))
-                {
-                    roleType.Set(@object.Strategy, value);
-                    return true;
-                }
+                roleType.Set(@object.Strategy, value);
+                return true;
             }
 
             return false;
@@ -184,26 +181,23 @@ namespace Allors.Database.Data
                     throw new NotSupportedException("RoleType with muliplicity many");
                 }
 
-                if (roleType.ObjectType.IsComposite)
+                if (roleType.ObjectType.IsComposite && acl.CanRead(roleType))
                 {
-                    if (acl.CanRead(roleType))
+                    var role = roleType.Get(@object.Strategy);
+                    if (role == null)
                     {
-                        var role = roleType.Get(@object.Strategy);
-                        if (role == null)
+                        if (acl.CanWrite(roleType))
                         {
-                            if (acl.CanWrite(roleType))
-                            {
-                                role = @object.Strategy.Transaction.Create((IClass)roleType.ObjectType);
-                                roleType.Set(@object.Strategy, role);
-                            }
+                            role = @object.Strategy.Transaction.Create((IClass)roleType.ObjectType);
+                            roleType.Set(@object.Strategy, role);
                         }
+                    }
 
-                        if (this.ExistNext)
+                    if (this.ExistNext)
+                    {
+                        if (role is IObject next)
                         {
-                            if (role is IObject next)
-                            {
-                                this.Next.Ensure(next, acls);
-                            }
+                            this.Next.Ensure(next, acls);
                         }
                     }
                 }
@@ -217,12 +211,9 @@ namespace Allors.Database.Data
                 }
 
                 // TODO: Access check for AssociationType
-                if (associationType.Get(@object.Strategy) is IObject association)
+                if (associationType.Get(@object.Strategy) is IObject association && this.ExistNext)
                 {
-                    if (this.ExistNext)
-                    {
-                        this.Next.Ensure(association, acls);
-                    }
+                    this.Next.Ensure(association, acls);
                 }
             }
         }

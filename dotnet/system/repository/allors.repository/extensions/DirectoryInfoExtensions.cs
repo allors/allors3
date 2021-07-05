@@ -14,8 +14,7 @@ namespace Allors.Repository
         public static bool Contains(this DirectoryInfo @this, FileInfo fileInfo)
         {
             var allFiles = @this.GetFiles("*", SearchOption.AllDirectories);
-            var match = allFiles.Any(v => v.FullName.Equals(fileInfo.FullName));
-            return match;
+            return allFiles.Any(v => v.FullName.Equals(fileInfo.FullName));
         }
     }
 }

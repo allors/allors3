@@ -15,8 +15,7 @@ namespace Allors.Database.Domain
         {
             var media = new MediaBuilder(@this.Strategy.Transaction).WithInFileName(fileName).WithInData(content).Build();
             var templateType = new TemplateTypes(@this.Strategy.Transaction).OpenDocumentType;
-            var template = new TemplateBuilder(@this.Strategy.Transaction).WithMedia(media).WithTemplateType(templateType).WithArguments<T>().Build();
-            return template;
+            return new TemplateBuilder(@this.Strategy.Transaction).WithMedia(media).WithTemplateType(templateType).WithArguments<T>().Build();
         }
 
         public static byte[] GetResourceBytes(this Singleton @this, string name)

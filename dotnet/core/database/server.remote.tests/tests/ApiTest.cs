@@ -112,23 +112,20 @@ namespace Allors.Server.Tests
         protected Stream GetResource(string name)
         {
             var assembly = this.GetType().GetTypeInfo().Assembly;
-            var resource = assembly.GetManifestResourceStream(name);
-            return resource;
+            return assembly.GetManifestResourceStream(name);
         }
 
         protected async Task<HttpResponseMessage> PostAsJsonAsync(Uri uri, object args)
         {
             var json = JsonSerializer.Serialize(args);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await this.HttpClient.PostAsync(uri, content);
-            return response;
+            return await this.HttpClient.PostAsync(uri, content);
         }
 
         protected async Task<T> ReadAsAsync<T>(HttpResponseMessage response)
         {
             var json = await response.Content.ReadAsStringAsync();
-            var deserializedObject = JsonSerializer.Deserialize<T>(json);
-            return deserializedObject;
+            return JsonSerializer.Deserialize<T>(json);
         }
     }
 }

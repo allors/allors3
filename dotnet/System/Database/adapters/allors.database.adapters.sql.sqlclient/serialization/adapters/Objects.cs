@@ -57,9 +57,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                                 var objectType = this.database.ObjectFactory.GetObjectType(objectTypeId);
 
                                 var objectIdsString = this.reader.ReadElementContentAsString();
-                                var objectIdStringArray = objectIdsString.Split(Serialization.ObjectsSplitterCharArray);
-
-                                foreach (var objectIdString in objectIdStringArray)
+                                foreach (var objectIdString in objectIdsString.Split(Serialization.ObjectsSplitterCharArray))
                                 {
                                     var objectArray = objectIdString.Split(Serialization.ObjectSplitterCharArray);
 

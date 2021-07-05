@@ -157,9 +157,9 @@
               "PostgresDocker",
               "TypescriptInstall",
               "TypescriptTest",
-              "TypescriptWorkspaceAdaptersJson",
-              "TypescriptWorkspaceDomainCore",
-              "TypescriptWorkspaceMetaLazy",
+              "TypescriptWorkspaceAdaptersJsonSystem",
+              "TypescriptWorkspaceAdaptersSystem",
+              "TypescriptWorkspaceMetaJsonSystem",
               "TypescriptWorkspaceTest"
             ]
           }
@@ -252,9 +252,9 @@
               "PostgresDocker",
               "TypescriptInstall",
               "TypescriptTest",
-              "TypescriptWorkspaceAdaptersJson",
-              "TypescriptWorkspaceDomainCore",
-              "TypescriptWorkspaceMetaLazy",
+              "TypescriptWorkspaceAdaptersJsonSystem",
+              "TypescriptWorkspaceAdaptersSystem",
+              "TypescriptWorkspaceMetaJsonSystem",
               "TypescriptWorkspaceTest"
             ]
           }

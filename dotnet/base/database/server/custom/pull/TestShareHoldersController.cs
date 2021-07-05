@@ -6,9 +6,8 @@
 namespace Allors.Database.Server.Controllers
 {
     using System;
-
+    using Allors.Services;
     using Domain;
-    using Services;
     using Data;
     using Microsoft.AspNetCore.Mvc;
     using Database;
@@ -21,7 +20,7 @@ namespace Allors.Database.Server.Controllers
         {
             this.WorkspaceService = workspaceService;
             this.Transaction = sessionService.Transaction;
-            this.TreeCache = this.Transaction.Database.Services().TreeCache;
+            this.TreeCache = this.Transaction.Database.Services().Get<ITreeCache>();
         }
 
         private ITransaction Transaction { get; }

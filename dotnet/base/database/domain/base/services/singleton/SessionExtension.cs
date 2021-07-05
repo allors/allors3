@@ -5,19 +5,17 @@
 
 namespace Allors.Database.Domain
 {
-    using Domain;
-
     public static partial class TransactionExtension
     {
         public static Singleton GetSingleton(this ITransaction @this)
         {
-            var singletonService = @this.Database.Services().SingletonId;
+            var singletonId = @this.Database.Services().Get<ISingletonId>();
 
-            var singleton = (Singleton)@this.Instantiate(singletonService.Id);
+            var singleton = (Singleton)@this.Instantiate(singletonId.Id);
             if (singleton == null)
             {
                 singleton = new Singletons(@this).Extent().First;
-                singletonService.Id = singleton?.Id ?? 0;
+                singletonId.Id = singleton?.Id ?? 0;
             }
 
             return singleton;

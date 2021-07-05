@@ -6,26 +6,17 @@
 
 namespace Allors.Database.Configuration
 {
-    using Bogus;
-    using Database;
     using Domain;
     using Domain.Derivations.Rules.Default;
     using Microsoft.AspNetCore.Http;
 
-    public class TestDomainDatabaseServices : DefaultDomainDatabaseServices
+    public class TestDomainDatabaseServices : DomainDatabaseServices
     {
         public TestDomainDatabaseServices(Engine engine, IHttpContextAccessor httpContextAccessor = null) : base(engine, httpContextAccessor) { }
 
-        public override void OnInit(IDatabase database)
-        {
-            this.PasswordHasher = new TestPasswordHasher();
+        protected override IPasswordHasher CreatePasswordHasher() => new TestPasswordHasher();
 
-            base.OnInit(database);
-
-            this.Faker = new Faker();
-        }
-
-        public Faker Faker { get; set; }
+        protected override IDerivationFactory CreateDerivationFactory() => new DefaultDerivationFactory(this.Engine);
 
         private class TestPasswordHasher : IPasswordHasher
         {

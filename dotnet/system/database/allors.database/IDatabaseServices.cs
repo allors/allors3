@@ -6,7 +6,6 @@
 namespace Allors.Database
 {
     using System;
-    using Data;
 
     /// <summary>
     /// The Database's services.
@@ -17,8 +16,6 @@ namespace Allors.Database
 
         ITransactionServices CreateTransactionServices();
 
-        IPreparedExtents PreparedExtents { get; }
-
-        IPreparedSelects PreparedSelects { get; }
+        T Get<T>();
     }
 }

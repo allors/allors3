@@ -121,23 +121,17 @@ namespace Allors.Development.Repository.Generation
                         {
                             template.Add(RelationTypeKey, relationType);
                         }
+                        else if (metaPopulation.FindById(input) is IInheritance inheritance)
+                        {
+                            template.Add(InheritanceKey, inheritance);
+                        }
+                        else if (metaPopulation.FindById(input) is IMethodType methodType)
+                        {
+                            template.Add(MethodTypeKey, methodType);
+                        }
                         else
                         {
-                            if (metaPopulation.FindById(input) is IInheritance inheritance)
-                            {
-                                template.Add(InheritanceKey, inheritance);
-                            }
-                            else
-                            {
-                                if (metaPopulation.FindById(input) is IMethodType methodType)
-                                {
-                                    template.Add(MethodTypeKey, methodType);
-                                }
-                                else
-                                {
-                                    throw new ArgumentException(input + " was not found");
-                                }
-                            }
+                            throw new ArgumentException(input + " was not found");
                         }
 
                         // TODO: Super Domains

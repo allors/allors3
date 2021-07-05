@@ -6,8 +6,8 @@
 namespace Allors.Database.Server.Controllers
 {
     using System;
+    using Allors.Services;
     using Domain;
-    using Services;
     using Database;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -88,8 +88,8 @@ namespace Allors.Database.Server.Controllers
         {
             try
             {
-                var timeService = this.Database.Services().Time;
-                timeService.Shift = new TimeSpan(days, hours, minutes, seconds);
+                var time = this.Database.Services().Get<ITime>();
+                time.Shift = new TimeSpan(days, hours, minutes, seconds);
                 return this.Ok();
             }
             catch (Exception e)

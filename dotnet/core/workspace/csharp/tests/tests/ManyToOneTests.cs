@@ -63,9 +63,7 @@ namespace Tests.Workspace
             });
 
             var workspaceOrganisation1 = session1.Create<WorkspaceOrganisation>();
-            var databasePerson1 = result.GetCollection<Person>().First();
-
-            workspaceOrganisation1.WorkspaceDatabaseOwner = databasePerson1;
+            workspaceOrganisation1.WorkspaceDatabaseOwner = result.GetCollection<Person>().First();
 
             await session1.Push();
 
@@ -110,9 +108,7 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var workspaceOrganisation1 = session.Create<WorkspaceOrganisation>();
-            var workspacePerson1 = session.Create<WorkspacePerson>();
-
-            workspaceOrganisation1.WorkspaceWorkspaceOwner = workspacePerson1;
+            workspaceOrganisation1.WorkspaceWorkspaceOwner = session.Create<WorkspacePerson>();
 
             await session.Push();
 

@@ -10,8 +10,8 @@ namespace Allors.Database.Server.Controllers
     using System.IO;
     using System.Linq;
     using System.Security.Cryptography;
+    using Allors.Services;
     using Domain;
-    using Services;
     using Database;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;

@@ -7,7 +7,7 @@
 
 namespace Allors.Database
 {
-    using Derivations;
+    using Services;
 
     public class DefaultDomainTransactionServices : IDomainTransactionServices
     {
@@ -16,5 +16,7 @@ namespace Allors.Database
         public void Dispose() { }
 
         public IDerive Derive => null;
+
+        public T Get<T>() => default;
     }
 }

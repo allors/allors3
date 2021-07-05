@@ -47,7 +47,7 @@ namespace Allors.Database.Domain
 
             var transaction = this.User.Transaction();
             var database = transaction.Database;
-            var accessControlCache = database.Services().AccessControlCache;
+            var accessControlCache = database.Services().Get<IAccessControlCache>();
 
             List<AccessControl> misses = null;
             foreach (var accessControl in this.User.AccessControlsWhereEffectiveUser)

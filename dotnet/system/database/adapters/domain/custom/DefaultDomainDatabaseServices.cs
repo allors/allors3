@@ -7,7 +7,6 @@
 
 namespace Allors.Database
 {
-    using Data;
     using Meta;
 
     public class DefaultDomainDatabaseServices : IDomainDatabaseServices
@@ -16,12 +15,10 @@ namespace Allors.Database
 
         public ITransactionServices CreateTransactionServices() => new DefaultDomainTransactionServices();
 
-        public MetaPopulation M { get; set; }
+        public MetaPopulation M { get; private set; }
+
+        public T Get<T>() => default;
 
         public void Dispose() { }
-
-        public IPreparedExtents PreparedExtents => null;
-
-        public IPreparedSelects PreparedSelects => null;
     }
 }

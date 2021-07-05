@@ -13,8 +13,7 @@ namespace Allors.Database.Domain
         {
             if (method.SecurityTokens == null)
             {
-                var securityTokens = new[] { new SecurityTokens(this.Transaction()).DefaultSecurityToken, this.Worker.OwnerSecurityToken };
-                method.SecurityTokens = securityTokens;
+                method.SecurityTokens = (new[] { new SecurityTokens(this.Transaction()).DefaultSecurityToken, this.Worker.OwnerSecurityToken });
             }
         }
 

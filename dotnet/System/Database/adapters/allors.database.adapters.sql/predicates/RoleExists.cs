@@ -30,16 +30,13 @@ namespace Allors.Database.Adapters.Sql
             {
                 statement.Append(" " + this.role.SingularFullName + "_R." + Mapping.ColumnNameForRole + " IS NOT NULL");
             }
+            else if (this.role.IsMany)
+            {
+                statement.Append(" " + this.role.SingularFullName + "_R." + Mapping.ColumnNameForObject + " IS NOT NULL");
+            }
             else
             {
-                if (this.role.IsMany)
-                {
-                    statement.Append(" " + this.role.SingularFullName + "_R." + Mapping.ColumnNameForObject + " IS NOT NULL");
-                }
-                else
-                {
-                    statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.role.RelationType] + " IS NOT NULL");
-                }
+                statement.Append(" " + alias + "." + schema.ColumnNameByRelationType[this.role.RelationType] + " IS NOT NULL");
             }
 
             return this.Include;

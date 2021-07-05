@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
             var transaction = this.strategy.Transaction;
 
             // TODO: Avoid creating a Derivation
-            var derivation = this.DatabaseServices().DerivationFactory.CreateDerivation(transaction);
+            var derivation = this.DatabaseServices().Get<IDerivationFactory>().CreateDerivation(transaction);
             this.SyncInventoryTransactions(derivation, this.InventoryItem, this.Quantity, new InventoryTransactionReasons(transaction).Consumption, true);
         }
 

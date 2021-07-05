@@ -23,7 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Base\Transaction\" />
+    <Compile Remove="Base\Transaction\**" />
+    <EmbeddedResource Remove="Base\Transaction\**" />
+    <None Remove="Base\Transaction\**" />
   </ItemGroup>
 
 </Project>

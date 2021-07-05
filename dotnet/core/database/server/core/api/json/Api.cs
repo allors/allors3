@@ -18,6 +18,7 @@ namespace Allors.Database.Protocol.Json
     using Derivations;
     using Domain;
     using Meta;
+    using Services;
     using User = Domain.User;
 
     public class Api
@@ -26,17 +27,17 @@ namespace Allors.Database.Protocol.Json
         {
             this.Transaction = transaction;
 
-            var transactionContext = transaction.Services();
-            var databaseContext = transaction.Database.Services();
-            var metaCache = databaseContext.MetaCache;
+            var transactionServices = transaction.Services();
+            var databaseServices = transaction.Database.Services();
+            var metaCache = databaseServices.Get<IMetaCache>();
 
-            this.User = transactionContext.User;
+            this.User = transactionServices.User;
             this.AccessControlLists = new WorkspaceAccessControlLists(workspaceName, this.User);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(workspaceName);
-            this.M = databaseContext.M;
-            this.MetaPopulation = databaseContext.M;
-            this.PreparedSelects = databaseContext.PreparedSelects;
-            this.PreparedExtents = databaseContext.PreparedExtents;
+            this.M = databaseServices.M;
+            this.MetaPopulation = databaseServices.M;
+            this.PreparedSelects = databaseServices.Get<IPreparedSelects>();
+            this.PreparedExtents = databaseServices.Get<IPreparedExtents>();
             this.Build = @class => (IObject)DefaultObjectBuilder.Build(transaction, @class);
             this.Derive = () => this.Transaction.Derive(false);
 
@@ -114,10 +115,6 @@ namespace Allors.Database.Protocol.Json
         }
 
         // TODO: Delete
-        public PullResponseBuilder CreatePullResponseBuilder()
-        {
-            var response = new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert);
-            return response;
-        }
+        public PullResponseBuilder CreatePullResponseBuilder() => new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert);
     }
 }

@@ -10,24 +10,25 @@ namespace Allors.Database.Configuration
     using System.Linq;
     using Data;
     using Domain;
+    using Services;
 
     public class PreparedExtents : IPreparedExtents
     {
         private readonly ConcurrentDictionary<Guid, IExtent> extentById;
 
-        public PreparedExtents(IDomainDatabaseServices domainDatabaseServices)
+        public PreparedExtents(IDatabase database)
         {
-            this.DomainDatabaseServices = domainDatabaseServices;
+            this.Database = database;
             this.extentById = new ConcurrentDictionary<Guid, IExtent>();
         }
 
-        public IDomainDatabaseServices DomainDatabaseServices { get; }
+        public IDatabase Database { get; }
 
         public IExtent Get(Guid id)
         {
             if (!this.extentById.TryGetValue(id, out var extent))
             {
-                var transaction = this.DomainDatabaseServices.Database.CreateTransaction();
+                var transaction = this.Database.CreateTransaction();
                 try
                 {
                     var m = transaction.Database.Services().M;
@@ -46,7 +47,7 @@ namespace Allors.Database.Configuration
                 }
                 finally
                 {
-                    if (this.DomainDatabaseServices.Database.IsShared)
+                    if (this.Database.IsShared)
                     {
                         transaction.Dispose();
                     }

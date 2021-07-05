@@ -76,8 +76,7 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
                 // Initialization
                 if (changeSet.Created.Any())
                 {
-                    var newObjects = changeSet.Created;
-                    foreach (Object newObject in newObjects)
+                    foreach (Object newObject in changeSet.Created)
                     {
                         newObject.OnInit();
                     }
@@ -96,40 +95,35 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
                 foreach (var kvp in changeSet.AssociationsByRoleType)
                 {
                     var roleType = kvp.Key;
-                    var associations = kvp.Value;
-
-                    foreach (var association in associations)
+                    foreach (var association in kvp.Value)
                     {
                         var strategy = association.Strategy;
                         var @class = strategy.Class;
 
-                        if (this.Engine.PatternsByRoleTypeByClass.TryGetValue(@class, out var patternsByRoleType))
+                        if (this.Engine.PatternsByRoleTypeByClass.TryGetValue(@class, out var patternsByRoleType) && patternsByRoleType.TryGetValue(roleType, out var patterns))
                         {
-                            if (patternsByRoleType.TryGetValue(roleType, out var patterns))
+                            foreach (var pattern in patterns)
                             {
-                                foreach (var pattern in patterns)
+                                var rule = this.Engine.RuleByPattern[pattern];
+                                if (!matchesByRule.TryGetValue(rule, out var matches))
                                 {
-                                    var rule = this.Engine.RuleByPattern[pattern];
-                                    if (!matchesByRule.TryGetValue(rule, out var matches))
-                                    {
-                                        matches = new HashSet<IObject>();
-                                        matchesByRule.Add(rule, matches);
-                                    }
-
-                                    IEnumerable<IObject> source = new IObject[] { association };
-
-                                    if (pattern.Tree != null)
-                                    {
-                                        source = source.SelectMany(v => pattern.Tree.SelectMany(w => w.Resolve(v)));
-                                    }
-
-                                    if (pattern.OfType != null)
-                                    {
-                                        source = source.Where(v => pattern.OfType.IsAssignableFrom(v.Strategy.Class));
-                                    }
-
-                                    matches.UnionWith(source);
+                                    matches = new HashSet<IObject>();
+                                    matchesByRule.Add(rule, matches);
                                 }
+
+                                IEnumerable<IObject> source = new IObject[] { association };
+
+                                if (pattern.Tree != null)
+                                {
+                                    source = source.SelectMany(v => pattern.Tree.SelectMany(w => w.Resolve(v)));
+                                }
+
+                                if (pattern.OfType != null)
+                                {
+                                    source = source.Where(v => pattern.OfType.IsAssignableFrom(v.Strategy.Class));
+                                }
+
+                                matches.UnionWith(source);
                             }
                         }
                     }
@@ -138,40 +132,35 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
                 foreach (var kvp in changeSet.RolesByAssociationType)
                 {
                     var associationType = kvp.Key;
-                    var roles = this.Transaction.Instantiate(kvp.Value);
-
-                    foreach (var role in roles)
+                    foreach (var role in this.Transaction.Instantiate(kvp.Value))
                     {
                         var strategy = role.Strategy;
                         var @class = strategy.Class;
 
-                        if (this.Engine.PatternsByAssociationTypeByClass.TryGetValue(@class, out var patternsByAssociationType))
+                        if (this.Engine.PatternsByAssociationTypeByClass.TryGetValue(@class, out var patternsByAssociationType) && patternsByAssociationType.TryGetValue(associationType, out var patterns))
                         {
-                            if (patternsByAssociationType.TryGetValue(associationType, out var patterns))
+                            foreach (var pattern in patterns)
                             {
-                                foreach (var pattern in patterns)
+                                var rule = this.Engine.RuleByPattern[pattern];
+                                if (!matchesByRule.TryGetValue(rule, out var matches))
                                 {
-                                    var rule = this.Engine.RuleByPattern[pattern];
-                                    if (!matchesByRule.TryGetValue(rule, out var matches))
-                                    {
-                                        matches = new HashSet<IObject>();
-                                        matchesByRule.Add(rule, matches);
-                                    }
-
-                                    IEnumerable<IObject> source = new IObject[] { role };
-
-                                    if (pattern.Tree != null)
-                                    {
-                                        source = source.SelectMany(v => pattern.Tree.SelectMany(w => w.Resolve(v)));
-                                    }
-
-                                    if (pattern.OfType != null)
-                                    {
-                                        source = source.Where(v => pattern.OfType.IsAssignableFrom(v.Strategy.Class));
-                                    }
-
-                                    matches.UnionWith(source);
+                                    matches = new HashSet<IObject>();
+                                    matchesByRule.Add(rule, matches);
                                 }
+
+                                IEnumerable<IObject> source = new IObject[] { role };
+
+                                if (pattern.Tree != null)
+                                {
+                                    source = source.SelectMany(v => pattern.Tree.SelectMany(w => w.Resolve(v)));
+                                }
+
+                                if (pattern.OfType != null)
+                                {
+                                    source = source.Where(v => pattern.OfType.IsAssignableFrom(v.Strategy.Class));
+                                }
+
+                                matches.UnionWith(source);
                             }
                         }
                     }
@@ -203,8 +192,7 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
                             @object.OnPostDerive(x => x.WithDerivation(this));
                         }
 
-                        var changed = this.PostDeriveAccumulatedChangeSet.Associations;
-                        foreach (Object @object in changed)
+                        foreach (Object @object in this.PostDeriveAccumulatedChangeSet.Associations)
                         {
                             if (!created.Contains(@object))
                             {

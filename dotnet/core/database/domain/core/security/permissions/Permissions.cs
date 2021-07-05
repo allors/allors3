@@ -9,13 +9,14 @@ namespace Allors.Database.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Allors;
+    using Database.Services;
     using Meta;
 
     public partial class Permissions
     {
         public Permission Get(Class @class, IRoleType roleType, Operations operation)
         {
-            var permissionCacheEntry = this.Transaction.Database.Services().PermissionsCache.Get(@class.Id);
+            var permissionCacheEntry = this.Transaction.Database.Services().Get<IPermissionsCache>().Get(@class.Id);
             if (permissionCacheEntry != null)
             {
                 long id = 0;
@@ -38,7 +39,7 @@ namespace Allors.Database.Domain
 
         public Permission Get(Class @class, IMethodType methodType)
         {
-            var permissionCacheEntry = this.Transaction.Database.Services().PermissionsCache.Get(@class.Id);
+            var permissionCacheEntry = this.Transaction.Database.Services().Get<IPermissionsCache>().Get(@class.Id);
             if (permissionCacheEntry != null)
             {
                 var id = permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId[methodType.Id];
@@ -51,9 +52,9 @@ namespace Allors.Database.Domain
         public void Sync()
         {
             var permissions = new Permissions(this.Transaction).Extent();
-            this.Transaction.Prefetch(this.DatabaseServices().PrefetchPolicyCache.PermissionsWithClass, permissions);
+            this.Transaction.Prefetch(this.DatabaseServices().Get<IPrefetchPolicyCache>().PermissionsWithClass, permissions);
 
-            var permissionsCache = this.Transaction.Database.Services().PermissionsCache;
+            var permissionsCache = this.Transaction.Database.Services().Get<IPermissionsCache>();
 
             var permissionCacheEntryByClassId = permissions
                 .GroupBy(v => v.ClassPointer)

@@ -57,12 +57,9 @@ namespace Allors.Database.Domain.Derivations
             }
 
             @this.RoleTypesByAssociation.TryGetValue(derivable, out var changedRoleTypes);
-            if (changedRoleTypes != null)
+            if (changedRoleTypes != null && changedRoleTypes.Any(roleType => check(roleType)))
             {
-                if (changedRoleTypes.Any(roleType => check(roleType)))
-                {
-                    return true;
-                }
+                return true;
             }
 
             return false;

@@ -20,8 +20,7 @@ namespace Allors.Database.Domain
                                          + @"[a-zA-Z]{2,}))$";
 
             var regexStrict = new Regex(PatternStrict);
-            var isStrictMatch = regexStrict.IsMatch(emailAddress);
-            return isStrictMatch;
+            return regexStrict.IsMatch(emailAddress);
         }
 
         public override string ToString() => this.ElectronicAddressString;

@@ -40,9 +40,9 @@ namespace Allors.Database.Domain.Tests
 
         public ITransaction Session { get; private set; }
 
-        public ITime Time => this.Session.Database.Services().Time;
+        public ITime Time => this.Session.Database.Services().Get<ITime>();
 
-        public IDerivationFactory DerivationFactory => this.Session.Database.Services().DerivationFactory;
+        public IDerivationFactory DerivationFactory => this.Session.Database.Services().Get<IDerivationFactory>();
 
         public TimeSpan? TimeShift
         {

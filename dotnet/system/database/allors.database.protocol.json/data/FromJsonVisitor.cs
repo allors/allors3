@@ -322,8 +322,7 @@ namespace Allors.Database.Protocol.Json
                             }
                             else if (visited.v != null)
                             {
-                                var value = this.unitConvert.FromJson(((IRoleType)propertyType).ObjectType.Tag, visited.v);
-                                equals.Value = value;
+                                equals.Value = this.unitConvert.FromJson(((IRoleType)propertyType).ObjectType.Tag, visited.v);
                             }
 
                             break;

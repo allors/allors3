@@ -9,9 +9,7 @@ namespace Allors.Database.Domain
     {
         public static void Daily(ITransaction transaction)
         {
-            var parties = new Parties(transaction).Extent();
-
-            foreach (Party party in parties)
+            foreach (Party party in new Parties(transaction).Extent())
             {
                 party.DeriveRelationships();
             }

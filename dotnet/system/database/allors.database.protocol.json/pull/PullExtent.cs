@@ -10,6 +10,7 @@ namespace Allors.Database.Protocol.Json
     using System.Linq;
     using Data;
     using Security;
+    using Services;
     using Extent = Extent;
 
     public class PullExtent
