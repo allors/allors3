@@ -11,25 +11,25 @@ partial class Build
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
             .SetProcessWorkingDirectory(Paths.Typescript)));
 
-    private Target TypescriptWorkspaceMetaLazy => _ => _
+    private Target TypescriptWorkspaceMetaJsonSystem => _ => _
         .After(TypescriptInstall)
         .DependsOn(DotnetCoreGenerate)
         .DependsOn(EnsureDirectories)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
             .SetProcessWorkingDirectory(Paths.Typescript)
-            .SetCommand("test:workspace-meta-lazy")));
+            .SetCommand("test:workspace-meta-json-system")));
 
-    private Target TypescriptWorkspaceAdaptersJson => _ => _
+    private Target TypescriptWorkspaceAdaptersSystem => _ => _
         .After(TypescriptInstall)
         .DependsOn(DotnetCoreGenerate)
         .DependsOn(EnsureDirectories)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
             .SetProcessWorkingDirectory(Paths.Typescript)
-            .SetCommand("test:workspace-adapters-json")));
+            .SetCommand("test:workspace-adapters-system")));
 
-    private Target TypescriptWorkspaceDomainCore => _ => _
+    private Target TypescriptWorkspaceAdaptersJsonSystem => _ => _
         .After(DotnetCoreInstall)
         .After(TypescriptInstall)
         .DependsOn(EnsureDirectories)
@@ -45,15 +45,15 @@ partial class Build
             NpmRun(s => s
                 .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
                 .SetProcessWorkingDirectory(Paths.Typescript)
-                .SetCommand("test:workspace-domain-core"));
+                .SetCommand("test:workspace-adapters-json-system"));
         });
 
 
     private Target TypescriptWorkspaceTest => _ => _
          .After(TypescriptInstall)
-         .DependsOn(TypescriptWorkspaceMetaLazy)
-         .DependsOn(TypescriptWorkspaceAdaptersJson)
-         .DependsOn(TypescriptWorkspaceDomainCore);
+         .DependsOn(TypescriptWorkspaceMetaJsonSystem)
+         .DependsOn(TypescriptWorkspaceAdaptersSystem)
+         .DependsOn(TypescriptWorkspaceAdaptersJsonSystem);
 
     private Target TypescriptTest => _ => _
         .DependsOn(TypescriptWorkspaceTest);
