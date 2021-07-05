@@ -11,6 +11,6 @@ namespace Allors
 
     public static class TransactionExtensions
     {
-        public static Faker Faker(this ITransaction @this) => ((dynamic)@this.Database.Services()).Faker;
+        public static Faker Faker(this ITransaction @this) => @this.Database.Services().Get<Faker>();
     }
 }

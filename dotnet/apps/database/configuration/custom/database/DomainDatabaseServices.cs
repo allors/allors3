@@ -7,6 +7,7 @@
 namespace Allors.Database.Configuration
 {
     using System;
+    using Bogus;
     using Data;
     using Domain;
     using Domain.Derivations.Rules.Default;
@@ -54,6 +55,8 @@ namespace Allors.Database.Configuration
 
         private IDerivationFactory derivationFactory;
 
+        private Faker faker;
+
         protected DomainDatabaseServices(Engine engine, IHttpContextAccessor httpContextAccessor = null)
         {
             this.Engine = engine;
@@ -91,6 +94,8 @@ namespace Allors.Database.Configuration
                 nameof(ITemplateObjectCache) => (T)(this.templateObjectCache ??= new TemplateObjectCache()),
 
                 nameof(IDerivationFactory) => (T)(this.derivationFactory ??= this.CreateDerivationFactory()),
+
+                nameof(Faker) => (T)(object)(this.faker ??= new Faker()),
 
                 _ => throw new NotSupportedException($"Service {typeof(T)} not supported")
             };

@@ -36,8 +36,7 @@ namespace Allors.Database.Configuration
                 new AccumulatedScoreRule(m),
             };
 
-            var engine = new Engine(rules);
-            this.DerivationFactory = new DefaultDerivationFactory(engine);
+            this.Engine = new Engine(rules);
         }
     }
 }

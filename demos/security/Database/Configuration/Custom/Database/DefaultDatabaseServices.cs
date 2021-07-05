@@ -9,18 +9,10 @@ using Allors.Database.Domain.Derivations.Rules.Default;
 namespace Allors.Database.Configuration
 {
     using Microsoft.AspNetCore.Http;
-    
+
 
     public class DefaultDatabaseServices : DatabaseServices
     {
-        public DefaultDatabaseServices(Engine engine, IHttpContextAccessor httpContextAccessor = null) : base(httpContextAccessor) => this.Engine = engine;
-
-        public Engine Engine { get; }
-
-        public override void OnInit(IDatabase database)
-        {
-            base.OnInit(database);
-            this.DerivationFactory = new DefaultDerivationFactory(this.Engine);
-        }
+        public DefaultDatabaseServices(Engine engine, IHttpContextAccessor httpContextAccessor = null) : base(engine, httpContextAccessor) { }
     }
 }
