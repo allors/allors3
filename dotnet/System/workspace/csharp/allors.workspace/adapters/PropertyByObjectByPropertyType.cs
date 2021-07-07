@@ -8,17 +8,14 @@ namespace Allors.Workspace.Adapters
 {
     using System.Collections.Generic;
     using Meta;
-    using Numbers;
 
     public class PropertyByObjectByPropertyType
     {
-        private readonly INumbers numbers;
         private readonly IDictionary<IPropertyType, IDictionary<long, object>> propertyByObjectByPropertyType;
         private IDictionary<IPropertyType, IDictionary<long, object>> changedPropertyByObjectByPropertyType;
 
-        public PropertyByObjectByPropertyType(INumbers numbers)
+        public PropertyByObjectByPropertyType()
         {
-            this.numbers = numbers;
             this.propertyByObjectByPropertyType = new Dictionary<IPropertyType, IDictionary<long, object>>();
             this.changedPropertyByObjectByPropertyType = new Dictionary<IPropertyType, IDictionary<long, object>>();
         }
@@ -47,7 +44,7 @@ namespace Allors.Workspace.Adapters
 
             this.changedPropertyByObjectByPropertyType.TryGetValue(propertyType, out var changedValueByPropertyType);
 
-            if (propertyType.IsOne ? Equals(newValue, originalValue) : this.numbers.AreEqual(newValue, originalValue))
+            if (propertyType.IsOne ? Equals(newValue, originalValue) : newValue == originalValue)
             {
                 changedValueByPropertyType?.Remove(@object);
             }

@@ -11,6 +11,7 @@ namespace Allors.Workspace.Adapters
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
+    using Ranges;
 
     public sealed class ChangeSet : IChangeSet
     {
@@ -87,18 +88,16 @@ namespace Allors.Workspace.Adapters
             }
             else
             {
-                var numbers = this.Session.Workspace.Numbers;
+                var numbers = this.Session.Workspace.Ranges;
                 var hasChange = false;
 
-                var addedRoles = numbers.Except(current, previous);
-                foreach (var v in numbers.Enumerate(addedRoles))
+                foreach (var v in numbers.Except((Range)current, (Range)previous))
                 {
                     this.AddRole(relationType, this.Session.GetStrategy(v));
                     hasChange = true;
                 }
 
-                var removedRoles = numbers.Except(previous, current);
-                foreach (var v in numbers.Enumerate(removedRoles))
+                foreach (var v in numbers.Except((Range)previous, (Range)current))
                 {
                     this.AddRole(relationType, this.Session.GetStrategy(v));
                     hasChange = true;

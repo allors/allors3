@@ -7,18 +7,18 @@ namespace Allors.Workspace.Adapters
 {
     using System.Collections.Generic;
     using Meta;
-    using Numbers;
+    using Ranges;
 
     public abstract class Workspace : IWorkspace
     {
         private readonly Dictionary<long, WorkspaceRecord> recordById;
 
-        protected Workspace(DatabaseConnection database, IWorkspaceServices services, INumbers numbers, WorkspaceIdGenerator workspaceIdGenerator)
+        protected Workspace(DatabaseConnection database, IWorkspaceServices services, IRanges ranges, WorkspaceIdGenerator workspaceIdGenerator)
         {
             this.DatabaseConnection = database;
             this.Services = services;
             this.WorkspaceIdGenerator = workspaceIdGenerator;
-            this.Numbers = numbers;
+            this.Ranges = ranges;
 
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, long[]>();
@@ -33,7 +33,7 @@ namespace Allors.Workspace.Adapters
 
         public WorkspaceIdGenerator WorkspaceIdGenerator { get; }
 
-        public INumbers Numbers { get; }
+        public IRanges Ranges { get; }
 
         public Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
 
@@ -54,7 +54,7 @@ namespace Allors.Workspace.Adapters
                 this.WorkspaceClassByWorkspaceId.Add(id, @class);
 
                 this.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids);
-                this.Numbers.Add(ids, id);
+                this.Ranges.Add(ids, id);
                 this.WorkspaceIdsByWorkspaceClass[@class] = ids;
             }
 

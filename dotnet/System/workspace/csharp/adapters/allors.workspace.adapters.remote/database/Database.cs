@@ -17,7 +17,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Allors.Protocol.Json.Api.Sync;
     using Collections;
     using Meta;
-    using Numbers;
+    using Ranges;
 
     public abstract class DatabaseConnection : Adapters.DatabaseConnection
     {
@@ -30,9 +30,9 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly WorkspaceIdGenerator workspaceIdGenerator;
         private readonly Func<IWorkspaceServices> servicesBuilder;
 
-        protected DatabaseConnection(Adapters.Configuration configuration, Func<IWorkspaceServices> servicesBuilder, WorkspaceIdGenerator workspaceIdGenerator, INumbers numbers) : base(configuration)
+        protected DatabaseConnection(Adapters.Configuration configuration, Func<IWorkspaceServices> servicesBuilder, WorkspaceIdGenerator workspaceIdGenerator, IRanges ranges) : base(configuration)
         {
-            this.Numbers = numbers;
+            this.Ranges = ranges;
             this.workspaceIdGenerator = workspaceIdGenerator;
             this.servicesBuilder = servicesBuilder;
 
@@ -48,7 +48,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public abstract IUnitConvert UnitConvert { get; }
 
-        internal INumbers Numbers { get; }
+        internal IRanges Ranges { get; }
 
         public string UserId { get; protected set; }
 
@@ -191,12 +191,12 @@ namespace Allors.Workspace.Adapters.Remote
                             return true;
                         }
 
-                        if (!this.Numbers.AreEqual(@record.AccessControlIds, v.a))
+                        if (!this.Ranges.AreEqual(@record.AccessControlIds, v.a))
                         {
                             return true;
                         }
 
-                        if (!this.Numbers.AreEqual(@record.DeniedPermissions, v.d))
+                        if (!this.Ranges.AreEqual(@record.DeniedPermissions, v.d))
                         {
                             return true;
                         }
@@ -241,7 +241,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
         }
 
-        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.Numbers, this.workspaceIdGenerator);
+        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.Ranges, this.workspaceIdGenerator);
 
         public override Adapters.DatabaseRecord GetRecord(long id)
         {

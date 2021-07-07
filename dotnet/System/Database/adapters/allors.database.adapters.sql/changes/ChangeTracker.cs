@@ -8,9 +8,11 @@
 
 namespace Allors.Database.Adapters.Sql
 {
+    using Ranges;
+
     internal struct ChangeTracker
     {
-        internal object Add { get; set; }
-        internal object Remove { get; set; }
+        internal Range Add { get; set; }
+        internal Range Remove { get; set; }
     }
 }

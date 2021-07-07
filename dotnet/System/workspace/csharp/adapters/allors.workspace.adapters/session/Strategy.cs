@@ -194,7 +194,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetComposites<T>(IRoleType roleType, in IEnumerable<T> role) where T : IObject
         {
-            var roleNumbers = this.Session.Workspace.Numbers.From(role?.Select(v => v.Id));
+            var roleNumbers = this.Session.Workspace.Ranges.From(role?.Select(v => v.Id));
 
             switch (roleType.Origin)
             {
@@ -224,7 +224,7 @@ namespace Allors.Workspace.Adapters
             switch (roleType.Origin)
             {
                 case Origin.Session:
-                    this.Session.SessionOriginState.AddRole(this.Id, roleType, value.Id);
+                    this.Session.SessionOriginState.AddCompositesRole(this.Id, roleType, value.Id);
                     break;
 
                 case Origin.Workspace:
@@ -249,7 +249,7 @@ namespace Allors.Workspace.Adapters
             switch (roleType.Origin)
             {
                 case Origin.Session:
-                    this.Session.SessionOriginState.AddRole(this.Id, roleType, value.Id);
+                    this.Session.SessionOriginState.RemoveCompositesRole(this.Id, roleType, value.Id);
                     break;
 
                 case Origin.Workspace:

@@ -700,7 +700,7 @@ namespace Allors.Database.Adapters
                     {
                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                         {
-                            association.Strategy.RemoveCompositeRoles(relationType.RoleType);
+                            association.Strategy.RemoveCompositesRoles(relationType.RoleType);
                             this.Commit(transactionFlag);
                         }
                     }
@@ -733,7 +733,7 @@ namespace Allors.Database.Adapters
                     {
                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                         {
-                            association.Strategy.SetCompositeRoles(relationType.RoleType, (IObject[])null);
+                            association.Strategy.SetCompositesRole(relationType.RoleType, (IObject[])null);
                             this.Commit(transactionFlag);
                         }
                     }
@@ -766,7 +766,7 @@ namespace Allors.Database.Adapters
                     {
                         for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                         {
-                            association.Strategy.SetCompositeRoles(relationType.RoleType, emptyRoles);
+                            association.Strategy.SetCompositesRole(relationType.RoleType, emptyRoles);
                             this.Commit(transactionFlag);
                         }
                     }
@@ -1227,7 +1227,7 @@ namespace Allors.Database.Adapters
                     var association = associations[i];
                     for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                     {
-                        association.Strategy.SetCompositeRoles(relationType.RoleType, roles);
+                        association.Strategy.SetCompositesRole(relationType.RoleType, roles);
                         this.Commit(transactionFlag);
                     }
 
@@ -1237,7 +1237,7 @@ namespace Allors.Database.Adapters
                 // Remove All
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    associations[this.GetAssociationCount() - 1].Strategy.RemoveCompositeRoles(relationType.RoleType);
+                    associations[this.GetAssociationCount() - 1].Strategy.RemoveCompositesRoles(relationType.RoleType);
                     this.Commit(transactionFlag);
                     this.AssertRelationNotExists(relationType, associations, role, transactionFlag, testRepeat, assertRepeat);
                 }
@@ -1248,7 +1248,7 @@ namespace Allors.Database.Adapters
                     var association = associations[i];
                     for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                     {
-                        association.Strategy.SetCompositeRoles(relationType.RoleType, roles);
+                        association.Strategy.SetCompositesRole(relationType.RoleType, roles);
                         this.Commit(transactionFlag);
                     }
 
@@ -1258,7 +1258,7 @@ namespace Allors.Database.Adapters
                 // Set Null
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    associations[this.GetAssociationCount() - 1].Strategy.SetCompositeRoles(relationType.RoleType, (IObject[])null);
+                    associations[this.GetAssociationCount() - 1].Strategy.SetCompositesRole(relationType.RoleType, (IObject[])null);
                     this.Commit(transactionFlag);
                     this.AssertRelationNotExists(relationType, associations, role, transactionFlag, testRepeat, assertRepeat);
                 }
@@ -1269,7 +1269,7 @@ namespace Allors.Database.Adapters
                     var association = associations[i];
                     for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                     {
-                        association.Strategy.SetCompositeRoles(relationType.RoleType, roles);
+                        association.Strategy.SetCompositesRole(relationType.RoleType, roles);
                         this.Commit(transactionFlag);
                     }
 
@@ -1279,7 +1279,7 @@ namespace Allors.Database.Adapters
                 // Set Empty
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    associations[this.GetAssociationCount() - 1].Strategy.SetCompositeRoles(relationType.RoleType, emptyRoles);
+                    associations[this.GetAssociationCount() - 1].Strategy.SetCompositesRole(relationType.RoleType, emptyRoles);
                     this.Commit(transactionFlag);
                     this.AssertRelationNotExists(relationType, associations, role, transactionFlag, testRepeat, assertRepeat);
                 }
@@ -1502,7 +1502,7 @@ namespace Allors.Database.Adapters
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
                     var association = associations[associations.Count() - 1];
-                    association.Strategy.RemoveCompositeRoles(relationType.RoleType);
+                    association.Strategy.RemoveCompositesRoles(relationType.RoleType);
                     this.Commit(transactionFlag);
 
                     this.AssertRelationNotExists(relationType, associations, roles, transactionFlag, testRepeat, assertRepeat);
@@ -1529,7 +1529,7 @@ namespace Allors.Database.Adapters
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
                     var association = associations[associations.Count() - 1];
-                    association.Strategy.SetCompositeRoles(relationType.RoleType, (IObject[])null);
+                    association.Strategy.SetCompositesRole(relationType.RoleType, (IObject[])null);
                     this.Commit(transactionFlag);
 
                     this.AssertRelationNotExists(relationType, associations, roles, transactionFlag, testRepeat, assertRepeat);
@@ -1556,7 +1556,7 @@ namespace Allors.Database.Adapters
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
                     var association = associations[associations.Count() - 1];
-                    association.Strategy.SetCompositeRoles(relationType.RoleType, (IObject[])null);
+                    association.Strategy.SetCompositesRole(relationType.RoleType, (IObject[])null);
                     this.Commit(transactionFlag);
 
                     this.AssertRelationNotExists(relationType, associations, roles, transactionFlag, testRepeat, assertRepeat);
@@ -1866,42 +1866,42 @@ namespace Allors.Database.Adapters
 
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.RemoveCompositeRoles(relationType.RoleType);
+                    association.Strategy.RemoveCompositesRoles(relationType.RoleType);
                     this.Commit(transactionFlag);
                     this.AssertRelationNotExists(relationType, association, role, transactionFlag, testRepeat, assertRepeat);
                 }
 
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.SetCompositeRoles(relationType.RoleType, roles);
+                    association.Strategy.SetCompositesRole(relationType.RoleType, roles);
                     this.Commit(transactionFlag);
                     this.AssertRelation(relationType, association, role, transactionFlag, testRepeat, assertRepeat);
                 }
 
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.RemoveCompositeRoles(relationType.RoleType);
+                    association.Strategy.RemoveCompositesRoles(relationType.RoleType);
                     this.Commit(transactionFlag);
                     this.AssertRelationNotExists(relationType, association, role, transactionFlag, testRepeat, assertRepeat);
                 }
 
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.SetCompositeRoles(relationType.RoleType, roles);
+                    association.Strategy.SetCompositesRole(relationType.RoleType, roles);
                     this.Commit(transactionFlag);
                     this.AssertRelation(relationType, association, role, transactionFlag, testRepeat, assertRepeat);
                 }
 
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.SetCompositeRoles(relationType.RoleType, (IObject[])null);
+                    association.Strategy.SetCompositesRole(relationType.RoleType, (IObject[])null);
                     this.Commit(transactionFlag);
                     this.AssertRelationNotExists(relationType, association, role, transactionFlag, testRepeat, assertRepeat);
                 }
 
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.SetCompositeRoles(relationType.RoleType, emptyRoles);
+                    association.Strategy.SetCompositesRole(relationType.RoleType, emptyRoles);
                     this.Commit(transactionFlag);
                     this.AssertRelationNotExists(relationType, association, role, transactionFlag, testRepeat, assertRepeat);
                 }
@@ -1980,7 +1980,7 @@ namespace Allors.Database.Adapters
                 // Set
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.SetCompositeRoles(relationType.RoleType, roles);
+                    association.Strategy.SetCompositesRole(relationType.RoleType, roles);
                     this.Commit(transactionFlag);
 
                     this.AssertRelationExists(relationType, association, roles, transactionFlag, testRepeat, assertRepeat);
@@ -2016,7 +2016,7 @@ namespace Allors.Database.Adapters
                 // Remove
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.RemoveCompositeRoles(relationType.RoleType);
+                    association.Strategy.RemoveCompositesRoles(relationType.RoleType);
                     this.Commit(transactionFlag);
 
                     this.AssertRelationNotExists(relationType, association, roles, transactionFlag, testRepeat, assertRepeat);
@@ -2025,7 +2025,7 @@ namespace Allors.Database.Adapters
                 // Set
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.SetCompositeRoles(relationType.RoleType, roles);
+                    association.Strategy.SetCompositesRole(relationType.RoleType, roles);
                     this.Commit(transactionFlag);
 
                     this.AssertRelationExists(relationType, association, roles, transactionFlag, testRepeat, assertRepeat);
@@ -2034,7 +2034,7 @@ namespace Allors.Database.Adapters
                 // Remove All
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.RemoveCompositeRoles(relationType.RoleType);
+                    association.Strategy.RemoveCompositesRoles(relationType.RoleType);
                     this.Commit(transactionFlag);
 
                     this.AssertRelationNotExists(relationType, association, roles, transactionFlag, testRepeat, assertRepeat);
@@ -2043,7 +2043,7 @@ namespace Allors.Database.Adapters
                 // Add
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.SetCompositeRoles(relationType.RoleType, roles);
+                    association.Strategy.SetCompositesRole(relationType.RoleType, roles);
                     this.Commit(transactionFlag);
 
                     this.AssertRelationExists(relationType, association, roles, transactionFlag, testRepeat, assertRepeat);
@@ -2052,7 +2052,7 @@ namespace Allors.Database.Adapters
                 // Remove All
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.RemoveCompositeRoles(relationType.RoleType);
+                    association.Strategy.RemoveCompositesRoles(relationType.RoleType);
                     this.Commit(transactionFlag);
                     this.AssertRelationNotExists(relationType, association, roles, transactionFlag, assertRepeat, testRepeat);
                 }
@@ -2060,7 +2060,7 @@ namespace Allors.Database.Adapters
                 // Set
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.SetCompositeRoles(relationType.RoleType, roles);
+                    association.Strategy.SetCompositesRole(relationType.RoleType, roles);
                     this.Commit(transactionFlag);
 
                     this.AssertRelationExists(relationType, association, roles, transactionFlag, testRepeat, assertRepeat);
@@ -2069,7 +2069,7 @@ namespace Allors.Database.Adapters
                 // Set Null
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.SetCompositeRoles(relationType.RoleType, (IObject[])null);
+                    association.Strategy.SetCompositesRole(relationType.RoleType, (IObject[])null);
                     this.Commit(transactionFlag);
                     this.AssertRelationNotExists(relationType, association, roles, transactionFlag, assertRepeat, testRepeat);
                 }
@@ -2077,7 +2077,7 @@ namespace Allors.Database.Adapters
                 // Set
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.SetCompositeRoles(relationType.RoleType, roles);
+                    association.Strategy.SetCompositesRole(relationType.RoleType, roles);
                     this.Commit(transactionFlag);
 
                     this.AssertRelationExists(relationType, association, roles, transactionFlag, testRepeat, assertRepeat);
@@ -2086,7 +2086,7 @@ namespace Allors.Database.Adapters
                 // Set Empty Array
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.SetCompositeRoles(relationType.RoleType, emptyRoles);
+                    association.Strategy.SetCompositesRole(relationType.RoleType, emptyRoles);
                     this.Commit(transactionFlag);
                     this.AssertRelationNotExists(relationType, association, roles, transactionFlag, assertRepeat, testRepeat);
                 }
@@ -2271,7 +2271,7 @@ namespace Allors.Database.Adapters
                 // RemoveAll
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.RemoveCompositeRoles(relationType.RoleType);
+                    association.Strategy.RemoveCompositesRoles(relationType.RoleType);
                     this.Commit(transactionFlag);
                     this.AssertRelationNotExists(relationType, association, roles, transactionFlag, assertRepeat, testRepeat);
                 }
@@ -2292,7 +2292,7 @@ namespace Allors.Database.Adapters
                 // Set Null
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.SetCompositeRoles(relationType.RoleType, (IObject[])null);
+                    association.Strategy.SetCompositesRole(relationType.RoleType, (IObject[])null);
                     this.Commit(transactionFlag);
 
                     this.AssertRelationNotExists(relationType, association, roles, transactionFlag, assertRepeat, testRepeat);
@@ -2314,7 +2314,7 @@ namespace Allors.Database.Adapters
                 // Set Empty Array
                 for (int repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                 {
-                    association.Strategy.SetCompositeRoles(relationType.RoleType, emptyRoles);
+                    association.Strategy.SetCompositesRole(relationType.RoleType, emptyRoles);
                     this.Commit(transactionFlag);
                     this.AssertRelationNotExists(relationType, association, roles, transactionFlag, assertRepeat, testRepeat);
                 }
@@ -2345,7 +2345,7 @@ namespace Allors.Database.Adapters
                 {
                     try
                     {
-                        association.Strategy.SetCompositeRoles(relationType.RoleType, rolesOtherDatabase);
+                        association.Strategy.SetCompositesRole(relationType.RoleType, rolesOtherDatabase);
                         Assert.True(false); // Fail
                     }
                     catch (ArgumentException exception)

@@ -5,12 +5,12 @@
 
 namespace Allors.Workspace.Adapters
 {
-    using System.Collections.Generic;
+    using Ranges;
 
     public class AccessControl
     {
         public long Version { get; set; }
 
-        public ISet<long> PermissionIds { get; set; }
+        public Range PermissionIds { get; set; }
     }
 }

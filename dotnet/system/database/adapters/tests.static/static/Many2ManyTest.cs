@@ -5363,7 +5363,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C1.C1C2many2manies, c1bs);
+                        c1A.Strategy.SetCompositesRole(m.C1.C1C2many2manies, c1bs);
                     }
                     catch
                     {
@@ -5403,7 +5403,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C1.C1I2many2manies, c1bs);
+                        c1A.Strategy.SetCompositesRole(m.C1.C1I2many2manies, c1bs);
                     }
                     catch
                     {
@@ -5443,7 +5443,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C1.C1S2many2manies, c1bs);
+                        c1A.Strategy.SetCompositesRole(m.C1.C1S2many2manies, c1bs);
                     }
                     catch
                     {
@@ -5483,7 +5483,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C2.C1many2manies, c1bs);
+                        c1A.Strategy.SetCompositesRole(m.C2.C1many2manies, c1bs);
                     }
                     catch
                     {
@@ -5522,7 +5522,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C2.C1many2manies, c2Bs);
+                        c1A.Strategy.SetCompositesRole(m.C2.C1many2manies, c2Bs);
                     }
                     catch
                     {
@@ -5562,7 +5562,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C1.C1AllorsString, c1bs);
+                        c1A.Strategy.SetCompositesRole(m.C1.C1AllorsString, c1bs);
                     }
                     catch
                     {
@@ -5601,7 +5601,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C1.C1AllorsDecimal, c2Bs);
+                        c1A.Strategy.SetCompositesRole(m.C1.C1AllorsDecimal, c2Bs);
                     }
                     catch
                     {
@@ -5641,7 +5641,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C1.C1C1many2one, c1bs);
+                        c1A.Strategy.SetCompositesRole(m.C1.C1C1many2one, c1bs);
                     }
                     catch
                     {
@@ -5680,7 +5680,7 @@ namespace Allors.Database.Adapters
                     try
                     {
                         mark();
-                        c1A.Strategy.SetCompositeRoles(m.C1.C1C2many2one, c2Bs);
+                        c1A.Strategy.SetCompositesRole(m.C1.C1C2many2one, c2Bs);
                     }
                     catch
                     {

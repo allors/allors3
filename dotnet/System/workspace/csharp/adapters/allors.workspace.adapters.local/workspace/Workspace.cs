@@ -5,11 +5,11 @@
 
 namespace Allors.Workspace.Adapters.Local
 {
-    using Numbers;
+    using Ranges;
 
     public class Workspace : Adapters.Workspace
     {
-        public Workspace(DatabaseConnection database, IWorkspaceServices services, INumbers numbers) : base(database, services, numbers, new WorkspaceIdGenerator()) => this.Services.OnInit(this);
+        public Workspace(DatabaseConnection database, IWorkspaceServices services, IRanges ranges) : base(database, services, ranges, new WorkspaceIdGenerator()) => this.Services.OnInit(this);
 
         public new DatabaseConnection DatabaseConnection => (DatabaseConnection)base.DatabaseConnection;
 

@@ -23,12 +23,12 @@ namespace Allors.Workspace.Adapters.Remote.Default
     using Allors.Protocol.Json.SystemTextJson;
     using Collections;
     using Meta;
-    using Numbers;
+    using Ranges;
     using Polly;
 
     public class DatabaseConnection : Remote.DatabaseConnection
     {
-        public DatabaseConnection(Configuration configuration, Func<IWorkspaceServices> servicesBuilder, HttpClient httpClient, WorkspaceIdGenerator workspaceIdGenerator, INumbers numbers) : base(configuration, servicesBuilder, workspaceIdGenerator, numbers)
+        public DatabaseConnection(Configuration configuration, Func<IWorkspaceServices> servicesBuilder, HttpClient httpClient, WorkspaceIdGenerator workspaceIdGenerator, IRanges ranges) : base(configuration, servicesBuilder, workspaceIdGenerator, ranges)
         {
             this.HttpClient = httpClient;
             this.HttpClient.DefaultRequestHeaders.Accept.Clear();

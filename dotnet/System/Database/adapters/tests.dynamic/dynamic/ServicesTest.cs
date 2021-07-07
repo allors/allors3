@@ -2437,7 +2437,7 @@ namespace Allors.Database.Adapters
                                                         this.Commit(transactionFlag);
                                                     }
 
-                                                    association.Strategy.SetCompositeRoles(relationType.RoleType, (IObject[])null);
+                                                    association.Strategy.SetCompositesRole(relationType.RoleType, (IObject[])null);
                                                     this.Commit(transactionFlag);
                                                     for (var testRepeatIndex = 0; testRepeatIndex < testRepeat; testRepeatIndex++)
                                                     {
@@ -2467,7 +2467,7 @@ namespace Allors.Database.Adapters
                                                         this.Commit(transactionFlag);
                                                     }
 
-                                                    association.Strategy.SetCompositeRoles(relationType.RoleType, (IObject[])null);
+                                                    association.Strategy.SetCompositesRole(relationType.RoleType, (IObject[])null);
                                                     this.Commit(transactionFlag);
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -2499,7 +2499,7 @@ namespace Allors.Database.Adapters
                                                         this.Commit(transactionFlag);
                                                     }
 
-                                                    association.Strategy.SetCompositeRoles(relationType.RoleType, (IObject[])null);
+                                                    association.Strategy.SetCompositesRole(relationType.RoleType, (IObject[])null);
                                                     this.Commit(transactionFlag);
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -2529,7 +2529,7 @@ namespace Allors.Database.Adapters
                                                         this.Commit(transactionFlag);
                                                     }
 
-                                                    association.Strategy.SetCompositeRoles(relationType.RoleType, (IObject[])null);
+                                                    association.Strategy.SetCompositesRole(relationType.RoleType, (IObject[])null);
                                                     this.Commit(transactionFlag);
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -2561,7 +2561,7 @@ namespace Allors.Database.Adapters
                                                         this.Commit(transactionFlag);
                                                     }
 
-                                                    association.Strategy.SetCompositeRoles(relationType.RoleType, (IObject[])null);
+                                                    association.Strategy.SetCompositesRole(relationType.RoleType, (IObject[])null);
                                                     this.Commit(transactionFlag);
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -2805,7 +2805,7 @@ namespace Allors.Database.Adapters
                                                         this.Commit(transactionFlag);
                                                     }
 
-                                                    association.Strategy.SetCompositeRoles(relationType.RoleType, (IObject[])null);
+                                                    association.Strategy.SetCompositesRole(relationType.RoleType, (IObject[])null);
                                                     this.Commit(transactionFlag);
 
                                                     for (var testRepeatIndex = 0;
@@ -2838,7 +2838,7 @@ namespace Allors.Database.Adapters
                                                         this.Commit(transactionFlag);
                                                     }
 
-                                                    association.Strategy.SetCompositeRoles(relationType.RoleType, (IObject[])null);
+                                                    association.Strategy.SetCompositesRole(relationType.RoleType, (IObject[])null);
                                                     this.Commit(transactionFlag);
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -2870,7 +2870,7 @@ namespace Allors.Database.Adapters
                                                         this.Commit(transactionFlag);
                                                     }
 
-                                                    association.Strategy.SetCompositeRoles(relationType.RoleType, (IObject[])null);
+                                                    association.Strategy.SetCompositesRole(relationType.RoleType, (IObject[])null);
                                                     this.Commit(transactionFlag);
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -2902,7 +2902,7 @@ namespace Allors.Database.Adapters
                                                         this.Commit(transactionFlag);
                                                     }
 
-                                                    association.Strategy.SetCompositeRoles(relationType.RoleType, (IObject[])null);
+                                                    association.Strategy.SetCompositesRole(relationType.RoleType, (IObject[])null);
                                                     this.Commit(transactionFlag);
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;
@@ -2934,7 +2934,7 @@ namespace Allors.Database.Adapters
                                                         this.Commit(transactionFlag);
                                                     }
 
-                                                    association.Strategy.SetCompositeRoles(relationType.RoleType, (IObject[])null);
+                                                    association.Strategy.SetCompositesRole(relationType.RoleType, (IObject[])null);
                                                     this.Commit(transactionFlag);
                                                     for (var testRepeatIndex = 0;
                                                          testRepeatIndex < testRepeat;

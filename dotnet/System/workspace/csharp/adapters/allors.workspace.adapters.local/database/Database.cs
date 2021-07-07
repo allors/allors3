@@ -13,7 +13,7 @@ namespace Allors.Workspace.Adapters.Local
     using Database.Security;
     using Database.Services;
     using Meta;
-    using Numbers;
+    using Ranges;
     using AccessControl = AccessControl;
     using IRoleType = Database.Meta.IRoleType;
 
@@ -24,9 +24,9 @@ namespace Allors.Workspace.Adapters.Local
         private readonly ConcurrentDictionary<long, DatabaseRecord> recordsById;
 
         private readonly Func<IWorkspaceServices> servicesBuilder;
-        private readonly Func<INumbers> numbersBuilder;
+        private readonly Func<IRanges> numbersBuilder;
 
-        public DatabaseConnection(Configuration configuration, IDatabase database, Func<IWorkspaceServices> servicesBuilder, Func<INumbers> numbersBuilder) : base(configuration)
+        public DatabaseConnection(Configuration configuration, IDatabase database, Func<IWorkspaceServices> servicesBuilder, Func<IRanges> numbersBuilder) : base(configuration)
         {
             this.Database = database;
             this.servicesBuilder = servicesBuilder;

@@ -8,7 +8,7 @@ namespace Tests.Workspace.Remote
     using System;
     using System.Net.Http;
     using System.Threading.Tasks;
-    using Allors.Numbers;
+    using Allors.Ranges;
     using Allors.Workspace;
     using Allors.Workspace.Adapters;
     using Allors.Workspace.Domain;
@@ -41,7 +41,7 @@ namespace Tests.Workspace.Remote
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
             var configuration = new Allors.Workspace.Adapters.Remote.Configuration("Default", metaPopulation, objectFactory);
-            this.Database = new DatabaseConnection(configuration, () => new WorkspaceContext(), httpClient, new WorkspaceIdGenerator(), new ArrayNumbers());
+            this.Database = new DatabaseConnection(configuration, () => new WorkspaceContext(), httpClient, new WorkspaceIdGenerator(), new UncachedRanges());
             this.Workspace = this.Database.CreateWorkspace();
 
             await this.Login("administrator");

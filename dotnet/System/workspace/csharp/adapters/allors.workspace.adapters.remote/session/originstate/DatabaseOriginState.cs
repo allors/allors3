@@ -35,7 +35,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 var database = this.RemoteStrategy.Session.Workspace.DatabaseConnection;
 
-                var numbers = database.Numbers;
+                var numbers = database.Ranges;
 
                 var roles = new List<PushRequestRole>();
 

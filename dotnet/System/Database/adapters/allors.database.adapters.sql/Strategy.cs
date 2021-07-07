@@ -175,7 +175,7 @@ namespace Allors.Database.Adapters.Sql
             }
             else if (roleType.IsMany)
             {
-                this.SetCompositeRoles(roleType, (IEnumerable<IObject>)value);
+                this.SetCompositesRole(roleType, (IEnumerable<IObject>)value);
             }
             else
             {
@@ -191,7 +191,7 @@ namespace Allors.Database.Adapters.Sql
             }
             else if (roleType.IsMany)
             {
-                this.RemoveCompositeRoles(roleType);
+                this.RemoveCompositesRoles(roleType);
             }
             else
             {
@@ -303,11 +303,11 @@ namespace Allors.Database.Adapters.Sql
 
             if (roleType.AssociationType.IsOne)
             {
-                this.AddCompositeRoleOne2Many(roleType, role);
+                this.AddCompositesRoleOne2Many(roleType, role);
             }
             else
             {
-                this.AddCompositeRoleMany2Many(roleType, role);
+                this.AddCompositesRoleMany2Many(roleType, role);
             }
         }
 
@@ -331,13 +331,13 @@ namespace Allors.Database.Adapters.Sql
             }
         }
 
-        public virtual void SetCompositeRoles(IRoleType roleType, IEnumerable<IObject> roleObjects)
+        public virtual void SetCompositesRole(IRoleType roleType, IEnumerable<IObject> roleObjects)
         {
             var roleCollection = roleObjects != null ? roleObjects as ICollection<IObject> ?? roleObjects.ToArray() : null;
 
             if (roleCollection == null || roleCollection.Count == 0)
             {
-                this.RemoveCompositeRoles(roleType);
+                this.RemoveCompositesRoles(roleType);
             }
             else
             {
@@ -358,11 +358,11 @@ namespace Allors.Database.Adapters.Sql
                         {
                             if (roleType.AssociationType.IsOne)
                             {
-                                this.AddCompositeRoleOne2Many(roleType, role);
+                                this.AddCompositesRoleOne2Many(roleType, role);
                             }
                             else
                             {
-                                this.AddCompositeRoleMany2Many(roleType, role);
+                                this.AddCompositesRoleMany2Many(roleType, role);
                             }
                         }
 
@@ -388,7 +388,7 @@ namespace Allors.Database.Adapters.Sql
             }
         }
 
-        public virtual void RemoveCompositeRoles(IRoleType roleType)
+        public virtual void RemoveCompositesRoles(IRoleType roleType)
         {
             this.AssertExist();
 
@@ -702,6 +702,8 @@ namespace Allors.Database.Adapters.Sql
              *
              *   A ----- R    ->     A       R  =   A       R 
              */
+
+            // A <---- R
             var associationByRole = this.State.GetAssociationByRole(roleType.AssociationType);
             associationByRole[role.Reference] = null;
 
@@ -745,7 +747,7 @@ namespace Allors.Database.Adapters.Sql
             role.OnChangingCompositesAssociationRemove(roleType.AssociationType, this.ObjectId);
         }
 
-        private void AddCompositeRoleOne2Many(IRoleType roleType, Strategy role)
+        private void AddCompositesRoleOne2Many(IRoleType roleType, Strategy role)
         {
             /*  [if exist]        [then remove]        set
              *
@@ -777,7 +779,7 @@ namespace Allors.Database.Adapters.Sql
             this.RequireFlush(roleType);
         }
 
-        private void AddCompositeRoleMany2Many(IRoleType roleType, Strategy role)
+        private void AddCompositesRoleMany2Many(IRoleType roleType, Strategy role)
         {
             /*  [if exist]        [no remove]         set
              *
@@ -973,7 +975,7 @@ namespace Allors.Database.Adapters.Sql
         {
             get
             {
-                var numbers = this.Transaction.Database.Numbers;
+                var numbers = this.Transaction.Database.____RULE_VIOLATION____Ranges____RULE_VIOLATION____;
 
                 if (this.originalRoleByRoleType == null)
                 {
@@ -1033,7 +1035,7 @@ namespace Allors.Database.Adapters.Sql
         {
             get
             {
-                var numbers = this.Transaction.Database.Numbers;
+                var numbers = this.Transaction.Database.____RULE_VIOLATION____Ranges____RULE_VIOLATION____;
 
                 if (this.originalAssociationByAssociationType == null)
                 {
@@ -1108,7 +1110,7 @@ namespace Allors.Database.Adapters.Sql
 
         private void OnChangingCompositesRoleAdd(IRoleType roleType, long originalRole)
         {
-            var numbers = this.Transaction.Database.Numbers;
+            var numbers = this.Transaction.Database.____RULE_VIOLATION____Ranges____RULE_VIOLATION____;
             this.EnsureOriginalRoleByRoleType.TryGetValue(roleType, out var temp);
 
             var changeTracker = (ChangeTracker?)temp ?? new ChangeTracker();
@@ -1120,7 +1122,7 @@ namespace Allors.Database.Adapters.Sql
 
         private void OnChangingCompositesRoleRemove(IRoleType roleType, long originalRole)
         {
-            var numbers = this.Transaction.Database.Numbers;
+            var numbers = this.Transaction.Database.____RULE_VIOLATION____Ranges____RULE_VIOLATION____;
             this.EnsureOriginalRoleByRoleType.TryGetValue(roleType, out var temp);
 
             var changeTracker = (ChangeTracker?)temp ?? new ChangeTracker();
@@ -1143,7 +1145,7 @@ namespace Allors.Database.Adapters.Sql
 
         private void OnChangingCompositesAssociationAdd(IAssociationType associationType, long originalAssociation)
         {
-            var numbers = this.Transaction.Database.Numbers;
+            var numbers = this.Transaction.Database.____RULE_VIOLATION____Ranges____RULE_VIOLATION____;
             this.EnsureOriginalAssociationByAssociationType.TryGetValue(associationType, out var temp);
 
             var changeTracker = (ChangeTracker?)temp ?? new ChangeTracker();
@@ -1155,7 +1157,7 @@ namespace Allors.Database.Adapters.Sql
 
         private void OnChangingCompositesAssociationRemove(IAssociationType associationType, long originalAssociation)
         {
-            var numbers = this.Transaction.Database.Numbers;
+            var numbers = this.Transaction.Database.____RULE_VIOLATION____Ranges____RULE_VIOLATION____;
             this.EnsureOriginalAssociationByAssociationType.TryGetValue(associationType, out var temp);
 
             var changeTracker = (ChangeTracker?)temp ?? new ChangeTracker();

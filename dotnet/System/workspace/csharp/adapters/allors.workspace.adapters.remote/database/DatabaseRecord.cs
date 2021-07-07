@@ -82,7 +82,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return false;
             }
 
-            return !this.database.Numbers.Contains(this.DeniedPermissions, permission) && this.AccessControlIds.Any(v => this.database.AccessControlById[v].PermissionIds.Any(w => w == permission));
+            return !this.DeniedPermissions.Contains(permission) && this.AccessControlIds.Any(v => this.database.AccessControlById[v].PermissionIds.Any(w => w == permission));
         }
     }
 }

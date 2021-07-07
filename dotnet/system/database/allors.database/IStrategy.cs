@@ -180,13 +180,13 @@ namespace Allors.Database
         /// </summary>
         /// <param name="roleType">Type of the relation.</param>
         /// <param name="roles">The roles.</param>
-        void SetCompositeRoles(IRoleType roleType, IEnumerable<IObject> roles);
+        void SetCompositesRole(IRoleType roleType, IEnumerable<IObject> roles);
 
         /// <summary>
         /// Removes the composite roles.
         /// </summary>
         /// <param name="roleType">Type of the relation.</param>
-        void RemoveCompositeRoles(IRoleType roleType);
+        void RemoveCompositesRoles(IRoleType roleType);
 
         /// <summary>
         /// Gets a value indicating whether the association exists.

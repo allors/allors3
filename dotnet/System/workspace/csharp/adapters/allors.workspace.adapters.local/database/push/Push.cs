@@ -13,7 +13,7 @@ namespace Allors.Workspace.Adapters.Local
     using Database.Meta;
     using Database.Security;
     using Database.Services;
-    using Numbers;
+    using Ranges;
 
     public class Push : Result, IPushResult
     {
@@ -51,7 +51,7 @@ namespace Allors.Workspace.Adapters.Local
 
         private Func<IValidation> Derive { get; }
 
-        private INumbers Numbers => this.Workspace.Numbers;
+        private IRanges Ranges => this.Workspace.Ranges;
 
         internal void Execute(PushToDatabaseTracker tracker)
         {
@@ -188,12 +188,12 @@ namespace Allors.Workspace.Adapters.Local
                     }
                     else if (this.ObjectByNewId == null)
                     {
-                        var roles = this.Transaction.Instantiate(this.Numbers.Enumerate(roleValue));
-                        obj.Strategy.SetCompositeRoles(roleType, this.GetRoles(roles));
+                        var roles = this.Transaction.Instantiate(this.Ranges.Enumerate(roleValue));
+                        obj.Strategy.SetCompositesRole(roleType, this.GetRoles(roles));
                     }
                     else
                     {
-                        obj.Strategy.SetCompositeRoles(roleType, this.GetRoles(roleValue));
+                        obj.Strategy.SetCompositesRole(roleType, this.GetRoles(roleValue));
                     }
                 }
                 else
@@ -205,13 +205,13 @@ namespace Allors.Workspace.Adapters.Local
 
         private IEnumerable<IObject> GetRoles(object ids)
         {
-            foreach (var v in this.Numbers.Enumerate(ids).Where(v => v < 0))
+            foreach (var v in this.Ranges.Enumerate(ids).Where(v => v < 0))
             {
                 this.ObjectByNewId.TryGetValue(v, out var role);
                 yield return role;
             };
 
-            var existingIds = this.Numbers.Enumerate(ids).Where(v => v > 0);
+            var existingIds = this.Ranges.Enumerate(ids).Where(v => v > 0);
             foreach (var role in this.Transaction.Instantiate(existingIds))
             {
                 yield return role;

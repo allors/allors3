@@ -7,7 +7,7 @@ namespace Allors.Workspace.Adapters
 {
     using System.Collections.Generic;
     using Meta;
-    using Numbers;
+    using Ranges;
 
     public abstract class RecordBasedOriginState
     {
@@ -71,12 +71,12 @@ namespace Allors.Workspace.Adapters
         {
             var previousRole = this.GetRole(roleType);
 
-            if (this.Numbers.Contains(previousRole, roleToAdd))
+            if (this.Ranges.Contains(previousRole, roleToAdd))
             {
                 return;
             }
 
-            var role = this.Numbers.Add(previousRole, roleToAdd);
+            var role = this.Ranges.Add(previousRole, roleToAdd);
 
             this.SetChangedRole(roleType, role);
 
@@ -95,12 +95,12 @@ namespace Allors.Workspace.Adapters
         {
             var previousRole = this.GetRole(roleType);
 
-            if (!this.Numbers.Contains(previousRole, roleToRemove))
+            if (!this.Ranges.Contains(previousRole, roleToRemove))
             {
                 return;
             }
 
-            var role = this.Numbers.Remove(previousRole, roleToRemove);
+            var role = this.Ranges.Remove(previousRole, roleToRemove);
 
             this.SetChangedRole(roleType, role);
         }
@@ -118,8 +118,8 @@ namespace Allors.Workspace.Adapters
             }
 
             // OneToMany
-            var addedRoles = this.Numbers.Except(role, previousRole);
-            foreach (var addedRole in this.Numbers.Enumerate(addedRoles))
+            var addedRoles = this.Ranges.Except(role, previousRole);
+            foreach (var addedRole in this.Ranges.Enumerate(addedRoles))
             {
                 var previousAssociationObject = this.Session.GetCompositeAssociation<IObject>(addedRole, associationType);
                 previousAssociationObject?.Strategy.Set(roleType, null);
@@ -217,7 +217,7 @@ namespace Allors.Workspace.Adapters
                 return (long?)role == forRole;
             }
 
-            return this.Numbers.Contains(role, forRole);
+            return this.Ranges.Contains(role, forRole);
         }
 
         protected abstract void OnChange();
@@ -239,7 +239,7 @@ namespace Allors.Workspace.Adapters
 
         protected Workspace Workspace => this.Session.Workspace;
 
-        private INumbers Numbers => this.Strategy.Session.Workspace.Numbers;
+        private IRanges Ranges => this.Strategy.Session.Workspace.Ranges;
 
         #endregion
     }

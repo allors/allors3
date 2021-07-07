@@ -109,7 +109,7 @@ namespace Allors.Database.Adapters.Memory
                     this.SetCompositeRole(roleType, (IObject)value);
                     break;
                 default:
-                    this.SetCompositeRoles(roleType, (IEnumerable<IObject>)value);
+                    this.SetCompositesRole(roleType, (IEnumerable<IObject>)value);
                     break;
             }
         }
@@ -125,7 +125,7 @@ namespace Allors.Database.Adapters.Memory
                     this.RemoveCompositeRole(roleType);
                     break;
                 default:
-                    this.RemoveCompositeRoles(roleType);
+                    this.RemoveCompositesRoles(roleType);
                     break;
             }
         }
@@ -250,11 +250,11 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        public void SetCompositeRoles(IRoleType roleType, IEnumerable<IObject> roles)
+        public void SetCompositesRole(IRoleType roleType, IEnumerable<IObject> roles)
         {
             if (roles == null || (roles is ICollection<IObject> collection && collection.Count == 0))
             {
-                this.RemoveCompositeRoles(roleType);
+                this.RemoveCompositesRoles(roleType);
             }
             else
             {
@@ -315,7 +315,7 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        public void RemoveCompositeRoles(IRoleType roleType)
+        public void RemoveCompositesRoles(IRoleType roleType)
         {
             this.AssertNotDeleted();
 
@@ -1044,7 +1044,7 @@ namespace Allors.Database.Adapters.Memory
         private void AddCompositeRoleMany2Many(IRoleType roleType, Strategy add)
         {
             this.compositesRoleByRoleType.TryGetValue(roleType, out var previousRole);
-            if (previousRole != null && previousRole.Contains(add))
+            if (previousRole?.Contains(add) == true)
             {
                 return;
             }
@@ -1081,7 +1081,7 @@ namespace Allors.Database.Adapters.Memory
         private void AddCompositeRoleOne2Many(IRoleType roleType, Strategy add)
         {
             this.compositesRoleByRoleType.TryGetValue(roleType, out var previousRole);
-            if (previousRole != null && previousRole.Contains(add))
+            if (previousRole?.Contains(add) == true)
             {
                 return;
             }
@@ -1137,7 +1137,7 @@ namespace Allors.Database.Adapters.Memory
         private void RemoveCompositeRoleMany2Many(IRoleType roleType, Strategy remove)
         {
             this.compositesRoleByRoleType.TryGetValue(roleType, out var roleStrategies);
-            if (roleStrategies == null || !roleStrategies.Contains(remove))
+            if (roleStrategies?.Contains(remove) != true)
             {
                 return;
             }
@@ -1170,7 +1170,7 @@ namespace Allors.Database.Adapters.Memory
         private void RemoveCompositeRoleOne2Many(IRoleType roleType, Strategy roleToRemove)
         {
             this.compositesRoleByRoleType.TryGetValue(roleType, out var role);
-            if (role == null || !role.Contains(roleToRemove))
+            if (role?.Contains(roleToRemove) != true)
             {
                 return;
             }
