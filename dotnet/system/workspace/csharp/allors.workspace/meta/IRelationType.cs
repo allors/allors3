@@ -19,7 +19,5 @@ namespace Allors.Workspace.Meta
         Multiplicity Multiplicity { get; }
 
         bool IsDerived { get; }
-
-        bool IsSynced { get; }
     }
 }

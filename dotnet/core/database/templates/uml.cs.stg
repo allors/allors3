@@ -51,7 +51,7 @@ $endif$
 >>
 
 prefix(roleType) ::= <%
-$if(roleType._.RelationType.IsDerived)$_$endif$$if(roleType._.RelationType.IsSynced)$__$endif$
+$if(roleType._.RelationType.IsDerived)$_$endif$
 %>
 
 nullableName(roleType) ::= <%

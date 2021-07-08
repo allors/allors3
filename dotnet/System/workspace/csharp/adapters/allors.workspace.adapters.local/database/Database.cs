@@ -56,9 +56,9 @@ namespace Allors.Workspace.Adapters.Local
                     return @object.Strategy.GetCompositeRole(roleType)?.Id;
                 }
 
-                var roles = @object.Strategy.GetCompositeRoles<IObject>(roleType);
+                var roles = @object.Strategy.GetCompositesRole<IObject>(roleType);
                 return roles.Any()
-                    ? @object.Strategy.GetCompositeRoles<IObject>(roleType).Select(v => v.Id).ToArray()
+                    ? @object.Strategy.GetCompositesRole<IObject>(roleType).Select(v => v.Id).ToArray()
                     : Array.Empty<long>();
             }
 

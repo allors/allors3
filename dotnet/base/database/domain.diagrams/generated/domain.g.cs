@@ -91,11 +91,11 @@ namespace Allors.Domain
 		}
 		public interface TransitionalVersion  : Object 
 		{
-						ObjectState[] __PreviousObjectStates {set;}
+						ObjectState[] _PreviousObjectStates {set;}
 
-						ObjectState[] __LastObjectStates {set;}
+						ObjectState[] _LastObjectStates {set;}
 
-						ObjectState[] __ObjectStates {set;}
+						ObjectState[] _ObjectStates {set;}
 
 		}
 		public interface User  : Deletable, UniquelyIdentifiable, SecurityTokenOwner 
@@ -343,7 +343,7 @@ namespace Allors.Domain
 		}
 		public interface SyncDepthI1  : DerivationCounted 
 		{
-						SyncDepth2 __SyncDepth2 {set;}
+						SyncDepth2 _SyncDepth2 {set;}
 
 						global::System.Int32 Value {set;}
 
@@ -1056,7 +1056,7 @@ namespace Allors.Domain
 		}
 		public interface SyncRoot  : DerivationCounted 
 		{
-						SyncDepthI1 __SyncDepth1 {set;}
+						SyncDepthI1 _SyncDepth1 {set;}
 
 						global::System.Int32 Value {set;}
 

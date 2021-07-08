@@ -9,7 +9,6 @@ namespace Allors.Repository
     using Allors.Repository.Attributes;
 
     [Id("51d4dbfb-98ef-4f38-836a-5948701c4cce")]
-    [Synced]
     public partial class ExchangeRate : Object, Deletable
     {
         #region inherited properties

@@ -12,7 +12,7 @@ namespace Allors.Workspace.Adapters.Remote
     {
         internal Strategy(Adapters.Session session, IClass @class, long id) : base(session, @class, id)
         {
-            if (this.Class.HasDatabaseOrigin)
+            if (this.Class.Origin == Origin.Database)
             {
                 this.DatabaseOriginState = new DatabaseOriginState(this, (DatabaseRecord)((DatabaseConnection)session.Workspace.DatabaseConnection).GetRecord(this.Id));
             }

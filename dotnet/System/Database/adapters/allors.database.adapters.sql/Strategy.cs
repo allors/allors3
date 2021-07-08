@@ -112,7 +112,7 @@ namespace Allors.Database.Adapters.Sql
                         var associationStrategy = this.Transaction.State.GetOrCreateReferenceForExistingObject(association, this.Transaction).Strategy;
                         if (roleType.IsMany)
                         {
-                            associationStrategy.RemoveCompositeRole(roleType, this.GetObject());
+                            associationStrategy.RemoveCompositesRole(roleType, this.GetObject());
                         }
                         else
                         {
@@ -127,7 +127,7 @@ namespace Allors.Database.Adapters.Sql
                     {
                         if (roleType.IsMany)
                         {
-                            association.Strategy.RemoveCompositeRole(roleType, this.GetObject());
+                            association.Strategy.RemoveCompositesRole(roleType, this.GetObject());
                         }
                         else
                         {
@@ -151,7 +151,7 @@ namespace Allors.Database.Adapters.Sql
             }
 
             return roleType.IsMany
-                ? this.ExistCompositeRoles(roleType)
+                ? this.ExistCompositesRole(roleType)
                 : this.ExistCompositeRole(roleType);
         }
 
@@ -163,7 +163,7 @@ namespace Allors.Database.Adapters.Sql
             }
 
             return roleType.IsMany
-                       ? (object)this.GetCompositeRoles<IObject>(roleType)
+                       ? (object)this.GetCompositesRole<IObject>(roleType)
                        : this.GetCompositeRole(roleType);
         }
 
@@ -191,7 +191,7 @@ namespace Allors.Database.Adapters.Sql
             }
             else if (roleType.IsMany)
             {
-                this.RemoveCompositesRoles(roleType);
+                this.RemoveCompositesRole(roleType);
             }
             else
             {
@@ -266,7 +266,7 @@ namespace Allors.Database.Adapters.Sql
             }
         }
 
-        public virtual bool ExistCompositeRoles(IRoleType roleType)
+        public virtual bool ExistCompositesRole(IRoleType roleType)
         {
             this.AssertExist();
 
@@ -278,7 +278,7 @@ namespace Allors.Database.Adapters.Sql
             return this.GetNonModifiedCompositeRoles(roleType).Length > 0;
         }
 
-        public virtual IEnumerable<T> GetCompositeRoles<T>(IRoleType roleType) where T : IObject
+        public virtual IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : IObject
         {
             this.AssertExist();
 
@@ -289,7 +289,7 @@ namespace Allors.Database.Adapters.Sql
             }
         }
 
-        public virtual void AddCompositeRole(IRoleType roleType, IObject roleObject)
+        public virtual void AddCompositesRole(IRoleType roleType, IObject roleObject)
         {
             this.AssertExist();
 
@@ -311,7 +311,7 @@ namespace Allors.Database.Adapters.Sql
             }
         }
 
-        public virtual void RemoveCompositeRole(IRoleType roleType, IObject roleObject)
+        public virtual void RemoveCompositesRole(IRoleType roleType, IObject roleObject)
         {
             this.AssertExist();
 
@@ -337,7 +337,7 @@ namespace Allors.Database.Adapters.Sql
 
             if (roleCollection == null || roleCollection.Count == 0)
             {
-                this.RemoveCompositesRoles(roleType);
+                this.RemoveCompositesRole(roleType);
             }
             else
             {
@@ -388,7 +388,7 @@ namespace Allors.Database.Adapters.Sql
             }
         }
 
-        public virtual void RemoveCompositesRoles(IRoleType roleType)
+        public virtual void RemoveCompositesRole(IRoleType roleType)
         {
             this.AssertExist();
 
@@ -409,9 +409,9 @@ namespace Allors.Database.Adapters.Sql
             }
         }
 
-        public virtual bool ExistAssociation(IAssociationType associationType) => associationType.IsMany ? this.ExistCompositeAssociations(associationType) : this.ExistCompositeAssociation(associationType);
+        public virtual bool ExistAssociation(IAssociationType associationType) => associationType.IsMany ? this.ExistCompositesAssociation(associationType) : this.ExistCompositeAssociation(associationType);
 
-        public virtual object GetAssociation(IAssociationType associationType) => associationType.IsMany ? (object)this.GetCompositeAssociations<IObject>(associationType) : this.GetCompositeAssociation(associationType);
+        public virtual object GetAssociation(IAssociationType associationType) => associationType.IsMany ? (object)this.GetCompositesAssociation<IObject>(associationType) : this.GetCompositeAssociation(associationType);
 
         public virtual bool ExistCompositeAssociation(IAssociationType associationType) => this.GetCompositeAssociation(associationType) != null;
 
@@ -422,14 +422,14 @@ namespace Allors.Database.Adapters.Sql
             return association?.Strategy.GetObject();
         }
 
-        public virtual bool ExistCompositeAssociations(IAssociationType associationType)
+        public virtual bool ExistCompositesAssociation(IAssociationType associationType)
         {
             this.AssertExist();
 
             return this.Transaction.GetAssociations(this, associationType).Length > 0;
         }
 
-        public virtual IEnumerable<T> GetCompositeAssociations<T>(IAssociationType associationType) where T : IObject
+        public virtual IEnumerable<T> GetCompositesAssociation<T>(IAssociationType associationType) where T : IObject
         {
             this.AssertExist();
 
@@ -765,7 +765,7 @@ namespace Allors.Database.Adapters.Sql
 
             // A --x-- PR
             var previousAssociation = (Strategy)role.GetCompositeAssociation(roleType.AssociationType)?.Strategy;
-            previousAssociation?.RemoveCompositeRole(roleType, role.GetObject());
+            previousAssociation?.RemoveCompositesRole(roleType, role.GetObject());
 
             // A <---- R
             this.OnChangingCompositesRoleAdd(roleType, role.ObjectId);

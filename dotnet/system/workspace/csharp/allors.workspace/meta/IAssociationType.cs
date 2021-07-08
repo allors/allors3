@@ -13,10 +13,10 @@ namespace Allors.Workspace.Meta
     /// </summary>
     public interface IAssociationType : IPropertyType
     {
-        IRelationType RelationType { get; }
-
         new IComposite ObjectType { get; }
 
         IRoleType RoleType { get; }
+
+        IRelationType RelationType { get; }
     }
 }

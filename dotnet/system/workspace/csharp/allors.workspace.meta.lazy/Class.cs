@@ -23,11 +23,10 @@ namespace Allors.Workspace.Meta
 
         private HashSet<IAssociationTypeInternals> LazyAssociationTypes => this.lazyAssociationTypes ??= new HashSet<IAssociationTypeInternals>(this.ExclusiveAssociationTypes.Union(this.Supertypes.SelectMany(v => v.ExclusiveAssociationTypes)));
         private HashSet<IRoleTypeInternals> LazyRoleTypes => this.lazyRoleTypes ??= new HashSet<IRoleTypeInternals>(this.ExclusiveRoleTypes.Union(this.Supertypes.SelectMany(v => v.ExclusiveRoleTypes)));
-        private HashSet<IRoleTypeInternals> LazyWorkspaceRoleTypes => this.lazyWorkspaceRoleTypes ??= new HashSet<IRoleTypeInternals>(this.LazyRoleTypes.Where(v => v.RelationType.HasWorkspaceOrigin));
-        private HashSet<IRoleTypeInternals> LazyDatabaseRoleTypes => this.lazyDatabaseRoleTypes ??= new HashSet<IRoleTypeInternals>(this.LazyRoleTypes.Where(v => v.RelationType.HasDatabaseOrigin));
+        private HashSet<IRoleTypeInternals> LazyWorkspaceRoleTypes => this.lazyWorkspaceRoleTypes ??= new HashSet<IRoleTypeInternals>(this.LazyRoleTypes.Where(v => v.RelationType.Origin == Origin.Workspace));
+        private HashSet<IRoleTypeInternals> LazyDatabaseRoleTypes => this.lazyDatabaseRoleTypes ??= new HashSet<IRoleTypeInternals>(this.LazyRoleTypes.Where(v => v.RelationType.Origin == Origin.Database));
         private HashSet<IMethodTypeInternals> LazyMethodTypes => this.lazyMethodTypes ??= new HashSet<IMethodTypeInternals>(this.ExclusiveMethodTypes.Union(this.Supertypes.SelectMany(v => v.ExclusiveMethodTypes)));
 
-        private bool IsSynced { get; set; }
         private Origin Origin { get; set; }
         private int Tag { get; set; }
         private string SingularName { get; set; }
@@ -49,12 +48,6 @@ namespace Allors.Workspace.Meta
         IMetaPopulation IMetaObject.MetaPopulation => this.MetaPopulation;
 
         Origin IMetaObject.Origin => this.Origin;
-
-        bool IMetaObject.HasDatabaseOrigin => this.Origin == Origin.Database;
-
-        bool IMetaObject.HasWorkspaceOrigin => this.Origin == Origin.Workspace;
-
-        bool IMetaObject.HasSessionOrigin => this.Origin == Origin.Session;
         #endregion
 
         #region IMetaIdentifiableObject
@@ -78,7 +71,6 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IComposite
-        bool IComposite.IsSynced => this.IsSynced;
 
         IEnumerable<IInterface> IComposite.DirectSupertypes => this.DirectSupertypes;
 
@@ -107,14 +99,13 @@ namespace Allors.Workspace.Meta
         IMethodTypeInternals[] ICompositeInternals.ExclusiveMethodTypes { get => this.ExclusiveMethodTypes; set => this.ExclusiveMethodTypes = value; }
         #endregion
 
-        public void Init(int tag, string singularName, string pluralName = null, Origin origin = Origin.Database, bool isSynced = false)
+        public void Init(int tag, string singularName, string pluralName = null, Origin origin = Origin.Database)
         {
             this.Tag = tag;
             this.SingularName = singularName;
             this.PluralName = pluralName ?? Pluralizer.Pluralize(singularName);
             this.Classes = new[] { this };
             this.Origin = origin;
-            this.IsSynced = isSynced;
         }
 
         void ICompositeInternals.Bind(Dictionary<string, Type> typeByTypeName) => this.ClrType = typeByTypeName[this.SingularName];

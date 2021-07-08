@@ -11,7 +11,5 @@ namespace Allors.Database.Meta
     public interface IInterface : IComposite
     {
         IEnumerable<IComposite> Subtypes { get; }
-
-        bool AssignedIsSynced { get; }
     }
 }

@@ -2,11 +2,11 @@ delimiters "$", "$"
 
 TemplateId() ::= <<17ED40F8-BDF8-4A7C-9AE9-1C4D2AD6BA2B>>
 TemplateName() ::= <<Allors C# Domain>>
-TemplateVersion() ::= <<3.0.4>>
+TemplateVersion() ::= <<3.0.5>>
 TemplateAllors() ::= <<1.0>>
 TemplateConfiguration(meta) ::= <<
 $!
-Copyright 2002-2016 Allors bvba.
+Copyright 2002-2021 Allors bvba.
 
 Dual Licensed under
   a) the Lesser General Public Licence v3 (LGPL)
@@ -267,7 +267,7 @@ $if(associationType._.IsMany)$
 		{
 			get
 			{
-				return Strategy.GetCompositeAssociations<$associationType._.ObjectType.Name$>(Meta.$associationType._.Name$);
+				return Strategy.GetCompositesAssociation<$associationType._.ObjectType.Name$>(Meta.$associationType._.Name$);
 			}
 		}
 
@@ -276,7 +276,7 @@ $if(associationType._.IsMany)$
 		{
 			get
 			{
-				return Strategy.ExistCompositeAssociations(Meta.$associationType._.Name$);
+				return Strategy.ExistCompositesAssociation(Meta.$associationType._.Name$);
 			}
 		}
 $else$
@@ -332,22 +332,22 @@ $if(roleClass._.IsMany)$
 		{
 			get
 			{
-				return Strategy.GetCompositeRoles<$roleClass_ObjectType(roleClass)$>(Meta.$roleClass._.Name$);
+				return Strategy.GetCompositesRole<$roleClass_ObjectType(roleClass)$>(Meta.$roleClass._.Name$);
 			}
 			set
 			{
-				Strategy.SetCompositeRoles(Meta.$roleClass._.Name$, value);
+				Strategy.SetCompositesRole(Meta.$roleClass._.Name$, value);
 			}
 		}
 
 		public void Add$roleClass._.SingularName$ ($roleClass_ObjectType(roleClass)$ value)
 		{
-			Strategy.AddCompositeRole(Meta.$roleClass._.Name$, value);
+			Strategy.AddCompositesRole(Meta.$roleClass._.Name$, value);
 		}
 
 		public void Remove$roleClass._.SingularName$ ($roleClass_ObjectType(roleClass)$ value)
 		{
-			Strategy.RemoveCompositeRole(Meta.$roleClass._.Name$, value);
+			Strategy.RemoveCompositesRole(Meta.$roleClass._.Name$, value);
 		}
 
 		[System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
@@ -355,13 +355,13 @@ $if(roleClass._.IsMany)$
 		{
 			get
 			{
-				return Strategy.ExistCompositeRoles(Meta.$roleClass._.Name$);
+				return Strategy.ExistCompositesRole(Meta.$roleClass._.Name$);
 			}
 		}
 
 		public void Remove$roleClass._.PluralName$()
 		{
-			Strategy.RemoveCompositeRoles(Meta.$roleClass._.Name$);
+			Strategy.RemoveCompositesRole(Meta.$roleClass._.Name$);
 		}
 $else$
 		public $roleClass_ObjectType(roleClass)$ $roleClass._.SingularName$

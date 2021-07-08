@@ -21,7 +21,7 @@ namespace Allors.Workspace.Adapters
             this.Id = id;
             this.Class = @class;
 
-            if (!this.Class.HasSessionOrigin)
+            if (this.Class.Origin != Origin.Session)
             {
                 this.WorkspaceOriginState = new WorkspaceOriginState(this, this.Session.Workspace.GetRecord(this.Id));
             }

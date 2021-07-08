@@ -40,7 +40,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         #endregion
-        [Synced]
+        [Derived]
         public SyncDepthI1 SyncDepth1 { get; set; }
 
         #region Allors

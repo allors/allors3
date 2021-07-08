@@ -24,7 +24,7 @@ namespace Allors.Database.Adapters.Memory
         {
             if (this.associationType.IsMany)
             {
-                return strategy.ExistCompositeAssociations(this.associationType)
+                return strategy.ExistCompositesAssociation(this.associationType)
                         ? ThreeValuedLogic.True
                         : ThreeValuedLogic.False;
             }

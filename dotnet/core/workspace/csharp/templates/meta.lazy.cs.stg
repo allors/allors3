@@ -264,11 +264,11 @@ build_unit(unit) ::= <<
 >>
 
 build_interface(interface) ::= <<
-	        m.$interface._.SingularName$.Init(tag: $interface._.Tag$, singularName: "$interface._.SingularName$"$if(interface.ExistAssignedPluralName)$, pluralName: "$interface._.PluralName$"$endif$$if(interface.AssignedIsSynced)$, isSynced: $interface._.AssignedIsSynced$$endif$);
+	        m.$interface._.SingularName$.Init(tag: $interface._.Tag$, singularName: "$interface._.SingularName$"$if(interface.ExistAssignedPluralName)$, pluralName: "$interface._.PluralName$"$endif$);
 >>
 
 build_class(class) ::= <<
-	        m.$class._.SingularName$.Init(tag: $class._.Tag$, singularName: "$class._.SingularName$"$if(class.ExistAssignedPluralName)$, pluralName: "$class._.PluralName$"$endif$$if(!class.HasDatabaseOrigin)$, origin: Allors.Origin.$class._.Origin$$endif$$if(class.AssignedIsSynced)$, isSynced: $class._.AssignedIsSynced$$endif$);
+	        m.$class._.SingularName$.Init(tag: $class._.Tag$, singularName: "$class._.SingularName$"$if(class.ExistAssignedPluralName)$, pluralName: "$class._.PluralName$"$endif$$if(!class.HasDatabaseOrigin)$, origin: Allors.Origin.$class._.Origin$$endif$);
 >>
 
 inheritance(composite) ::= <<$composite._.WorkspaceDirectSupertypesByWorkspaceName.(workspaceName):{superType|$build_inheritance(composite, superType)$}$>>
@@ -282,7 +282,7 @@ build_relationType(relationType) ::= <<
 
             var relationType = new RelationType($relationType._.Tag$, associationType, m.$relationType._.AssociationType._.ObjectType.Name$, roleType, m.$relationType._.RoleType._.ObjectType.Name$$if(relationType.Multiplicity)$, Allors.Multiplicity.$relationType._.Multiplicity$$endif$);
 
-            relationType.Init($Separated([origin(relationType), isDerived(relationType), isSynced(relationType)], ",")$);
+            relationType.Init($Separated([origin(relationType), isDerived(relationType)], ",")$);
 
 $initRoleType(roleType=relationType.RoleType)$
 
@@ -292,7 +292,6 @@ $initRoleType(roleType=relationType.RoleType)$
 
 origin(relationType) ::= <<$if(!relationType._.HasDatabaseOrigin)$origin: Origin.$relationType._.Origin$$endif$>>
 isDerived(relationType) ::= <<$if(relationType.IsDerived)$isDerived: $relationType._.IsDerived$$endif$>>
-isSynced(relationType) ::= <<$if(relationType.IsSynced)$isSynced: $relationType._.IsSynced$$endif$>>
 
 initRoleType(roleType) ::= <<
             roleType.Init($Separated([singularName(roleType), pluralName(roleType), size(roleType), precision(roleType), scale(roleType), isRequired(roleType), isUnique(roleType), mediaType(roleType)], ",")$);

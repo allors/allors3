@@ -246,7 +246,7 @@ namespace Allors.Database.Adapters
                                 roles.Remove(0);
                             }
 
-                            association.Strategy.AddCompositeRole(relationType.RoleType, role);
+                            association.Strategy.AddCompositesRole(relationType.RoleType, role);
 
                             if (addTwice)
                             {
@@ -257,7 +257,7 @@ namespace Allors.Database.Adapters
                                     roles.Remove(0);
                                 }
 
-                                association.Strategy.AddCompositeRole(relationType.RoleType, role);
+                                association.Strategy.AddCompositesRole(relationType.RoleType, role);
                             }
                             else
                             {
@@ -317,7 +317,7 @@ namespace Allors.Database.Adapters
                                 roles.Remove(0);
                             }
 
-                            association.Strategy.AddCompositeRole(relationType.RoleType, role);
+                            association.Strategy.AddCompositesRole(relationType.RoleType, role);
 
                             if (addTwice)
                             {
@@ -328,7 +328,7 @@ namespace Allors.Database.Adapters
                                     roles.Remove(0);
                                 }
 
-                                association.Strategy.AddCompositeRole(relationType.RoleType, role);
+                                association.Strategy.AddCompositesRole(relationType.RoleType, role);
                             }
                             else
                             {

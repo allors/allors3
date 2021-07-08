@@ -15,11 +15,5 @@ namespace Allors.Workspace.Meta
         int Tag { get; }
 
         Origin Origin { get; }
-
-        bool HasDatabaseOrigin { get; }
-
-        bool HasWorkspaceOrigin { get; }
-
-        bool HasSessionOrigin { get; }
     }
 }

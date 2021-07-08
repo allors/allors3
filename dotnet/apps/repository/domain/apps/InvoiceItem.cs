@@ -94,7 +94,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Synced]
+        [Derived]
         Invoice SyncedInvoice { get; set; }
 
         #region Allors

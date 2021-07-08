@@ -31,19 +31,12 @@ namespace Allors.Workspace.Meta
         private Multiplicity Multiplicity { get; }
         private Origin Origin { get; set; }
         private bool IsDerived { get; set; }
-        private bool IsSynced { get; set; }
 
         #region IMetaObject
 
         public IMetaPopulation MetaPopulation { get; }
 
         Origin IMetaObject.Origin => this.Origin;
-
-        bool IMetaObject.HasDatabaseOrigin => this.Origin == Origin.Database;
-
-        bool IMetaObject.HasWorkspaceOrigin => this.Origin == Origin.Workspace;
-
-        bool IMetaObject.HasSessionOrigin => this.Origin == Origin.Session;
 
         #endregion
 
@@ -63,8 +56,6 @@ namespace Allors.Workspace.Meta
 
         bool IRelationType.IsDerived => this.IsDerived;
 
-        bool IRelationType.IsSynced => this.IsSynced;
-
         #endregion
 
         #region IRelationTypeInternals
@@ -75,11 +66,12 @@ namespace Allors.Workspace.Meta
 
         public override string ToString() => $"{this.AssociationType.ObjectType.SingularName}{this.RoleType.Name}";
 
-        public void Init(Origin origin = Origin.Database, bool isDerived = false, bool isSynced = false)
+        public void Init(Origin origin = Origin.Database, bool isDerived = false)
         {
             this.Origin = origin;
             this.IsDerived = isDerived;
-            this.IsSynced = isSynced;
+
+            ((AssociationType)this.AssociationType).Init();
         }
     }
 }

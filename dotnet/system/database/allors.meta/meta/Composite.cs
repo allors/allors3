@@ -12,9 +12,6 @@ namespace Allors.Database.Meta
 
     public abstract partial class Composite : ObjectType, ICompositeBase
     {
-        private bool assignedIsSynced;
-        private bool isSynced;
-
         private HashSet<IInterfaceBase> derivedDirectSupertypes;
         private HashSet<IInterfaceBase> derivedSupertypes;
 
@@ -32,27 +29,6 @@ namespace Allors.Database.Meta
         public override Origin Origin => this.AssignedOrigin;
 
         public Origin AssignedOrigin { get; set; }
-
-        public bool AssignedIsSynced
-        {
-            get => this.assignedIsSynced;
-
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.assignedIsSynced = value;
-                this.MetaPopulation.Stale();
-            }
-        }
-
-        public bool IsSynced
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.isSynced;
-            }
-        }
 
         public bool ExistExclusiveClass
         {
@@ -362,9 +338,7 @@ namespace Allors.Database.Meta
 
             this.derivedMethodTypes = new HashSet<IMethodTypeBase>(methodTypes);
         }
-
-        public void DeriveIsSynced() => this.isSynced = this.assignedIsSynced || this.derivedSupertypes.Any(v => v.AssignedIsSynced);
-
+        
         /// <summary>
         /// Derive super types recursively.
         /// </summary>

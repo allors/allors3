@@ -28,7 +28,7 @@ namespace Allors.Database.Adapters.Memory
         {
             var containing = new HashSet<IObject>(this.containingEnumerable);
 
-            return strategy.GetCompositeRoles<IObject>(this.roleType).Any(role => containing.Contains(role)) ? ThreeValuedLogic.True : ThreeValuedLogic.False;
+            return strategy.GetCompositesRole<IObject>(this.roleType).Any(role => containing.Contains(role)) ? ThreeValuedLogic.True : ThreeValuedLogic.False;
         }
     }
 }

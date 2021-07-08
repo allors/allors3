@@ -406,12 +406,6 @@ namespace Allors.Database.Meta
                         type.DeriveSupertypes(sharedInterfaces);
                     }
 
-                    // isSynced
-                    foreach (var composite in this.Composites)
-                    {
-                        composite.DeriveIsSynced();
-                    }
-
                     // Subtypes
                     foreach (var type in this.interfaces)
                     {

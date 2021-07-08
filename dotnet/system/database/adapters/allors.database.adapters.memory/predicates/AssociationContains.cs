@@ -23,6 +23,6 @@ namespace Allors.Database.Adapters.Memory
             this.containedObject = containedObject;
         }
 
-        internal override ThreeValuedLogic Evaluate(Strategy strategy) => strategy.GetCompositeAssociations<IObject>(this.associationType).Contains(this.containedObject) ? ThreeValuedLogic.True : ThreeValuedLogic.False;
+        internal override ThreeValuedLogic Evaluate(Strategy strategy) => strategy.GetCompositesAssociation<IObject>(this.associationType).Contains(this.containedObject) ? ThreeValuedLogic.True : ThreeValuedLogic.False;
     }
 }

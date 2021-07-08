@@ -96,16 +96,15 @@ namespace Allors.Workspace.Meta
 
         public override string ToString() => $"{this.RoleType.ObjectType.SingularName}.{this.Name}";
 
-        public void Init(ICompositeInternals objectType)
+        public void Init()
         {
-            const string Where = "Where";
+            const string where = "Where";
 
             this.IsMany = this.RelationType.Multiplicity == Multiplicity.ManyToOne ||
                           this.RelationType.Multiplicity == Multiplicity.ManyToMany;
             this.IsOne = !this.IsMany;
-            this.ObjectType = objectType;
-            this.SingularName = this.ObjectType.SingularName + Where + this.RoleType.SingularName;
-            this.PluralName = this.ObjectType.PluralName + Where + this.RoleType.SingularName;
+            this.SingularName = this.ObjectType.SingularName + where + this.RoleType.SingularName;
+            this.PluralName = this.ObjectType.PluralName + where + this.RoleType.SingularName;
             this.Name = this.IsMany ? this.PluralName : this.SingularName;
         }
     }

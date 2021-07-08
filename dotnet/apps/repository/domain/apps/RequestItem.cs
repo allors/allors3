@@ -193,7 +193,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Synced]
+        [Derived]
         public Request SyncedRequest { get; set; }
 
         #region inherited methods

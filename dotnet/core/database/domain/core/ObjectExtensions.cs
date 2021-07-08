@@ -35,9 +35,9 @@ namespace Allors.Database.Domain
                 }
                 else
                 {
-                    foreach (var role in @this.Strategy.GetCompositeRoles<IObject>(roleType))
+                    foreach (var role in @this.Strategy.GetCompositesRole<IObject>(roleType))
                     {
-                        inTo.Strategy.AddCompositeRole(roleType, role);
+                        inTo.Strategy.AddCompositesRole(roleType, role);
                     }
                 }
             }
@@ -56,9 +56,9 @@ namespace Allors.Database.Domain
                 }
                 else
                 {
-                    foreach (var role in @this.Strategy.GetCompositeRoles<IObject>(roleType))
+                    foreach (var role in @this.Strategy.GetCompositesRole<IObject>(roleType))
                     {
-                        inTo.Strategy.AddCompositeRole(roleType, role);
+                        inTo.Strategy.AddCompositesRole(roleType, role);
                     }
                 }
             }
@@ -109,9 +109,9 @@ namespace Allors.Database.Domain
                 }
                 else
                 {
-                    foreach (var role in strategy.GetCompositeRoles<IObject>(roleType))
+                    foreach (var role in strategy.GetCompositesRole<IObject>(roleType))
                     {
-                        clone.Strategy.AddCompositeRole(roleType, role.Clone(node.Nodes));
+                        clone.Strategy.AddCompositesRole(roleType, role.Clone(node.Nodes));
                     }
                 }
             }

@@ -10,7 +10,5 @@ namespace Allors.Database.Domain.Derivations
         Regular = 1,
 
         Derived = 2,
-
-        Synced = 3,
     }
 }
