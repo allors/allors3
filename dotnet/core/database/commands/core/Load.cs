@@ -1,4 +1,4 @@
-// <copyright file="Load.cs" company="Allors bvba">
+// <copyright file="Import.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -10,7 +10,7 @@ namespace Commands
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
 
-    [Command(Description = "Load the population from file")]
+    [Command(Description = "Import the population from file")]
     public class Load
     {
         public Program Parent { get; set; }

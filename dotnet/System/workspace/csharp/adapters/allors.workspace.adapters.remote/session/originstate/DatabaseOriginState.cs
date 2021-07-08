@@ -7,6 +7,7 @@ namespace Allors.Workspace.Adapters.Remote
 {
     using System.Collections.Generic;
     using Allors.Protocol.Json.Api.Push;
+    using Ranges;
 
     internal sealed class DatabaseOriginState : Adapters.DatabaseOriginState
     {
@@ -56,19 +57,19 @@ namespace Allors.Workspace.Adapters.Remote
                     }
                     else if (!this.ExistDatabaseRecord)
                     {
-                        pushRequestRole.a = numbers.ToArray(roleValue);
+                        pushRequestRole.a = ((Range)roleValue).ToArray();
                     }
                     else
                     {
-                        var databaseRole = (long[])this.DatabaseRecord.GetRole(relationType.RoleType);
-                        if (databaseRole == null)
+                        var databaseRole = (Range)this.DatabaseRecord.GetRole(relationType.RoleType);
+                        if (databaseRole == default)
                         {
-                            pushRequestRole.a = numbers.ToArray(roleValue);
+                            pushRequestRole.a = ((Range)roleValue).ToArray();
                         }
                         else
                         {
-                            pushRequestRole.a = numbers.ToArray(numbers.Except(roleValue, databaseRole));
-                            pushRequestRole.r = numbers.ToArray(numbers.Except(databaseRole, roleValue));
+                            pushRequestRole.a = numbers.Except((Range)roleValue, databaseRole).ToArray();
+                            pushRequestRole.r = numbers.Except(databaseRole, (Range)roleValue).ToArray();
                         }
                     }
 

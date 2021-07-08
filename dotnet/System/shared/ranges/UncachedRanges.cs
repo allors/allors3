@@ -11,9 +11,9 @@ namespace Allors.Ranges
 
     public class UncachedRanges : IRanges
     {
-        public Range From(IEnumerable<long>? values)
+        public Range New(IEnumerable<long>? sortedItems)
         {
-            switch (values)
+            switch (sortedItems)
             {
                 case null:
                 case long[] { Length: 0 }:
@@ -23,20 +23,43 @@ namespace Allors.Ranges
                 case ICollection<long> collection:
                     var newArray = new long[collection.Count];
                     collection.CopyTo(newArray, 0);
-                    return this.From(newArray);
+                    return new Range(newArray);
                 default:
-                    return new Range(values.ToArray());
+                    return new Range(sortedItems.ToArray());
             }
         }
 
-        public Range From(params long[] values) =>
-            values switch
+        public Range New(params long[] sortedItems) =>
+            sortedItems switch
             {
                 { Length: 0 } => default,
-                _ => new Range(values)
+                _ => new Range(sortedItems)
             };
 
-        public Range From(long value) => new Range(new[] { value });
+        public Range New(long item) => new Range(new[] { item });
+
+        public Range Import(IEnumerable<long>? unsortedItems)
+        {
+            switch (unsortedItems)
+            {
+                case null:
+                case long[] { Length: 0 }:
+                    return default;
+                case long[] array:
+                    var sortedArray = (long[])array.Clone();
+                    Array.Sort(sortedArray);
+                    return new Range(sortedArray);
+                case ICollection<long> collection:
+                    var newSortedArray = new long[collection.Count];
+                    collection.CopyTo(newSortedArray, 0);
+                    Array.Sort(newSortedArray);
+                    return new Range(newSortedArray);
+                default:
+                    return new Range(unsortedItems.OrderBy(v => v).ToArray());
+            }
+        }
+
+        public Range Import(params long[] unsortedItems) => this.Import((IEnumerable<long>)unsortedItems);
 
         public Range Add(Range range, long item)
         {

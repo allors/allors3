@@ -146,24 +146,19 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     var id = syncResponseAccessControl.i;
                     var version = syncResponseAccessControl.v;
-                    var permissionsIds = syncResponseAccessControl.p
-                        ?.Select(v =>
+                    var permissionsIds = syncResponseAccessControl.p;
+                    this.AccessControlById[id] = new AccessControl { Version = version, PermissionIds = this.Ranges.New(permissionsIds) };
+
+                    foreach (var permissionId in permissionsIds)
+                    {
+                        if (this.Permissions.Contains(permissionId))
                         {
-                            if (this.Permissions.Contains(v))
-                            {
-                                return v;
-                            }
+                            continue;
+                        }
 
-                            (missingPermissionIds ??= new HashSet<long>()).Add(v);
-
-                            return v;
-                        });
-
-                    var permissionIdSet = permissionsIds != null
-                        ? (ISet<long>)new HashSet<long>(permissionsIds)
-                        : EmptySet<long>.Instance;
-
-                    this.AccessControlById[id] = new AccessControl { Version = version, PermissionIds = permissionIdSet };
+                        missingPermissionIds ??= new HashSet<long>();
+                        missingPermissionIds.Add(permissionId);
+                    }
                 }
             }
 
@@ -191,12 +186,12 @@ namespace Allors.Workspace.Adapters.Remote
                             return true;
                         }
 
-                        if (!this.Ranges.AreEqual(@record.AccessControlIds, v.a))
+                        if (!@record.AccessControlIds.Equals(v.a))
                         {
                             return true;
                         }
 
-                        if (!this.Ranges.AreEqual(@record.DeniedPermissions, v.d))
+                        if (!@record.DeniedPermissions.Equals(v.d))
                         {
                             return true;
                         }

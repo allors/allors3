@@ -9,6 +9,7 @@ namespace Allors.Workspace.Adapters
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
+    using Ranges;
 
     public abstract class Strategy : IStrategy
     {
@@ -194,7 +195,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetComposites<T>(IRoleType roleType, in IEnumerable<T> role) where T : IObject
         {
-            var roleNumbers = this.Session.Workspace.Ranges.From(role?.Select(v => v.Id));
+            var roleNumbers = this.Session.Workspace.Ranges.Import(role?.Select(v => v.Id));
 
             switch (roleType.Origin)
             {
@@ -308,7 +309,7 @@ namespace Allors.Workspace.Adapters
             return association switch
             {
                 long id => new[] { this.Session.GetOne<T>(id) },
-                long[] ids => ids.Select(v => this.Session.GetOne<T>(v)).ToArray(),
+                Range ids => ids.Select(v => this.Session.GetOne<T>(v)).ToArray(),
                 _ => Array.Empty<T>()
             };
         }

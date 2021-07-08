@@ -10,6 +10,7 @@ namespace Allors.Workspace.Adapters
     using System.Threading.Tasks;
     using Data;
     using Meta;
+    using Ranges;
 
     public abstract class Session : ISession
     {
@@ -185,9 +186,7 @@ namespace Allors.Workspace.Adapters
                 return this.GetOne<IObject>((long?)role);
             }
 
-            return role != null
-                ? this.Workspace.Ranges.Enumerate(role).Select(this.GetOne<IObject>).ToArray()
-                : this.Workspace.DatabaseConnection.EmptyArray(roleType.ObjectType);
+            return ((Range?)role)?.Select(this.GetOne<IObject>).ToArray() ?? this.Workspace.DatabaseConnection.EmptyArray(roleType.ObjectType);
         }
 
         public T GetCompositeAssociation<T>(long role, IAssociationType associationType) where T : IObject

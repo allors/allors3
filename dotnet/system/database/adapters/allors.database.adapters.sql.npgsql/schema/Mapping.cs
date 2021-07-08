@@ -416,7 +416,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             var table = this.tableNameForObjectByClass[@class];
             var name = this.Database.SchemaName + "." + ProcedurePrefixForLoad + @class.Name.ToLowerInvariant();
 
-            // Load Objects
+            // Import Objects
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForClass},{this.ObjectArrayParam.TypeName});
 CREATE FUNCTION {name}(

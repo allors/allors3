@@ -617,7 +617,7 @@ namespace Allors.Database.Adapters
 
                         this.Transaction.Commit();
 
-                        // From - Middle - To
+                        // New - Middle - To
                         from = C1.Create(this.Transaction);
                         var middle = C1.Create(this.Transaction);
                         to = C1.Create(this.Transaction);
@@ -2844,7 +2844,7 @@ namespace Allors.Database.Adapters
                         Assert.Contains(bigArrayObject, objects);
                     }
 
-                    // From - Middle - To
+                    // New - Middle - To
                     from = C1.Create(this.Transaction);
                     var middle = C1.Create(this.Transaction);
                     var to = C1.Create(this.Transaction);

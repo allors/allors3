@@ -51,8 +51,6 @@ namespace Allors.Workspace.Adapters.Local
 
         private Func<IValidation> Derive { get; }
 
-        private IRanges Ranges => this.Workspace.Ranges;
-
         internal void Execute(PushToDatabaseTracker tracker)
         {
             var metaPopulation = this.Workspace.DatabaseConnection.Database.MetaPopulation;
@@ -188,12 +186,12 @@ namespace Allors.Workspace.Adapters.Local
                     }
                     else if (this.ObjectByNewId == null)
                     {
-                        var roles = this.Transaction.Instantiate(this.Ranges.Enumerate(roleValue));
-                        obj.Strategy.SetCompositesRole(roleType, this.GetRoles(roles));
+                        var roles = this.Transaction.Instantiate((long[])roleValue);
+                        obj.Strategy.SetCompositesRole(roleType, roles);
                     }
                     else
                     {
-                        obj.Strategy.SetCompositesRole(roleType, this.GetRoles(roleValue));
+                        obj.Strategy.SetCompositesRole(roleType, this.GetRoles((long[])roleValue));
                     }
                 }
                 else
@@ -203,15 +201,15 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        private IEnumerable<IObject> GetRoles(object ids)
+        private IEnumerable<IObject> GetRoles(long[] ids)
         {
-            foreach (var v in this.Ranges.Enumerate(ids).Where(v => v < 0))
+            foreach (var v in ids.Where(v => v < 0))
             {
                 this.ObjectByNewId.TryGetValue(v, out var role);
                 yield return role;
-            };
+            }
 
-            var existingIds = this.Ranges.Enumerate(ids).Where(v => v > 0);
+            var existingIds = ids.Where(v => v > 0);
             foreach (var role in this.Transaction.Instantiate(existingIds))
             {
                 yield return role;

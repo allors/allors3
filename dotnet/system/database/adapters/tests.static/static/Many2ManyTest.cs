@@ -45,7 +45,7 @@ namespace Allors.Database.Adapters
                         var to3 = C1.Create(this.Transaction);
                         var to4 = C1.Create(this.Transaction);
 
-                        // From 0-4-0
+                        // New 0-4-0
                         // Get
                         mark();
                         var tuttefrut = to1.Strategy.IsDeleted;
@@ -1827,7 +1827,7 @@ namespace Allors.Database.Adapters
                         var to3 = C2.Create(this.Transaction);
                         var to4 = C2.Create(this.Transaction);
 
-                        // From 0-4-0
+                        // New 0-4-0
                         // Get
                         mark();
                         var tuttefrut = to1.Strategy.IsDeleted;
@@ -3566,7 +3566,7 @@ namespace Allors.Database.Adapters
                         var to3 = C4.Create(this.Transaction);
                         var to4 = C4.Create(this.Transaction);
 
-                        // From 0-4-0
+                        // New 0-4-0
                         // Get
                         mark();
                         var tuttefrut = to1.Strategy.IsDeleted;

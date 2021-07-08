@@ -43,7 +43,7 @@ namespace Allors.Database.Adapters
 
         protected Action[] Inits => this.Profile.Inits;
 
-        // TODO: Save Load (remove and add relations)
+        // TODO: Save Import (remove and add relations)
         public abstract void Dispose();
 
         [Fact]
@@ -625,7 +625,7 @@ namespace Allors.Database.Adapters
         //    c1RelationType.RoleType.SingularName = "RelationType";
         //    c1RelationType.RoleType.PluralName = "RelationTypes";
 
-        // // From string to one2one
+        // // New string to one2one
         //    c1RelationType.RoleType.Size = null;
         //    c1RelationType.RoleType.ObjectType = c2;
 

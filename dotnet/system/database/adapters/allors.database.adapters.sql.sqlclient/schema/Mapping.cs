@@ -541,7 +541,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             var table = this.tableNameForObjectByClass[@class];
             var name = $"{this.Database.SchemaName}.{ProcedurePrefixForLoad}{@class.Name.ToLowerInvariant()}";
 
-            // Load Objects
+            // Import Objects
             var definition = $@"
 CREATE PROCEDURE {name}
     {this.ParamNameForClass} {SqlTypeForClass},

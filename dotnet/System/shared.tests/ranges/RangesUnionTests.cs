@@ -17,8 +17,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From();
-            var y = num.From();
+            var x = num.New();
+            var y = num.New();
             var z = num.Union(x, y);
 
             Assert.Equal(Array.Empty<long>(), z);
@@ -29,8 +29,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(0);
-            var y = num.From();
+            var x = num.New(0);
+            var y = num.New();
             var z = num.Union(x, y);
 
             Assert.Equal(new long[] { 0 }, z);
@@ -41,8 +41,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(0, 1);
-            var y = num.From();
+            var x = num.New(0, 1);
+            var y = num.New();
             var z = num.Union(x, y);
 
             Assert.Equal(new long[] { 0, 1 }, z);
@@ -53,8 +53,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(0);
-            var y = num.From(0);
+            var x = num.New(0);
+            var y = num.New(0);
             var z = num.Union(x, y);
 
             Assert.Equal(new long[] { 0 }, z);
@@ -65,8 +65,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(0, 1);
-            var y = num.From(0, 1);
+            var x = num.New(0, 1);
+            var y = num.New(0, 1);
             var z = num.Union(x, y);
 
             Assert.Equal(new Range(new long[] { 0, 1 }), z);
@@ -78,8 +78,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(0, 1);
-            var y = num.From(2, 3);
+            var x = num.New(0, 1);
+            var y = num.New(2, 3);
             var z = num.Union(x, y);
 
             Assert.Equal(new long[] { 0, 1, 2, 3 }, z);
@@ -90,8 +90,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(4, 5);
-            var y = num.From(2, 3);
+            var x = num.New(4, 5);
+            var y = num.New(2, 3);
             var z = num.Union(x, y);
 
             Assert.Equal(new long[] { 2, 3, 4, 5 }, z);
@@ -103,8 +103,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(1, 4);
-            var y = num.From(2, 3);
+            var x = num.New(1, 4);
+            var y = num.New(2, 3);
             var z = num.Union(x, y);
 
             Assert.Equal(new long[] { 1, 2, 3, 4 }, z);
@@ -115,8 +115,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(1, 3);
-            var y = num.From(2, 4);
+            var x = num.New(1, 3);
+            var y = num.New(2, 4);
             var z = num.Union(x, y);
 
             Assert.Equal(new long[] { 1, 2, 3, 4 }, z);
@@ -127,8 +127,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(2, 4);
-            var y = num.From(1, 3);
+            var x = num.New(2, 4);
+            var y = num.New(1, 3);
             var z = num.Union(x, y);
 
             Assert.Equal(new long[] { 1, 2, 3, 4 }, z);

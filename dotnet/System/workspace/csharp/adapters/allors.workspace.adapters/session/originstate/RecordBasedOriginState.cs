@@ -69,9 +69,9 @@ namespace Allors.Workspace.Adapters
 
         public void AddCompositeRole(IRoleType roleType, long roleToAdd)
         {
-            var previousRole = this.GetRole(roleType);
+            var previousRole = (Range)this.GetRole(roleType);
 
-            if (this.Ranges.Contains(previousRole, roleToAdd))
+            if (previousRole.Contains(roleToAdd))
             {
                 return;
             }
@@ -93,9 +93,9 @@ namespace Allors.Workspace.Adapters
 
         public void RemoveCompositeRole(IRoleType roleType, long roleToRemove)
         {
-            var previousRole = this.GetRole(roleType);
+            var previousRole = (Range)this.GetRole(roleType);
 
-            if (!this.Ranges.Contains(previousRole, roleToRemove))
+            if (!previousRole.Contains(roleToRemove))
             {
                 return;
             }
@@ -105,9 +105,9 @@ namespace Allors.Workspace.Adapters
             this.SetChangedRole(roleType, role);
         }
 
-        public void SetCompositesRole(IRoleType roleType, object role)
+        public void SetCompositesRole(IRoleType roleType, Range role)
         {
-            var previousRole = this.GetRole(roleType);
+            var previousRole = (Range)this.GetRole(roleType);
 
             this.SetChangedRole(roleType, role);
 
@@ -118,8 +118,7 @@ namespace Allors.Workspace.Adapters
             }
 
             // OneToMany
-            var addedRoles = this.Ranges.Except(role, previousRole);
-            foreach (var addedRole in this.Ranges.Enumerate(addedRoles))
+            foreach (var addedRole in this.Ranges.Except(role, previousRole))
             {
                 var previousAssociationObject = this.Session.GetCompositeAssociation<IObject>(addedRole, associationType);
                 previousAssociationObject?.Strategy.Set(roleType, null);
@@ -217,7 +216,7 @@ namespace Allors.Workspace.Adapters
                 return (long?)role == forRole;
             }
 
-            return this.Ranges.Contains(role, forRole);
+            return ((Range)role).Contains(forRole);
         }
 
         protected abstract void OnChange();

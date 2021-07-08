@@ -24,13 +24,13 @@ namespace Allors.Workspace.Adapters.Local
         private readonly ConcurrentDictionary<long, DatabaseRecord> recordsById;
 
         private readonly Func<IWorkspaceServices> servicesBuilder;
-        private readonly Func<IRanges> numbersBuilder;
+        private readonly IRanges ranges;
 
-        public DatabaseConnection(Configuration configuration, IDatabase database, Func<IWorkspaceServices> servicesBuilder, Func<IRanges> numbersBuilder) : base(configuration)
+        public DatabaseConnection(Configuration configuration, IDatabase database, Func<IWorkspaceServices> servicesBuilder, Func<IRanges> rangesFactory) : base(configuration)
         {
             this.Database = database;
             this.servicesBuilder = servicesBuilder;
-            this.numbersBuilder = numbersBuilder;
+            this.ranges = rangesFactory();
 
             this.recordsById = new ConcurrentDictionary<long, DatabaseRecord>();
             this.permissionCache = this.Database.Services.Get<IPermissionsCache>();
@@ -83,7 +83,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.numbersBuilder());
+        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.ranges);
 
         public override Adapters.DatabaseRecord GetRecord(long id)
         {
@@ -150,7 +150,7 @@ namespace Allors.Workspace.Adapters.Local
             }
 
             acessControl.Version = accessControl.Strategy.ObjectVersion;
-            acessControl.PermissionIds = new HashSet<long>(accessControl.Permissions.Select(v => v.Id));
+            acessControl.PermissionIds = this.ranges.Import(accessControl.Permissions.Select(v => v.Id));
 
             return acessControl;
         }

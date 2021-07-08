@@ -48,7 +48,15 @@ namespace Allors.Ranges
             return true;
         }
 
-        public override bool Equals(object? obj) => obj is Range other && this.Equals(other);
+        public override bool Equals(object? obj) =>
+            obj switch
+            {
+                null => this.Items == null,
+                Range range => this.Equals(range),
+                long item => this.Items?.Length == 1 && this.Items[0] == item,
+                long[] items => this.Equals(new Range(items)),
+                _ => throw new NotSupportedException($"Can not compare a Range with an object of type {obj.GetType()}")
+            };
 
         public override int GetHashCode() => this.Items?.GetHashCode() ?? 0;
 
@@ -72,7 +80,12 @@ namespace Allors.Ranges
 
         public override string ToString()
         {
-            return base.ToString();
+            if (this.Items == null)
+            {
+                return "[]";
+            }
+
+            return "[" + string.Join(", ", this.Items) + "]";
         }
 
         private class EmptyEnumerator<TEmpty> : IEnumerator<TEmpty>
