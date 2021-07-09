@@ -8,11 +8,12 @@ namespace Allors.Workspace.Adapters.Local
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
+    using Ranges;
 
     public class DatabaseRecord : Adapters.DatabaseRecord
     {
         private readonly AccessControl[] accessControls;
-        private readonly ISet<long> deniedPermissionIds;
+        private readonly IRange deniedPermissionIds;
 
         private readonly Dictionary<IRoleType, object> roleByRoleType;
 
@@ -21,7 +22,7 @@ namespace Allors.Workspace.Adapters.Local
         {
         }
 
-        internal DatabaseRecord(IClass @class, long id, long version, Dictionary<IRoleType, object> roleByRoleType, ISet<long> deniedPermissionIds, AccessControl[] accessControls)
+        internal DatabaseRecord(IClass @class, long id, long version, Dictionary<IRoleType, object> roleByRoleType, IRange deniedPermissionIds, AccessControl[] accessControls)
             : base(@class, id, version)
         {
             this.roleByRoleType = roleByRoleType;
@@ -47,7 +48,7 @@ namespace Allors.Workspace.Adapters.Local
                 return false;
             }
 
-            return this.deniedPermissionIds?.Contains(permission) != true && this.accessControls.Any(v => v.PermissionIds.Contains(permission));
+            return this.deniedPermissionIds.Contains(permission) && this.accessControls.Any(v => v.PermissionIds.Contains(permission));
         }
     }
 }

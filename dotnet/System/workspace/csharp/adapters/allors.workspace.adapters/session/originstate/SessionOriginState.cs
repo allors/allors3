@@ -49,7 +49,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void SetCompositesRole(long association, IRoleType roleType, Range newRole)
+        public void SetCompositesRole(long association, IRoleType roleType, IRange newRole)
         {
             var previousRole = this.ranges.Unbox(this.Get(association, roleType));
 
@@ -273,7 +273,7 @@ namespace Allors.Workspace.Adapters
             this.propertyByObjectByPropertyType.Set(roleId, associationType, associationIds);
 
             // A ----> R
-            var roleIds = (Range)this.Get(associationId, roleType);
+            var roleIds = (IRange)this.Get(associationId, roleType);
             roleIds = this.ranges.Add(roleIds, roleId);
             this.propertyByObjectByPropertyType.Set(associationId, roleType, roleIds);
         }
@@ -301,7 +301,7 @@ namespace Allors.Workspace.Adapters
         private void RemoveCompositesRoleMany2Many(long associationId, IRoleType roleType, long roleId)
         {
             var associationType = roleType.AssociationType;
-            var previousRoleIds = (Range)this.Get(associationId, roleType);
+            var previousRoleIds = (IRange)this.Get(associationId, roleType);
 
             // R not in PR 
             if (!previousRoleIds.Contains(roleId))

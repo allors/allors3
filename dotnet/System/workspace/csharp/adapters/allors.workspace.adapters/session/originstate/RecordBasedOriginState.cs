@@ -27,8 +27,7 @@ namespace Allors.Workspace.Adapters
 
         public object GetRole(IRoleType roleType)
         {
-            if (this.ChangedRoleByRelationType != null &&
-                this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var role))
+            if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var role))
             {
                 return role;
             }
@@ -105,7 +104,7 @@ namespace Allors.Workspace.Adapters
             this.SetChangedRole(roleType, role);
         }
 
-        public void SetCompositesRole(IRoleType roleType, Range role)
+        public void SetCompositesRole(IRoleType roleType, IRange role)
         {
             var previousRole = this.Ranges.Unbox(this.GetRole(roleType));
 

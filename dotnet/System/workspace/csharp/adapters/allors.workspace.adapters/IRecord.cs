@@ -6,11 +6,16 @@
 namespace Allors.Workspace.Adapters
 {
     using Meta;
+    using Ranges;
 
     public interface IRecord
     {
         long Version { get; }
 
-        object GetRole(IRoleType roleType);
+        object GetUnitRole(IRoleType roleType);
+
+        long? GetCompositeRole(IRoleType roleType);
+
+        IRange GetCompositesRole(IRoleType roleType);
     }
 }

@@ -186,7 +186,7 @@ namespace Allors.Workspace.Adapters
                 return this.GetOne<IObject>((long?)role);
             }
 
-            return ((Range?)role)?.Select(this.GetOne<IObject>).ToArray() ?? this.Workspace.DatabaseConnection.EmptyArray(roleType.ObjectType);
+            return ((IRange?)role)?.Select(this.GetOne<IObject>).ToArray() ?? this.Workspace.DatabaseConnection.EmptyArray(roleType.ObjectType);
         }
 
         public T GetCompositeAssociation<T>(long role, IAssociationType associationType) where T : IObject

@@ -73,7 +73,7 @@ namespace Tests.Workspace.Local
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
             var configuration = new Allors.Workspace.Adapters.Local.Configuration("Default", metaPopulation, objectFactory);
-            this.DatabaseConnection = new DatabaseConnection(configuration, this.Database, () => new WorkspaceContext(), () => new UncachedRanges()) { UserId = user.Id };
+            this.DatabaseConnection = new DatabaseConnection(configuration, this.Database, () => new WorkspaceContext(), () => new DefaultRanges()) { UserId = user.Id };
 
             this.Workspace = this.DatabaseConnection.CreateWorkspace();
 

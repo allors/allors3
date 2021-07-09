@@ -21,7 +21,7 @@ namespace Allors.Workspace.Adapters
             this.Ranges = ranges;
 
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
-            this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, Range>();
+            this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, IRange>();
 
             this.recordById = new Dictionary<long, WorkspaceRecord>();
         }
@@ -37,7 +37,7 @@ namespace Allors.Workspace.Adapters
 
         public Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
 
-        public Dictionary<IClass, Range> WorkspaceIdsByWorkspaceClass { get; }
+        public Dictionary<IClass, IRange> WorkspaceIdsByWorkspaceClass { get; }
 
         public abstract ISession CreateSession();
 

@@ -9,24 +9,24 @@ namespace Allors.Ranges
 
     public interface IRanges
     {
-        Range From(IEnumerable<long>? sortedItems);
+        IRange From(IEnumerable<long>? sortedItems);
 
-        Range From(params long[] sortedItems);
+        IRange From(params long[] sortedItems);
 
-        Range From(long item);
+        IRange From(long item);
 
-        Range Unbox(object boxed);
+        IRange Unbox(object boxed);
 
-        Range Import(IEnumerable<long>? unsortedItems);
+        IRange Import(IEnumerable<long>? unsortedItems);
 
-        Range Import(params long[] unsortedItems);
+        IRange Import(params long[] unsortedItems);
 
-        Range Add(Range range, long item);
+        IRange Add(IRange range, long item);
 
-        Range Remove(Range range, long item);
+        IRange Remove(IRange range, long item);
 
-        Range Union(Range range, Range other);
+        IRange Union(IRange range, IRange other);
 
-        Range Except(Range range, Range other);
+        IRange Except(IRange range, IRange other);
     }
 }

@@ -69,7 +69,7 @@ namespace Allors.Ranges
             var y = num.From(0, 1);
             var z = num.Union(x, y);
 
-            Assert.Equal(new Range(new long[] { 0, 1 }), z);
+            Assert.Equal(new ArrayRange(new long[] { 0, 1 }), z);
         }
 
 

@@ -113,7 +113,7 @@ namespace Allors.Database.Adapters.Sql
             get;
         }
 
-        internal IRanges Ranges = new UncachedRanges();
+        internal IRanges Ranges = new DefaultRanges();
 
         public ITransaction CreateTransaction()
         {

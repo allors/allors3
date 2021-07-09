@@ -208,7 +208,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        private IEnumerable<IObject> GetRoles(Range ids)
+        private IEnumerable<IObject> GetRoles(IRange ids)
         {
             foreach (var v in ids.Where(v => v < 0))
             {

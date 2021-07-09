@@ -309,7 +309,7 @@ namespace Allors.Workspace.Adapters
             return association switch
             {
                 long id => new[] { this.Session.GetOne<T>(id) },
-                Range ids => ids.Select(v => this.Session.GetOne<T>(v)).ToArray(),
+                IRange ids => ids.Select(v => this.Session.GetOne<T>(v)).ToArray(),
                 _ => Array.Empty<T>()
             };
         }
