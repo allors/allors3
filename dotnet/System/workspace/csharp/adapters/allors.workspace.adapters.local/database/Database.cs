@@ -58,7 +58,7 @@ namespace Allors.Workspace.Adapters.Local
                     ?.Select(this.GetAccessControl)
                     .ToArray() ?? Array.Empty<AccessControl>();
 
-                this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, acl.DeniedPermissionIds, accessControls);
+                this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, this.ranges.From(acl.DeniedPermissionIds), accessControls);
             }
         }
 

@@ -48,7 +48,7 @@ namespace Allors.Workspace.Adapters.Local
                 return false;
             }
 
-            return this.deniedPermissionIds.Contains(permission) && this.accessControls.Any(v => v.PermissionIds.Contains(permission));
+            return !this.deniedPermissionIds.Contains(permission) && this.accessControls.Any(v => v.PermissionIds.Contains(permission));
         }
     }
 }

@@ -25,6 +25,8 @@ namespace Allors.Ranges
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
+        public bool IsEmpty => true;
+
         public bool Contains(long item) => false;
 
         public long[] ToArray() => EmptyArray;

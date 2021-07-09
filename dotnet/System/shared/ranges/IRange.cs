@@ -10,8 +10,10 @@ namespace Allors.Ranges
 
     public interface IRange : IEquatable<IRange>, IEnumerable<long>
     {
-        long[] ToArray();
+        bool IsEmpty { get; }
 
         bool Contains(long item);
+
+        long[] ToArray();
     }
 }

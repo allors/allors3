@@ -11,7 +11,6 @@ namespace Allors.Workspace.Adapters
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
-    using Ranges;
 
     public sealed class ChangeSet : IChangeSet
     {
@@ -91,8 +90,8 @@ namespace Allors.Workspace.Adapters
                 var ranges = this.Session.Workspace.Ranges;
                 var hasChange = false;
 
-                var currentRange = ranges.Unbox(current);
-                var previousRange = ranges.Unbox(previous);
+                var currentRange = ranges.Ensure(current);
+                var previousRange = ranges.Ensure(previous);
 
                 foreach (var v in ranges.Except(currentRange, previousRange))
                 {

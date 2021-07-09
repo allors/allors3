@@ -6,7 +6,6 @@
 namespace Allors.Workspace.Adapters
 {
     using Meta;
-    using Ranges;
 
     public abstract class DatabaseRecord : IRecord
     {
@@ -23,11 +22,7 @@ namespace Allors.Workspace.Adapters
 
         public long Version { get; }
 
-        public abstract object GetUnitRole(IRoleType roleType);
-
-        public abstract long? GetCompositeRole(IRoleType roleType);
-
-        public abstract IRange GetCompositesRole(IRoleType roleType);
+        public abstract object GetRole(IRoleType roleType);
 
         public abstract bool IsPermitted(long permission);
     }

@@ -38,11 +38,11 @@ namespace Allors.Ranges
 
         public IRange From(long item) => new ArrayRange(new[] { item });
 
-        public IRange Unbox(object boxed) => boxed switch
+        public IRange Ensure(object? nullable) => nullable switch
         {
             null => EmptyRange.Instance,
             IRange range => range,
-            _ => throw new NotSupportedException($"Unboxing is not supported from {boxed.GetType()}")
+            _ => throw new NotSupportedException($"Unboxing is not supported from {nullable.GetType()}")
         };
 
         public IRange Import(IEnumerable<long>? unsortedItems)
@@ -72,6 +72,7 @@ namespace Allors.Ranges
         {
             switch (range)
             {
+                case null:
                 case EmptyRange _:
                     return this.From(item);
                 case ArrayRange arrayRange:
@@ -121,6 +122,8 @@ namespace Allors.Ranges
         {
             switch (range)
             {
+                case null:
+                    return EmptyRange.Instance;
                 case EmptyRange _:
                     return range;
                 case ArrayRange arrayRange:
@@ -168,6 +171,7 @@ namespace Allors.Ranges
         {
             switch (range)
             {
+                case null:
                 case EmptyRange _:
                     return other;
                 case ArrayRange arrayRange when other is EmptyRange:
@@ -272,6 +276,8 @@ namespace Allors.Ranges
 
             switch (range)
             {
+                case null:
+                    return EmptyRange.Instance;
                 case EmptyRange _:
                     return range;
                 case ArrayRange arrayRange:

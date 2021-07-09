@@ -35,18 +35,19 @@ namespace Allors.Workspace.Adapters
 
         public long Version { get; private set; }
 
+        public object GetRole(IRoleType roleType)
+        {
+            object @object = null;
+            this.roleByRelationType?.TryGetValue(roleType.RelationType, out @object);
+            return @object;
+        }
+
         public object GetUnitRole(IRoleType roleType) => this.GetRole(roleType);
 
         public long? GetCompositeRole(IRoleType roleType) => (long?)this.GetRole(roleType);
 
         public IRange GetCompositesRole(IRoleType roleType) => (IRange)this.GetRole(roleType);
 
-        private object GetRole(IRoleType roleType)
-        {
-            object @object = null;
-            this.roleByRelationType?.TryGetValue(roleType.RelationType, out @object);
-            return @object;
-        }
 
         private IEnumerable<KeyValuePair<IRelationType, object>> Import(
             IReadOnlyDictionary<IRelationType, object> changedRoleByRoleType,

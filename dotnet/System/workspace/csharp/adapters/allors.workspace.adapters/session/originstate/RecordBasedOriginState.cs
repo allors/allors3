@@ -25,7 +25,7 @@ namespace Allors.Workspace.Adapters
 
         private Dictionary<IRelationType, object> PreviousChangedRoleByRelationType { get; set; }
 
-        public object GetRole(IRoleType roleType)
+        public object GetUnitRole(IRoleType roleType)
         {
             if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var role))
             {
@@ -35,11 +35,31 @@ namespace Allors.Workspace.Adapters
             return this.Record?.GetRole(roleType);
         }
 
+        public long? GetCompositeRole(IRoleType roleType)
+        {
+            if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var role))
+            {
+                return (long?)role;
+            }
+
+            return (long?)this.Record?.GetRole(roleType);
+        }
+
+        public IRange GetCompositesRole(IRoleType roleType)
+        {
+            if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var role))
+            {
+                return (IRange)role;
+            }
+
+            return this.Ranges.Ensure(this.Record?.GetRole(roleType));
+        }
+
         public void SetUnitRole(IRoleType roleType, object role) => this.SetChangedRole(roleType, role);
 
         public void SetCompositeRole(IRoleType roleType, long? role)
         {
-            var previousRole = (long?)this.GetRole(roleType);
+            var previousRole = this.GetCompositeRole(roleType);
 
             if (previousRole == role)
             {
@@ -68,7 +88,7 @@ namespace Allors.Workspace.Adapters
 
         public void AddCompositesRole(IRoleType roleType, long roleToAdd)
         {
-            var previousRole = this.Ranges.Unbox(this.GetRole(roleType));
+            var previousRole = this.GetCompositesRole(roleType);
 
             if (previousRole.Contains(roleToAdd))
             {
@@ -92,7 +112,7 @@ namespace Allors.Workspace.Adapters
 
         public void RemoveCompositesRole(IRoleType roleType, long roleToRemove)
         {
-            var previousRole = this.Ranges.Unbox(this.GetRole(roleType));
+            var previousRole = this.GetCompositesRole(roleType);
 
             if (!previousRole.Contains(roleToRemove))
             {
@@ -106,7 +126,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetCompositesRole(IRoleType roleType, IRange role)
         {
-            var previousRole = this.Ranges.Unbox(this.GetRole(roleType));
+            var previousRole = this.GetCompositesRole(roleType);
 
             this.SetChangedRole(roleType, role);
 
@@ -208,14 +228,13 @@ namespace Allors.Workspace.Adapters
                 return false;
             }
 
-            var role = this.GetRole(roleType);
-
             if (roleType.IsOne)
             {
-                return (long?)role == forRole;
+                var role = this.GetCompositeRole(roleType);
+                return role == forRole;
             }
 
-            var roleRange = this.Ranges.Unbox(role);
+            var roleRange = this.GetCompositesRole(roleType);
             return roleRange.Contains(forRole);
         }
 

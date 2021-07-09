@@ -57,7 +57,7 @@ namespace Allors.Workspace.Adapters.Remote
                     }
                     else
                     {
-                        var roleIds = ranges.Unbox(roleValue);
+                        var roleIds = ranges.Ensure(roleValue);
 
                         if (!this.ExistDatabaseRecord)
                         {
@@ -65,8 +65,8 @@ namespace Allors.Workspace.Adapters.Remote
                         }
                         else
                         {
-                            var databaseRole = ranges.Unbox(this.DatabaseRecord.GetRole(relationType.RoleType));
-                            if (databaseRole == default)
+                            var databaseRole = ranges.Ensure(this.DatabaseRecord.GetRole(relationType.RoleType));
+                            if (databaseRole.IsEmpty)
                             {
                                 pushRequestRole.a = roleIds.ToArray();
                             }

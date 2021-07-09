@@ -55,11 +55,13 @@ namespace Allors.Ranges
                 _ => throw new NotSupportedException($"Can not compare a Range with an object of type {obj.GetType()}")
             };
 
+        public override int GetHashCode() => this.Items.GetHashCode();
+
         public IEnumerator<long> GetEnumerator() => ((IEnumerable<long>)this.Items).GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        public long[] ToArray() => this.Items;
+        public bool IsEmpty => false;
 
         public bool Contains(long item) =>
             this.Items switch
@@ -67,6 +69,8 @@ namespace Allors.Ranges
                 var singleItems when singleItems.Length == 1 => singleItems[0] == item,
                 _ => Array.BinarySearch(this.Items, item) >= 0,
             };
+
+        public long[] ToArray() => this.Items;
 
         public override string ToString() => "[" + string.Join(", ", this.Items) + "]";
     }

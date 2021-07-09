@@ -95,8 +95,8 @@ namespace Allors.Workspace.Adapters
             roleType.Origin switch
             {
                 Origin.Session => this.Session.GetRole(this, roleType),
-                Origin.Workspace => this.WorkspaceOriginState?.GetRole(roleType),
-                Origin.Database => this.DatabaseOriginState?.IsVersionUnknown == true ? throw new Exception() : this.CanRead(roleType) ? this.DatabaseOriginState?.GetRole(roleType) : null,
+                Origin.Workspace => this.WorkspaceOriginState?.GetUnitRole(roleType),
+                Origin.Database => this.DatabaseOriginState?.IsVersionUnknown == true ? throw new Exception() : this.CanRead(roleType) ? this.DatabaseOriginState?.GetUnitRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
             };
 
@@ -104,8 +104,8 @@ namespace Allors.Workspace.Adapters
             this.Session.GetOne<T>(roleType.Origin switch
             {
                 Origin.Session => (long?)this.Session.GetRole(this, roleType),
-                Origin.Workspace => (long?)this.WorkspaceOriginState?.GetRole(roleType),
-                Origin.Database => this.DatabaseOriginState?.IsVersionUnknown == true ? throw new Exception() : this.CanRead(roleType) ? (long?)this.DatabaseOriginState?.GetRole(roleType) : null,
+                Origin.Workspace => this.WorkspaceOriginState?.GetCompositeRole(roleType),
+                Origin.Database => this.DatabaseOriginState?.IsVersionUnknown == true ? throw new Exception() : this.CanRead(roleType) ? this.DatabaseOriginState?.GetCompositeRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
             });
 
@@ -114,8 +114,8 @@ namespace Allors.Workspace.Adapters
             var roles = roleType.Origin switch
             {
                 Origin.Session => this.Session.GetRole(this, roleType),
-                Origin.Workspace => this.WorkspaceOriginState?.GetRole(roleType),
-                Origin.Database => this.DatabaseOriginState?.IsVersionUnknown == true ? throw new Exception() : this.CanRead(roleType) ? this.DatabaseOriginState?.GetRole(roleType) : null,
+                Origin.Workspace => this.WorkspaceOriginState?.GetCompositesRole(roleType),
+                Origin.Database => this.DatabaseOriginState?.IsVersionUnknown == true ? throw new Exception() : this.CanRead(roleType) ? this.DatabaseOriginState?.GetCompositesRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
             };
 
@@ -293,7 +293,7 @@ namespace Allors.Workspace.Adapters
                 return this.Session.GetCompositeAssociation<T>(this.Id, associationType);
             }
 
-            var association = (long?)this.Session.SessionOriginState.Get(this.Id, associationType);
+            var association = (long?)this.Session.SessionOriginState.GetComposite(this.Id, associationType);
             return association != null ? this.Session.GetOne<T>(association) : default;
         }
 
@@ -304,14 +304,9 @@ namespace Allors.Workspace.Adapters
                 return this.Session.GetCompositesAssociation<T>(this.Id, associationType);
             }
 
-            var association = this.Session.SessionOriginState.Get(this.Id, associationType);
+            var association = this.Session.SessionOriginState.GetComposites(this.Id, associationType);
 
-            return association switch
-            {
-                long id => new[] { this.Session.GetOne<T>(id) },
-                IRange ids => ids.Select(v => this.Session.GetOne<T>(v)).ToArray(),
-                _ => Array.Empty<T>()
-            };
+            return association.IsEmpty ? Array.Empty<T>() : association.Select(v => this.Session.GetOne<T>(v)).ToArray();
         }
 
         public bool CanRead(IRoleType roleType) => this.DatabaseOriginState?.CanRead(roleType) ?? true;
@@ -320,17 +315,23 @@ namespace Allors.Workspace.Adapters
 
         public bool CanExecute(IMethodType methodType) => this.DatabaseOriginState?.CanExecute(methodType) ?? false;
 
-        public bool IsAssociationForRole(IRoleType roleType, long forRoleId)
-        {
-            var role = this.Session.SessionOriginState.Get(this.Id, roleType);
-            return roleType.Origin switch
+        public bool IsCompositeAssociationForRole(IRoleType roleType, long forRoleId) =>
+            roleType.Origin switch
             {
-                Origin.Session => Equals(role, forRoleId),
+                Origin.Session => Equals(this.Session.SessionOriginState.GetComposite(this.Id, roleType), forRoleId),
                 Origin.Workspace => this.WorkspaceOriginState?.IsAssociationForRole(roleType, forRoleId) ?? false,
                 Origin.Database => this.DatabaseOriginState?.IsAssociationForRole(roleType, forRoleId) ?? false,
                 _ => throw new ArgumentException("Unsupported Origin")
             };
-        }
+
+        public bool IsCompositesAssociationForRole(IRoleType roleType, long forRoleId) =>
+            roleType.Origin switch
+            {
+                Origin.Session => Equals(this.Session.SessionOriginState.GetComposites(this.Id, roleType), forRoleId),
+                Origin.Workspace => this.WorkspaceOriginState?.IsAssociationForRole(roleType, forRoleId) ?? false,
+                Origin.Database => this.DatabaseOriginState?.IsAssociationForRole(roleType, forRoleId) ?? false,
+                _ => throw new ArgumentException("Unsupported Origin")
+            };
 
         public void OnDatabasePushNewId(long newId) => this.Id = newId;
 

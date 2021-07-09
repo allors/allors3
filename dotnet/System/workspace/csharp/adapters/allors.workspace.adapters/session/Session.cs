@@ -10,7 +10,6 @@ namespace Allors.Workspace.Adapters
     using System.Threading.Tasks;
     using Data;
     using Meta;
-    using Ranges;
 
     public abstract class Session : ISession
     {
@@ -175,18 +174,18 @@ namespace Allors.Workspace.Adapters
 
         public object GetRole(Strategy association, IRoleType roleType)
         {
-            var role = this.SessionOriginState.Get(association.Id, roleType);
             if (roleType.ObjectType.IsUnit)
             {
-                return role;
+                return this.SessionOriginState.GetUnit(association.Id, roleType);
             }
 
             if (roleType.IsOne)
             {
-                return this.GetOne<IObject>((long?)role);
+                return this.GetOne<IObject>(this.SessionOriginState.GetComposite(association.Id, roleType));
             }
 
-            return ((IRange?)role)?.Select(this.GetOne<IObject>).ToArray() ?? this.Workspace.DatabaseConnection.EmptyArray(roleType.ObjectType);
+            var range = this.SessionOriginState.GetComposites(association.Id, roleType);
+            return !range.IsEmpty ? range.Select(this.GetOne<IObject>).ToArray() : this.Workspace.DatabaseConnection.EmptyArray(roleType.ObjectType);
         }
 
         public T GetCompositeAssociation<T>(long role, IAssociationType associationType) where T : IObject
@@ -200,7 +199,7 @@ namespace Allors.Workspace.Adapters
                     continue;
                 }
 
-                if (association.IsAssociationForRole(roleType, role))
+                if (association.IsCompositeAssociationForRole(roleType, role))
                 {
                     return (T)association.Object;
                 }
@@ -220,7 +219,7 @@ namespace Allors.Workspace.Adapters
                     continue;
                 }
 
-                if (association.IsAssociationForRole(roleType, role))
+                if (association.IsCompositesAssociationForRole(roleType, role))
                 {
                     yield return (T)association.Object;
                 }
@@ -303,7 +302,7 @@ namespace Allors.Workspace.Adapters
 
         }
 
-        protected void OnDatabasePushResponse(Adapters.Strategy strategy)
+        protected void OnDatabasePushResponse(Strategy strategy)
         {
             var databaseRecord = this.Workspace.DatabaseConnection.OnPushResponse(strategy.Class, strategy.Id);
             strategy.OnDatabasePushResponse(databaseRecord);

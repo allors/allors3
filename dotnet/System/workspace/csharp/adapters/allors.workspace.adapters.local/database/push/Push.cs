@@ -188,7 +188,7 @@ namespace Allors.Workspace.Adapters.Local
                     }
                     else
                     {
-                        var objectIds = ranges.Unbox(roleValue);
+                        var objectIds = ranges.Ensure(roleValue);
 
                         if (this.ObjectByNewId == null)
                         {
