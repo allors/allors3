@@ -88,16 +88,19 @@ namespace Allors.Workspace.Adapters
             }
             else
             {
-                var numbers = this.Session.Workspace.Ranges;
+                var ranges = this.Session.Workspace.Ranges;
                 var hasChange = false;
 
-                foreach (var v in numbers.Except((Range)current, (Range)previous))
+                var currentRange = ranges.Unbox(current);
+                var previousRange = ranges.Unbox(previous);
+
+                foreach (var v in ranges.Except(currentRange, previousRange))
                 {
                     this.AddRole(relationType, this.Session.GetStrategy(v));
                     hasChange = true;
                 }
 
-                foreach (var v in numbers.Except((Range)previous, (Range)current))
+                foreach (var v in ranges.Except(previousRange, currentRange))
                 {
                     this.AddRole(relationType, this.Session.GetStrategy(v));
                     hasChange = true;

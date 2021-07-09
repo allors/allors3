@@ -151,6 +151,8 @@ namespace Allors.Workspace.Adapters.Local
             var roleTypes = composite.DatabaseRoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0);
             var acl = this.AccessControlLists[obj];
 
+            var ranges = this.Workspace.Ranges;
+
             foreach (var keyValuePair in local.DatabaseOriginState.ChangedRoleByRelationType)
             {
                 var relationType = keyValuePair.Key;
@@ -184,14 +186,19 @@ namespace Allors.Workspace.Adapters.Local
 
                         obj.Strategy.SetCompositeRole(roleType, role);
                     }
-                    else if (this.ObjectByNewId == null)
-                    {
-                        var roles = this.Transaction.Instantiate((long[])roleValue);
-                        obj.Strategy.SetCompositesRole(roleType, roles);
-                    }
                     else
                     {
-                        obj.Strategy.SetCompositesRole(roleType, this.GetRoles((long[])roleValue));
+                        var objectIds = ranges.Unbox(roleValue);
+
+                        if (this.ObjectByNewId == null)
+                        {
+                            var roles = this.Transaction.Instantiate(objectIds);
+                            obj.Strategy.SetCompositesRole(roleType, roles);
+                        }
+                        else
+                        {
+                            obj.Strategy.SetCompositesRole(roleType, this.GetRoles(objectIds));
+                        }
                     }
                 }
                 else
@@ -201,7 +208,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        private IEnumerable<IObject> GetRoles(long[] ids)
+        private IEnumerable<IObject> GetRoles(Range ids)
         {
             foreach (var v in ids.Where(v => v < 0))
             {

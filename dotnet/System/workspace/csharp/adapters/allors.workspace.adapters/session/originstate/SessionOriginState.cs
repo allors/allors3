@@ -51,7 +51,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetCompositesRole(long association, IRoleType roleType, Range newRole)
         {
-            var previousRole = (Range)this.Get(association, roleType);
+            var previousRole = this.ranges.Unbox(this.Get(association, roleType));
 
             // Use Diff (Add/Remove)
             var addedRoles = this.ranges.Except(newRole, previousRole);
@@ -208,7 +208,7 @@ namespace Allors.Workspace.Adapters
             var associationType = roleType.AssociationType;
 
             // A <---- R
-            var roleAssociations = (Range)this.Get(roleId, associationType);
+            var roleAssociations = this.ranges.Unbox(this.Get(roleId, associationType));
             roleAssociations = this.ranges.Remove(roleAssociations, associationId);
             this.propertyByObjectByPropertyType.Set(roleId, associationType, roleAssociations);
 
@@ -226,7 +226,7 @@ namespace Allors.Workspace.Adapters
              */
 
             var associationType = roleType.AssociationType;
-            var previousRoleIds = (Range)this.Get(associationId, roleType);
+            var previousRoleIds = this.ranges.Unbox(this.Get(associationId, roleType));
 
             // R in PR 
             if (previousRoleIds.Contains(roleId))
@@ -245,7 +245,7 @@ namespace Allors.Workspace.Adapters
             this.propertyByObjectByPropertyType.Set(roleId, associationType, roleId);
 
             // A ----> R
-            var roleIds = (Range)this.Get(associationId, roleType);
+            var roleIds = this.ranges.Unbox(this.Get(associationId, roleType));
             roleIds = this.ranges.Add(roleIds, roleId);
             this.propertyByObjectByPropertyType.Set(associationId, roleType, roleIds);
         }
@@ -259,7 +259,7 @@ namespace Allors.Workspace.Adapters
              *   A ----- PR         A       PR       A --    PR       A --    PR
              */
             var associationType = roleType.AssociationType;
-            var previousRoleIds = (Range)this.Get(associationId, roleType);
+            var previousRoleIds = this.ranges.Unbox(this.Get(associationId, roleType));
 
             // R in PR 
             if (previousRoleIds.Contains(roleId))
@@ -268,7 +268,7 @@ namespace Allors.Workspace.Adapters
             }
 
             // A <---- R
-            var associationIds = (Range)this.Get(roleId, associationType);
+            var associationIds = this.ranges.Unbox(this.Get(roleId, associationType));
             associationIds = this.ranges.Add(associationIds, associationId);
             this.propertyByObjectByPropertyType.Set(roleId, associationType, associationIds);
 
@@ -281,7 +281,7 @@ namespace Allors.Workspace.Adapters
         private void RemoveCompositesRoleOne2Many(long associationId, IRoleType roleType, long roleId)
         {
             var associationType = roleType.AssociationType;
-            var previousRoleIds = (Range)this.Get(associationId, roleType);
+            var previousRoleIds = this.ranges.Unbox(this.Get(associationId, roleType));
 
             // R not in PR 
             if (!previousRoleIds.Contains(roleId))
@@ -293,7 +293,7 @@ namespace Allors.Workspace.Adapters
             this.propertyByObjectByPropertyType.Set(roleId, associationType, null);
 
             // A ----> R
-            var roleIds = (Range)this.Get(associationId, roleType);
+            var roleIds = this.ranges.Unbox(this.Get(associationId, roleType));
             roleIds = this.ranges.Add(roleIds, roleId);
             this.propertyByObjectByPropertyType.Set(associationId, roleType, roleIds);
         }
@@ -310,12 +310,12 @@ namespace Allors.Workspace.Adapters
             }
 
             // A <---- R
-            var associationIds = (Range)this.Get(roleId, associationType);
+            var associationIds = this.ranges.Unbox(this.Get(roleId, associationType));
             associationIds = this.ranges.Remove(associationIds, associationId);
             this.propertyByObjectByPropertyType.Set(roleId, associationType, associationIds);
 
             // A ----> R
-            var roleIds = (Range)this.Get(associationId, roleType);
+            var roleIds = this.ranges.Unbox(this.Get(associationId, roleType));
             roleIds = this.ranges.Remove(roleIds, roleId);
             this.propertyByObjectByPropertyType.Set(associationId, roleType, roleIds);
         }

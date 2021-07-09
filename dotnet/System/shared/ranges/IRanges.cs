@@ -9,11 +9,13 @@ namespace Allors.Ranges
 
     public interface IRanges
     {
-        Range New(IEnumerable<long>? sortedItems);
+        Range From(IEnumerable<long>? sortedItems);
 
-        Range New(params long[] sortedItems);
+        Range From(params long[] sortedItems);
 
-        Range New(long item);
+        Range From(long item);
+
+        Range Unbox(object boxed);
 
         Range Import(IEnumerable<long>? unsortedItems);
 

@@ -67,9 +67,9 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void AddCompositeRole(IRoleType roleType, long roleToAdd)
+        public void AddCompositesRole(IRoleType roleType, long roleToAdd)
         {
-            var previousRole = (Range)this.GetRole(roleType);
+            var previousRole = this.Ranges.Unbox(this.GetRole(roleType));
 
             if (previousRole.Contains(roleToAdd))
             {
@@ -91,9 +91,9 @@ namespace Allors.Workspace.Adapters
             previousAssociationObject?.Strategy.Set(roleType, null);
         }
 
-        public void RemoveCompositeRole(IRoleType roleType, long roleToRemove)
+        public void RemoveCompositesRole(IRoleType roleType, long roleToRemove)
         {
-            var previousRole = (Range)this.GetRole(roleType);
+            var previousRole = this.Ranges.Unbox(this.GetRole(roleType));
 
             if (!previousRole.Contains(roleToRemove))
             {
@@ -107,7 +107,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetCompositesRole(IRoleType roleType, Range role)
         {
-            var previousRole = (Range)this.GetRole(roleType);
+            var previousRole = this.Ranges.Unbox(this.GetRole(roleType));
 
             this.SetChangedRole(roleType, role);
 
@@ -216,7 +216,8 @@ namespace Allors.Workspace.Adapters
                 return (long?)role == forRole;
             }
 
-            return ((Range)role).Contains(forRole);
+            var roleRange = this.Ranges.Unbox(role);
+            return roleRange.Contains(forRole);
         }
 
         protected abstract void OnChange();

@@ -36,7 +36,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 var database = this.RemoteStrategy.Session.Workspace.DatabaseConnection;
 
-                var numbers = database.Ranges;
+                var ranges = database.Ranges;
 
                 var roles = new List<PushRequestRole>();
 
@@ -55,21 +55,26 @@ namespace Allors.Workspace.Adapters.Remote
                     {
                         pushRequestRole.c = (long?)roleValue;
                     }
-                    else if (!this.ExistDatabaseRecord)
-                    {
-                        pushRequestRole.a = ((Range)roleValue).ToArray();
-                    }
                     else
                     {
-                        var databaseRole = (Range)this.DatabaseRecord.GetRole(relationType.RoleType);
-                        if (databaseRole == default)
+                        var roleIds = ranges.Unbox(roleValue);
+
+                        if (!this.ExistDatabaseRecord)
                         {
-                            pushRequestRole.a = ((Range)roleValue).ToArray();
+                            pushRequestRole.a = roleIds.ToArray();
                         }
                         else
                         {
-                            pushRequestRole.a = numbers.Except((Range)roleValue, databaseRole).ToArray();
-                            pushRequestRole.r = numbers.Except(databaseRole, (Range)roleValue).ToArray();
+                            var databaseRole = ranges.Unbox(this.DatabaseRecord.GetRole(relationType.RoleType));
+                            if (databaseRole == default)
+                            {
+                                pushRequestRole.a = roleIds.ToArray();
+                            }
+                            else
+                            {
+                                pushRequestRole.a = ranges.Except(roleIds, databaseRole).ToArray();
+                                pushRequestRole.r = ranges.Except(databaseRole, roleIds).ToArray();
+                            }
                         }
                     }
 

@@ -11,7 +11,7 @@ namespace Allors.Ranges
 
     public class UncachedRanges : IRanges
     {
-        public Range New(IEnumerable<long>? sortedItems)
+        public Range From(IEnumerable<long>? sortedItems)
         {
             switch (sortedItems)
             {
@@ -29,14 +29,21 @@ namespace Allors.Ranges
             }
         }
 
-        public Range New(params long[] sortedItems) =>
+        public Range From(params long[] sortedItems) =>
             sortedItems switch
             {
                 { Length: 0 } => default,
                 _ => new Range(sortedItems)
             };
 
-        public Range New(long item) => new Range(new[] { item });
+        public Range From(long item) => new Range(new[] { item });
+
+        public Range Unbox(object boxed) => boxed switch
+        {
+            null => default,
+            Range range => range,
+            _ => throw new NotSupportedException($"Unboxing is not supported from {boxed.GetType()}")
+        };
 
         public Range Import(IEnumerable<long>? unsortedItems)
         {
@@ -257,7 +264,7 @@ namespace Allors.Ranges
                     {
                         case null:
                             return range;
-                        case var otherItems when otherItems.Length == 0:
+                        case var otherItems when otherItems.Length == 1:
                             return this.Remove(range, otherItems[0]);
                         default:
                         {

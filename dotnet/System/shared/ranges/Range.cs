@@ -55,7 +55,7 @@ namespace Allors.Ranges
                 Range range => this.Equals(range),
                 long item => this.Items?.Length == 1 && this.Items[0] == item,
                 long[] items => this.Equals(new Range(items)),
-                _ => throw new NotSupportedException($"Can not compare a Range with an object of type {obj.GetType()}")
+                _ => throw new NotSupportedException($"Can not compare a Range with an @object of type {obj.GetType()}")
             };
 
         public override int GetHashCode() => this.Items?.GetHashCode() ?? 0;
@@ -63,7 +63,7 @@ namespace Allors.Ranges
         public static bool operator ==(Range left, Range right) => left.Equals(right);
 
         public static bool operator !=(Range left, Range right) => !left.Equals(right);
-
+        
         public IEnumerator<long> GetEnumerator() => this.Items != null ? ((IEnumerable<long>)this.Items).GetEnumerator() : EmptyEnumerator<long>.Instance;
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();

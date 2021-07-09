@@ -43,25 +43,6 @@ namespace Allors.Workspace.Adapters.Local
 
         internal void Sync(IEnumerable<IObject> objects, IAccessControlLists accessControlLists)
         {
-            // TODO: Prefetch objects
-            static object GetRole(IObject @object, IRoleType roleType)
-            {
-                if (roleType.ObjectType.IsUnit)
-                {
-                    return @object.Strategy.GetUnitRole(roleType);
-                }
-
-                if (roleType.IsOne)
-                {
-                    return @object.Strategy.GetCompositeRole(roleType)?.Id;
-                }
-
-                var roles = @object.Strategy.GetCompositesRole<IObject>(roleType);
-                return roles.Any()
-                    ? @object.Strategy.GetCompositesRole<IObject>(roleType).Select(v => v.Id).ToArray()
-                    : Array.Empty<long>();
-            }
-
             foreach (var @object in objects)
             {
                 var id = @object.Id;
@@ -69,9 +50,7 @@ namespace Allors.Workspace.Adapters.Local
                 var roleTypes = databaseClass.DatabaseRoleTypes.Where(w => w.RelationType.WorkspaceNames.Length > 0);
 
                 var workspaceClass = (IClass)this.Configuration.MetaPopulation.FindByTag(databaseClass.Tag);
-                var roleByRoleType = roleTypes.ToDictionary(w =>
-                        ((IRelationType)this.Configuration.MetaPopulation.FindByTag(w.RelationType.Tag)).RoleType,
-                    w => GetRole(@object, w));
+                var roleByRoleType = roleTypes.ToDictionary(w => ((IRelationType)this.Configuration.MetaPopulation.FindByTag(w.RelationType.Tag)).RoleType, w => GetRole(@object, w));
 
                 var acl = accessControlLists[@object];
 
@@ -153,6 +132,22 @@ namespace Allors.Workspace.Adapters.Local
             acessControl.PermissionIds = this.ranges.Import(accessControl.Permissions.Select(v => v.Id));
 
             return acessControl;
+        }
+
+        private object GetRole(IObject @object, IRoleType roleType)
+        {
+            if (roleType.ObjectType.IsUnit)
+            {
+                return @object.Strategy.GetUnitRole(roleType);
+            }
+
+            if (roleType.IsOne)
+            {
+                return @object.Strategy.GetCompositeRole(roleType)?.Id;
+            }
+
+            var roles = @object.Strategy.GetCompositesRole<IObject>(roleType);
+            return this.ranges.From(roles.Select(v => v.Id));
         }
     }
 }
