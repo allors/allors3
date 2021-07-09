@@ -14,9 +14,9 @@ namespace Allors.Database.Domain
 
     public static partial class ObjectExtensions
     {
-        public static bool IsCloneable(this IRoleType roleType) => !(roleType.RelationType.IsDerived || roleType.RelationType.IsSynced) && (roleType.ObjectType.IsUnit || roleType.AssociationType.IsMany);
+        public static bool IsCloneable(this IRoleType roleType) => !roleType.RelationType.IsDerived && (roleType.ObjectType.IsUnit || roleType.AssociationType.IsMany);
 
-        public static bool IsMergeable(this IRoleType roleType) => !(roleType.RelationType.IsDerived || roleType.RelationType.IsSynced);
+        public static bool IsMergeable(this IRoleType roleType) => !roleType.RelationType.IsDerived;
 
         public static void Merge<T>(this T @this, IObject inTo) where T : IObject
         {

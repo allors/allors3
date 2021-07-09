@@ -37,7 +37,7 @@ namespace Allors.Repository
 
         #endregion Allors
         [Multiplicity(Multiplicity.OneToMany)]
-        [Synced]
+        [Derived]
         [Workspace]
         public Score[] AccumulatedScores { get; set; }
 

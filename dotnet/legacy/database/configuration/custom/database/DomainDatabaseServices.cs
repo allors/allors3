@@ -12,6 +12,7 @@ namespace Allors.Database.Configuration
     using Domain.Derivations.Rules.Default;
     using Meta;
     using Microsoft.AspNetCore.Http;
+    using Services;
 
     public abstract class DomainDatabaseServices : IDomainDatabaseServices
     {

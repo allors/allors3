@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Collections.Generic;
     using Meta;
 
     public partial class LocalisedTextAccessor
@@ -16,7 +15,7 @@ namespace Allors.Database.Domain
 
         public string Get(IObject @object, Locale locale)
         {
-            foreach (var localisedText in @object.Strategy.GetCompositeRoles<LocalisedText>(this.roleType))
+            foreach (var localisedText in @object.Strategy.GetCompositesRole<LocalisedText>(this.roleType))
             {
                 if (localisedText?.Locale?.Equals(locale) == true)
                 {
@@ -29,7 +28,7 @@ namespace Allors.Database.Domain
 
         public void Set(IObject @object, Locale locale, string text)
         {
-            foreach (var existingLocalisedText in @object.Strategy.GetCompositeRoles<LocalisedText>(this.roleType))
+            foreach (var existingLocalisedText in @object.Strategy.GetCompositesRole<LocalisedText>(this.roleType))
             {
                 if (existingLocalisedText?.Locale?.Equals(locale) == true)
                 {
@@ -42,7 +41,7 @@ namespace Allors.Database.Domain
                 .WithLocale(locale)
                 .WithText(text)
                 .Build();
-            @object.Strategy.AddCompositeRole(this.roleType, newLocalisedText);
+            @object.Strategy.AddCompositesRole(this.roleType, newLocalisedText);
         }
     }
 }

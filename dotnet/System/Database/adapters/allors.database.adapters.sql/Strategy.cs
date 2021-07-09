@@ -975,7 +975,7 @@ namespace Allors.Database.Adapters.Sql
         {
             get
             {
-                var numbers = this.Transaction.Database.____RULE_VIOLATION____Ranges____RULE_VIOLATION____;
+                var ranges = this.Transaction.Database.____RULE_VIOLATION____Ranges____RULE_VIOLATION____;
 
                 if (this.originalRoleByRoleType == null)
                 {
@@ -1013,7 +1013,7 @@ namespace Allors.Database.Adapters.Sql
                     {
                         var changeTracker = (ChangeTracker)originalRole;
 
-                        if (numbers.Except(changeTracker.Add, changeTracker.Remove) == null && numbers.Except(changeTracker.Remove, changeTracker.Add) == null)
+                        if (ranges.Except(changeTracker.Add, changeTracker.Remove) == default && ranges.Except(changeTracker.Remove, changeTracker.Add) == default)
                         {
                             continue;
                         }
@@ -1064,7 +1064,7 @@ namespace Allors.Database.Adapters.Sql
                     {
                         var changeTracker = (ChangeTracker)originalAssociation;
 
-                        if (numbers.Except(changeTracker.Add, changeTracker.Remove) == null && numbers.Except(changeTracker.Remove, changeTracker.Add) == null)
+                        if (numbers.Except(changeTracker.Add, changeTracker.Remove) == default && numbers.Except(changeTracker.Remove, changeTracker.Add) == default)
                         {
                             continue;
                         }
