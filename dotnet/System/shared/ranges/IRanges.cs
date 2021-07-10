@@ -25,8 +25,8 @@ namespace Allors.Ranges
 
         IRange Remove(IRange? range, long item);
 
-        IRange Union(IRange? range, IRange other);
+        IRange Union(IRange? range, IRange? other);
 
-        IRange Except(IRange? range, IRange other);
+        IRange Except(IRange? range, IRange? other);
     }
 }

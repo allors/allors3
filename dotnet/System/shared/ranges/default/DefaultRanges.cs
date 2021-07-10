@@ -167,14 +167,16 @@ namespace Allors.Ranges
             }
         }
 
-        public IRange Union(IRange? range, IRange other)
+        public IRange Union(IRange? range, IRange? other)
         {
             switch (range)
             {
                 case null:
                 case EmptyRange _:
-                    return other;
-                case ArrayRange arrayRange when other is EmptyRange:
+                    return other ?? EmptyRange.Instance;
+                case ArrayRange _ when other == null:
+                    return range;
+                case ArrayRange _ when other is EmptyRange:
                     return range;
                 case ArrayRange arrayRange when other is ArrayRange otherArrayRange:
                     switch (arrayRange.Items)
@@ -267,9 +269,9 @@ namespace Allors.Ranges
             }
         }
 
-        public IRange Except(IRange? range, IRange other)
+        public IRange Except(IRange? range, IRange? other)
         {
-            if (other is EmptyRange)
+            if (other == null || other is EmptyRange)
             {
                 return range ?? EmptyRange.Instance;
             }
