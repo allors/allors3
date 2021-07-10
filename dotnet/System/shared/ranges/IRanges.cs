@@ -9,15 +9,11 @@ namespace Allors.Ranges
 
     public interface IRanges
     {
-        IRange From(IEnumerable<long>? unsortedItems);
+        IRange Import(IEnumerable<long>? unsortedItems);
 
-        IRange From(params long[] unsortedItems);
+        IRange Load(IEnumerable<long>? sortedItems);
 
-        IRange Cast(IEnumerable<long>? sortedItems);
-
-        IRange Cast(params long[] sortedItems);
-
-        IRange Cast(long item);
+        IRange Load(long item);
 
         IRange Ensure(object? nullable);
 

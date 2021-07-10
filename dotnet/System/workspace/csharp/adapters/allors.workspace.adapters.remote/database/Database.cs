@@ -15,7 +15,6 @@ namespace Allors.Workspace.Adapters.Remote
     using Allors.Protocol.Json.Api.Push;
     using Allors.Protocol.Json.Api.Security;
     using Allors.Protocol.Json.Api.Sync;
-    using Collections;
     using Meta;
     using Ranges;
 
@@ -135,6 +134,10 @@ namespace Allors.Workspace.Adapters.Remote
                             executePermissionByOperandType[operandType] = id;
 
                             break;
+                        case Operations.Create:
+                            throw new NotSupportedException("Create not supported");
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
                 }
             }
@@ -146,8 +149,8 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     var id = syncResponseAccessControl.i;
                     var version = syncResponseAccessControl.v;
-                    var permissionsIds = syncResponseAccessControl.p;
-                    this.AccessControlById[id] = new AccessControl { Version = version, PermissionIds = this.Ranges.Cast(permissionsIds) };
+                    var permissionsIds = this.Ranges.Load(syncResponseAccessControl.p);
+                    this.AccessControlById[id] = new AccessControl { Version = version, PermissionIds = this.Ranges.Load(permissionsIds) };
 
                     foreach (var permissionId in permissionsIds)
                     {
@@ -186,12 +189,12 @@ namespace Allors.Workspace.Adapters.Remote
                             return true;
                         }
 
-                        if (!@record.AccessControlIds.Equals(v.a))
+                        if (!@record.AccessControlIds.Equals(this.Ranges.Load(v.a)))
                         {
                             return true;
                         }
 
-                        if (!@record.DeniedPermissions.Equals(v.d))
+                        if (!@record.DeniedPermissions.Equals(this.Ranges.Load(v.d)))
                         {
                             return true;
                         }
@@ -225,7 +228,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                     return 0;
 
-                default:
+                case Operations.Execute:
                     if (this.executePermissionByOperandTypeByClass.TryGetValue(@class,
                         out var executePermissionByOperandType) && executePermissionByOperandType.TryGetValue(operandType, out var executePermission))
                     {
@@ -233,6 +236,12 @@ namespace Allors.Workspace.Adapters.Remote
                     }
 
                     return 0;
+
+                case Operations.Create:
+                    throw new NotSupportedException("Create is not supported");
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(operation));
             }
         }
 

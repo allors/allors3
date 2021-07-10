@@ -70,7 +70,7 @@ namespace Allors.Ranges
                 _ => Array.BinarySearch(this.Items, item) >= 0,
             };
 
-        public long[] ToArray() => this.Items;
+        public long[]? Save() => this.Items;
 
         public override string ToString() => "[" + string.Join(", ", this.Items) + "]";
     }

@@ -6,8 +6,6 @@
 namespace Allors.Workspace.Adapters.Remote.Default
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
@@ -21,11 +19,10 @@ namespace Allors.Workspace.Adapters.Remote.Default
     using Allors.Protocol.Json.Api.Sync;
     using Allors.Protocol.Json.Auth;
     using Allors.Protocol.Json.SystemTextJson;
-    using Collections;
-    using Meta;
     using Ranges;
     using Polly;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Add call to 'ConfigureAwait' (or vice versa).", Justification = "<Pending>")]
     public class DatabaseConnection : Remote.DatabaseConnection
     {
         public DatabaseConnection(Configuration configuration, Func<IWorkspaceServices> servicesBuilder, HttpClient httpClient, WorkspaceIdGenerator workspaceIdGenerator, IRanges ranges) : base(configuration, servicesBuilder, workspaceIdGenerator, ranges)

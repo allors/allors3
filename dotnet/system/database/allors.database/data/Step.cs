@@ -178,27 +178,21 @@ namespace Allors.Database.Data
             {
                 if (roleType.IsMany)
                 {
-                    throw new NotSupportedException("RoleType with muliplicity many");
+                    throw new NotSupportedException("RoleType with multiplicity many");
                 }
 
                 if (roleType.ObjectType.IsComposite && acl.CanRead(roleType))
                 {
                     var role = roleType.Get(@object.Strategy);
-                    if (role == null)
+                    if (role == null && acl.CanWrite(roleType))
                     {
-                        if (acl.CanWrite(roleType))
-                        {
-                            role = @object.Strategy.Transaction.Create((IClass)roleType.ObjectType);
-                            roleType.Set(@object.Strategy, role);
-                        }
+                        role = @object.Strategy.Transaction.Create((IClass)roleType.ObjectType);
+                        roleType.Set(@object.Strategy, role);
                     }
 
-                    if (this.ExistNext)
+                    if (this.ExistNext && role is IObject next)
                     {
-                        if (role is IObject next)
-                        {
-                            this.Next.Ensure(next, acls);
-                        }
+                        this.Next.Ensure(next, acls);
                     }
                 }
             }

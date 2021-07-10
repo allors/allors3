@@ -10,17 +10,20 @@ namespace Allors.Database.Protocol.Json
     using System.Linq;
     using Allors.Protocol.Json.Api.Security;
     using Meta;
+    using Ranges;
     using Security;
 
     public class SecurityResponseBuilder
     {
         private readonly ITransaction transaction;
         private readonly ISet<IClass> allowedClasses;
+        private readonly IRanges ranges;
 
-        public SecurityResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses)
+        public SecurityResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, IRanges ranges)
         {
             this.transaction = transaction;
             this.allowedClasses = allowedClasses;
+            this.ranges = ranges;
             this.AccessControlLists = accessControlLists;
         }
 
@@ -46,7 +49,7 @@ namespace Allors.Database.Protocol.Json
 
                         if (this.AccessControlLists.EffectivePermissionIdsByAccessControl.TryGetValue(v, out var x))
                         {
-                            response.p = x.ToArray();
+                            response.p = this.ranges.Import(x).Save();
                         }
 
                         return response;

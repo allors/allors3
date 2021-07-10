@@ -25,13 +25,10 @@ namespace Allors.Database.Adapters
 
         public bool TryGetUnit(long association, object cacheId, IRoleType roleType, out object role)
         {
-            if (this.cachedUnitRoleByAssociationByRoleType.TryGetValue(roleType, out var entryByAssociation) && entryByAssociation.TryGetValue(association, out var cachedUnitRole))
+            if (this.cachedUnitRoleByAssociationByRoleType.TryGetValue(roleType, out var entryByAssociation) && entryByAssociation.TryGetValue(association, out var cachedUnitRole) && cachedUnitRole.CacheId.Equals(cacheId))
             {
-                if (cachedUnitRole.CacheId.Equals(cacheId))
-                {
-                    role = cachedUnitRole.Role;
-                    return true;
-                }
+                role = cachedUnitRole.Role;
+                return true;
             }
 
             role = null;
@@ -51,13 +48,10 @@ namespace Allors.Database.Adapters
 
         public bool TryGetComposite(long association, object cacheId, IRoleType roleType, out long? role)
         {
-            if (this.cachedCompositeRoleByAssociationByRoleType.TryGetValue(roleType, out var entryByAssociation) && entryByAssociation.TryGetValue(association, out var cachedCompositeRole))
+            if (this.cachedCompositeRoleByAssociationByRoleType.TryGetValue(roleType, out var entryByAssociation) && entryByAssociation.TryGetValue(association, out var cachedCompositeRole) && cachedCompositeRole.CacheId.Equals(cacheId))
             {
-                if (cachedCompositeRole.CacheId.Equals(cacheId))
-                {
-                    role = cachedCompositeRole.Role;
-                    return true;
-                }
+                role = cachedCompositeRole.Role;
+                return true;
             }
 
             role = null;
@@ -77,13 +71,10 @@ namespace Allors.Database.Adapters
 
         public bool TryGetComposites(long association, object cacheId, IRoleType roleType, out long[] role)
         {
-            if (this.cachedCompositesRoleByAssociationByRoleType.TryGetValue(roleType, out var entryByAssociation) && entryByAssociation.TryGetValue(association, out var cachedCompositesRole))
+            if (this.cachedCompositesRoleByAssociationByRoleType.TryGetValue(roleType, out var entryByAssociation) && entryByAssociation.TryGetValue(association, out var cachedCompositesRole) && cachedCompositesRole.CacheId.Equals(cacheId))
             {
-                if (cachedCompositesRole.CacheId.Equals(cacheId))
-                {
-                    role = cachedCompositesRole.Role;
-                    return true;
-                }
+                role = cachedCompositesRole.Role;
+                return true;
             }
 
             role = null;

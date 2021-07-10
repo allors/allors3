@@ -9,6 +9,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Allors.Protocol.Json.Api.Sync;
     using Meta;
+    using Ranges;
 
     internal class DatabaseRecord : Adapters.DatabaseRecord
     {
@@ -24,13 +25,16 @@ namespace Allors.Workspace.Adapters.Remote
         {
             this.database = database;
             this.syncResponseRoles = syncResponseObject.r;
-            this.AccessControlIds = ctx.CheckForMissingAccessControls(syncResponseObject.a);
-            this.DeniedPermissions = ctx.CheckForMissingPermissions(syncResponseObject.d);
+
+            var ranges = database.Ranges;
+
+            this.AccessControlIds = ranges.Load(ctx.CheckForMissingAccessControls(syncResponseObject.a));
+            this.DeniedPermissions = ranges.Load(ctx.CheckForMissingPermissions(syncResponseObject.d));
         }
 
-        internal long[] AccessControlIds { get; }
+        internal IRange AccessControlIds { get; }
 
-        internal long[] DeniedPermissions { get; }
+        internal IRange DeniedPermissions { get; }
 
         private Dictionary<IRelationType, object> RoleByRelationType
         {
@@ -39,6 +43,7 @@ namespace Allors.Workspace.Adapters.Remote
                 if (this.syncResponseRoles != null)
                 {
                     var meta = this.database.Configuration.MetaPopulation;
+                    var ranges = this.database.Ranges;
 
                     var metaPopulation = this.database.Configuration.MetaPopulation;
                     this.roleByRelationType = this.syncResponseRoles.ToDictionary(
@@ -58,7 +63,7 @@ namespace Allors.Workspace.Adapters.Remote
                                 return v.o;
                             }
 
-                            return v.c;
+                            return ranges.Load(v.c);
                         });
 
                     this.syncResponseRoles = null;

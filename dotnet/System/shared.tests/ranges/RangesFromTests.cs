@@ -17,7 +17,7 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.Cast();
+            var x = num.Load();
 
             Assert.Equal(Array.Empty<long>(), x);
         }
@@ -27,7 +27,7 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.Cast(0L);
+            var x = num.Load(0L);
 
             Assert.Equal(new[] { 0L }, x);
         }
@@ -37,7 +37,7 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.Cast(0L, 1L);
+            var x = num.Load(0L, 1L);
 
             Assert.Equal(new[] { 0L, 1L }, x);
         }

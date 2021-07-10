@@ -58,7 +58,7 @@ namespace Allors.Workspace.Adapters.Local
                     ?.Select(this.GetAccessControl)
                     .ToArray() ?? Array.Empty<AccessControl>();
 
-                this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, this.ranges.Cast(acl.DeniedPermissionIds), accessControls);
+                this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, this.ranges.Load(acl.DeniedPermissionIds), accessControls);
             }
         }
 
@@ -92,7 +92,7 @@ namespace Allors.Workspace.Adapters.Local
                 case Operations.Create:
                     throw new NotSupportedException("Create is not supported");
                 default:
-                    throw new NotSupportedException($"Unknown operation {operation}");
+                    throw new ArgumentOutOfRangeException($"Unknown operation {operation}");
             }
 
             return permission;
@@ -130,7 +130,7 @@ namespace Allors.Workspace.Adapters.Local
             }
 
             acessControl.Version = accessControl.Strategy.ObjectVersion;
-            acessControl.PermissionIds = this.ranges.From(accessControl.Permissions.Select(v => v.Id));
+            acessControl.PermissionIds = this.ranges.Import(accessControl.Permissions.Select(v => v.Id));
 
             return acessControl;
         }
@@ -147,7 +147,7 @@ namespace Allors.Workspace.Adapters.Local
                 return @object.Strategy.GetCompositeRole(roleType)?.Id;
             }
 
-            return this.ranges.Cast(@object.Strategy.GetCompositesRole<IObject>(roleType).Select(v => v.Id));
+            return this.ranges.Load(@object.Strategy.GetCompositesRole<IObject>(roleType).Select(v => v.Id));
         }
     }
 }

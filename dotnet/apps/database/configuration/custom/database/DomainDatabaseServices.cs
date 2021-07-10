@@ -13,6 +13,7 @@ namespace Allors.Database.Configuration
     using Domain.Derivations.Rules.Default;
     using Meta;
     using Microsoft.AspNetCore.Http;
+    using Ranges;
     using Services;
 
     public abstract class DomainDatabaseServices : IDomainDatabaseServices
@@ -20,6 +21,8 @@ namespace Allors.Database.Configuration
         private readonly IHttpContextAccessor httpContextAccessor;
 
         private IDatabase database;
+
+        private IRanges ranges;
 
         private IMetaCache metaCache;
 
@@ -72,6 +75,8 @@ namespace Allors.Database.Configuration
         public T Get<T>() =>
             typeof(T).Name switch
             {
+                nameof(IRanges) => (T)(this.ranges ??= new DefaultRanges()),
+
                 nameof(IMetaCache) => (T)(this.metaCache ??= new MetaCache(this.database)),
                 nameof(IClassById) => (T)(this.classById ??= new ClassById()),
                 nameof(IVersionedIdByStrategy) => (T)(this.versionedIdByStrategy ??= new VersionedIdByStrategy()),

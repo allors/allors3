@@ -12,12 +12,14 @@ namespace Allors.Database.Protocol.Json
     using Data;
     using Derivations;
     using Meta;
+    using Ranges;
     using Security;
     using Services;
 
     public class PullResponseBuilder : IProcedureContext, IProcedureOutput
     {
         private readonly IUnitConvert unitConvert;
+        private readonly IRanges ranges;
 
         private readonly Dictionary<string, ISet<IObject>> collectionsByName = new Dictionary<string, ISet<IObject>>();
         private readonly Dictionary<string, IObject> objectByName = new Dictionary<string, IObject>();
@@ -30,9 +32,10 @@ namespace Allors.Database.Protocol.Json
 
         private List<IValidation> errors;
 
-        public PullResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IUnitConvert unitConvert)
+        public PullResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IUnitConvert unitConvert, IRanges ranges)
         {
             this.unitConvert = unitConvert;
+            this.ranges = ranges;
             this.Transaction = transaction;
 
             this.AccessControlLists = accessControlLists;
@@ -246,8 +249,8 @@ namespace Allors.Database.Protocol.Json
                 {
                     i = v.Strategy.ObjectId,
                     v = v.Strategy.ObjectVersion,
-                    a = this.accessControlsWriter.Write(v)?.OrderBy(w => w).ToArray(),
-                    d = this.permissionsWriter.Write(v)?.OrderBy(w => w).ToArray()
+                    a = this.ranges.Import(this.accessControlsWriter.Write(v)).Save(),
+                    d = this.ranges.Import(this.permissionsWriter.Write(v)).Save()
                 }).ToArray(),
                 o = this.objectByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Id),
                 c = this.collectionsByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Select(obj => obj.Id).ToArray()),

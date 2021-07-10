@@ -14,6 +14,6 @@ namespace Allors.Ranges
 
         bool Contains(long item);
 
-        long[] ToArray();
+        long[]? Save();
     }
 }

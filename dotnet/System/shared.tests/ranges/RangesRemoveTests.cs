@@ -16,7 +16,7 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.Cast();
+            var x = num.Load();
             const int y = 1;
             var z = num.Remove(x, y);
 
@@ -28,7 +28,7 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.Cast(0);
+            var x = num.Load(0);
             const int y = 1;
             var z = num.Remove(x, y);
 
@@ -40,7 +40,7 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.Cast(2);
+            var x = num.Load(2);
             const int y = 1;
             var z = num.Remove(x, y);
 
@@ -52,7 +52,7 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.Cast(1);
+            var x = num.Load(1);
             const int y = 1;
             var z = num.Remove(x, y);
 
@@ -64,7 +64,7 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.Cast(-1, 0);
+            var x = num.Load(-1, 0);
             const int y = 1;
             var z = num.Remove(x, y);
 
@@ -76,7 +76,7 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.Cast(2, 3);
+            var x = num.Load(2, 3);
             const int y = 1;
             var z = num.Remove(x, y);
 
@@ -88,7 +88,7 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.Cast(0, 2);
+            var x = num.Load(0, 2);
             const int y = 1;
             var z = num.Remove(x, y);
 
@@ -100,7 +100,7 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.Cast(0, 1);
+            var x = num.Load(0, 1);
             const int y = 0;
             var z = num.Remove(x, y);
 
@@ -112,7 +112,7 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.Cast(0, 1);
+            var x = num.Load(0, 1);
             const int y = 1;
             var z = num.Remove(x, y);
 
@@ -124,7 +124,7 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.Cast(0, 1, 2);
+            var x = num.Load(0, 1, 2);
             const int y = 1;
             var z = num.Remove(x, y);
 

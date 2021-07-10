@@ -29,7 +29,7 @@ namespace Allors.Ranges
 
         public bool Contains(long item) => false;
 
-        public long[] ToArray() => EmptyArray;
+        public long[]? Save() => null;
 
         public override string ToString() => "[]";
 

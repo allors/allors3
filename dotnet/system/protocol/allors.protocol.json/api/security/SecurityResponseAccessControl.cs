@@ -18,7 +18,7 @@ namespace Allors.Protocol.Json.Api.Security
         public long v { get; set; }
 
         /// <summary>
-        /// PermissionIds
+        /// PermissionIds (Range)
         /// </summary>
         public long[] p { get; set; }
     }

@@ -116,7 +116,7 @@ namespace Allors.Workspace.Adapters
 
                         break;
                     default:
-                        throw new NotSupportedException($"Unknown origin {@class.Origin}");
+                        throw new ArgumentOutOfRangeException($"Origin {@class.Origin}");
                 }
             }
         }

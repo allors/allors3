@@ -11,11 +11,13 @@ namespace Allors.Database.Protocol.Json
     using Allors.Protocol.Json;
     using Meta;
     using Allors.Protocol.Json.Api.Sync;
+    using Ranges;
     using Security;
 
     public class SyncResponseBuilder
     {
         private readonly IUnitConvert unitConvert;
+        private readonly IRanges ranges;
 
         private readonly AccessControlsWriter accessControlsWriter;
         private readonly PermissionsWriter permissionsWriter;
@@ -24,12 +26,13 @@ namespace Allors.Database.Protocol.Json
         private readonly ISet<IClass> allowedClasses;
         private readonly Action<IEnumerable<IObject>> prefetch;
 
-        public SyncResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, Action<IEnumerable<IObject>> prefetch, IUnitConvert unitConvert)
+        public SyncResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, Action<IEnumerable<IObject>> prefetch, IUnitConvert unitConvert, IRanges ranges)
         {
             this.transaction = transaction;
             this.allowedClasses = allowedClasses;
             this.prefetch = prefetch;
             this.unitConvert = unitConvert;
+            this.ranges = ranges;
 
             this.AccessControlLists = accessControlLists;
 
@@ -47,27 +50,6 @@ namespace Allors.Database.Protocol.Json
 
             this.prefetch(objects);
 
-            static SyncResponseRole CreateSyncResponseRole(IObject @object, IRoleType roleType, IUnitConvert unitConvert)
-            {
-                var syncResponseRole = new SyncResponseRole { t = roleType.RelationType.Tag };
-
-                if (roleType.ObjectType.IsUnit)
-                {
-                    syncResponseRole.v = unitConvert.ToJson(@object.Strategy.GetUnitRole(roleType));
-                }
-                else if (roleType.IsOne)
-                {
-                    syncResponseRole.o = @object.Strategy.GetCompositeRole(roleType)?.Id;
-                }
-                else
-                {
-                    var roles = @object.Strategy.GetCompositesRole<IObject>(roleType);
-                    syncResponseRole.c = roles.Select(roleObject => roleObject.Id).OrderBy(v => v).ToArray();
-                }
-
-                return syncResponseRole;
-            }
-
             return new SyncResponse
             {
                 o = objects.Select(v =>
@@ -83,16 +65,37 @@ namespace Allors.Database.Protocol.Json
                         // TODO: Cache
                         r = @class.DatabaseRoleTypes?.Where(v => v.RelationType.WorkspaceNames.Length > 0)
                             .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))
-                            .Select(w => CreateSyncResponseRole(v, w, this.unitConvert))
+                            .Select(w => this.CreateSyncResponseRole(v, w, this.unitConvert))
                             .ToArray(),
-                        a = this.accessControlsWriter.Write(v)?.ToArray(),
-                        d = this.permissionsWriter.Write(v)?.ToArray(),
+                        a = this.ranges.Import(this.accessControlsWriter.Write(v)).Save(),
+                        d = this.ranges.Import(this.permissionsWriter.Write(v)).Save(),
                     };
                 }).ToArray(),
                 a = this.AccessControlLists.EffectivePermissionIdsByAccessControl.Keys
                     .Select(v => new[] { v.Strategy.ObjectId, v.Strategy.ObjectVersion })
                     .ToArray(),
             };
+        }
+
+        private SyncResponseRole CreateSyncResponseRole(IObject @object, IRoleType roleType, IUnitConvert unitConvert)
+        {
+            var syncResponseRole = new SyncResponseRole { t = roleType.RelationType.Tag };
+
+            if (roleType.ObjectType.IsUnit)
+            {
+                syncResponseRole.v = unitConvert.ToJson(@object.Strategy.GetUnitRole(roleType));
+            }
+            else if (roleType.IsOne)
+            {
+                syncResponseRole.o = @object.Strategy.GetCompositeRole(roleType)?.Id;
+            }
+            else
+            {
+                var roles = @object.Strategy.GetCompositesRole<IObject>(roleType);
+                syncResponseRole.c = this.ranges.Import(roles.Select(roleObject => roleObject.Id)).ToArray();
+            }
+
+            return syncResponseRole;
         }
     }
 }

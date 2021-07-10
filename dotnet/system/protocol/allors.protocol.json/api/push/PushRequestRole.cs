@@ -30,6 +30,6 @@ namespace Allors.Protocol.Json.Api.Push
         /// <summary>
         /// Remove Composites Role
         /// </summary>
-        public long[] r { get; set; }
+        public long[] r { get; set; } 
     }
 }

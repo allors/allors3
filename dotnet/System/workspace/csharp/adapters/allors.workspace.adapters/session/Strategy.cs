@@ -195,7 +195,7 @@ namespace Allors.Workspace.Adapters
         public void SetCompositesRole<T>(IRoleType roleType, in IEnumerable<T> role) where T : IObject
         {
             var ranges = this.Session.Workspace.Ranges;
-            var roleIds = ranges.From(role?.Select(v => v.Id));
+            var roleIds = ranges.Import(role?.Select(v => v.Id));
 
             switch (roleType.Origin)
             {

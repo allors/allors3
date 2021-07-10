@@ -11,7 +11,7 @@ namespace Allors.Ranges
 
     public class DefaultRanges : IRanges
     {
-        public IRange Cast(IEnumerable<long>? sortedItems)
+        public IRange Load(IEnumerable<long>? sortedItems)
         {
             switch (sortedItems)
             {
@@ -29,23 +29,16 @@ namespace Allors.Ranges
             }
         }
 
-        public IRange Cast(params long[] sortedItems) =>
-            sortedItems switch
-            {
-                { Length: 0 } => EmptyRange.Instance,
-                _ => new ArrayRange(sortedItems)
-            };
-
-        public IRange Cast(long item) => new ArrayRange(new[] { item });
+        public IRange Load(long item) => new ArrayRange(new[] { item });
 
         public IRange Ensure(object? nullable) => nullable switch
         {
             null => EmptyRange.Instance,
             IRange range => range,
-            _ => throw new NotSupportedException($"Unboxing is not supported from {nullable.GetType()}")
+            _ => throw new NotSupportedException($"Ensure is not supported from {nullable.GetType()}")
         };
 
-        public IRange From(IEnumerable<long>? unsortedItems)
+        public IRange Import(IEnumerable<long>? unsortedItems)
         {
             switch (unsortedItems)
             {
@@ -66,15 +59,13 @@ namespace Allors.Ranges
             }
         }
 
-        public IRange From(params long[] unsortedItems) => this.From((IEnumerable<long>)unsortedItems);
-
         public IRange Add(IRange? range, long item)
         {
             switch (range)
             {
                 case null:
                 case EmptyRange _:
-                    return this.Cast(item);
+                    return this.Load(item);
                 case ArrayRange arrayRange:
                     switch (arrayRange.Items)
                     {
@@ -114,7 +105,7 @@ namespace Allors.Ranges
                     }
 
                 default:
-                    throw new NotSupportedException($"Unsupported range type {range.GetType()}");
+                    throw new ArgumentOutOfRangeException($"Range type {range.GetType()}");
             }
         }
 
@@ -163,7 +154,7 @@ namespace Allors.Ranges
                     }
 
                 default:
-                    throw new NotSupportedException($"Unsupported range type {range.GetType()}");
+                    throw new ArgumentOutOfRangeException($"Range type {range.GetType()}");
             }
         }
 
@@ -265,7 +256,7 @@ namespace Allors.Ranges
                     }
 
                 default:
-                    throw new NotSupportedException($"Unsupported range type {range.GetType()}");
+                    throw new ArgumentOutOfRangeException($"Range type {range.GetType()}");
             }
         }
 
@@ -356,7 +347,7 @@ namespace Allors.Ranges
                 }
 
                 default:
-                    throw new NotSupportedException($"Unsupported range type {range.GetType()}");
+                    throw new ArgumentOutOfRangeException($"Range type {range.GetType()}");
             }
         }
     }

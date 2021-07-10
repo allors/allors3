@@ -52,7 +52,7 @@ namespace Allors.Workspace.Adapters
                         this.AssociationsByRoleType.Add(roleType, strategies);
                         break;
                     default:
-                        throw new NotSupportedException($"PropertyType {kvp.Key} is not supported");
+                        throw new ArgumentOutOfRangeException($"PropertyType {kvp.Key}");
                 }
             }
         }

@@ -16,7 +16,7 @@ namespace Allors.Protocol.Json.Api.Sync
         public int t { get; set; }
 
         /// <summary>
-        /// Collection ordered by ID
+        /// Collection (Range)
         /// </summary>
         public long[] c { get; set; }
 
