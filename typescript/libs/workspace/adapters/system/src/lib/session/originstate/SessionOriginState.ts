@@ -1,5 +1,5 @@
 import { PropertyType, RoleType } from '@allors/workspace/meta/system';
-import { add, difference, enumerate, has, Numbers, remove } from '../../collections/Numbers';
+import { add, difference, enumerate, has, Range, remove } from '../../collections/Range';
 import { ChangeSet } from '../ChangeSet';
 import { PropertyByObjectByPropertyType } from './PropertyByObjectByPropertyType';
 
@@ -53,7 +53,7 @@ export class SessionOriginState {
       return;
     }
 
-    const previousRole = this.Get(association, roleType) as Numbers;
+    const previousRole = this.Get(association, roleType) as Range;
 
     //  Use Diff (Add/Remove)
     const addedRoles = difference(newRole, previousRole);

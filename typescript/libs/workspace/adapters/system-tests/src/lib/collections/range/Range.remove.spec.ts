@@ -1,8 +1,8 @@
-import { Numbers, remove } from '@allors/workspace/adapters/system';
+import { Range, fromUnsorted, remove } from '@allors/workspace/adapters/system';
 
-describe('Numbers', () => {
+describe('Range', () => {
   describe('as undefined set', () => {
-    const set: Numbers = undefined;
+    const set: Range = undefined;
 
     describe('removing a non existing element', () => {
       const removed = remove(set, 0);
@@ -14,7 +14,7 @@ describe('Numbers', () => {
   });
 
   describe('as single element set', () => {
-    const set: Numbers = Numbers([1]);
+    const set: Range = fromUnsorted([1]);
 
     describe('removing the element', () => {
       const removed = remove(set, 1);

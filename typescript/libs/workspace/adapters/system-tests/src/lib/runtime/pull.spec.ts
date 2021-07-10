@@ -3,13 +3,15 @@ import { Pull } from '@allors/workspace/domain/system';
 import { Fixture, name_c1B, name_c2B } from '../Fixture';
 import '../Matchers';
 import '@allors/workspace/domain/core';
-import { PluralNames } from '@allors/workspace/domain/core';
 
 let fixture: Fixture;
 
+it('dummy', () => {
+  expect(true).toBeTruthy();
+});
+
 export async function initPull(database: Database, login: (login: string) => Promise<boolean>) {
   fixture = new Fixture(database, login);
-
 }
 
 export async function andGreaterThanLessThan() {

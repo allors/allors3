@@ -2,7 +2,7 @@ import { AssociationType, Class, MethodType, RoleType } from '@allors/workspace/
 import { IObject } from './IObject';
 import { ISession } from './ISession';
 import { Method } from './Method';
-import { UnitTypes } from './Types';
+import { UnitType } from './Types';
 
 export interface IStrategy {
   object: IObject;
@@ -23,7 +23,7 @@ export interface IStrategy {
 
   get(roleType: RoleType): unknown;
 
-  getUnit(roleType: RoleType): UnitTypes;
+  getUnit(roleType: RoleType): UnitType;
 
   getComposite<T extends IObject>(roleType: RoleType): T;
 
@@ -31,7 +31,7 @@ export interface IStrategy {
 
   set(roleType: RoleType, value: unknown): void;
 
-  setUnit(roleType: RoleType, value: UnitTypes): void;
+  setUnit(roleType: RoleType, value: UnitType): void;
 
   setComposite<T extends IObject>(roleType: RoleType, value: T): void;
 

@@ -1,4 +1,4 @@
-import { UnitTypes } from "@allors/workspace/domain/system";
+import { UnitType } from "@allors/workspace/domain/system";
 import { Extent } from "./Extent";
 import { PredicateKind } from "./PredicateKind";
 
@@ -34,10 +34,10 @@ export interface Predicate {
   obs?: number[];
 
   /** Value */
-  v?: UnitTypes;
+  v?: UnitType;
 
   /** Values */
-  vs?: UnitTypes[];
+  vs?: UnitType[];
 
   /** Path */
   pa?: number;

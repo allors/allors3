@@ -6,7 +6,7 @@ import { ChangeSetTracker } from './trackers/ChangSetTracker';
 import { PushToDatabaseTracker } from './trackers/PushToDatabaseTracker';
 import { PushToWorkspaceTracker } from './trackers/PushToWorkspaceTracker';
 import { ChangeSet } from './ChangeSet';
-import { enumerate } from '../collections/Numbers';
+import { enumerate } from '../collections/Range';
 import { AssociationType, Class, Composite, Origin, RoleType } from '@allors/workspace/meta/system';
 
 export function isNewId(id: number): boolean {
@@ -142,7 +142,7 @@ export abstract class Session implements ISession {
     const roleType = associationType.roleType;
     for (const association of this.getForAssociation(associationType.objectType as Composite)) {
       if (association.canRead(roleType)) {
-        if (association.isAssociationForRole(roleType, role)) {
+        if (association.isCompositeAssociationForRole(roleType, role)) {
           return association.object as T;
         }
       }
@@ -159,7 +159,7 @@ export abstract class Session implements ISession {
         // TODO: Warning!!! continue If
       }
 
-      if (association.isAssociationForRole(roleType, role)) {
+      if (association.isCompositesAssociationForRole(roleType, role)) {
         associations.push(association.object as T);
       }
     }

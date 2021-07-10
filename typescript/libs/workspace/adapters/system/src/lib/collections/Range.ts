@@ -1,4 +1,4 @@
-export type Numbers = Array<number> | undefined;
+export type Range = Array<number> | undefined;
 
 function _has(set: Array<number>, value: number): boolean {
   let j = 0;
@@ -47,7 +47,7 @@ function assert(value: unknown): asserts value {
   }
 }
 
-export function Numbers(set?: number[]): Numbers {
+export function fromUnsorted(set?: number[]): Range {
   if (Array.isArray(set)) {
     return [...set].sort();
   }
@@ -55,7 +55,7 @@ export function Numbers(set?: number[]): Numbers {
   return undefined;
 }
 
-export function* enumerate(set: Numbers) {
+export function* enumerate(set: Range) {
   if (Array.isArray(set)) {
     return yield* set;
   } else if (set != null) {
@@ -63,15 +63,17 @@ export function* enumerate(set: Numbers) {
   }
 }
 
-export function toArray(set: Numbers) {
+export function save(set: Range) {
   if (Array.isArray(set)) {
-    return set;
+    if (set.length > 0) {
+      return set;
+    }
   } else if (set != null) {
     return [set];
   }
 }
 
-export function has(set: Numbers, value: number): boolean {
+export function has(set: Range, value: number): boolean {
   assert(value);
 
   if (set == null) {
@@ -87,7 +89,7 @@ export function has(set: Numbers, value: number): boolean {
   return false;
 }
 
-export function equals(self: Numbers, other: Numbers): boolean {
+export function equals(self: Range, other: Range): boolean {
   if (self == null) {
     return other == null;
   }
@@ -109,7 +111,7 @@ export function equals(self: Numbers, other: Numbers): boolean {
   return true;
 }
 
-export function add(set: Numbers, value: number): Exclude<Numbers, undefined> {
+export function add(set: Range, value: number): Exclude<Range, undefined> {
   if (!Array.isArray(set)) {
     return [value];
   }
@@ -121,7 +123,7 @@ export function add(set: Numbers, value: number): Exclude<Numbers, undefined> {
   return set;
 }
 
-export function remove(set: Numbers, value: number): Numbers {
+export function remove(set: Range, value: number): Range {
   if (Array.isArray(set) && _has(set, value)) {
     if (set.length === 1) {
       return undefined;
@@ -133,7 +135,7 @@ export function remove(set: Numbers, value: number): Numbers {
   return set;
 }
 
-export function difference(self: Numbers, other: Numbers): Numbers {
+export function difference(self: Range, other: Range): Range {
   if (self == null || other == null) {
     return self;
   }
@@ -142,7 +144,7 @@ export function difference(self: Numbers, other: Numbers): Numbers {
   return diff.length > 0 ? diff : undefined;
 }
 
-export function properSubset(self: Numbers, other: Numbers): boolean {
+export function properSubset(self: Range, other: Range): boolean {
   if (other == null) {
     return false;
   }

@@ -1,5 +1,5 @@
 export * from './lib/collections/MapMap'
-export * from './lib/collections/Numbers'
+export * from './lib/collections/Range'
 
 export * from './lib/database/Database'
 export * from './lib/database/DatabaseRecord'

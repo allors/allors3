@@ -1,8 +1,8 @@
-import { Numbers } from '@allors/workspace/adapters/system';
+import { fromUnsorted } from '@allors/workspace/adapters/system';
 
-describe('Numbers', () => {
+describe('Range', () => {
   describe('initialize with undefined', () => {
-    const set = Numbers(undefined);
+    const set = fromUnsorted(undefined);
 
     it('should return undefined', () => {
       expect(set).toBeUndefined();

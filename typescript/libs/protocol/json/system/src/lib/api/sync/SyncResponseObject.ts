@@ -10,10 +10,10 @@ export interface SyncResponseObject {
   /** ObjectType */
   t: number;
 
-  /** AccessControls */
+  /** AccessControls (Range) */
   a: number[];
 
-  /** DeniedPermissions */
+  /** DeniedPermissions (Range) */
   d: number[];
 
   /** Roles */

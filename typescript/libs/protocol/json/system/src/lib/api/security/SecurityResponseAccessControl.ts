@@ -5,6 +5,6 @@ export interface SecurityResponseAccessControl {
   /** Version */
   v: number;
 
-  /** PermissionIds */
+  /** PermissionIds (Range) */
   p: number[];
 }

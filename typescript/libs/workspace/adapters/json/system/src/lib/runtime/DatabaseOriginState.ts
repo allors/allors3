@@ -1,5 +1,5 @@
 import { PushRequestNewObject, PushRequestObject, PushRequestRole } from '@allors/protocol/json/system';
-import { DatabaseOriginState as SystemDatabaseOriginState, DatabaseRecord, difference, Strategy, toArray } from '@allors/workspace/adapters/system';
+import { DatabaseOriginState as SystemDatabaseOriginState, DatabaseRecord, difference, Strategy, save } from '@allors/workspace/adapters/system';
 import { unitToJson } from '../json/toJson';
 
 export class DatabaseOriginState extends SystemDatabaseOriginState {
@@ -35,14 +35,14 @@ export class DatabaseOriginState extends SystemDatabaseOriginState {
         } else if (relationType.roleType.isOne) {
           pushRequestRole.c = roleValue;
         } else if (!this.ExistDatabaseRecord) {
-          pushRequestRole.a = toArray(roleValue);
+          pushRequestRole.a = save(roleValue);
         } else {
           const databaseRole = this.DatabaseRecord.getRole(relationType.roleType);
           if (databaseRole == null) {
-            pushRequestRole.a = toArray(roleValue);
+            pushRequestRole.a = save(roleValue);
           } else {
-            pushRequestRole.a = toArray(difference(roleValue, databaseRole));
-            pushRequestRole.r = toArray(difference(databaseRole, roleValue));
+            pushRequestRole.a = save(difference(roleValue, databaseRole));
+            pushRequestRole.r = save(difference(databaseRole, roleValue));
           }
         }
 

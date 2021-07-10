@@ -7,6 +7,11 @@ import { C1 } from '@allors/workspace/domain/core';
 
 let fixture: Fixture;
 
+it('dummy', () => {
+  expect(true).toBeTruthy();
+});
+
+
 export async function initAssociation(database: Database, login: (login: string) => Promise<boolean>) {
   fixture = new Fixture(database, login);
 }

@@ -1,8 +1,8 @@
-import { Numbers, has } from '@allors/workspace/adapters/system';
+import { Range, fromUnsorted, has } from '@allors/workspace/adapters/system';
 
-describe('Numbers', () => {
+describe('Range', () => {
   describe('as undefined set', () => {
-    const set: Numbers = undefined;
+    const set: Range = undefined;
 
     describe('has a number', () => {
       const hasZero = has(set, 0);
@@ -14,7 +14,7 @@ describe('Numbers', () => {
   });
 
   describe('as single element set', () => {
-    const set: Numbers = Numbers([1]);
+    const set: Range = fromUnsorted([1]);
 
     describe('has the element', () => {
       const hasTheElement = has(set, 1);
@@ -35,7 +35,7 @@ describe('Numbers', () => {
 });
 
 describe('as multiple element set', () => {
-  const set: Numbers = Numbers([3, 1, 6, 5]);
+  const set: Range = fromUnsorted([3, 1, 6, 5]);
 
   describe('has the elements 1, 3, 5 and 6', () => {
     const has1 = has(set, 1);

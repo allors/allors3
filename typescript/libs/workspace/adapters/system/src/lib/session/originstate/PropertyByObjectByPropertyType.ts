@@ -1,6 +1,6 @@
 import { PropertyType } from '@allors/workspace/meta/system';
 import { MapMap } from '../../collections/MapMap';
-import { equals, Numbers } from '../../collections/Numbers';
+import { equals, Range } from '../../collections/Range';
 
 export class PropertyByObjectByPropertyType {
   private propertyByObjectByPropertyType: MapMap<PropertyType, number, any>;
@@ -21,7 +21,7 @@ export class PropertyByObjectByPropertyType {
   }
 
   public Set(object: number, propertyType: PropertyType, newValue: any) {
-    const originalValue = this.propertyByObjectByPropertyType.get(propertyType, object) as Numbers;
+    const originalValue = this.propertyByObjectByPropertyType.get(propertyType, object) as Range;
 
     if (propertyType.isOne ? newValue === originalValue : equals(newValue, originalValue)) {
       this.changedPropertyByObjectByPropertyType.remove(propertyType, object);

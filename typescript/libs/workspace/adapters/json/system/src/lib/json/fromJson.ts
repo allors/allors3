@@ -1,7 +1,7 @@
-import { UnitTypes } from '@allors/workspace/domain/system';
+import { UnitType } from '@allors/workspace/domain/system';
 import { UnitTags } from '@allors/workspace/meta/system';
 
-export function unitFromJson(tag: number, value: unknown): UnitTypes {
+export function unitFromJson(tag: number, value: unknown): UnitType {
   if (value == null) {
     return null;
   }

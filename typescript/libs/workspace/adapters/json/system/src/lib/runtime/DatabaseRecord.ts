@@ -1,13 +1,13 @@
 import { Class, RelationType, RoleType } from '@allors/workspace/meta/system';
-import { DatabaseRecord as SystemDatabaseRecord, has, Numbers } from '@allors/workspace/adapters/system';
+import { DatabaseRecord as SystemDatabaseRecord, has, Range } from '@allors/workspace/adapters/system';
 import { SyncResponseObject, SyncResponseRole } from '@allors/protocol/json/system';
 import { Database } from './Database';
 import { ResponseContext } from './Security/ResponseContext';
 import { unitFromJson } from '../json/fromJson';
 
 export class DatabaseRecord extends SystemDatabaseRecord {
-  accessControlIds: Numbers;
-  deniedPermissionIds: Numbers;
+  accessControlIds: Range;
+  deniedPermissionIds: Range;
 
   private _roleByRelationType?: Map<RelationType, unknown>;
   private syncResponseRoles?: SyncResponseRole[];

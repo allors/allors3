@@ -3,7 +3,7 @@ import { ChangeSet } from '../ChangeSet';
 import { Strategy } from '../Strategy';
 import { Workspace } from '../../workspace/Workspace';
 import { Session } from '../Session';
-import { add, has, remove, difference, enumerate } from '../../collections/Numbers';
+import { add, has, remove, difference, enumerate } from '../../collections/Range';
 import { Class, RelationType, RoleType } from '@allors/workspace/meta/system';
 
 export abstract class RecordBasedOriginState {

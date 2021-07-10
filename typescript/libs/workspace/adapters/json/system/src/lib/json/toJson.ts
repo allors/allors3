@@ -1,6 +1,7 @@
 import { AssociationType, ObjectType, PropertyType, RoleType } from '@allors/workspace/meta/system';
 import {
-  UnitTypes,
+  UnitType,
+  TypeForParameter,
   Procedure as DataProcedure,
   Pull as DataPull,
   Extent as DataExtent,
@@ -10,12 +11,11 @@ import {
   Select as DataSelect,
   Step as DataStep,
   Node as DataNode,
-  ParameterTypes,
   IObject,
 } from '@allors/workspace/domain/system';
 import { Extent, ExtentKind, Predicate, Procedure, Pull, Result, Select, Sort, Step, Node, PredicateKind } from '@allors/protocol/json/system';
 
-export function unitToJson(from: unknown): UnitTypes {
+export function unitToJson(from: unknown): UnitType {
   if (from == null) {
     return;
   }
@@ -170,7 +170,7 @@ function nodeToJson(from: DataNode): Node {
   };
 }
 
-function argumentsToJson(from: { [name: string]: ParameterTypes }): { [name: string]: string } {
+function argumentsToJson(from: { [name: string]: TypeForParameter }): { [name: string]: string } {
   if (from == null) {
     return;
   }

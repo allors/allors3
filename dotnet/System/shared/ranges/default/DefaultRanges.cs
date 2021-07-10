@@ -31,6 +31,14 @@ namespace Allors.Ranges
 
         public IRange Load(long item) => new ArrayRange(new[] { item });
 
+        public IRange Load(params long[] sortedItems) =>
+            sortedItems switch
+            {
+                null => EmptyRange.Instance,
+                { Length: 0 } => EmptyRange.Instance,
+                _ => new ArrayRange(sortedItems)
+            };
+
         public IRange Ensure(object? nullable) => nullable switch
         {
             null => EmptyRange.Instance,
@@ -38,7 +46,7 @@ namespace Allors.Ranges
             _ => throw new NotSupportedException($"Ensure is not supported from {nullable.GetType()}")
         };
 
-        public IRange Import(IEnumerable<long>? unsortedItems)
+        public IRange FromUnsorted(IEnumerable<long>? unsortedItems)
         {
             switch (unsortedItems)
             {

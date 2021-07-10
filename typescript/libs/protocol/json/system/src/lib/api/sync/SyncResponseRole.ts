@@ -2,7 +2,7 @@ export interface SyncResponseRole {
   /** RoleType */
   t: number;
 
-  /** Collection */
+  /** Collection (Range) */
   c: number[];
 
   /** Object */

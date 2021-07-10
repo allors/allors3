@@ -3,7 +3,7 @@ import { DatabaseRecord } from '../database/DatabaseRecord';
 import { DatabaseOriginState, InitialVersion, UnknownVersion } from './originstate/DatabaseOriginState';
 import { WorkspaceOriginState } from './originstate/WorkspaceOriginState';
 import { isNewId, Session } from './Session';
-import { Numbers, enumerate } from '../collections/Numbers';
+import { fromUnsorted, enumerate } from '../collections/Range';
 import { AssociationType, Class, MethodType, Origin, RoleType } from '@allors/workspace/meta/system';
 
 export abstract class Strategy implements IStrategy {
@@ -187,21 +187,21 @@ export abstract class Strategy implements IStrategy {
   }
 
   public setComposites(roleType: RoleType, role: ReadonlyArray<IObject>) {
-    const roleNumbers = Numbers(role?.map((v) => v.id));
+    const roleIds = fromUnsorted(role?.map((v) => v.id));
 
     switch (roleType.origin) {
       case Origin.Session:
-        this.session.sessionOriginState.SetCompositesRole(this.id, roleType, roleNumbers);
+        this.session.sessionOriginState.SetCompositesRole(this.id, roleType, roleIds);
         break;
 
       case Origin.Workspace:
-        this.WorkspaceOriginState?.SetCompositesRole(roleType, roleNumbers);
+        this.WorkspaceOriginState?.SetCompositesRole(roleType, roleIds);
 
         break;
 
       case Origin.Database:
         if (this.canWrite(roleType)) {
-          this.DatabaseOriginState?.SetCompositesRole(roleType, roleNumbers);
+          this.DatabaseOriginState?.SetCompositesRole(roleType, roleIds);
         }
 
         break;
@@ -303,7 +303,22 @@ export abstract class Strategy implements IStrategy {
     };
   }
 
-  public isAssociationForRole(roleType: RoleType, forRoleId: number): boolean {
+  public isCompositeAssociationForRole(roleType: RoleType, forRoleId: number): boolean {
+    const role = this.session.sessionOriginState.Get(this.id, roleType);
+
+    switch (roleType.origin) {
+      case Origin.Session:
+        return role === forRoleId;
+      case Origin.Workspace:
+        return this.WorkspaceOriginState?.IsAssociationForRole(roleType, forRoleId) ?? false;
+      case Origin.Database:
+        return this.DatabaseOriginState?.IsAssociationForRole(roleType, forRoleId) ?? false;
+      default:
+        throw new Error('Unsupported Origin');
+    }
+  }
+
+  public isCompositesAssociationForRole(roleType: RoleType, forRoleId: number): boolean {
     const role = this.session.sessionOriginState.Get(this.id, roleType);
 
     switch (roleType.origin) {

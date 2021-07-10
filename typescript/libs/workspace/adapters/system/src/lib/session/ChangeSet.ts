@@ -1,7 +1,7 @@
 import { IChangeSet, IStrategy, ISession } from '@allors/workspace/domain/system';
 import { AssociationType, PropertyType, RelationType, RoleType } from '@allors/workspace/meta/system';
 import { MapMap } from '../collections/MapMap';
-import { difference, enumerate } from '../collections/Numbers';
+import { difference, enumerate } from '../collections/Range';
 import { Session } from './Session';
 import { Strategy } from './Strategy';
 
