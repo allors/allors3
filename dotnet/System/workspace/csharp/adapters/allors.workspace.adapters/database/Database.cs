@@ -11,7 +11,7 @@ namespace Allors.Workspace.Adapters
 
     public abstract class DatabaseConnection : IDatabaseConnection
     {
-        private ConcurrentDictionary<IObjectType, object> emptyArrayByObjectType;
+        private ConcurrentDictionary<IObjectType, object> EmptyArrayByObjectType;
 
         protected DatabaseConnection(Configuration configuration) => this.Configuration = configuration;
 
@@ -26,9 +26,9 @@ namespace Allors.Workspace.Adapters
 
         public object EmptyArray(IObjectType objectType)
         {
-            this.emptyArrayByObjectType ??= new ConcurrentDictionary<IObjectType, object>();
+            this.EmptyArrayByObjectType ??= new ConcurrentDictionary<IObjectType, object>();
 
-            if (this.emptyArrayByObjectType.TryGetValue(objectType, out var emptyArray))
+            if (this.EmptyArrayByObjectType.TryGetValue(objectType, out var emptyArray))
             {
                 return emptyArray;
             }
@@ -36,7 +36,7 @@ namespace Allors.Workspace.Adapters
             var type = this.Configuration.ObjectFactory.GetType(objectType);
             emptyArray = Array.CreateInstance(type, 0);
 
-            this.emptyArrayByObjectType.TryAdd(objectType, emptyArray);
+            this.EmptyArrayByObjectType.TryAdd(objectType, emptyArray);
 
             return emptyArray;
         }

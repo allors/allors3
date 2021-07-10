@@ -147,7 +147,7 @@ namespace Allors.Workspace.Adapters.Remote
                     var id = syncResponseAccessControl.i;
                     var version = syncResponseAccessControl.v;
                     var permissionsIds = syncResponseAccessControl.p;
-                    this.AccessControlById[id] = new AccessControl { Version = version, PermissionIds = this.Ranges.From(permissionsIds) };
+                    this.AccessControlById[id] = new AccessControl { Version = version, PermissionIds = this.Ranges.Cast(permissionsIds) };
 
                     foreach (var permissionId in permissionsIds)
                     {

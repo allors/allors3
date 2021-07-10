@@ -59,7 +59,7 @@ namespace Allors.Workspace.Adapters.Remote
                     {
                         var roleIds = ranges.Ensure(roleValue);
 
-                        if (!this.ExistDatabaseRecord)
+                        if (!this.ExistRecord)
                         {
                             pushRequestRole.a = roleIds.ToArray();
                         }

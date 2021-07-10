@@ -50,7 +50,7 @@ namespace Allors.Workspace.Adapters.Local
                 var roleTypes = databaseClass.DatabaseRoleTypes.Where(w => w.RelationType.WorkspaceNames.Length > 0);
 
                 var workspaceClass = (IClass)this.Configuration.MetaPopulation.FindByTag(databaseClass.Tag);
-                var roleByRoleType = roleTypes.ToDictionary(w => ((IRelationType)this.Configuration.MetaPopulation.FindByTag(w.RelationType.Tag)).RoleType, w => GetRole(@object, w));
+                var roleByRoleType = roleTypes.ToDictionary(w => ((IRelationType)this.Configuration.MetaPopulation.FindByTag(w.RelationType.Tag)).RoleType, w => this.GetRole(@object, w));
 
                 var acl = accessControlLists[@object];
 
@@ -58,7 +58,7 @@ namespace Allors.Workspace.Adapters.Local
                     ?.Select(this.GetAccessControl)
                     .ToArray() ?? Array.Empty<AccessControl>();
 
-                this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, this.ranges.From(acl.DeniedPermissionIds), accessControls);
+                this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, this.ranges.Cast(acl.DeniedPermissionIds), accessControls);
             }
         }
 
@@ -81,17 +81,18 @@ namespace Allors.Workspace.Adapters.Local
             switch (operation)
             {
                 case Operations.Read:
-                    permissionCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(operandId,
-                        out permission);
+                    permissionCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
                     break;
                 case Operations.Write:
-                    permissionCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(operandId,
-                        out permission);
+                    permissionCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
                     break;
+                case Operations.Execute:
+                    permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(operandId, out permission);
+                    break;
+                case Operations.Create:
+                    throw new NotSupportedException("Create is not supported");
                 default:
-                    permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(operandId,
-                        out permission);
-                    break;
+                    throw new NotSupportedException($"Unknown operation {operation}");
             }
 
             return permission;
@@ -129,7 +130,7 @@ namespace Allors.Workspace.Adapters.Local
             }
 
             acessControl.Version = accessControl.Strategy.ObjectVersion;
-            acessControl.PermissionIds = this.ranges.Import(accessControl.Permissions.Select(v => v.Id));
+            acessControl.PermissionIds = this.ranges.From(accessControl.Permissions.Select(v => v.Id));
 
             return acessControl;
         }
@@ -146,8 +147,7 @@ namespace Allors.Workspace.Adapters.Local
                 return @object.Strategy.GetCompositeRole(roleType)?.Id;
             }
 
-            var roles = @object.Strategy.GetCompositesRole<IObject>(roleType);
-            return this.ranges.From(roles.Select(v => v.Id));
+            return this.ranges.Cast(@object.Strategy.GetCompositesRole<IObject>(roleType).Select(v => v.Id));
         }
     }
 }

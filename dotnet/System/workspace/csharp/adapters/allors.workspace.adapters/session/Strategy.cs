@@ -9,7 +9,6 @@ namespace Allors.Workspace.Adapters
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
-    using Ranges;
 
     public abstract class Strategy : IStrategy
     {
@@ -61,37 +60,37 @@ namespace Allors.Workspace.Adapters
 
         public IObject Object => this.@object ??= this.Session.Workspace.DatabaseConnection.Configuration.ObjectFactory.Create(this);
 
-        public bool Exist(IRoleType roleType)
+        public bool ExistRole(IRoleType roleType)
         {
             if (roleType.ObjectType.IsUnit)
             {
-                return this.GetUnit(roleType) != null;
+                return this.GetUnitRole(roleType) != null;
             }
 
             if (roleType.IsOne)
             {
-                return this.GetComposite<IObject>(roleType) != null;
+                return this.GetCompositeRole<IObject>(roleType) != null;
             }
 
-            return this.GetComposites<IObject>(roleType).Any();
+            return this.GetCompositesRole<IObject>(roleType).Any();
         }
 
-        public object Get(IRoleType roleType)
+        public object GetRole(IRoleType roleType)
         {
             if (roleType.ObjectType.IsUnit)
             {
-                return this.GetUnit(roleType);
+                return this.GetUnitRole(roleType);
             }
 
             if (roleType.IsOne)
             {
-                return this.GetComposite<IObject>(roleType);
+                return this.GetCompositeRole<IObject>(roleType);
             }
 
-            return this.GetComposites<IObject>(roleType);
+            return this.GetCompositesRole<IObject>(roleType);
         }
 
-        public object GetUnit(IRoleType roleType) =>
+        public object GetUnitRole(IRoleType roleType) =>
             roleType.Origin switch
             {
                 Origin.Session => this.Session.GetRole(this, roleType),
@@ -100,7 +99,7 @@ namespace Allors.Workspace.Adapters
                 _ => throw new ArgumentException("Unsupported Origin")
             };
 
-        public T GetComposite<T>(IRoleType roleType) where T : IObject =>
+        public T GetCompositeRole<T>(IRoleType roleType) where T : IObject =>
             this.Session.GetOne<T>(roleType.Origin switch
             {
                 Origin.Session => (long?)this.Session.GetRole(this, roleType),
@@ -109,7 +108,7 @@ namespace Allors.Workspace.Adapters
                 _ => throw new ArgumentException("Unsupported Origin")
             });
 
-        public IEnumerable<T> GetComposites<T>(IRoleType roleType) where T : IObject
+        public IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : IObject
         {
             var roles = roleType.Origin switch
             {
@@ -127,23 +126,23 @@ namespace Allors.Workspace.Adapters
             return this.Session.GetMany<T>((IEnumerable<long>)roles);
         }
 
-        public void Set(IRoleType roleType, object value)
+        public void SetRole(IRoleType roleType, object value)
         {
             if (roleType.ObjectType.IsUnit)
             {
-                this.SetUnit(roleType, value);
+                this.SetUnitRole(roleType, value);
             }
             else if (roleType.IsOne)
             {
-                this.SetComposite(roleType, (IObject)value);
+                this.SetCompositeRole(roleType, (IObject)value);
             }
             else
             {
-                this.SetComposites(roleType, (IEnumerable<IObject>)value);
+                this.SetCompositesRole(roleType, (IEnumerable<IObject>)value);
             }
         }
 
-        public void SetUnit(IRoleType roleType, object value)
+        public void SetUnitRole(IRoleType roleType, object value)
         {
             switch (roleType.Origin)
             {
@@ -168,7 +167,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void SetComposite<T>(IRoleType roleType, T value) where T : IObject
+        public void SetCompositeRole<T>(IRoleType roleType, T value) where T : IObject
         {
             switch (roleType.Origin)
             {
@@ -193,25 +192,26 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void SetComposites<T>(IRoleType roleType, in IEnumerable<T> role) where T : IObject
+        public void SetCompositesRole<T>(IRoleType roleType, in IEnumerable<T> role) where T : IObject
         {
-            var roleNumbers = this.Session.Workspace.Ranges.Import(role?.Select(v => v.Id));
+            var ranges = this.Session.Workspace.Ranges;
+            var roleIds = ranges.From(role?.Select(v => v.Id));
 
             switch (roleType.Origin)
             {
                 case Origin.Session:
-                    this.Session.SessionOriginState.SetCompositesRole(this.Id, roleType, roleNumbers);
+                    this.Session.SessionOriginState.SetCompositesRole(this.Id, roleType, roleIds);
                     break;
 
                 case Origin.Workspace:
-                    this.WorkspaceOriginState?.SetCompositesRole(roleType, roleNumbers);
+                    this.WorkspaceOriginState?.SetCompositesRole(roleType, roleIds);
 
                     break;
 
                 case Origin.Database:
                     if (this.CanWrite(roleType))
                     {
-                        this.DatabaseOriginState?.SetCompositesRole(roleType, roleNumbers);
+                        this.DatabaseOriginState?.SetCompositesRole(roleType, roleIds);
                     }
 
                     break;
@@ -220,7 +220,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void Add<T>(IRoleType roleType, T value) where T : IObject
+        public void AddCompositesRole<T>(IRoleType roleType, T value) where T : IObject
         {
             switch (roleType.Origin)
             {
@@ -245,7 +245,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void Remove<T>(IRoleType roleType, T value) where T : IObject
+        public void RemoveCompositesRole<T>(IRoleType roleType, T value) where T : IObject
         {
             switch (roleType.Origin)
             {
@@ -270,23 +270,23 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void Remove(IRoleType roleType)
+        public void RemoveRole(IRoleType roleType)
         {
             if (roleType.ObjectType.IsUnit)
             {
-                this.SetUnit(roleType, null);
+                this.SetUnitRole(roleType, null);
             }
             else if (roleType.IsOne)
             {
-                this.SetComposite(roleType, (IObject)null);
+                this.SetCompositeRole(roleType, (IObject)null);
             }
             else
             {
-                this.SetComposites(roleType, (IEnumerable<IObject>)null);
+                this.SetCompositesRole(roleType, (IEnumerable<IObject>)null);
             }
         }
 
-        public T GetComposite<T>(IAssociationType associationType) where T : IObject
+        public T GetCompositeAssociation<T>(IAssociationType associationType) where T : IObject
         {
             if (associationType.Origin != Origin.Session)
             {
@@ -297,7 +297,7 @@ namespace Allors.Workspace.Adapters
             return association != null ? this.Session.GetOne<T>(association) : default;
         }
 
-        public IEnumerable<T> GetComposites<T>(IAssociationType associationType) where T : IObject
+        public IEnumerable<T> GetCompositesAssociation<T>(IAssociationType associationType) where T : IObject
         {
             if (associationType.Origin != Origin.Session)
             {

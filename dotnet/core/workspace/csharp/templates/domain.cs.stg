@@ -240,24 +240,24 @@ $if(concreteRoleType._.ObjectType.IsUnit)$
 		{
 			get
 			{
-				return ($concreteRoleType_ObjectType(concreteRoleType)$) this.Strategy.GetUnit(Meta.$concreteRoleType._.Name$);
+				return ($concreteRoleType_ObjectType(concreteRoleType)$) this.Strategy.GetUnitRole(Meta.$concreteRoleType._.Name$);
 			}
 			set
 			{
-				this.Strategy.SetUnit(Meta.$concreteRoleType._.Name$, value);
+				this.Strategy.SetUnitRole(Meta.$concreteRoleType._.Name$, value);
 			}
 		}
 
 		virtual public bool Exist$concreteRoleType._.SingularName${
 			get
 			{
-				return this.Strategy.Exist(Meta.$concreteRoleType._.Name$);
+				return this.Strategy.ExistRole(Meta.$concreteRoleType._.Name$);
 			}
 		}
 
 		virtual public void Remove$concreteRoleType._.SingularName$()
 		{
-			this.Strategy.Remove(Meta.$concreteRoleType._.Name$);
+			this.Strategy.RemoveRole(Meta.$concreteRoleType._.Name$);
 		}
 $else$
 $if(concreteRoleType._.IsMany)$
@@ -265,46 +265,46 @@ $if(concreteRoleType._.IsMany)$
 		{
 			get
 			{
-				return this.Strategy.GetComposites<$concreteRoleType_ObjectType(concreteRoleType)$>(Meta.$concreteRoleType._.Name$);
+				return this.Strategy.GetCompositesRole<$concreteRoleType_ObjectType(concreteRoleType)$>(Meta.$concreteRoleType._.Name$);
 			}
 			set
 			{
-				this.Strategy.SetComposites(Meta.$concreteRoleType._.Name$, value);
+				this.Strategy.SetCompositesRole(Meta.$concreteRoleType._.Name$, value);
 			}
 		}
 
 		virtual public void Add$concreteRoleType._.SingularName$ ($concreteRoleType_ObjectType(concreteRoleType)$ value)
 		{
-			this.Strategy.Add(Meta.$concreteRoleType._.Name$, value);
+			this.Strategy.AddCompositesRole(Meta.$concreteRoleType._.Name$, value);
 		}
 
 		virtual public void Remove$concreteRoleType._.SingularName$ ($concreteRoleType_ObjectType(concreteRoleType)$ value)
 		{
-			this.Strategy.Remove(Meta.$concreteRoleType._.Name$, value);
+			this.Strategy.RemoveCompositesRole(Meta.$concreteRoleType._.Name$, value);
 		}
 
 		virtual public bool Exist$concreteRoleType._.PluralName$
 		{
 			get
 			{
-				return this.Strategy.Exist(Meta.$concreteRoleType._.Name$);
+				return this.Strategy.ExistRole(Meta.$concreteRoleType._.Name$);
 			}
 		}
 
 		virtual public void Remove$concreteRoleType._.PluralName$()
 		{
-			this.Strategy.Remove(Meta.$concreteRoleType._.Name$);
+			this.Strategy.RemoveRole(Meta.$concreteRoleType._.Name$);
 		}
 $else$
 		virtual public $concreteRoleType_ObjectType(concreteRoleType)$ $concreteRoleType._.SingularName$
 		{
 			get
 			{
-				return this.Strategy.GetComposite<$concreteRoleType_ObjectType(concreteRoleType)$>(Meta.$concreteRoleType._.Name$);
+				return this.Strategy.GetCompositeRole<$concreteRoleType_ObjectType(concreteRoleType)$>(Meta.$concreteRoleType._.Name$);
 			}
 			set
 			{
-				this.Strategy.SetComposite(Meta.$concreteRoleType._.Name$, value);
+				this.Strategy.SetCompositeRole(Meta.$concreteRoleType._.Name$, value);
 			}
 		}
 
@@ -312,13 +312,13 @@ $else$
 		{
 			get
 			{
-				return this.Strategy.Exist(Meta.$concreteRoleType._.Name$);
+				return this.Strategy.ExistRole(Meta.$concreteRoleType._.Name$);
 			}
 		}
 
 		virtual public void Remove$concreteRoleType._.SingularName$()
 		{
-			this.Strategy.Remove(Meta.$concreteRoleType._.Name$);
+			this.Strategy.RemoveRole(Meta.$concreteRoleType._.Name$);
 		}
 $endif$
 $endif$
@@ -331,7 +331,7 @@ $if(associationType._.IsOne)$
 		{
             get
             {
-                return this.Strategy.GetComposite<$objectType_Name(associationType._.ObjectType)$>(Meta.$associationType._.Name$);
+                return this.Strategy.GetCompositeAssociation<$objectType_Name(associationType._.ObjectType)$>(Meta.$associationType._.Name$);
             }
 		}
 $else$
@@ -339,7 +339,7 @@ $else$
 		{
             get
             {
-                return this.Strategy.GetComposites<$objectType_Name(associationType._.ObjectType)$>(Meta.$associationType._.Name$).ToArray();
+                return this.Strategy.GetCompositesAssociation<$objectType_Name(associationType._.ObjectType)$>(Meta.$associationType._.Name$).ToArray();
             }
 		}
 $endif$

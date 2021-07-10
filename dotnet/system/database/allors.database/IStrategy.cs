@@ -157,6 +157,7 @@ namespace Allors.Database
         /// <summary>
         /// Gets the composite roles.
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="roleType">Type of the relation.</param>
         /// <returns>The role objects.</returns>
         IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : IObject;

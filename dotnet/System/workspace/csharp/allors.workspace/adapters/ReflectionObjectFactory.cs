@@ -35,27 +35,21 @@ namespace Allors.Workspace.Adapters
         /// <see cref="ConstructorInfo"/> by <see cref="IObjectType"/> cache.
         /// </summary>
         private readonly Dictionary<IObjectType, ConstructorInfo> contructorInfoByObjectType;
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ReflectionObjectFactory"/> class.
         /// </summary>
         /// <param name="metaPopulation">
         /// The meta databaseOrigin.
         /// </param>
-        /// <param name="assembly">
-        /// The assembly.
-        /// </param>
-        /// <param name="namespace">
-        /// The namespace.
-        /// </param>
+        /// <param name="instance"></param>
         /// <exception cref="ArgumentException"></exception>
         public ReflectionObjectFactory(IMetaPopulation metaPopulation, Type instance)
         {
             var assembly = instance.GetTypeInfo().Assembly;
 
             var types = assembly.GetTypes()
-                .Where(type => type.Namespace != null &&
-                               type.Namespace.Equals(instance.Namespace) &&
+                .Where(type => type.Namespace?.Equals(instance.Namespace) == true &&
                                type.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IObject)))
                 .ToArray();
 
@@ -127,7 +121,7 @@ namespace Allors.Workspace.Adapters
             this.typeByObjectType.TryGetValue(objectType, out var type);
             return type;
         }
-        
+
         public IObjectType GetObjectType<T>()
         {
             var typeName = typeof(T).Name;

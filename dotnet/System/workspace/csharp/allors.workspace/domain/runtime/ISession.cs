@@ -34,9 +34,9 @@ namespace Allors.Workspace
 
         IEnumerable<T> GetMany<T>(IEnumerable<T> objects) where T : IObject;
 
-        IEnumerable<T> GetMany<T>(IEnumerable<long> identities) where T : IObject;
+        IEnumerable<T> GetMany<T>(IEnumerable<long> ids) where T : IObject;
 
-        IEnumerable<T> GetMany<T>(IEnumerable<string> responseVersionErrors) where T : IObject;
+        IEnumerable<T> GetMany<T>(IEnumerable<string> ids) where T : IObject;
 
         IEnumerable<T> GetAll<T>() where T : IObject;
 

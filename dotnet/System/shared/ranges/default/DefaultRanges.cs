@@ -11,7 +11,7 @@ namespace Allors.Ranges
 
     public class DefaultRanges : IRanges
     {
-        public IRange From(IEnumerable<long>? sortedItems)
+        public IRange Cast(IEnumerable<long>? sortedItems)
         {
             switch (sortedItems)
             {
@@ -29,14 +29,14 @@ namespace Allors.Ranges
             }
         }
 
-        public IRange From(params long[] sortedItems) =>
+        public IRange Cast(params long[] sortedItems) =>
             sortedItems switch
             {
                 { Length: 0 } => EmptyRange.Instance,
                 _ => new ArrayRange(sortedItems)
             };
 
-        public IRange From(long item) => new ArrayRange(new[] { item });
+        public IRange Cast(long item) => new ArrayRange(new[] { item });
 
         public IRange Ensure(object? nullable) => nullable switch
         {
@@ -45,7 +45,7 @@ namespace Allors.Ranges
             _ => throw new NotSupportedException($"Unboxing is not supported from {nullable.GetType()}")
         };
 
-        public IRange Import(IEnumerable<long>? unsortedItems)
+        public IRange From(IEnumerable<long>? unsortedItems)
         {
             switch (unsortedItems)
             {
@@ -66,15 +66,15 @@ namespace Allors.Ranges
             }
         }
 
-        public IRange Import(params long[] unsortedItems) => this.Import((IEnumerable<long>)unsortedItems);
+        public IRange From(params long[] unsortedItems) => this.From((IEnumerable<long>)unsortedItems);
 
-        public IRange Add(IRange range, long item)
+        public IRange Add(IRange? range, long item)
         {
             switch (range)
             {
                 case null:
                 case EmptyRange _:
-                    return this.From(item);
+                    return this.Cast(item);
                 case ArrayRange arrayRange:
                     switch (arrayRange.Items)
                     {
@@ -118,7 +118,7 @@ namespace Allors.Ranges
             }
         }
 
-        public IRange Remove(IRange range, long item)
+        public IRange Remove(IRange? range, long item)
         {
             switch (range)
             {
@@ -167,7 +167,7 @@ namespace Allors.Ranges
             }
         }
 
-        public IRange Union(IRange range, IRange other)
+        public IRange Union(IRange? range, IRange other)
         {
             switch (range)
             {
@@ -267,11 +267,11 @@ namespace Allors.Ranges
             }
         }
 
-        public IRange Except(IRange range, IRange other)
+        public IRange Except(IRange? range, IRange other)
         {
             if (other is EmptyRange)
             {
-                return range;
+                return range ?? EmptyRange.Instance;
             }
 
             switch (range)

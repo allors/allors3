@@ -12,11 +12,6 @@ namespace Allors
     public enum Operations
     {
         /// <summary>
-        /// None.
-        /// </summary>
-        None = 0,
-
-        /// <summary>
         /// Create.
         /// </summary>
         Create = 1,

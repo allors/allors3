@@ -5,6 +5,7 @@
 
 namespace Allors.Workspace.Adapters
 {
+    using System;
     using System.Collections.Generic;
     using Meta;
     using Ranges;
@@ -77,12 +78,32 @@ namespace Allors.Workspace.Adapters
                 if (associationType.IsOne && previousAssociationObject != null)
                 {
                     // OneToOne
-                    previousAssociationObject?.Strategy.Set(roleType, null);
+                    previousAssociationObject?.Strategy.SetRole(roleType, null);
                 }
             }
             else
             {
                 this.SetChangedRole(roleType, role);
+            }
+        }
+
+        public void SetCompositesRole(IRoleType roleType, IRange role)
+        {
+            var previousRole = this.GetCompositesRole(roleType);
+
+            this.SetChangedRole(roleType, role);
+
+            var associationType = roleType.AssociationType;
+            if (associationType.IsMany)
+            {
+                return;
+            }
+
+            // OneToMany
+            foreach (var addedRole in this.Ranges.Except(role, previousRole))
+            {
+                var previousAssociationObject = this.Session.GetCompositeAssociation<IObject>(addedRole, associationType);
+                previousAssociationObject?.Strategy.SetRole(roleType, null);
             }
         }
 
@@ -107,7 +128,7 @@ namespace Allors.Workspace.Adapters
 
             // OneToMany
             var previousAssociationObject = this.Session.GetCompositeAssociation<IObject>(roleToAdd, associationType);
-            previousAssociationObject?.Strategy.Set(roleType, null);
+            previousAssociationObject?.Strategy.SetRole(roleType, null);
         }
 
         public void RemoveCompositesRole(IRoleType roleType, long roleToRemove)
@@ -124,31 +145,10 @@ namespace Allors.Workspace.Adapters
             this.SetChangedRole(roleType, role);
         }
 
-        public void SetCompositesRole(IRoleType roleType, IRange role)
-        {
-            var previousRole = this.GetCompositesRole(roleType);
-
-            this.SetChangedRole(roleType, role);
-
-            var associationType = roleType.AssociationType;
-            if (associationType.IsMany)
-            {
-                return;
-            }
-
-            // OneToMany
-            foreach (var addedRole in this.Ranges.Except(role, previousRole))
-            {
-                var previousAssociationObject = this.Session.GetCompositeAssociation<IObject>(addedRole, associationType);
-                previousAssociationObject?.Strategy.Set(roleType, null);
-            }
-        }
-
         public void Checkpoint(ChangeSet changeSet)
         {
             // Same record
-            if (this.PreviousRecord == null || this.Record == null ||
-                this.Record.Version == this.PreviousRecord.Version)
+            if (this.PreviousRecord == null || this.Record == null || this.Record.Version == this.PreviousRecord.Version)
             {
                 // No previous changed roles
                 if (this.PreviousChangedRoleByRelationType == null)
@@ -223,11 +223,6 @@ namespace Allors.Workspace.Adapters
 
         public bool IsAssociationForRole(IRoleType roleType, long forRole)
         {
-            if (roleType.ObjectType.IsUnit)
-            {
-                return false;
-            }
-
             if (roleType.IsOne)
             {
                 var role = this.GetCompositeRole(roleType);

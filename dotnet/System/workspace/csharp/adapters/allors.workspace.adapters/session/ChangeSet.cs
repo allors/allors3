@@ -8,6 +8,7 @@
 
 namespace Allors.Workspace.Adapters
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
@@ -35,8 +36,7 @@ namespace Allors.Workspace.Adapters
 
         public IDictionary<IAssociationType, ISet<IStrategy>> RolesByAssociationType { get; }
 
-        public void AddSessionStateChanges(
-            IDictionary<IPropertyType, IDictionary<long, object>> sessionStateChangeSet)
+        public void AddSessionStateChanges(IDictionary<IPropertyType, IDictionary<long, object>> sessionStateChangeSet)
         {
             foreach (var kvp in sessionStateChangeSet)
             {
@@ -51,6 +51,8 @@ namespace Allors.Workspace.Adapters
                     case IRoleType roleType:
                         this.AssociationsByRoleType.Add(roleType, strategies);
                         break;
+                    default:
+                        throw new NotSupportedException($"PropertyType {kvp.Key} is not supported");
                 }
             }
         }

@@ -138,7 +138,7 @@ namespace Allors.Workspace.Adapters.Remote
             return (T)strategy.Object;
         }
 
-        public override Adapters.Strategy InstantiateDatabaseStrategy(long id)
+        private Adapters.Strategy InstantiateDatabaseStrategy(long id)
         {
             var databaseRecord = (DatabaseRecord)base.Workspace.DatabaseConnection.GetRecord(id);
             var strategy = new Strategy(this, databaseRecord);

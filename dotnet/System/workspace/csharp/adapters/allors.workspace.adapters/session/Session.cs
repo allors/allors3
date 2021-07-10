@@ -5,6 +5,7 @@
 
 namespace Allors.Workspace.Adapters
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -46,8 +47,9 @@ namespace Allors.Workspace.Adapters
 
         protected Dictionary<long, Strategy> StrategyByWorkspaceId { get; }
 
-        public T Create<T>() where T : class, IObject =>
-            this.Create<T>((IClass)this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>());
+        public abstract T Create<T>(IClass @class) where T : class, IObject;
+
+        public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>());
 
         public T GetOne<T>(IObject @object) where T : IObject => this.GetOne<T>(@object.Id);
 
@@ -57,16 +59,15 @@ namespace Allors.Workspace.Adapters
 
         public T GetOne<T>(long id) where T : IObject => (T)this.GetStrategy(id)?.Object;
 
-        public T GetOne<T>(string idAsString) where T : IObject =>
-            long.TryParse(idAsString, out var id) ? (T)this.GetStrategy(id)?.Object : default;
+        public T GetOne<T>(string idAsString) where T : IObject => long.TryParse(idAsString, out var id) ? (T)this.GetStrategy(id)?.Object : default;
 
         public IEnumerable<T> GetMany<T>(IEnumerable<IObject> objects) where T : IObject => objects.Select(this.GetOne<T>);
 
         public IEnumerable<T> GetMany<T>(IEnumerable<T> objects) where T : IObject => objects.Select(this.GetOne);
 
-        public IEnumerable<T> GetMany<T>(IEnumerable<long> identities) where T : IObject => identities.Select(this.GetOne<T>);
+        public IEnumerable<T> GetMany<T>(IEnumerable<long> ids) where T : IObject => ids.Select(this.GetOne<T>);
 
-        public IEnumerable<T> GetMany<T>(IEnumerable<string> identities) where T : IObject => this.GetMany<T>(identities.Select(
+        public IEnumerable<T> GetMany<T>(IEnumerable<string> ids) where T : IObject => this.GetMany<T>(ids.Select(
             v =>
             {
                 long.TryParse(v, out var id);
@@ -103,7 +104,8 @@ namespace Allors.Workspace.Adapters
                         }
 
                         break;
-                    default:
+                    case Origin.Database:
+                    case Origin.Session:
                         if (this.strategiesByClass.TryGetValue(@class, out var strategies))
                         {
                             foreach (var strategy in strategies)
@@ -113,6 +115,8 @@ namespace Allors.Workspace.Adapters
                         }
 
                         break;
+                    default:
+                        throw new NotSupportedException($"Unknown origin {@class.Origin}");
                 }
             }
         }
@@ -161,7 +165,7 @@ namespace Allors.Workspace.Adapters
         {
             if (id == 0)
             {
-                return default;
+                return null;
             }
 
             if (this.StrategyByWorkspaceId.TryGetValue(id, out var sessionStrategy))
@@ -192,6 +196,11 @@ namespace Allors.Workspace.Adapters
         {
             var roleType = associationType.RoleType;
 
+            if (roleType.ObjectType.IsUnit)
+            {
+                throw new ArgumentException("AssociationType should not be for a Unit", nameof(associationType));
+            }
+
             foreach (var association in this.GetForAssociation(associationType.ObjectType))
             {
                 if (!association.CanRead(roleType))
@@ -212,6 +221,11 @@ namespace Allors.Workspace.Adapters
         {
             var roleType = associationType.RoleType;
 
+            if (roleType.ObjectType.IsUnit)
+            {
+                throw new ArgumentException("AssociationType should not be for a Unit", nameof(associationType));
+            }
+
             foreach (var association in this.GetForAssociation(associationType.ObjectType))
             {
                 if (!association.CanRead(roleType))
@@ -225,10 +239,6 @@ namespace Allors.Workspace.Adapters
                 }
             }
         }
-
-        public abstract T Create<T>(IClass @class) where T : class, IObject;
-
-        public abstract Strategy InstantiateDatabaseStrategy(long id);
 
         protected abstract Strategy InstantiateWorkspaceStrategy(long id);
 
@@ -245,19 +255,6 @@ namespace Allors.Workspace.Adapters
             {
                 strategies.Add(strategy);
             }
-        }
-
-        protected void RemoveStrategy(Strategy strategy)
-        {
-            this.StrategyByWorkspaceId.Remove(strategy.Id);
-
-            var @class = strategy.Class;
-            if (!this.strategiesByClass.TryGetValue(@class, out var strategies))
-            {
-                return;
-            }
-
-            strategies.Remove(strategy);
         }
 
         protected IPushResult PushToWorkspace(IPushResult result)
@@ -308,8 +305,20 @@ namespace Allors.Workspace.Adapters
             strategy.OnDatabasePushResponse(databaseRecord);
         }
 
-
         internal static bool IsNewId(long id) => id < 0;
+
+        private void RemoveStrategy(Strategy strategy)
+        {
+            this.StrategyByWorkspaceId.Remove(strategy.Id);
+
+            var @class = strategy.Class;
+            if (!this.strategiesByClass.TryGetValue(@class, out var strategies))
+            {
+                return;
+            }
+
+            strategies.Remove(strategy);
+        }
 
         private IEnumerable<Strategy> GetForAssociation(IComposite objectType)
         {

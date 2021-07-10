@@ -26,32 +26,32 @@ namespace Allors.Workspace
 
         bool CanExecute(IMethodType methodType);
 
-        bool Exist(IRoleType roleType);
+        bool ExistRole(IRoleType roleType);
 
-        object Get(IRoleType roleType);
+        object GetRole(IRoleType roleType);
 
-        object GetUnit(IRoleType roleType);
+        void SetRole(IRoleType roleType, object value);
 
-        T GetComposite<T>(IRoleType roleType) where T : IObject;
+        void RemoveRole(IRoleType roleType);
 
-        IEnumerable<T> GetComposites<T>(IRoleType roleType) where T : IObject;
+        object GetUnitRole(IRoleType roleType);
 
-        void Set(IRoleType roleType, object value);
+        void SetUnitRole(IRoleType roleType, object value);
 
-        void SetUnit(IRoleType roleType, object value);
+        T GetCompositeRole<T>(IRoleType roleType) where T : IObject;
 
-        void SetComposite<T>(IRoleType roleType, T value) where T : IObject;
+        void SetCompositeRole<T>(IRoleType roleType, T value) where T : IObject;
 
-        void SetComposites<T>(IRoleType roleType, in IEnumerable<T> role) where T : IObject;
+        IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : IObject;
 
-        void Add<T>(IRoleType roleType, T value) where T : IObject;
+        void AddCompositesRole<T>(IRoleType roleType, T value) where T : IObject;
 
-        void Remove<T>(IRoleType roleType, T value) where T : IObject;
+        void RemoveCompositesRole<T>(IRoleType roleType, T value) where T : IObject;
 
-        void Remove(IRoleType roleType);
+        void SetCompositesRole<T>(IRoleType roleType, in IEnumerable<T> role) where T : IObject;
 
-        T GetComposite<T>(IAssociationType associationType) where T : IObject;
+        T GetCompositeAssociation<T>(IAssociationType associationType) where T : IObject;
 
-        IEnumerable<T> GetComposites<T>(IAssociationType associationType) where T : IObject;
+        IEnumerable<T> GetCompositesAssociation<T>(IAssociationType associationType) where T : IObject;
     }
 }

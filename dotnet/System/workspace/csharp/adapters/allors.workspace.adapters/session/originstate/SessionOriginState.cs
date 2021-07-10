@@ -56,7 +56,6 @@ namespace Allors.Workspace.Adapters
         {
             var previousRole = this.GetComposites(association, roleType);
 
-            // Use Diff (Add/Remove)
             var addedRoles = this.ranges.Except(newRole, previousRole);
             var removedRoles = this.ranges.Except(previousRole, newRole);
 

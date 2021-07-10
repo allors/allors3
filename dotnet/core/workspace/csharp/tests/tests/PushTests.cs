@@ -35,19 +35,19 @@ namespace Tests.Workspace
 
             foreach (var roleType in this.M.C1.RoleTypes)
             {
-                Assert.False(newObject.Strategy.Exist(roleType));
+                Assert.False(newObject.Strategy.ExistRole(roleType));
             }
 
             foreach (var associationType in this.M.C1.AssociationTypes)
             {
                 if (associationType.IsOne)
                 {
-                    var association = newObject.Strategy.GetComposite<IObject>(associationType);
+                    var association = newObject.Strategy.GetCompositeAssociation<IObject>(associationType);
                     Assert.Null(association);
                 }
                 else
                 {
-                    var association = newObject.Strategy.GetComposites<IObject>(associationType);
+                    var association = newObject.Strategy.GetCompositesAssociation<IObject>(associationType);
                     Assert.Empty(association);
                 }
             }

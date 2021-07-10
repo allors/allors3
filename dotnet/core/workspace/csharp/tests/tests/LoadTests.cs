@@ -57,19 +57,19 @@ namespace Tests.Workspace
             {
                 foreach (var roleType in this.M.C1.DatabaseOriginRoleTypes)
                 {
-                    Assert.False(c1.Strategy.Exist(roleType));
+                    Assert.False(c1.Strategy.ExistRole(roleType));
                 }
 
                 foreach (var associationType in this.M.C1.AssociationTypes)
                 {
                     if (associationType.IsOne)
                     {
-                        var association = c1.Strategy.GetComposite<IObject>(associationType);
+                        var association = c1.Strategy.GetCompositeAssociation<IObject>(associationType);
                         Assert.Null(association);
                     }
                     else
                     {
-                        var association = c1.Strategy.GetComposites<IObject>(associationType);
+                        var association = c1.Strategy.GetCompositesAssociation<IObject>(associationType);
                         Assert.Empty(association);
                     }
                 }
@@ -94,19 +94,19 @@ namespace Tests.Workspace
             {
                 foreach (var roleType in this.M.C1.DatabaseOriginRoleTypes)
                 {
-                    Assert.False(c1.Strategy.Exist(roleType));
+                    Assert.False(c1.Strategy.ExistRole(roleType));
                 }
 
                 foreach (var associationType in this.M.C1.AssociationTypes)
                 {
                     if (associationType.IsOne)
                     {
-                        var association = c1.Strategy.GetComposite<IObject>(associationType);
+                        var association = c1.Strategy.GetCompositeAssociation<IObject>(associationType);
                         Assert.Null(association);
                     }
                     else
                     {
-                        var association = c1.Strategy.GetComposites<IObject>(associationType);
+                        var association = c1.Strategy.GetCompositesAssociation<IObject>(associationType);
                         Assert.Empty(association);
                     }
                 }

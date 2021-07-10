@@ -63,7 +63,7 @@ namespace Allors.Workspace.Meta
         {
             if (this.IsOne)
             {
-                var association = strategy.GetComposite<IObject>(this);
+                var association = strategy.GetCompositeRole<IObject>(this);
 
                 if (ofType == null || association == null)
                 {
@@ -74,7 +74,7 @@ namespace Allors.Workspace.Meta
             }
             else
             {
-                var association = strategy.GetComposites<IObject>(this);
+                var association = strategy.GetCompositesRole<IObject>(this);
 
                 if (ofType == null || association == null)
                 {
@@ -114,7 +114,7 @@ namespace Allors.Workspace.Meta
         {
             if (this.IsOne)
             {
-                var association = strategy.GetComposite<IObject>(this);
+                var association = strategy.GetCompositeRole<IObject>(this);
 
                 if (ofType == null || association == null)
                 {
@@ -125,7 +125,7 @@ namespace Allors.Workspace.Meta
             }
             else
             {
-                var association = strategy.GetComposites<IObject>(this);
+                var association = strategy.GetCompositesRole<IObject>(this);
 
                 if (ofType == null || association == null)
                 {
@@ -136,7 +136,7 @@ namespace Allors.Workspace.Meta
             }
         }
 
-        public void Set(IStrategy strategy, object value) => strategy.Set(this, value);
+        public void Set(IStrategy strategy, object value) => strategy.SetRole(this, value);
 
         public override string ToString() => $"{this.AssociationType.ObjectType.SingularName}.{this.Name}";
 

@@ -20,17 +20,17 @@ namespace Allors.Workspace.Adapters
 
         internal bool IsVersionUnknown => this.Version == Allors.Version.Unknown.Value;
 
-        protected bool ExistDatabaseRecord => this.Record != null;
-
         protected override IEnumerable<IRoleType> RoleTypes => this.Class.DatabaseOriginRoleTypes;
+
+        protected bool ExistRecord => this.Record != null;
 
         protected override IRecord Record => this.DatabaseRecord;
 
-        protected DatabaseRecord DatabaseRecord { get; set; }
+        protected DatabaseRecord DatabaseRecord { get; private set; }
 
         public bool CanRead(IRoleType roleType)
         {
-            if (!this.ExistDatabaseRecord)
+            if (!this.ExistRecord)
             {
                 return true;
             }
@@ -46,7 +46,7 @@ namespace Allors.Workspace.Adapters
 
         public bool CanWrite(IRoleType roleType)
         {
-            if (!this.ExistDatabaseRecord)
+            if (!this.ExistRecord)
             {
                 return true;
             }
@@ -56,14 +56,13 @@ namespace Allors.Workspace.Adapters
                 return false;
             }
 
-            var permission =
-                this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, roleType, Operations.Write);
+            var permission = this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, roleType, Operations.Write);
             return this.DatabaseRecord.IsPermitted(permission);
         }
 
         public bool CanExecute(IMethodType methodType)
         {
-            if (!this.ExistDatabaseRecord)
+            if (!this.ExistRecord)
             {
                 return true;
             }
@@ -73,8 +72,7 @@ namespace Allors.Workspace.Adapters
                 return false;
             }
 
-            var permission =
-                this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, methodType, Operations.Execute);
+            var permission = this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, methodType, Operations.Execute);
             return this.DatabaseRecord.IsPermitted(permission);
         }
 
@@ -83,6 +81,7 @@ namespace Allors.Workspace.Adapters
             this.DatabaseRecord = newDatabaseRecord;
             this.ChangedRoleByRelationType = null;
         }
+
         public void OnPulled() =>
             // TODO: check for overwrites
             this.DatabaseRecord = this.Session.Workspace.DatabaseConnection.GetRecord(this.Id);

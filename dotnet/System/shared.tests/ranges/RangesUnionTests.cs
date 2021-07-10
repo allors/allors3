@@ -17,8 +17,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From();
-            var y = num.From();
+            var x = num.Cast();
+            var y = num.Cast();
             var z = num.Union(x, y);
 
             Assert.Equal(Array.Empty<long>(), z);
@@ -29,8 +29,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(0);
-            var y = num.From();
+            var x = num.Cast(0);
+            var y = num.Cast();
             var z = num.Union(x, y);
 
             Assert.Equal(new long[] { 0 }, z);
@@ -41,8 +41,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(0, 1);
-            var y = num.From();
+            var x = num.Cast(0, 1);
+            var y = num.Cast();
             var z = num.Union(x, y);
 
             Assert.Equal(new long[] { 0, 1 }, z);
@@ -53,8 +53,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(0);
-            var y = num.From(0);
+            var x = num.Cast(0);
+            var y = num.Cast(0);
             var z = num.Union(x, y);
 
             Assert.Equal(new long[] { 0 }, z);
@@ -65,8 +65,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(0, 1);
-            var y = num.From(0, 1);
+            var x = num.Cast(0, 1);
+            var y = num.Cast(0, 1);
             var z = num.Union(x, y);
 
             Assert.Equal(new ArrayRange(new long[] { 0, 1 }), z);
@@ -78,8 +78,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(0, 1);
-            var y = num.From(2, 3);
+            var x = num.Cast(0, 1);
+            var y = num.Cast(2, 3);
             var z = num.Union(x, y);
 
             Assert.Equal(new long[] { 0, 1, 2, 3 }, z);
@@ -90,8 +90,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(4, 5);
-            var y = num.From(2, 3);
+            var x = num.Cast(4, 5);
+            var y = num.Cast(2, 3);
             var z = num.Union(x, y);
 
             Assert.Equal(new long[] { 2, 3, 4, 5 }, z);
@@ -103,8 +103,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(1, 4);
-            var y = num.From(2, 3);
+            var x = num.Cast(1, 4);
+            var y = num.Cast(2, 3);
             var z = num.Union(x, y);
 
             Assert.Equal(new long[] { 1, 2, 3, 4 }, z);
@@ -115,8 +115,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(1, 3);
-            var y = num.From(2, 4);
+            var x = num.Cast(1, 3);
+            var y = num.Cast(2, 4);
             var z = num.Union(x, y);
 
             Assert.Equal(new long[] { 1, 2, 3, 4 }, z);
@@ -127,8 +127,8 @@ namespace Allors.Ranges
         {
             var num = this.Ranges;
 
-            var x = num.From(2, 4);
-            var y = num.From(1, 3);
+            var x = num.Cast(2, 4);
+            var y = num.Cast(1, 3);
             var z = num.Union(x, y);
 
             Assert.Equal(new long[] { 1, 2, 3, 4 }, z);
