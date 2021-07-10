@@ -1013,7 +1013,7 @@ namespace Allors.Database.Adapters.Sql
                     {
                         var changeTracker = (ChangeTracker)originalRole;
 
-                        if (ranges.Except(changeTracker.Add, changeTracker.Remove) == default && ranges.Except(changeTracker.Remove, changeTracker.Add) == default)
+                        if (ranges.Except(changeTracker.Add, changeTracker.Remove).IsEmpty && ranges.Except(changeTracker.Remove, changeTracker.Add).IsEmpty)
                         {
                             continue;
                         }
@@ -1064,7 +1064,7 @@ namespace Allors.Database.Adapters.Sql
                     {
                         var changeTracker = (ChangeTracker)originalAssociation;
 
-                        if (ranges.Except(changeTracker.Add, changeTracker.Remove) == default && ranges.Except(changeTracker.Remove, changeTracker.Add) == default)
+                        if (ranges.Except(changeTracker.Add, changeTracker.Remove).IsEmpty && ranges.Except(changeTracker.Remove, changeTracker.Add).IsEmpty)
                         {
                             continue;
                         }
