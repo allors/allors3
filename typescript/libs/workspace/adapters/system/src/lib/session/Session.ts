@@ -8,6 +8,7 @@ import { PushToWorkspaceTracker } from './trackers/PushToWorkspaceTracker';
 import { ChangeSet } from './ChangeSet';
 import { enumerate } from '../collections/Range';
 import { AssociationType, Class, Composite, Origin, RoleType } from '@allors/workspace/meta/system';
+import { IRange } from '@allors/workspace/adapters/system';
 
 export function isNewId(id: number): boolean {
   return id < 0;
@@ -35,7 +36,7 @@ export abstract class Session implements ISession {
     this.pushToWorkspaceTracker = new PushToWorkspaceTracker();
   }
 
-  abstract Create(cls: Composite): IObject;
+  abstract create(cls: Composite): IObject;
 
   abstract invoke(method: Method | Method[], options?: InvokeOptions): Promise<IResult>;
 
@@ -46,11 +47,11 @@ export abstract class Session implements ISession {
   abstract push(): Promise<IResult>;
 
   getOne<T>(id: number): T {
-    return (this.getStrategy(id)?.object as unknown) as T;
+    return this.getStrategy(id)?.object as unknown as T;
   }
 
   getMany<T>(ids: number[]): T[] {
-    return (ids.map((v) => this.getStrategy(v)).filter((v) => v != null) as unknown) as T[];
+    return ids.map((v) => this.getStrategy(v)).filter((v) => v != null) as unknown as T[];
   }
 
   getAll<T extends IObject>(objectType: Composite): T[] {
@@ -73,6 +74,19 @@ export abstract class Session implements ISession {
           }
 
           break;
+        case Origin.Database:
+        case Origin.Session:
+          if (this.strategiesByClass.has(cls)) {
+            const strategies = this.strategiesByClass.get(cls);
+            strategies.forEach((v) => {
+              all.push(v.object as T);
+            });
+          }
+
+          break;
+
+        default:
+          throw new Error(`Unknown Origin {@class.Origin}`);
       }
     }
 
@@ -80,24 +94,25 @@ export abstract class Session implements ISession {
   }
 
   checkpoint(): IChangeSet {
-    const changeSet = new ChangeSet(this, this.changeSetTracker.Created, this.changeSetTracker.Instantiated);
-    if (this.changeSetTracker.DatabaseOriginStates != null) {
-      for (const databaseOriginState of this.changeSetTracker.DatabaseOriginStates) {
-        databaseOriginState.Checkpoint(changeSet);
+    const changeSet = new ChangeSet(this, this.changeSetTracker.created, this.changeSetTracker.instantiated);
+    if (this.changeSetTracker.databaseOriginStates != null) {
+      for (const databaseOriginState of this.changeSetTracker.databaseOriginStates) {
+        databaseOriginState.checkpoint(changeSet);
       }
     }
 
-    if (this.changeSetTracker.WorkspaceOriginStates != null) {
-      for (const workspaceOriginState of this.changeSetTracker.WorkspaceOriginStates) {
-        workspaceOriginState.Checkpoint(changeSet);
+    if (this.changeSetTracker.workspaceOriginStates != null) {
+      for (const workspaceOriginState of this.changeSetTracker.workspaceOriginStates) {
+        workspaceOriginState.checkpoint(changeSet);
       }
     }
 
-    this.sessionOriginState.Checkpoint(changeSet);
-    this.changeSetTracker.Created = null;
-    this.changeSetTracker.Instantiated = null;
-    this.changeSetTracker.DatabaseOriginStates = null;
-    this.changeSetTracker.WorkspaceOriginStates = null;
+    this.sessionOriginState.checkpoint(changeSet);
+
+    this.changeSetTracker.created = null;
+    this.changeSetTracker.instantiated = null;
+    this.changeSetTracker.databaseOriginStates = null;
+    this.changeSetTracker.workspaceOriginStates = null;
 
     return changeSet;
   }
@@ -118,19 +133,19 @@ export abstract class Session implements ISession {
     return null;
   }
 
-  public getRole(association: Strategy, roleType: RoleType): any {
-    const role = this.sessionOriginState.Get(association.id, roleType);
+  public getRole(association: Strategy, roleType: RoleType): unknown {
     if (roleType.objectType.isUnit) {
-      return role;
+      return this.sessionOriginState.getUnitRole(association.id, roleType);
     }
 
     if (roleType.isOne) {
-      return this.getOne<IObject>(role);
+      return this.getOne<IObject>(this.sessionOriginState.getCompositeRole(association.id, roleType));
     }
 
-    if (role !== null) {
+    const range = this.sessionOriginState.getCompositesRole(association.id, roleType);
+    if (range !== null) {
       const roles = [];
-      for (const v of enumerate(role)) {
+      for (const v of enumerate(range)) {
         roles.push(this.getOne<IObject>(v));
       }
     } else {
@@ -189,30 +204,30 @@ export abstract class Session implements ISession {
   }
 
   protected pushToWorkspace(result: IPushResult): IPushResult {
-    if (this.pushToWorkspaceTracker.Created != null) {
-      for (const strategy of this.pushToWorkspaceTracker.Created) {
-        strategy.WorkspaceOriginState.Push();
+    if (this.pushToWorkspaceTracker.created != null) {
+      for (const strategy of this.pushToWorkspaceTracker.created) {
+        strategy.WorkspaceOriginState.push();
       }
     }
 
-    if (this.pushToWorkspaceTracker.Changed != null) {
-      for (const state of this.pushToWorkspaceTracker.Changed) {
-        if (this.pushToWorkspaceTracker.Created?.has(state.strategy) == true) {
+    if (this.pushToWorkspaceTracker.changed != null) {
+      for (const state of this.pushToWorkspaceTracker.changed) {
+        if (this.pushToWorkspaceTracker.created?.has(state.strategy) == true) {
           continue;
         }
 
-        state.Push();
+        state.push();
       }
     }
 
-    this.pushToWorkspaceTracker.Created = null;
-    this.pushToWorkspaceTracker.Changed = null;
+    this.pushToWorkspaceTracker.created = null;
+    this.pushToWorkspaceTracker.changed = null;
     return result;
   }
 
   protected onDatabasePushResponseNew(workspaceId: number, databaseId: number) {
     const strategy = this.strategyByWorkspaceId[workspaceId];
-    this.pushToDatabaseTracker.Created.delete(strategy);
+    this.pushToDatabaseTracker.created.delete(strategy);
     this.removeStrategy(strategy);
     strategy.OnDatabasePushNewId(databaseId);
     this.addStrategy(strategy);

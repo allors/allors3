@@ -41,7 +41,7 @@ namespace Tests.Workspace.Remote
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
             var configuration = new Allors.Workspace.Adapters.Remote.Configuration("Default", metaPopulation, objectFactory);
-            this.Database = new DatabaseConnection(configuration, () => new WorkspaceContext(), httpClient, new WorkspaceIdGenerator(), new DefaultRanges());
+            this.Database = new DatabaseConnection(configuration, () => new WorkspaceContext(), httpClient, new IdGenerator(), new DefaultRanges());
             this.Workspace = this.Database.CreateWorkspace();
 
             await this.Login("administrator");

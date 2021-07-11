@@ -1,5 +1,5 @@
 import { PushRequestNewObject, PushRequestObject, PushRequestRole } from '@allors/protocol/json/system';
-import { DatabaseOriginState as SystemDatabaseOriginState, DatabaseRecord, difference, Strategy, save } from '@allors/workspace/adapters/system';
+import { DatabaseOriginState as SystemDatabaseOriginState, DatabaseRecord, difference, Strategy, save, IRange } from '@allors/workspace/adapters/system';
 import { unitToJson } from '../json/toJson';
 
 export class DatabaseOriginState extends SystemDatabaseOriginState {
@@ -9,40 +9,43 @@ export class DatabaseOriginState extends SystemDatabaseOriginState {
 
   PushNew(): PushRequestNewObject {
     return {
-      w: this.Id,
-      t: this.Class.tag,
+      w: this.id,
+      t: this.class.tag,
       r: this.PushRoles(),
     };
   }
 
   PushExisting(): PushRequestObject {
     return {
-      d: this.Id,
-      v: this.Version,
+      d: this.id,
+      v: this.version,
       r: this.PushRoles(),
     };
   }
 
   private PushRoles(): PushRequestRole[] {
-    if (this.ChangedRoleByRelationType?.size > 0) {
+    if (this.changedRoleByRelationType?.size > 0) {
       const roles: PushRequestRole[] = [];
 
-      for (const [relationType, roleValue] of this.ChangedRoleByRelationType) {
+      for (const [relationType, roleValue] of this.changedRoleByRelationType) {
         const pushRequestRole: PushRequestRole = { t: relationType.tag };
 
         if (relationType.roleType.objectType.isUnit) {
           pushRequestRole.u = unitToJson(roleValue);
         } else if (relationType.roleType.isOne) {
-          pushRequestRole.c = roleValue;
-        } else if (!this.ExistDatabaseRecord) {
-          pushRequestRole.a = save(roleValue);
+          pushRequestRole.c = roleValue as number;
         } else {
-          const databaseRole = this.DatabaseRecord.getRole(relationType.roleType);
-          if (databaseRole == null) {
-            pushRequestRole.a = save(roleValue);
+          const roleIds = roleValue as IRange;
+          if (!this.existRecord) {
+            pushRequestRole.a = save(roleIds);
           } else {
-            pushRequestRole.a = save(difference(roleValue, databaseRole));
-            pushRequestRole.r = save(difference(databaseRole, roleValue));
+            const databaseRole = this.databaseRecord.getRole(relationType.roleType) as IRange;
+            if (databaseRole == null) {
+              pushRequestRole.a = save(roleIds);
+            } else {
+              pushRequestRole.a = save(difference(roleIds, databaseRole));
+              pushRequestRole.r = save(difference(databaseRole, roleIds));
+            }
           }
         }
 

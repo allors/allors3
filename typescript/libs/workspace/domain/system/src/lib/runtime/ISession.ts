@@ -16,7 +16,7 @@ export interface ISession {
 
   services: ISessionServices;
 
-  Create(cls: Class): IObject;
+  create(cls: Class): IObject;
 
   getOne<T extends IObject>(id: number): T;
 

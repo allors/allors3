@@ -34,9 +34,7 @@ namespace Allors.Workspace.Adapters.Remote
             if (this.ChangedRoleByRelationType?.Count > 0)
             {
                 var database = this.RemoteStrategy.Session.Workspace.DatabaseConnection;
-
                 var ranges = database.Ranges;
-
                 var roles = new List<PushRequestRole>();
 
                 foreach (var keyValuePair in this.ChangedRoleByRelationType)

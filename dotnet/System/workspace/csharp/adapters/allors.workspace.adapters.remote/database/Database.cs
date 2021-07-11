@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly Dictionary<IClass, Dictionary<IOperandType, long>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, long>> executePermissionByOperandTypeByClass;
 
-        protected DatabaseConnection(Adapters.Configuration configuration, Func<IWorkspaceServices> servicesBuilder, WorkspaceIdGenerator workspaceIdGenerator, IRanges ranges) : base(configuration, workspaceIdGenerator)
+        protected DatabaseConnection(Adapters.Configuration configuration, Func<IWorkspaceServices> servicesBuilder, IdGenerator idGenerator, IRanges ranges) : base(configuration, idGenerator)
         {
             this.Ranges = ranges;
             this.servicesBuilder = servicesBuilder;

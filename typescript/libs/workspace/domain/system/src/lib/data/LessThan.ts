@@ -1,10 +1,10 @@
 import { RoleType } from '@allors/workspace/meta/system';
 import { ParameterizablePredicateBase } from './ParameterizablePredicate';
-import { UnitType } from '../runtime/Types';
+import { IUnit } from '../runtime/Types';
 
 export interface LessThan extends ParameterizablePredicateBase {
   kind: 'LessThan';
   roleType: RoleType;
-  value?: UnitType;
+  value?: IUnit;
   path?: RoleType;
 }

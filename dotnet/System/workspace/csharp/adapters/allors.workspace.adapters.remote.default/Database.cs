@@ -25,7 +25,7 @@ namespace Allors.Workspace.Adapters.Remote.Default
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Add call to 'ConfigureAwait' (or vice versa).", Justification = "<Pending>")]
     public class DatabaseConnection : Remote.DatabaseConnection
     {
-        public DatabaseConnection(Configuration configuration, Func<IWorkspaceServices> servicesBuilder, HttpClient httpClient, WorkspaceIdGenerator workspaceIdGenerator, IRanges ranges) : base(configuration, servicesBuilder, workspaceIdGenerator, ranges)
+        public DatabaseConnection(Configuration configuration, Func<IWorkspaceServices> servicesBuilder, HttpClient httpClient, IdGenerator idGenerator, IRanges ranges) : base(configuration, servicesBuilder, idGenerator, ranges)
         {
             this.HttpClient = httpClient;
             this.HttpClient.DefaultRequestHeaders.Accept.Clear();

@@ -13,12 +13,12 @@ namespace Allors.Workspace.Adapters
     {
         private ConcurrentDictionary<IObjectType, object> emptyArrayByObjectType;
 
-        private readonly WorkspaceIdGenerator workspaceIdGenerator;
+        private readonly IdGenerator idGenerator;
 
-        protected DatabaseConnection(Configuration configuration, WorkspaceIdGenerator workspaceIdGenerator)
+        protected DatabaseConnection(Configuration configuration, IdGenerator idGenerator)
         {
             this.Configuration = configuration;
-            this.workspaceIdGenerator = workspaceIdGenerator;
+            this.idGenerator = idGenerator;
         }
 
         IConfiguration IDatabaseConnection.Configuration => this.Configuration;
@@ -49,6 +49,6 @@ namespace Allors.Workspace.Adapters
 
         public abstract DatabaseRecord OnPushResponse(IClass @class, long id);
 
-        public long NextId() => this.workspaceIdGenerator.Next();
+        public long NextId() => this.idGenerator.Next();
     }
 }

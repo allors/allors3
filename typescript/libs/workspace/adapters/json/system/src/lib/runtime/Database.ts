@@ -1,10 +1,9 @@
 import { InvokeRequest, InvokeResponse, PullRequest, PullResponse, PushRequest, PushResponse, SecurityRequest, SecurityResponse, SyncRequest, SyncResponse } from '@allors/protocol/json/system';
-import { Configuration, Database as SystemDatabase, equals, IdGenerator, MapMap, ServicesBuilder } from '@allors/workspace/adapters/system';
+import { AccessControl, Configuration, Database as SystemDatabase, equals, IdGenerator, MapMap, ServicesBuilder } from '@allors/workspace/adapters/system';
 import { IWorkspace, Operations } from '@allors/workspace/domain/system';
 import { Class, MethodType, OperandType, RelationType } from '@allors/workspace/meta/system';
 import { Client } from './Client';
 import { DatabaseRecord } from './DatabaseRecord';
-import { AccessControl } from './security/AccessControl';
 import { ResponseContext } from './Security/ResponseContext';
 import { Workspace } from './Workspace';
 

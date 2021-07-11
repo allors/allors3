@@ -4,40 +4,36 @@ import { WorkspaceRecord } from '../../workspace/WorkspaceRecord';
 import { Strategy } from '../Strategy';
 import { RecordBasedOriginState } from './RecordBasedOriginState';
 
-export /* sealed */ class WorkspaceOriginState extends RecordBasedOriginState {
-  public strategy: Strategy;
-  private WorkspaceRecord: WorkspaceRecord;
+export class WorkspaceOriginState extends RecordBasedOriginState {
 
-  public constructor(strategy: Strategy, record: WorkspaceRecord) {
+  public constructor(public strategy: Strategy, private workspaceRecord: WorkspaceRecord) {
     super(strategy);
-    this.strategy = strategy;
-    this.WorkspaceRecord = record;
-    this.PreviousRecord = this.WorkspaceRecord;
+    this.previousRecord = this.workspaceRecord;
   }
 
-  get RoleTypes(): Set<RoleType> {
-    return this.Class.workspaceOriginRoleTypes;
+  get roleTypes(): Set<RoleType> {
+    return this.class.workspaceOriginRoleTypes;
   }
 
-  get Record(): IRecord {
-    return this.WorkspaceRecord;
+  get record(): IRecord {
+    return this.workspaceRecord;
   }
 
   get Version(): number {
-    return this.WorkspaceRecord.version;
+    return this.workspaceRecord.version;
   }
 
-  protected /* override */ OnChange() {
-    this.strategy.session.changeSetTracker.OnWorkspaceChanged(this);
-    this.strategy.session.pushToWorkspaceTracker.OnChanged(this);
+  protected onChange() {
+    this.strategy.session.changeSetTracker.onWorkspaceChanged(this);
+    this.strategy.session.pushToWorkspaceTracker.onChanged(this);
   }
 
-  public Push() {
-    if (this.HasChanges) {
-      this.Workspace.push(this.Id, this.Class, this.Record?.version ?? 0, this.ChangedRoleByRelationType);
+  public push() {
+    if (this.hasChanges) {
+      this.workspace.push(this.id, this.class, this.record?.version ?? 0, this.changedRoleByRelationType);
     }
 
-    this.WorkspaceRecord = this.Workspace.getRecord(this.Id);
-    this.ChangedRoleByRelationType = null;
+    this.workspaceRecord = this.workspace.getRecord(this.id);
+    this.changedRoleByRelationType = null;
   }
 }

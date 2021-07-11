@@ -49,6 +49,16 @@ namespace Allors.Workspace.Adapters
 
         public abstract T Create<T>(IClass @class) where T : class, IObject;
 
+        public abstract Task<IInvokeResult> Invoke(Method method, InvokeOptions options = null);
+
+        public abstract Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null);
+
+        public abstract Task<IPullResult> Call(Procedure procedure, params Pull[] pulls);
+
+        public abstract Task<IPullResult> Pull(params Pull[] pulls);
+
+        public abstract Task<IPushResult> Push();
+
         public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>());
 
         public T GetOne<T>(IObject @object) where T : IObject => this.GetOne<T>(@object.Id);
@@ -151,16 +161,6 @@ namespace Allors.Workspace.Adapters
             return changeSet;
         }
 
-        public abstract Task<IInvokeResult> Invoke(Method method, InvokeOptions options = null);
-
-        public abstract Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null);
-
-        public abstract Task<IPullResult> Pull(params Pull[] pulls);
-
-        public abstract Task<IPullResult> Call(Procedure procedure, params Pull[] pulls);
-
-        public abstract Task<IPushResult> Push();
-
         public Strategy GetStrategy(long id)
         {
             if (id == 0)
@@ -180,15 +180,15 @@ namespace Allors.Workspace.Adapters
         {
             if (roleType.ObjectType.IsUnit)
             {
-                return this.SessionOriginState.GetUnit(association.Id, roleType);
+                return this.SessionOriginState.GetUnitRole(association.Id, roleType);
             }
 
             if (roleType.IsOne)
             {
-                return this.GetOne<IObject>(this.SessionOriginState.GetComposite(association.Id, roleType));
+                return this.GetOne<IObject>(this.SessionOriginState.GetCompositeRole(association.Id, roleType));
             }
 
-            var range = this.SessionOriginState.GetComposites(association.Id, roleType);
+            var range = this.SessionOriginState.GetCompositesRole(association.Id, roleType);
             return !range.IsEmpty ? range.Select(this.GetOne<IObject>).ToArray() : this.Workspace.DatabaseConnection.EmptyArray(roleType.ObjectType);
         }
 

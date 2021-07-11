@@ -1,8 +1,8 @@
-import { MapMap, Range } from '@allors/workspace/adapters/system';
+import { MapMap, IRange } from '@allors/workspace/adapters/system';
 
 describe('MapMap', () => {
   describe('after construction', () => {
-    const mapMap = new MapMap<string, string, Range>();
+    const mapMap = new MapMap<string, string, IRange>();
 
     it('should be defined', () => {
       expect(mapMap).toBeDefined();

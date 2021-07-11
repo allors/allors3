@@ -1,4 +1,4 @@
-import { Range, enumerate } from '@allors/workspace/adapters/system';
+import { IRange, enumerate } from '@allors/workspace/adapters/system';
 import { Database } from '../Database';
 
 export class ResponseContext {
@@ -11,7 +11,7 @@ export class ResponseContext {
 
   missingPermissionIds: Set<number>;
 
-  checkForMissingAccessControls(value: Range): Range {
+  checkForMissingAccessControls(value: IRange): IRange {
     for (const id of enumerate(value)) {
       if (!this.database.accessControlById.has(id)) {
         this.missingAccessControlIds.add(id);
@@ -21,7 +21,7 @@ export class ResponseContext {
     return value;
   }
 
-  checkForMissingPermissions(value: Range): Range {
+  checkForMissingPermissions(value: IRange): IRange {
     for (const id of enumerate(value)) {
       if (!this.database.permissions.has(id)) {
         this.missingPermissionIds.add(id);

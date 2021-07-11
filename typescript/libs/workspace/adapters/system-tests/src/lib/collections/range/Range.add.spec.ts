@@ -1,8 +1,8 @@
-import { Range, importFrom, add } from '@allors/workspace/adapters/system';
+import { IRange, importFrom, add } from '@allors/workspace/adapters/system';
 
-describe('Range', () => {
+describe('IRange', () => {
   describe('as undefined set', () => {
-    const set: Range = undefined;
+    const set: IRange = undefined;
 
     describe('adding an element', () => {
       const added = add(set, 0);
@@ -22,7 +22,7 @@ describe('Range', () => {
   });
 
   describe('as single element set', () => {
-    const set: Range = importFrom([1]);
+    const set: IRange = importFrom([1]);
 
     describe('adding another smaller element', () => {
       const added = add(set, 0);

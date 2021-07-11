@@ -5,11 +5,11 @@
 
 namespace Allors.Workspace.Adapters
 {
-    public sealed class WorkspaceIdGenerator
+    public sealed class IdGenerator
     {
         private long counter;
 
-        public WorkspaceIdGenerator() => this.counter = 0;
+        public IdGenerator() => this.counter = 0;
 
         public long Next() => --this.counter;
     }

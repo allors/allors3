@@ -293,7 +293,7 @@ namespace Allors.Workspace.Adapters
                 return this.Session.GetCompositeAssociation<T>(this.Id, associationType);
             }
 
-            var association = (long?)this.Session.SessionOriginState.GetComposite(this.Id, associationType);
+            var association = this.Session.SessionOriginState.GetCompositeRole(this.Id, associationType);
             return association != null ? this.Session.GetOne<T>(association) : default;
         }
 
@@ -304,7 +304,7 @@ namespace Allors.Workspace.Adapters
                 return this.Session.GetCompositesAssociation<T>(this.Id, associationType);
             }
 
-            var association = this.Session.SessionOriginState.GetComposites(this.Id, associationType);
+            var association = this.Session.SessionOriginState.GetCompositesRole(this.Id, associationType);
 
             return association.IsEmpty ? Array.Empty<T>() : association.Select(v => this.Session.GetOne<T>(v)).ToArray();
         }
@@ -318,7 +318,7 @@ namespace Allors.Workspace.Adapters
         public bool IsCompositeAssociationForRole(IRoleType roleType, long forRoleId) =>
             roleType.Origin switch
             {
-                Origin.Session => Equals(this.Session.SessionOriginState.GetComposite(this.Id, roleType), forRoleId),
+                Origin.Session => Equals(this.Session.SessionOriginState.GetCompositeRole(this.Id, roleType), forRoleId),
                 Origin.Workspace => this.WorkspaceOriginState?.IsAssociationForRole(roleType, forRoleId) ?? false,
                 Origin.Database => this.DatabaseOriginState?.IsAssociationForRole(roleType, forRoleId) ?? false,
                 _ => throw new ArgumentException("Unsupported Origin")
@@ -327,7 +327,7 @@ namespace Allors.Workspace.Adapters
         public bool IsCompositesAssociationForRole(IRoleType roleType, long forRoleId) =>
             roleType.Origin switch
             {
-                Origin.Session => Equals(this.Session.SessionOriginState.GetComposites(this.Id, roleType), forRoleId),
+                Origin.Session => this.Session.Workspace.Ranges.Ensure(this.Session.SessionOriginState.GetCompositesRole(this.Id, roleType)).Contains(forRoleId),
                 Origin.Workspace => this.WorkspaceOriginState?.IsAssociationForRole(roleType, forRoleId) ?? false,
                 Origin.Database => this.DatabaseOriginState?.IsAssociationForRole(roleType, forRoleId) ?? false,
                 _ => throw new ArgumentException("Unsupported Origin")

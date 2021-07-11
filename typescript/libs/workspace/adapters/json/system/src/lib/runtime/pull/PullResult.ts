@@ -1,4 +1,4 @@
-import { IObject, IPullResult, ISession, IWorkspace, UnitType } from '@allors/workspace/domain/system';
+import { IObject, IPullResult, ISession, IWorkspace, IUnit } from '@allors/workspace/domain/system';
 import { PullResponse } from '@allors/protocol/json/system';
 import { Result } from '../Result';
 
@@ -7,7 +7,7 @@ export class PullResult extends Result implements IPullResult {
 
   collections: Map<string, IObject[]>;
 
-  values: Map<string, UnitType>;
+  values: Map<string, IUnit>;
 
   workspace: IWorkspace;
 
@@ -29,7 +29,7 @@ export class PullResult extends Result implements IPullResult {
     return this.objects.get(name.toUpperCase()) as T;
   }
 
-  value(name: string): UnitType | UnitType[] {
+  value(name: string): IUnit | IUnit[] {
     return this.values.get(name.toUpperCase());
   }
 }

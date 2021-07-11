@@ -1,6 +1,6 @@
 import { AssociationType, ObjectType, PropertyType, RoleType } from '@allors/workspace/meta/system';
 import {
-  UnitType,
+  IUnit,
   TypeForParameter,
   Procedure as DataProcedure,
   Pull as DataPull,
@@ -15,7 +15,7 @@ import {
 } from '@allors/workspace/domain/system';
 import { Extent, ExtentKind, Predicate, Procedure, Pull, Result, Select, Sort, Step, Node, PredicateKind } from '@allors/protocol/json/system';
 
-export function unitToJson(from: unknown): UnitType {
+export function unitToJson(from: unknown): IUnit {
   if (from == null) {
     return;
   }

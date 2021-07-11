@@ -1,4 +1,4 @@
-import { UnitType } from "@allors/workspace/domain/system";
+import { IUnit } from "@allors/workspace/domain/system";
 
 export interface Procedure {
   /** Name */
@@ -11,7 +11,7 @@ export interface Procedure {
   o: { [name: string]: number };
 
   /** Values */
-  v: { [name: string]: UnitType };
+  v: { [name: string]: IUnit };
 
   /** Pool
    *  [][id,version]

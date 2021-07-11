@@ -1,8 +1,8 @@
-import { Range, importFrom, has } from '@allors/workspace/adapters/system';
+import { IRange, importFrom, has } from '@allors/workspace/adapters/system';
 
-describe('Range', () => {
+describe('IRange', () => {
   describe('as undefined set', () => {
-    const set: Range = undefined;
+    const set: IRange = undefined;
 
     describe('has a number', () => {
       const hasZero = has(set, 0);
@@ -14,7 +14,7 @@ describe('Range', () => {
   });
 
   describe('as single element set', () => {
-    const set: Range = importFrom([1]);
+    const set: IRange = importFrom([1]);
 
     describe('has the element', () => {
       const hasTheElement = has(set, 1);
@@ -35,7 +35,7 @@ describe('Range', () => {
 });
 
 describe('as multiple element set', () => {
-  const set: Range = importFrom([3, 1, 6, 5]);
+  const set: IRange = importFrom([3, 1, 6, 5]);
 
   describe('has the elements 1, 3, 5 and 6', () => {
     const has1 = has(set, 1);

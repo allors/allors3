@@ -1,5 +1,6 @@
+import { IUnit } from '@allors/workspace/domain/system';
 import { PropertyType, RoleType } from '@allors/workspace/meta/system';
-import { add, difference, enumerate, has, Range, remove } from '../../collections/Range';
+import { add, difference, enumerate, has, IRange, remove } from '../../collections/Range';
 import { ChangeSet } from '../ChangeSet';
 import { PropertyByObjectByPropertyType } from './PropertyByObjectByPropertyType';
 
@@ -10,126 +11,255 @@ export class SessionOriginState {
     this.propertyByObjectByPropertyType = new PropertyByObjectByPropertyType();
   }
 
-  public Checkpoint(changeSet: ChangeSet) {
-    changeSet.AddSessionStateChanges(this.propertyByObjectByPropertyType.Checkpoint());
+  public checkpoint(changeSet: ChangeSet) {
+    changeSet.addSessionStateChanges(this.propertyByObjectByPropertyType.checkpoint());
   }
 
-  public Get(object: number, propertyType: PropertyType): any {
-    return this.propertyByObjectByPropertyType.Get(object, propertyType);
+  public getUnitRole(object: number, propertyType: PropertyType): IUnit {
+    return this.propertyByObjectByPropertyType.get(object, propertyType) as IUnit;
   }
 
-  public SetUnitRole(association: number, roleType: RoleType, role: any) {
-    this.propertyByObjectByPropertyType.Set(association, roleType, role);
+  public setUnitRole(association: number, roleType: RoleType, role: IUnit) {
+    this.propertyByObjectByPropertyType.set(association, roleType, role);
   }
 
-  public SetCompositeRole(association: number, roleType: RoleType, newRole: number) {
-    if (newRole === null) {
-      this.RemoveRoles(association, roleType);
-      return;
-    }
-
-    const associationType = roleType.associationType;
-    //  Association
-    const previousRole = this.propertyByObjectByPropertyType.Get(association, roleType) as number;
-    if (previousRole != null) {
-      this.propertyByObjectByPropertyType.Set(previousRole, associationType, null);
-    }
-
-    if (associationType.isOne) {
-      //  OneToOne
-      const previousAssociation = this.propertyByObjectByPropertyType.Get(newRole, associationType) as number;
-      if (previousAssociation != null) {
-        this.propertyByObjectByPropertyType.Set(previousAssociation, roleType, null);
-      }
-    }
-
-    //  Role
-    this.propertyByObjectByPropertyType.Set(association, roleType, newRole);
+  public getCompositeRole(object: number, propertyType: PropertyType): number {
+    return this.propertyByObjectByPropertyType.get(object, propertyType) as number;
   }
 
-  public SetCompositesRole(association: number, roleType: RoleType, newRole: any) {
+  public setCompositeRole(association: number, roleType: RoleType, newRole: number) {
     if (newRole == null) {
-      this.RemoveRoles(association, roleType);
-      return;
+      if (roleType.associationType.isOne) {
+        const roleId = this.getCompositeRole(association, roleType);
+        if (roleId == null) {
+          return;
+        }
+
+        this.removeCompositeRoleOne2One(association, roleType, roleId);
+      } else {
+        const roleId = this.getCompositeRole(association, roleType);
+        if (roleId == null) {
+          return;
+        }
+
+        this.removeCompositeRoleMany2One(association, roleType, roleId);
+      }
+    } else if (roleType.associationType.isOne) {
+      this.setCompositeRoleOne2One(association, roleType, newRole);
+    } else {
+      this.setCompositeRoleMany2One(association, roleType, newRole);
     }
+  }
 
-    const previousRole = this.Get(association, roleType) as Range;
+  public getCompositesRole(object: number, propertyType: PropertyType): IRange {
+    return this.propertyByObjectByPropertyType.get(object, propertyType) as IRange;
+  }
 
-    //  Use Diff (Add/Remove)
+  public addCompositesRole(association: number, roleType: RoleType, item: number) {
+    if (roleType.associationType.isOne) {
+      this.addCompositesRoleOne2Many(association, roleType, item);
+    } else {
+      this.addCompositesRoleMany2Many(association, roleType, item);
+    }
+  }
+
+  public removeCompositesRole(association: number, roleType: RoleType, item: number) {
+    if (roleType.associationType.isOne) {
+      this.removeCompositesRoleOne2Many(association, roleType, item);
+    } else {
+      this.removeCompositesRoleMany2Many(association, roleType, item);
+    }
+  }
+
+  public setCompositesRole(association: number, roleType: RoleType, newRole: IRange) {
+    const previousRole = this.getCompositesRole(association, roleType);
+
     const addedRoles = difference(newRole, previousRole);
     const removedRoles = difference(previousRole, newRole);
 
     for (const addedRole of enumerate(addedRoles)) {
-      this.AddRole(association, roleType, addedRole);
+      this.addCompositesRole(association, roleType, addedRole);
     }
 
     for (const removedRole of enumerate(removedRoles)) {
-      this.RemoveRole(association, roleType, removedRole);
+      this.removeCompositesRole(association, roleType, removedRole);
     }
   }
 
-  public AddRole(association: number, roleType: RoleType, roleToAdd: number) {
+  private setCompositeRoleOne2One(associationId: number, roleType: RoleType, roleId: number) {
+    /*  [if exist]        [then remove]        set
+     *
+     *  RA ----- R         RA --x-- R       RA    -- R       RA    -- R
+     *                ->                +        -        =       -
+     *   A ----- PR         A --x-- PR       A --    PR       A --    PR
+     */
     const associationType = roleType.associationType;
-    const previousRole = this.propertyByObjectByPropertyType.Get(association, roleType);
-    if (has(previousRole, roleToAdd)) {
+    const previousRoleId = this.propertyByObjectByPropertyType.get(associationId, roleType) as number;
+
+    // R = PR
+    if (roleId == previousRoleId) {
       return;
     }
 
-    //  Role
-    this.propertyByObjectByPropertyType.Set(association, roleType, add(previousRole, roleToAdd));
-    //  Association
-    if (associationType.isOne) {
-      const previousRoleAssociations = this.propertyByObjectByPropertyType.Get(<number>previousRole, associationType);
-      this.propertyByObjectByPropertyType.Set(<number>previousRole, associationType, remove(previousRoleAssociations, association));
+    // A --x-- PR
+    if (previousRoleId != null) {
+      this.propertyByObjectByPropertyType.set(previousRoleId, associationType, null);
     }
 
-    const roleAssociations = this.propertyByObjectByPropertyType.Get(roleToAdd, associationType);
-    this.propertyByObjectByPropertyType.Set(roleToAdd, associationType, add(roleAssociations, association));
+    const roleAssociation = this.propertyByObjectByPropertyType.get(roleId, associationType) as number;
+
+    // RA --x-- R
+    if (roleAssociation != null) {
+      this.propertyByObjectByPropertyType.set(roleAssociation, roleType, null);
+    }
+
+    // A <---- R
+    this.propertyByObjectByPropertyType.set(roleId, associationType, associationId);
+
+    // A ----> R
+    this.propertyByObjectByPropertyType.set(associationId, roleType, roleId);
   }
 
-  private RemoveRole(association: number, roleType: RoleType, roleToRemove: number) {
+  private setCompositeRoleMany2One(associationId: number, roleType: RoleType, newRole: number) {
+    /*  [if exist]        [then remove]        set
+     *
+     *  RA ----- R         RA       R       RA    -- R       RA ----- R
+     *                ->                +        -        =       -
+     *   A ----- PR         A --x-- PR       A --    PR       A --    PR
+     */
     const associationType = roleType.associationType;
-    const previousRole = this.propertyByObjectByPropertyType.Get(association, roleType);
-    if (associationType.isOne) {
-      if (previousRole == (roleToRemove as number)) {
-        return;
-      }
 
-      //  Role
-      this.propertyByObjectByPropertyType.Set(association, roleType, null);
-      //  Association
-      const removedRole = remove(previousRole, roleToRemove);
-      this.propertyByObjectByPropertyType.Set(roleToRemove, associationType, removedRole);
-    } else {
-      if (!has(previousRole, roleToRemove)) {
-        return;
-      }
-
-      //  Role
-      const removedRole = remove(previousRole, roleToRemove);
-      this.propertyByObjectByPropertyType.Set(association, roleType, removedRole);
-      //  Association
-      const previousAssociations = this.propertyByObjectByPropertyType.Get(roleToRemove, associationType);
-      const removedAssociations = remove(previousAssociations, association);
-      this.propertyByObjectByPropertyType.Set(roleToRemove, associationType, removedAssociations);
+    //  Association
+    const previousRole = this.propertyByObjectByPropertyType.get(associationId, roleType) as number;
+    if (previousRole != null) {
+      this.propertyByObjectByPropertyType.set(previousRole, associationType, null);
     }
+
+    //  Role
+    this.propertyByObjectByPropertyType.set(associationId, roleType, newRole);
   }
 
-  private RemoveRoles(association: number, roleType: RoleType) {
-    if (roleType.objectType.isUnit) {
-      //  Role
-      this.SetUnitRole(association, roleType, null);
-    } else {
-      const previousRole = this.Get(association, roleType);
-      if (roleType.isOne) {
-        if (previousRole != null) {
-          this.RemoveRole(association, roleType, <number>previousRole);
-        }
-      } else {
-        for (const removeRole of enumerate(previousRole)) {
-          this.RemoveRole(association, roleType, removeRole);
-        }
-      }
+  private removeCompositeRoleOne2One(associationId: number, roleType: RoleType, roleId: number) {
+    /*                        delete
+     *
+     *   A ----- R    ->     A       R  =   A       R
+     */
+
+    // A <---- R
+    this.propertyByObjectByPropertyType.set(roleId, roleType.associationType, null);
+
+    // A ----> R
+    this.propertyByObjectByPropertyType.set(associationId, roleType, null);
+  }
+
+  private removeCompositeRoleMany2One(associationId: number, roleType: RoleType, roleId: number) {
+    /*                        delete
+     *  RA --                                RA --
+     *       -        ->                 =        -
+     *   A ----- R           A --x-- R             -- R
+     */
+    const associationType = roleType.associationType;
+
+    // A <---- R
+    let roleAssociations = this.getCompositesRole(roleId, associationType);
+    roleAssociations = remove(roleAssociations, associationId);
+    this.propertyByObjectByPropertyType.set(roleId, associationType, roleAssociations);
+
+    // A ----> R
+    this.propertyByObjectByPropertyType.set(associationId, roleType, null);
+  }
+
+  private addCompositesRoleOne2Many(associationId: number, roleType: RoleType, roleId: number) {
+    /*  [if exist]        [then remove]        set
+     *
+     *  RA ----- R         RA       R       RA    -- R       RA ----- R
+     *                ->                +        -        =       -
+     *   A ----- PR         A --x-- PR       A --    PR       A --    PR
+     */
+    const associationType = roleType.associationType;
+    const previousRoleId = this.getCompositesRole(associationId, roleType);
+
+    // R in PR
+    if (has(previousRoleId, roleId)) {
+      return;
     }
+
+    // A --x-- PR
+    const previousAssociationId = this.getCompositeRole(roleId, associationType);
+    if (previousAssociationId != null) {
+      this.removeCompositesRoleOne2Many(previousAssociationId, roleType, roleId);
+    }
+
+    // A <---- R
+    this.propertyByObjectByPropertyType.set(roleId, associationType, roleId);
+
+    // A ----> R
+    let roleIds = this.getCompositesRole(associationId, roleType);
+    roleIds = add(roleIds, roleId);
+    this.propertyByObjectByPropertyType.set(associationId, roleType, roleIds);
+  }
+
+  private addCompositesRoleMany2Many(associationId: number, roleType: RoleType, roleId: number) {
+    /*  [if exist]        [no remove]         set
+     *
+     *  RA ----- R         RA       R       RA    -- R       RA ----- R
+     *                ->                +        -        =       -
+     *   A ----- PR         A       PR       A --    PR       A --    PR
+     */
+    const associationType = roleType.associationType;
+    const previousRoleIds = this.getCompositesRole(associationId, roleType);
+
+    // R in PR
+    if (has(previousRoleIds, roleId)) {
+      return;
+    }
+
+    // A <---- R
+    let associationIds = this.getCompositesRole(roleId, associationType);
+    associationIds = add(associationIds, associationId);
+    this.propertyByObjectByPropertyType.set(roleId, associationType, associationIds);
+
+    // A ----> R
+    let roleIds = this.getCompositesRole(associationId, roleType);
+    roleIds = add(roleIds, roleId);
+    this.propertyByObjectByPropertyType.set(associationId, roleType, roleIds);
+  }
+
+  private removeCompositesRoleOne2Many(associationId: number, roleType: RoleType, roleId: number) {
+    const associationType = roleType.associationType;
+    const previousRoleIds = this.getCompositesRole(associationId, roleType);
+
+    // R not in PR
+    if (!has(previousRoleIds, roleId)) {
+      return;
+    }
+
+    // A <---- R
+    this.propertyByObjectByPropertyType.set(roleId, associationType, null);
+
+    // A ----> R
+    let roleIds = this.getCompositesRole(associationId, roleType);
+    roleIds = add(roleIds, roleId);
+    this.propertyByObjectByPropertyType.set(associationId, roleType, roleIds);
+  }
+
+  private removeCompositesRoleMany2Many(associationId: number, roleType: RoleType, roleId: number) {
+    const associationType = roleType.associationType;
+    const previousRoleIds = this.getCompositesRole(associationId, roleType);
+
+    // R not in PR
+    if (!has(previousRoleIds, roleId)) {
+      return;
+    }
+
+    // A <---- R
+    let associationIds = this.getCompositesRole(roleId, associationType);
+    associationIds = remove(associationIds, associationId);
+    this.propertyByObjectByPropertyType.set(roleId, associationType, associationIds);
+
+    // A ----> R
+    let roleIds = this.getCompositesRole(associationId, roleType);
+    roleIds = remove(roleIds, roleId);
+    this.propertyByObjectByPropertyType.set(associationId, roleType, roleIds);
   }
 }
