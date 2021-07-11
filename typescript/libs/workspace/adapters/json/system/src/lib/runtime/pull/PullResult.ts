@@ -16,20 +16,20 @@ export class PullResult extends Result implements IPullResult {
 
     this.workspace = session.workspace;
 
-    this.objects = new Map(Object.keys(response.o).map((v) => [v, session.getOne(response.o[v])]));
-    this.collections = new Map(Object.keys(response.c).map((v) => [v, response.c[v].map((w) => session.getOne(w))]));
-    this.values = new Map(Object.keys(response.v).map((v) => [v, response.v[v]]));
+    this.objects = new Map(Object.keys(response.o).map((v) => [v.toUpperCase(), session.getOne(response.o[v])]));
+    this.collections = new Map(Object.keys(response.c).map((v) => [v.toUpperCase(), response.c[v].map((w) => session.getOne(w))]));
+    this.values = new Map(Object.keys(response.v).map((v) => [v.toUpperCase(), response.v[v]]));
   }
 
   collection<T extends IObject>(name: string): T[] {
-    return this.collections.get(name) as T[];
+    return this.collections.get(name.toUpperCase()) as T[];
   }
 
   object<T extends IObject>(name: string): T {
-    return this.objects.get(name) as T;
+    return this.objects.get(name.toUpperCase()) as T;
   }
 
   value(name: string): UnitType | UnitType[] {
-    return this.values.get(name);
+    return this.values.get(name.toUpperCase());
   }
 }

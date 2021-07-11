@@ -13,15 +13,14 @@ namespace Allors.Workspace.Adapters
     {
         private readonly Dictionary<long, WorkspaceRecord> recordById;
 
-        protected Workspace(DatabaseConnection database, IWorkspaceServices services, IRanges ranges, WorkspaceIdGenerator workspaceIdGenerator)
+        protected Workspace(DatabaseConnection database, IWorkspaceServices services, IRanges ranges)
         {
             this.DatabaseConnection = database;
             this.Services = services;
-            this.WorkspaceIdGenerator = workspaceIdGenerator;
             this.Ranges = ranges;
 
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
-            this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, IRange>();
+            this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, ISet<long>>();
 
             this.recordById = new Dictionary<long, WorkspaceRecord>();
         }
@@ -31,13 +30,11 @@ namespace Allors.Workspace.Adapters
 
         public IWorkspaceServices Services { get; }
 
-        public WorkspaceIdGenerator WorkspaceIdGenerator { get; }
-
         public IRanges Ranges { get; }
 
         public Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
 
-        public Dictionary<IClass, IRange> WorkspaceIdsByWorkspaceClass { get; }
+        public Dictionary<IClass, ISet<long>> WorkspaceIdsByWorkspaceClass { get; }
 
         public abstract ISession CreateSession();
 
@@ -49,14 +46,14 @@ namespace Allors.Workspace.Adapters
 
         public void Push(long id, IClass @class, long version, Dictionary<IRelationType, object> changedRoleByRoleType)
         {
-            if (!this.WorkspaceClassByWorkspaceId.ContainsKey(id))
+            this.WorkspaceClassByWorkspaceId[id] = @class;
+            if (!this.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids))
             {
-                this.WorkspaceClassByWorkspaceId.Add(id, @class);
-
-                this.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids);
-                this.Ranges.Add(ids, id);
-                this.WorkspaceIdsByWorkspaceClass[@class] = ids;
+                ids = new HashSet<long>();
+                this.WorkspaceIdsByWorkspaceClass.Add(@class, ids);
             }
+
+            ids.Add(id);
 
             if (!this.recordById.TryGetValue(id, out var originalWorkspaceRecord))
             {

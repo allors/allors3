@@ -18,23 +18,19 @@ namespace Allors.Workspace.Adapters.Remote
         private Dictionary<IRelationType, object> roleByRelationType;
         private SyncResponseRole[] syncResponseRoles;
 
-        internal DatabaseRecord(DatabaseConnection database, IClass @class, long id) : base(@class, id, 0) => this.database = database;
+        internal DatabaseRecord(DatabaseConnection database, IClass @class, long id, long version) : base(@class, id, version) => this.database = database;
 
-        internal DatabaseRecord(DatabaseConnection database, ResponseContext ctx, SyncResponseObject syncResponseObject)
-            : base((IClass)database.Configuration.MetaPopulation.FindByTag(syncResponseObject.t), syncResponseObject.i, syncResponseObject.v)
-        {
-            this.database = database;
-            this.syncResponseRoles = syncResponseObject.r;
+        internal static DatabaseRecord FromResponse(DatabaseConnection database, ResponseContext ctx, SyncResponseObject syncResponseObject) =>
+            new DatabaseRecord(database, (IClass)database.Configuration.MetaPopulation.FindByTag(syncResponseObject.t), syncResponseObject.i, syncResponseObject.v)
+            {
+                syncResponseRoles = syncResponseObject.r,
+                AccessControlIds = database.Ranges.Load(ctx.CheckForMissingAccessControls(syncResponseObject.a)),
+                DeniedPermissions = database.Ranges.Load(ctx.CheckForMissingPermissions(syncResponseObject.d))
+            };
 
-            var ranges = database.Ranges;
+        internal IRange AccessControlIds { get; private set; }
 
-            this.AccessControlIds = ranges.Load(ctx.CheckForMissingAccessControls(syncResponseObject.a));
-            this.DeniedPermissions = ranges.Load(ctx.CheckForMissingPermissions(syncResponseObject.d));
-        }
-
-        internal IRange AccessControlIds { get; }
-
-        internal IRange DeniedPermissions { get; }
+        internal IRange DeniedPermissions { get; private set; }
 
         private Dictionary<IRelationType, object> RoleByRelationType
         {
@@ -42,20 +38,18 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (this.syncResponseRoles != null)
                 {
-                    var meta = this.database.Configuration.MetaPopulation;
                     var ranges = this.database.Ranges;
-
                     var metaPopulation = this.database.Configuration.MetaPopulation;
                     this.roleByRelationType = this.syncResponseRoles.ToDictionary(
-                        v => (IRelationType)meta.FindByTag(v.t),
+                        v => (IRelationType)metaPopulation.FindByTag(v.t),
                         v =>
                         {
                             var roleType = ((IRelationType)metaPopulation.FindByTag(v.t)).RoleType;
-
                             var objectType = roleType.ObjectType;
+
                             if (objectType.IsUnit)
                             {
-                                return this.database.UnitConvert.FromJson(roleType.ObjectType.Tag, v.v);
+                                return this.database.UnitConvert.FromJson(objectType.Tag, v.v);
                             }
 
                             if (roleType.IsOne)
@@ -87,7 +81,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return false;
             }
 
-            return !this.DeniedPermissions.Contains(permission) && this.AccessControlIds.Any(v => this.database.AccessControlById[v].PermissionIds.Any(w => w == permission));
+            return !this.DeniedPermissions.Contains(permission) && this.AccessControlIds.Any(v => this.database.AccessControlById[v].PermissionIds.Contains(permission));
         }
     }
 }

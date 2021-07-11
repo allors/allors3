@@ -16,18 +16,9 @@ namespace Allors.Workspace.Adapters.Remote
         {
             this.Workspace = session.Workspace;
 
-            this.Objects = response.o.ToDictionary(
-                pair => pair.Key,
-                pair => session.GetOne<IObject>(pair.Value),
-                StringComparer.OrdinalIgnoreCase);
-            this.Collections = response.c.ToDictionary(
-                pair => pair.Key,
-                pair => pair.Value.Select(session.GetOne<IObject>).ToArray(),
-                StringComparer.OrdinalIgnoreCase);
-            this.Values = response.v.ToDictionary(
-                pair => pair.Key,
-                pair => pair.Value,
-                StringComparer.OrdinalIgnoreCase);
+            this.Objects = response.o.ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => session.GetOne<IObject>(pair.Value));
+            this.Collections = response.c.ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => pair.Value.Select(session.GetOne<IObject>).ToArray());
+            this.Values = response.v.ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => pair.Value);
         }
 
         private IWorkspace Workspace { get; }
@@ -41,26 +32,23 @@ namespace Allors.Workspace.Adapters.Remote
         public T[] GetCollection<T>() where T : IObject
         {
             var objectType = this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>();
-            var key = objectType.PluralName;
+            var key = objectType.PluralName.ToUpperInvariant();
             return this.GetCollection<T>(key);
         }
 
-        public T[] GetCollection<T>(string key) where T : IObject =>
-            this.Collections.TryGetValue(key, out var collection) ? collection?.Cast<T>().ToArray() : null;
+        public T[] GetCollection<T>(string key) where T : IObject => this.Collections.TryGetValue(key.ToUpperInvariant(), out var collection) ? collection?.Cast<T>().ToArray() : null;
 
-        public T GetObject<T>()
-            where T : class, IObject
+        public T GetObject<T>() where T : class, IObject
         {
             var objectType = this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>();
-            var key = objectType.SingularName;
+            var key = objectType.SingularName.ToUpperInvariant();
             return this.GetObject<T>(key);
         }
 
-        public T GetObject<T>(string key)
-            where T : class, IObject => this.Objects.TryGetValue(key, out var @object) ? (T)@object : null;
+        public T GetObject<T>(string key) where T : class, IObject => this.Objects.TryGetValue(key.ToUpperInvariant(), out var @object) ? (T)@object : null;
 
-        public object GetValue(string key) => this.Values[key];
+        public object GetValue(string key) => this.Values[key.ToUpperInvariant()];
 
-        public T GetValue<T>(string key) => (T)this.GetValue(key);
+        public T GetValue<T>(string key) => (T)this.GetValue(key.ToUpperInvariant());
     }
 }

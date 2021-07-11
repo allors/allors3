@@ -120,7 +120,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public override T Create<T>(IClass @class)
         {
-            var workspaceId = base.Workspace.WorkspaceIdGenerator.Next();
+            var workspaceId = base.Workspace.DatabaseConnection.NextId();
             var strategy = new Strategy(this, @class, workspaceId);
             this.AddStrategy(strategy);
 

@@ -88,7 +88,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public override T Create<T>(IClass @class)
         {
-            var workspaceId = this.Workspace.WorkspaceIdGenerator.Next();
+            var workspaceId = this.Workspace.DatabaseConnection.NextId();
             var strategy = new Strategy(this, @class, workspaceId);
             this.AddStrategy(strategy);
 

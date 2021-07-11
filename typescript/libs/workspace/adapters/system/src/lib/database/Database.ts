@@ -12,11 +12,11 @@ export abstract class Database {
 
   abstract createWorkspace(): IWorkspace;
 
+  abstract getRecord(id: number): DatabaseRecord | undefined;
+
   abstract getPermission(cls: Class, operandType: OperandType, operation: Operations): number | undefined;
 
   abstract onPushResponse(cls: Class, id: number): DatabaseRecord;
-
-  abstract getRecord(identity: number): DatabaseRecord | undefined;
   
   nextId(): number {
     return this.idGenerator();

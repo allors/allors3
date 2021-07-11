@@ -11,24 +11,24 @@ namespace Allors.Workspace.Adapters
 
     public abstract class DatabaseConnection : IDatabaseConnection
     {
-        private ConcurrentDictionary<IObjectType, object> EmptyArrayByObjectType;
+        private ConcurrentDictionary<IObjectType, object> emptyArrayByObjectType;
 
-        protected DatabaseConnection(Configuration configuration) => this.Configuration = configuration;
+        private readonly WorkspaceIdGenerator workspaceIdGenerator;
+
+        protected DatabaseConnection(Configuration configuration, WorkspaceIdGenerator workspaceIdGenerator)
+        {
+            this.Configuration = configuration;
+            this.workspaceIdGenerator = workspaceIdGenerator;
+        }
 
         IConfiguration IDatabaseConnection.Configuration => this.Configuration;
         public Configuration Configuration { get; }
 
-        public abstract IWorkspace CreateWorkspace();
-
-        public abstract DatabaseRecord GetRecord(long identity);
-
-        public abstract long GetPermission(IClass @class, IOperandType operandType, Operations operation);
-
         public object EmptyArray(IObjectType objectType)
         {
-            this.EmptyArrayByObjectType ??= new ConcurrentDictionary<IObjectType, object>();
+            this.emptyArrayByObjectType ??= new ConcurrentDictionary<IObjectType, object>();
 
-            if (this.EmptyArrayByObjectType.TryGetValue(objectType, out var emptyArray))
+            if (this.emptyArrayByObjectType.TryGetValue(objectType, out var emptyArray))
             {
                 return emptyArray;
             }
@@ -36,11 +36,19 @@ namespace Allors.Workspace.Adapters
             var type = this.Configuration.ObjectFactory.GetType(objectType);
             emptyArray = Array.CreateInstance(type, 0);
 
-            this.EmptyArrayByObjectType.TryAdd(objectType, emptyArray);
+            this.emptyArrayByObjectType.TryAdd(objectType, emptyArray);
 
             return emptyArray;
         }
 
+        public abstract IWorkspace CreateWorkspace();
+
+        public abstract DatabaseRecord GetRecord(long id);
+
+        public abstract long GetPermission(IClass @class, IOperandType operandType, Operations operation);
+
         public abstract DatabaseRecord OnPushResponse(IClass @class, long id);
+
+        public long NextId() => this.workspaceIdGenerator.Next();
     }
 }

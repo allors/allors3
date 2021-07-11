@@ -26,7 +26,7 @@ namespace Allors.Workspace.Adapters.Local
         private readonly Func<IWorkspaceServices> servicesBuilder;
         private readonly IRanges ranges;
 
-        public DatabaseConnection(Configuration configuration, IDatabase database, Func<IWorkspaceServices> servicesBuilder, Func<IRanges> rangesFactory) : base(configuration)
+        public DatabaseConnection(Configuration configuration, IDatabase database, Func<IWorkspaceServices> servicesBuilder, Func<IRanges> rangesFactory) : base(configuration, new WorkspaceIdGenerator())
         {
             this.Database = database;
             this.servicesBuilder = servicesBuilder;

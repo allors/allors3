@@ -13,7 +13,7 @@ export class DatabaseRecord extends SystemDatabaseRecord {
   private syncResponseRoles?: SyncResponseRole[];
 
   constructor(public readonly database: Database, cls: Class, id: number, public version: number) {
-    super(cls, id);
+    super(cls, id, version);
   }
 
   static fromResponse(database: Database, ctx: ResponseContext, syncResponseObject: SyncResponseObject): DatabaseRecord {
@@ -26,10 +26,10 @@ export class DatabaseRecord extends SystemDatabaseRecord {
 
   get roleByRelationType(): Map<RelationType, unknown> {
     if (this.syncResponseRoles != null) {
-      const meta = this.database.configuration.metaPopulation;
+      const metaPopulation = this.database.configuration.metaPopulation;
       this._roleByRelationType = new Map(
         this.syncResponseRoles.map((v) => {
-          const relationType = meta.metaObjectByTag.get(v.t) as RelationType;
+          const relationType = metaPopulation.metaObjectByTag.get(v.t) as RelationType;
           const roleType = relationType.roleType;
           const objectType = roleType.objectType;
           let role: unknown;
@@ -63,7 +63,7 @@ export class DatabaseRecord extends SystemDatabaseRecord {
       return false;
     }
 
-    if (this.deniedPermissionIds != null && has(this.deniedPermissionIds, permission)) {
+    if (has(this.deniedPermissionIds, permission)) {
       return false;
     }
 
@@ -71,6 +71,6 @@ export class DatabaseRecord extends SystemDatabaseRecord {
       return false;
     }
 
-    return this.accessControlIds.some((v) => this.database.accessControlById.get(v).permissionIds.has(permission));
+    return this.accessControlIds.some((v) => has(this.database.accessControlById.get(v).permissionIds, permission));
   }
 }

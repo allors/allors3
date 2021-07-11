@@ -9,7 +9,7 @@ import { ResponseContext } from './Security/ResponseContext';
 import { Workspace } from './Workspace';
 
 export class Database extends SystemDatabase {
-  recordsById: Map<number, DatabaseRecord>;
+  private recordsById: Map<number, DatabaseRecord>;
 
   accessControlById: Map<number, AccessControl>;
   permissions: Set<number>;
@@ -35,14 +35,39 @@ export class Database extends SystemDatabase {
     return new Workspace(this, this.servicesBuilder());
   }
 
-  onPushResponse(cls: Class, id: number): DatabaseRecord {
-    const record = new DatabaseRecord(this, cls, id, 0);
-    this.recordsById.set(id, record);
-    return record;
+  onPullResonse(response: PullResponse): SyncRequest {
+    return {
+      o: response.p
+        .filter((v) => {
+          const record = this.recordsById.get(v.i);
+
+          if (record == null) {
+            return true;
+          }
+
+          if (record.version !== v.v) {
+            return true;
+          }
+
+          if (!equals(record.accessControlIds, v.a)) {
+            return true;
+          }
+
+          if (!equals(record.deniedPermissionIds, v.d)) {
+            return true;
+          }
+
+          // TODO: Use smarter updates for DeniedPermissions
+
+          return false;
+        })
+        .map((v) => v.i),
+    };
   }
 
   onSyncResponse(syncResponse: SyncResponse): SecurityRequest | null {
     const ctx = new ResponseContext(this);
+
     for (const syncResponseObject of syncResponse.o) {
       const databaseObjects = DatabaseRecord.fromResponse(this, ctx, syncResponseObject);
       this.recordsById.set(databaseObjects.id, databaseObjects);
@@ -88,23 +113,22 @@ export class Database extends SystemDatabase {
       for (const syncResponseAccessControl of securityResponse.a) {
         const id = syncResponseAccessControl.i;
         const version = syncResponseAccessControl.v;
-        const permissionsIds = syncResponseAccessControl.p?.map((v) => {
-          if (this.permissions.has(v)) {
-            return v;
+        const permissionIds = syncResponseAccessControl.p;
+        this.accessControlById.set(id, new AccessControl(version, permissionIds));
+
+        if (permissionIds != null) {
+          for (const permissionId of permissionIds) {
+            if (this.permissions.has(permissionId)) {
+              continue;
+            }
+
+            (missingPermissionIds ??= new Set()).add(permissionId);
           }
-
-          (missingPermissionIds ??= new Set()).add(v);
-
-          return v;
-        });
-
-        const permissionIdSet = permissionsIds != null ? new Set(permissionsIds) : new Set<number>();
-
-        this.accessControlById.set(id, new AccessControl(version, permissionIdSet));
+        }
       }
     }
 
-    if (missingPermissionIds) {
+    if (missingPermissionIds != null) {
       return {
         p: Array.from(missingPermissionIds),
       };
@@ -113,32 +137,10 @@ export class Database extends SystemDatabase {
     return undefined;
   }
 
-  onPullResonse(response: PullResponse): SyncRequest {
-    return {
-      o: response.p
-        .filter((v) => {
-          const record = this.recordsById.get(v.i);
-
-          if (!record) {
-            return true;
-          }
-
-          if (record.version !== v.v) {
-            return true;
-          }
-
-          if (!equals(record.accessControlIds, v.a)) {
-            return true;
-          }
-
-          if (!equals(record.deniedPermissionIds, v.d)) {
-            return true;
-          }
-
-          return false;
-        })
-        .map((v) => v.i),
-    };
+  onPushResponse(cls: Class, id: number): DatabaseRecord {
+    const record = new DatabaseRecord(this, cls, id, 0);
+    this.recordsById.set(id, record);
+    return record;
   }
 
   getPermission(cls: Class, operandType: OperandType, operation: Operations): number | undefined {
@@ -147,28 +149,17 @@ export class Database extends SystemDatabase {
         return this.readPermissionByOperandTypeByClass.get(cls, operandType);
       case Operations.Write:
         return this.writePermissionByOperandTypeByClass.get(cls, operandType);
-      default:
+      case Operations.Execute:
         return this.executePermissionByOperandTypeByClass.get(cls, operandType);
+      case Operations.Create:
+        throw new Error('Create is not supported');
+      default:
+        throw new Error('Argument out of range');
     }
   }
 
-  // pull(name: string, values?: Map<string, object>, objects: Map<string, IObject>, collections: Map<string, IObject[]>): Observable<PullResponse> {
-  //   // const pullArgs: PullArgs = {
-  //   //     v: values?.ToDictionary(v => v.Key, v => v.Value),
-  //   //     o: objects?.ToDictionary(v => v.Key, v => v.Value.Id),
-  //   //     c: collections?.ToDictionary(v => v.Key, v => v.Value.Select(v => v.Id).ToArray()),
-  //   // };
-  //   // var uri = new Uri(name + "/pull", UriKind.Relative);
-  //   // var response = await this.PostAsJsonAsync(uri, pullArgs);
-  //   // _ = response.EnsureSuccessStatusCode();
-  //   // return await this.ReadAsAsync<PullResponse>(response);
-
-  //   // TODO:
-  //   return undefined;
-  // }
-
-  getRecord(identity: number): DatabaseRecord | undefined {
-    return this.recordsById.get(identity);
+  getRecord(id: number): DatabaseRecord | undefined {
+    return this.recordsById.get(id);
   }
 
   pull(pullRequest: PullRequest): Promise<PullResponse> {

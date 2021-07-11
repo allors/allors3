@@ -9,7 +9,7 @@ namespace Allors.Workspace.Adapters.Local
 
     public class Workspace : Adapters.Workspace
     {
-        public Workspace(DatabaseConnection database, IWorkspaceServices services, IRanges ranges) : base(database, services, ranges, new WorkspaceIdGenerator()) => this.Services.OnInit(this);
+        public Workspace(DatabaseConnection database, IWorkspaceServices services, IRanges ranges) : base(database, services, ranges) => this.Services.OnInit(this);
 
         public new DatabaseConnection DatabaseConnection => (DatabaseConnection)base.DatabaseConnection;
 

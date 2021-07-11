@@ -12,8 +12,8 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class DerivationError : IDerivationError
     {
-        private readonly ResponseDerivationError responseDerivationError;
         private readonly ISession session;
+        private readonly ResponseDerivationError responseDerivationError;
 
         public DerivationError(ISession session, ResponseDerivationError responseDerivationError)
         {
@@ -21,7 +21,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.responseDerivationError = responseDerivationError;
         }
 
-        public string Message => this.responseDerivationError.e;
+        public string Message => this.responseDerivationError.m;
 
         public IEnumerable<Role> Roles =>
             from r in this.responseDerivationError.r

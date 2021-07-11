@@ -22,17 +22,15 @@ namespace Allors.Workspace.Adapters.Remote
     {
         private readonly Dictionary<long, DatabaseRecord> recordsById;
 
+        private readonly Func<IWorkspaceServices> servicesBuilder;
+
         private readonly Dictionary<IClass, Dictionary<IOperandType, long>> readPermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, long>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, long>> executePermissionByOperandTypeByClass;
 
-        private readonly WorkspaceIdGenerator workspaceIdGenerator;
-        private readonly Func<IWorkspaceServices> servicesBuilder;
-
-        protected DatabaseConnection(Adapters.Configuration configuration, Func<IWorkspaceServices> servicesBuilder, WorkspaceIdGenerator workspaceIdGenerator, IRanges ranges) : base(configuration)
+        protected DatabaseConnection(Adapters.Configuration configuration, Func<IWorkspaceServices> servicesBuilder, WorkspaceIdGenerator workspaceIdGenerator, IRanges ranges) : base(configuration, workspaceIdGenerator)
         {
             this.Ranges = ranges;
-            this.workspaceIdGenerator = workspaceIdGenerator;
             this.servicesBuilder = servicesBuilder;
 
             this.recordsById = new Dictionary<long, DatabaseRecord>();
@@ -45,29 +43,58 @@ namespace Allors.Workspace.Adapters.Remote
             this.executePermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, long>>();
         }
 
+        internal Dictionary<long, AccessControl> AccessControlById { get; }
+
+        internal ISet<long> Permissions { get; }
+
         public abstract IUnitConvert UnitConvert { get; }
 
         internal IRanges Ranges { get; }
 
         public string UserId { get; protected set; }
 
-        internal ISet<long> Permissions { get; }
+        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.Ranges);
 
-        internal Dictionary<long, AccessControl> AccessControlById { get; }
+        internal SyncRequest OnPullResponse(PullResponse response) =>
+            new SyncRequest
+            {
+                o = response.p
+                    .Where(v =>
+                    {
+                        if (!this.recordsById.TryGetValue(v.i, out var @record))
+                        {
+                            return true;
+                        }
 
-        public override Adapters.DatabaseRecord OnPushResponse(IClass @class, long id)
-        {
-            var record = new DatabaseRecord(this, @class, id);
-            this.recordsById[record.Id] = record;
-            return record;
-        }
+                        if (!@record.Version.Equals(v.v))
+                        {
+                            return true;
+                        }
+
+                        if (!@record.AccessControlIds.Equals(this.Ranges.Load(v.a)))
+                        {
+                            return true;
+                        }
+
+                        if (!@record.DeniedPermissions.Equals(this.Ranges.Load(v.d)))
+                        {
+                            return true;
+                        }
+
+                        // TODO: Use smarter updates for DeniedPermissions
+
+                        return false;
+                    })
+                    .Select(v => v.i).ToArray()
+            };
 
         internal SecurityRequest OnSyncResponse(SyncResponse syncResponse)
         {
             var ctx = new ResponseContext(this);
+
             foreach (var syncResponseObject in syncResponse.o)
             {
-                var databaseObjects = new DatabaseRecord(this, ctx, syncResponseObject);
+                var databaseObjects = DatabaseRecord.FromResponse(this, ctx, syncResponseObject);
                 this.recordsById[databaseObjects.Id] = databaseObjects;
             }
 
@@ -149,10 +176,10 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     var id = syncResponseAccessControl.i;
                     var version = syncResponseAccessControl.v;
-                    var permissionsIds = this.Ranges.Load(syncResponseAccessControl.p);
-                    this.AccessControlById[id] = new AccessControl { Version = version, PermissionIds = this.Ranges.Load(permissionsIds) };
+                    var permissionIds = this.Ranges.Load(syncResponseAccessControl.p);
+                    this.AccessControlById[id] = new AccessControl { Version = version, PermissionIds = this.Ranges.Load(permissionIds) };
 
-                    foreach (var permissionId in permissionsIds)
+                    foreach (var permissionId in permissionIds)
                     {
                         if (this.Permissions.Contains(permissionId))
                         {
@@ -165,46 +192,15 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
-            if (missingPermissionIds != null)
-            {
-                return new SecurityRequest { p = missingPermissionIds.ToArray() };
-            }
-
-            return null;
+            return missingPermissionIds != null ? new SecurityRequest { p = missingPermissionIds.ToArray() } : null;
         }
 
-        internal SyncRequest OnPullResponse(PullResponse response) =>
-            new SyncRequest
-            {
-                o = response.p
-                    .Where(v =>
-                    {
-                        if (!this.recordsById.TryGetValue(v.i, out var @record))
-                        {
-                            return true;
-                        }
-
-                        if (!@record.Version.Equals(v.v))
-                        {
-                            return true;
-                        }
-
-                        if (!@record.AccessControlIds.Equals(this.Ranges.Load(v.a)))
-                        {
-                            return true;
-                        }
-
-                        if (!@record.DeniedPermissions.Equals(this.Ranges.Load(v.d)))
-                        {
-                            return true;
-                        }
-
-                        // TODO: Use smarter updates for DeniedPermissions
-
-                        return false;
-                    })
-                    .Select(v => v.i).ToArray()
-            };
+        public override Adapters.DatabaseRecord OnPushResponse(IClass @class, long id)
+        {
+            var record = new DatabaseRecord(this, @class, id, 0);
+            this.recordsById[record.Id] = record;
+            return record;
+        }
 
         public override long GetPermission(IClass @class, IOperandType operandType, Operations operation)
         {
@@ -244,8 +240,6 @@ namespace Allors.Workspace.Adapters.Remote
                     throw new ArgumentOutOfRangeException(nameof(operation));
             }
         }
-
-        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.Ranges, this.workspaceIdGenerator);
 
         public override Adapters.DatabaseRecord GetRecord(long id)
         {
