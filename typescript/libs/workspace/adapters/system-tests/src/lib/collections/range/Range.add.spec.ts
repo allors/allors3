@@ -1,4 +1,4 @@
-import { Range, fromUnsorted, add } from '@allors/workspace/adapters/system';
+import { Range, importFrom, add } from '@allors/workspace/adapters/system';
 
 describe('Range', () => {
   describe('as undefined set', () => {
@@ -22,7 +22,7 @@ describe('Range', () => {
   });
 
   describe('as single element set', () => {
-    const set: Range = fromUnsorted([1]);
+    const set: Range = importFrom([1]);
 
     describe('adding another smaller element', () => {
       const added = add(set, 0);

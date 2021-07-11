@@ -1,4 +1,4 @@
-import { Range, fromUnsorted, has } from '@allors/workspace/adapters/system';
+import { Range, importFrom, has } from '@allors/workspace/adapters/system';
 
 describe('Range', () => {
   describe('as undefined set', () => {
@@ -14,7 +14,7 @@ describe('Range', () => {
   });
 
   describe('as single element set', () => {
-    const set: Range = fromUnsorted([1]);
+    const set: Range = importFrom([1]);
 
     describe('has the element', () => {
       const hasTheElement = has(set, 1);
@@ -35,7 +35,7 @@ describe('Range', () => {
 });
 
 describe('as multiple element set', () => {
-  const set: Range = fromUnsorted([3, 1, 6, 5]);
+  const set: Range = importFrom([3, 1, 6, 5]);
 
   describe('has the elements 1, 3, 5 and 6', () => {
     const has1 = has(set, 1);

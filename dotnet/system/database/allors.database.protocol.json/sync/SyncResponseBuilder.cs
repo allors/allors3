@@ -67,8 +67,8 @@ namespace Allors.Database.Protocol.Json
                             .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))
                             .Select(w => this.CreateSyncResponseRole(v, w, this.unitConvert))
                             .ToArray(),
-                        a = this.ranges.FromUnsorted(this.accessControlsWriter.Write(v)).Save(),
-                        d = this.ranges.FromUnsorted(this.permissionsWriter.Write(v)).Save(),
+                        a = this.ranges.ImportFrom(this.accessControlsWriter.Write(v)).Save(),
+                        d = this.ranges.ImportFrom(this.permissionsWriter.Write(v)).Save(),
                     };
                 }).ToArray(),
                 a = this.AccessControlLists.EffectivePermissionIdsByAccessControl.Keys
@@ -92,7 +92,7 @@ namespace Allors.Database.Protocol.Json
             else
             {
                 var roles = @object.Strategy.GetCompositesRole<IObject>(roleType);
-                syncResponseRole.c = this.ranges.FromUnsorted(roles.Select(roleObject => roleObject.Id)).ToArray();
+                syncResponseRole.c = this.ranges.ImportFrom(roles.Select(roleObject => roleObject.Id)).ToArray();
             }
 
             return syncResponseRole;

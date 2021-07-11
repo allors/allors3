@@ -1,4 +1,4 @@
-import { MapMap, Range, fromUnsorted } from '@allors/workspace/adapters/system';
+import { MapMap, Range, importFrom } from '@allors/workspace/adapters/system';
 import { mm } from './mm';
 
 describe('MapMap', () => {
@@ -7,18 +7,18 @@ describe('MapMap', () => {
 
     describe('setting a value', () => {
       beforeEach(() => {
-        mapMap.set('a', 'b', fromUnsorted([1]));
+        mapMap.set('a', 'b', importFrom([1]));
       });
 
       it('should have that value', () => {
         const a = mm(mapMap).get('a');
-        expect(a?.get('b')).toEqual(fromUnsorted([1]));
+        expect(a?.get('b')).toEqual(importFrom([1]));
       });
     });
 
     describe('setting undefined', () => {
       beforeEach(() => {
-        mapMap.set('a', 'b', fromUnsorted());
+        mapMap.set('a', 'b', importFrom());
       });
 
       it('should not have the map for key1', () => {
@@ -34,11 +34,11 @@ describe('MapMap', () => {
 
     describe('setting a value', () => {
       beforeEach(() => {
-        mapMap.set('a', 'b', fromUnsorted([1]));
+        mapMap.set('a', 'b', importFrom([1]));
       });
 
       it('should have that value', () => {
-        expect(mm(mapMap).get('a')?.get('b')).toEqual(fromUnsorted([1]));
+        expect(mm(mapMap).get('a')?.get('b')).toEqual(importFrom([1]));
       });
     });
   });
@@ -48,15 +48,15 @@ describe('MapMap', () => {
     mm(mapMap).set('a', new Map());
     mm(mapMap)
       .get('a')
-      ?.set('b', fromUnsorted([0]));
+      ?.set('b', importFrom([0]));
 
     describe('setting a value', () => {
       beforeEach(() => {
-        mapMap.set('a', 'b', fromUnsorted([1]));
+        mapMap.set('a', 'b', importFrom([1]));
       });
 
       it('should return value', () => {
-        expect(mm(mapMap).get('a')?.get('b')).toEqual(fromUnsorted([1]));
+        expect(mm(mapMap).get('a')?.get('b')).toEqual(importFrom([1]));
       });
     });
   });

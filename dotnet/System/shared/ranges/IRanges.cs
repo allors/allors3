@@ -9,7 +9,7 @@ namespace Allors.Ranges
 
     public interface IRanges
     {
-        IRange ImportUnsorted(IEnumerable<long>? unsortedItems);
+        IRange ImportFrom(IEnumerable<long>? unsortedItems);
 
         IRange Load(IEnumerable<long>? sortedItems);
 

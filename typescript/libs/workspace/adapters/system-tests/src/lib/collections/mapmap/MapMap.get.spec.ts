@@ -1,4 +1,4 @@
-import { MapMap, Range, fromUnsorted } from '@allors/workspace/adapters/system';
+import { MapMap, Range, importFrom } from '@allors/workspace/adapters/system';
 import { mm } from './mm';
 
 describe('MapMap', () => {
@@ -33,13 +33,13 @@ describe('MapMap', () => {
     mm(mapMap).set('a', new Map());
     mm(mapMap)
       .get('a')
-      ?.set('b', fromUnsorted([0]));
+      ?.set('b', importFrom([0]));
 
     describe('getting a value', () => {
       const value = mapMap.get('a', 'b');
 
       it('should return value', () => {
-        expect(value).toEqual(fromUnsorted([0]));
+        expect(value).toEqual(importFrom([0]));
       });
     });
   });

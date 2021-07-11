@@ -249,8 +249,8 @@ namespace Allors.Database.Protocol.Json
                 {
                     i = v.Strategy.ObjectId,
                     v = v.Strategy.ObjectVersion,
-                    a = this.ranges.FromUnsorted(this.accessControlsWriter.Write(v)).Save(),
-                    d = this.ranges.FromUnsorted(this.permissionsWriter.Write(v)).Save()
+                    a = this.ranges.ImportFrom(this.accessControlsWriter.Write(v)).Save(),
+                    d = this.ranges.ImportFrom(this.permissionsWriter.Write(v)).Save()
                 }).ToArray(),
                 o = this.objectByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Id),
                 c = this.collectionsByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Select(obj => obj.Id).ToArray()),

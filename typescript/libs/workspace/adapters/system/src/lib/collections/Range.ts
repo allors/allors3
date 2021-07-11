@@ -47,7 +47,7 @@ function assert(value: unknown): asserts value {
   }
 }
 
-export function fromUnsorted(set?: number[]): Range {
+export function importFrom(set?: number[]): Range {
   if (Array.isArray(set)) {
     return [...set].sort();
   }

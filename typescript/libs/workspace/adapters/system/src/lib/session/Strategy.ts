@@ -3,7 +3,7 @@ import { DatabaseRecord } from '../database/DatabaseRecord';
 import { DatabaseOriginState, InitialVersion, UnknownVersion } from './originstate/DatabaseOriginState';
 import { WorkspaceOriginState } from './originstate/WorkspaceOriginState';
 import { isNewId, Session } from './Session';
-import { fromUnsorted, enumerate } from '../collections/Range';
+import { importFrom, enumerate } from '../collections/Range';
 import { AssociationType, Class, MethodType, Origin, RoleType } from '@allors/workspace/meta/system';
 
 export abstract class Strategy implements IStrategy {
@@ -187,7 +187,7 @@ export abstract class Strategy implements IStrategy {
   }
 
   public setComposites(roleType: RoleType, role: ReadonlyArray<IObject>) {
-    const roleIds = fromUnsorted(role?.map((v) => v.id));
+    const roleIds = importFrom(role?.map((v) => v.id));
 
     switch (roleType.origin) {
       case Origin.Session:

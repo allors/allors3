@@ -1,4 +1,4 @@
-import { Range, fromUnsorted, remove } from '@allors/workspace/adapters/system';
+import { Range, importFrom, remove } from '@allors/workspace/adapters/system';
 
 describe('Range', () => {
   describe('as undefined set', () => {
@@ -14,7 +14,7 @@ describe('Range', () => {
   });
 
   describe('as single element set', () => {
-    const set: Range = fromUnsorted([1]);
+    const set: Range = importFrom([1]);
 
     describe('removing the element', () => {
       const removed = remove(set, 1);

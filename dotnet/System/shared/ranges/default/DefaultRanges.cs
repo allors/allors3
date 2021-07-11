@@ -46,7 +46,7 @@ namespace Allors.Ranges
             _ => throw new NotSupportedException($"Ensure is not supported from {nullable.GetType()}")
         };
 
-        public IRange FromUnsorted(IEnumerable<long>? unsortedItems)
+        public IRange ImportFrom(IEnumerable<long>? unsortedItems)
         {
             switch (unsortedItems)
             {
