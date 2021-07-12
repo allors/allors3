@@ -136,51 +136,66 @@ namespace Tests.Workspace
         [Fact]
         public async void DatabaseDatabase_RemoveRole()
         {
+
             await this.Login("administrator");
 
             var session1 = this.Workspace.CreateSession();
 
             var organisation1 = session1.Create<Organisation>();
             organisation1.Name = "Allors";
-            organisation1.Owner = session1.Create<Person>();
+            var person1 = session1.Create<Person>();
+            organisation1.Owner = person1;
+
+            Assert.Equal(person1, organisation1.Owner);
 
             await session1.Push();
 
             var session2 = this.Workspace.CreateSession();
 
+            #region pulls
             var pulls = new Pull
             {
                 Object = organisation1,
                 Results = new[]
-                            {
-                    new Result
-                    {
-                        Select = new Select
-                        {
-                            Include = new[] {new Node(this.M.Organisation.Owner)}
-                        }
-                    }
-                }
+                {
+                   new Result
+                   {
+                       Select = new Select
+                       {
+                           Include = new[] {new Node(this.M.Organisation.Owner)}
+                       }
+                   }
+               }
             };
+            #endregion
 
-            var result = await session2.Pull(pulls);
+            var pullResult = await session2.Pull(pulls);
 
-            var organisation2 = result.GetObject<Organisation>();
+            var organisation2 = pullResult.GetObject<Organisation>();
+            var person2 = organisation2.Owner;
 
             Assert.Equal(organisation1.Id, organisation2.Id);
-            Assert.Equal(organisation1.Owner.Id, organisation2.Owner.Id);
+            Assert.Equal(person1.Id, person2.Id);
+
+            var canRemoveBeforePull = organisation1.CanWriteOwner;
+
+            await session1.Pull(pulls);
+
+            var canRemoveAfterPull = organisation1.CanWriteOwner;
 
             organisation1.RemoveOwner();
 
             Assert.Null(organisation1.Owner);
             Assert.NotNull(organisation2.Owner);
 
-            await session1.Push();
+            var pushResult = await session1.Push();
 
             Assert.Null(organisation1.Owner);
             Assert.NotNull(organisation2.Owner);
 
             await session2.Pull(pulls);
+
+            person2 = organisation2.Owner;
 
             Assert.Null(organisation1.Owner);
             Assert.Null(organisation2.Owner);

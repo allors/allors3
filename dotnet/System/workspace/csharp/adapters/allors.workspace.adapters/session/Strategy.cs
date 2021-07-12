@@ -38,7 +38,7 @@ namespace Allors.Workspace.Adapters
         public long Version =>
             this.Class.Origin switch
             {
-                Origin.Session => Allors.Version.Initial.Value,
+                Origin.Session => Allors.Version.WorkspaceInitial.Value,
                 Origin.Workspace => this.WorkspaceOriginState.Version,
                 Origin.Database => this.DatabaseOriginState.Version,
                 _ => throw new Exception()
@@ -95,7 +95,7 @@ namespace Allors.Workspace.Adapters
             {
                 Origin.Session => this.Session.GetRole(this, roleType),
                 Origin.Workspace => this.WorkspaceOriginState?.GetUnitRole(roleType),
-                Origin.Database => this.DatabaseOriginState?.IsVersionUnknown == true ? throw new Exception() : this.CanRead(roleType) ? this.DatabaseOriginState?.GetUnitRole(roleType) : null,
+                Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState?.GetUnitRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
             };
 
@@ -104,7 +104,7 @@ namespace Allors.Workspace.Adapters
             {
                 Origin.Session => (long?)this.Session.GetRole(this, roleType),
                 Origin.Workspace => this.WorkspaceOriginState?.GetCompositeRole(roleType),
-                Origin.Database => this.DatabaseOriginState?.IsVersionUnknown == true ? throw new Exception() : this.CanRead(roleType) ? this.DatabaseOriginState?.GetCompositeRole(roleType) : null,
+                Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState.GetCompositeRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
             });
 
@@ -114,7 +114,7 @@ namespace Allors.Workspace.Adapters
             {
                 Origin.Session => this.Session.GetRole(this, roleType),
                 Origin.Workspace => this.WorkspaceOriginState?.GetCompositesRole(roleType),
-                Origin.Database => this.DatabaseOriginState?.IsVersionUnknown == true ? throw new Exception() : this.CanRead(roleType) ? this.DatabaseOriginState?.GetCompositesRole(roleType) : null,
+                Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState?.GetCompositesRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
             };
 
@@ -176,14 +176,14 @@ namespace Allors.Workspace.Adapters
                     break;
 
                 case Origin.Workspace:
-                    this.WorkspaceOriginState?.SetCompositeRole(roleType, value?.Id);
+                    this.WorkspaceOriginState.SetCompositeRole(roleType, value?.Id);
 
                     break;
 
                 case Origin.Database:
                     if (this.CanWrite(roleType))
                     {
-                        this.DatabaseOriginState?.SetCompositeRole(roleType, value?.Id);
+                        this.DatabaseOriginState.SetCompositeRole(roleType, value?.Id);
                     }
 
                     break;

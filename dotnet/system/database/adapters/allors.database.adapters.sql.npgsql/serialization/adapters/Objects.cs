@@ -63,7 +63,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                                     var objectId = long.Parse(objectArray[0]);
                                     var objectVersion = objectArray.Length > 1
                                         ? long.Parse(objectArray[1])
-                                        : (long) Allors.Version.Initial;
+                                        : (long) Allors.Version.DatabaseInitial;
 
                                     if (objectType is IClass @class)
                                     {

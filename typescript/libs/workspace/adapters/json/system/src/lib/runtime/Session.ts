@@ -66,41 +66,39 @@ export class Session extends SystemSession {
 
   async push(): Promise<IPushResult> {
     const pushRequest: PushRequest = {
-      n: [...this.pushToDatabaseTracker.created].map((v) => (v.DatabaseOriginState as DatabaseOriginState).PushNew()),
-      o: [...this.pushToDatabaseTracker.changed].map((v) => (v.strategy.DatabaseOriginState as DatabaseOriginState).PushExisting()),
+      n: [...this.pushToDatabaseTracker.created].map((v) => (v.DatabaseOriginState as DatabaseOriginState).pushNew()),
+      o: [...this.pushToDatabaseTracker.changed].map((v) => (v.strategy.DatabaseOriginState as DatabaseOriginState).pushExisting()),
     };
 
-    const result = await this.database.push(pushRequest);
-    return new PushResult(this, result);
+    const pushResponse = await this.database.push(pushRequest);
 
-    // TODO:
-    //
-    // if (pushResponse.HasErrors) {
-    //     return new PushResult(this, pushResponse);
-    // }
+    const result = new PushResult(this, pushResponse);
 
-    // if ((pushResponse.n != null)) {
-    //     for (let pushResponseNewObject in pushResponse.n) {
-    //         let workspaceId = pushResponseNewObject.w;
-    //         let databaseId = pushResponseNewObject.d;
-    //         this.OnDatabasePushResponseNew(workspaceId, databaseId);
-    //     }
+    if(result.hasErrors){
+      return result;
+    }
 
-    // }
+    if ((pushResponse.n != null)) {
+        for (let pushResponseNewObject of pushResponse.n) {
+            let workspaceId = pushResponseNewObject.w;
+            let databaseId = pushResponseNewObject.d;
+            this.onDatabasePushResponseNew(workspaceId, databaseId);
+        }
+    }
 
-    // this.PushToDatabaseTracker.Created = null;
-    // if ((pushRequest.o != null)) {
-    //     for (let id in pushRequest.o.Select(() => {  }, v.d)) {
-    //         let strategy = this.GetStrategy(id);
-    //         this.OnDatabasePushResponse(strategy);
-    //     }
+    this.pushToDatabaseTracker.created = null;
 
-    // }
+    if ((pushRequest.o != null)) {
+        for (let id of pushRequest.o.map(v => v.d)) {
+            let strategy = this.getStrategy(id);
+            this.onDatabasePushResponse(strategy);
+        }
 
-    // let result = new PushResult(this, pushResponse);
-    // if (!result.HasErrors) {
-    //     this.PushToWorkspace(result);
-    // }
+    }
+
+    if (!result.hasErrors) {
+        this.PushToWorkspace(result);
+    }
   }
 
   create<T extends IObject>(cls: Class): T {

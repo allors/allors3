@@ -7,23 +7,23 @@ export class DatabaseOriginState extends SystemDatabaseOriginState {
     super(strategy, record);
   }
 
-  PushNew(): PushRequestNewObject {
+  pushNew(): PushRequestNewObject {
     return {
       w: this.id,
       t: this.class.tag,
-      r: this.PushRoles(),
+      r: this.pushRoles(),
     };
   }
 
-  PushExisting(): PushRequestObject {
+  pushExisting(): PushRequestObject {
     return {
       d: this.id,
       v: this.version,
-      r: this.PushRoles(),
+      r: this.pushRoles(),
     };
   }
 
-  private PushRoles(): PushRequestRole[] {
+  private pushRoles(): PushRequestRole[] {
     if (this.changedRoleByRelationType?.size > 0) {
       const roles: PushRequestRole[] = [];
 

@@ -258,7 +258,7 @@ namespace Allors.Database.Adapters.Memory
 
         public virtual IObject Create(IClass objectType)
         {
-            var strategy = new Strategy(this, objectType, ++this.currentId, Version.Initial);
+            var strategy = new Strategy(this, objectType, ++this.currentId, Version.DatabaseInitial);
             this.AddStrategy(strategy);
 
             this.ChangeLog.OnCreated(strategy);

@@ -11,15 +11,13 @@ namespace Allors
     {
         public static readonly Version Unknown = new Version(0);
 
-        public static readonly Version Initial = new Version(1);
+        public static readonly Version WorkspaceInitial = new Version(1);
+
+        public static readonly Version DatabaseInitial = new Version(2);
 
         private Version(long value) => this.Value = value;
 
         public long Value { get; }
-
-        public bool IsUnknown => this != Unknown;
-
-        public bool IsInitial => this == Initial;
 
         public static bool operator ==(Version @this, Version other) => @this.Equals(other);
 
