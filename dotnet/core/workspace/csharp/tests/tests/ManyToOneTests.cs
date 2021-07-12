@@ -71,10 +71,10 @@ namespace Tests.Workspace
 
             var workspaceOrganisation2 = session2.GetOne(workspaceOrganisation1);
 
-            workspaceOrganisation1.RemoveWorkspaceWorkspaceOwner();
+            workspaceOrganisation1.RemoveWorkspaceDatabaseOwner();
 
-            Assert.Null(workspaceOrganisation2.WorkspaceWorkspaceOwner);
-            Assert.Null(workspaceOrganisation1.WorkspaceWorkspaceOwner);
+            Assert.Null(workspaceOrganisation2.WorkspaceDatabaseOwner);
+            Assert.Null(workspaceOrganisation1.WorkspaceDatabaseOwner);
         }
 
         [Fact]
@@ -105,22 +105,31 @@ namespace Tests.Workspace
         {
             await this.Login("administrator");
 
-            var session = this.Workspace.CreateSession();
+            var session1 = this.Workspace.CreateSession();
 
-            var workspaceOrganisation1 = session.Create<WorkspaceOrganisation>();
-            workspaceOrganisation1.WorkspaceWorkspaceOwner = session.Create<WorkspacePerson>();
+            var workspaceOrganisation1 = session1.Create<WorkspaceOrganisation>();
+            workspaceOrganisation1.WorkspaceWorkspaceOwner = session1.Create<WorkspacePerson>();
 
-            await session.Push();
+            await session1.Push();
 
             var session2 = this.Workspace.CreateSession();
 
             var workspaceOrganisation2 = session2.GetOne(workspaceOrganisation1);
 
             Assert.NotNull(workspaceOrganisation2.WorkspaceWorkspaceOwner);
-            
+
             workspaceOrganisation1.RemoveWorkspaceWorkspaceOwner();
 
             Assert.NotNull(workspaceOrganisation2.WorkspaceWorkspaceOwner);
+            Assert.Null(workspaceOrganisation1.WorkspaceWorkspaceOwner);
+
+            await session1.Push();
+            await session2.Pull(new Pull
+            {
+                Object = workspaceOrganisation1
+            });
+
+            Assert.Null(workspaceOrganisation2.WorkspaceWorkspaceOwner);
             Assert.Null(workspaceOrganisation1.WorkspaceWorkspaceOwner);
         }
     }
