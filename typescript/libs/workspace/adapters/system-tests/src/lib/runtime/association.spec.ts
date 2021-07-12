@@ -3,7 +3,6 @@ import { Pull } from '@allors/workspace/domain/system';
 import { Fixture, name_c1C, name_c2C } from '../Fixture';
 import '../Matchers';
 import '@allors/workspace/domain/core';
-import { C1 } from '@allors/workspace/domain/core';
 
 let fixture: Fixture;
 

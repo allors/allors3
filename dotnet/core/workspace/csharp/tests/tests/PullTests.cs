@@ -15,7 +15,6 @@ namespace Tests.Workspace
     using static Names;
     using C1 = Allors.Workspace.Domain.C1;
     using C2 = Allors.Workspace.Domain.C2;
-    using DateTime = Allors.Workspace.Meta.DateTime;
     using I12 = Allors.Workspace.Domain.I12;
     using I2 = Allors.Workspace.Domain.I2;
 
@@ -1968,6 +1967,40 @@ namespace Tests.Workspace
             Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B);
+        }
+
+        [Fact]
+        public async void WithResultName()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+            var m = this.M;
+
+            var pull = new Pull
+            {
+                Extent = new Filter(m.C1)
+                {
+                    Predicate = new Equals(m.C1.C1AllorsInteger)
+                    {
+                        Value = 2
+                    }
+                },
+                Results = new[]{
+                    new Result
+                    {
+                        Name = "IetsAnders",
+                    }
+                }
+            };
+
+            var result = await session.Pull(pull);
+
+            Assert.Single(result.Collections);
+            Assert.Empty(result.Objects);
+            Assert.Empty(result.Values);
+
+            result.Assert().Collection<C1>("IetsAnders").Equal(c1C, c1D);
         }
     }
 }
