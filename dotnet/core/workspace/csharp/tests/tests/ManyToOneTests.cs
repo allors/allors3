@@ -132,5 +132,59 @@ namespace Tests.Workspace
             Assert.Null(workspaceOrganisation2.WorkspaceWorkspaceOwner);
             Assert.Null(workspaceOrganisation1.WorkspaceWorkspaceOwner);
         }
+
+        [Fact]
+        public async void DatabaseDatabase_RemoveRole()
+        {
+            await this.Login("administrator");
+
+            var session1 = this.Workspace.CreateSession();
+
+            var organisation1 = session1.Create<Organisation>();
+            organisation1.Name = "Allors";
+            organisation1.Owner = session1.Create<Person>();
+
+            await session1.Push();
+
+            var session2 = this.Workspace.CreateSession();
+
+            var pulls = new Pull
+            {
+                Object = organisation1,
+                Results = new[]
+                            {
+                    new Result
+                    {
+                        Select = new Select
+                        {
+                            Include = new[] {new Node(this.M.Organisation.Owner)}
+                        }
+                    }
+                }
+            };
+
+            var result = await session2.Pull(pulls);
+
+            var organisation2 = result.GetObject<Organisation>();
+
+            Assert.Equal(organisation1.Id, organisation2.Id);
+            Assert.Equal(organisation1.Owner.Id, organisation2.Owner.Id);
+
+            organisation1.RemoveOwner();
+
+            Assert.Null(organisation1.Owner);
+            Assert.NotNull(organisation2.Owner);
+
+            await session1.Push();
+
+            Assert.Null(organisation1.Owner);
+            Assert.NotNull(organisation2.Owner);
+
+            await session2.Pull(pulls);
+
+            Assert.Null(organisation1.Owner);
+            Assert.Null(organisation2.Owner);
+        }
+
     }
 }
