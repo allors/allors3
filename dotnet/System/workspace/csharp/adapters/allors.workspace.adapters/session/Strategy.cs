@@ -93,7 +93,7 @@ namespace Allors.Workspace.Adapters
         public object GetUnitRole(IRoleType roleType) =>
             roleType.Origin switch
             {
-                Origin.Session => this.Session.GetRole(this, roleType),
+                Origin.Session => this.Session.GetUnitRole(this, roleType),
                 Origin.Workspace => this.WorkspaceOriginState?.GetUnitRole(roleType),
                 Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState?.GetUnitRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
@@ -102,7 +102,7 @@ namespace Allors.Workspace.Adapters
         public T GetCompositeRole<T>(IRoleType roleType) where T : IObject =>
             this.Session.GetOne<T>(roleType.Origin switch
             {
-                Origin.Session => (long?)this.Session.GetRole(this, roleType),
+                Origin.Session => this.Session.GetCompositeRole(this, roleType),
                 Origin.Workspace => this.WorkspaceOriginState?.GetCompositeRole(roleType),
                 Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState.GetCompositeRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
@@ -112,18 +112,13 @@ namespace Allors.Workspace.Adapters
         {
             var roles = roleType.Origin switch
             {
-                Origin.Session => this.Session.GetRole(this, roleType),
+                Origin.Session => this.Session.GetCompositesRole(this, roleType),
                 Origin.Workspace => this.WorkspaceOriginState?.GetCompositesRole(roleType),
                 Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState?.GetCompositesRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
             };
 
-            if (roles == null)
-            {
-                return Array.Empty<T>();
-            }
-
-            return this.Session.GetMany<T>((IEnumerable<long>)roles);
+            return roles == null ? Array.Empty<T>() : this.Session.GetMany<T>(roles);
         }
 
         public void SetRole(IRoleType roleType, object value)
@@ -290,7 +285,7 @@ namespace Allors.Workspace.Adapters
         {
             if (associationType.Origin != Origin.Session)
             {
-                return this.Session.GetCompositeAssociation<T>(this.Id, associationType);
+                return (T)this.Session.GetCompositeAssociation(this.Id, associationType)?.Object;
             }
 
             var association = this.Session.SessionOriginState.GetCompositeRole(this.Id, associationType);
@@ -301,11 +296,10 @@ namespace Allors.Workspace.Adapters
         {
             if (associationType.Origin != Origin.Session)
             {
-                return this.Session.GetCompositesAssociation<T>(this.Id, associationType);
+                return this.Session.GetCompositesAssociation(this.Id, associationType).Select(v => v.@object).Cast<T>();
             }
 
             var association = this.Session.SessionOriginState.GetCompositesRole(this.Id, associationType);
-
             return association.IsEmpty ? Array.Empty<T>() : association.Select(v => this.Session.GetOne<T>(v)).ToArray();
         }
 

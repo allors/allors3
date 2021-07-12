@@ -134,7 +134,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void DatabaseDatabase_RemoveRole()
+        public async void DatabaseDatabase_RemoveRoleWithPush()
         {
 
             await this.Login("administrator");
@@ -201,5 +201,33 @@ namespace Tests.Workspace
             Assert.Null(organisation2.Owner);
         }
 
+        [Fact]
+        public async void DatabaseDatabase_RemoveRole()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var organisation = session.Create<Organisation>();
+            var person1 = session.Create<Person>();
+            organisation.Owner = person1;
+
+            Assert.Equal(person1, organisation.Owner);
+        }
+
+
+        [Fact]
+        public async void SessionSession_RemoveRole()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var organisation = session.Create<SessionOrganisation>();
+            var person1 = session.Create<SessionPerson>();
+            organisation.SessionSessionOwner = person1;
+
+            Assert.Equal(person1, organisation.SessionSessionOwner);
+        }
     }
 }

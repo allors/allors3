@@ -11,6 +11,7 @@ namespace Allors.Workspace.Adapters
     using System.Threading.Tasks;
     using Data;
     using Meta;
+    using Ranges;
 
     public abstract class Session : ISession
     {
@@ -176,23 +177,13 @@ namespace Allors.Workspace.Adapters
             return IsNewId(id) ? this.InstantiateWorkspaceStrategy(id) : null;
         }
 
-        public object GetRole(Strategy association, IRoleType roleType)
-        {
-            if (roleType.ObjectType.IsUnit)
-            {
-                return this.SessionOriginState.GetUnitRole(association.Id, roleType);
-            }
+        public object GetUnitRole(Strategy association, IRoleType roleType) => this.SessionOriginState.GetUnitRole(association.Id, roleType);
 
-            if (roleType.IsOne)
-            {
-                return this.GetOne<IObject>(this.SessionOriginState.GetCompositeRole(association.Id, roleType));
-            }
+        public long? GetCompositeRole(Strategy association, IRoleType roleType) => this.SessionOriginState.GetCompositeRole(association.Id, roleType);
 
-            var range = this.SessionOriginState.GetCompositesRole(association.Id, roleType);
-            return !range.IsEmpty ? range.Select(this.GetOne<IObject>).ToArray() : this.Workspace.DatabaseConnection.EmptyArray(roleType.ObjectType);
-        }
+        public IRange GetCompositesRole(Strategy association, IRoleType roleType) => this.SessionOriginState.GetCompositesRole(association.Id, roleType);
 
-        public T GetCompositeAssociation<T>(long role, IAssociationType associationType) where T : IObject
+        public Strategy GetCompositeAssociation(long role, IAssociationType associationType)
         {
             var roleType = associationType.RoleType;
 
@@ -201,7 +192,7 @@ namespace Allors.Workspace.Adapters
                 throw new ArgumentException("AssociationType should not be for a Unit", nameof(associationType));
             }
 
-            foreach (var association in this.GetForAssociation(associationType.ObjectType))
+            foreach (var association in this.StrategiesForClass(associationType.ObjectType))
             {
                 if (!association.CanRead(roleType))
                 {
@@ -210,14 +201,14 @@ namespace Allors.Workspace.Adapters
 
                 if (association.IsCompositeAssociationForRole(roleType, role))
                 {
-                    return (T)association.Object;
+                    return association;
                 }
             }
 
-            return default;
+            return null;
         }
 
-        public IEnumerable<T> GetCompositesAssociation<T>(long role, IAssociationType associationType) where T : IObject
+        public IEnumerable<Strategy> GetCompositesAssociation(long role, IAssociationType associationType)
         {
             var roleType = associationType.RoleType;
 
@@ -226,7 +217,7 @@ namespace Allors.Workspace.Adapters
                 throw new ArgumentException("AssociationType should not be for a Unit", nameof(associationType));
             }
 
-            foreach (var association in this.GetForAssociation(associationType.ObjectType))
+            foreach (var association in this.StrategiesForClass(associationType.ObjectType))
             {
                 if (!association.CanRead(roleType))
                 {
@@ -235,7 +226,7 @@ namespace Allors.Workspace.Adapters
 
                 if (association.IsCompositesAssociationForRole(roleType, role))
                 {
-                    yield return (T)association.Object;
+                    yield return association;
                 }
             }
         }
@@ -320,7 +311,7 @@ namespace Allors.Workspace.Adapters
             strategies.Remove(strategy);
         }
 
-        private IEnumerable<Strategy> GetForAssociation(IComposite objectType)
+        private IEnumerable<Strategy> StrategiesForClass(IComposite objectType)
         {
             var classes = new HashSet<IClass>(objectType.Classes);
             return this.StrategyByWorkspaceId.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value);

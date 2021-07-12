@@ -59,12 +59,12 @@ namespace Allors.Workspace.Adapters
             var associationType = roleType.AssociationType;
             if (associationType.IsOne && role.HasValue)
             {
-                var previousAssociationObject = this.Session.GetCompositeAssociation<IObject>(role.Value, associationType);
+                var previousAssociation = this.Session.GetCompositeAssociation(role.Value, associationType);
                 this.SetChangedRole(roleType, role);
-                if (associationType.IsOne && previousAssociationObject != null)
+                if (associationType.IsOne && previousAssociation != null)
                 {
                     // OneToOne
-                    previousAssociationObject.Strategy.SetRole(roleType, null);
+                    previousAssociation.SetRole(roleType, null);
                 }
             }
             else
@@ -101,8 +101,8 @@ namespace Allors.Workspace.Adapters
             }
 
             // OneToMany
-            var previousAssociationObject = this.Session.GetCompositeAssociation<IObject>(roleToAdd, associationType);
-            previousAssociationObject?.Strategy.SetRole(roleType, null);
+            var previousAssociation = this.Session.GetCompositeAssociation(roleToAdd, associationType);
+            previousAssociation?.SetRole(roleType, null);
         }
 
         public void RemoveCompositesRole(IRoleType roleType, long roleToRemove)
@@ -133,8 +133,8 @@ namespace Allors.Workspace.Adapters
             // OneToMany
             foreach (var addedRole in this.Ranges.Except(role, previousRole))
             {
-                var previousAssociationObject = this.Session.GetCompositeAssociation<IObject>(addedRole, associationType);
-                previousAssociationObject?.Strategy.SetRole(roleType, null);
+                var previousAssociation = this.Session.GetCompositeAssociation(addedRole, associationType);
+                previousAssociation?.SetRole(roleType, null);
             }
         }
 

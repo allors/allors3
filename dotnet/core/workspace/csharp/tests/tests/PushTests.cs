@@ -168,11 +168,11 @@ namespace Tests.Workspace
             person.FirstName = "Johny";
             person.LastName = "Doey";
 
-            Assert.Equal(Version.Unknown.Value, person.Strategy.Version);
+            Assert.Equal(Version.WorkspaceInitial.Value, person.Strategy.Version);
 
             Assert.False((await session.Push()).HasErrors);
 
-            Assert.Equal(Version.Unknown.Value, person.Strategy.Version);
+            Assert.Equal(Version.WorkspaceInitial.Value, person.Strategy.Version);
         }
 
 
@@ -188,7 +188,7 @@ namespace Tests.Workspace
             c1.C1C1One2One = c1;
             c1.AddC1C1One2Many(c1);
 
-            Assert.Equal(Version.Unknown.Value, c1.Strategy.Version);
+            Assert.Equal(Version.WorkspaceInitial.Value, c1.Strategy.Version);
 
             Assert.False((await session.Push()).HasErrors);
 
