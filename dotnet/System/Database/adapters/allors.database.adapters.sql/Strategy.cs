@@ -785,7 +785,7 @@ namespace Allors.Database.Adapters.Sql
              *
              *  RA ----- R         RA       R       RA    -- R       RA ----- R
              *                ->                +        -        =       -
-             *   A ----- PR         A       PR       A --    PR       A --    PR
+             *   A ----- PR         A       PR       A --    PR       A ----- PR
              */
             var previousRoleIds = this.GetCompositesRole(roleType);
 

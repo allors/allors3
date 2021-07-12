@@ -237,7 +237,7 @@ namespace Allors.Workspace.Adapters
              *
              *  RA ----- R         RA       R       RA    -- R       RA ----- R
              *                ->                +        -        =       -
-             *   A ----- PR         A       PR       A --    PR       A --    PR
+             *   A ----- PR         A       PR       A --    PR       A ----- PR
              */
             var associationType = roleType.AssociationType;
             var previousRoleIds = this.GetCompositesRole(associationId, roleType);
