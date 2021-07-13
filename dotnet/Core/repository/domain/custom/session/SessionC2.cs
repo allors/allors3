@@ -21,6 +21,8 @@ namespace Allors.Repository
 
         public int DerivationCount { get; set; }
 
+        #region Session
+
         public I2 SessionI2I2Many2One { get; set; }
 
         public C1 SessionI2C1Many2One { get; set; }
@@ -134,7 +136,245 @@ namespace Allors.Repository
         public C1 SessionI12C1Many2One { get; set; }
 
         public DateTime SessionI12AllorsDateTime { get; set; }
-        
+
+        #endregion
+
+        #region Workspace
+
+        public I2 WorkspaceI2I2Many2One { get; set; }
+
+        public C1 WorkspaceI2C1Many2One { get; set; }
+
+        public I12 WorkspaceI2I12Many2One { get; set; }
+
+        public bool WorkspaceI2AllorsBoolean { get; set; }
+
+        public C1[] WorkspaceI2C1One2Manies { get; set; }
+
+        public C1 WorkspaceI2C1One2One { get; set; }
+
+        public decimal WorkspaceI2AllorsDecimal { get; set; }
+
+        public I2[] WorkspaceI2I2Many2Manies { get; set; }
+
+        public byte[] WorkspaceI2AllorsBinary { get; set; }
+
+        public Guid WorkspaceI2AllorsUnique { get; set; }
+
+        public I1 WorkspaceI2I1Many2One { get; set; }
+
+        public DateTime WorkspaceI2AllorsDateTime { get; set; }
+
+        public I12[] WorkspaceI2I12One2Manies { get; set; }
+
+        public I12 WorkspaceI2I12One2One { get; set; }
+
+        public C2[] WorkspaceI2C2Many2Manies { get; set; }
+
+        public I1[] WorkspaceI2I1Many2Manies { get; set; }
+
+        public C2 WorkspaceI2C2Many2One { get; set; }
+
+        public string WorkspaceI2AllorsString { get; set; }
+
+        public C2[] WorkspaceI2C2One2Manies { get; set; }
+
+        public I1 WorkspaceI2I1One2One { get; set; }
+
+        public I1[] WorkspaceI2I1One2Manies { get; set; }
+
+        public I12[] WorkspaceI2I12Many2Manies { get; set; }
+
+        public I2 WorkspaceI2I2One2One { get; set; }
+
+        public int WorkspaceI2AllorsInteger { get; set; }
+
+        public I2[] WorkspaceI2I2One2Manies { get; set; }
+
+        public C1[] WorkspaceI2C1Many2Manies { get; set; }
+
+        public C2 WorkspaceI2C2One2One { get; set; }
+
+        public double WorkspaceI2AllorsDouble { get; set; }
+
+        public byte[] WorkspaceI12AllorsBinary { get; set; }
+
+        public C2 WorkspaceI12C2One2One { get; set; }
+
+        public double WorkspaceI12AllorsDouble { get; set; }
+
+        public I1 WorkspaceI12I1Many2One { get; set; }
+
+        public string WorkspaceI12AllorsString { get; set; }
+
+        public I12[] WorkspaceI12I12Many2Manies { get; set; }
+
+        public decimal WorkspaceI12AllorsDecimal { get; set; }
+
+        public I2[] WorkspaceI12I2Many2Manies { get; set; }
+
+        public C2[] WorkspaceI12C2Many2Manies { get; set; }
+
+        public I1[] WorkspaceI12I1Many2Manies { get; set; }
+
+        public I12[] WorkspaceI12I12One2Manies { get; set; }
+
+        public string WorkspaceName { get; set; }
+
+        public C1[] WorkspaceI12C1Many2Manies { get; set; }
+
+        public I2 WorkspaceI12I2Many2One { get; set; }
+
+        public Guid WorkspaceI12AllorsUnique { get; set; }
+
+        public int WorkspaceI12AllorsInteger { get; set; }
+
+        public I1[] WorkspaceI12I1One2Manies { get; set; }
+
+        public C1 WorkspaceI12C1One2One { get; set; }
+
+        public I12 WorkspaceI12I12One2One { get; set; }
+
+        public I2 WorkspaceI12I2One2One { get; set; }
+
+        public I12[] WorkspaceDependencies { get; set; }
+
+        public I2[] WorkspaceI12I2One2Manies { get; set; }
+
+        public C2 WorkspaceI12C2Many2One { get; set; }
+
+        public I12 WorkspaceI12I12Many2One { get; set; }
+
+        public bool WorkspaceI12AllorsBoolean { get; set; }
+
+        public I1 WorkspaceI12I1One2One { get; set; }
+
+        public C1[] WorkspaceI12C1One2Manies { get; set; }
+
+        public C1 WorkspaceI12C1Many2One { get; set; }
+
+        public DateTime WorkspaceI12AllorsDateTime { get; set; }
+
+        #endregion
+
+        #region Database
+
+        public I2 DatabaseI2I2Many2One { get; set; }
+
+        public C1 DatabaseI2C1Many2One { get; set; }
+
+        public I12 DatabaseI2I12Many2One { get; set; }
+
+        public bool DatabaseI2AllorsBoolean { get; set; }
+
+        public C1[] DatabaseI2C1One2Manies { get; set; }
+
+        public C1 DatabaseI2C1One2One { get; set; }
+
+        public decimal DatabaseI2AllorsDecimal { get; set; }
+
+        public I2[] DatabaseI2I2Many2Manies { get; set; }
+
+        public byte[] DatabaseI2AllorsBinary { get; set; }
+
+        public Guid DatabaseI2AllorsUnique { get; set; }
+
+        public I1 DatabaseI2I1Many2One { get; set; }
+
+        public DateTime DatabaseI2AllorsDateTime { get; set; }
+
+        public I12[] DatabaseI2I12One2Manies { get; set; }
+
+        public I12 DatabaseI2I12One2One { get; set; }
+
+        public C2[] DatabaseI2C2Many2Manies { get; set; }
+
+        public I1[] DatabaseI2I1Many2Manies { get; set; }
+
+        public C2 DatabaseI2C2Many2One { get; set; }
+
+        public string DatabaseI2AllorsString { get; set; }
+
+        public C2[] DatabaseI2C2One2Manies { get; set; }
+
+        public I1 DatabaseI2I1One2One { get; set; }
+
+        public I1[] DatabaseI2I1One2Manies { get; set; }
+
+        public I12[] DatabaseI2I12Many2Manies { get; set; }
+
+        public I2 DatabaseI2I2One2One { get; set; }
+
+        public int DatabaseI2AllorsInteger { get; set; }
+
+        public I2[] DatabaseI2I2One2Manies { get; set; }
+
+        public C1[] DatabaseI2C1Many2Manies { get; set; }
+
+        public C2 DatabaseI2C2One2One { get; set; }
+
+        public double DatabaseI2AllorsDouble { get; set; }
+
+        public byte[] DatabaseI12AllorsBinary { get; set; }
+
+        public C2 DatabaseI12C2One2One { get; set; }
+
+        public double DatabaseI12AllorsDouble { get; set; }
+
+        public I1 DatabaseI12I1Many2One { get; set; }
+
+        public string DatabaseI12AllorsString { get; set; }
+
+        public I12[] DatabaseI12I12Many2Manies { get; set; }
+
+        public decimal DatabaseI12AllorsDecimal { get; set; }
+
+        public I2[] DatabaseI12I2Many2Manies { get; set; }
+
+        public C2[] DatabaseI12C2Many2Manies { get; set; }
+
+        public I1[] DatabaseI12I1Many2Manies { get; set; }
+
+        public I12[] DatabaseI12I12One2Manies { get; set; }
+
+        public string DatabaseName { get; set; }
+
+        public C1[] DatabaseI12C1Many2Manies { get; set; }
+
+        public I2 DatabaseI12I2Many2One { get; set; }
+
+        public Guid DatabaseI12AllorsUnique { get; set; }
+
+        public int DatabaseI12AllorsInteger { get; set; }
+
+        public I1[] DatabaseI12I1One2Manies { get; set; }
+
+        public C1 DatabaseI12C1One2One { get; set; }
+
+        public I12 DatabaseI12I12One2One { get; set; }
+
+        public I2 DatabaseI12I2One2One { get; set; }
+
+        public I12[] DatabaseDependencies { get; set; }
+
+        public I2[] DatabaseI12I2One2Manies { get; set; }
+
+        public C2 DatabaseI12C2Many2One { get; set; }
+
+        public I12 DatabaseI12I12Many2One { get; set; }
+
+        public bool DatabaseI12AllorsBoolean { get; set; }
+
+        public I1 DatabaseI12I1One2One { get; set; }
+
+        public C1[] DatabaseI12C1One2Manies { get; set; }
+
+        public C1 DatabaseI12C1Many2One { get; set; }
+
+        public DateTime DatabaseI12AllorsDateTime { get; set; }
+
+        #endregion
+
         public bool ChangedRolePingS12 { get; set; }
         public bool ChangedRolePongS12 { get; set; }
         public bool ChangedRolePingI12 { get; set; }
