@@ -134,6 +134,54 @@ namespace Tests.Workspace
         }
 
         [Fact]
+        public async void DatabaseDatabase_SetRole()
+        {
+            await this.Login("administrator");
+
+            var session1 = this.Workspace.CreateSession();
+
+            var organisation1 = session1.Create<Organisation>();
+            organisation1.Name = "Allors";
+
+            await session1.Push();
+
+            var session2 = this.Workspace.CreateSession();
+
+            #region pulls
+            var pulls = new Pull
+            {
+                Object = organisation1,
+                Results = new[]
+                            {
+                    new Result
+                    {
+                        Select = new Select
+                        {
+                            Include = new[] {new Node(this.M.Organisation.Owner)}
+                        }
+                    }
+                }
+            };
+            #endregion
+
+            var result = await session2.Pull(pulls);
+
+            var organisation2 = result.GetObject<Organisation>();
+
+            organisation1.Owner = session1.Create<Person>();
+
+            await session1.Push();
+
+            Assert.NotNull(organisation1.Owner);
+            Assert.Null(organisation2.Owner);
+
+            await session2.Pull(pulls);
+
+            Assert.NotNull(organisation1.Owner);
+            Assert.NotNull(organisation2.Owner);
+        }
+
+        [Fact]
         public async void DatabaseDatabase_RemoveRoleWithPush()
         {
 
