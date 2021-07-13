@@ -9,6 +9,7 @@ namespace Allors.Workspace.Adapters
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
+    using Ranges;
 
     public abstract class Strategy : IStrategy
     {
@@ -93,7 +94,7 @@ namespace Allors.Workspace.Adapters
         public object GetUnitRole(IRoleType roleType) =>
             roleType.Origin switch
             {
-                Origin.Session => this.Session.GetUnitRole(this, roleType),
+                Origin.Session => this.Session.SessionOriginState.GetUnitRole(this.Id, roleType),
                 Origin.Workspace => this.WorkspaceOriginState?.GetUnitRole(roleType),
                 Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState?.GetUnitRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
@@ -102,7 +103,7 @@ namespace Allors.Workspace.Adapters
         public T GetCompositeRole<T>(IRoleType roleType) where T : IObject =>
             this.Session.Instantiate<T>(roleType.Origin switch
             {
-                Origin.Session => this.Session.GetCompositeRole(this, roleType),
+                Origin.Session => this.Session.SessionOriginState.GetCompositeRole(this.Id, roleType),
                 Origin.Workspace => this.WorkspaceOriginState?.GetCompositeRole(roleType),
                 Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState.GetCompositeRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
@@ -112,7 +113,7 @@ namespace Allors.Workspace.Adapters
         {
             var roles = roleType.Origin switch
             {
-                Origin.Session => this.Session.GetCompositesRole(this, roleType),
+                Origin.Session => this.Session.SessionOriginState.GetCompositesRole(this.Id, roleType),
                 Origin.Workspace => this.WorkspaceOriginState?.GetCompositesRole(roleType),
                 Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState?.GetCompositesRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")

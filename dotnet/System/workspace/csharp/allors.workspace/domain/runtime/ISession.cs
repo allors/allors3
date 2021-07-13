@@ -20,11 +20,15 @@ namespace Allors.Workspace
 
         Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null);
 
-        Task<IPullResult> Pull(params Pull[] pulls);
+        Task<IPullResult> Call(Procedure procedure, params Pull[] pull);
 
-        Task<IPullResult> Call(Procedure procedure, params Pull[] pulls);
+        Task<IPullResult> Pull(params Pull[] pull);
 
         Task<IPushResult> Push();
+
+        Task<IPullResult> PullFromWorkspace();
+
+        Task<IPushResult> PushToWorkspace();
 
         T Create<T>() where T : class, IObject;
 

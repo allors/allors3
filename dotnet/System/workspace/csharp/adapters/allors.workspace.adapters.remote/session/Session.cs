@@ -52,20 +52,20 @@ namespace Allors.Workspace.Adapters.Remote
             return new InvokeResult(this, invokeResponse);
         }
 
-        public override async Task<IPullResult> Pull(params Pull[] pulls)
+        public override async Task<IPullResult> Pull(params Pull[] pull)
         {
-            var pullRequest = new PullRequest { l = pulls.Select(v => v.ToJson(this.DatabaseConnection.UnitConvert)).ToArray() };
+            var pullRequest = new PullRequest { l = pull.Select(v => v.ToJson(this.DatabaseConnection.UnitConvert)).ToArray() };
 
             var pullResponse = await this.Workspace.DatabaseConnection.Pull(pullRequest);
             return await this.OnPull(pullResponse);
         }
 
-        public override async Task<IPullResult> Call(Procedure procedure, params Pull[] pulls)
+        public override async Task<IPullResult> Call(Procedure procedure, params Pull[] pull)
         {
             var pullRequest = new PullRequest
             {
                 p = procedure.ToJson(this.DatabaseConnection.UnitConvert),
-                l = pulls.Select(v => v.ToJson(this.DatabaseConnection.UnitConvert)).ToArray()
+                l = pull.Select(v => v.ToJson(this.DatabaseConnection.UnitConvert)).ToArray()
             };
 
             var pullResponse = await this.Workspace.DatabaseConnection.Pull(pullRequest);
@@ -109,11 +109,6 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             var result = new PushResult(this, pushResponse);
-
-            if (!result.HasErrors)
-            {
-                this.PushToWorkspace(result);
-            }
 
             return result;
         }

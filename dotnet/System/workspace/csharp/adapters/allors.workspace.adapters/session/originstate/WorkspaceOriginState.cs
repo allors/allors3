@@ -43,5 +43,11 @@ namespace Allors.Workspace.Adapters
             this.WorkspaceRecord = this.Workspace.GetRecord(this.Id);
             this.ChangedRoleByRelationType = null;
         }
+
+        public void Pull()
+        {
+            // TODO: Check for overwrites
+            this.WorkspaceRecord = this.Workspace.GetRecord(this.Id);
+        }
     }
 }

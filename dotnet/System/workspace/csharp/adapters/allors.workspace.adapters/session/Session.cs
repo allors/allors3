@@ -11,7 +11,6 @@ namespace Allors.Workspace.Adapters
     using System.Threading.Tasks;
     using Data;
     using Meta;
-    using Ranges;
 
     public abstract class Session : ISession
     {
@@ -50,18 +49,94 @@ namespace Allors.Workspace.Adapters
 
         public abstract T Create<T>(IClass @class) where T : class, IObject;
 
+        public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>());
+
         public abstract Task<IInvokeResult> Invoke(Method method, InvokeOptions options = null);
 
         public abstract Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null);
 
-        public abstract Task<IPullResult> Call(Procedure procedure, params Pull[] pulls);
+        public abstract Task<IPullResult> Call(Procedure procedure, params Pull[] pull);
 
-        public abstract Task<IPullResult> Pull(params Pull[] pulls);
+        public abstract Task<IPullResult> Pull(params Pull[] pull);
 
         public abstract Task<IPushResult> Push();
 
-        public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>());
+        public Task<IPullResult> PullFromWorkspace()
+        {
+            var pullResult = new PullResult();
 
+            // TODO: Optimize
+            foreach (var kvp in this.StrategyByWorkspaceId)
+            {
+                var strategy = kvp.Value;
+                strategy.WorkspaceOriginState.Pull();
+            }
+
+            return Task.FromResult((IPullResult)pullResult);
+        }
+
+        public Task<IPushResult> PushToWorkspace()
+        {
+            var pushResult = new PushResult();
+
+            if (this.PushToWorkspaceTracker.Created != null)
+            {
+                foreach (var strategy in this.PushToWorkspaceTracker.Created)
+                {
+                    strategy.WorkspaceOriginState.Push();
+                }
+            }
+
+            if (this.PushToWorkspaceTracker.Changed != null)
+            {
+                foreach (var state in this.PushToWorkspaceTracker.Changed)
+                {
+                    if (this.PushToWorkspaceTracker.Created?.Contains(state.Strategy) == true)
+                    {
+                        continue;
+                    }
+
+                    state.Push();
+                }
+            }
+
+            this.PushToWorkspaceTracker.Created = null;
+            this.PushToWorkspaceTracker.Changed = null;
+
+            return Task.FromResult((IPushResult)pushResult);
+        }
+
+        public IChangeSet Checkpoint()
+        {
+            var changeSet = new ChangeSet(this, this.ChangeSetTracker.Created, this.ChangeSetTracker.Instantiated);
+
+            if (this.ChangeSetTracker.DatabaseOriginStates != null)
+            {
+                foreach (var databaseOriginState in this.ChangeSetTracker.DatabaseOriginStates)
+                {
+                    databaseOriginState.Checkpoint(changeSet);
+                }
+            }
+
+            if (this.ChangeSetTracker.WorkspaceOriginStates != null)
+            {
+                foreach (var workspaceOriginState in this.ChangeSetTracker.WorkspaceOriginStates)
+                {
+                    workspaceOriginState.Checkpoint(changeSet);
+                }
+            }
+
+            this.SessionOriginState.Checkpoint(changeSet);
+
+            this.ChangeSetTracker.Created = null;
+            this.ChangeSetTracker.Instantiated = null;
+            this.ChangeSetTracker.DatabaseOriginStates = null;
+            this.ChangeSetTracker.WorkspaceOriginStates = null;
+
+            return changeSet;
+        }
+
+        #region Instantiate
         public T Instantiate<T>(IObject @object) where T : IObject => this.Instantiate<T>(@object.Id);
 
         public T Instantiate<T>(T @object) where T : IObject => this.Instantiate<T>(@object.Id);
@@ -131,36 +206,7 @@ namespace Allors.Workspace.Adapters
                 }
             }
         }
-
-        public IChangeSet Checkpoint()
-        {
-            var changeSet = new ChangeSet(this, this.ChangeSetTracker.Created, this.ChangeSetTracker.Instantiated);
-
-            if (this.ChangeSetTracker.DatabaseOriginStates != null)
-            {
-                foreach (var databaseOriginState in this.ChangeSetTracker.DatabaseOriginStates)
-                {
-                    databaseOriginState.Checkpoint(changeSet);
-                }
-            }
-
-            if (this.ChangeSetTracker.WorkspaceOriginStates != null)
-            {
-                foreach (var workspaceOriginState in this.ChangeSetTracker.WorkspaceOriginStates)
-                {
-                    workspaceOriginState.Checkpoint(changeSet);
-                }
-            }
-
-            this.SessionOriginState.Checkpoint(changeSet);
-
-            this.ChangeSetTracker.Created = null;
-            this.ChangeSetTracker.Instantiated = null;
-            this.ChangeSetTracker.DatabaseOriginStates = null;
-            this.ChangeSetTracker.WorkspaceOriginStates = null;
-
-            return changeSet;
-        }
+        #endregion
 
         public Strategy GetStrategy(long id)
         {
@@ -176,12 +222,6 @@ namespace Allors.Workspace.Adapters
 
             return IsNewId(id) ? this.InstantiateWorkspaceStrategy(id) : null;
         }
-
-        public object GetUnitRole(Strategy association, IRoleType roleType) => this.SessionOriginState.GetUnitRole(association.Id, roleType);
-
-        public long? GetCompositeRole(Strategy association, IRoleType roleType) => this.SessionOriginState.GetCompositeRole(association.Id, roleType);
-
-        public IRange GetCompositesRole(Strategy association, IRoleType roleType) => this.SessionOriginState.GetCompositesRole(association.Id, roleType);
 
         public Strategy GetCompositeAssociation(long role, IAssociationType associationType)
         {
@@ -246,35 +286,6 @@ namespace Allors.Workspace.Adapters
             {
                 strategies.Add(strategy);
             }
-        }
-
-        protected IPushResult PushToWorkspace(IPushResult result)
-        {
-            if (this.PushToWorkspaceTracker.Created != null)
-            {
-                foreach (var strategy in this.PushToWorkspaceTracker.Created)
-                {
-                    strategy.WorkspaceOriginState.Push();
-                }
-            }
-
-            if (this.PushToWorkspaceTracker.Changed != null)
-            {
-                foreach (var state in this.PushToWorkspaceTracker.Changed)
-                {
-                    if (this.PushToWorkspaceTracker.Created?.Contains(state.Strategy) == true)
-                    {
-                        continue;
-                    }
-
-                    state.Push();
-                }
-            }
-
-            this.PushToWorkspaceTracker.Created = null;
-            this.PushToWorkspaceTracker.Changed = null;
-
-            return result;
         }
 
         protected void OnDatabasePushResponseNew(long workspaceId, long databaseId)

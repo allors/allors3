@@ -24,22 +24,22 @@ namespace Allors.Workspace.Adapters.Local
             return Task.FromResult<IInvokeResult>(result);
         }
 
-        public override Task<IPullResult> Pull(params Data.Pull[] pulls)
+        public override Task<IPullResult> Call(Data.Procedure procedure, params Data.Pull[] pull)
         {
             var result = new Pull(this, this.Workspace);
-            result.Execute(pulls);
+
+            result.Execute(procedure);
+            result.Execute(pull);
 
             this.OnPulled(result);
 
             return Task.FromResult<IPullResult>(result);
         }
 
-        public override Task<IPullResult> Call(Data.Procedure procedure, params Data.Pull[] pulls)
+        public override Task<IPullResult> Pull(params Data.Pull[] pull)
         {
             var result = new Pull(this, this.Workspace);
-
-            result.Execute(procedure);
-            result.Execute(pulls);
+            result.Execute(pull);
 
             this.OnPulled(result);
 
@@ -76,11 +76,6 @@ namespace Allors.Workspace.Adapters.Local
             {
                 var strategy = this.GetStrategy(@object.Id);
                 this.OnDatabasePushResponse(strategy);
-            }
-
-            if (!result.HasErrors)
-            {
-                this.PushToWorkspace(result);
             }
 
             return Task.FromResult<IPushResult>(result);
