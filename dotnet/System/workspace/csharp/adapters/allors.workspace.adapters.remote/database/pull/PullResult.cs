@@ -16,8 +16,8 @@ namespace Allors.Workspace.Adapters.Remote
         {
             this.Workspace = session.Workspace;
 
-            this.Objects = response.o.ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => session.GetOne<IObject>(pair.Value));
-            this.Collections = response.c.ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => pair.Value.Select(session.GetOne<IObject>).ToArray());
+            this.Objects = response.o.ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => session.Instantiate<IObject>(pair.Value));
+            this.Collections = response.c.ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => pair.Value.Select(session.Instantiate<IObject>).ToArray());
             this.Values = response.v.ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => pair.Value);
         }
 

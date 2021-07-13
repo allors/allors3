@@ -23,7 +23,7 @@ namespace Allors.Workspace.Adapters.Local
         public IEnumerable<Role> Roles => this.derivationError.Relations
             .Select(v =>
                 new Role(
-                    this.session.GetOne<IObject>(v.Association.Id),
+                    this.session.Instantiate<IObject>(v.Association.Id),
                     (IRelationType)this.session.Workspace.DatabaseConnection.Configuration.MetaPopulation.FindByTag(v.RelationType.Tag)));
 
         public string Message => this.derivationError.Message;

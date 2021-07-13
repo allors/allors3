@@ -40,8 +40,8 @@ namespace Tests.Workspace
 
             var session2 = this.Workspace.CreateSession();
 
-            var workspaceOrganisation2 = session2.GetOne(workspaceOrganisation1);
-            var databasePerson2 = session2.GetOne(databasePerson1);
+            var workspaceOrganisation2 = session2.Instantiate(workspaceOrganisation1);
+            var databasePerson2 = session2.Instantiate(databasePerson1);
 
             Assert.Equal(databasePerson2, workspaceOrganisation2.WorkspaceDatabaseOwner);
             Assert.Equal(databasePerson1, workspaceOrganisation1.WorkspaceDatabaseOwner);
@@ -69,7 +69,7 @@ namespace Tests.Workspace
 
             var session2 = this.Workspace.CreateSession();
 
-            var workspaceOrganisation2 = session2.GetOne(workspaceOrganisation1);
+            var workspaceOrganisation2 = session2.Instantiate(workspaceOrganisation1);
 
             workspaceOrganisation1.RemoveWorkspaceDatabaseOwner();
 
@@ -93,8 +93,8 @@ namespace Tests.Workspace
 
             var session2 = this.Workspace.CreateSession();
 
-            var workspaceOrganisation2 = session2.GetOne(workspaceOrganisation1);
-            var workspacePerson2 = session2.GetOne(workspacePerson1);
+            var workspaceOrganisation2 = session2.Instantiate(workspaceOrganisation1);
+            var workspacePerson2 = session2.Instantiate(workspacePerson1);
 
             Assert.Equal(workspacePerson2, workspaceOrganisation2.WorkspaceWorkspaceOwner);
             Assert.Equal(workspacePerson1, workspaceOrganisation1.WorkspaceWorkspaceOwner);
@@ -114,7 +114,7 @@ namespace Tests.Workspace
 
             var session2 = this.Workspace.CreateSession();
 
-            var workspaceOrganisation2 = session2.GetOne(workspaceOrganisation1);
+            var workspaceOrganisation2 = session2.Instantiate(workspaceOrganisation1);
 
             Assert.NotNull(workspaceOrganisation2.WorkspaceWorkspaceOwner);
 
@@ -168,6 +168,7 @@ namespace Tests.Workspace
 
             var organisation2 = result.GetObject<Organisation>();
 
+            await session1.Pull(pulls);
             organisation1.Owner = session1.Create<Person>();
 
             await session1.Push();

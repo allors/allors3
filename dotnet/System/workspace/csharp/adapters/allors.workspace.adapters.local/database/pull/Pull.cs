@@ -98,11 +98,11 @@ namespace Allors.Workspace.Adapters.Local
 
         public IDictionary<string, IObject[]> Collections =>
             this.collections ??= this.DatabaseCollectionsByName.ToDictionary(v => v.Key,
-                v => v.Value.Select(w => this.Session.GetOne<IObject>(w.Id)).ToArray());
+                v => v.Value.Select(w => this.Session.Instantiate<IObject>(w.Id)).ToArray());
 
         public IDictionary<string, IObject> Objects =>
             this.objects ??= this.DatabaseObjectByName.ToDictionary(v => v.Key,
-                v => this.Session.GetOne<IObject>(v.Value.Id));
+                v => this.Session.Instantiate<IObject>(v.Value.Id));
 
         public IDictionary<string, object> Values => this.ValueByName;
 

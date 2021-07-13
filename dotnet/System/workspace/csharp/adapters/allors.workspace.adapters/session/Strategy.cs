@@ -100,7 +100,7 @@ namespace Allors.Workspace.Adapters
             };
 
         public T GetCompositeRole<T>(IRoleType roleType) where T : IObject =>
-            this.Session.GetOne<T>(roleType.Origin switch
+            this.Session.Instantiate<T>(roleType.Origin switch
             {
                 Origin.Session => this.Session.GetCompositeRole(this, roleType),
                 Origin.Workspace => this.WorkspaceOriginState?.GetCompositeRole(roleType),
@@ -118,7 +118,7 @@ namespace Allors.Workspace.Adapters
                 _ => throw new ArgumentException("Unsupported Origin")
             };
 
-            return roles == null ? Array.Empty<T>() : this.Session.GetMany<T>(roles);
+            return roles == null ? Array.Empty<T>() : this.Session.Instantiate<T>(roles);
         }
 
         public void SetRole(IRoleType roleType, object value)
@@ -289,7 +289,7 @@ namespace Allors.Workspace.Adapters
             }
 
             var association = this.Session.SessionOriginState.GetCompositeRole(this.Id, associationType);
-            return association != null ? this.Session.GetOne<T>(association) : default;
+            return association != null ? this.Session.Instantiate<T>(association) : default;
         }
 
         public IEnumerable<T> GetCompositesAssociation<T>(IAssociationType associationType) where T : IObject
@@ -300,7 +300,7 @@ namespace Allors.Workspace.Adapters
             }
 
             var association = this.Session.SessionOriginState.GetCompositesRole(this.Id, associationType);
-            return association.IsEmpty ? Array.Empty<T>() : association.Select(v => this.Session.GetOne<T>(v)).ToArray();
+            return association.IsEmpty ? Array.Empty<T>() : association.Select(v => this.Session.Instantiate<T>(v)).ToArray();
         }
 
         public bool CanRead(IRoleType roleType) => this.DatabaseOriginState?.CanRead(roleType) ?? true;

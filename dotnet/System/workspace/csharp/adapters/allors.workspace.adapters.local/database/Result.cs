@@ -27,11 +27,11 @@ namespace Allors.Workspace.Adapters.Local
 
         public string ErrorMessage { get; protected set; }
 
-        public IEnumerable<IObject> VersionErrors => this.versionErrors?.Select(v => this.Session.GetOne<IObject>(v));
+        public IEnumerable<IObject> VersionErrors => this.versionErrors?.Select(v => this.Session.Instantiate<IObject>(v));
 
         public IEnumerable<IObject> AccessErrors => this.accessErrorStrategies?.Select(v => v.Object);
 
-        public IEnumerable<IObject> MissingErrors => this.Session.GetMany<IObject>(this.databaseMissingIds);
+        public IEnumerable<IObject> MissingErrors => this.Session.Instantiate<IObject>(this.databaseMissingIds);
 
         public IEnumerable<IDerivationError> DerivationErrors => this.derivationErrors
             ?.Select<Database.Derivations.IDerivationError, IDerivationError>(v =>

@@ -26,11 +26,11 @@ namespace Allors.Workspace.Adapters.Remote
 
         public string ErrorMessage => this.response._e;
 
-        public IEnumerable<IObject> VersionErrors => this.session.GetMany<IObject>(this.response._v);
+        public IEnumerable<IObject> VersionErrors => this.session.Instantiate<IObject>(this.response._v);
 
-        public IEnumerable<IObject> AccessErrors => this.session.GetMany<IObject>(this.response._a);
+        public IEnumerable<IObject> AccessErrors => this.session.Instantiate<IObject>(this.response._a);
 
-        public IEnumerable<IObject> MissingErrors => this.session.GetMany<IObject>(this.response._m);
+        public IEnumerable<IObject> MissingErrors => this.session.Instantiate<IObject>(this.response._m);
 
         public IEnumerable<IDerivationError> DerivationErrors
         {

@@ -106,15 +106,13 @@ namespace Allors.Workspace.Adapters.Local
             return (T)strategy.Object;
         }
 
-        private Adapters.Strategy InstantiateDatabaseStrategy(long id)
+        private void InstantiateDatabaseStrategy(long id)
         {
             var databaseRecord = this.Workspace.DatabaseConnection.GetRecord(id);
             var strategy = new Strategy(this, (DatabaseRecord)databaseRecord);
             this.AddStrategy(strategy);
 
             this.ChangeSetTracker.OnInstantiated(strategy);
-
-            return strategy;
         }
 
         protected override Adapters.Strategy InstantiateWorkspaceStrategy(long id)
@@ -141,7 +139,7 @@ namespace Allors.Workspace.Adapters.Local
             {
                 if (this.StrategyByWorkspaceId.TryGetValue(databaseObject.Id, out var strategy))
                 {
-                    ((DatabaseOriginState)strategy.DatabaseOriginState).OnPulled();
+                    strategy.DatabaseOriginState.OnPulled();
                 }
                 else
                 {

@@ -62,36 +62,36 @@ namespace Allors.Workspace.Adapters
 
         public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>());
 
-        public T GetOne<T>(IObject @object) where T : IObject => this.GetOne<T>(@object.Id);
+        public T Instantiate<T>(IObject @object) where T : IObject => this.Instantiate<T>(@object.Id);
 
-        public T GetOne<T>(T @object) where T : IObject => this.GetOne<T>(@object.Id);
+        public T Instantiate<T>(T @object) where T : IObject => this.Instantiate<T>(@object.Id);
 
-        public T GetOne<T>(long? id) where T : IObject => id.HasValue ? this.GetOne<T>((long)id) : default;
+        public T Instantiate<T>(long? id) where T : IObject => id.HasValue ? this.Instantiate<T>((long)id) : default;
 
-        public T GetOne<T>(long id) where T : IObject => (T)this.GetStrategy(id)?.Object;
+        public T Instantiate<T>(long id) where T : IObject => (T)this.GetStrategy(id)?.Object;
 
-        public T GetOne<T>(string idAsString) where T : IObject => long.TryParse(idAsString, out var id) ? (T)this.GetStrategy(id)?.Object : default;
+        public T Instantiate<T>(string idAsString) where T : IObject => long.TryParse(idAsString, out var id) ? (T)this.GetStrategy(id)?.Object : default;
 
-        public IEnumerable<T> GetMany<T>(IEnumerable<IObject> objects) where T : IObject => objects.Select(this.GetOne<T>);
+        public IEnumerable<T> Instantiate<T>(IEnumerable<IObject> objects) where T : IObject => objects.Select(this.Instantiate<T>);
 
-        public IEnumerable<T> GetMany<T>(IEnumerable<T> objects) where T : IObject => objects.Select(this.GetOne);
+        public IEnumerable<T> Instantiate<T>(IEnumerable<T> objects) where T : IObject => objects.Select(this.Instantiate);
 
-        public IEnumerable<T> GetMany<T>(IEnumerable<long> ids) where T : IObject => ids.Select(this.GetOne<T>);
+        public IEnumerable<T> Instantiate<T>(IEnumerable<long> ids) where T : IObject => ids.Select(this.Instantiate<T>);
 
-        public IEnumerable<T> GetMany<T>(IEnumerable<string> ids) where T : IObject => this.GetMany<T>(ids.Select(
+        public IEnumerable<T> Instantiate<T>(IEnumerable<string> ids) where T : IObject => this.Instantiate<T>(ids.Select(
             v =>
             {
                 long.TryParse(v, out var id);
                 return id;
             }));
 
-        public IEnumerable<T> GetAll<T>() where T : IObject
+        public IEnumerable<T> Instantiate<T>() where T : IObject
         {
             var objectType = (IComposite)this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>();
-            return this.GetAll<T>(objectType);
+            return this.Instantiate<T>(objectType);
         }
 
-        public IEnumerable<T> GetAll<T>(IComposite objectType) where T : IObject
+        public IEnumerable<T> Instantiate<T>(IComposite objectType) where T : IObject
         {
             foreach (var @class in objectType.Classes)
             {
