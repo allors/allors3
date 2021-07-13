@@ -263,9 +263,8 @@ namespace Tests.Workspace
             Assert.Equal(person1, organisation.Owner);
         }
 
-
         [Fact]
-        public async void SessionSession_RemoveRole()
+        public async void SessionSession_SetRole()
         {
             await this.Login("administrator");
 
@@ -276,6 +275,24 @@ namespace Tests.Workspace
             organisation.SessionSessionOwner = person1;
 
             Assert.Equal(person1, organisation.SessionSessionOwner);
+        }
+
+        [Fact]
+        public async void SessionSession_RemoveRole()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var organisation1 = session.Create<SessionOrganisation>();
+            var person1 = session.Create<SessionPerson>();
+            organisation1.SessionSessionOwner = person1;
+
+            Assert.Equal(person1, organisation1.SessionSessionOwner);
+
+            organisation1.RemoveSessionSessionOwner();
+
+            Assert.Null(organisation1.SessionSessionOwner);
         }
     }
 }
