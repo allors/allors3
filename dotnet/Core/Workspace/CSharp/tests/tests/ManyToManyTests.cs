@@ -23,13 +23,17 @@ namespace Tests.Workspace
 
             var session1 = this.Workspace.CreateSession();
 
-            var result = await session1.Pull(new[]
+            #region pulls
+            var pulls = new[]
             {
                 new Pull
                 {
                     Extent = new Filter(this.M.C1)
                 }
-            });
+            };
+            #endregion
+
+            var result = await session1.Pull(pulls);
 
             var session1c1 = result.GetCollection<C1>().First();
             var session1c12 = session1.Create<C1>();
@@ -39,6 +43,7 @@ namespace Tests.Workspace
             await session1.Push();
 
             var session2 = this.Workspace.CreateSession();
+            await session2.Pull(pulls);
 
             var session2c1 = session2.Instantiate<C1>(session1c1);
 
@@ -73,6 +78,7 @@ namespace Tests.Workspace
             await session1.Push();
 
             var session2 = this.Workspace.CreateSession();
+            await session2.Pull(pulls);
 
             var session2c1 = session2.Instantiate<C1>(session1c1);
 

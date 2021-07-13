@@ -54,13 +54,15 @@ namespace Tests.Workspace
 
             var session1 = this.Workspace.CreateSession();
 
-            var result = await session1.Pull(new[]
-            {
+            var pulls = new[]
+                        {
                 new Pull
                 {
                     Extent = new Filter(this.M.Person)
                 }
-            });
+            };
+
+            var result = await session1.Pull(pulls);
 
             var workspaceOrganisation1 = session1.Create<WorkspaceOrganisation>();
             workspaceOrganisation1.WorkspaceDatabaseOwner = result.GetCollection<Person>().First();
@@ -68,6 +70,7 @@ namespace Tests.Workspace
             await session1.Push();
 
             var session2 = this.Workspace.CreateSession();
+            await session2.Pull(pulls);
 
             var workspaceOrganisation2 = session2.Instantiate(workspaceOrganisation1);
 
