@@ -15,6 +15,7 @@ namespace Allors.Repository
     [Id("1467598c-6e4c-4d34-9831-ee36026495b6")]
     #endregion
     [Workspace(Default)]
+    [Origin(Origin.Session)]
     public partial class SessionC2 : Object, DerivationCounted, SessionI2
     {
         #region inherited properties
