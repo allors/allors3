@@ -16,83 +16,306 @@ namespace Tests.Workspace
         {
         }
 
+        #region WorkspaceWorkspace
+
         [Fact]
-        public async void WorkspaceDatabase_SetRole()
+        public async void WorkspaceWorkspace_SetRole_WithoutPush()
         {
             await this.Login("administrator");
 
             var session1 = this.Workspace.CreateSession();
 
-            #region pulls
-            var pulls = new[]
-            {
-                new Pull
-                {
-                    Extent = new Filter(this.M.C1)
-                }
-            };
-            #endregion
+            var c1 = session1.Create<WorkspaceC1>();
+            var c2 = session1.Create<WorkspaceC2>();
 
-            var result = await session1.Pull(pulls);
+            c1.AddWorkspaceC1WorkspaceC2Many2Many(c2);
 
-            var session1c1 = result.GetCollection<C1>().First();
-            var session1c12 = session1.Create<C1>();
-
-            session1c1.AddC1C1Many2Many(session1c12);
-
-            await session1.Push();
-
-            var session2 = this.Workspace.CreateSession();
-            await session2.Pull(pulls);
-
-            var session2c1 = session2.Instantiate<C1>(session1c1);
-
-            Assert.Contains<C1>(session1c12, session1c1.C1C1Many2Manies);
-            Assert.Contains<C1>(session1c12, session2c1.C1C1Many2Manies);
+            Assert.Contains(c2, c1.WorkspaceC1WorkspaceC2Many2Manies);
         }
 
         [Fact]
-        public async void WorkspaceDatabase_RemoveRole()
+        public async void WorkspaceWorkspace_SetRole_WithPush()
         {
             await this.Login("administrator");
 
             var session1 = this.Workspace.CreateSession();
 
+            var c1 = session1.Create<WorkspaceC1>();
+            var c2 = session1.Create<WorkspaceC2>();
+
+            c1.AddWorkspaceC1WorkspaceC2Many2Many(c2);
+
+            Assert.Contains(c2, c1.WorkspaceC1WorkspaceC2Many2Manies);
+
+            await session1.Push();
+
+            Assert.Contains(c2, c1.WorkspaceC1WorkspaceC2Many2Manies);
+        }
+
+        [Fact]
+        public async void WorkspaceWorkspace_RemoveRole_WithoutPush()
+        {
+            await this.Login("administrator");
+
+            var session1 = this.Workspace.CreateSession();
+
+            var c1 = session1.Create<WorkspaceC1>();
+            var c2 = session1.Create<WorkspaceC2>();
+
+            c1.AddWorkspaceC1WorkspaceC2Many2Many(c2);
+
+            Assert.Contains(c2, c1.WorkspaceC1WorkspaceC2Many2Manies);
+
+            c1.RemoveWorkspaceC1WorkspaceC2Many2Many(c2);
+
+            Assert.DoesNotContain(c2, c1.WorkspaceC1WorkspaceC2Many2Manies);
+        }
+
+        [Fact]
+        public async void WorkspaceWorkspace_RemoveRole_WithPush()
+        {
+            await this.Login("administrator");
+
+            var session1 = this.Workspace.CreateSession();
+
+            var c1 = session1.Create<WorkspaceC1>();
+            var c2 = session1.Create<WorkspaceC2>();
+
+            c1.AddWorkspaceC1WorkspaceC2Many2Many(c2);
+
+            Assert.Contains(c2, c1.WorkspaceC1WorkspaceC2Many2Manies);
+
+            await session1.Push();
+
+            Assert.Contains(c2, c1.WorkspaceC1WorkspaceC2Many2Manies);
+
+            c1.RemoveWorkspaceC1WorkspaceC2Many2Many(c2);
+
+            Assert.DoesNotContain(c2, c1.WorkspaceC1WorkspaceC2Many2Manies);
+
+            await session1.Push();
+
+            Assert.DoesNotContain(c2, c1.WorkspaceC1WorkspaceC2Many2Manies);
+        }
+
+        #endregion
+
+        #region WorkspaceDatabase
+
+        [Fact]
+        public async void WorkspaceDatabase_SetRole_WithoutPush()
+        {
+            await this.Login("administrator");
+
+            var session1 = this.Workspace.CreateSession();
+
+            var c1 = session1.Create<WorkspaceC1>();
+            var c2 = session1.Create<C2>();
+
+            c1.AddWorkspaceC1DatabaseC2Many2Many(c2);
+
+            Assert.Contains(c2, c1.WorkspaceC1DatabaseC2Many2Manies);
+        }
+
+        [Fact]
+        public async void WorkspaceDatabase_SetRole_WithPush()
+        {
+            await this.Login("administrator");
+
+            var session1 = this.Workspace.CreateSession();
+
+            var c1 = session1.Create<WorkspaceC1>();
+            var c2 = session1.Create<C2>();
+
+            await session1.Push();
+
+            c1.AddWorkspaceC1DatabaseC2Many2Many(c2);
+
+            Assert.Contains(c2, c1.WorkspaceC1DatabaseC2Many2Manies);
+
+            await session1.Push();
+
+            Assert.Contains(c2, c1.WorkspaceC1DatabaseC2Many2Manies);
+        }
+
+        [Fact]
+        public async void WorkspaceDatabase_RemoveRole_WithoutPush()
+        {
+            await this.Login("administrator");
+
+            var session1 = this.Workspace.CreateSession();
+
+            var c1 = session1.Create<WorkspaceC1>();
+            var c2 = session1.Create<C2>();
+
+            c1.AddWorkspaceC1DatabaseC2Many2Many(c2);
+
+            Assert.Contains(c2, c1.WorkspaceC1DatabaseC2Many2Manies);
+
+            c1.RemoveWorkspaceC1DatabaseC2Many2Many(c2);
+
+            Assert.DoesNotContain(c2, c1.WorkspaceC1DatabaseC2Many2Manies);
+        }
+
+        [Fact]
+        public async void WorkspaceDatabase_RemoveRole_WithPush()
+        {
+            await this.Login("administrator");
+
+            var session1 = this.Workspace.CreateSession();
+
+            var c1 = session1.Create<WorkspaceC1>();
+            var c2 = session1.Create<C2>();
+
+            await session1.Push();
+
+            c1.AddWorkspaceC1DatabaseC2Many2Many(c2);
+
+            Assert.Contains(c2, c1.WorkspaceC1DatabaseC2Many2Manies);
+
+            await session1.Push();
+
+            Assert.Contains(c2, c1.WorkspaceC1DatabaseC2Many2Manies);
+
+            c1.RemoveWorkspaceC1DatabaseC2Many2Many(c2);
+
+            Assert.DoesNotContain(c2, c1.WorkspaceC1DatabaseC2Many2Manies);
+
+            await session1.Push();
+
+            Assert.DoesNotContain(c2, c1.WorkspaceC1DatabaseC2Many2Manies);
+        }
+
+        #endregion
+
+        #region DatabaseDatabase
+
+        [Fact]
+        public async void DatabaseDatabase_SetRole_WithoutPush()
+        {
+            await this.Login("administrator");
+
+            var session1 = this.Workspace.CreateSession();
+
+            var c1 = session1.Create<C1>();
+            var c2 = session1.Create<C2>();
+
+            c1.AddC1C2Many2Many(c2);
+
+            Assert.Contains(c2, c1.C1C2Many2Manies);
+        }
+
+        [Fact]
+        public async void DatabaseDatabase_SetRole_WithPush()
+        {
+            await this.Login("administrator");
+
+            var session1 = this.Workspace.CreateSession();
+
+            var c1 = session1.Create<C1>();
+            var c2 = session1.Create<C2>();
+
+            await session1.Push();
+
             #region pulls
+
             var pulls = new[]
             {
                 new Pull
                 {
                     Extent = new Filter(this.M.C1)
+                },
+                new Pull
+                {
+                    Extent = new Filter(this.M.C2)
                 }
             };
+
             #endregion
 
-            var result = await session1.Pull(pulls);
+            await session1.Pull(pulls);
 
-            var session1c1 = session1.Create<C1>();
-            var session1c12 = result.GetCollection<C1>().First();
+            c1.AddC1C2Many2Many(c2);
 
-            session1c1.AddC1C1Many2Many(session1c12);
-
-            await session1.Push();
-
-            var session2 = this.Workspace.CreateSession();
-            await session2.Pull(pulls);
-
-            var session2c1 = session2.Instantiate<C1>(session1c1);
-
-            session1c1.RemoveC1C1Many2Manies();
-
-            Assert.Empty(session1c1.C1C1Many2Manies);
-            Assert.Contains<C1>(session1c12, session2c1.C1C1Many2Manies);
+            Assert.Contains(c2, c1.C1C2Many2Manies);
 
             await session1.Push();
 
-            await session2.Pull(pulls);
+            // TODO:
+            await session1.Pull(pulls);
 
-            Assert.Empty(session1c1.C1C1Many2Manies);
-            Assert.Empty(session2c1.C1C1Many2Manies);
+            Assert.Contains(c2, c1.C1C2Many2Manies);
         }
+
+        [Fact]
+        public async void DatabaseDatabase_RemoveRole_WithoutPush()
+        {
+            await this.Login("administrator");
+
+            var session1 = this.Workspace.CreateSession();
+
+            var c1 = session1.Create<C1>();
+            var c2 = session1.Create<C2>();
+
+            c1.AddC1C2Many2Many(c2);
+
+            Assert.Contains(c2, c1.C1C2Many2Manies);
+
+            c1.RemoveC1C2Many2Many(c2);
+
+            Assert.DoesNotContain(c2, c1.C1C2Many2Manies);
+        }
+
+        [Fact]
+        public async void DatabaseDatabase_RemoveRole_WithPush()
+        {
+            await this.Login("administrator");
+
+            var session1 = this.Workspace.CreateSession();
+
+            var c1 = session1.Create<C1>();
+            var c2 = session1.Create<C2>();
+
+            await session1.Push();
+
+            #region pulls
+
+            var pulls = new[]
+            {
+                new Pull
+                {
+                    Extent = new Filter(this.M.C1)
+                },
+                new Pull
+                {
+                    Extent = new Filter(this.M.C2)
+                }
+            };
+
+            #endregion
+
+            await session1.Pull(pulls);
+
+            c1.AddC1C2Many2Many(c2);
+
+            Assert.Contains(c2, c1.C1C2Many2Manies);
+
+            await session1.Push();
+
+            // TODO:
+            await session1.Pull(pulls);
+
+            Assert.Contains(c2, c1.C1C2Many2Manies);
+
+            c1.RemoveC1C2Many2Many(c2);
+
+            Assert.DoesNotContain(c2, c1.C1C2Many2Manies);
+
+            await session1.Push();
+
+            Assert.DoesNotContain(c2, c1.C1C2Many2Manies);
+        }
+
+        #endregion
     }
 }
