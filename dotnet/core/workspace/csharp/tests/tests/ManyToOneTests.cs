@@ -37,6 +37,7 @@ namespace Tests.Workspace
             workspaceOrganisation1.WorkspaceDatabaseOwner = databasePerson1;
 
             await session1.Push();
+            await session1.PushToWorkspace();
 
             var session2 = this.Workspace.CreateSession();
 
@@ -68,6 +69,7 @@ namespace Tests.Workspace
             workspaceOrganisation1.WorkspaceDatabaseOwner = result.GetCollection<Person>().First();
 
             await session1.Push();
+            await session1.PushToWorkspace();
 
             var session2 = this.Workspace.CreateSession();
             await session2.Pull(pulls);
@@ -76,8 +78,16 @@ namespace Tests.Workspace
 
             workspaceOrganisation1.RemoveWorkspaceDatabaseOwner();
 
-            Assert.Null(workspaceOrganisation2.WorkspaceDatabaseOwner);
             Assert.Null(workspaceOrganisation1.WorkspaceDatabaseOwner);
+            Assert.NotNull(workspaceOrganisation2.WorkspaceDatabaseOwner);
+
+            await session1.Push();
+            await session1.PushToWorkspace();
+
+            await session2.PullFromWorkspace();
+
+            Assert.Null(workspaceOrganisation1.WorkspaceDatabaseOwner);
+            Assert.Null(workspaceOrganisation2.WorkspaceDatabaseOwner);
         }
 
         [Fact]
@@ -93,6 +103,7 @@ namespace Tests.Workspace
             workspaceOrganisation1.WorkspaceWorkspaceOwner = workspacePerson1;
 
             await session1.Push();
+            await session1.PushToWorkspace();
 
             var session2 = this.Workspace.CreateSession();
 
@@ -114,6 +125,7 @@ namespace Tests.Workspace
             workspaceOrganisation1.WorkspaceWorkspaceOwner = session1.Create<WorkspacePerson>();
 
             await session1.Push();
+            await session1.PushToWorkspace();
 
             var session2 = this.Workspace.CreateSession();
 
@@ -126,11 +138,8 @@ namespace Tests.Workspace
             Assert.NotNull(workspaceOrganisation2.WorkspaceWorkspaceOwner);
             Assert.Null(workspaceOrganisation1.WorkspaceWorkspaceOwner);
 
-            await session1.Push();
-            await session2.Pull(new Pull
-            {
-                Object = workspaceOrganisation1
-            });
+            await session1.PushToWorkspace();
+            await session2.PullFromWorkspace();
 
             Assert.Null(workspaceOrganisation2.WorkspaceWorkspaceOwner);
             Assert.Null(workspaceOrganisation1.WorkspaceWorkspaceOwner);

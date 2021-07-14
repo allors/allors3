@@ -175,28 +175,6 @@ namespace Tests.Workspace
             Assert.Equal(Version.WorkspaceInitial.Value, person.Strategy.Version);
         }
 
-
-        [Fact]
-        public async void PushShouldNotSync()
-        {
-            await this.Login("administrator");
-
-            var session = this.Workspace.CreateSession();
-
-            var c1 = session.Create<C1>();
-            c1.C1AllorsString = "A string";
-            c1.C1C1One2One = c1;
-            c1.AddC1C1One2Many(c1);
-
-            Assert.Equal(Version.WorkspaceInitial.Value, c1.Strategy.Version);
-
-            Assert.False((await session.Push()).HasErrors);
-
-            Assert.Throws<Exception>(() => c1.C1AllorsString);
-            Assert.Throws<Exception>(() => c1.C1C1One2One);
-            Assert.Throws<Exception>(() => c1.C1C1One2Manies.Any());
-        }
-
         [Fact]
         public async void PushShouldDerive()
         {

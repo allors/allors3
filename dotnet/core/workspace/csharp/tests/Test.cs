@@ -23,9 +23,9 @@ namespace Tests.Workspace
 
         protected abstract IProfile Profile { get; }
         
-        public async Task InitializeAsync() => await this.Profile.InitializeAsync();
+        public virtual async Task InitializeAsync() => await this.Profile.InitializeAsync();
 
-        public async Task DisposeAsync() => await this.Profile.DisposeAsync();
+        public virtual async Task DisposeAsync() => await this.Profile.DisposeAsync();
 
         protected async Task Login(string userName) => await this.Profile.Login(userName);
     }
