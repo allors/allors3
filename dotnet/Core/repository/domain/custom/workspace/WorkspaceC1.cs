@@ -18,231 +18,231 @@ namespace Allors.Repository
     public partial class WorkspaceC1 : WorkspaceI1, DerivationCounted, Object
     {
         #region inherited properties
-        public I1 WorkspaceI1I1Many2One { get; set; }
+        public WorkspaceI1 WorkspaceI1WorkspaceI1Many2One { get; set; }
 
-        public I12[] WorkspaceI1I12Many2Manies { get; set; }
+        public WorkspaceI12[] WorkspaceI1WorkspaceI12Many2Manies { get; set; }
 
-        public I2[] WorkspaceI1I2Many2Manies { get; set; }
+        public WorkspaceI2[] WorkspaceI1WorkspaceI2Many2Manies { get; set; }
 
-        public I2 WorkspaceI1I2Many2One { get; set; }
+        public WorkspaceI2 WorkspaceI1WorkspaceI2Many2One { get; set; }
 
         public string WorkspaceI1AllorsString { get; set; }
 
-        public I12 WorkspaceI1I12Many2One { get; set; }
+        public WorkspaceI12 WorkspaceI1WorkspaceI12Many2One { get; set; }
 
         public DateTime WorkspaceI1AllorsDateTime { get; set; }
 
-        public I2[] WorkspaceI1I2One2Manies { get; set; }
+        public WorkspaceI2[] WorkspaceI1WorkspaceI2One2Manies { get; set; }
 
-        public C2[] WorkspaceI1C2One2Manies { get; set; }
+        public WorkspaceC2[] WorkspaceI1WorkspaceC2One2Manies { get; set; }
 
-        public C1 WorkspaceI1C1One2One { get; set; }
+        public WorkspaceC1 WorkspaceI1WorkspaceC1One2One { get; set; }
 
         public int WorkspaceI1AllorsInteger { get; set; }
 
-        public C2[] WorkspaceI1C2Many2Manies { get; set; }
+        public WorkspaceC2[] WorkspaceI1WorkspaceC2Many2Manies { get; set; }
 
-        public I1[] WorkspaceI1I1One2Manies { get; set; }
+        public WorkspaceI1[] WorkspaceI1WorkspaceI1One2Manies { get; set; }
 
-        public I1[] WorkspaceI1I1Many2Manies { get; set; }
+        public WorkspaceI1[] WorkspaceI1WorkspaceI1Many2Manies { get; set; }
 
         public bool WorkspaceI1AllorsBoolean { get; set; }
 
         public decimal WorkspaceI1AllorsDecimal { get; set; }
 
-        public I12 WorkspaceI1I12One2One { get; set; }
+        public WorkspaceI12 WorkspaceI1WorkspaceI12One2One { get; set; }
 
-        public I2 WorkspaceI1I2One2One { get; set; }
+        public WorkspaceI2 WorkspaceI1WorkspaceI2One2One { get; set; }
 
-        public C2 WorkspaceI1C2One2One { get; set; }
+        public WorkspaceC2 WorkspaceI1WorkspaceC2One2One { get; set; }
 
-        public C1[] WorkspaceI1C1One2Manies { get; set; }
+        public WorkspaceC1[] WorkspaceI1WorkspaceC1One2Manies { get; set; }
 
         public byte[] WorkspaceI1AllorsBinary { get; set; }
 
-        public C1[] WorkspaceI1C1Many2Manies { get; set; }
+        public WorkspaceC1[] WorkspaceI1WorkspaceC1Many2Manies { get; set; }
 
         public double WorkspaceI1AllorsDouble { get; set; }
 
-        public I1 WorkspaceI1I1One2One { get; set; }
+        public WorkspaceI1 WorkspaceI1WorkspaceI1One2One { get; set; }
 
-        public C1 WorkspaceI1C1Many2One { get; set; }
+        public WorkspaceC1 WorkspaceI1WorkspaceC1Many2One { get; set; }
 
-        public I12[] WorkspaceI1I12One2Manies { get; set; }
+        public WorkspaceI12[] WorkspaceI1WorkspaceI12One2Manies { get; set; }
 
-        public C2 WorkspaceI1C2Many2One { get; set; }
+        public WorkspaceC2 WorkspaceI1WorkspaceC2Many2One { get; set; }
 
         public Guid WorkspaceI1AllorsUnique { get; set; }
 
         public byte[] WorkspaceI12AllorsBinary { get; set; }
 
-        public C2 WorkspaceI12C2One2One { get; set; }
+        public WorkspaceC2 WorkspaceI12WorkspaceC2One2One { get; set; }
 
         public double WorkspaceI12AllorsDouble { get; set; }
 
-        public I1 WorkspaceI12I1Many2One { get; set; }
+        public WorkspaceI1 WorkspaceI12WorkspaceI1Many2One { get; set; }
 
         public string WorkspaceI12AllorsString { get; set; }
 
-        public I12[] WorkspaceI12I12Many2Manies { get; set; }
+        public WorkspaceI12[] WorkspaceI12WorkspaceI12Many2Manies { get; set; }
 
         public decimal WorkspaceI12AllorsDecimal { get; set; }
 
-        public I2[] WorkspaceI12I2Many2Manies { get; set; }
+        public WorkspaceI2[] WorkspaceI12WorkspaceI2Many2Manies { get; set; }
 
-        public C2[] WorkspaceI12C2Many2Manies { get; set; }
+        public WorkspaceC2[] WorkspaceI12WorkspaceC2Many2Manies { get; set; }
 
-        public I1[] WorkspaceI12I1Many2Manies { get; set; }
+        public WorkspaceI1[] WorkspaceI12WorkspaceI1Many2Manies { get; set; }
 
-        public I12[] WorkspaceI12I12One2Manies { get; set; }
+        public WorkspaceI12[] WorkspaceI12WorkspaceI12One2Manies { get; set; }
 
         public string WorkspaceName { get; set; }
 
-        public C1[] WorkspaceI12C1Many2Manies { get; set; }
+        public WorkspaceC1[] WorkspaceI12WorkspaceC1Many2Manies { get; set; }
 
-        public I2 WorkspaceI12I2Many2One { get; set; }
+        public WorkspaceI2 WorkspaceI12WorkspaceI2Many2One { get; set; }
 
         public Guid WorkspaceI12AllorsUnique { get; set; }
 
         public int WorkspaceI12AllorsInteger { get; set; }
 
-        public I1[] WorkspaceI12I1One2Manies { get; set; }
+        public WorkspaceI1[] WorkspaceI12WorkspaceI1One2Manies { get; set; }
 
-        public C1 WorkspaceI12C1One2One { get; set; }
+        public WorkspaceC1 WorkspaceI12WorkspaceC1One2One { get; set; }
 
-        public I12 WorkspaceI12I12One2One { get; set; }
+        public WorkspaceI12 WorkspaceI12WorkspaceI12One2One { get; set; }
 
-        public I2 WorkspaceI12I2One2One { get; set; }
+        public WorkspaceI2 WorkspaceI12WorkspaceI2One2One { get; set; }
 
-        public I12[] WorkspaceDependencies { get; set; }
+        public WorkspaceI12[] WorkspaceDependencies { get; set; }
 
-        public I2[] WorkspaceI12I2One2Manies { get; set; }
+        public WorkspaceI2[] WorkspaceI12WorkspaceI2One2Manies { get; set; }
 
-        public C2 WorkspaceI12C2Many2One { get; set; }
+        public WorkspaceC2 WorkspaceI12WorkspaceC2Many2One { get; set; }
 
-        public I12 WorkspaceI12I12Many2One { get; set; }
+        public WorkspaceI12 WorkspaceI12WorkspaceI12Many2One { get; set; }
 
         public bool WorkspaceI12AllorsBoolean { get; set; }
 
-        public I1 WorkspaceI12I1One2One { get; set; }
+        public WorkspaceI1 WorkspaceI12WorkspaceI1One2One { get; set; }
 
-        public C1[] WorkspaceI12C1One2Manies { get; set; }
+        public WorkspaceC1[] WorkspaceI12WorkspaceC1One2Manies { get; set; }
 
-        public C1 WorkspaceI12C1Many2One { get; set; }
+        public WorkspaceC1 WorkspaceI12WorkspaceC1Many2One { get; set; }
 
         public DateTime WorkspaceI12AllorsDateTime { get; set; }
 
-        public I1 DatabaseI1I1Many2One { get; set; }
+        public I1 WorkspaceI1DatabaseI1Many2One { get; set; }
 
-        public I12[] DatabaseI1I12Many2Manies { get; set; }
+        public I12[] WorkspaceI1DatabaseI12Many2Manies { get; set; }
 
-        public I2[] DatabaseI1I2Many2Manies { get; set; }
+        public I2[] WorkspaceI1DatabaseI2Many2Manies { get; set; }
 
-        public I2 DatabaseI1I2Many2One { get; set; }
+        public I2 WorkspaceI1DatabaseI2Many2One { get; set; }
 
         public string DatabaseI1AllorsString { get; set; }
 
-        public I12 DatabaseI1I12Many2One { get; set; }
+        public I12 WorkspaceI1DatabaseI12Many2One { get; set; }
 
         public DateTime DatabaseI1AllorsDateTime { get; set; }
 
-        public I2[] DatabaseI1I2One2Manies { get; set; }
+        public I2[] WorkspaceI1DatabaseI2One2Manies { get; set; }
 
-        public C2[] DatabaseI1C2One2Manies { get; set; }
+        public C2[] WorkspaceI1DatabaseC2One2Manies { get; set; }
 
-        public C1 DatabaseI1C1One2One { get; set; }
+        public C1 WorkspaceI1DatabaseC1One2One { get; set; }
 
         public int DatabaseI1AllorsInteger { get; set; }
 
-        public C2[] DatabaseI1C2Many2Manies { get; set; }
+        public C2[] WorkspaceI1DatabaseC2Many2Manies { get; set; }
 
-        public I1[] DatabaseI1I1One2Manies { get; set; }
+        public I1[] WorkspaceI1DatabaseI1One2Manies { get; set; }
 
-        public I1[] DatabaseI1I1Many2Manies { get; set; }
+        public I1[] WorkspaceI1DatabaseI1Many2Manies { get; set; }
 
         public bool DatabaseI1AllorsBoolean { get; set; }
 
         public decimal DatabaseI1AllorsDecimal { get; set; }
 
-        public I12 DatabaseI1I12One2One { get; set; }
+        public I12 WorkspaceI1DatabaseI12One2One { get; set; }
 
-        public I2 DatabaseI1I2One2One { get; set; }
+        public I2 WorkspaceI1DatabaseI2One2One { get; set; }
 
-        public C2 DatabaseI1C2One2One { get; set; }
+        public C2 WorkspaceI1DatabaseC2One2One { get; set; }
 
-        public C1[] DatabaseI1C1One2Manies { get; set; }
+        public C1[] WorkspaceI1DatabaseC1One2Manies { get; set; }
 
         public byte[] DatabaseI1AllorsBinary { get; set; }
 
-        public C1[] DatabaseI1C1Many2Manies { get; set; }
+        public C1[] WorkspaceI1DatabaseC1Many2Manies { get; set; }
 
         public double DatabaseI1AllorsDouble { get; set; }
 
-        public I1 DatabaseI1I1One2One { get; set; }
+        public I1 WorkspaceI1DatabaseI1One2One { get; set; }
 
-        public C1 DatabaseI1C1Many2One { get; set; }
+        public C1 WorkspaceI1DatabaseC1Many2One { get; set; }
 
-        public I12[] DatabaseI1I12One2Manies { get; set; }
+        public I12[] WorkspaceI1DatabaseI12One2Manies { get; set; }
 
-        public C2 DatabaseI1C2Many2One { get; set; }
+        public C2 WorkspaceI1DatabaseC2Many2One { get; set; }
 
         public Guid DatabaseI1AllorsUnique { get; set; }
 
         public byte[] DatabaseI12AllorsBinary { get; set; }
 
-        public C2 DatabaseI12C2One2One { get; set; }
+        public C2 WorkspaceI12DatabaseC2One2One { get; set; }
 
         public double DatabaseI12AllorsDouble { get; set; }
 
-        public I1 DatabaseI12I1Many2One { get; set; }
+        public I1 WorkspaceI12DatabaseI1Many2One { get; set; }
 
         public string DatabaseI12AllorsString { get; set; }
 
-        public I12[] DatabaseI12I12Many2Manies { get; set; }
+        public I12[] WorkspaceI12DatabaseI12Many2Manies { get; set; }
 
         public decimal DatabaseI12AllorsDecimal { get; set; }
 
-        public I2[] DatabaseI12I2Many2Manies { get; set; }
+        public I2[] WorkspaceI12DatabaseI2Many2Manies { get; set; }
 
-        public C2[] DatabaseI12C2Many2Manies { get; set; }
+        public C2[] WorkspaceI12DatabaseC2Many2Manies { get; set; }
 
-        public I1[] DatabaseI12I1Many2Manies { get; set; }
+        public I1[] WorkspaceI12DatabaseI1Many2Manies { get; set; }
 
-        public I12[] DatabaseI12I12One2Manies { get; set; }
+        public I12[] WorkspaceI12DatabaseI12One2Manies { get; set; }
 
         public string DatabaseName { get; set; }
 
-        public C1[] DatabaseI12C1Many2Manies { get; set; }
+        public C1[] WorkspaceI12DatabaseC1Many2Manies { get; set; }
 
-        public I2 DatabaseI12I2Many2One { get; set; }
+        public I2 WorkspaceI12DatabaseI2Many2One { get; set; }
 
         public Guid DatabaseI12AllorsUnique { get; set; }
 
         public int DatabaseI12AllorsInteger { get; set; }
 
-        public I1[] DatabaseI12I1One2Manies { get; set; }
+        public I1[] WorkspaceI12DatabaseI1One2Manies { get; set; }
 
-        public C1 DatabaseI12C1One2One { get; set; }
+        public C1 WorkspaceI12DatabaseC1One2One { get; set; }
 
-        public I12 DatabaseI12I12One2One { get; set; }
+        public I12 WorkspaceI12DatabaseI12One2One { get; set; }
 
-        public I2 DatabaseI12I2One2One { get; set; }
+        public I2 WorkspaceI12DatabaseI2One2One { get; set; }
 
         public I12[] DatabaseDependencies { get; set; }
 
-        public I2[] DatabaseI12I2One2Manies { get; set; }
+        public I2[] WorkspaceI12DatabaseI2One2Manies { get; set; }
 
-        public C2 DatabaseI12C2Many2One { get; set; }
+        public C2 WorkspaceI12DatabaseC2Many2One { get; set; }
 
-        public I12 DatabaseI12I12Many2One { get; set; }
+        public I12 WorkspaceI12DatabaseI12Many2One { get; set; }
 
         public bool DatabaseI12AllorsBoolean { get; set; }
 
-        public I1 DatabaseI12I1One2One { get; set; }
+        public I1 WorkspaceI12DatabaseI1One2One { get; set; }
 
-        public C1[] DatabaseI12C1One2Manies { get; set; }
+        public C1[] WorkspaceI12DatabaseC1One2Manies { get; set; }
 
-        public C1 DatabaseI12C1Many2One { get; set; }
+        public C1 WorkspaceI12DatabaseC1Many2One { get; set; }
 
         public DateTime DatabaseI12AllorsDateTime { get; set; }
 
@@ -471,7 +471,7 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public C1[] WorkspaceC1C1Many2Manies { get; set; }
+        public WorkspaceC1[] WorkspaceC1WorkspaceC1Many2Manies { get; set; }
 
         #region Allors
         [Id("13a1ac52-cbd3-4219-b3e1-7c7fdcdf90e2")]
@@ -480,7 +480,7 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public C1 WorkspaceC1C1Many2One { get; set; }
+        public WorkspaceC1 WorkspaceC1WorkspaceC1Many2One { get; set; }
 
         #region Allors
         [Id("fb60c9ae-0a9e-4fa2-8fa2-d5a6960bcfe1")]
@@ -489,7 +489,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public C1[] WorkspaceC1C1One2Manies { get; set; }
+        public WorkspaceC1[] WorkspaceC1WorkspaceC1One2Manies { get; set; }
 
         #region Allors
         [Id("d4404cb1-c9b9-4ebe-9568-8dddc0a9e482")]
@@ -498,7 +498,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public C1 WorkspaceC1C1One2One { get; set; }
+        public WorkspaceC1 WorkspaceC1WorkspaceC1One2One { get; set; }
 
         #region Allors
         [Id("c7a013df-c73a-4878-911b-7c17eae52bfb")]
@@ -507,7 +507,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public C2[] WorkspaceC1C2Many2Manies { get; set; }
+        public WorkspaceC2[] WorkspaceC1WorkspaceC2Many2Manies { get; set; }
 
         #region Allors
         [Id("af8fdd90-5288-47bd-9df8-83a410836bde")]
@@ -516,7 +516,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public C2 WorkspaceC1C2Many2One { get; set; }
+        public WorkspaceC2 WorkspaceC1WorkspaceC2Many2One { get; set; }
 
         #region Allors
         [Id("bab4db1f-8c83-4c78-b268-6b79c1649266")]
@@ -525,7 +525,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public C2[] WorkspaceC1C2One2Manies { get; set; }
+        public WorkspaceC2[] WorkspaceC1WorkspaceC2One2Manies { get; set; }
 
         #region Allors
         [Id("f549984d-d894-4bd4-a8b3-b0facfb261d3")]
@@ -534,7 +534,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public C2 WorkspaceC1C2One2One { get; set; }
+        public WorkspaceC2 WorkspaceC1WorkspaceC2One2One { get; set; }
 
         #region Allors
         [Id("9f4e49b9-2819-4517-a6a5-38f9c08c5288")]
@@ -543,7 +543,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I12[] WorkspaceC1I12Many2Manies { get; set; }
+        public WorkspaceI12[] WorkspaceC1WorkspaceI12Many2Manies { get; set; }
 
         #region Allors
         [Id("21133757-db64-4096-b939-d52ac6a713ae")]
@@ -552,7 +552,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I12 WorkspaceC1I12Many2One { get; set; }
+        public WorkspaceI12 WorkspaceC1WorkspaceI12Many2One { get; set; }
 
         #region Allors
         [Id("649d7d79-5a85-4d2a-8604-92df80d1f532")]
@@ -561,7 +561,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I12[] WorkspaceC1I12One2Manies { get; set; }
+        public WorkspaceI12[] WorkspaceC1WorkspaceI12One2Manies { get; set; }
 
         #region Allors
         [Id("053edc8b-a580-4c57-b040-7345ac8f4d95")]
@@ -570,7 +570,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I12 WorkspaceC1I12One2One { get; set; }
+        public WorkspaceI12 WorkspaceC1WorkspaceI12One2One { get; set; }
 
         #region Allors
         [Id("b3dbe29e-8782-45f7-b3c3-5a4a3c9b127f")]
@@ -579,7 +579,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I1[] WorkspaceC1I1Many2Manies { get; set; }
+        public WorkspaceI1[] WorkspaceC1WorkspaceI1Many2Manies { get; set; }
 
         #region Allors
         [Id("0df01347-03d5-467b-a7a7-fb4114964f6c")]
@@ -588,7 +588,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I1 WorkspaceC1I1Many2One { get; set; }
+        public WorkspaceI1 WorkspaceC1WorkspaceI1Many2One { get; set; }
 
         #region Allors
         [Id("322c8a86-ea0a-4f09-844b-94f714e2e7f3")]
@@ -597,7 +597,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I1[] WorkspaceC1I1One2Manies { get; set; }
+        public WorkspaceI1[] WorkspaceC1WorkspaceI1One2Manies { get; set; }
 
         #region Allors
         [Id("ccb4599d-512d-4868-b0d2-d4c49e9101ac")]
@@ -606,7 +606,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I1 WorkspaceC1I1One2One { get; set; }
+        public WorkspaceI1 WorkspaceC1WorkspaceI1One2One { get; set; }
 
         #region Allors
         [Id("d62c480e-4803-47ec-94cf-f19c21357f22")]
@@ -615,7 +615,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I2[] WorkspaceC1I2Many2Manies { get; set; }
+        public WorkspaceI2[] WorkspaceC1WorkspaceI2Many2Manies { get; set; }
 
         #region Allors
         [Id("635ef67a-65ca-4c5b-b8d3-cc0009317cd5")]
@@ -624,7 +624,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I2 WorkspaceC1I2Many2One { get; set; }
+        public WorkspaceI2 WorkspaceC1WorkspaceI2Many2One { get; set; }
 
         #region Allors
         [Id("f7274131-b157-4e6e-bd20-20273e098cbd")]
@@ -633,7 +633,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
         [Multiplicity(Multiplicity.OneToMany)]
-        public I2[] WorkspaceC1I2One2Manies { get; set; }
+        public WorkspaceI2[] WorkspaceC1WorkspaceI2One2Manies { get; set; }
 
         #region Allors
         [Id("a501851a-b485-440b-a371-ac1699f97821")]
@@ -642,7 +642,7 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I2 WorkspaceC1I2One2One { get; set; }
+        public WorkspaceI2 WorkspaceC1WorkspaceI2One2One { get; set; }
 
         #endregion
 
@@ -852,7 +852,7 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public C1[] DatabaseC1C1Many2Manies { get; set; }
+        public C1[] WorkspaceC1DatabaseC1Many2Manies { get; set; }
 
         #region Allors
         [Id("1e3f7088-55d5-4e07-91c9-96e08c06d826")]
@@ -861,7 +861,7 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public C1 DatabaseC1C1Many2One { get; set; }
+        public C1 WorkspaceC1DatabaseC1Many2One { get; set; }
 
         #region Allors
         [Id("05e5b19a-ac7f-49dd-be46-ab5a27f83b8e")]
@@ -870,7 +870,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public C1[] DatabaseC1C1One2Manies { get; set; }
+        public C1[] WorkspaceC1DatabaseC1One2Manies { get; set; }
 
         #region Allors
         [Id("b989909b-22b0-4355-a3c8-f769beb0528c")]
@@ -879,7 +879,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public C1 DatabaseC1C1One2One { get; set; }
+        public C1 WorkspaceC1DatabaseC1One2One { get; set; }
 
         #region Allors
         [Id("45491d2d-ba05-43ad-ac8b-c9c4468556af")]
@@ -888,7 +888,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public C2[] DatabaseC1C2Many2Manies { get; set; }
+        public C2[] WorkspaceC1DatabaseC2Many2Manies { get; set; }
 
         #region Allors
         [Id("a583ad5e-d6a5-43de-b8f7-c2a0de0d629e")]
@@ -897,7 +897,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public C2 DatabaseC1C2Many2One { get; set; }
+        public C2 WorkspaceC1DatabaseC2Many2One { get; set; }
 
         #region Allors
         [Id("3764a1a2-94bc-45bf-be19-030956dbd819")]
@@ -906,7 +906,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public C2[] DatabaseC1C2One2Manies { get; set; }
+        public C2[] WorkspaceC1DatabaseC2One2Manies { get; set; }
 
         #region Allors
         [Id("321b9054-b325-4be0-890a-5af5696f68b6")]
@@ -915,7 +915,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public C2 DatabaseC1C2One2One { get; set; }
+        public C2 WorkspaceC1DatabaseC2One2One { get; set; }
 
         #region Allors
         [Id("21278eee-e78a-494d-b062-a16cba401fd8")]
@@ -924,7 +924,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I12[] DatabaseC1I12Many2Manies { get; set; }
+        public I12[] WorkspaceC1DatabaseI12Many2Manies { get; set; }
 
         #region Allors
         [Id("64da3515-fa2a-4121-b4a7-151e85da423b")]
@@ -933,7 +933,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I12 DatabaseC1I12Many2One { get; set; }
+        public I12 WorkspaceC1DatabaseI12Many2One { get; set; }
 
         #region Allors
         [Id("d0d85fbe-5815-4cdd-b6a9-b519a5ed58b5")]
@@ -942,7 +942,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I12[] DatabaseC1I12One2Manies { get; set; }
+        public I12[] WorkspaceC1DatabaseI12One2Manies { get; set; }
 
         #region Allors
         [Id("09cb1c23-1b2c-47e0-806c-f5739b8f74a9")]
@@ -951,7 +951,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I12 DatabaseC1I12One2One { get; set; }
+        public I12 WorkspaceC1DatabaseI12One2One { get; set; }
 
         #region Allors
         [Id("5253065d-9253-41fa-afc8-b6b9f4bfe325")]
@@ -960,7 +960,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I1[] DatabaseC1I1Many2Manies { get; set; }
+        public I1[] WorkspaceC1DatabaseI1Many2Manies { get; set; }
 
         #region Allors
         [Id("b57a38db-69d2-4837-9e3a-afb85dbbe6ab")]
@@ -969,7 +969,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I1 DatabaseC1I1Many2One { get; set; }
+        public I1 WorkspaceC1DatabaseI1Many2One { get; set; }
 
         #region Allors
         [Id("65670bd0-f3a2-46d7-902c-08d5380c7fa2")]
@@ -978,7 +978,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I1[] DatabaseC1I1One2Manies { get; set; }
+        public I1[] WorkspaceC1DatabaseI1One2Manies { get; set; }
 
         #region Allors
         [Id("1800ec28-b5dc-43a5-bece-919b6ca24da0")]
@@ -987,7 +987,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I1 DatabaseC1I1One2One { get; set; }
+        public I1 WorkspaceC1DatabaseI1One2One { get; set; }
 
         #region Allors
         [Id("86208458-2000-40a7-aba9-2d60f1310413")]
@@ -996,7 +996,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I2[] DatabaseC1I2Many2Manies { get; set; }
+        public I2[] WorkspaceC1DatabaseI2Many2Manies { get; set; }
 
         #region Allors
         [Id("45929620-ce95-4dfb-b4ed-005266e40a5e")]
@@ -1005,7 +1005,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I2 DatabaseC1I2Many2One { get; set; }
+        public I2 WorkspaceC1DatabaseI2Many2One { get; set; }
 
         #region Allors
         [Id("0b39c9cd-923e-4024-aa93-6e02d71bf567")]
@@ -1014,7 +1014,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
         [Multiplicity(Multiplicity.OneToMany)]
-        public I2[] DatabaseC1I2One2Manies { get; set; }
+        public I2[] WorkspaceC1DatabaseI2One2Manies { get; set; }
 
         #region Allors
         [Id("3567d86a-e3cb-4bbe-aef1-0b30fa18161e")]
@@ -1023,7 +1023,7 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         [Origin(Origin.Workspace)]
-        public I2 DatabaseC1I2One2One { get; set; }
+        public I2 WorkspaceC1DatabaseI2One2One { get; set; }
 
         #endregion
 
