@@ -14,6 +14,7 @@ namespace Allors.Workspace.Adapters
         {
             this.DatabaseRecord = record;
             this.PreviousRecord = this.DatabaseRecord;
+            this.IsPushed = false;
         }
 
         public long Version => this.DatabaseRecord?.Version ?? Allors.Version.WorkspaceInitial;
@@ -26,7 +27,9 @@ namespace Allors.Workspace.Adapters
 
         protected override IRecord Record => this.DatabaseRecord;
 
-        protected DatabaseRecord DatabaseRecord { get; private set; }
+        internal protected DatabaseRecord DatabaseRecord { get; private set; }
+
+        public bool IsPushed { get; private set; }
 
         public bool CanRead(IRoleType roleType)
         {
@@ -47,6 +50,11 @@ namespace Allors.Workspace.Adapters
 
         public bool CanWrite(IRoleType roleType)
         {
+            if (this.IsPushed)
+            {
+                return false;
+            }
+
             if (!this.ExistRecord)
             {
                 return true;
@@ -79,15 +87,13 @@ namespace Allors.Workspace.Adapters
             return this.DatabaseRecord.IsPermitted(permission);
         }
 
-        public void PushResponse(DatabaseRecord newDatabaseRecord)
-        {
-            this.DatabaseRecord = newDatabaseRecord;
-            this.ChangedRoleByRelationType = null;
-        }
+        public void OnPushed() => this.IsPushed = true;
 
-        public void OnPulled() =>
-            // TODO: check for overwrites
+        public void OnPulled()
+        {
+            this.IsPushed = false;
             this.DatabaseRecord = this.Session.Workspace.DatabaseConnection.GetRecord(this.Id);
+        }
 
         protected override void OnChange()
         {

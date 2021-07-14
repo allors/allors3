@@ -195,13 +195,6 @@ namespace Allors.Workspace.Adapters.Remote
             return missingPermissionIds != null ? new SecurityRequest { p = missingPermissionIds.ToArray() } : null;
         }
 
-        public override Adapters.DatabaseRecord OnPushResponse(IClass @class, long id)
-        {
-            var record = new DatabaseRecord(this, @class, id, 0);
-            this.recordsById[record.Id] = record;
-            return record;
-        }
-
         public override long GetPermission(IClass @class, IOperandType operandType, Operations operation)
         {
             switch (operation)

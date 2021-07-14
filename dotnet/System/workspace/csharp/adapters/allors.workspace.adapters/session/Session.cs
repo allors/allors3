@@ -292,35 +292,12 @@ namespace Allors.Workspace.Adapters
         {
             var strategy = this.StrategyByWorkspaceId[workspaceId];
             this.PushToDatabaseTracker.Created.Remove(strategy);
-
-            this.RemoveStrategy(strategy);
             strategy.OnDatabasePushNewId(databaseId);
             this.AddStrategy(strategy);
-
-            this.OnDatabasePushResponse(strategy);
-
-        }
-
-        protected void OnDatabasePushResponse(Strategy strategy)
-        {
-            var databaseRecord = this.Workspace.DatabaseConnection.OnPushResponse(strategy.Class, strategy.Id);
-            strategy.OnDatabasePushResponse(databaseRecord);
+            strategy.OnDatabasePushed();
         }
 
         internal static bool IsNewId(long id) => id < 0;
-
-        private void RemoveStrategy(Strategy strategy)
-        {
-            this.StrategyByWorkspaceId.Remove(strategy.Id);
-
-            var @class = strategy.Class;
-            if (!this.strategiesByClass.TryGetValue(@class, out var strategies))
-            {
-                return;
-            }
-
-            strategies.Remove(strategy);
-        }
 
         private IEnumerable<Strategy> StrategiesForClass(IComposite objectType)
         {

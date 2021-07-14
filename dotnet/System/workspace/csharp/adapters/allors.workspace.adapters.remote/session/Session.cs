@@ -104,13 +104,11 @@ namespace Allors.Workspace.Adapters.Remote
                 foreach (var id in pushRequest.o.Select(v => v.d))
                 {
                     var strategy = this.GetStrategy(id);
-                    this.OnDatabasePushResponse(strategy);
+                    strategy.OnDatabasePushed();
                 }
             }
 
-            var result = new PushResult(this, pushResponse);
-
-            return result;
+            return new PushResult(this, pushResponse);
         }
 
         public override T Create<T>(IClass @class)
@@ -133,15 +131,13 @@ namespace Allors.Workspace.Adapters.Remote
             return (T)strategy.Object;
         }
 
-        private Adapters.Strategy InstantiateDatabaseStrategy(long id)
+        private void InstantiateDatabaseStrategy(long id)
         {
             var databaseRecord = (DatabaseRecord)base.Workspace.DatabaseConnection.GetRecord(id);
             var strategy = new Strategy(this, databaseRecord);
             this.AddStrategy(strategy);
 
             this.ChangeSetTracker.OnInstantiated(strategy);
-
-            return strategy;
         }
 
         protected override Adapters.Strategy InstantiateWorkspaceStrategy(long id)
@@ -164,7 +160,6 @@ namespace Allors.Workspace.Adapters.Remote
             var syncRequest = this.Workspace.DatabaseConnection.OnPullResponse(pullResponse);
             if (syncRequest.o.Length > 0)
             {
-                Task ret;
                 var database = (DatabaseConnection)base.Workspace.DatabaseConnection;
                 var syncResponse = await database.Sync(syncRequest);
                 var securityRequest = database.OnSyncResponse(syncResponse);
@@ -177,7 +172,7 @@ namespace Allors.Workspace.Adapters.Remote
                     }
                     else
                     {
-                        ((DatabaseOriginState)strategy.DatabaseOriginState).OnPulled();
+                        strategy.DatabaseOriginState.OnPulled();
                     }
                 }
 
@@ -198,7 +193,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (this.StrategyByWorkspaceId.TryGetValue(v.i, out var strategy))
                 {
-                    ((DatabaseOriginState)strategy.DatabaseOriginState).OnPulled();
+                    strategy.DatabaseOriginState.OnPulled();
                 }
                 else
                 {

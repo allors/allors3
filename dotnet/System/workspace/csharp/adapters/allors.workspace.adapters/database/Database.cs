@@ -47,8 +47,6 @@ namespace Allors.Workspace.Adapters
 
         public abstract long GetPermission(IClass @class, IOperandType operandType, Operations operation);
 
-        public abstract DatabaseRecord OnPushResponse(IClass @class, long id);
-
         public long NextId() => this.idGenerator.Next();
     }
 }

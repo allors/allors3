@@ -22,6 +22,8 @@ namespace Allors.Workspace.Adapters
 
         public long Version { get; }
 
+        public bool IsPushed { get; private set; }
+
         public abstract object GetRole(IRoleType roleType);
 
         public abstract bool IsPermitted(long permission);

@@ -176,9 +176,6 @@ namespace Tests.Workspace
 
             await session1.Push();
 
-            // TODO: Koen (Read/Write)
-            //await session1.Pull(pulls);
-
             Assert.NotNull(organisation1.Owner);
             Assert.Null(organisation2.Owner);
 
@@ -220,7 +217,8 @@ namespace Tests.Workspace
                            Include = new[] {new Node(this.M.Organisation.Owner)}
                        }
                    }
-               }            };
+               }
+            };
             #endregion
 
             var pullResult = await session2.Pull(pulls);

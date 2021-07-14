@@ -75,7 +75,7 @@ namespace Allors.Workspace.Adapters.Local
             foreach (var @object in result.Objects)
             {
                 var strategy = this.GetStrategy(@object.Id);
-                this.OnDatabasePushResponse(strategy);
+                strategy.OnDatabasePushed();
             }
 
             return Task.FromResult<IPushResult>(result);

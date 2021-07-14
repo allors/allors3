@@ -330,6 +330,6 @@ namespace Allors.Workspace.Adapters
 
         public void OnDatabasePushNewId(long newId) => this.Id = newId;
 
-        public void OnDatabasePushResponse(DatabaseRecord databaseRecord) => this.DatabaseOriginState.PushResponse(databaseRecord);
+        public void OnDatabasePushed() => this.DatabaseOriginState.OnPushed();
     }
 }
