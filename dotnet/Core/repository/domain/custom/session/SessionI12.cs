@@ -93,7 +93,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C1[] SessionI12C1Many2Manies { get; set; }
+        SessionC1[] SessionI12SessionC1Many2Manies { get; set; }
 
         #region Allors
         [Id("666cb267-c669-4300-9d1d-a5c93780088e")]
@@ -102,7 +102,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C1[] SessionI12C1One2Manies { get; set; }
+        SessionC1[] SessionI12SessionC1One2Manies { get; set; }
 
         #region Allors
         [Id("5b7da3fc-41ca-46be-9442-7ff3e8289301")]
@@ -111,7 +111,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C1 SessionI12C1Many2One { get; set; }
+        SessionC1 SessionI12SessionC1Many2One { get; set; }
 
         #region Allors
         [Id("1ba88357-1460-4bcf-ae80-7618781b99f5")]
@@ -120,7 +120,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C1 SessionI12C1One2One { get; set; }
+        SessionC1 SessionI12SessionC1One2One { get; set; }
 
         #region Allors
         [Id("6eb50c27-5fb9-493b-a70d-f916b97c3844")]
@@ -129,7 +129,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C2 SessionI12C2One2One { get; set; }
+        SessionC2 SessionI12SessionC2One2One { get; set; }
 
         #region Allors
         [Id("f791ef10-1733-4774-a172-bf1d59c61ff4")]
@@ -138,7 +138,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C2[] SessionI12C2Many2Manies { get; set; }
+        SessionC2[] SessionI12SessionC2Many2Manies { get; set; }
 
         #region Allors
         [Id("c9535c5d-f171-49e9-a948-f1e825053f54")]
@@ -147,7 +147,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C2 SessionI12C2Many2One { get; set; }
+        SessionC2 SessionI12SessionC2Many2One { get; set; }
 
         #region Allors
         [Id("b473d477-ac03-4586-a512-d53ce90e1a0f")]
@@ -156,7 +156,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I1 SessionI12I1Many2One { get; set; }
+        SessionI1 SessionI12SessionI1Many2One { get; set; }
 
         #region Allors
         [Id("a95dfa52-c118-42b6-b129-24b58ea69439")]
@@ -165,7 +165,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I1 SessionI12I1One2One { get; set; }
+        SessionI1 SessionI12SessionI1One2One { get; set; }
 
         #region Allors
         [Id("81f8568b-2e07-44cf-b452-69447b0b0db1")]
@@ -174,7 +174,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I1[] SessionI12I1One2Manies { get; set; }
+        SessionI1[] SessionI12SessionI1One2Manies { get; set; }
 
         #region Allors
         [Id("fa270183-f6d0-44f6-b92a-1d8181459c2d")]
@@ -183,7 +183,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I1[] SessionI12I1Many2Manies { get; set; }
+        SessionI1[] SessionI12SessionI1Many2Manies { get; set; }
 
         #region Allors
         [Id("19cbfeff-bf16-4380-915e-930fcb0713d9")]
@@ -192,7 +192,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I2[] SessionI12I2Many2Manies { get; set; }
+        SessionI2[] SessionI12SessionI2Many2Manies { get; set; }
 
         #region Allors
         [Id("9b7ebccb-2184-4844-aeb6-be4cdba36b5f")]
@@ -201,7 +201,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I2 SessionI12I2Many2One { get; set; }
+        SessionI2 SessionI12SessionI2Many2One { get; set; }
 
         #region Allors
         [Id("0bbc5c82-0d61-493a-a6bf-fdc04d077a65")]
@@ -210,7 +210,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I2 SessionI12I2One2One { get; set; }
+        SessionI2 SessionI12SessionI2One2One { get; set; }
 
         #region Allors
         [Id("99f0230b-14ed-429d-a3c8-ef7fafbd69d9")]
@@ -219,7 +219,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I2[] SessionI12I2One2Manies { get; set; }
+        SessionI2[] SessionI12SessionI2One2Manies { get; set; }
 
         #region Allors
         [Id("dfc02521-be67-42e5-aff2-3fe32e395621")]
@@ -228,7 +228,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I12[] SessionI12I12Many2Manies { get; set; }
+        SessionI12[] SessionI12SessionI12Many2Manies { get; set; }
 
         #region Allors
         [Id("7a33c7af-e88f-4f92-8248-78cbe379ec40")]
@@ -237,7 +237,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I12[] SessionI12I12One2Manies { get; set; }
+        SessionI12[] SessionI12SessionI12One2Manies { get; set; }
 
         #region Allors
         [Id("254a47ea-a20b-4b93-a7af-0f45b92ed240")]
@@ -246,7 +246,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I12 SessionI12I12One2One { get; set; }
+        SessionI12 SessionI12SessionI12One2One { get; set; }
 
         #region Allors
         [Id("661c9e17-b056-40bd-bdd1-d134f1ebef6f")]
@@ -255,7 +255,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I12[] SessionDependencies { get; set; }
+        SessionI12[] SessionDependencies { get; set; }
 
         #region Allors
         [Id("c5436dc2-f903-4734-b2d5-74e0545e0d19")]
@@ -264,7 +264,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I12 SessionI12I12Many2One { get; set; }
+        SessionI12 SessionI12SessionI12Many2One { get; set; }
 
         #endregion
 
@@ -345,7 +345,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C1[] WorkspaceI12C1Many2Manies { get; set; }
+        WorkspaceC1[] SessionI12WorkspaceC1Many2Manies { get; set; }
 
         #region Allors
         [Id("539bb865-b4f5-41af-8cd8-19601dd4b567")]
@@ -354,7 +354,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C1[] WorkspaceI12C1One2Manies { get; set; }
+        WorkspaceC1[] SessionI12WorkspaceC1One2Manies { get; set; }
 
         #region Allors
         [Id("c1418ba6-3447-43aa-8436-3335506ea6a4")]
@@ -363,7 +363,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C1 WorkspaceI12C1Many2One { get; set; }
+        WorkspaceC1 SessionI12WorkspaceC1Many2One { get; set; }
 
         #region Allors
         [Id("c5f7f61b-845a-4e27-a7ca-bf9e56d9d299")]
@@ -372,7 +372,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C1 WorkspaceI12C1One2One { get; set; }
+        WorkspaceC1 SessionI12WorkspaceC1One2One { get; set; }
 
         #region Allors
         [Id("e1513b56-8b4b-4e04-920b-cbd09ec47d30")]
@@ -381,7 +381,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C2 WorkspaceI12C2One2One { get; set; }
+        WorkspaceC2 SessionI12WorkspaceC2One2One { get; set; }
 
         #region Allors
         [Id("dab340f2-ba80-4407-b9b2-fd968578eba3")]
@@ -390,7 +390,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C2[] WorkspaceI12C2Many2Manies { get; set; }
+        WorkspaceC2[] SessionI12WorkspaceC2Many2Manies { get; set; }
 
         #region Allors
         [Id("0e92c739-4c3b-457a-a6b2-b50da566dab8")]
@@ -399,7 +399,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C2 WorkspaceI12C2Many2One { get; set; }
+        WorkspaceC2 SessionI12WorkspaceC2Many2One { get; set; }
 
         #region Allors
         [Id("6fd648bf-756b-4f3e-96e3-ab8353e64a30")]
@@ -408,7 +408,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I1 WorkspaceI12I1Many2One { get; set; }
+        WorkspaceI1 SessionI12WorkspaceI1Many2One { get; set; }
 
         #region Allors
         [Id("4681bc0d-0e0f-42ab-a113-7596881a7cbc")]
@@ -417,7 +417,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I1 WorkspaceI12I1One2One { get; set; }
+        WorkspaceI1 SessionI12WorkspaceI1One2One { get; set; }
 
         #region Allors
         [Id("bcf3214a-a3db-4838-aa4b-3bf2fa1c5845")]
@@ -426,7 +426,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I1[] WorkspaceI12I1One2Manies { get; set; }
+        WorkspaceI1[] SessionI12WorkspaceI1One2Manies { get; set; }
 
         #region Allors
         [Id("8bb0137e-66e1-4ac6-a97d-ad11dc9b9057")]
@@ -435,7 +435,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I1[] WorkspaceI12I1Many2Manies { get; set; }
+        WorkspaceI1[] SessionI12WorkspaceI1Many2Manies { get; set; }
 
         #region Allors
         [Id("00ad31bd-a803-48d1-8077-dc213d718627")]
@@ -444,7 +444,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I2[] WorkspaceI12I2Many2Manies { get; set; }
+        WorkspaceI2[] SessionI12WorkspaceI2Many2Manies { get; set; }
 
         #region Allors
         [Id("1446f3ca-2330-4500-bd6b-972c2d9f6022")]
@@ -453,7 +453,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I2 WorkspaceI12I2Many2One { get; set; }
+        WorkspaceI2 SessionI12WorkspaceI2Many2One { get; set; }
 
         #region Allors
         [Id("029e9c12-03b8-4caf-abb9-7c7cc6cf13a2")]
@@ -462,7 +462,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I2 WorkspaceI12I2One2One { get; set; }
+        WorkspaceI2 SessionI12WorkspaceI2One2One { get; set; }
 
         #region Allors
         [Id("966d31e5-15af-4a9c-9974-899e4002ea28")]
@@ -471,7 +471,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I2[] WorkspaceI12I2One2Manies { get; set; }
+        WorkspaceI2[] SessionI12WorkspaceI2One2Manies { get; set; }
 
         #region Allors
         [Id("b93d4692-bf96-4b63-9950-f629fe78979e")]
@@ -480,7 +480,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I12[] WorkspaceI12I12Many2Manies { get; set; }
+        WorkspaceI12[] SessionI12WorkspaceI12Many2Manies { get; set; }
 
         #region Allors
         [Id("46ab9551-3276-40c0-bfd2-34407a55754d")]
@@ -489,7 +489,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I12[] WorkspaceI12I12One2Manies { get; set; }
+        WorkspaceI12[] SessionI12WorkspaceI12One2Manies { get; set; }
 
         #region Allors
         [Id("7ca7847c-66d4-44b4-8268-fc3e97cad498")]
@@ -498,7 +498,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I12 WorkspaceI12I12One2One { get; set; }
+        WorkspaceI12 SessionI12WorkspaceI12One2One { get; set; }
 
         #region Allors
         [Id("7db01151-1732-4cfa-aac4-ff1c2109eee2")]
@@ -507,7 +507,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I12[] WorkspaceDependencies { get; set; }
+        WorkspaceI12[] WorkspaceDependencies { get; set; }
 
         #region Allors
         [Id("f3141e88-50d6-4a5e-8a84-c3637cbd5812")]
@@ -516,7 +516,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I12 WorkspaceI12I12Many2One { get; set; }
+        WorkspaceI12 SessionI12WorkspaceI12Many2One { get; set; }
 
         #endregion
 
@@ -597,7 +597,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C1[] DatabaseI12C1Many2Manies { get; set; }
+        C1[] SessionI12DatabaseC1Many2Manies { get; set; }
 
         #region Allors
         [Id("27de768c-ee0b-4627-888a-4f7833d6f35b")]
@@ -606,7 +606,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C1[] DatabaseI12C1One2Manies { get; set; }
+        C1[] SessionI12DatabaseC1One2Manies { get; set; }
 
         #region Allors
         [Id("eb9f8fe8-2f46-41d7-90ad-e949901271bb")]
@@ -615,7 +615,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C1 DatabaseI12C1Many2One { get; set; }
+        C1 SessionI12DatabaseC1Many2One { get; set; }
 
         #region Allors
         [Id("f6004804-b7fb-4ab9-9ff3-fa2684473580")]
@@ -624,7 +624,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C1 DatabaseI12C1One2One { get; set; }
+        C1 SessionI12DatabaseC1One2One { get; set; }
 
         #region Allors
         [Id("00495922-1442-4abd-9a26-74d139b10780")]
@@ -633,7 +633,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C2 DatabaseI12C2One2One { get; set; }
+        C2 SessionI12DatabaseC2One2One { get; set; }
 
         #region Allors
         [Id("07d3c3b5-88fd-49ee-b379-f2cd9b75d0af")]
@@ -642,7 +642,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C2[] DatabaseI12C2Many2Manies { get; set; }
+        C2[] SessionI12DatabaseC2Many2Manies { get; set; }
 
         #region Allors
         [Id("2f1635e9-7f7f-4b3c-a54a-31c91b4baa6e")]
@@ -651,7 +651,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        C2 DatabaseI12C2Many2One { get; set; }
+        C2 SessionI12DatabaseC2Many2One { get; set; }
 
         #region Allors
         [Id("d0f14037-b600-49c1-968c-3ae4a290dc1f")]
@@ -660,7 +660,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I1 DatabaseI12I1Many2One { get; set; }
+        I1 SessionI12DatabaseI1Many2One { get; set; }
 
         #region Allors
         [Id("6a795842-1b49-4ebd-b542-d22cfb46f06c")]
@@ -669,7 +669,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I1 DatabaseI12I1One2One { get; set; }
+        I1 SessionI12DatabaseI1One2One { get; set; }
 
         #region Allors
         [Id("14258e1a-e139-40fc-995c-c3d05115ec00")]
@@ -678,7 +678,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I1[] DatabaseI12I1One2Manies { get; set; }
+        I1[] SessionI12DatabaseI1One2Manies { get; set; }
 
         #region Allors
         [Id("f98f1e67-dfbd-4997-9d61-47605ee8e1db")]
@@ -687,7 +687,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I1[] DatabaseI12I1Many2Manies { get; set; }
+        I1[] SessionI12DatabaseI1Many2Manies { get; set; }
 
         #region Allors
         [Id("2bb04ca8-37cc-463b-b17a-477deb1a224e")]
@@ -696,7 +696,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I2[] DatabaseI12I2Many2Manies { get; set; }
+        I2[] SessionI12DatabaseI2Many2Manies { get; set; }
 
         #region Allors
         [Id("7e2a9cc6-9a57-46f1-93fc-c91bf1ef951c")]
@@ -705,7 +705,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I2 DatabaseI12I2Many2One { get; set; }
+        I2 SessionI12DatabaseI2Many2One { get; set; }
 
         #region Allors
         [Id("c3503ccf-1622-4ff3-8eb3-56f6ecccc5ae")]
@@ -714,7 +714,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I2 DatabaseI12I2One2One { get; set; }
+        I2 SessionI12DatabaseI2One2One { get; set; }
 
         #region Allors
         [Id("a4446250-14d2-451e-8610-67925ca8124d")]
@@ -723,7 +723,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I2[] DatabaseI12I2One2Manies { get; set; }
+        I2[] SessionI12DatabaseI2One2Manies { get; set; }
 
         #region Allors
         [Id("39987b99-7cbc-49a1-84b1-e176ef05fa8c")]
@@ -732,7 +732,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I12[] DatabaseI12I12Many2Manies { get; set; }
+        I12[] SessionI12DatabaseI12Many2Manies { get; set; }
 
         #region Allors
         [Id("34881815-b0c9-4e80-a0e6-0981e961fb3a")]
@@ -741,7 +741,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I12[] DatabaseI12I12One2Manies { get; set; }
+        I12[] SessionI12DatabaseI12One2Manies { get; set; }
 
         #region Allors
         [Id("d98d3744-db24-4bab-a0fc-64f55751cf6e")]
@@ -750,7 +750,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I12 DatabaseI12I12One2One { get; set; }
+        I12 SessionI12DatabaseI12One2One { get; set; }
 
         #region Allors
         [Id("55d9fd31-eb81-48cf-a363-e0534fc298da")]
@@ -768,7 +768,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         #endregion
-        I12 DatabaseI12I12Many2One { get; set; }
+        I12 SessionI12DatabaseI12Many2One { get; set; }
 
         #endregion
     }

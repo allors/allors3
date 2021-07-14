@@ -55,7 +55,7 @@ namespace Tests.Workspace
             var session1 = this.Workspace.CreateSession();
 
             var pulls = new[]
-         PullFromDatabase           {
+            {
                 new Pull
                 {
                     Extent = new Filter(this.M.Person)
@@ -124,7 +124,7 @@ namespace Tests.Workspace
             workspaceOrganisation1.RemoveWorkspaceWorkspaceOwner();
 
             Assert.NotNull(workspaceOrganisation2.WorkspaceWorkspaceOwner);
-            Assert.Null(workspaceOrganisation1.WorksPullFromDatabaseWorkspaceOwner);
+            Assert.Null(workspaceOrganisation1.WorkspaceWorkspaceOwner);
 
             await session1.Push();
             await session2.Pull(new Pull
@@ -155,7 +155,7 @@ namespace Tests.Workspace
             {
                 Object = organisation1,
                 Results = new[]
-                            {
+                {
                     new Result
                     {
                         Select = new Select
@@ -163,20 +163,20 @@ namespace Tests.Workspace
                             Include = new[] {new Node(this.M.Organisation.Owner)}
                         }
                     }
-              PullFromDatabase
+                }
             };
             #endregion
 
             var result = await session2.Pull(pulls);
 
-         PullFromDatabasear organisation2 = result.GetObject<Organisation>();
+            var organisation2 = result.GetObject<Organisation>();
 
             await session1.Pull(pulls);
             organisation1.Owner = session1.Create<Person>();
 
             await session1.Push();
 
-            Assert.NotNull(organisationPullFromDatabasener);
+            Assert.NotNull(organisation1.Owner);
             Assert.Null(organisation2.Owner);
 
             await session2.Pull(pulls);
@@ -217,7 +217,7 @@ namespace Tests.Workspace
                            Include = new[] {new Node(this.M.Organisation.Owner)}
                        }
                    }
-               }PullFromDatabase         };
+               }            };
             #endregion
 
             var pullResult = await session2.Pull(pulls);
@@ -228,7 +228,7 @@ namespace Tests.Workspace
             Assert.Equal(organisation1.Id, organisation2.Id);
             Assert.Equal(person1.Id, person2.Id);
 
-          PullFromDatabaser canRemoveBeforePull = organisation1.CanWriteOwner;
+            var canRemoveBeforePull = organisation1.CanWriteOwner;
 
             await session1.Pull(pulls);
 
@@ -241,7 +241,7 @@ namespace Tests.Workspace
 
             var pushResult = await session1.Push();
 
-            Assert.Null(organisation1.OPullFromDatabase);
+            Assert.Null(organisation1.Owner);
             Assert.NotNull(organisation2.Owner);
 
             await session2.Pull(pulls);

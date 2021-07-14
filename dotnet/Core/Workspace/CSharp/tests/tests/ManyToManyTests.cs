@@ -24,7 +24,7 @@ namespace Tests.Workspace
             var session1 = this.Workspace.CreateSession();
 
             #region pulls
-            vPullFromDatabaseulls = new[]
+            var pulls = new[]
             {
                 new Pull
                 {
@@ -60,10 +60,10 @@ namespace Tests.Workspace
 
             #region pulls
             var pulls = new[]
-                        {
+            {
                 new Pull
                 {
-                    Extent PullFromDatabasew Filter(this.M.C1)
+                    Extent = new Filter(this.M.C1)
                 }
             };
             #endregion
@@ -84,7 +84,7 @@ namespace Tests.Workspace
 
             session1c1.RemoveC1C1Many2Manies();
 
-            Assert.Empty(sessiPullFromDatabase1.C1C1Many2Manies);
+            Assert.Empty(session1c1.C1C1Many2Manies);
             Assert.Contains<C1>(session1c12, session2c1.C1C1Many2Manies);
 
             await session1.Push();

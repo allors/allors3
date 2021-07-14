@@ -1027,17 +1027,6 @@ namespace Allors.Repository
 
         #endregion
 
-        #region Allors
-        [Id("d208a271-ff51-462d-badb-0f687739bb31")]
-        #endregion
-        [Workspace(Default)]
-        public void ClassMethod() { }
-
-        #region Allors
-        [Id("0f89c81f-d4d7-45f8-8a7d-274d609cc6c8")]
-        #endregion
-        public void Sum() { }
-
         #region inherited methods
 
         public void OnBuild() { }
