@@ -7,6 +7,7 @@ namespace Tests.Workspace
 {
     using System.Linq;
     using System.Threading.Tasks;
+    using Allors.Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Antlr.Runtime.Misc;
@@ -25,15 +26,15 @@ namespace Tests.Workspace
             await base.InitializeAsync();
             await this.Login("administrator");
 
-            var singleSessionContext = new SingleSessionContext(this);
-            var multipleSessionContext = new MultipleSessionContext(this);
+            var singleSessionContext = new SingleSessionContext(this, "Single shared");
+            var multipleSessionContext = new MultipleSessionContext(this, "Multiple shared");
 
             this.contextFactories = new Func<Context>[]
             {
                 () => singleSessionContext,
-                () => new SingleSessionContext(this),
+                () => new SingleSessionContext(this, "Single"),
                 () => multipleSessionContext,
-                () => new MultipleSessionContext(this),
+                () => new MultipleSessionContext(this, "Multiple"),
             };
         }
 
@@ -50,15 +51,15 @@ namespace Tests.Workspace
                     var c1x_1 = await ctx.Create<C1>(session1, mode);
                     var c1y_2 = await ctx.Create<C1>(session2, mode);
 
-                    Assert.NotNull(c1x_1);
-                    Assert.NotNull(c1y_2);
+                    c1x_1.ShouldNotBeNull(ctx, mode);
+                    c1y_2.ShouldNotBeNull(ctx, mode);
 
                     await session2.Push();
                     var result = await session1.Pull(new Pull { Object = c1y_2 });
 
                     var c1y_1 = (C1)result.Objects.Values.First();
 
-                    Assert.NotNull(c1y_1);
+                    c1y_1.ShouldNotBeNull(ctx, mode);
 
                     if (!c1x_1.CanWriteC1C1One2One)
                     {
@@ -67,10 +68,9 @@ namespace Tests.Workspace
 
                     c1x_1.C1C1One2One = c1y_1;
 
-                    Assert.Equal(c1y_1, c1x_1.C1C1One2One);
+                    c1y_1.ShouldEqual(c1x_1.C1C1One2One, ctx, mode);
                 }
             }
-
         }
     }
 }

@@ -8,13 +8,16 @@ namespace Tests.Workspace
 
     public abstract class Context
     {
-        protected Context(Test test)
+        protected Context(Test test, string name)
         {
             this.Test = test;
+            this.Name = name;
             this.OutOfBandWorkspace = this.Test.Profile.CreateWorkspace();
             this.OutOfBandSession = this.OutOfBandWorkspace.CreateSession();
         }
         public Test Test { get; }
+
+        public string Name { get; }
 
         public ISession Session1 { get; protected set; }
 
@@ -54,5 +57,7 @@ namespace Tests.Workspace
                     throw new ArgumentOutOfRangeException(nameof(mode), mode, $@"Mode [{string.Join(", ", Enum.GetNames(typeof(Mode)))}]");
             }
         }
+
+        public override string ToString() => this.Name;
     }
 }
