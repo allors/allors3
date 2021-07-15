@@ -49,42 +49,44 @@ namespace Tests.Workspace
         [Fact]
         public async void Test()
         {
-            foreach (var push1 in this.pushes)
+            foreach (var push in this.pushes)
             {
-                foreach (var push2 in this.pushes)
+                foreach (Mode mode1 in Enum.GetValues(typeof(Mode)))
                 {
-                    foreach (Mode mode1 in Enum.GetValues(typeof(Mode)))
+                    foreach (Mode mode2 in Enum.GetValues(typeof(Mode)))
                     {
-                        foreach (Mode mode2 in Enum.GetValues(typeof(Mode)))
+                        foreach (var contextFactory in this.contextFactories)
                         {
-                            foreach (var contextFactory in this.contextFactories)
+                            var ctx = contextFactory();
+                            var (session1, session2) = ctx;
+
+                            var c1x_1 = await ctx.Create<C1>(session1, mode1);
+                            var c1y_2 = await ctx.Create<C1>(session2, mode2);
+
+                            c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
+                            c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
+
+                            await session2.Push();
+                            var result = await session1.Pull(new Pull { Object = c1y_2 });
+
+                            var c1y_1 = (C1)result.Objects.Values.First();
+
+                            c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
+
+                            if (!c1x_1.CanWriteC1C1One2One)
                             {
-                                var ctx = contextFactory();
-                                var (session1, session2) = ctx;
-
-                                var c1x_1 = await ctx.Create<C1>(session1, mode1);
-                                var c1y_2 = await ctx.Create<C1>(session2, mode1);
-
-                                c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
-                                c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
-
-                                await session2.Push();
-                                var result = await session1.Pull(new Pull { Object = c1y_2 });
-
-                                var c1y_1 = (C1)result.Objects.Values.First();
-
-                                c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
-
-                                if (!c1x_1.CanWriteC1C1One2One)
-                                {
-                                    await session1.Pull(new Pull { Object = c1x_1 });
-                                }
-
-                                c1x_1.C1C1One2One = c1y_1;
-
-                                c1y_1.ShouldEqual(c1x_1.C1C1One2One, ctx, mode1, mode2);
+                                await session1.Pull(new Pull { Object = c1x_1 });
                             }
+
+                            c1x_1.C1C1One2One = c1y_1;
+
+                            c1y_1.ShouldEqual(c1x_1.C1C1One2One, ctx, mode1, mode2);
+
+                            await push(session1);
+
+                            c1y_1.ShouldEqual(c1x_1.C1C1One2One, ctx, mode1, mode2);
                         }
+
                     }
                 }
             }
