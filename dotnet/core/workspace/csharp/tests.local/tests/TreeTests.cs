@@ -11,6 +11,6 @@ namespace Tests.Workspace.Local
     {
         public TreeTests(Fixture fixture) : base(fixture) => this.Profile = new Profile(fixture);
 
-        protected override IProfile Profile { get; }
+        public override IProfile Profile { get; }
     }
 }

@@ -11,6 +11,6 @@ namespace Tests.Workspace.WorkspaceWorkspace.Local
     {
         public ManyToManyTests(Fixture fixture) : base(fixture) => this.Profile = new Workspace.Local.Profile(fixture);
 
-        protected override IProfile Profile { get; }
+        public override IProfile Profile { get; }
     }
 }

@@ -11,6 +11,6 @@ namespace Tests.Workspace.Remote
     {
         public ChangeSetTests(Fixture fixture) : base(fixture) => this.Profile = new Profile();
 
-        protected override IProfile Profile { get; }
+        public override IProfile Profile { get; }
     }
 }

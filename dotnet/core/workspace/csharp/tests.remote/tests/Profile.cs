@@ -34,7 +34,7 @@ namespace Tests.Workspace.Remote
 
         public async Task InitializeAsync()
         {
-            var httpClient = new HttpClient { BaseAddress = new Uri(Url), Timeout = TimeSpan.FromMinutes(30)};
+            var httpClient = new HttpClient { BaseAddress = new Uri(Url), Timeout = TimeSpan.FromMinutes(30) };
             var response = await httpClient.GetAsync(SetupUrl);
             Assert.True(response.IsSuccessStatusCode);
 
@@ -48,6 +48,8 @@ namespace Tests.Workspace.Remote
         }
 
         public Task DisposeAsync() => Task.CompletedTask;
+
+        public IWorkspace CreateWorkspace() => this.Database.CreateWorkspace();
 
         public async Task Login(string user)
         {

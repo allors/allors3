@@ -21,8 +21,8 @@ namespace Tests.Workspace
 
         public M M => this.Workspace.Context().M;
 
-        protected abstract IProfile Profile { get; }
-        
+        public abstract IProfile Profile { get; }
+
         public virtual async Task InitializeAsync() => await this.Profile.InitializeAsync();
 
         public virtual async Task DisposeAsync() => await this.Profile.DisposeAsync();

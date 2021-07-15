@@ -11,6 +11,6 @@ namespace Tests.Workspace.WorkspaceDatabase.Remote
     {
         public ManyToManyTests(Fixture fixture) : base(fixture) => this.Profile = new Workspace.Remote.Profile();
 
-        protected override IProfile Profile { get; }
+        public override IProfile Profile { get; }
     }
 }

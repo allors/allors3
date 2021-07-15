@@ -50,6 +50,11 @@ namespace Allors.Workspace.Adapters
 
         public bool CanWrite(IRoleType roleType)
         {
+            if (this.IsVersionInitial)
+            {
+                return !this.IsPushed;
+            }
+
             if (this.IsPushed)
             {
                 return false;
@@ -57,12 +62,6 @@ namespace Allors.Workspace.Adapters
 
             if (!this.ExistRecord)
             {
-                return true;
-            }
-
-            if (this.IsVersionInitial)
-            {
-                // TODO: 
                 return true;
             }
 

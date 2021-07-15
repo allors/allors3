@@ -64,6 +64,8 @@ namespace Tests.Workspace.Local
 
         public Task DisposeAsync() => Task.CompletedTask;
 
+        public IWorkspace CreateWorkspace() => this.DatabaseConnection.CreateWorkspace();
+
         public Task Login(string userName)
         {
             using var transaction = this.Database.CreateTransaction();

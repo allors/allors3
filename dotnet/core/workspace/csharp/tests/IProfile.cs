@@ -14,5 +14,7 @@ namespace Tests.Workspace
         IWorkspace Workspace { get; }
 
         Task Login(string userName);
+
+        IWorkspace CreateWorkspace();
     }
 }
