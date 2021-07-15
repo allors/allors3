@@ -12,9 +12,14 @@ namespace Tests.Workspace
         {
             this.Test = test;
             this.Name = name;
-            this.OutOfBandWorkspace = this.Test.Profile.CreateWorkspace();
-            this.OutOfBandSession = this.OutOfBandWorkspace.CreateSession();
+            this.SharedDatabaseWorkspace = this.Test.Profile.CreateWorkspace();
+            this.SharedDatabaseSession = this.SharedDatabaseWorkspace.CreateSession();
+            this.ExclusiveDatabase = this.Test.Profile.CreateDatabase();
+            this.ExclusiveDatabaseWorkspace = this.ExclusiveDatabase.CreateWorkspace();
+            this.ExclusiveDatabaseSession = this.ExclusiveDatabaseWorkspace.CreateSession();
         }
+
+
         public Test Test { get; }
 
         public string Name { get; }
@@ -23,9 +28,15 @@ namespace Tests.Workspace
 
         public ISession Session2 { get; protected set; }
 
-        public IWorkspace OutOfBandWorkspace { get; }
+        public IWorkspace SharedDatabaseWorkspace { get; }
 
-        public ISession OutOfBandSession { get; }
+        public ISession SharedDatabaseSession { get; }
+
+        public IDatabaseConnection ExclusiveDatabase { get; set; }
+
+        public IWorkspace ExclusiveDatabaseWorkspace { get; }
+
+        public ISession ExclusiveDatabaseSession { get; }
 
         public void Deconstruct(out ISession session1, out ISession session2)
         {
@@ -48,11 +59,16 @@ namespace Tests.Workspace
                     await session.Push();
                     await session.Pull(new Pull { Object = pushAndPullObject });
                     return pushAndPullObject;
-                case Mode.OutOfBand:
-                    var outOfBandObject = this.OutOfBandSession.Create<T>();
-                    await this.OutOfBandSession.Push();
-                    var result = await session.Pull(new Pull { Object = outOfBandObject });
-                    return (T)result.Objects.Values.First();
+                case Mode.SharedDatabase:
+                    var sharedDatabaseObject = this.SharedDatabaseSession.Create<T>();
+                    await this.SharedDatabaseSession.Push();
+                    var sharedResult = await session.Pull(new Pull { Object = sharedDatabaseObject });
+                    return (T)sharedResult.Objects.Values.First();
+                case Mode.ExclusiveDatabase:
+                    var exclusiveDatabaseObject = this.ExclusiveDatabaseSession.Create<T>();
+                    await this.ExclusiveDatabaseSession.Push();
+                    var exclusiveResult = await session.Pull(new Pull { Object = exclusiveDatabaseObject });
+                    return (T)exclusiveResult.Objects.Values.First();
                 default:
                     throw new ArgumentOutOfRangeException(nameof(mode), mode, $@"Mode [{string.Join(", ", Enum.GetNames(typeof(Mode)))}]");
             }

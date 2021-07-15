@@ -20,9 +20,16 @@ namespace Tests.Workspace.Local
     using Configuration = Allors.Database.Adapters.Memory.Configuration;
     using DatabaseConnection = Allors.Workspace.Adapters.Local.DatabaseConnection;
     using Person = Allors.Database.Domain.Person;
+    using User = Allors.Database.Domain.User;
 
     public class Profile : IProfile
     {
+        private readonly Func<IRanges> rangesFactory;
+        private readonly Func<IWorkspaceServices> servicesBuilder;
+        private readonly Allors.Workspace.Adapters.Local.Configuration configuration;
+
+        private User user;
+
         public Database Database { get; private set; }
 
         public DatabaseConnection DatabaseConnection { get; private set; }
@@ -35,13 +42,19 @@ namespace Tests.Workspace.Local
 
         public Profile(Fixture fixture)
         {
+            this.rangesFactory = () => new DefaultRanges();
+            this.servicesBuilder = () => new WorkspaceContext();
+
+            var metaPopulation = new MetaBuilder().Build();
+            var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
+            this.configuration = new Allors.Workspace.Adapters.Local.Configuration("Default", metaPopulation, objectFactory);
+
             this.Database = new Database(
                 new DefaultDomainDatabaseServices(fixture.Engine),
                 new Configuration
                 {
                     ObjectFactory = new Allors.Database.ObjectFactory(fixture.M, typeof(Person)),
                 });
-
 
             this.Database.Init();
 
@@ -64,18 +77,17 @@ namespace Tests.Workspace.Local
 
         public Task DisposeAsync() => Task.CompletedTask;
 
+        public IDatabaseConnection CreateDatabase() => new DatabaseConnection(this.configuration, this.Database, this.servicesBuilder, this.rangesFactory) { UserId = this.user.Id };
+
         public IWorkspace CreateWorkspace() => this.DatabaseConnection.CreateWorkspace();
 
         public Task Login(string userName)
         {
             using var transaction = this.Database.CreateTransaction();
-            var user = new Users(transaction).Extent().ToArray().First(v => v.UserName.Equals(userName, StringComparison.InvariantCultureIgnoreCase));
-            transaction.Services().User = user;
+            this.user = new Users(transaction).Extent().ToArray().First(v => v.UserName.Equals(userName, StringComparison.InvariantCultureIgnoreCase));
+            transaction.Services().User = this.user;
 
-            var metaPopulation = new MetaBuilder().Build();
-            var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
-            var configuration = new Allors.Workspace.Adapters.Local.Configuration("Default", metaPopulation, objectFactory);
-            this.DatabaseConnection = new DatabaseConnection(configuration, this.Database, () => new WorkspaceContext(), () => new DefaultRanges()) { UserId = user.Id };
+            this.DatabaseConnection = new DatabaseConnection(this.configuration, this.Database, this.servicesBuilder, this.rangesFactory) { UserId = this.user.Id };
 
             this.Workspace = this.DatabaseConnection.CreateWorkspace();
 

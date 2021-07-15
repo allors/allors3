@@ -5,6 +5,7 @@ namespace Tests.Workspace
         NoPush,
         Push,
         PushAndPull,
-        OutOfBand,
+        SharedDatabase,
+        ExclusiveDatabase,
     }
 }

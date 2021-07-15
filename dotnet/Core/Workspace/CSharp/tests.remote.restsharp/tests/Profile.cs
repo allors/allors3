@@ -6,7 +6,6 @@
 namespace Tests.Workspace.Remote
 {
     using System;
-    using System.Net.Http;
     using System.Threading.Tasks;
     using Allors.Ranges;
     using Allors.Workspace;
@@ -14,9 +13,11 @@ namespace Tests.Workspace.Remote
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
     using Allors.Workspace.Meta.Lazy;
+    using RestSharp;
+    using RestSharp.Serializers.NewtonsoftJson;
     using Xunit;
     using Configuration = Allors.Workspace.Adapters.Remote.Configuration;
-    using DatabaseConnection = Allors.Workspace.Adapters.Remote.Default.DatabaseConnection;
+    using DatabaseConnection = Allors.Workspace.Adapters.Remote.ResthSharp.DatabaseConnection;
 
     public class Profile : IProfile
     {
@@ -25,23 +26,9 @@ namespace Tests.Workspace.Remote
         public const string SetupUrl = "Test/Setup?population=full";
         public const string LoginUrl = "TestAuthentication/Token";
 
-        private readonly Func<IWorkspaceServices> servicesBuilder;
+        private readonly Configuration configuration;
         private readonly IdGenerator idGenerator;
         private readonly DefaultRanges defaultRanges;
-        private readonly Configuration configuration;
-
-        private HttpClient httpClient;
-
-        public Profile()
-        {
-            this.servicesBuilder = () => new WorkspaceContext();
-            this.idGenerator = new IdGenerator();
-            this.defaultRanges = new DefaultRanges();
-
-            var metaPopulation = new MetaBuilder().Build();
-            var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
-            this.configuration = new Configuration("Default", metaPopulation, objectFactory);
-        }
 
         IWorkspace IProfile.Workspace => this.Workspace;
 
@@ -51,13 +38,23 @@ namespace Tests.Workspace.Remote
 
         public M M => this.Workspace.Context().M;
 
+        public Profile()
+        {
+            var metaPopulation = new MetaBuilder().Build();
+            var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
+            this.configuration = new Configuration("Default", metaPopulation, objectFactory);
+            this.idGenerator = new IdGenerator();
+            this.defaultRanges = new DefaultRanges();
+        }
+
         public async Task InitializeAsync()
         {
-            this.httpClient = new HttpClient { BaseAddress = new Uri(Url), Timeout = TimeSpan.FromMinutes(30) };
-            var response = await this.httpClient.GetAsync(SetupUrl);
-            Assert.True(response.IsSuccessStatusCode);
+            var request = new RestRequest($"{Url}{SetupUrl}", RestSharp.Method.GET, DataFormat.Json);
+            var restClient = this.CreateRestClient();
+            var response = await restClient.ExecuteAsync(request);
+            Assert.True(response.IsSuccessful);
 
-            this.Database = new DatabaseConnection(this.configuration, this.servicesBuilder, this.httpClient, this.idGenerator, this.defaultRanges);
+            this.Database = new DatabaseConnection(this.configuration, () => new WorkspaceContext(), this.CreateRestClient, this.idGenerator, this.defaultRanges);
             this.Workspace = this.Database.CreateWorkspace();
 
             await this.Login("administrator");
@@ -65,7 +62,7 @@ namespace Tests.Workspace.Remote
 
         public Task DisposeAsync() => Task.CompletedTask;
 
-        public IDatabaseConnection CreateDatabase() => new DatabaseConnection(this.configuration, this.servicesBuilder, this.httpClient, this.idGenerator, this.defaultRanges);
+        public IDatabaseConnection CreateDatabase() => new DatabaseConnection(this.configuration, () => new WorkspaceContext(), this.CreateRestClient, this.idGenerator, this.defaultRanges);
 
         public IWorkspace CreateWorkspace() => this.Database.CreateWorkspace();
 
@@ -75,5 +72,7 @@ namespace Tests.Workspace.Remote
             var response = await this.Database.Login(uri, user, null);
             Assert.True(response);
         }
+
+        private IRestClient CreateRestClient() => new RestClient(Url).UseNewtonsoftJson();
     }
 }
