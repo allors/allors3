@@ -50,7 +50,7 @@ namespace Tests.Workspace.SessionDatabase
         [Fact]
         public async void SetRole()
         {
-            foreach (var push1 in this.pushes)
+            foreach (var push in this.pushes)
             {
                 foreach (Mode mode in Enum.GetValues(typeof(Mode)))
                 {
@@ -77,7 +77,7 @@ namespace Tests.Workspace.SessionDatabase
 
                         c1x_1.SessionC1DatabaseC1Many2Manies.ShouldContains(c1y_1, ctx, mode);
 
-                        await push1(session1);
+                        await push(session1);
 
                         c1x_1.SessionC1DatabaseC1Many2Manies.ShouldContains(c1y_1, ctx, mode);
                     }
@@ -85,60 +85,44 @@ namespace Tests.Workspace.SessionDatabase
             }
         }
 
-        //[Fact]
-        //public void SetRole_WithoutPush()
-        //{
-        //    this.c1.AddSessionC1DatabaseC2Many2Many(this.c2);
+        [Fact]
+        public async void RemoveRole()
+        {
+            foreach (var push in this.pushes)
+            {
+                foreach (Mode mode in Enum.GetValues(typeof(Mode)))
+                {
+                    foreach (var contextFactory in this.contextFactories)
+                    {
+                        var ctx = contextFactory();
+                        var (session1, session2) = ctx;
 
-        //    Assert.Contains(this.c2, this.c1.SessionC1DatabaseC2Many2Manies);
-        //}
+                        var c1x_1 = ctx.Session1.Create<SessionC1>();
+                        var c1y_2 = await ctx.Create<C1>(session2, mode);
 
-        //[Fact]
-        //public async void SetRole_WithPush()
-        //{
-        //    await this.session1.Push();
+                        c1x_1.ShouldNotBeNull(ctx, mode);
+                        c1y_2.ShouldNotBeNull(ctx, mode);
 
-        //    this.c1.AddSessionC1DatabaseC2Many2Many(this.c2);
+                        await session2.Push();
 
-        //    Assert.Contains(this.c2, this.c1.SessionC1DatabaseC2Many2Manies);
+                        var result = await session1.Pull(new Pull { Object = c1y_2 });
 
-        //    await this.session1.Push();
+                        var c1y_1 = (C1)result.Objects.Values.First();
 
-        //    Assert.Contains(this.c2, this.c1.SessionC1DatabaseC2Many2Manies);
-        //}
+                        c1y_1.ShouldNotBeNull(ctx, mode);
 
-        //[Fact]
-        //public void RemoveRole_WithoutPush()
-        //{
-        //    this.c1.AddSessionC1DatabaseC2Many2Many(this.c2);
+                        c1x_1.AddSessionC1DatabaseC1Many2Many(c1y_1);
+                        c1x_1.SessionC1DatabaseC1Many2Manies.ShouldContains(c1y_1, ctx, mode);
 
-        //    Assert.Contains(this.c2, this.c1.SessionC1DatabaseC2Many2Manies);
+                        c1x_1.RemoveSessionC1DatabaseC1Many2Many(c1y_1);
+                        c1x_1.SessionC1DatabaseC1Many2Manies.ShouldNotContains(c1y_1, ctx, mode);
 
-        //    this.c1.RemoveSessionC1DatabaseC2Many2Many(this.c2);
+                        await push(session1);
 
-        //    Assert.DoesNotContain(this.c2, this.c1.SessionC1DatabaseC2Many2Manies);
-        //}
-
-        //[Fact]
-        //public async void RemoveRole_WithPush()
-        //{
-        //    await this.session1.Push();
-
-        //    this.c1.AddSessionC1DatabaseC2Many2Many(this.c2);
-
-        //    Assert.Contains(this.c2, this.c1.SessionC1DatabaseC2Many2Manies);
-
-        //    await this.session1.Push();
-
-        //    Assert.Contains(this.c2, this.c1.SessionC1DatabaseC2Many2Manies);
-
-        //    this.c1.RemoveSessionC1DatabaseC2Many2Many(this.c2);
-
-        //    Assert.DoesNotContain(this.c2, this.c1.SessionC1DatabaseC2Many2Manies);
-
-        //    await this.session1.Push();
-
-        //    Assert.DoesNotContain(this.c2, this.c1.SessionC1DatabaseC2Many2Manies);
-        //}
+                        c1x_1.SessionC1DatabaseC1Many2Manies.ShouldNotContains(c1y_1, ctx, mode);
+                    }
+                }
+            }
+        }
     }
 }
