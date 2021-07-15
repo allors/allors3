@@ -56,7 +56,6 @@ namespace Tests.Workspace.DatabaseDatabase
                 {
                     foreach (Mode mode2 in Enum.GetValues(typeof(Mode)))
                     {
-
                         foreach (var contextFactory in this.contextFactories)
                         {
                             var ctx = contextFactory();
