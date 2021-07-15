@@ -56,7 +56,6 @@ namespace Tests.Workspace.DatabaseDatabase
                 {
                     foreach (Mode mode2 in Enum.GetValues(typeof(Mode)))
                     {
-
                         foreach (var contextFactory in this.contextFactories)
                         {
                             var ctx = contextFactory();
@@ -141,99 +140,5 @@ namespace Tests.Workspace.DatabaseDatabase
                 }
             }
         }
-
-        //[Fact]
-        //public void SetRole_WithoutPush()
-        //{
-        //    this.c1.AddC1C2Many2Many(this.c2);
-
-        //    Assert.Contains(this.c2, this.c1.C1C2Many2Manies);
-        //}
-
-        //[Fact]
-        //public async void SetRole_WithPush()
-        //{
-        //    await this.session1.Push();
-
-        //    #region pulls
-
-        //    var pulls = new[]
-        //    {
-        //        new Pull
-        //        {
-        //            Extent = new Filter(this.M.C1)
-        //        },
-        //        new Pull
-        //        {
-        //            Extent = new Filter(this.M.C2)
-        //        }
-        //    };
-
-        //    #endregion
-
-        //    await this.session1.Pull(pulls);
-
-        //    this.c1.AddC1C2Many2Many(this.c2);
-
-        //    Assert.Contains(this.c2, this.c1.C1C2Many2Manies);
-
-        //    await this.session1.Push();
-        //    await this.session1.Pull(pulls);
-
-        //    Assert.Contains(this.c2, this.c1.C1C2Many2Manies);
-        //}
-
-        //[Fact]
-        //public void RemoveRole_WithoutPush()
-        //{
-        //    this.c1.AddC1C2Many2Many(this.c2);
-
-        //    Assert.Contains(this.c2, this.c1.C1C2Many2Manies);
-
-        //    this.c1.RemoveC1C2Many2Many(this.c2);
-
-        //    Assert.DoesNotContain(this.c2, this.c1.C1C2Many2Manies);
-        //}
-
-        //[Fact]
-        //public async void RemoveRole_WithPush()
-        //{
-        //    await this.session1.Push();
-
-        //    #region pulls
-
-        //    var pulls = new[]
-        //    {
-        //        new Pull
-        //        {
-        //            Extent = new Filter(this.M.C1)
-        //        },
-        //        new Pull
-        //        {
-        //            Extent = new Filter(this.M.C2)
-        //        }
-        //    };
-
-        //    #endregion
-
-        //    await this.session1.Pull(pulls);
-
-        //    this.c1.AddC1C2Many2Many(this.c2);
-
-        //    Assert.Contains(this.c2, this.c1.C1C2Many2Manies);
-
-        //    await this.session1.Push();
-        //    await this.session1.Pull(pulls);
-
-        //    Assert.Contains(this.c2, this.c1.C1C2Many2Manies);
-
-        //    this.c1.RemoveC1C2Many2Many(this.c2);
-
-        //    Assert.DoesNotContain(this.c2, this.c1.C1C2Many2Manies);
-
-        //    await this.session1.Push();
-
-        //    Assert.DoesNotContain(this.c2, this.c1.C1C2Many2Manies);
-        //}
     }
 }
