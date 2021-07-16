@@ -70,6 +70,8 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceWorkspace
 
                             var c1y_1 = session1.Instantiate(c1y_2);
 
+                            c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
+
                             c1x_1.AddWorkspaceC1WorkspaceC1One2Many(c1y_1);
 
                             c1x_1.WorkspaceC1WorkspaceC1One2Manies.ShouldContains(c1y_1, ctx, mode1, mode2);
@@ -107,6 +109,8 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceWorkspace
                             await session1.PullFromWorkspace();
 
                             var c1y_1 = session1.Instantiate(c1y_2);
+
+                            c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
                             c1x_1.AddWorkspaceC1WorkspaceC1One2Many(c1y_1);
 

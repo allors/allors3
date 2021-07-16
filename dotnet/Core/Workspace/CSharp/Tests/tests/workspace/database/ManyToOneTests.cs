@@ -3,20 +3,22 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.OriginWorkspace.WorkspaceWorkspace
+namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
 {
     using System.Threading.Tasks;
     using Allors.Workspace.Domain;
     using Allors.Workspace;
     using Xunit;
     using System;
+    using Allors.Workspace.Data;
+    using System.Linq;
 
-    public abstract class ManyToManyTests : Test
+    public abstract class ManyToOneTests : Test
     {
         private Func<Context>[] contextFactories;
         private Func<ISession, Task>[] pushes;
 
-        protected ManyToManyTests(Fixture fixture) : base(fixture)
+        protected ManyToOneTests(Fixture fixture) : base(fixture)
         {
 
         }
@@ -52,7 +54,7 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceWorkspace
             {
                 foreach (WorkspaceMode mode1 in Enum.GetValues(typeof(WorkspaceMode)))
                 {
-                    foreach (WorkspaceMode mode2 in Enum.GetValues(typeof(WorkspaceMode)))
+                    foreach (DatabaseMode mode2 in Enum.GetValues(typeof(DatabaseMode)))
                     {
                         foreach (var contextFactory in this.contextFactories)
                         {
@@ -60,26 +62,28 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceWorkspace
                             var (session1, session2) = ctx;
 
                             var c1x_1 = await ctx.Create<WorkspaceC1>(session1, mode1);
-                            var c1y_2 = await ctx.Create<WorkspaceC1>(session2, mode2);
+                            var c1y_2 = await ctx.Create<C1>(session2, mode2);
 
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            await session2.PushToWorkspace();
-                            await session1.PullFromWorkspace();
+                            await session2.Push();
+                            var result = await session1.Pull(new Pull { Object = c1y_2 });
 
-                            var c1y_1 = session1.Instantiate(c1y_2);
+                            var c1y_1 = (C1)result.Objects.Values.First();
+
+                            await session2.PushToWorkspace();
 
                             c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
+                            c1x_1.WorkspaceC1DatabaseC1Many2One = c1y_1;
 
-                            c1x_1.AddWorkspaceC1WorkspaceC1Many2Many(c1y_1);
-
-                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldContains(c1y_1, ctx, mode1, mode2);
+                            c1x_1.WorkspaceC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
+                            //c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2One.ShouldContains(c1x_1, ctx, mode1, mode2);
 
                             await push(session1);
 
-                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldContains(c1y_1, ctx, mode1, mode2);
+                            c1x_1.WorkspaceC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
                         }
                     }
                 }
@@ -93,7 +97,7 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceWorkspace
             {
                 foreach (WorkspaceMode mode1 in Enum.GetValues(typeof(WorkspaceMode)))
                 {
-                    foreach (WorkspaceMode mode2 in Enum.GetValues(typeof(WorkspaceMode)))
+                    foreach (DatabaseMode mode2 in Enum.GetValues(typeof(DatabaseMode)))
                     {
                         foreach (var contextFactory in this.contextFactories)
                         {
@@ -101,34 +105,34 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceWorkspace
                             var (session1, session2) = ctx;
 
                             var c1x_1 = await ctx.Create<WorkspaceC1>(session1, mode1);
-                            var c1y_2 = await ctx.Create<WorkspaceC1>(session2, mode2);
+                            var c1y_2 = await ctx.Create<C1>(session2, mode2);
 
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            await session2.PushToWorkspace();
-                            await session1.PullFromWorkspace();
+                            await session2.Push();
+                            var result = await session1.Pull(new Pull { Object = c1y_2 });
 
-                            var c1y_1 = session1.Instantiate(c1y_2);
+                            var c1y_1 = (C1)result.Objects.Values.First();
+
+                            await session2.PushToWorkspace();
 
                             c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            c1x_1.AddWorkspaceC1WorkspaceC1Many2Many(c1y_1);
+                            c1x_1.WorkspaceC1DatabaseC1Many2One = c1y_1;
+                            c1x_1.WorkspaceC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
 
-                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldContains(c1y_1, ctx, mode1, mode2);
-
-                            c1x_1.RemoveWorkspaceC1WorkspaceC1Many2Many(c1y_1);
-                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldNotContains(c1y_1, ctx, mode1, mode2);
+                            c1x_1.RemoveWorkspaceC1DatabaseC1Many2One();
+                            c1x_1.WorkspaceC1DatabaseC1Many2One.ShouldNotEqual(c1y_1, ctx, mode1, mode2);
 
                             await push(session1);
 
-                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldNotContains(c1y_1, ctx, mode1, mode2);
+                            c1x_1.WorkspaceC1DatabaseC1Many2One.ShouldNotEqual(c1y_1, ctx, mode1, mode2);
+
                         }
                     }
                 }
             }
         }
-
-
     }
 }

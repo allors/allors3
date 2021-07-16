@@ -73,6 +73,7 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
                             var c1y_1 = (C1)result.Objects.Values.First();
 
                             await session2.PushToWorkspace();
+                            c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
                             c1x_1.AddWorkspaceC1DatabaseC1Many2Many(c1y_1);
 
