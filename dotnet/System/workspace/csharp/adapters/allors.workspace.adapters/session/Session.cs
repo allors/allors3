@@ -61,9 +61,9 @@ namespace Allors.Workspace.Adapters
 
         public abstract Task<IPushResult> Push();
 
-        public Task<IPullResult> PullFromWorkspace()
+        public Task<IWorkspaceResult> PullFromWorkspace()
         {
-            var pullResult = new PullResult();
+            var pullResult = new WorkspaceResult();
 
             // TODO: Optimize
             foreach (var kvp in this.StrategyByWorkspaceId)
@@ -72,12 +72,12 @@ namespace Allors.Workspace.Adapters
                 strategy.WorkspaceOriginState.Pull();
             }
 
-            return Task.FromResult((IPullResult)pullResult);
+            return Task.FromResult((IWorkspaceResult)pullResult);
         }
 
-        public Task<IPushResult> PushToWorkspace()
+        public Task<IWorkspaceResult> PushToWorkspace()
         {
-            var pushResult = new PushResult();
+            var pushResult = new WorkspaceResult();
 
             if (this.PushToWorkspaceTracker.Created != null)
             {
@@ -103,7 +103,7 @@ namespace Allors.Workspace.Adapters
             this.PushToWorkspaceTracker.Created = null;
             this.PushToWorkspaceTracker.Changed = null;
 
-            return Task.FromResult((IPushResult)pushResult);
+            return Task.FromResult((IWorkspaceResult)pushResult);
         }
 
         public IChangeSet Checkpoint()

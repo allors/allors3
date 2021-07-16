@@ -7,13 +7,14 @@ namespace Allors.Workspace.Adapters
 {
     using System.Collections.Generic;
 
-    public class PushResult : IPushResult
+    public class WorkspaceResult : IWorkspaceResult
     {
         public bool HasErrors { get; }
-        public string ErrorMessage { get; }
+
         public IEnumerable<IObject> VersionErrors { get; }
+
         public IEnumerable<IObject> AccessErrors { get; }
+
         public IEnumerable<IObject> MissingErrors { get; }
-        public IEnumerable<IDerivationError> DerivationErrors { get; }
     }
 }

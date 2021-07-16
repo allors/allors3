@@ -26,9 +26,9 @@ namespace Allors.Workspace
 
         Task<IPushResult> Push();
 
-        Task<IPullResult> PullFromWorkspace();
+        Task<IWorkspaceResult> PullFromWorkspace();
 
-        Task<IPushResult> PushToWorkspace();
+        Task<IWorkspaceResult> PushToWorkspace();
 
         T Create<T>() where T : class, IObject;
 
