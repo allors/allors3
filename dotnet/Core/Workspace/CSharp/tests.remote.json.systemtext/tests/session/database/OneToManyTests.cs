@@ -7,9 +7,9 @@ namespace Tests.Workspace.OriginSession.SessionDatabase.Remote
 {
     using Xunit;
 
-    public class ManyToManyTests : SessionDatabase.ManyToManyTests, IClassFixture<Fixture>
+    public class OneToManyTests : SessionDatabase.OneToManyTests, IClassFixture<Fixture>
     {
-        public ManyToManyTests(Fixture fixture) : base(fixture) => this.Profile = new Workspace.Remote.Profile();
+        public OneToManyTests(Fixture fixture) : base(fixture) => this.Profile = new Workspace.Remote.Profile();
 
         public override IProfile Profile { get; }
     }

@@ -11,13 +11,13 @@ namespace Tests.Workspace.OriginSession.SessionWorkspace
     using Xunit;
     using System;
 
-    public abstract class ManyToManyTests : Test
+    public abstract class ManyToOneTests : Test
     {
         private Func<ISession, Task>[] pushes;
 
         private Func<Context>[] contextFactories;
 
-        protected ManyToManyTests(Fixture fixture) : base(fixture)
+        protected ManyToOneTests(Fixture fixture) : base(fixture)
         {
 
         }
@@ -71,13 +71,13 @@ namespace Tests.Workspace.OriginSession.SessionWorkspace
 
                         c1y_1.ShouldNotBeNull(ctx, mode);
 
-                        c1x_1.AddSessionC1WorkspaceC1Many2Many(c1y_1);
+                        c1x_1.SessionC1WorkspaceC1Many2One = c1y_1;
 
-                        c1x_1.SessionC1WorkspaceC1Many2Manies.ShouldContains(c1y_1, ctx, mode);
+                        c1x_1.SessionC1WorkspaceC1Many2One.ShouldEqual(c1y_1, ctx, mode);
 
                         await push(session1);
 
-                        c1x_1.SessionC1WorkspaceC1Many2Manies.ShouldContains(c1y_1, ctx, mode);
+                        c1x_1.SessionC1WorkspaceC1Many2One.ShouldEqual(c1y_1, ctx, mode);
                     }
                 }
             }
@@ -108,15 +108,15 @@ namespace Tests.Workspace.OriginSession.SessionWorkspace
 
                         c1y_1.ShouldNotBeNull(ctx, mode);
 
-                        c1x_1.AddSessionC1WorkspaceC1Many2Many(c1y_1);
-                        c1x_1.SessionC1WorkspaceC1Many2Manies.ShouldContains(c1y_1, ctx, mode);
+                        c1x_1.SessionC1WorkspaceC1Many2One = c1y_1;
+                        c1x_1.SessionC1WorkspaceC1Many2One.ShouldEqual(c1y_1, ctx, mode);
 
-                        c1x_1.RemoveSessionC1WorkspaceC1Many2Many(c1y_1);
-                        c1x_1.SessionC1WorkspaceC1Many2Manies.ShouldNotContains(c1y_1, ctx, mode);
+                        c1x_1.RemoveSessionC1WorkspaceC1Many2One();
+                        c1x_1.SessionC1WorkspaceC1Many2One.ShouldNotEqual(c1y_1, ctx, mode);
 
                         await push(session1);
 
-                        c1x_1.SessionC1WorkspaceC1Many2Manies.ShouldNotContains(c1y_1, ctx, mode);
+                        c1x_1.SessionC1WorkspaceC1Many2One.ShouldNotEqual(c1y_1, ctx, mode);
                     }
                 }
             }
