@@ -117,8 +117,18 @@ partial class Build
                 await server.Ready();
 
                 DotNetTest(s => s
-                    .SetProjectFile(Paths.DotnetCoreWorkspaceCSharpTestsRemote)
-                    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTestsRemote.trx")
+                    .SetProjectFile(Paths.DotnetCoreWorkspaceCSharpTestsRemoteJsonSystemText)
+                    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTestsRemoteJsonSystemText.trx")
+                    .SetResultsDirectory(Paths.ArtifactsTests));
+            }
+
+            {
+                using var server = new Server(Paths.ArtifactsCoreServer);
+                await server.Ready();
+
+                DotNetTest(s => s
+                    .SetProjectFile(Paths.DotnetCoreWorkspaceCSharpTestsRemoteJsonRestSharp)
+                    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTestsRemoteJsonRestSharp.trx")
                     .SetResultsDirectory(Paths.ArtifactsTests));
             }
         });

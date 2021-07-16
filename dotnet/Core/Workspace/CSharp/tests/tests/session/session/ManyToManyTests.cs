@@ -49,7 +49,7 @@ namespace Tests.Workspace.SessionSession
         {
             foreach (var push in this.pushes)
             {
-                foreach (Mode mode in Enum.GetValues(typeof(Mode)))
+                foreach (DatabaseMode mode in Enum.GetValues(typeof(DatabaseMode)))
                 {
                     foreach (var contextFactory in this.contextFactories)
                     {
@@ -81,7 +81,7 @@ namespace Tests.Workspace.SessionSession
         {
             foreach (var push1 in this.pushes)
             {
-                foreach (Mode mode in Enum.GetValues(typeof(Mode)))
+                foreach (DatabaseMode mode in Enum.GetValues(typeof(DatabaseMode)))
                 {
                     foreach (var contextFactory in this.contextFactories)
                     {

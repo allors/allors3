@@ -1,11 +1,9 @@
 namespace Tests.Workspace
 {
-    public enum Mode
+    public enum WorkspaceMode
     {
         NoPush,
         Push,
         PushAndPull,
-        SharedDatabase,
-        ExclusiveDatabase,
     }
 }

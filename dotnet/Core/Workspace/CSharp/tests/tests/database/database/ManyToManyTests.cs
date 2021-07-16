@@ -52,9 +52,9 @@ namespace Tests.Workspace.DatabaseDatabase
         {
             foreach (var push in this.pushes)
             {
-                foreach (Mode mode1 in Enum.GetValues(typeof(Mode)))
+                foreach (DatabaseMode mode1 in Enum.GetValues(typeof(DatabaseMode)))
                 {
-                    foreach (Mode mode2 in Enum.GetValues(typeof(Mode)))
+                    foreach (DatabaseMode mode2 in Enum.GetValues(typeof(DatabaseMode)))
                     {
                         foreach (var contextFactory in this.contextFactories)
                         {
@@ -97,9 +97,9 @@ namespace Tests.Workspace.DatabaseDatabase
         {
             foreach (var push in this.pushes)
             {
-                foreach (Mode mode1 in Enum.GetValues(typeof(Mode)))
+                foreach (DatabaseMode mode1 in Enum.GetValues(typeof(DatabaseMode)))
                 {
-                    foreach (Mode mode2 in Enum.GetValues(typeof(Mode)))
+                    foreach (DatabaseMode mode2 in Enum.GetValues(typeof(DatabaseMode)))
                     {
                         foreach (var contextFactory in this.contextFactories)
                         {
