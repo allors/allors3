@@ -38,20 +38,20 @@ namespace Allors.Workspace
 
         void SetUnitRole(IRoleType roleType, object value);
 
-        T GetCompositeRole<T>(IRoleType roleType) where T : IObject;
+        T GetCompositeRole<T>(IRoleType roleType) where T : class, IObject;
 
-        void SetCompositeRole<T>(IRoleType roleType, T value) where T : IObject;
+        void SetCompositeRole<T>(IRoleType roleType, T value) where T : class, IObject;
 
-        IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : IObject;
+        IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : class, IObject;
 
-        void AddCompositesRole<T>(IRoleType roleType, T value) where T : IObject;
+        void AddCompositesRole<T>(IRoleType roleType, T value) where T : class, IObject;
 
-        void RemoveCompositesRole<T>(IRoleType roleType, T value) where T : IObject;
+        void RemoveCompositesRole<T>(IRoleType roleType, T value) where T : class, IObject;
 
-        void SetCompositesRole<T>(IRoleType roleType, in IEnumerable<T> role) where T : IObject;
+        void SetCompositesRole<T>(IRoleType roleType, in IEnumerable<T> role) where T : class, IObject;
 
-        T GetCompositeAssociation<T>(IAssociationType associationType) where T : IObject;
+        T GetCompositeAssociation<T>(IAssociationType associationType) where T : class, IObject;
 
-        IEnumerable<T> GetCompositesAssociation<T>(IAssociationType associationType) where T : IObject;
+        IEnumerable<T> GetCompositesAssociation<T>(IAssociationType associationType) where T : class, IObject;
     }
 }

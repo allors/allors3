@@ -100,7 +100,7 @@ namespace Allors.Workspace.Adapters
                 _ => throw new ArgumentException("Unsupported Origin")
             };
 
-        public T GetCompositeRole<T>(IRoleType roleType) where T : IObject =>
+        public T GetCompositeRole<T>(IRoleType roleType) where T : class, IObject =>
             this.Session.Instantiate<T>(roleType.Origin switch
             {
                 Origin.Session => this.Session.SessionOriginState.GetCompositeRole(this.Id, roleType),
@@ -109,7 +109,7 @@ namespace Allors.Workspace.Adapters
                 _ => throw new ArgumentException("Unsupported Origin")
             });
 
-        public IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : IObject
+        public IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : class, IObject
         {
             var roles = roleType.Origin switch
             {
@@ -163,8 +163,10 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void SetCompositeRole<T>(IRoleType roleType, T value) where T : IObject
+        public void SetCompositeRole<T>(IRoleType roleType, T value) where T : class, IObject
         {
+            this.AssertInput(value);
+
             switch (roleType.Origin)
             {
                 case Origin.Session:
@@ -188,8 +190,10 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void SetCompositesRole<T>(IRoleType roleType, in IEnumerable<T> role) where T : IObject
+        public void SetCompositesRole<T>(IRoleType roleType, in IEnumerable<T> role) where T : class, IObject
         {
+            this.AssertInput(role);
+
             var ranges = this.Session.Workspace.Ranges;
             var roleIds = ranges.ImportFrom(role?.Select(v => v.Id));
 
@@ -216,8 +220,10 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void AddCompositesRole<T>(IRoleType roleType, T value) where T : IObject
+        public void AddCompositesRole<T>(IRoleType roleType, T value) where T : class, IObject
         {
+            this.AssertInput(value);
+
             switch (roleType.Origin)
             {
                 case Origin.Session:
@@ -241,8 +247,10 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void RemoveCompositesRole<T>(IRoleType roleType, T value) where T : IObject
+        public void RemoveCompositesRole<T>(IRoleType roleType, T value) where T : class, IObject
         {
+            this.AssertInput(value);
+
             switch (roleType.Origin)
             {
                 case Origin.Session:
@@ -282,7 +290,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public T GetCompositeAssociation<T>(IAssociationType associationType) where T : IObject
+        public T GetCompositeAssociation<T>(IAssociationType associationType) where T : class, IObject
         {
             if (associationType.Origin != Origin.Session)
             {
@@ -293,7 +301,7 @@ namespace Allors.Workspace.Adapters
             return association != null ? this.Session.Instantiate<T>(association) : default;
         }
 
-        public IEnumerable<T> GetCompositesAssociation<T>(IAssociationType associationType) where T : IObject
+        public IEnumerable<T> GetCompositesAssociation<T>(IAssociationType associationType) where T : class, IObject
         {
             if (associationType.Origin != Origin.Session)
             {
@@ -331,5 +339,36 @@ namespace Allors.Workspace.Adapters
         public void OnDatabasePushNewId(long newId) => this.Id = newId;
 
         public void OnDatabasePushed() => this.DatabaseOriginState.OnPushed();
+
+        private void AssertInput(IObject input)
+        {
+            if (input == null)
+            {
+                return;
+            }
+
+            this.AssertInput(input.Strategy);
+        }
+
+        private void AssertInput(IEnumerable<IObject> inputs)
+        {
+            if (inputs == null)
+            {
+                return;
+            }
+
+            foreach (var input in inputs)
+            {
+                this.AssertInput(input.Strategy);
+            }
+        }
+
+        private void AssertInput(IStrategy input)
+        {
+            if (this.Session != input.Session)
+            {
+                throw new ArgumentException("Strategy is from a different session");
+            }
+        }
     }
 }

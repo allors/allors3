@@ -106,14 +106,14 @@ namespace Allors.Workspace.Adapters.Local
 
         public IDictionary<string, object> Values => this.ValueByName;
 
-        public T[] GetCollection<T>() where T : IObject
+        public T[] GetCollection<T>() where T : class, IObject
         {
             var objectType = this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>();
             var key = objectType.PluralName;
             return this.GetCollection<T>(key);
         }
 
-        public T[] GetCollection<T>(string key) where T : IObject =>
+        public T[] GetCollection<T>(string key) where T : class, IObject =>
             this.Collections.TryGetValue(key, out var collection) ? collection?.Cast<T>().ToArray() : null;
 
         public T GetObject<T>()

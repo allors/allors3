@@ -37,27 +37,27 @@ namespace Allors.Workspace
         IChangeSet Checkpoint();
 
         #region Instantiate
-        T Instantiate<T>(IObject @object) where T : IObject;
+        T Instantiate<T>(IObject @object) where T : class, IObject;
 
-        T Instantiate<T>(T @object) where T : IObject;
+        T Instantiate<T>(T @object) where T : class, IObject;
 
-        T Instantiate<T>(long? id) where T : IObject;
+        T Instantiate<T>(long? id) where T : class, IObject;
 
-        T Instantiate<T>(long id) where T : IObject;
+        T Instantiate<T>(long id) where T : class, IObject;
 
-        T Instantiate<T>(string idAsString) where T : IObject;
+        T Instantiate<T>(string idAsString) where T : class, IObject;
 
-        IEnumerable<T> Instantiate<T>(IEnumerable<IObject> objects) where T : IObject;
+        IEnumerable<T> Instantiate<T>(IEnumerable<IObject> objects) where T : class, IObject;
 
-        IEnumerable<T> Instantiate<T>(IEnumerable<T> objects) where T : IObject;
+        IEnumerable<T> Instantiate<T>(IEnumerable<T> objects) where T : class, IObject;
 
-        IEnumerable<T> Instantiate<T>(IEnumerable<long> ids) where T : IObject;
+        IEnumerable<T> Instantiate<T>(IEnumerable<long> ids) where T : class, IObject;
 
-        IEnumerable<T> Instantiate<T>(IEnumerable<string> ids) where T : IObject;
+        IEnumerable<T> Instantiate<T>(IEnumerable<string> ids) where T : class, IObject;
 
-        IEnumerable<T> Instantiate<T>() where T : IObject;
+        IEnumerable<T> Instantiate<T>() where T : class, IObject;
 
-        IEnumerable<T> Instantiate<T>(IComposite objectType) where T : IObject;
+        IEnumerable<T> Instantiate<T>(IComposite objectType) where T : class, IObject;
         #endregion
     }
 }

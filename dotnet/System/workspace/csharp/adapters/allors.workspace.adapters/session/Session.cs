@@ -137,36 +137,36 @@ namespace Allors.Workspace.Adapters
         }
 
         #region Instantiate
-        public T Instantiate<T>(IObject @object) where T : IObject => this.Instantiate<T>(@object.Id);
+        public T Instantiate<T>(IObject @object) where T : class, IObject => this.Instantiate<T>(@object.Id);
 
-        public T Instantiate<T>(T @object) where T : IObject => this.Instantiate<T>(@object.Id);
+        public T Instantiate<T>(T @object) where T : class, IObject => this.Instantiate<T>(@object.Id);
 
-        public T Instantiate<T>(long? id) where T : IObject => id.HasValue ? this.Instantiate<T>((long)id) : default;
+        public T Instantiate<T>(long? id) where T : class, IObject => id.HasValue ? this.Instantiate<T>((long)id) : default;
 
-        public T Instantiate<T>(long id) where T : IObject => (T)this.GetStrategy(id)?.Object;
+        public T Instantiate<T>(long id) where T : class, IObject => (T)this.GetStrategy(id)?.Object;
 
-        public T Instantiate<T>(string idAsString) where T : IObject => long.TryParse(idAsString, out var id) ? (T)this.GetStrategy(id)?.Object : default;
+        public T Instantiate<T>(string idAsString) where T : class, IObject => long.TryParse(idAsString, out var id) ? (T)this.GetStrategy(id)?.Object : default;
 
-        public IEnumerable<T> Instantiate<T>(IEnumerable<IObject> objects) where T : IObject => objects.Select(this.Instantiate<T>);
+        public IEnumerable<T> Instantiate<T>(IEnumerable<IObject> objects) where T : class, IObject => objects.Select(this.Instantiate<T>);
 
-        public IEnumerable<T> Instantiate<T>(IEnumerable<T> objects) where T : IObject => objects.Select(this.Instantiate);
+        public IEnumerable<T> Instantiate<T>(IEnumerable<T> objects) where T : class, IObject => objects.Select(this.Instantiate);
 
-        public IEnumerable<T> Instantiate<T>(IEnumerable<long> ids) where T : IObject => ids.Select(this.Instantiate<T>);
+        public IEnumerable<T> Instantiate<T>(IEnumerable<long> ids) where T : class, IObject => ids.Select(this.Instantiate<T>);
 
-        public IEnumerable<T> Instantiate<T>(IEnumerable<string> ids) where T : IObject => this.Instantiate<T>(ids.Select(
+        public IEnumerable<T> Instantiate<T>(IEnumerable<string> ids) where T : class, IObject => this.Instantiate<T>(ids.Select(
             v =>
             {
                 long.TryParse(v, out var id);
                 return id;
             }));
 
-        public IEnumerable<T> Instantiate<T>() where T : IObject
+        public IEnumerable<T> Instantiate<T>() where T : class, IObject
         {
             var objectType = (IComposite)this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>();
             return this.Instantiate<T>(objectType);
         }
 
-        public IEnumerable<T> Instantiate<T>(IComposite objectType) where T : IObject
+        public IEnumerable<T> Instantiate<T>(IComposite objectType) where T : class, IObject
         {
             foreach (var @class in objectType.Classes)
             {

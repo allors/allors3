@@ -18,9 +18,10 @@ namespace Allors.Workspace.Adapters
         public IDictionary<string, IObject[]> Collections { get; }
         public IDictionary<string, IObject> Objects { get; }
         public IDictionary<string, object> Values { get; }
-        public T[] GetCollection<T>() where T : IObject => throw new System.NotImplementedException();
 
-        public T[] GetCollection<T>(string key) where T : IObject => throw new System.NotImplementedException();
+        public T[] GetCollection<T>() where T : class, IObject => throw new System.NotImplementedException();
+
+        public T[] GetCollection<T>(string key) where T : class, IObject => throw new System.NotImplementedException();
 
         public T GetObject<T>() where T : class, IObject => throw new System.NotImplementedException();
 

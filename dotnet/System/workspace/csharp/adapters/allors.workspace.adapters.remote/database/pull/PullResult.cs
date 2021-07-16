@@ -28,14 +28,14 @@ namespace Allors.Workspace.Adapters.Remote
 
         public IDictionary<string, object> Values { get; }
 
-        public T[] GetCollection<T>() where T : IObject
+        public T[] GetCollection<T>() where T : class, IObject
         {
             var objectType = this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>();
             var key = objectType.PluralName.ToUpperInvariant();
             return this.GetCollection<T>(key);
         }
 
-        public T[] GetCollection<T>(string key) where T : IObject => this.Collections.TryGetValue(key.ToUpperInvariant(), out var collection) ? collection?.Cast<T>().ToArray() : null;
+        public T[] GetCollection<T>(string key) where T : class, IObject => this.Collections.TryGetValue(key.ToUpperInvariant(), out var collection) ? collection?.Cast<T>().ToArray() : null;
 
         public T GetObject<T>() where T : class, IObject
         {

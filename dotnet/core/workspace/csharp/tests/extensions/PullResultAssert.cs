@@ -8,8 +8,8 @@ namespace Tests.Workspace
 
         public PullResultAssert(IPullResult pullResult) => this.pullResult = pullResult;
 
-        public PullResultCollectionAssert<T> Collection<T>() where T : IObject => new PullResultCollectionAssert<T>(this.pullResult);
+        public PullResultCollectionAssert<T> Collection<T>() where T : class, IObject => new PullResultCollectionAssert<T>(this.pullResult);
 
-        public PullResultCollectionAssert<T> Collection<T>(string name) where T : IObject => new PullResultCollectionAssert<T>(this.pullResult, name);
+        public PullResultCollectionAssert<T> Collection<T>(string name) where T : class, IObject => new PullResultCollectionAssert<T>(this.pullResult, name);
     }
 }

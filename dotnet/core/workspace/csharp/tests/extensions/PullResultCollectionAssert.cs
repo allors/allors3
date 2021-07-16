@@ -4,7 +4,7 @@ namespace Tests.Workspace
     using Allors.Workspace;
     using Xunit;
 
-    public class PullResultCollectionAssert<T> where T : IObject
+    public class PullResultCollectionAssert<T> where T : class, IObject
     {
         private readonly T[] collection;
 
