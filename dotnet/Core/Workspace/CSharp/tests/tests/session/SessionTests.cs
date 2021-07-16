@@ -51,5 +51,31 @@ namespace Tests.Workspace.OriginSession
 
             Assert.True(hasErrors);
         }
+
+        [Fact]
+        public void CrossSessionShouldThrowError()
+        {
+            var session1 = this.Workspace.CreateSession();
+            var session2 = this.Workspace.CreateSession();
+
+            var c1x = session1.Create<SessionC1>();
+            var c1y = session2.Create<SessionC1>();
+            Assert.NotNull(c1x);
+            Assert.NotNull(c1y);
+
+            bool hasErrors;
+
+            try
+            {
+                c1x.AddSessionC1SessionC1Many2Many(c1y);
+                hasErrors = false;
+            }
+            catch (Exception)
+            {
+                hasErrors = true;
+            }
+
+            Assert.True(hasErrors);
+        }
     }
 }
