@@ -78,10 +78,14 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
                             c1x_1.AddWorkspaceC1DatabaseC1Many2Many(c1y_1);
 
                             c1x_1.WorkspaceC1DatabaseC1Many2Manies.ShouldContains(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2Many.ShouldContains(c1x_1, ctx, mode1, mode2);
+                            Assert.Single(c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2Many.Where(v => v.Equals(c1x_1)));
 
                             await push(session1);
 
                             c1x_1.WorkspaceC1DatabaseC1Many2Manies.ShouldContains(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2Many.ShouldContains(c1x_1, ctx, mode1, mode2);
+                            Assert.Single(c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2Many.Where(v => v.Equals(c1x_1)));
                         }
                     }
                 }
@@ -119,13 +123,17 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
 
                             c1x_1.AddWorkspaceC1DatabaseC1Many2Many(c1y_1);
                             c1x_1.WorkspaceC1DatabaseC1Many2Manies.ShouldContains(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2Many.ShouldContains(c1x_1, ctx, mode1, mode2);
+                            Assert.Single(c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2Many.Where(v => v.Equals(c1x_1)));
 
                             c1x_1.RemoveWorkspaceC1DatabaseC1Many2Many(c1y_1);
                             c1x_1.WorkspaceC1DatabaseC1Many2Manies.ShouldNotContains(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2Many.ShouldNotContains(c1x_1, ctx, mode1, mode2);
 
                             await push(session1);
 
                             c1x_1.WorkspaceC1DatabaseC1Many2Manies.ShouldNotContains(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2Many.ShouldNotContains(c1x_1, ctx, mode1, mode2);
                         }
                     }
                 }
