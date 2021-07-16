@@ -11,13 +11,13 @@ namespace Tests.Workspace.OriginSession.SessionSession
     using Xunit;
     using System;
 
-    public abstract class ManyToManyTests : Test
+    public abstract class OneToManyTests : Test
     {
         private Func<ISession, Task>[] pushes;
 
         private Func<Context>[] contextFactories;
 
-        protected ManyToManyTests(Fixture fixture) : base(fixture)
+        protected OneToManyTests(Fixture fixture) : base(fixture)
         {
 
         }
@@ -62,13 +62,13 @@ namespace Tests.Workspace.OriginSession.SessionSession
 
                         await session1.Push();
 
-                        c1x_1.AddSessionC1SessionC1Many2Many(c1y_2);
+                        c1x_1.AddSessionC1SessionC1One2Many(c1y_2);
 
-                        c1x_1.SessionC1SessionC1Many2Manies.ShouldContains(c1y_2, ctx, mode);
+                        c1x_1.SessionC1SessionC1One2Manies.ShouldContains(c1y_2, ctx, mode);
 
                         await push(session1);
 
-                        c1x_1.SessionC1SessionC1Many2Manies.ShouldContains(c1y_2, ctx, mode);
+                        c1x_1.SessionC1SessionC1One2Manies.ShouldContains(c1y_2, ctx, mode);
                     }
                 }
             }
@@ -94,15 +94,15 @@ namespace Tests.Workspace.OriginSession.SessionSession
 
                         await session1.Push();
 
-                        c1x_1.AddSessionC1SessionC1Many2Many(c1y_2);
-                        c1x_1.SessionC1SessionC1Many2Manies.ShouldContains(c1y_2, ctx, mode);
+                        c1x_1.AddSessionC1SessionC1One2Many(c1y_2);
+                        c1x_1.SessionC1SessionC1One2Manies.ShouldContains(c1y_2, ctx, mode);
 
-                        c1x_1.RemoveSessionC1SessionC1Many2Many(c1y_2);
-                        c1x_1.SessionC1SessionC1Many2Manies.ShouldNotContains(c1y_2, ctx, mode);
+                        c1x_1.RemoveSessionC1SessionC1One2Many(c1y_2);
+                        c1x_1.SessionC1SessionC1One2Manies.ShouldNotContains(c1y_2, ctx, mode);
 
                         await push1(session1);
 
-                        c1x_1.SessionC1SessionC1Many2Manies.ShouldNotContains(c1y_2, ctx, mode);
+                        c1x_1.SessionC1SessionC1One2Manies.ShouldNotContains(c1y_2, ctx, mode);
                     }
                 }
             }
