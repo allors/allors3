@@ -3,21 +3,23 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.OriginSession.SessionSession
+namespace Tests.Workspace.OriginSession.SessionDatabase
 {
     using System.Threading.Tasks;
     using Allors.Workspace.Domain;
     using Allors.Workspace;
     using Xunit;
     using System;
+    using Allors.Workspace.Data;
+    using System.Linq;
 
-    public abstract class ManyToManyTests : Test
+    public abstract class OneToManyTests : Test
     {
         private Func<ISession, Task>[] pushes;
 
         private Func<Context>[] contextFactories;
 
-        protected ManyToManyTests(Fixture fixture) : base(fixture)
+        protected OneToManyTests(Fixture fixture) : base(fixture)
         {
 
         }
@@ -33,10 +35,13 @@ namespace Tests.Workspace.OriginSession.SessionSession
                 async (session) => await session.Push()
             };
 
+            var singleSessionContext = new SingleSessionContext(this, "Single shared");
             var multipleSessionContext = new MultipleSessionContext(this, "Multiple shared");
 
             this.contextFactories = new Func<Context>[]
             {
+                () => singleSessionContext,
+                () => new SingleSessionContext(this, "Single"),
                 () => multipleSessionContext,
                 () => new MultipleSessionContext(this, "Multiple"),
             };
@@ -55,20 +60,26 @@ namespace Tests.Workspace.OriginSession.SessionSession
                         var (session1, session2) = ctx;
 
                         var c1x_1 = ctx.Session1.Create<SessionC1>();
-                        var c1y_2 = ctx.Session1.Create<SessionC1>();
+                        var c1y_2 = await ctx.Create<C1>(session2, mode);
 
                         c1x_1.ShouldNotBeNull(ctx, mode);
                         c1y_2.ShouldNotBeNull(ctx, mode);
 
-                        await session1.Push();
+                        await session2.Push();
 
-                        c1x_1.AddSessionC1SessionC1Many2Many(c1y_2);
+                        var result = await session1.Pull(new Pull { Object = c1y_2 });
 
-                        c1x_1.SessionC1SessionC1Many2Manies.ShouldContains(c1y_2, ctx, mode);
+                        var c1y_1 = (C1)result.Objects.Values.First();
+
+                        c1y_1.ShouldNotBeNull(ctx, mode);
+
+                        c1x_1.AddSessionC1DatabaseC1One2Many(c1y_1);
+
+                        c1x_1.SessionC1DatabaseC1One2Manies.ShouldContains(c1y_1, ctx, mode);
 
                         await push(session1);
 
-                        c1x_1.SessionC1SessionC1Many2Manies.ShouldContains(c1y_2, ctx, mode);
+                        c1x_1.SessionC1DatabaseC1One2Manies.ShouldContains(c1y_1, ctx, mode);
                     }
                 }
             }
@@ -77,7 +88,7 @@ namespace Tests.Workspace.OriginSession.SessionSession
         [Fact]
         public async void RemoveRole()
         {
-            foreach (var push1 in this.pushes)
+            foreach (var push in this.pushes)
             {
                 foreach (DatabaseMode mode in Enum.GetValues(typeof(DatabaseMode)))
                 {
@@ -87,22 +98,28 @@ namespace Tests.Workspace.OriginSession.SessionSession
                         var (session1, session2) = ctx;
 
                         var c1x_1 = ctx.Session1.Create<SessionC1>();
-                        var c1y_2 = ctx.Session1.Create<SessionC1>();
+                        var c1y_2 = await ctx.Create<C1>(session2, mode);
 
                         c1x_1.ShouldNotBeNull(ctx, mode);
                         c1y_2.ShouldNotBeNull(ctx, mode);
 
-                        await session1.Push();
+                        await session2.Push();
 
-                        c1x_1.AddSessionC1SessionC1Many2Many(c1y_2);
-                        c1x_1.SessionC1SessionC1Many2Manies.ShouldContains(c1y_2, ctx, mode);
+                        var result = await session1.Pull(new Pull { Object = c1y_2 });
 
-                        c1x_1.RemoveSessionC1SessionC1Many2Many(c1y_2);
-                        c1x_1.SessionC1SessionC1Many2Manies.ShouldNotContains(c1y_2, ctx, mode);
+                        var c1y_1 = (C1)result.Objects.Values.First();
 
-                        await push1(session1);
+                        c1y_1.ShouldNotBeNull(ctx, mode);
 
-                        c1x_1.SessionC1SessionC1Many2Manies.ShouldNotContains(c1y_2, ctx, mode);
+                        c1x_1.AddSessionC1DatabaseC1One2Many(c1y_1);
+                        c1x_1.SessionC1DatabaseC1One2Manies.ShouldContains(c1y_1, ctx, mode);
+
+                        c1x_1.RemoveSessionC1DatabaseC1One2Many(c1y_1);
+                        c1x_1.SessionC1DatabaseC1One2Manies.ShouldNotContains(c1y_1, ctx, mode);
+
+                        await push(session1);
+
+                        c1x_1.SessionC1DatabaseC1One2Manies.ShouldNotContains(c1y_1, ctx, mode);
                     }
                 }
             }
