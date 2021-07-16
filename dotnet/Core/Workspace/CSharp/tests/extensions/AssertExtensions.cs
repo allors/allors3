@@ -35,7 +35,7 @@ namespace Tests.Workspace
         public static void ShouldNotEqual(this object actual, object expected, Context context, WorkspaceMode mode1, DatabaseMode mode2)
         => Assert.True(!Equals(actual, expected), $"Expected Equals: [{actual}, {expected}] on context {context} with mode1 {mode1} and mode2 {mode2}");
 
-        public static void ShouldNotNotEqual(this object actual, object expected, Context context, DatabaseMode mode)
+        public static void ShouldNotEqual(this object actual, object expected, Context context, DatabaseMode mode)
             => Assert.True(!Equals(actual, expected), $"Expected Equals: [{actual}, {expected}] on context {context} with mode1 {mode}");
 
         public static void ShouldNotEqual(this object actual, object expected, Context context, WorkspaceMode mode)
