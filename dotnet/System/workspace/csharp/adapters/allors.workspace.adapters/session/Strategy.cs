@@ -222,6 +222,11 @@ namespace Allors.Workspace.Adapters
 
         public void AddCompositesRole<T>(IRoleType roleType, T value) where T : class, IObject
         {
+            if (value == null)
+            {
+                return;
+            }
+
             this.AssertInput(value);
 
             switch (roleType.Origin)
@@ -249,6 +254,11 @@ namespace Allors.Workspace.Adapters
 
         public void RemoveCompositesRole<T>(IRoleType roleType, T value) where T : class, IObject
         {
+            if (value == null)
+            {
+                return;
+            }
+
             this.AssertInput(value);
 
             switch (roleType.Origin)
