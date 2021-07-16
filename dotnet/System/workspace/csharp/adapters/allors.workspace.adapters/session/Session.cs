@@ -69,7 +69,10 @@ namespace Allors.Workspace.Adapters
             foreach (var kvp in this.StrategyByWorkspaceId)
             {
                 var strategy = kvp.Value;
-                strategy.WorkspaceOriginState.Pull();
+                if (strategy.Class.Origin != Origin.Session)
+                {
+                    strategy.WorkspaceOriginState.Pull();
+                }
             }
 
             return Task.FromResult((IWorkspaceResult)pullResult);
