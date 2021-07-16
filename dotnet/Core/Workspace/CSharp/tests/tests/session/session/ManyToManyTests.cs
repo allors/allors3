@@ -10,6 +10,7 @@ namespace Tests.Workspace.OriginSession.SessionSession
     using Allors.Workspace;
     using Xunit;
     using System;
+    using System.Linq;
 
     public abstract class ManyToManyTests : Test
     {
@@ -47,29 +48,31 @@ namespace Tests.Workspace.OriginSession.SessionSession
         {
             foreach (var push in this.pushes)
             {
-                foreach (DatabaseMode mode in Enum.GetValues(typeof(DatabaseMode)))
+                foreach (var contextFactory in this.contextFactories)
                 {
-                    foreach (var contextFactory in this.contextFactories)
-                    {
-                        var ctx = contextFactory();
-                        var (session1, session2) = ctx;
+                    var ctx = contextFactory();
+                    var (session1, session2) = ctx;
 
-                        var c1x_1 = ctx.Session1.Create<SessionC1>();
-                        var c1y_2 = ctx.Session1.Create<SessionC1>();
+                    var c1x_1 = ctx.Session1.Create<SessionC1>();
+                    var c1y_2 = ctx.Session1.Create<SessionC1>();
 
-                        c1x_1.ShouldNotBeNull(ctx, mode);
-                        c1y_2.ShouldNotBeNull(ctx, mode);
+                    c1x_1.ShouldNotBeNull(ctx);
+                    c1y_2.ShouldNotBeNull(ctx);
 
-                        await session1.Push();
+                    await session1.Push();
 
-                        c1x_1.AddSessionC1SessionC1Many2Many(c1y_2);
+                    c1x_1.AddSessionC1SessionC1Many2Many(c1y_2);
 
-                        c1x_1.SessionC1SessionC1Many2Manies.ShouldContains(c1y_2, ctx, mode);
+                    c1x_1.SessionC1SessionC1Many2Manies.ShouldContains(c1y_2, ctx);
+                    c1y_2.SessionC1sWhereSessionC1SessionC1Many2Many.ShouldContains(c1x_1, ctx);
+                    Assert.Single(c1y_2.SessionC1sWhereSessionC1SessionC1Many2Many.Where(v => this.Equals(c1x_1)));
 
-                        await push(session1);
 
-                        c1x_1.SessionC1SessionC1Many2Manies.ShouldContains(c1y_2, ctx, mode);
-                    }
+                    await push(session1);
+
+                    c1x_1.SessionC1SessionC1Many2Manies.ShouldContains(c1y_2, ctx);
+                    c1y_2.SessionC1sWhereSessionC1SessionC1Many2Many.ShouldContains(c1x_1, ctx);
+                    Assert.Single(c1y_2.SessionC1sWhereSessionC1SessionC1Many2Many.Where(v => this.Equals(c1x_1)));
                 }
             }
         }
@@ -79,32 +82,34 @@ namespace Tests.Workspace.OriginSession.SessionSession
         {
             foreach (var push1 in this.pushes)
             {
-                foreach (DatabaseMode mode in Enum.GetValues(typeof(DatabaseMode)))
+                foreach (var contextFactory in this.contextFactories)
                 {
-                    foreach (var contextFactory in this.contextFactories)
-                    {
-                        var ctx = contextFactory();
-                        var (session1, session2) = ctx;
+                    var ctx = contextFactory();
+                    var (session1, session2) = ctx;
 
-                        var c1x_1 = ctx.Session1.Create<SessionC1>();
-                        var c1y_2 = ctx.Session1.Create<SessionC1>();
+                    var c1x_1 = ctx.Session1.Create<SessionC1>();
+                    var c1y_2 = ctx.Session1.Create<SessionC1>();
 
-                        c1x_1.ShouldNotBeNull(ctx, mode);
-                        c1y_2.ShouldNotBeNull(ctx, mode);
+                    c1x_1.ShouldNotBeNull(ctx);
+                    c1y_2.ShouldNotBeNull(ctx);
 
-                        await session1.Push();
+                    await session1.Push();
 
-                        c1x_1.AddSessionC1SessionC1Many2Many(c1y_2);
-                        c1x_1.SessionC1SessionC1Many2Manies.ShouldContains(c1y_2, ctx, mode);
+                    c1x_1.AddSessionC1SessionC1Many2Many(c1y_2);
+                    c1x_1.SessionC1SessionC1Many2Manies.ShouldContains(c1y_2, ctx);
+                    c1y_2.SessionC1sWhereSessionC1SessionC1Many2Many.ShouldContains(c1x_1, ctx);
+                    Assert.Single(c1y_2.SessionC1sWhereSessionC1SessionC1Many2Many.Where(v => this.Equals(c1x_1)));
 
-                        c1x_1.RemoveSessionC1SessionC1Many2Many(c1y_2);
-                        c1x_1.SessionC1SessionC1Many2Manies.ShouldNotContains(c1y_2, ctx, mode);
+                    c1x_1.RemoveSessionC1SessionC1Many2Many(c1y_2);
+                    c1x_1.SessionC1SessionC1Many2Manies.ShouldNotContains(c1y_2, ctx);
+                    c1y_2.SessionC1sWhereSessionC1SessionC1Many2Many.ShouldNotContains(c1x_1, ctx);
 
-                        await push1(session1);
+                    await push1(session1);
 
-                        c1x_1.SessionC1SessionC1Many2Manies.ShouldNotContains(c1y_2, ctx, mode);
-                    }
+                    c1x_1.SessionC1SessionC1Many2Manies.ShouldNotContains(c1y_2, ctx);
+                    c1y_2.SessionC1sWhereSessionC1SessionC1Many2Many.ShouldNotContains(c1x_1, ctx);
                 }
+
             }
         }
     }
