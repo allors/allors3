@@ -82,10 +82,15 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
                             c1x_1.AddC1C1Many2Many(c1y_1);
 
                             c1x_1.C1C1Many2Manies.ShouldContains(c1y_1, ctx, mode1, mode2);
+                            c1y_1.C1sWhereC1C1Many2Many.ShouldContains(c1x_1, ctx, mode1, mode2);
+
+                            Assert.Single(c1y_1.C1sWhereC1C1Many2Many.Where(v => v.Equals(c1x_1)));
 
                             await push(session1);
 
                             c1x_1.C1C1Many2Manies.ShouldContains(c1y_1, ctx, mode1);
+                            c1y_1.C1sWhereC1C1Many2Many.ShouldContains(c1x_1, ctx, mode1, mode2);
+                            Assert.Single(c1y_1.C1sWhereC1C1Many2Many.Where(v => v.Equals(c1x_1)));
                         }
                     }
                 }
@@ -127,14 +132,18 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
                             c1x_1.AddC1C1Many2Many(c1y_1);
 
                             c1x_1.C1C1Many2Manies.ShouldContains(c1y_1, ctx, mode1, mode2);
+                            c1y_1.C1sWhereC1C1Many2Many.ShouldContains(c1x_1, ctx, mode1, mode2);
+                            Assert.Single(c1y_1.C1sWhereC1C1Many2Many.Where(v => v.Equals(c1x_1)));
 
                             c1x_1.RemoveC1C1Many2Many(c1y_1);
 
                             c1x_1.C1C1Many2Manies.ShouldNotContains(c1y_1, ctx, mode1, mode2);
+                            c1y_1.C1sWhereC1C1Many2Many.ShouldNotContains(c1x_1, ctx, mode1, mode2);
 
                             await push(session1);
 
                             c1x_1.C1C1Many2Manies.ShouldNotContains(c1y_1, ctx, mode1, mode2);
+                            c1y_1.C1sWhereC1C1Many2Many.ShouldNotContains(c1x_1, ctx, mode1, mode2);
                         }
                     }
                 }
