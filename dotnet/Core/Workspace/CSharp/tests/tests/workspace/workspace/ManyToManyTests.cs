@@ -9,12 +9,12 @@ namespace Tests.Workspace.WorkspaceWorkspace
     using Allors.Workspace.Domain;
     using Allors.Workspace;
     using Xunit;
+    using System;
 
     public abstract class ManyToManyTests : Test
     {
-        private ISession session1;
-        private WorkspaceC1 c1;
-        private WorkspaceC2 c2;
+        private Func<Context>[] contextFactories;
+        private Func<ISession, Task>[] pushes;
 
         protected ManyToManyTests(Fixture fixture) : base(fixture)
         {
@@ -24,66 +24,100 @@ namespace Tests.Workspace.WorkspaceWorkspace
         public override async Task InitializeAsync()
         {
             await base.InitializeAsync();
-
             await this.Login("administrator");
 
-            this.session1 = this.Workspace.CreateSession();
+            var singleSessionContext = new SingleSessionContext(this, "Single shared");
+            var multipleSessionContext = new MultipleSessionContext(this, "Multiple shared");
 
-            this.c1 = this.session1.Create<WorkspaceC1>();
-            this.c2 = this.session1.Create<WorkspaceC2>();
+            this.pushes = new Func<ISession, Task>[]
+            {
+                (session) => Task.CompletedTask,
+                async (session) => await session.PushToWorkspace(),
+                async (session) => {await session.PushToWorkspace(); await session.PullFromWorkspace(); }
+            };
+
+            this.contextFactories = new Func<Context>[]
+            {
+                () => singleSessionContext,
+                () => new SingleSessionContext(this, "Single"),
+                () => multipleSessionContext,
+                () => new MultipleSessionContext(this, "Multiple"),
+            };
         }
 
         [Fact]
-        public void SetRole_WithoutPush()
+        public async void SetRole()
         {
-            this.c1.AddWorkspaceC1WorkspaceC2Many2Many(this.c2);
+            foreach (var push in this.pushes)
+            {
+                foreach (WorkspaceMode mode1 in Enum.GetValues(typeof(WorkspaceMode)))
+                {
+                    foreach (WorkspaceMode mode2 in Enum.GetValues(typeof(WorkspaceMode)))
+                    {
+                        foreach (var contextFactory in this.contextFactories)
+                        {
+                            var ctx = contextFactory();
+                            var (session1, session2) = ctx;
 
-            Assert.Contains(this.c2, this.c1.WorkspaceC1WorkspaceC2Many2Manies);
+                            var c1x_1 = await ctx.Create<WorkspaceC1>(session1, mode1);
+                            var c1y_2 = await ctx.Create<WorkspaceC1>(session2, mode2);
+
+                            c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
+                            c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
+
+                            await session2.PushToWorkspace();
+
+                            c1x_1.AddWorkspaceC1WorkspaceC1Many2Many(c1y_2);
+
+                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldContains(c1y_2, ctx, mode1, mode2);
+
+                            await push(session1);
+
+                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldContains(c1y_2, ctx, mode1, mode2);
+                        }
+                    }
+                }
+            }
         }
 
         [Fact]
-        public async void SetRole_WithPush()
+        public async void RemoveRole()
         {
-            this.c1.AddWorkspaceC1WorkspaceC2Many2Many(this.c2);
+            foreach (var push in this.pushes)
+            {
+                foreach (WorkspaceMode mode1 in Enum.GetValues(typeof(WorkspaceMode)))
+                {
+                    foreach (WorkspaceMode mode2 in Enum.GetValues(typeof(WorkspaceMode)))
+                    {
+                        foreach (var contextFactory in this.contextFactories)
+                        {
+                            var ctx = contextFactory();
+                            var (session1, session2) = ctx;
 
-            Assert.Contains(this.c2, this.c1.WorkspaceC1WorkspaceC2Many2Manies);
+                            var c1x_1 = await ctx.Create<WorkspaceC1>(session1, mode1);
+                            var c1y_2 = await ctx.Create<WorkspaceC1>(session2, mode2);
 
-            await this.session1.Push();
+                            c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
+                            c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
-            Assert.Contains(this.c2, this.c1.WorkspaceC1WorkspaceC2Many2Manies);
+                            await session2.PushToWorkspace();
+
+                            c1x_1.AddWorkspaceC1WorkspaceC1Many2Many(c1y_2);
+
+                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldContains(c1y_2, ctx, mode1, mode2);
+
+                            c1x_1.RemoveWorkspaceC1WorkspaceC1Many2Many(c1y_2);
+                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldNotContains(c1y_2, ctx, mode1, mode2);
+
+                            await push(session1);
+
+                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldNotContains(c1y_2, ctx, mode1, mode2);
+                        }
+                    }
+                }
+            }
         }
 
-        [Fact]
-        public void RemoveRole_WithoutPush()
-        {
-            this.c1.AddWorkspaceC1WorkspaceC2Many2Many(this.c2);
-
-            Assert.Contains(this.c2, this.c1.WorkspaceC1WorkspaceC2Many2Manies);
-
-            this.c1.RemoveWorkspaceC1WorkspaceC2Many2Many(this.c2);
-
-            Assert.DoesNotContain(this.c2, this.c1.WorkspaceC1WorkspaceC2Many2Manies);
-        }
-
-        [Fact]
-        public async void RemoveRole_WithPush()
-        {
-            this.c1.AddWorkspaceC1WorkspaceC2Many2Many(this.c2);
-
-            Assert.Contains(this.c2, this.c1.WorkspaceC1WorkspaceC2Many2Manies);
-
-            await this.session1.Push();
-
-            Assert.Contains(this.c2, this.c1.WorkspaceC1WorkspaceC2Many2Manies);
-
-            this.c1.RemoveWorkspaceC1WorkspaceC2Many2Many(this.c2);
-
-            Assert.DoesNotContain(this.c2, this.c1.WorkspaceC1WorkspaceC2Many2Manies);
-
-            await this.session1.Push();
-
-            Assert.DoesNotContain(this.c2, this.c1.WorkspaceC1WorkspaceC2Many2Manies);
-        }
 
     }
 }
