@@ -25,6 +25,24 @@ namespace Tests.Workspace
 
         #endregion
 
+        #region ShouldNotEqual
+        public static void ShouldNotEqual(this object actual, object expected, Context context, DatabaseMode mode1, DatabaseMode mode2)
+            => Assert.True(!Equals(actual, expected), $"Expected Equals: [{actual}, {expected}] on context {context} with mode1 {mode1} and mode2 {mode2}");
+
+        public static void ShouldNotEqual(this object actual, object expected, Context context, WorkspaceMode mode1, WorkspaceMode mode2)
+        => Assert.True(!Equals(actual, expected), $"Expected Equals: [{actual}, {expected}] on context {context} with mode1 {mode1} and mode2 {mode2}");
+
+        public static void ShouldNotEqual(this object actual, object expected, Context context, WorkspaceMode mode1, DatabaseMode mode2)
+        => Assert.True(!Equals(actual, expected), $"Expected Equals: [{actual}, {expected}] on context {context} with mode1 {mode1} and mode2 {mode2}");
+
+        public static void ShouldNotNotEqual(this object actual, object expected, Context context, DatabaseMode mode)
+            => Assert.True(!Equals(actual, expected), $"Expected Equals: [{actual}, {expected}] on context {context} with mode1 {mode}");
+
+        public static void ShouldNotEqual(this object actual, object expected, Context context, WorkspaceMode mode)
+          => Assert.True(!Equals(actual, expected), $"Expected Equals: [{actual}, {expected}] on context {context} with mode1 {mode}");
+
+        #endregion
+
         #region ShouldNotBeNull
 
         public static void ShouldNotBeNull(this object actual, Context context, DatabaseMode mode1, DatabaseMode mode2)
