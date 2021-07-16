@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.WorkspaceWorkspace
+namespace Tests.Workspace.OriginWorkspace.WorkspaceWorkspace
 {
     using System.Threading.Tasks;
     using Allors.Workspace.Domain;
@@ -66,14 +66,17 @@ namespace Tests.Workspace.WorkspaceWorkspace
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
                             await session2.PushToWorkspace();
+                            await session1.PullFromWorkspace();
 
-                            c1x_1.AddWorkspaceC1WorkspaceC1Many2Many(c1y_2);
+                            var c1y_1 = session1.Instantiate(c1y_2);
 
-                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldContains(c1y_2, ctx, mode1, mode2);
+                            c1x_1.AddWorkspaceC1WorkspaceC1Many2Many(c1y_1);
+
+                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldContains(c1y_1, ctx, mode1, mode2);
 
                             await push(session1);
 
-                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldContains(c1y_2, ctx, mode1, mode2);
+                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldContains(c1y_1, ctx, mode1, mode2);
                         }
                     }
                 }
@@ -101,17 +104,20 @@ namespace Tests.Workspace.WorkspaceWorkspace
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
                             await session2.PushToWorkspace();
+                            await session1.PullFromWorkspace();
 
-                            c1x_1.AddWorkspaceC1WorkspaceC1Many2Many(c1y_2);
+                            var c1y_1 = session1.Instantiate(c1y_2);
 
-                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldContains(c1y_2, ctx, mode1, mode2);
+                            c1x_1.AddWorkspaceC1WorkspaceC1Many2Many(c1y_1);
 
-                            c1x_1.RemoveWorkspaceC1WorkspaceC1Many2Many(c1y_2);
-                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldNotContains(c1y_2, ctx, mode1, mode2);
+                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldContains(c1y_1, ctx, mode1, mode2);
+
+                            c1x_1.RemoveWorkspaceC1WorkspaceC1Many2Many(c1y_1);
+                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldNotContains(c1y_1, ctx, mode1, mode2);
 
                             await push(session1);
 
-                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldNotContains(c1y_2, ctx, mode1, mode2);
+                            c1x_1.WorkspaceC1WorkspaceC1Many2Manies.ShouldNotContains(c1y_1, ctx, mode1, mode2);
                         }
                     }
                 }

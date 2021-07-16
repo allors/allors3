@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.SessionWorkspace
+namespace Tests.Workspace.OriginSession.SessionWorkspace
 {
     using System.Threading.Tasks;
     using Allors.Workspace.Domain;
@@ -65,14 +65,54 @@ namespace Tests.Workspace.SessionWorkspace
                         c1y_2.ShouldNotBeNull(ctx, mode);
 
                         await session2.PushToWorkspace();
+                        await session1.PullFromWorkspace();
 
-                        c1x_1.AddSessionC1WorkspaceC1Many2Many(c1y_2);
+                        var c1y_1 = session1.Instantiate(c1y_2);
 
-                        c1x_1.SessionC1WorkspaceC1Many2Manies.ShouldContains(c1y_2, ctx, mode);
+                        c1x_1.AddSessionC1WorkspaceC1Many2Many(c1y_1);
+
+                        c1x_1.SessionC1WorkspaceC1Many2Manies.ShouldContains(c1y_1, ctx, mode);
 
                         await push(session1);
 
-                        c1x_1.SessionC1WorkspaceC1Many2Manies.ShouldContains(c1y_2, ctx, mode);
+                        c1x_1.SessionC1WorkspaceC1Many2Manies.ShouldContains(c1y_1, ctx, mode);
+                    }
+                }
+            }
+        }
+
+        [Fact]
+        public async void RemoveRole()
+        {
+            foreach (var push in this.pushes)
+            {
+                foreach (WorkspaceMode mode in Enum.GetValues(typeof(WorkspaceMode)))
+                {
+                    foreach (var contextFactory in this.contextFactories)
+                    {
+                        var ctx = contextFactory();
+                        var (session1, session2) = ctx;
+
+                        var c1x_1 = ctx.Session1.Create<SessionC1>();
+                        var c1y_2 = await ctx.Create<WorkspaceC1>(session2, mode);
+
+                        c1x_1.ShouldNotBeNull(ctx, mode);
+                        c1y_2.ShouldNotBeNull(ctx, mode);
+
+                        await session2.PushToWorkspace();
+                        await session1.PullFromWorkspace();
+
+                        var c1y_1 = session1.Instantiate(c1y_2);
+
+                        c1x_1.AddSessionC1WorkspaceC1Many2Many(c1y_1);
+                        c1x_1.SessionC1WorkspaceC1Many2Manies.ShouldContains(c1y_1, ctx, mode);
+
+                        c1x_1.RemoveSessionC1WorkspaceC1Many2Many(c1y_1);
+                        c1x_1.SessionC1WorkspaceC1Many2Manies.ShouldNotContains(c1y_1, ctx, mode);
+
+                        await push(session1);
+
+                        c1x_1.SessionC1WorkspaceC1Many2Manies.ShouldNotContains(c1y_1, ctx, mode);
                     }
                 }
             }

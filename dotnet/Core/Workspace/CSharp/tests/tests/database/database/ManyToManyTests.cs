@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.DatabaseDatabase
+namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
 {
     using System.Threading.Tasks;
     using Allors.Workspace.Domain;

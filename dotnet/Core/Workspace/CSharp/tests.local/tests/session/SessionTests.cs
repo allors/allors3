@@ -3,11 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Session.Local
+namespace Tests.Workspace.OriginSession.Local
 {
     using Xunit;
 
-    public class SessionTests : Session.SessionTests, IClassFixture<Fixture>
+    public class SessionTests : OriginSession.SessionTests, IClassFixture<Fixture>
     {
         public SessionTests(Fixture fixture) : base(fixture) => this.Profile = new Workspace.Local.Profile(fixture);
 

@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.DatabaseDatabase.Remote
+namespace Tests.Workspace.OriginDatabase.DatabaseDatabase.Remote
 {
     using Xunit;
 

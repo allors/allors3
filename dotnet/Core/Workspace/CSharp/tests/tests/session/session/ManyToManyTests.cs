@@ -3,15 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.SessionSession
+namespace Tests.Workspace.OriginSession.SessionSession
 {
     using System.Threading.Tasks;
     using Allors.Workspace.Domain;
     using Allors.Workspace;
     using Xunit;
     using System;
-    using Allors.Workspace.Data;
-    using System.Linq;
 
     public abstract class ManyToManyTests : Test
     {

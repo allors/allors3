@@ -3,19 +3,19 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.OriginSession
+namespace Tests.Workspace.OriginDatabase
 {
     using System.Threading.Tasks;
     using Allors.Workspace.Domain;
     using Allors.Workspace;
     using Xunit;
-    using System;
     using Allors.Workspace.Data;
+    using System;
     using System.Linq;
 
-    public abstract class SessionTests : Test
+    public abstract class DatabaseTests : Test
     {
-        protected SessionTests(Fixture fixture) : base(fixture)
+        protected DatabaseTests(Fixture fixture) : base(fixture)
         {
 
         }
@@ -27,21 +27,20 @@ namespace Tests.Workspace.OriginSession
         }
 
         [Fact]
-        public async void PullingASessionObjectShouldThrowError()
+        public async void PullingANotPushedObjectShouldThrowException()
         {
             var session1 = this.Workspace.CreateSession();
 
-            var c1 = session1.Create<SessionC1>();
+            var c1 = session1.Create<C1>();
             Assert.NotNull(c1);
 
-            await session1.Push();
-
             var session2 = this.Workspace.CreateSession();
+
             bool hasErrors;
 
             try
             {
-                var result = session2.Pull(new Pull { Object = c1 });
+                var result = await session2.Pull(new Pull { Object = c1 });
                 hasErrors = false;
             }
             catch (Exception)

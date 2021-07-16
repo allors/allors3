@@ -3,13 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Database.Local
+namespace Tests.Workspace.OriginDatabase.Remote
 {
     using Xunit;
 
-    public class BehaviourTests : Database.BehaviourTests, IClassFixture<Fixture>
+    public class DatabaseTests : OriginDatabase.DatabaseTests, IClassFixture<Fixture>
     {
-        public BehaviourTests(Fixture fixture) : base(fixture) => this.Profile = new Workspace.Local.Profile(fixture);
+        public DatabaseTests(Fixture fixture) : base(fixture) => this.Profile = new Workspace.Remote.Profile();
 
         public override IProfile Profile { get; }
     }

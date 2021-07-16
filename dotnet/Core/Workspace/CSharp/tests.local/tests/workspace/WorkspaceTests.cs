@@ -3,13 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.OriginSession.SessionDatabase.Remote
+namespace Tests.Workspace.WorkspaceDatabase.Local
 {
     using Xunit;
 
-    public class ManyToManyTests : SessionDatabase.ManyToManyTests, IClassFixture<Fixture>
+    public class WorkspaceTests : OriginWorkspace.WorkspaceTests, IClassFixture<Fixture>
     {
-        public ManyToManyTests(Fixture fixture) : base(fixture) => this.Profile = new Workspace.Remote.Profile();
+        public WorkspaceTests(Fixture fixture) : base(fixture) => this.Profile = new Workspace.Local.Profile(fixture);
 
         public override IProfile Profile { get; }
     }

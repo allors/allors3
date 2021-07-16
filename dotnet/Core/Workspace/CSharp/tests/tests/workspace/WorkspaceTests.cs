@@ -3,19 +3,17 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.Database
+namespace Tests.Workspace.OriginWorkspace
 {
     using System.Threading.Tasks;
     using Allors.Workspace.Domain;
-    using Allors.Workspace;
     using Xunit;
-    using Allors.Workspace.Data;
     using System;
-    using System.Linq;
+    using Allors.Workspace.Data;
 
-    public abstract class BehaviourTests : Test
+    public abstract class WorkspaceTests : Test
     {
-        protected BehaviourTests(Fixture fixture) : base(fixture)
+        protected WorkspaceTests(Fixture fixture) : base(fixture)
         {
 
         }
@@ -27,20 +25,21 @@ namespace Tests.Workspace.Database
         }
 
         [Fact]
-        public async void PullingANotPushedObjectShouldThrowException()
+        public async void PullingAWorkspaceObjectShouldThrowError()
         {
             var session1 = this.Workspace.CreateSession();
 
-            var c1 = session1.Create<C1>();
+            var c1 = session1.Create<WorkspaceC1>();
             Assert.NotNull(c1);
 
-            var session2 = this.Workspace.CreateSession();
+            await session1.Push();
 
+            var session2 = this.Workspace.CreateSession();
             bool hasErrors;
 
             try
             {
-                var result = await session2.Pull(new Pull { Object = c1 });
+                var result = session2.Pull(new Pull { Object = c1 });
                 hasErrors = false;
             }
             catch (Exception)
