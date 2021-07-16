@@ -10,6 +10,7 @@ namespace Tests.Workspace.OriginSession.SessionWorkspace
     using Allors.Workspace;
     using Xunit;
     using System;
+    using System.Linq;
 
     public abstract class ManyToManyTests : Test
     {
@@ -74,10 +75,14 @@ namespace Tests.Workspace.OriginSession.SessionWorkspace
                         c1x_1.AddSessionC1WorkspaceC1Many2Many(c1y_1);
 
                         c1x_1.SessionC1WorkspaceC1Many2Manies.ShouldContains(c1y_1, ctx, mode);
+                        c1y_1.SessionC1sWhereSessionC1WorkspaceC1Many2Many.ShouldContains(c1x_1, ctx, mode);
+                        Assert.Single(c1y_1.SessionC1sWhereSessionC1WorkspaceC1Many2Many.Where(v => v.Equals(c1x_1)));
 
                         await push(session1);
 
                         c1x_1.SessionC1WorkspaceC1Many2Manies.ShouldContains(c1y_1, ctx, mode);
+                        c1y_1.SessionC1sWhereSessionC1WorkspaceC1Many2Many.ShouldContains(c1x_1, ctx, mode);
+                        Assert.Single(c1y_1.SessionC1sWhereSessionC1WorkspaceC1Many2Many.Where(v => v.Equals(c1x_1)));
                     }
                 }
             }
@@ -110,13 +115,17 @@ namespace Tests.Workspace.OriginSession.SessionWorkspace
 
                         c1x_1.AddSessionC1WorkspaceC1Many2Many(c1y_1);
                         c1x_1.SessionC1WorkspaceC1Many2Manies.ShouldContains(c1y_1, ctx, mode);
+                        c1y_1.SessionC1sWhereSessionC1WorkspaceC1Many2Many.ShouldContains(c1x_1, ctx, mode);
+                        Assert.Single(c1y_1.SessionC1sWhereSessionC1WorkspaceC1Many2Many.Where(v => v.Equals(c1x_1)));
 
                         c1x_1.RemoveSessionC1WorkspaceC1Many2Many(c1y_1);
                         c1x_1.SessionC1WorkspaceC1Many2Manies.ShouldNotContains(c1y_1, ctx, mode);
+                        c1y_1.SessionC1sWhereSessionC1WorkspaceC1Many2Many.ShouldNotContains(c1x_1, ctx, mode);
 
                         await push(session1);
 
                         c1x_1.SessionC1WorkspaceC1Many2Manies.ShouldNotContains(c1y_1, ctx, mode);
+                        c1y_1.SessionC1sWhereSessionC1WorkspaceC1Many2Many.ShouldNotContains(c1x_1, ctx, mode);
                     }
                 }
             }
