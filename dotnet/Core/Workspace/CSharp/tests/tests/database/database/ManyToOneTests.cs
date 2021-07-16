@@ -74,7 +74,7 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
 
                             c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            if (!c1x_1.CanWriteC1C1Many2Manies)
+                            if (!c1x_1.CanWriteC1C1Many2One)
                             {
                                 await session1.Pull(new Pull { Object = c1x_1 });
                             }
@@ -121,7 +121,7 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
 
                             c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            if (!c1x_1.CanWriteC1C1Many2Manies)
+                            if (!c1x_1.CanWriteC1C1Many2One)
                             {
                                 await session1.Pull(new Pull { Object = c1x_1 });
                             }
