@@ -241,7 +241,6 @@ namespace Allors.Workspace.Adapters
 
                 case Origin.Workspace:
                     this.WorkspaceOriginState.AddCompositesRole(roleType, value.Id);
-
                     break;
 
                 case Origin.Database:
