@@ -79,19 +79,15 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
                                 await session1.Pull(new Pull { Object = c1x_1 });
                             }
 
-                            // TODO: c1x_1 is not pushed => c1y_2.C1WhereC1C1One2One can't be set because c1x_1 doesn't exist in the datbase yet?
-
                             c1x_1.C1C1One2One = c1y_1;
 
                             c1x_1.C1C1One2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
-                            //c1y_1.C1C1One2One.ShouldEqual(c1x_1, ctx, mode1, mode2);
-                            c1y_2.C1WhereC1C1One2One.ShouldEqual(c1x_1, ctx);
+                            c1y_1.C1WhereC1C1One2One.ShouldEqual(c1x_1, ctx);
 
                             await push(session1);
 
                             c1x_1.C1C1One2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
-                            //c1y_1.C1C1One2One.ShouldEqual(c1x_1, ctx, mode1, mode2);
-                            c1y_2.C1WhereC1C1One2One.ShouldEqual(c1x_1, ctx);
+                            c1y_1.C1WhereC1C1One2One.ShouldEqual(c1x_1, ctx);
                         }
                     }
                 }
@@ -133,20 +129,17 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
                             c1x_1.C1C1One2One = c1y_1;
 
                             c1x_1.C1C1One2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
-                            //c1y_1.C1C1One2One.ShouldEqual(c1x_1, ctx, mode1, mode2);
-                            c1y_2.C1WhereC1C1One2One.ShouldEqual(c1x_1, ctx);
+                            c1y_1.C1WhereC1C1One2One.ShouldEqual(c1x_1, ctx);
 
                             c1x_1.RemoveC1C1One2One();
 
                             c1x_1.C1C1One2One.ShouldNotEqual(c1y_1, ctx, mode1, mode2);
-                            //c1y_1.C1C1One2One.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
-                            c1y_2.C1WhereC1C1One2One.ShouldNotEqual(c1x_1, ctx);
+                            c1y_1.C1WhereC1C1One2One.ShouldNotEqual(c1x_1, ctx);
 
                             await push(session1);
 
                             c1x_1.C1C1One2One.ShouldNotEqual(c1y_1, ctx, mode1, mode2);
-                            //c1y_1.C1C1One2One.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
-                            c1y_2.C1WhereC1C1One2One.ShouldNotEqual(c1x_1, ctx);
+                            c1y_1.C1WhereC1C1One2One.ShouldNotEqual(c1x_1, ctx);
                         }
                     }
                 }
