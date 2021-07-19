@@ -6,8 +6,10 @@
 namespace Tests.Workspace.OriginDatabase
 {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
     using Allors.Workspace;
+    using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
 
@@ -25,6 +27,28 @@ namespace Tests.Workspace.OriginDatabase
         }
 
         [Fact]
+        public async void SettingACorrectDataType()
+        {
+            var session1 = this.Workspace.CreateSession();
+
+            var c1_1 = session1.Create<C1>();
+            var c2_1 = session1.Create<C2>();
+            Assert.NotNull(c1_1);
+            Assert.NotNull(c2_1);
+
+            await session1.Push();
+            var result = await session1.Pull(new Pull { Object = c1_1 });
+            var c1_2 = (C1)result.Objects.Values.First();
+
+            Assert.NotNull(c1_2);
+
+            c1_2.Strategy.SetCompositeRole(this.M.C1.C1C2One2One, c2_1);
+
+            Assert.Equal(c2_1, c1_2.C1C2One2One);
+            Assert.Equal(c1_2, c2_1.C1WhereC1C2One2One);
+        }
+
+        [Fact]
         public void AddingAWrongDataType()
         {
             var session1 = this.Workspace.CreateSession();
@@ -38,7 +62,7 @@ namespace Tests.Workspace.OriginDatabase
 
             try
             {
-                c1.Strategy.AddCompositesRole(this.M.C1.C1C1One2One, c2);
+                c1.Strategy.AddCompositesRole(this.M.C1.C1C1Many2Manies, c2);
                 hasErrors = false;
             }
             catch (Exception)
