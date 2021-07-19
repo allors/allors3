@@ -87,7 +87,7 @@ namespace Tests.Workspace.OriginDatabase
 
             try
             {
-                c1.Strategy.SetUnitRole(this.M.C1.C1AllorsDecimal, 1f);
+                c1.Strategy.SetUnitRole(this.M.C1.C1AllorsInteger, "Test");
                 hasErrors = false;
             }
             catch (Exception)
