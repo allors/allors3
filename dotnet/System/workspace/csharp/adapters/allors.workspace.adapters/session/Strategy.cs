@@ -145,6 +145,8 @@ namespace Allors.Workspace.Adapters
 
         public void SetUnitRole(IRoleType roleType, object value)
         {
+            this.AssertSameType(roleType, value);
+
             switch (roleType.Origin)
             {
                 case Origin.Session:
@@ -170,6 +172,8 @@ namespace Allors.Workspace.Adapters
         public void SetCompositeRole<T>(IRoleType roleType, T value) where T : class, IObject
         {
             this.AssertInput(value);
+
+            this.AssertSameType(roleType, value);
 
             switch (roleType.Origin)
             {
@@ -232,6 +236,8 @@ namespace Allors.Workspace.Adapters
             }
 
             this.AssertInput(value);
+
+            this.AssertSameType(roleType, value);
 
             switch (roleType.Origin)
             {
@@ -352,6 +358,14 @@ namespace Allors.Workspace.Adapters
         public void OnDatabasePushNewId(long newId) => this.Id = newId;
 
         public void OnDatabasePushed() => this.DatabaseOriginState.OnPushed();
+
+        private void AssertSameType<T>(IRoleType roleType, T value)
+        {
+            if (!roleType.ObjectType.ClrType.IsAssignableFrom(value.GetType()))
+            {
+                throw new ArgumentException($"Types do not match: {nameof(roleType)}: {roleType.ObjectType.ClrType} and {nameof(value)}: {value.GetType()}");
+            }
+        }
 
         private void AssertInput(IObject input)
         {

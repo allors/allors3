@@ -48,5 +48,55 @@ namespace Tests.Workspace.OriginDatabase
 
             Assert.True(hasErrors);
         }
+
+        [Fact]
+        public void SettingAWrongUnitType()
+        {
+            var session1 = this.Workspace.CreateSession();
+
+            var c1 = session1.Create<C1>();
+            var c2 = session1.Create<C2>();
+            Assert.NotNull(c1);
+            Assert.NotNull(c2);
+
+            bool hasErrors;
+
+            try
+            {
+                c1.Strategy.SetUnitRole(this.M.C1.C1AllorsDecimal, 1f);
+                hasErrors = false;
+            }
+            catch (Exception)
+            {
+                hasErrors = true;
+            }
+
+            Assert.True(hasErrors);
+        }
+
+        [Fact]
+        public void SettingAWrongDataType()
+        {
+            var session1 = this.Workspace.CreateSession();
+
+            var c1 = session1.Create<C1>();
+            var c2 = session1.Create<C2>();
+            Assert.NotNull(c1);
+            Assert.NotNull(c2);
+
+            bool hasErrors;
+
+            try
+            {
+                c1.Strategy.SetCompositeRole(this.M.C1.C1C1One2One, c2);
+                hasErrors = false;
+            }
+            catch (Exception)
+            {
+                hasErrors = true;
+            }
+
+            Assert.True(hasErrors);
+        }
     }
 }
