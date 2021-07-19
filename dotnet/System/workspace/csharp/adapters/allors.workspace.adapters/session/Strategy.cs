@@ -177,7 +177,10 @@ namespace Allors.Workspace.Adapters
         {
             this.AssertInput(value);
 
-            this.AssertSameType(roleType, value);
+            if (value != null)
+            {
+                this.AssertSameType(roleType, value);
+            }
 
             if (roleType.IsMany)
             {
