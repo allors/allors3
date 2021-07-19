@@ -145,19 +145,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetUnitRole(IRoleType roleType, object value)
         {
-            // TODO: UnitTags?
-            if (!roleType.ObjectType.ClrType.IsAssignableFrom(value.GetType()))
-            {
-                throw new ArgumentException($"Types do not match: {nameof(roleType)}: {roleType.ObjectType.ClrType} and {nameof(value)}: {value.GetType()}");
-            }
-
-            //switch (roleType.ObjectType.Tag)
-            //{
-            //    case UnitTags.Integer:
-            //        break;
-            //    default:
-            //        break;
-            //}
+            AssertUnitTag(roleType, value);
 
             switch (roleType.Origin)
             {
@@ -188,6 +176,7 @@ namespace Allors.Workspace.Adapters
             if (value != null)
             {
                 this.AssertSameType(roleType, value);
+                this.AssertSameSession(value);
             }
 
             if (roleType.IsMany)
@@ -389,6 +378,71 @@ namespace Allors.Workspace.Adapters
             if (!((IComposite)roleType.ObjectType).IsAssignableFrom(value.Strategy.Class))
             {
                 throw new ArgumentException($"Types do not match: {nameof(roleType)}: {roleType.ObjectType.ClrType} and {nameof(value)}: {value.GetType()}");
+            }
+        }
+
+        private void AssertSameSession(IObject value)
+        {
+            if (this.Session != value.Strategy.Session)
+            {
+                throw new ArgumentException($"Session do not match");
+            }
+        }
+
+        private static void AssertUnitTag(IRoleType roleType, object value)
+        {
+            switch (roleType.ObjectType.Tag)
+            {
+                case UnitTags.Binary:
+                    if (!(value is byte[]))
+                    {
+                        throw new ArgumentException($"{nameof(value)} is not a Binary");
+                    }
+                    break;
+                case UnitTags.Boolean:
+                    if (!(value is bool))
+                    {
+                        throw new ArgumentException($"{nameof(value)} is not an Bool");
+                    }
+                    break;
+                case UnitTags.DateTime:
+                    if (!(value is DateTime))
+                    {
+                        throw new ArgumentException($"{nameof(value)} is not an DateTime");
+                    }
+                    break;
+                case UnitTags.Decimal:
+                    if (!(value is decimal))
+                    {
+                        throw new ArgumentException($"{nameof(value)} is not an Decimal");
+                    }
+                    break;
+                case UnitTags.Float:
+                    if (!(value is float))
+                    {
+                        throw new ArgumentException($"{nameof(value)} is not an Float");
+                    }
+                    break;
+                case UnitTags.Integer:
+                    if (!(value is int))
+                    {
+                        throw new ArgumentException($"{nameof(value)} is not an Integer");
+                    }
+                    break;
+                case UnitTags.String:
+                    if (!(value is string))
+                    {
+                        throw new ArgumentException($"{nameof(value)} is not an String");
+                    }
+                    break;
+                case UnitTags.Unique:
+                    if (!(value is Guid))
+                    {
+                        throw new ArgumentException($"{nameof(value)} is not an Unique");
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(roleType));
             }
         }
 
