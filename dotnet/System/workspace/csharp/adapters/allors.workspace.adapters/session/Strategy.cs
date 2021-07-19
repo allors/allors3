@@ -145,7 +145,11 @@ namespace Allors.Workspace.Adapters
 
         public void SetUnitRole(IRoleType roleType, object value)
         {
-            this.AssertSameType(roleType, value);
+            // TODO: Tags
+            if (!roleType.ObjectType.ClrType.IsAssignableFrom(value.GetType()))
+            {
+                throw new ArgumentException($"Types do not match: {nameof(roleType)}: {roleType.ObjectType.ClrType} and {nameof(value)}: {value.GetType()}");
+            }
 
             switch (roleType.Origin)
             {
@@ -270,6 +274,7 @@ namespace Allors.Workspace.Adapters
                     throw new ArgumentException("Unsupported Origin");
             }
         }
+
         public void RemoveCompositesRole<T>(IRoleType roleType, T value) where T : class, IObject
         {
             if (value == null)
@@ -368,9 +373,9 @@ namespace Allors.Workspace.Adapters
 
         public void OnDatabasePushed() => this.DatabaseOriginState.OnPushed();
 
-        private void AssertSameType<T>(IRoleType roleType, T value)
+        private void AssertSameType<T>(IRoleType roleType, T value) where T : class, IObject
         {
-            if (!roleType.ObjectType.ClrType.IsAssignableFrom(value.GetType()))
+            if (!((IComposite)roleType.ObjectType).IsAssignableFrom(value.Strategy.Class))
             {
                 throw new ArgumentException($"Types do not match: {nameof(roleType)}: {roleType.ObjectType.ClrType} and {nameof(value)}: {value.GetType()}");
             }
