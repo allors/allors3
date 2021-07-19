@@ -78,6 +78,11 @@ namespace Allors.Workspace.Adapters
 
         public object GetRole(IRoleType roleType)
         {
+            if (roleType == null)
+            {
+                throw new ArgumentNullException(nameof(roleType));
+            }
+
             if (roleType.ObjectType.IsUnit)
             {
                 return this.GetUnitRole(roleType);
@@ -148,7 +153,6 @@ namespace Allors.Workspace.Adapters
 
                 case Origin.Workspace:
                     this.WorkspaceOriginState?.SetUnitRole(roleType, value);
-
                     break;
 
                 case Origin.Database:

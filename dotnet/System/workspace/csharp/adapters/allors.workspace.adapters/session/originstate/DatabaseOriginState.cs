@@ -27,7 +27,7 @@ namespace Allors.Workspace.Adapters
 
         protected override IRecord Record => this.DatabaseRecord;
 
-        internal protected DatabaseRecord DatabaseRecord { get; private set; }
+        protected internal DatabaseRecord DatabaseRecord { get; private set; }
 
         public bool IsPushed { get; private set; }
 
