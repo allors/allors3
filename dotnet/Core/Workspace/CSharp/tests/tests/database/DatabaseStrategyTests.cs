@@ -26,6 +26,8 @@ namespace Tests.Workspace.OriginDatabase
             await this.Login("administrator");
         }
 
+        // Move tests to seperate class called StrategyTests?
+
         [Fact]
         public async void SettingACorrectDataType()
         {

@@ -145,11 +145,19 @@ namespace Allors.Workspace.Adapters
 
         public void SetUnitRole(IRoleType roleType, object value)
         {
-            // TODO: Tags
+            // TODO: UnitTags?
             if (!roleType.ObjectType.ClrType.IsAssignableFrom(value.GetType()))
             {
                 throw new ArgumentException($"Types do not match: {nameof(roleType)}: {roleType.ObjectType.ClrType} and {nameof(value)}: {value.GetType()}");
             }
+
+            //switch (roleType.ObjectType.Tag)
+            //{
+            //    case UnitTags.Integer:
+            //        break;
+            //    default:
+            //        break;
+            //}
 
             switch (roleType.Origin)
             {
