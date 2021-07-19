@@ -88,6 +88,49 @@ namespace Tests.Workspace.OriginSession.SessionDatabase
         }
 
         [Fact]
+        public async void SetRoleToNull()
+        {
+            foreach (var push in this.pushes)
+            {
+                foreach (DatabaseMode mode in Enum.GetValues(typeof(DatabaseMode)))
+                {
+                    foreach (var contextFactory in this.contextFactories)
+                    {
+                        var ctx = contextFactory();
+                        var (session1, session2) = ctx;
+
+                        var c1x_1 = ctx.Session1.Create<SessionC1>();
+                        var c1y_2 = await ctx.Create<C1>(session2, mode);
+
+                        c1x_1.ShouldNotBeNull(ctx, mode);
+                        c1y_2.ShouldNotBeNull(ctx, mode);
+
+                        await session2.Push();
+
+                        var result = await session1.Pull(new Pull { Object = c1y_2 });
+
+                        var c1y_1 = (C1)result.Objects.Values.First();
+
+                        c1y_1.ShouldNotBeNull(ctx, mode);
+
+                        c1x_1.AddSessionC1DatabaseC1One2Many(null);
+                        Assert.Empty(c1x_1.SessionC1DatabaseC1One2Manies);
+
+                        c1x_1.AddSessionC1DatabaseC1One2Many(c1y_1);
+
+                        c1x_1.SessionC1DatabaseC1One2Manies.ShouldContains(c1y_1, ctx, mode);
+                        c1y_1.SessionC1WhereSessionC1DatabaseC1One2Many.ShouldEqual(c1x_1, ctx, mode);
+
+                        await push(session1);
+
+                        c1x_1.SessionC1DatabaseC1One2Manies.ShouldContains(c1y_1, ctx, mode);
+                        c1y_1.SessionC1WhereSessionC1DatabaseC1One2Many.ShouldEqual(c1x_1, ctx, mode);
+                    }
+                }
+            }
+        }
+
+        [Fact]
         public async void RemoveRole()
         {
             foreach (var push in this.pushes)
@@ -114,6 +157,53 @@ namespace Tests.Workspace.OriginSession.SessionDatabase
                         c1y_1.ShouldNotBeNull(ctx, mode);
 
                         c1x_1.AddSessionC1DatabaseC1One2Many(c1y_1);
+                        c1x_1.SessionC1DatabaseC1One2Manies.ShouldContains(c1y_1, ctx, mode);
+                        c1y_1.SessionC1WhereSessionC1DatabaseC1One2Many.ShouldEqual(c1x_1, ctx, mode);
+
+                        c1x_1.RemoveSessionC1DatabaseC1One2Many(c1y_1);
+                        c1x_1.SessionC1DatabaseC1One2Manies.ShouldNotContains(c1y_1, ctx, mode);
+                        c1y_1.SessionC1WhereSessionC1DatabaseC1One2Many.ShouldNotEqual(c1x_1, ctx, mode);
+
+                        await push(session1);
+
+                        c1x_1.SessionC1DatabaseC1One2Manies.ShouldNotContains(c1y_1, ctx, mode);
+                        c1y_1.SessionC1WhereSessionC1DatabaseC1One2Many.ShouldNotEqual(c1x_1, ctx, mode);
+                    }
+                }
+            }
+        }
+
+        [Fact]
+        public async void RemoveNullRole()
+        {
+            foreach (var push in this.pushes)
+            {
+                foreach (DatabaseMode mode in Enum.GetValues(typeof(DatabaseMode)))
+                {
+                    foreach (var contextFactory in this.contextFactories)
+                    {
+                        var ctx = contextFactory();
+                        var (session1, session2) = ctx;
+
+                        var c1x_1 = ctx.Session1.Create<SessionC1>();
+                        var c1y_2 = await ctx.Create<C1>(session2, mode);
+
+                        c1x_1.ShouldNotBeNull(ctx, mode);
+                        c1y_2.ShouldNotBeNull(ctx, mode);
+
+                        await session2.Push();
+
+                        var result = await session1.Pull(new Pull { Object = c1y_2 });
+
+                        var c1y_1 = (C1)result.Objects.Values.First();
+
+                        c1y_1.ShouldNotBeNull(ctx, mode);
+
+                        c1x_1.AddSessionC1DatabaseC1One2Many(c1y_1);
+                        c1x_1.SessionC1DatabaseC1One2Manies.ShouldContains(c1y_1, ctx, mode);
+                        c1y_1.SessionC1WhereSessionC1DatabaseC1One2Many.ShouldEqual(c1x_1, ctx, mode);
+
+                        c1x_1.RemoveSessionC1DatabaseC1One2Many(null);
                         c1x_1.SessionC1DatabaseC1One2Manies.ShouldContains(c1y_1, ctx, mode);
                         c1y_1.SessionC1WhereSessionC1DatabaseC1One2Many.ShouldEqual(c1x_1, ctx, mode);
 
