@@ -175,6 +175,11 @@ namespace Allors.Workspace.Adapters
 
             this.AssertSameType(roleType, value);
 
+            if (roleType.IsMany)
+            {
+                throw new ArgumentException($"Given {nameof(roleType)} is the wrong multiplicity");
+            }
+
             switch (roleType.Origin)
             {
                 case Origin.Session:
@@ -239,6 +244,11 @@ namespace Allors.Workspace.Adapters
 
             this.AssertSameType(roleType, value);
 
+            if (roleType.IsOne)
+            {
+                throw new ArgumentException($"Given {nameof(roleType)} is the wrong multiplicity");
+            }
+
             switch (roleType.Origin)
             {
                 case Origin.Session:
@@ -260,7 +270,6 @@ namespace Allors.Workspace.Adapters
                     throw new ArgumentException("Unsupported Origin");
             }
         }
-
         public void RemoveCompositesRole<T>(IRoleType roleType, T value) where T : class, IObject
         {
             if (value == null)

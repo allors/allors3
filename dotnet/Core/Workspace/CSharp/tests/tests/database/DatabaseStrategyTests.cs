@@ -55,9 +55,7 @@ namespace Tests.Workspace.OriginDatabase
             var session1 = this.Workspace.CreateSession();
 
             var c1 = session1.Create<C1>();
-            var c2 = session1.Create<C2>();
             Assert.NotNull(c1);
-            Assert.NotNull(c2);
 
             bool hasErrors;
 
@@ -89,6 +87,58 @@ namespace Tests.Workspace.OriginDatabase
             try
             {
                 c1.Strategy.SetCompositeRole(this.M.C1.C1C1One2One, c2);
+                hasErrors = false;
+            }
+            catch (Exception)
+            {
+                hasErrors = true;
+            }
+
+            Assert.True(hasErrors);
+        }
+
+        [Fact]
+        public void AddingAOne2OneUsingTheAddCompositesRoleMethod()
+        {
+            var session1 = this.Workspace.CreateSession();
+
+            var c1 = session1.Create<C1>();
+            var c2 = session1.Create<C2>();
+            Assert.NotNull(c1);
+            Assert.NotNull(c2);
+
+            bool hasErrors;
+
+            try
+            {
+                c1.Strategy.AddCompositesRole(this.M.C1.C1C2One2One, c2);
+                hasErrors = false;
+            }
+            catch (Exception)
+            {
+                hasErrors = true;
+            }
+
+            Assert.True(hasErrors);
+        }
+
+        [Fact]
+        public void AddingAMany2ManyUsingTheSetCompositeRoleMethod()
+        {
+            var session1 = this.Workspace.CreateSession();
+
+            var c1 = session1.Create<C1>();
+            var c2 = session1.Create<C2>();
+            Assert.NotNull(c1);
+            Assert.NotNull(c2);
+
+            bool hasErrors;
+
+            c1.Strategy.SetCompositesRole(this.M.C1.C1C2Many2Manies, new[] { c2 });
+
+            try
+            {
+                c1.Strategy.SetCompositeRole(this.M.C1.C1C2Many2Manies, c2);
                 hasErrors = false;
             }
             catch (Exception)
