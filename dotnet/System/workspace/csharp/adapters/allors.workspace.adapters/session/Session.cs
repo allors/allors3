@@ -14,10 +14,15 @@ namespace Allors.Workspace.Adapters
 
     public abstract class Session : ISession
     {
+        private static int sessionIdCounter = 0;
+        public int SessionId { get; set; }
+
         private readonly Dictionary<IClass, ISet<Strategy>> strategiesByClass;
 
         protected Session(Workspace workspace, ISessionServices sessionServices)
         {
+            this.SessionId = ++sessionIdCounter;
+
             this.Workspace = workspace;
             this.Services = sessionServices;
 
@@ -46,6 +51,8 @@ namespace Allors.Workspace.Adapters
         public SessionOriginState SessionOriginState { get; }
 
         protected Dictionary<long, Strategy> StrategyByWorkspaceId { get; }
+
+        public override string ToString() => $"session: {this.SessionId}";
 
         public abstract T Create<T>(IClass @class) where T : class, IObject;
 

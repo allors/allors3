@@ -17,3 +17,9 @@ using static DebuggerDisplayConstants;
 
 [assembly: DebuggerDisplay("{Name}" + id + session, Target = typeof(C1))]
 [assembly: DebuggerDisplay("{Name}" + id + session, Target = typeof(C2))]
+
+[assembly: DebuggerDisplay("{Name}" + id + session, Target = typeof(WorkspaceC1))]
+[assembly: DebuggerDisplay("{Name}" + id + session, Target = typeof(WorkspaceC2))]
+
+[assembly: DebuggerDisplay("{Name}" + id + session, Target = typeof(SessionC1))]
+[assembly: DebuggerDisplay("{Name}" + id + session, Target = typeof(SessionC2))]
