@@ -41,10 +41,10 @@ namespace Tests.Workspace.OriginSession
 
             try
             {
-                var result = session2.Pull(new Pull { Object = c1 });
+                var result = await session2.Pull(new Pull { Object = c1 });
                 hasErrors = false;
             }
-            catch (Exception)
+            catch (ArgumentException)
             {
                 hasErrors = true;
             }

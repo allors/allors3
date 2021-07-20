@@ -18,6 +18,18 @@ namespace Tests.Workspace
         protected ChangeSetTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
+        public async void CreatingChangeSetAfterCreatingSession()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Null(changeSet.Instantiated);
+        }
+
+        [Fact]
         public async void Instantiated()
         {
             await this.Login("administrator");
@@ -52,6 +64,25 @@ namespace Tests.Workspace
             var changeSet = session.Checkpoint();
 
             Assert.Single(changeSet.AssociationsByRoleType);
+        }
+
+        [Fact]
+        public async void ChangeSetAfterPushWithNoChanges()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var c1 = session.Create<C1>();
+
+            await session.Push();
+            var changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.Created);
+
+            await session.Push();
+            changeSet = session.Checkpoint();
+            Assert.Null(changeSet.Created);
         }
 
         [Fact]

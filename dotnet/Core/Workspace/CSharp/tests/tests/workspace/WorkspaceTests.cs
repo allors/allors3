@@ -39,7 +39,7 @@ namespace Tests.Workspace.OriginWorkspace
 
             try
             {
-                var result = session2.Pull(new Pull { Object = c1 });
+                var result = await session2.Pull(new Pull { Object = c1 });
                 hasErrors = false;
             }
             catch (Exception)

@@ -5,6 +5,7 @@
 
 namespace Allors.Workspace.Adapters.Local
 {
+    using System;
     using System.Threading.Tasks;
     using Meta;
 
@@ -36,10 +37,26 @@ namespace Allors.Workspace.Adapters.Local
             return Task.FromResult<IPullResult>(result);
         }
 
-        public override Task<IPullResult> Pull(params Data.Pull[] pull)
+        public override Task<IPullResult> Pull(params Data.Pull[] pulls)
         {
+            foreach (var pull in pulls)
+            {
+                if (pull.ObjectId < 0 || pull.Object?.Id < 0)
+                {
+                    throw new ArgumentException($"Id is not in the database");
+                }
+
+                if (pull.Object != null)
+                {
+                    if (pull.Object.Strategy.Class.Origin != Origin.Database)
+                    {
+                        throw new ArgumentException($"Origin is not Database");
+                    }
+                }
+            }
+
             var result = new Pull(this, this.Workspace);
-            result.Execute(pull);
+            result.Execute(pulls);
 
             this.OnPulled(result);
 

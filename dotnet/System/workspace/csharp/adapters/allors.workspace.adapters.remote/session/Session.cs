@@ -5,6 +5,7 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using Allors.Protocol.Json.Api.Invoke;
@@ -52,9 +53,25 @@ namespace Allors.Workspace.Adapters.Remote
             return new InvokeResult(this, invokeResponse);
         }
 
-        public override async Task<IPullResult> Pull(params Pull[] pull)
+        public override async Task<IPullResult> Pull(params Pull[] pulls)
         {
-            var pullRequest = new PullRequest { l = pull.Select(v => v.ToJson(this.DatabaseConnection.UnitConvert)).ToArray() };
+            foreach (var pull in pulls)
+            {
+                if (pull.ObjectId < 0 || pull.Object?.Id < 0)
+                {
+                    throw new ArgumentException($"Id is not in the database");
+                }
+
+                if (pull.Object != null)
+                {
+                    if (pull.Object.Strategy.Class.Origin != Origin.Database)
+                    {
+                        throw new ArgumentException($"Origin is not Database");
+                    }
+                }
+            }
+
+            var pullRequest = new PullRequest { l = pulls.Select(v => v.ToJson(this.DatabaseConnection.UnitConvert)).ToArray() };
 
             var pullResponse = await this.Workspace.DatabaseConnection.Pull(pullRequest);
             return await this.OnPull(pullResponse);
