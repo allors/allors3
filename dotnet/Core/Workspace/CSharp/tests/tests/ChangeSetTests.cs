@@ -106,5 +106,151 @@ namespace Tests.Workspace
 
             Assert.Single(changeSet.AssociationsByRoleType);
         }
+
+        [Fact]
+        public async void ChangeSetAfterPushWithPullWithNoChanges()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await session.Pull(pull);
+            var c1a = result.GetCollection<C1>().First();
+
+            await session.Push();
+            await session.Pull(pull);
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Null(changeSet.Created);
+            Assert.Empty(changeSet.AssociationsByRoleType);
+
+            await session.Push();
+            changeSet = session.Checkpoint();
+
+            Assert.Null(changeSet.Created);
+            Assert.Empty(changeSet.AssociationsByRoleType);
+        }
+
+        [Fact]
+        public async void ChangeSetAfterPushOne2One()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await session.Pull(pull);
+            var c1a = result.GetCollection<C1>().First();
+            var c1b = session.Create<C1>();
+
+            c1a.C1C1One2One = c1b;
+
+            await session.Push();
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.Created);
+            Assert.Single(changeSet.AssociationsByRoleType);
+            Assert.Single(changeSet.RolesByAssociationType);
+
+            await session.Push();
+            changeSet = session.Checkpoint();
+
+            Assert.Null(changeSet.Created);
+            Assert.Empty(changeSet.AssociationsByRoleType);
+            Assert.Empty(changeSet.RolesByAssociationType);
+        }
+
+        [Fact]
+        public async void ChangeSetAfterPushMany2One()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await session.Pull(pull);
+            var c1a = result.GetCollection<C1>().First();
+            var c1b = session.Create<C1>();
+
+            c1a.C1C1Many2One = c1b;
+
+            await session.Push();
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.Created);
+            Assert.Single(changeSet.AssociationsByRoleType);
+            Assert.Single(changeSet.RolesByAssociationType);
+
+            await session.Push();
+            changeSet = session.Checkpoint();
+
+            Assert.Null(changeSet.Created);
+            Assert.Empty(changeSet.AssociationsByRoleType);
+            Assert.Empty(changeSet.RolesByAssociationType);
+        }
+
+        [Fact]
+        public async void ChangeSetAfterPushOne2Many()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await session.Pull(pull);
+            var c1a = result.GetCollection<C1>().First();
+            var c1b = session.Create<C1>();
+
+            c1a.AddC1C1One2Many(c1b);
+
+            await session.Push();
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.Created);
+            Assert.Single(changeSet.AssociationsByRoleType);
+            Assert.Single(changeSet.RolesByAssociationType);
+
+            await session.Push();
+            changeSet = session.Checkpoint();
+
+            Assert.Null(changeSet.Created);
+            Assert.Empty(changeSet.AssociationsByRoleType);
+            Assert.Empty(changeSet.RolesByAssociationType);
+        }
+
+        [Fact]
+        public async void ChangeSetAfterPushMany2Many()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await session.Pull(pull);
+            var c1a = result.GetCollection<C1>().First();
+            var c1b = session.Create<C1>();
+
+            c1a.AddC1C1Many2Many(c1b);
+
+            await session.Push();
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.Created);
+            Assert.Single(changeSet.AssociationsByRoleType);
+            Assert.Single(changeSet.RolesByAssociationType);
+
+            await session.Push();
+            changeSet = session.Checkpoint();
+
+            Assert.Null(changeSet.Created);
+            Assert.Empty(changeSet.AssociationsByRoleType);
+            Assert.Empty(changeSet.RolesByAssociationType);
+        }
     }
 }
