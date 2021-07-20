@@ -98,6 +98,7 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             this.PushToDatabaseTracker.Created = null;
+            this.PushToDatabaseTracker.Changed = null;
 
             if (pushRequest.o != null)
             {

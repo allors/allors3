@@ -7,6 +7,7 @@ namespace Tests.Workspace
     using Allors.Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Meta;
+    using Xunit;
 
     public abstract class Context
     {
@@ -63,7 +64,8 @@ namespace Tests.Workspace
                     return pushObject;
                 case DatabaseMode.PushAndPull:
                     var pushAndPullObject = session.Create<T>();
-                    await session.Push();
+                    var result = await session.Push();
+                    Assert.False(result.HasErrors);
                     await session.Pull(new Pull { Object = pushAndPullObject });
                     return pushAndPullObject;
                 case DatabaseMode.SharedDatabase:

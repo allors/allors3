@@ -42,8 +42,6 @@ namespace Allors.Workspace.Adapters.Remote.SystemText
 
         public HttpClient HttpClient { get; }
 
-        ~DatabaseConnection() => this.HttpClient.Dispose();
-
         public async Task<bool> Login(Uri url, string username, string password)
         {
             var request = new AuthenticationTokenRequest { l = username, p = password };

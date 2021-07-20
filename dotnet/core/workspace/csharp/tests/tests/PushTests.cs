@@ -197,5 +197,35 @@ namespace Tests.Workspace
 
             Assert.Equal("Johny Doey", person.DomainFullName);
         }
+
+        [Fact]
+        public async void PushTwice()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var c1x_1 = session.Create<C1>();
+            var c1y_2 = session.Create<C1>();
+
+            await session.Push();
+
+            var result = await session.Pull(new Pull { Object = c1y_2 });
+
+            var c1y_1 = (C1)result.Objects.Values.First();
+
+            if (!c1x_1.CanWriteC1C1Many2One)
+            {
+                await session.Pull(new Pull { Object = c1x_1 });
+            }
+
+            c1x_1.C1C1Many2One = c1y_1;
+
+            var pushResult = await session.Push();
+            Assert.False(pushResult.HasErrors);
+
+            pushResult = await session.Push();
+            Assert.False(pushResult.HasErrors);
+        }
     }
 }

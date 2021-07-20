@@ -41,9 +41,9 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
             this.contextFactories = new Func<Context>[]
             {
                 () => singleSessionContext,
-                () => new SingleSessionContext(this, "Single"),
-                () => multipleSessionContext,
-                () => new MultipleSessionContext(this, "Multiple"),
+                //() => new SingleSessionContext(this, "Single"),
+                //() => multipleSessionContext,
+                //() => new MultipleSessionContext(this, "Multiple"),
             };
         }
 
@@ -88,6 +88,9 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
 
                             c1x_1.C1C1Many2One.ShouldEqual(c1y_1, ctx, mode1);
                             c1y_1.C1sWhereC1C1Many2One.ShouldContains(c1x_1, ctx, mode1, mode2);
+
+                            await session1.Push();
+                            await session2.Push();
                         }
                     }
                 }
