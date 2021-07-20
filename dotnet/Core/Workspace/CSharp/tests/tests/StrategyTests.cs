@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.OriginDatabase
+namespace Tests.Workspace
 {
     using System;
     using System.Linq;
@@ -13,9 +13,9 @@ namespace Tests.Workspace.OriginDatabase
     using Allors.Workspace.Domain;
     using Xunit;
 
-    public abstract class DatabaseStrategyTests : Test
+    public abstract class StrategyTests : Test
     {
-        protected DatabaseStrategyTests(Fixture fixture) : base(fixture)
+        protected StrategyTests(Fixture fixture) : base(fixture)
         {
 
         }
@@ -25,8 +25,6 @@ namespace Tests.Workspace.OriginDatabase
             await base.InitializeAsync();
             await this.Login("administrator");
         }
-
-        // Move tests to seperate class called StrategyTests?
 
         [Fact]
         public async void SettingACorrectDataType()
