@@ -21,8 +21,6 @@ namespace Allors.Workspace.Adapters.Local
         private IDictionary<string, IObject[]> collections;
         private IDictionary<string, IObject> objects;
 
-        private IList<IObject> mergeErrors;
-
         public Pull(Session session, Workspace workspace) : base(session)
         {
             this.Workspace = workspace;
@@ -99,8 +97,6 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public IEnumerable<IObject> MergeErrors => this.mergeErrors ?? Array.Empty<IObject>();
-
         public IDictionary<string, IObject[]> Collections =>
             this.collections ??= this.DatabaseCollectionsByName.ToDictionary(v => v.Key,
                 v => v.Value.Select(w => this.Session.Instantiate<IObject>(w.Id)).ToArray());
@@ -135,12 +131,6 @@ namespace Allors.Workspace.Adapters.Local
         public object GetValue(string key) => this.Values[key];
 
         public T GetValue<T>(string key) => (T)this.GetValue(key);
-
-        public void AddMergeError(IObject @object)
-        {
-            this.mergeErrors ??= new List<IObject>();
-            this.mergeErrors.Add(@object);
-        }
 
         public void Execute(Data.Procedure workspaceProcedure)
         {

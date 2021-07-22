@@ -5,6 +5,7 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json.Api;
@@ -15,6 +16,8 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly Response response;
 
         private IDerivationError[] derivationErrors;
+
+        private IList<IObject> mergeErrors;
 
         protected Result(ISession session, Response response)
         {
@@ -49,6 +52,14 @@ namespace Allors.Workspace.Adapters.Remote
 
                 return this.derivationErrors;
             }
+        }
+
+        public IEnumerable<IObject> MergeErrors => this.mergeErrors ?? Array.Empty<IObject>();
+
+        public void AddMergeError(IObject @object)
+        {
+            this.mergeErrors ??= new List<IObject>();
+            this.mergeErrors.Add(@object);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class PullResult : Result, IPullResultInternals
     {
-        private IList<IObject> mergeErrors;
+
 
         public PullResult(Adapters.Session session, PullResponse response) : base(session, response)
         {
@@ -52,13 +52,5 @@ namespace Allors.Workspace.Adapters.Remote
         public object GetValue(string key) => this.Values[key.ToUpperInvariant()];
 
         public T GetValue<T>(string key) => (T)this.GetValue(key.ToUpperInvariant());
-
-        public IEnumerable<IObject> MergeErrors => this.mergeErrors ?? Array.Empty<IObject>();
-
-        public void AddMergeError(IObject @object)
-        {
-            this.mergeErrors ??= new List<IObject>();
-            this.mergeErrors.Add(@object);
-        }
     }
 }
