@@ -219,6 +219,12 @@ namespace Allors.Workspace.Adapters
         {
             var ranges = this.Session.Workspace.Ranges;
 
+
+            if(this.ChangedRoleByRelationType == null)
+            {
+                return;
+            }
+
             foreach (var kvp in this.ChangedRoleByRelationType)
             {
                 var relationType = kvp.Key;
