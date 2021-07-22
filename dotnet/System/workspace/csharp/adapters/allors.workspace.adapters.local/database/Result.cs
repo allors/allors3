@@ -38,8 +38,10 @@ namespace Allors.Workspace.Adapters.Local
                 new DerivationError(this.Session, v)).ToArray();
 
         public bool HasErrors => !string.IsNullOrWhiteSpace(this.ErrorMessage) ||
-                                 this.accessErrorStrategies?.Count > 0 || this.databaseMissingIds?.Count > 0 ||
-                                 this.versionErrors?.Count > 0 || this.derivationErrors?.Count > 0;
+                                 this.accessErrorStrategies?.Count > 0 ||
+                                 this.databaseMissingIds?.Count > 0 ||
+                                 this.versionErrors?.Count > 0 ||
+                                 this.derivationErrors?.Count > 0;
 
         internal void AddDerivationErrors(Database.Derivations.IDerivationError[] errors) =>
             (this.derivationErrors ??= new List<Database.Derivations.IDerivationError>()).AddRange(errors);

@@ -5,12 +5,15 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json.Api.Pull;
 
-    public class PullResult : Result, IPullResult
+    public class PullResult : Result, IPullResultInternals
     {
+        private IList<IObject> mergeErrors;
+
         public PullResult(Adapters.Session session, PullResponse response) : base(session, response)
         {
             this.Workspace = session.Workspace;
@@ -49,5 +52,13 @@ namespace Allors.Workspace.Adapters.Remote
         public object GetValue(string key) => this.Values[key.ToUpperInvariant()];
 
         public T GetValue<T>(string key) => (T)this.GetValue(key.ToUpperInvariant());
+
+        public IEnumerable<IObject> MergeErrors => this.mergeErrors ?? Array.Empty<IObject>();
+
+        public void AddMergeError(IObject @object)
+        {
+            this.mergeErrors ??= new List<IObject>();
+            this.mergeErrors.Add(@object);
+        }
     }
 }

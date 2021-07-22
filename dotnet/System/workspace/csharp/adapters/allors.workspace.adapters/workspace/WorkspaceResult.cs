@@ -5,16 +5,26 @@
 
 namespace Allors.Workspace.Adapters
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class WorkspaceResult : IWorkspaceResult
     {
-        public bool HasErrors { get; }
+        private IList<IObject> mergeErrors;
+
+        public bool HasErrors => this.VersionErrors?.Any() == true || this.MissingErrors?.Any() == true || this.mergeErrors != null;
 
         public IEnumerable<IObject> VersionErrors { get; }
 
-        public IEnumerable<IObject> AccessErrors { get; }
-
         public IEnumerable<IObject> MissingErrors { get; }
+
+        public IEnumerable<IObject> MergeErrors => this.mergeErrors ?? Array.Empty<IObject>();
+
+        public void AddMergeError(IObject @Object)
+        {
+            this.mergeErrors ??= new List<IObject>();
+            this.mergeErrors.Add(@Object);
+        }
     }
 }

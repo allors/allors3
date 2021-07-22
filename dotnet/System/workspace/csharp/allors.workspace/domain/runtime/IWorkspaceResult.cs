@@ -13,8 +13,8 @@ namespace Allors.Workspace
 
         IEnumerable<IObject> VersionErrors { get; }
 
-        IEnumerable<IObject> AccessErrors { get; }
-
         IEnumerable<IObject> MissingErrors { get; }
+
+        IEnumerable<IObject> MergeErrors { get; }
     }
 }

@@ -9,7 +9,6 @@ namespace Allors.Workspace.Adapters
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
-    using Ranges;
 
     public abstract class Strategy : IStrategy
     {

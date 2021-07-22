@@ -151,7 +151,7 @@ namespace Allors.Workspace.Adapters.Local
             {
                 if (this.StrategyByWorkspaceId.TryGetValue(databaseObject.Id, out var strategy))
                 {
-                    strategy.DatabaseOriginState.OnPulled();
+                    strategy.DatabaseOriginState.OnPulled(pull);
                 }
                 else
                 {

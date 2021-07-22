@@ -70,7 +70,7 @@ namespace Allors.Workspace.Adapters
 
         public Task<IWorkspaceResult> PullFromWorkspace()
         {
-            var pullResult = new WorkspaceResult();
+            var result = new WorkspaceResult();
 
             // TODO: Optimize
             foreach (var kvp in this.StrategyByWorkspaceId)
@@ -78,11 +78,11 @@ namespace Allors.Workspace.Adapters
                 var strategy = kvp.Value;
                 if (strategy.Class.Origin != Origin.Session)
                 {
-                    strategy.WorkspaceOriginState.Pull();
+                    strategy.WorkspaceOriginState.OnPulled(result);
                 }
             }
 
-            return Task.FromResult((IWorkspaceResult)pullResult);
+            return Task.FromResult((IWorkspaceResult)result);
         }
 
         public Task<IWorkspaceResult> PushToWorkspace()

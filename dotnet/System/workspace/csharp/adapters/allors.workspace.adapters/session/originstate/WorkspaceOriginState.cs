@@ -44,10 +44,16 @@ namespace Allors.Workspace.Adapters
             this.ChangedRoleByRelationType = null;
         }
 
-        public void Pull()
+        public void OnPulled(WorkspaceResult result)
         {
-            // TODO: Check for overwrites
+            if (this.ChangedRoleByRelationType?.Count > 0)
+            {
+                result.AddMergeError(this.Strategy.Object);
+                return;
+            }
+
             this.WorkspaceRecord = this.Workspace.GetRecord(this.Id);
+            this.ChangedRoleByRelationType = null;
         }
     }
 }

@@ -175,6 +175,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         private async Task<IPullResult> OnPull(PullResponse pullResponse)
         {
+            var pullResult = new PullResult(this, pullResponse);
+
             var syncRequest = this.Workspace.DatabaseConnection.OnPullResponse(pullResponse);
             if (syncRequest.o.Length > 0)
             {
@@ -190,7 +192,7 @@ namespace Allors.Workspace.Adapters.Remote
                     }
                     else
                     {
-                        strategy.DatabaseOriginState.OnPulled();
+                        strategy.DatabaseOriginState.OnPulled(pullResult);
                     }
                 }
 
@@ -211,7 +213,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (this.StrategyByWorkspaceId.TryGetValue(v.i, out var strategy))
                 {
-                    strategy.DatabaseOriginState.OnPulled();
+                    strategy.DatabaseOriginState.OnPulled(pullResult);
                 }
                 else
                 {
@@ -219,7 +221,7 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
-            return new PullResult(this, pullResponse);
+            return pullResult;
         }
     }
 }
