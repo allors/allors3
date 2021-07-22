@@ -304,6 +304,11 @@ namespace Tests.Workspace
             var c1a = result.GetCollection<C1>().First();
             var c1b = session.Create<C1>();
 
+            await session.Push();
+            result = await session.Pull(new Pull { Object = c1b });
+
+            var c2b = result.GetObject<C1>();
+
             c1a.C1C1Many2One = c1b;
 
             await session.Push();
@@ -313,13 +318,6 @@ namespace Tests.Workspace
             Assert.Single(changeSet.Created);
             Assert.Single(changeSet.AssociationsByRoleType);
             Assert.Single(changeSet.RolesByAssociationType);
-
-            await session.Push();
-            changeSet = session.Checkpoint();
-
-            Assert.Empty(changeSet.Created);
-            Assert.Empty(changeSet.AssociationsByRoleType);
-            Assert.Empty(changeSet.RolesByAssociationType);
 
             result = await session.Pull(pull);
 
@@ -384,13 +382,6 @@ namespace Tests.Workspace
             Assert.Single(changeSet.Created);
             Assert.Single(changeSet.AssociationsByRoleType);
             Assert.Single(changeSet.RolesByAssociationType);
-
-            await session.Push();
-            changeSet = session.Checkpoint();
-
-            Assert.Empty(changeSet.Created);
-            Assert.Empty(changeSet.AssociationsByRoleType);
-            Assert.Empty(changeSet.RolesByAssociationType);
 
             result = await session.Pull(pull);
 
