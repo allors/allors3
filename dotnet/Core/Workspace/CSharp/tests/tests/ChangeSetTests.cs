@@ -308,5 +308,21 @@ namespace Tests.Workspace
             Assert.Empty(changeSet.AssociationsByRoleType);
             Assert.Empty(changeSet.RolesByAssociationType);
         }
+
+        [Fact]
+        public async void ChangeSetAfterPullInNewSessionButNoPush()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            await session.Pull();
+
+            var changeSet = session.Checkpoint();
+            Assert.Empty(changeSet.AssociationsByRoleType);
+            Assert.Empty(changeSet.RolesByAssociationType);
+            Assert.Empty(changeSet.Instantiated);
+            Assert.Empty(changeSet.Created);
+        }
     }
 }
