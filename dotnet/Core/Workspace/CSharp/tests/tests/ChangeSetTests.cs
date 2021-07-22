@@ -544,5 +544,35 @@ namespace Tests.Workspace
             Assert.Empty(changeSet.AssociationsByRoleType);
             Assert.Equal("Y", sessionC1a.SessionC1AllorsString);
         }
+
+        [Fact]
+        public async void ChangeSetAfterDoubleReset()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await session.Pull(pull);
+            var c1a = result.GetCollection<C1>()[0];
+
+            c1a.C1AllorsString = "X";
+
+            await session.Push();
+
+            result = await session.Pull(pull);
+            var c1b = result.GetCollection<C1>()[0];
+
+            c1b.C1AllorsString = "Y";
+
+            await session.Push();
+
+            c1b.Strategy.Reset();
+            c1b.Strategy.Reset();
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Empty(changeSet.AssociationsByRoleType);
+        }
     }
 }
