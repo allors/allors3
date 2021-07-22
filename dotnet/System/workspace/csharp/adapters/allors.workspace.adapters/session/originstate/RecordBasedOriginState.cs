@@ -215,6 +215,45 @@ namespace Allors.Workspace.Adapters
             this.PreviousChangedRoleByRelationType = this.ChangedRoleByRelationType != null ? new Dictionary<IRelationType, object>(this.ChangedRoleByRelationType) : null;
         }
 
+        public void Diff(IList<IDiff> diffs)
+        {
+            var ranges = this.Session.Workspace.Ranges;
+
+            foreach (var kvp in this.ChangedRoleByRelationType)
+            {
+                var relationType = kvp.Key;
+                var roleType = relationType.RoleType;
+
+                var changed = kvp.Value;
+                var original = this.Record?.GetRole(roleType);
+
+                if (roleType.ObjectType.IsUnit)
+                {
+                    diffs.Add(new UnitDiff(relationType, this.Strategy)
+                    {
+                        OriginalRole = original,
+                        ChangedRole = changed,
+                    });
+                }
+                else if (roleType.IsOne)
+                {
+                    diffs.Add(new CompositeDiff(relationType, this.Strategy)
+                    {
+                        OriginalRoleId = (long?)original,
+                        ChangedRoleId = (long?)changed,
+                    });
+                }
+                else
+                {
+                    diffs.Add(new CompositesDiff(relationType, this.Strategy)
+                    {
+                        OriginalRoleIds = ranges.Ensure(original).Save(),
+                        ChangedRoleIds = ranges.Ensure(changed).Save(),
+                    });
+                }
+            }
+        }
+
         public void Reset() => this.ChangedRoleByRelationType = null;
 
         public bool IsAssociationForRole(IRoleType roleType, long forRole)

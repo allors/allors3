@@ -22,7 +22,7 @@ namespace Allors.Workspace
 
         void Reset();
 
-        IDiff[] Diff();
+        IReadOnlyList<IDiff> Diff();
 
         bool CanRead(IRoleType roleType);
 

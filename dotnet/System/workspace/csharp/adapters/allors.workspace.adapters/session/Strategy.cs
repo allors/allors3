@@ -67,9 +67,14 @@ namespace Allors.Workspace.Adapters
             this.DatabaseOriginState.Reset();
         }
 
-        public IDiff[] Diff()
+        public IReadOnlyList<IDiff> Diff()
         {
-            return Array.Empty<IDiff>();
+            var diffs = new List<IDiff>();
+
+            this.WorkspaceOriginState.Diff(diffs);
+            this.DatabaseOriginState.Diff(diffs);
+
+            return diffs.ToArray();
         }
 
         public bool ExistRole(IRoleType roleType)

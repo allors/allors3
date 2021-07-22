@@ -1,9 +1,9 @@
 namespace Allors.Workspace
 {
-    public interface ICompositeDiff
+    public interface ICompositeDiff : IDiff
     {
-        IObject OriginalRole { get; }
+        long? OriginalRoleId { get; }
 
-        IObject CurrentRole { get; }
+        long? ChangedRoleId { get; }
     }
 }
