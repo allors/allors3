@@ -11,7 +11,7 @@ namespace Allors.Workspace.Adapters
 
     public abstract class Workspace : IWorkspace
     {
-        private readonly Dictionary<long, WorkspaceRecord> recordById;
+       private readonly Dictionary<long, WorkspaceRecord> recordById;
 
         protected Workspace(DatabaseConnection database, IWorkspaceServices services, IRanges ranges)
         {
