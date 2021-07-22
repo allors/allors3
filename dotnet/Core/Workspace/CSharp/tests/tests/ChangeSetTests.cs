@@ -26,7 +26,7 @@ namespace Tests.Workspace
 
             var changeSet = session.Checkpoint();
 
-            Assert.Null(changeSet.Instantiated);
+            Assert.Empty(changeSet.Instantiated);
         }
 
         [Fact]
@@ -138,7 +138,7 @@ namespace Tests.Workspace
 
             await session.Push();
             changeSet = session.Checkpoint();
-            Assert.Null(changeSet.Created);
+            Assert.Empty(changeSet.Created);
         }
 
         [Fact]
@@ -179,13 +179,13 @@ namespace Tests.Workspace
 
             var changeSet = session.Checkpoint();
 
-            Assert.Null(changeSet.Created);
+            Assert.Empty(changeSet.Created);
             Assert.Empty(changeSet.AssociationsByRoleType);
 
             await session.Push();
             changeSet = session.Checkpoint();
 
-            Assert.Null(changeSet.Created);
+            Assert.Empty(changeSet.Created);
             Assert.Empty(changeSet.AssociationsByRoleType);
         }
 
@@ -214,7 +214,7 @@ namespace Tests.Workspace
             await session.Push();
             changeSet = session.Checkpoint();
 
-            Assert.Null(changeSet.Created);
+            Assert.Empty(changeSet.Created);
             Assert.Empty(changeSet.AssociationsByRoleType);
             Assert.Empty(changeSet.RolesByAssociationType);
         }
@@ -244,7 +244,7 @@ namespace Tests.Workspace
             await session.Push();
             changeSet = session.Checkpoint();
 
-            Assert.Null(changeSet.Created);
+            Assert.Empty(changeSet.Created);
             Assert.Empty(changeSet.AssociationsByRoleType);
             Assert.Empty(changeSet.RolesByAssociationType);
         }
@@ -274,7 +274,7 @@ namespace Tests.Workspace
             await session.Push();
             changeSet = session.Checkpoint();
 
-            Assert.Null(changeSet.Created);
+            Assert.Empty(changeSet.Created);
             Assert.Empty(changeSet.AssociationsByRoleType);
             Assert.Empty(changeSet.RolesByAssociationType);
         }
@@ -304,7 +304,7 @@ namespace Tests.Workspace
             await session.Push();
             changeSet = session.Checkpoint();
 
-            Assert.Null(changeSet.Created);
+            Assert.Empty(changeSet.Created);
             Assert.Empty(changeSet.AssociationsByRoleType);
             Assert.Empty(changeSet.RolesByAssociationType);
         }
