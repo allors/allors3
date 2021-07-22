@@ -490,5 +490,89 @@ namespace Tests.Workspace
             Assert.Empty(changeSet.Instantiated);
             Assert.Empty(changeSet.Created);
         }
+
+        [Fact]
+        public async void ChangeSetBeforeAndAfterResetWithSessionObject()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var sessionC1a = session.Create<SessionC1>();
+
+            sessionC1a.SessionC1AllorsString = "X";
+
+            await session.Push();
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.AssociationsByRoleType);
+
+            sessionC1a.Strategy.Reset();
+            changeSet = session.Checkpoint();
+
+            Assert.Empty(changeSet.AssociationsByRoleType);
+        }
+
+        [Fact]
+        public async void ChangeSetBeforeAndAfterResetWithChangeSessionObject()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var sessionC1a = session.Create<SessionC1>();
+
+            sessionC1a.SessionC1AllorsString = "X";
+
+            await session.Push();
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.AssociationsByRoleType);
+
+            sessionC1a.SessionC1AllorsString = "Y";
+
+            changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.AssociationsByRoleType);
+            Assert.Equal("Y", sessionC1a.SessionC1AllorsString);
+
+            sessionC1a.Strategy.Reset();
+            changeSet = session.Checkpoint();
+
+            Assert.Empty(changeSet.AssociationsByRoleType);
+            Assert.Equal("Y", sessionC1a.SessionC1AllorsString);
+        }
+
+        [Fact]
+        public async void ChangeSetAfterDoubleReset()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await session.Pull(pull);
+            var c1a = result.GetCollection<C1>()[0];
+
+            c1a.C1AllorsString = "X";
+
+            await session.Push();
+
+            result = await session.Pull(pull);
+            var c1b = result.GetCollection<C1>()[0];
+
+            c1b.C1AllorsString = "Y";
+
+            await session.Push();
+
+            c1b.Strategy.Reset();
+            c1b.Strategy.Reset();
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Empty(changeSet.AssociationsByRoleType);
+        }
     }
 }

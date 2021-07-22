@@ -63,8 +63,8 @@ namespace Allors.Workspace.Adapters
 
         public void Reset()
         {
-            this.WorkspaceOriginState.Reset();
-            this.DatabaseOriginState.Reset();
+            this.WorkspaceOriginState?.Reset();
+            this.DatabaseOriginState?.Reset();
         }
 
         public IReadOnlyList<IDiff> Diff()
