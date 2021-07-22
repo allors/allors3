@@ -274,9 +274,8 @@ namespace Allors.Workspace.Adapters
                 var relationType = kvp.Key;
                 var roleType = relationType.RoleType;
 
-                var changed = kvp.Value;
-                var original = this.Record.GetRole(roleType);
-                var newOriginal = newRecord.GetRole(roleType);
+                var original = this.Record?.GetRole(roleType);
+                var newOriginal = newRecord?.GetRole(roleType);
 
                 if (roleType.ObjectType.IsUnit)
                 {
