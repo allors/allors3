@@ -46,13 +46,15 @@ namespace Allors.Workspace.Adapters
 
         public void OnPulled(WorkspaceResult result)
         {
-            if (this.ChangedRoleByRelationType?.Count > 0)
+            var newRecord = this.Workspace.GetRecord(this.Id);
+
+            if (!this.CanMerge(newRecord))
             {
                 result.AddMergeError(this.Strategy.Object);
                 return;
             }
 
-            this.WorkspaceRecord = this.Workspace.GetRecord(this.Id);
+            this.WorkspaceRecord = newRecord;
             this.ChangedRoleByRelationType = null;
         }
     }

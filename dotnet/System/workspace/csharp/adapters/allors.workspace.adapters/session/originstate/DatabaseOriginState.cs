@@ -88,10 +88,25 @@ namespace Allors.Workspace.Adapters
 
         public void OnPushed() => this.IsPushed = true;
 
-        public void OnPulled()
+        public void OnPulled(IPullResultInternals pull)
         {
-            this.IsPushed = false;
-            this.DatabaseRecord = this.Session.Workspace.DatabaseConnection.GetRecord(this.Id);
+            var newRecord = this.Session.Workspace.DatabaseConnection.GetRecord(this.Id);
+
+            if (!this.IsPushed)
+            {
+                if (!this.CanMerge(newRecord))
+                {
+                    pull.AddMergeError(this.Strategy.Object);
+                    return;
+                }
+            }
+            else
+            {
+                this.ChangedRoleByRelationType = null;
+                this.IsPushed = false;
+            }
+
+            this.DatabaseRecord = newRecord;
         }
 
         protected override void OnChange()

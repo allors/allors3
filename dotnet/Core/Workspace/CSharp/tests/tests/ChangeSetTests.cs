@@ -464,6 +464,7 @@ namespace Tests.Workspace
             Assert.Empty(changeSet.RolesByAssociationType);
 
             result = await session.Pull(pull);
+            Assert.False(result.HasErrors);
 
             c1a.RemoveC1C1Many2Manies();
 
@@ -561,6 +562,8 @@ namespace Tests.Workspace
             await session.Push();
 
             result = await session.Pull(pull);
+            Assert.False(result.HasErrors);
+
             var c1b = result.GetCollection<C1>()[0];
 
             c1b.C1AllorsString = "Y";

@@ -46,12 +46,9 @@ namespace Allors.Workspace.Adapters.Local
                     throw new ArgumentException($"Id is not in the database");
                 }
 
-                if (pull.Object != null)
+                if (pull.Object != null && pull.Object.Strategy.Class.Origin != Origin.Database)
                 {
-                    if (pull.Object.Strategy.Class.Origin != Origin.Database)
-                    {
-                        throw new ArgumentException($"Origin is not Database");
-                    }
+                    throw new ArgumentException($"Origin is not Database");
                 }
             }
 
@@ -151,7 +148,7 @@ namespace Allors.Workspace.Adapters.Local
             {
                 if (this.StrategyByWorkspaceId.TryGetValue(databaseObject.Id, out var strategy))
                 {
-                    strategy.DatabaseOriginState.OnPulled();
+                    strategy.DatabaseOriginState.OnPulled(pull);
                 }
                 else
                 {

@@ -6,6 +6,7 @@
 namespace Allors.Workspace.Adapters
 {
     using System.Collections.Generic;
+    using System.Text;
     using Meta;
     using Ranges;
 
@@ -217,13 +218,12 @@ namespace Allors.Workspace.Adapters
 
         public void Diff(IList<IDiff> diffs)
         {
-            var ranges = this.Session.Workspace.Ranges;
-
-
-            if(this.ChangedRoleByRelationType == null)
+            if (this.ChangedRoleByRelationType == null)
             {
                 return;
             }
+
+            var ranges = this.Session.Workspace.Ranges;
 
             foreach (var kvp in this.ChangedRoleByRelationType)
             {
@@ -259,6 +259,48 @@ namespace Allors.Workspace.Adapters
                 }
             }
         }
+
+        public bool CanMerge(IRecord newRecord)
+        {
+            if (this.ChangedRoleByRelationType == null)
+            {
+                return true;
+            }
+
+            var ranges = this.Session.Workspace.Ranges;
+
+            foreach (var kvp in this.ChangedRoleByRelationType)
+            {
+                var relationType = kvp.Key;
+                var roleType = relationType.RoleType;
+
+                var changed = kvp.Value;
+                var original = this.Record.GetRole(roleType);
+                var newOriginal = newRecord.GetRole(roleType);
+
+                if (roleType.ObjectType.IsUnit)
+                {
+                    if (!Equals(original, newOriginal))
+                    {
+                        return false;
+                    }
+                }
+                else if (roleType.IsOne)
+                {
+                    if (!Equals(original, newOriginal))
+                    {
+                        return false;
+                    }
+                }
+                else if (!ranges.Ensure(original).Equals(ranges.Ensure(newOriginal)))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
 
         public void Reset() => this.ChangedRoleByRelationType = null;
 
