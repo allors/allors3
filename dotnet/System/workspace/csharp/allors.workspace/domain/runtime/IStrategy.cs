@@ -10,6 +10,8 @@ namespace Allors.Workspace
 
     public interface IStrategy
     {
+        ISession Session { get; }
+
         IObject Object { get; }
 
         IClass Class { get; }
@@ -18,7 +20,9 @@ namespace Allors.Workspace
 
         long Version { get; }
 
-        ISession Session { get; }
+        void Reset();
+
+        IDiff[] Diff();
 
         bool CanRead(IRoleType roleType);
 

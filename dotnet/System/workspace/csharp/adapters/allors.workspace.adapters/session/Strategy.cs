@@ -61,6 +61,17 @@ namespace Allors.Workspace.Adapters
 
         public IObject Object => this.@object ??= this.Session.Workspace.DatabaseConnection.Configuration.ObjectFactory.Create(this);
 
+        public void Reset()
+        {
+            this.WorkspaceOriginState.Reset();
+            this.DatabaseOriginState.Reset();
+        }
+
+        public IDiff[] Diff()
+        {
+            return Array.Empty<IDiff>();
+        }
+
         public bool ExistRole(IRoleType roleType)
         {
             if (roleType.ObjectType.IsUnit)

@@ -215,6 +215,8 @@ namespace Allors.Workspace.Adapters
             this.PreviousChangedRoleByRelationType = this.ChangedRoleByRelationType != null ? new Dictionary<IRelationType, object>(this.ChangedRoleByRelationType) : null;
         }
 
+        public void Reset() => this.ChangedRoleByRelationType = null;
+
         public bool IsAssociationForRole(IRoleType roleType, long forRole)
         {
             if (roleType.IsOne)
