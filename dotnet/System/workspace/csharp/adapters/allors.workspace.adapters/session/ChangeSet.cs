@@ -11,6 +11,7 @@ namespace Allors.Workspace.Adapters
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Collections;
     using Meta;
 
     public sealed class ChangeSet : IChangeSet
@@ -18,8 +19,8 @@ namespace Allors.Workspace.Adapters
         public ChangeSet(Session session, ISet<IStrategy> created, ISet<IStrategy> instantiated)
         {
             this.Session = session;
-            this.Created = created;
-            this.Instantiated = instantiated;
+            this.Created = created ?? EmptySet<IStrategy>.Instance;
+            this.Instantiated = instantiated ?? EmptySet<IStrategy>.Instance;
             this.AssociationsByRoleType = new Dictionary<IRoleType, ISet<IStrategy>>();
             this.RolesByAssociationType = new Dictionary<IAssociationType, ISet<IStrategy>>();
         }
