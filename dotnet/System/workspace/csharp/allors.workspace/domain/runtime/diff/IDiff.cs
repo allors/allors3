@@ -6,6 +6,6 @@ namespace Allors.Workspace
     {
         IRelationType RelationType { get; }
 
-        IObject Assocation { get; }
+        IStrategy Assocation { get; }
     }
 }

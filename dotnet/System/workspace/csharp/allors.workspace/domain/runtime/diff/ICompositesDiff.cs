@@ -1,9 +1,11 @@
 namespace Allors.Workspace
 {
-    public interface ICompositesDiff
-    {
-        IObject[] OriginalRole { get; }
+    using System.Collections.Generic;
 
-        IObject[] CurrentRole { get; }
+    public interface ICompositesDiff : IDiff
+    {
+        IReadOnlyList<long> OriginalRoleIds { get; }
+
+        IReadOnlyList<long> ChangedRoleIds { get; }
     }
 }

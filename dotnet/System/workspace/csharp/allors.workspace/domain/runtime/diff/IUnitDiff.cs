@@ -1,9 +1,9 @@
 namespace Allors.Workspace
 {
-    public interface IUnitDiff
+    public interface IUnitDiff : IDiff
     {
         object OriginalRole { get; }
 
-        object CurrentRole { get; }
+        object ChangedRole { get; }
     }
 }
