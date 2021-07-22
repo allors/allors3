@@ -293,6 +293,47 @@ namespace Tests.Workspace
         }
 
         [Fact]
+        public async void ChangeSetAfterPushMany2OneRemove()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await session.Pull(pull);
+            var c1a = result.GetCollection<C1>().First();
+            var c1b = session.Create<C1>();
+
+            c1a.C1C1Many2One = c1b;
+
+            await session.Push();
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.Created);
+            Assert.Single(changeSet.AssociationsByRoleType);
+            Assert.Single(changeSet.RolesByAssociationType);
+
+            await session.Push();
+            changeSet = session.Checkpoint();
+
+            Assert.Empty(changeSet.Created);
+            Assert.Empty(changeSet.AssociationsByRoleType);
+            Assert.Empty(changeSet.RolesByAssociationType);
+
+            result = await session.Pull(pull);
+
+            c1a.RemoveC1C1Many2One();
+
+            await session.Push();
+
+            changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.AssociationsByRoleType);
+            Assert.Single(changeSet.RolesByAssociationType);
+        }
+
+        [Fact]
         public async void ChangeSetAfterPushOne2Many()
         {
             await this.Login("administrator");
@@ -323,6 +364,47 @@ namespace Tests.Workspace
         }
 
         [Fact]
+        public async void ChangeSetAfterPushOne2ManyRemove()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await session.Pull(pull);
+            var c1a = result.GetCollection<C1>().First();
+            var c1b = session.Create<C1>();
+
+            c1a.AddC1C1One2Many(c1b);
+
+            await session.Push();
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.Created);
+            Assert.Single(changeSet.AssociationsByRoleType);
+            Assert.Single(changeSet.RolesByAssociationType);
+
+            await session.Push();
+            changeSet = session.Checkpoint();
+
+            Assert.Empty(changeSet.Created);
+            Assert.Empty(changeSet.AssociationsByRoleType);
+            Assert.Empty(changeSet.RolesByAssociationType);
+
+            result = await session.Pull(pull);
+
+            c1a.RemoveC1C1One2Manies();
+
+            await session.Push();
+
+            changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.AssociationsByRoleType);
+            Assert.Single(changeSet.RolesByAssociationType);
+        }
+
+        [Fact]
         public async void ChangeSetAfterPushMany2Many()
         {
             await this.Login("administrator");
@@ -350,6 +432,47 @@ namespace Tests.Workspace
             Assert.Empty(changeSet.Created);
             Assert.Empty(changeSet.AssociationsByRoleType);
             Assert.Empty(changeSet.RolesByAssociationType);
+        }
+
+        [Fact]
+        public async void ChangeSetAfterPushMany2ManyRemove()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await session.Pull(pull);
+            var c1a = result.GetCollection<C1>().First();
+            var c1b = session.Create<C1>();
+
+            c1a.AddC1C1Many2Many(c1b);
+
+            await session.Push();
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.Created);
+            Assert.Single(changeSet.AssociationsByRoleType);
+            Assert.Single(changeSet.RolesByAssociationType);
+
+            await session.Push();
+            changeSet = session.Checkpoint();
+
+            Assert.Empty(changeSet.Created);
+            Assert.Empty(changeSet.AssociationsByRoleType);
+            Assert.Empty(changeSet.RolesByAssociationType);
+
+            result = await session.Pull(pull);
+
+            c1a.RemoveC1C1Many2Manies();
+
+            await session.Push();
+
+            changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.AssociationsByRoleType);
+            Assert.Single(changeSet.RolesByAssociationType);
         }
 
         [Fact]
