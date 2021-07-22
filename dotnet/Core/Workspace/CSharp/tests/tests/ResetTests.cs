@@ -283,19 +283,23 @@ namespace Tests.Workspace
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
-            c1a.AddC1C1Many2Many(c1b);
+            await session.Push();
+            result = await session.Pull(new Pull { Object = c1b });
+            var c1b_2 = (C1)result.Objects.Values.First();
 
-            Assert.Contains(c1b, c1a.C1C1Many2Manies);
-            Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+            c1a.AddC1C1Many2Many(c1b_2);
+
+            Assert.Contains(c1b_2, c1a.C1C1Many2Manies);
+            Assert.Contains(c1a, c1b_2.C1sWhereC1C1Many2Many);
 
             await session.Push();
-            result = await session.Pull(new Pull { Object = c1b }, pull);
-            var c1b_2 = (C1)result.Objects.Values.First();
+            result = await session.Pull(pull);
+            c1a = result.GetCollection<C1>()[0];
 
             c1a.RemoveC1C1Many2Many(c1b_2);
 
             Assert.Empty(c1a.C1C1Many2Manies);
-            Assert.Empty(c1b.C1sWhereC1C1Many2Many);
+            Assert.Empty(c1b_2.C1sWhereC1C1Many2Many);
 
             c1a.Strategy.Reset();
 
