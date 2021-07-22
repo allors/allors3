@@ -32,7 +32,7 @@ namespace Tests.Workspace
             });
 
             var workspaceOrganisation1 = session1.Create<WorkspaceOrganisation>();
-            var databasePerson1 = result.GetCollection<Person>().First();
+            var databasePerson1 = result.GetCollection<Person>()[0];
 
             workspaceOrganisation1.WorkspaceDatabaseOwner = databasePerson1;
 
@@ -66,7 +66,7 @@ namespace Tests.Workspace
             var result = await session1.Pull(pulls);
 
             var workspaceOrganisation1 = session1.Create<WorkspaceOrganisation>();
-            workspaceOrganisation1.WorkspaceDatabaseOwner = result.GetCollection<Person>().First();
+            workspaceOrganisation1.WorkspaceDatabaseOwner = result.GetCollection<Person>()[0];
 
             await session1.Push();
             await session1.PushToWorkspace();

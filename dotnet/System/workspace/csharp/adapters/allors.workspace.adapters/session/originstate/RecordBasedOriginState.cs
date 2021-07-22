@@ -212,7 +212,7 @@ namespace Allors.Workspace.Adapters
             }
 
             this.PreviousRecord = this.Record;
-            this.PreviousChangedRoleByRelationType = this.ChangedRoleByRelationType;
+            this.PreviousChangedRoleByRelationType = this.ChangedRoleByRelationType != null ? new Dictionary<IRelationType, object>(this.ChangedRoleByRelationType) : null;
         }
 
         public bool IsAssociationForRole(IRoleType roleType, long forRole)

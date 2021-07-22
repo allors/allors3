@@ -87,7 +87,7 @@ namespace Tests.Workspace
             };
 
             var result = await session.Pull(pull);
-            var c1a = result.GetCollection<C1>().First();
+            var c1a = result.GetCollection<C1>()[0];
 
             c1a.C1AllorsString = "X";
 

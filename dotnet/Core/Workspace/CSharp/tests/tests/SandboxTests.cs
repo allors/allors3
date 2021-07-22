@@ -53,7 +53,7 @@ namespace Tests.Workspace
         [Fact]
         public async void Test()
         {
-            var push = this.pushes.First();
+            var push = this.pushes[0];
             var contextFactory = this.contextFactories[0];
 
             {

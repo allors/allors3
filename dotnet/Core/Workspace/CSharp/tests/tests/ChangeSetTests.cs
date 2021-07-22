@@ -53,7 +53,7 @@ namespace Tests.Workspace
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
             var result = await session.Pull(pull);
-            var c1a = result.GetCollection<C1>().First();
+            var c1a = result.GetCollection<C1>()[0];
 
             c1a.C1AllorsString = "X";
 
@@ -73,9 +73,9 @@ namespace Tests.Workspace
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
             var result = await session.Pull(pull);
-            var c1a = result.GetCollection<C1>().First();
+            var c1a_1 = result.GetCollection<C1>()[0];
 
-            c1a.C1AllorsString = "X";
+            c1a_1.C1AllorsString = "X";
 
             await session.Push();
 
@@ -83,9 +83,9 @@ namespace Tests.Workspace
             Assert.Single(changeSet.AssociationsByRoleType);
 
             result = await session.Pull(pull);
-            var c1b = result.GetCollection<C1>().First();
+            var c1a_2 = result.GetCollection<C1>()[0];
 
-            c1b.C1AllorsString = "Y";
+            c1a_2.C1AllorsString = "Y";
 
             changeSet = session.Checkpoint();
 
@@ -101,7 +101,7 @@ namespace Tests.Workspace
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
             var result = await session.Pull(pull);
-            var c1a = result.GetCollection<C1>().First();
+            var c1a = result.GetCollection<C1>()[0];
 
             c1a.C1AllorsString = "X";
 
@@ -111,7 +111,7 @@ namespace Tests.Workspace
             Assert.Single(changeSet.AssociationsByRoleType);
 
             result = await session.Pull(pull);
-            var c1b = result.GetCollection<C1>().First();
+            var c1b = result.GetCollection<C1>()[0];
 
             c1b.C1AllorsString = "Y";
 
@@ -150,7 +150,7 @@ namespace Tests.Workspace
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
             var result = await session.Pull(pull);
-            var c1a = result.GetCollection<C1>().First();
+            var c1a = result.GetCollection<C1>()[0];
 
             c1a.C1AllorsString = "X";
 
@@ -172,7 +172,7 @@ namespace Tests.Workspace
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
             var result = await session.Pull(pull);
-            var c1a = result.GetCollection<C1>().First();
+            var c1a = result.GetCollection<C1>()[0];
 
             await session.Push();
             await session.Pull(pull);
@@ -198,7 +198,7 @@ namespace Tests.Workspace
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
             var result = await session.Pull(pull);
-            var c1a = result.GetCollection<C1>().First();
+            var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
             c1a.C1C1One2One = c1b;
@@ -228,7 +228,7 @@ namespace Tests.Workspace
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
             var result = await session.Pull(pull);
-            var c1a = result.GetCollection<C1>().First();
+            var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
             c1a.C1C1Many2One = c1b;
@@ -258,7 +258,7 @@ namespace Tests.Workspace
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
             var result = await session.Pull(pull);
-            var c1a = result.GetCollection<C1>().First();
+            var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
             c1a.AddC1C1One2Many(c1b);
@@ -288,7 +288,7 @@ namespace Tests.Workspace
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
             var result = await session.Pull(pull);
-            var c1a = result.GetCollection<C1>().First();
+            var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
             c1a.AddC1C1Many2Many(c1b);
