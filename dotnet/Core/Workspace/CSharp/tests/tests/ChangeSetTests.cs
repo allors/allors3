@@ -310,7 +310,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void PullButNoPush()
+        public async void ChangeSetAfterPullInNewSessionButNoPush()
         {
             await this.Login("administrator");
 
