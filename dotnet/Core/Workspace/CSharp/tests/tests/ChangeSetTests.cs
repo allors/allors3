@@ -563,7 +563,7 @@ namespace Tests.Workspace
 
             var changeSet = session.Checkpoint();
 
-            Assert.Empty(changeSet.AssociationsByRoleType);
+            Assert.Single(changeSet.AssociationsByRoleType);
         }
     }
 }

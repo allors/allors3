@@ -88,14 +88,8 @@ namespace Allors.Workspace.Adapters
 
         public void OnPushed() => this.IsPushed = true;
 
-        public void OnPulled(IPullResultInternals result)
+        public void OnPulled()
         {
-            if (this.ChangedRoleByRelationType?.Count > 0)
-            {
-                result.AddMergeError(this.Strategy.Object);
-                return;
-            }
-
             this.IsPushed = false;
             this.DatabaseRecord = this.Session.Workspace.DatabaseConnection.GetRecord(this.Id);
         }
