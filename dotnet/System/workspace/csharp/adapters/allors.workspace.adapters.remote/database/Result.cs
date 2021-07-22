@@ -25,7 +25,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.response = response;
         }
 
-        public bool HasErrors => this.response.HasErrors;
+        public bool HasErrors => this.response.HasErrors || this.mergeErrors?.Count > 0;
 
         public string ErrorMessage => this.response._e;
 

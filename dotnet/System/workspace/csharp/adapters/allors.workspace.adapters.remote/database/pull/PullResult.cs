@@ -5,15 +5,12 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json.Api.Pull;
 
     public class PullResult : Result, IPullResultInternals
     {
-
-
         public PullResult(Adapters.Session session, PullResponse response) : base(session, response)
         {
             this.Workspace = session.Workspace;
