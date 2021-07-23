@@ -2020,8 +2020,8 @@ namespace Tests.Workspace
 
             result = await session.Pull(pull2);
 
-            Assert.Single(result.Collections);
-            Assert.Empty(result.Objects);
+            Assert.Single(result.Objects);
+            Assert.Empty(result.Collections);
             Assert.Empty(result.Values);
         }
     }
