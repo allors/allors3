@@ -81,11 +81,7 @@ namespace Allors.Database.Adapters.Memory
 
                         if (strategy.IsDeleted)
                         {
-                            if (strategiesToDelete == null)
-                            {
-                                strategiesToDelete = new List<Strategy>();
-                            }
-
+                            strategiesToDelete ??= new List<Strategy>();
                             strategiesToDelete.Add(strategy);
                         }
                     }

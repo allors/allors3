@@ -7,6 +7,7 @@ namespace Allors.Database.Adapters.Memory
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Xml;
     using Adapters;
@@ -490,14 +491,29 @@ namespace Allors.Database.Adapters.Memory
 
         internal void Commit()
         {
+            if (this.ObjectId == 1374)
+            {
+                Debugger.Break();
+            }
+
             if (!this.IsDeleted && !this.Transaction.Database.IsLoading)
             {
+                // TODO: Test
+                /*
                 if (this.rollbackUnitRoleByRoleType != null ||
                     this.rollbackCompositeRoleByRoleType != null ||
                     this.rollbackCompositeRoleByRoleType != null ||
                     this.rollbackCompositeRoleByRoleType != null ||
                     this.rollbackCompositeRoleByRoleType != null ||
                     this.rollbackCompositeRoleByRoleType != null)
+                {
+                    ++this.ObjectVersion;
+                }
+                */
+
+                if (this.rollbackUnitRoleByRoleType != null ||
+                    this.rollbackCompositeRoleByRoleType != null ||
+                    this.rollbackCompositesRoleByRoleType != null)
                 {
                     ++this.ObjectVersion;
                 }
@@ -515,6 +531,11 @@ namespace Allors.Database.Adapters.Memory
 
         internal void Rollback()
         {
+            if (this.ObjectId == 1374)
+            {
+                Debugger.Break();
+            }
+
             foreach (var dictionaryItem in this.RollbackUnitRoleByRoleType)
             {
                 var roleType = dictionaryItem.Key;
@@ -975,15 +996,7 @@ namespace Allors.Database.Adapters.Memory
             else if (!this.RollbackCompositeAssociationByAssociationType.ContainsKey(associationType))
             {
                 this.compositeAssociationByAssociationType.TryGetValue(associationType, out var strategy);
-
-                if (strategy == null)
-                {
-                    this.RollbackCompositeAssociationByAssociationType[associationType] = null;
-                }
-                else
-                {
-                    this.RollbackCompositeAssociationByAssociationType[associationType] = strategy;
-                }
+                this.RollbackCompositeAssociationByAssociationType[associationType] = strategy;
             }
         }
 
@@ -1080,6 +1093,11 @@ namespace Allors.Database.Adapters.Memory
 
         private void AddCompositeRoleOne2Many(IRoleType roleType, Strategy add)
         {
+            if (this.ObjectId == 1374)
+            {
+                Debugger.Break();
+            }
+
             this.compositesRoleByRoleType.TryGetValue(roleType, out var previousRole);
             if (previousRole?.Contains(add) == true)
             {
