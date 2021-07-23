@@ -10,6 +10,7 @@ namespace Tests.Workspace.Remote
     using Allors.Ranges;
     using Allors.Workspace;
     using Allors.Workspace.Adapters;
+    using Allors.Workspace.Adapters.Remote.ResthSharp;
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
     using Allors.Workspace.Meta.Lazy;
@@ -29,6 +30,8 @@ namespace Tests.Workspace.Remote
         private readonly Configuration configuration;
         private readonly IdGenerator idGenerator;
         private readonly DefaultRanges defaultRanges;
+
+        private Client client;
 
         IWorkspace IProfile.Workspace => this.Workspace;
 
@@ -54,7 +57,8 @@ namespace Tests.Workspace.Remote
             var response = await restClient.ExecuteAsync(request);
             Assert.True(response.IsSuccessful);
 
-            this.Database = new DatabaseConnection(this.configuration, () => new WorkspaceContext(), this.CreateRestClient, this.idGenerator, this.defaultRanges);
+            this.client = new Client(this.CreateRestClient);
+            this.Database = new DatabaseConnection(this.configuration, () => new WorkspaceContext(), this.client, this.idGenerator, this.defaultRanges);
             this.Workspace = this.Database.CreateWorkspace();
 
             await this.Login("administrator");
@@ -62,14 +66,14 @@ namespace Tests.Workspace.Remote
 
         public Task DisposeAsync() => Task.CompletedTask;
 
-        public IDatabaseConnection CreateDatabase() => new DatabaseConnection(this.configuration, () => new WorkspaceContext(), this.CreateRestClient, this.idGenerator, this.defaultRanges);
+        public IDatabaseConnection CreateDatabase() => new DatabaseConnection(this.configuration, () => new WorkspaceContext(), this.client, this.idGenerator, this.defaultRanges);
 
         public IWorkspace CreateWorkspace() => this.Database.CreateWorkspace();
 
         public async Task Login(string user)
         {
             var uri = new Uri(LoginUrl, UriKind.Relative);
-            var response = await this.Database.Login(uri, user, null);
+            var response = await this.client.Login(uri, user, null);
             Assert.True(response);
         }
 

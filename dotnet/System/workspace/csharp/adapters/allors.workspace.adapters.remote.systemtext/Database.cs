@@ -25,6 +25,8 @@ namespace Allors.Workspace.Adapters.Remote.SystemText
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Add call to 'ConfigureAwait' (or vice versa).", Justification = "<Pending>")]
     public class DatabaseConnection : Remote.DatabaseConnection
     {
+        private string userId;
+
         public DatabaseConnection(Configuration configuration, Func<IWorkspaceServices> servicesBuilder, HttpClient httpClient, IdGenerator idGenerator, IRanges ranges) : base(configuration, servicesBuilder, idGenerator, ranges)
         {
             this.HttpClient = httpClient;
@@ -35,6 +37,8 @@ namespace Allors.Workspace.Adapters.Remote.SystemText
         }
 
         public override IUnitConvert UnitConvert { get; }
+
+        protected override string UserId => this.userId;
 
         public IAsyncPolicy Policy { get; set; } = Polly.Policy
             .Handle<HttpRequestException>()
@@ -54,7 +58,7 @@ namespace Allors.Workspace.Adapters.Remote.SystemText
             }
 
             this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authResult.t);
-            this.UserId = authResult.u;
+            this.userId = authResult.u;
 
             return true;
         }
