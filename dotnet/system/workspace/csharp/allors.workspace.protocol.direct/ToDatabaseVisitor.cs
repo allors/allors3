@@ -29,7 +29,7 @@ namespace Allors.Workspace.Protocol.Direct
                 ExtentRef = ws.ExtentRef,
                 Extent = this.Visit(ws.Extent),
                 ObjectType = this.Visit(ws.ObjectType),
-                Object = this.Visit(ws.Object),
+                Object = this.Visit(ws.Object) ?? this.Visit(ws.ObjectId),
                 Results = this.Visit(ws.Results),
                 Arguments = this.Visit(ws.Arguments)
             };
@@ -162,6 +162,8 @@ namespace Allors.Workspace.Protocol.Direct
         private Union Visit(Data.Union ws) => new Union(ws.Operands?.Select(this.Visit).ToArray()) { Sorting = this.Visit(ws.Sorting) };
 
         private IObject Visit(Workspace.IObject ws) => ws != null ? this.transaction.Instantiate(ws.Id) : null;
+
+        private IObject Visit(long? id) => id != null ? this.transaction.Instantiate(id.Value) : null;
 
         private Result[] Visit(Data.Result[] ws) =>
             ws?.Select(v => new Database.Data.Result
