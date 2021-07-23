@@ -491,11 +491,6 @@ namespace Allors.Database.Adapters.Memory
 
         internal void Commit()
         {
-            if (this.ObjectId == 1374)
-            {
-                Debugger.Break();
-            }
-
             if (!this.IsDeleted && !this.Transaction.Database.IsLoading)
             {
                 // TODO: Test
@@ -531,11 +526,6 @@ namespace Allors.Database.Adapters.Memory
 
         internal void Rollback()
         {
-            if (this.ObjectId == 1374)
-            {
-                Debugger.Break();
-            }
-
             foreach (var dictionaryItem in this.RollbackUnitRoleByRoleType)
             {
                 var roleType = dictionaryItem.Key;
@@ -1093,11 +1083,6 @@ namespace Allors.Database.Adapters.Memory
 
         private void AddCompositeRoleOne2Many(IRoleType roleType, Strategy add)
         {
-            if (this.ObjectId == 1374)
-            {
-                Debugger.Break();
-            }
-
             this.compositesRoleByRoleType.TryGetValue(roleType, out var previousRole);
             if (previousRole?.Contains(add) == true)
             {
