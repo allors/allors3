@@ -12,7 +12,6 @@ namespace Allors.Workspace.Adapters.Remote
 
     public abstract class Result : IResult
     {
-        private readonly ISession session;
         private readonly Response response;
 
         private IDerivationError[] derivationErrors;
@@ -21,19 +20,21 @@ namespace Allors.Workspace.Adapters.Remote
 
         protected Result(ISession session, Response response)
         {
-            this.session = session;
+            this.Session = session;
             this.response = response;
         }
+
+        public ISession Session { get; }
 
         public bool HasErrors => this.response.HasErrors || this.mergeErrors?.Count > 0;
 
         public string ErrorMessage => this.response._e;
 
-        public IEnumerable<IObject> VersionErrors => this.session.Instantiate<IObject>(this.response._v);
+        public IEnumerable<IObject> VersionErrors => this.Session.Instantiate<IObject>(this.response._v);
 
-        public IEnumerable<IObject> AccessErrors => this.session.Instantiate<IObject>(this.response._a);
+        public IEnumerable<IObject> AccessErrors => this.Session.Instantiate<IObject>(this.response._a);
 
-        public IEnumerable<IObject> MissingErrors => this.session.Instantiate<IObject>(this.response._m);
+        public IEnumerable<IObject> MissingErrors => this.Session.Instantiate<IObject>(this.response._m);
 
         public IEnumerable<IDerivationError> DerivationErrors
         {
@@ -47,7 +48,7 @@ namespace Allors.Workspace.Adapters.Remote
                 if (this.response._d?.Length > 0)
                 {
                     return this.derivationErrors ??= this.response._d
-                        .Select(v => (IDerivationError)new DerivationError(this.session, v)).ToArray();
+                        .Select(v => (IDerivationError)new DerivationError(this.Session, v)).ToArray();
                 }
 
                 return this.derivationErrors;

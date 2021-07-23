@@ -62,12 +62,9 @@ namespace Allors.Workspace.Adapters.Remote
                     throw new ArgumentException($"Id is not in the database");
                 }
 
-                if (pull.Object != null)
+                if (pull.Object != null && pull.Object.Strategy.Class.Origin != Origin.Database)
                 {
-                    if (pull.Object.Strategy.Class.Origin != Origin.Database)
-                    {
-                        throw new ArgumentException($"Origin is not Database");
-                    }
+                    throw new ArgumentException($"Origin is not Database");
                 }
             }
 

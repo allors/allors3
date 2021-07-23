@@ -11,22 +11,27 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class PullResult : Result, IPullResultInternals
     {
+        private IDictionary<string, IObject> objects;
+
+        private IDictionary<string, IObject[]> collections;
+
+        private IDictionary<string, object> values;
+
+        private readonly PullResponse pullResponse;
+
         public PullResult(Adapters.Session session, PullResponse response) : base(session, response)
         {
             this.Workspace = session.Workspace;
-
-            this.Objects = response.o.ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => session.Instantiate<IObject>(pair.Value));
-            this.Collections = response.c.ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => pair.Value.Select(session.Instantiate<IObject>).ToArray());
-            this.Values = response.v.ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => pair.Value);
+            this.pullResponse = response;
         }
 
         private IWorkspace Workspace { get; }
 
-        public IDictionary<string, IObject> Objects { get; }
+        public IDictionary<string, IObject> Objects => this.objects ??= this.pullResponse.o.ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => this.Session.Instantiate<IObject>(pair.Value));
 
-        public IDictionary<string, IObject[]> Collections { get; }
+        public IDictionary<string, IObject[]> Collections => this.collections ??= this.pullResponse.c.ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => pair.Value.Select(this.Session.Instantiate<IObject>).ToArray());
 
-        public IDictionary<string, object> Values { get; }
+        public IDictionary<string, object> Values => this.values ??= this.pullResponse.v.ToDictionary(pair => pair.Key.ToUpperInvariant(), pair => pair.Value);
 
         public T[] GetCollection<T>() where T : class, IObject
         {
