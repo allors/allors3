@@ -2002,5 +2002,27 @@ namespace Tests.Workspace
 
             result.Assert().Collection<C1>("IetsAnders").Equal(c1C, c1D);
         }
+
+        [Fact]
+        public async void PullWithObjectId()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+            var pull1 = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await session.Pull(pull1);
+            var c1a = result.GetCollection<C1>()[0];
+
+            var pull2 = new Pull
+            {
+                ObjectId = c1a.Id
+            };
+
+            result = await session.Pull(pull2);
+
+            Assert.Single(result.Objects);
+            Assert.Empty(result.Collections);
+            Assert.Empty(result.Values);
+        }
     }
 }

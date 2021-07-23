@@ -227,17 +227,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Tests.Remote.Json
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Blazor", "Blazor", "{6FCC3859-CF8A-4A58-8D3C-0EDCB67EF987}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor", "Core\workspace\csharp\Blazor\Blazor.csproj", "{3BBA0160-312D-4A85-821C-B50E7FA9F7E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor", "Core\workspace\csharp\Blazor\Blazor.csproj", "{3BBA0160-312D-4A85-821C-B50E7FA9F7E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.Bootstrap", "Core\workspace\csharp\Blazor.Bootstrap\Blazor.Bootstrap.csproj", "{3E8C9720-D734-423F-9974-F0554562C807}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor.Bootstrap", "Core\workspace\csharp\Blazor.Bootstrap\Blazor.Bootstrap.csproj", "{3E8C9720-D734-423F-9974-F0554562C807}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazors.Bootstrap.Server", "Core\workspace\csharp\Blazors.Bootstrap.Server\Blazors.Bootstrap.Server.csproj", "{F299EDB8-85AC-4678-8882-5ABD38678900}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazors.Bootstrap.Server", "Core\workspace\csharp\Blazors.Bootstrap.Server\Blazors.Bootstrap.Server.csproj", "{F299EDB8-85AC-4678-8882-5ABD38678900}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Blazor", "Blazor", "{6072307B-EF34-4264-866C-49AC54A6C245}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allors.Workspace.Blazor", "System\workspace\csharp\blazor\Allors.Workspace.Blazor\Allors.Workspace.Blazor.csproj", "{7A928166-85A9-4282-9AF1-6FE934692B21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Workspace.Blazor", "System\workspace\csharp\blazor\Allors.Workspace.Blazor\Allors.Workspace.Blazor.csproj", "{7A928166-85A9-4282-9AF1-6FE934692B21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Allors.Workspace.Blazor.Bootstrap", "System\workspace\csharp\blazor\Allors.Workspace.Blazor.Bootstrap\Allors.Workspace.Blazor.Bootstrap.csproj", "{2861A320-758B-464E-BFBA-FC26410C5067}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Workspace.Blazor.Bootstrap", "System\workspace\csharp\blazor\Allors.Workspace.Blazor.Bootstrap\Allors.Workspace.Blazor.Bootstrap.csproj", "{2861A320-758B-464E-BFBA-FC26410C5067}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Workspace.Blazor.Ant", "System\workspace\csharp\blazor\allors.workspace.blazor.ant\Allors.Workspace.Blazor.Ant.csproj", "{4DAC07CD-CA41-4DC1-A1EC-4EAE8DAE9225}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -613,6 +615,10 @@ Global
 		{2861A320-758B-464E-BFBA-FC26410C5067}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2861A320-758B-464E-BFBA-FC26410C5067}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2861A320-758B-464E-BFBA-FC26410C5067}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DAC07CD-CA41-4DC1-A1EC-4EAE8DAE9225}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DAC07CD-CA41-4DC1-A1EC-4EAE8DAE9225}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DAC07CD-CA41-4DC1-A1EC-4EAE8DAE9225}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DAC07CD-CA41-4DC1-A1EC-4EAE8DAE9225}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -731,6 +737,7 @@ Global
 		{6072307B-EF34-4264-866C-49AC54A6C245} = {DD3FE7E0-FA32-442B-869E-2554424B3BAC}
 		{7A928166-85A9-4282-9AF1-6FE934692B21} = {6072307B-EF34-4264-866C-49AC54A6C245}
 		{2861A320-758B-464E-BFBA-FC26410C5067} = {6072307B-EF34-4264-866C-49AC54A6C245}
+		{4DAC07CD-CA41-4DC1-A1EC-4EAE8DAE9225} = {6072307B-EF34-4264-866C-49AC54A6C245}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00D78C3D-8536-4549-B1EE-C19BD0C50387}
