@@ -1,0 +1,85 @@
+@page "/organisation/edit/{id}"
+@using Result = Allors.Workspace.Data.Result
+@using Task = System.Threading.Tasks.Task
+@using Allors.Workspace.Meta
+@using Allors.Workspace.Domain
+
+@attribute [Authorize]
+@inject IWorkspace Workspace
+@inject NavigationManager NavigationManager
+
+@if (organisation != null)
+{
+    <ABSForm Model="@organisation" OnValidSubmit="@HandleValidSubmit">
+        <ValidationSummary />
+
+        <BSRow>
+            <ABSStringInput RoleType="@M.Organisation.Name" />
+        </BSRow>
+
+        <BSRow>
+            <ABSSelect RoleType="@M.Organisation.Owner" Options="@people" Required="true" DisplayOption="@(v => ((Allors.Workspace.Domain.Person) v).FirstName)" />
+        </BSRow>
+
+        <BSRow>
+            <BSFormGroup>
+                <BSButton type="submit">Submit</BSButton>
+            </BSFormGroup>
+        </BSRow>
+    </ABSForm>
+}
+
+@code {
+    ISession Session;
+
+    M M => this.Workspace.Context().M;
+
+    [Parameter]
+    public string id { get; set; }
+
+    Allors.Workspace.Domain.Organisation organisation;
+
+    Allors.Workspace.Domain.Person[] people;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.Session = this.Workspace.CreateSession();
+
+        var pull = new[]
+        {
+            new Pull
+            {
+                ObjectId = !string.IsNullOrEmpty(id) ? long.Parse(id) : null,
+                Results = new[]
+                {
+                    new Result
+                    {
+                        Select = new Select
+                        {
+                            Include = new[] {new Node(this.M.Organisation.Owner)}
+                        }
+                    }
+                }
+            },
+            new Pull
+            {
+                Extent = new Filter(M.Person),
+            }
+        };
+
+        var result = await Session.Pull(pull);
+
+        organisation = result.GetObject<Allors.Workspace.Domain.Organisation>();
+        people = result.GetCollection<Allors.Workspace.Domain.Person>();
+    }
+
+    public async Task HandleValidSubmit()
+    {
+        var response = await Session.Push();
+        if (!response.HasErrors)
+        {
+            NavigationManager.NavigateTo("/organisation/list");
+        }
+    }
+
+}

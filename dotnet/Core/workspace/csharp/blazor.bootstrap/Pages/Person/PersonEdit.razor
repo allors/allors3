@@ -1,0 +1,70 @@
+@page "/person/edit/{id}"
+@using Allors.Workspace.Meta
+@using Allors.Workspace.Domain
+@using Person = Allors.Workspace.Domain.Person
+@attribute [Authorize]
+@inject IWorkspace Workspace
+@inject NavigationManager NavigationManager
+
+@if (person != null)
+{
+    <ABSForm Model="@person" OnValidSubmit="@HandleValidSubmit">
+        <ValidationSummary />
+
+        <BSRow>
+            <BSCol>
+                <ABSInput RoleType="@M.Person.FirstName" />
+            </BSCol>
+            <BSCol>
+                <ABSInput RoleType="@M.Person.LastName" />
+            </BSCol>
+        </BSRow>
+
+        <BSRow>
+            <BSCol>
+                <ABSDateInput RoleType="@M.Person.BirthDate" />
+            </BSCol>
+        </BSRow>
+
+        <BSRow>
+            <BSCol>
+                <button @onclick="HandleValidSubmit">Submit</button>
+            </BSCol>
+        </BSRow>
+
+    </ABSForm>
+}
+
+@code {
+    ISession Session;
+
+    M M => this.Workspace.Context().M;
+
+    [Parameter]
+    public string id { get; set; }
+
+    Person person;
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.Session = this.Workspace.CreateSession();
+
+        var pull = new Pull
+        {
+            ObjectId = !string.IsNullOrEmpty(id) ? long.Parse(id) : null,
+        };
+
+        var result = await this.Session.Pull(pull);
+
+        this.person = result.GetObject<Person>();
+    }
+
+    public async System.Threading.Tasks.Task HandleValidSubmit()
+    {
+        var response = await this.Session.Push();
+        if (!response.HasErrors)
+        {
+            this.NavigationManager.NavigateTo("/person/list");
+        }
+    }
+}
