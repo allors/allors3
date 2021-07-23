@@ -14,14 +14,22 @@
     <ProjectReference Include="..\..\..\..\System\Database\Adapters\Allors.Database.Adapters\Allors.Database.Adapters.csproj" />
     <ProjectReference Include="..\..\..\..\System\Database\Allors.Database.Protocol.Json\Allors.Database.Protocol.Json.csproj" />
     <ProjectReference Include="..\..\..\..\System\protocol\allors.protocol.json.systemtext\Allors.Protocol.Json.SystemText.csproj" />
+    <ProjectReference Include="..\..\..\..\System\workspace\csharp\adapters\allors.workspace.adapters.local\Allors.Workspace.Adapters.Local.csproj" />
     <ProjectReference Include="..\..\..\Database\Configuration\Configuration.csproj" />
     <ProjectReference Include="..\..\..\Database\Domain\Domain.csproj" />
     <ProjectReference Include="..\Blazor.Bootstrap\Blazor.Bootstrap.csproj" />
+    <ProjectReference Include="..\Configuration\Workspace.Configuration.csproj" />
+    <ProjectReference Include="..\Meta.Lazy\Workspace.Meta.Lazy.csproj" />
   </ItemGroup>
 
 
   <ItemGroup>
     <Compile Include="..\..\..\Database\Server\Core*\**\*.cs" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Compile Remove="..\..\..\Database\Server\core\api\json\**" />
   </ItemGroup>
 
 </Project>
