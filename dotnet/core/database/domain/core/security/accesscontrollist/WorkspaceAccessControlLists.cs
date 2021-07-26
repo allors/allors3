@@ -33,7 +33,7 @@ namespace Allors.Database.Domain
             {
                 if (!this.AclByObject.TryGetValue(@object, out var acl))
                 {
-                    acl = new AccessControlList(this, @object);
+                    acl = new AccessControlList(this, @object, this.WorkspaceName);
                     this.AclByObject.Add(@object, acl);
                 }
 

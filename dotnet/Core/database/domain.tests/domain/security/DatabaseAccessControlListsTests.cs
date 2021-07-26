@@ -16,9 +16,9 @@ namespace Allors.Database.Domain.Tests
     using Permission = Domain.Permission;
     using Role = Domain.Role;
 
-    public class DatabaseAccessControlListTests : DomainTest, IClassFixture<Fixture>
+    public class DatabaseAccessControlListsTests : DomainTest, IClassFixture<Fixture>
     {
-        public DatabaseAccessControlListTests(Fixture fixture) : base(fixture) { }
+        public DatabaseAccessControlListsTests(Fixture fixture) : base(fixture) { }
 
         public override Config Config => new Config { SetupSecurity = true };
 

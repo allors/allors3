@@ -104,7 +104,7 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         public DateTime BirthDate { get; set; }
-        
+
         #region Allors
         [Id("0521122D-1C45-41DC-804C-330FE81136C6")]
         [Size(256)]
@@ -192,15 +192,27 @@ namespace Allors.Repository
         [Indexed]
         public Organisation[] CycleMany { get; set; }
 
-        [Id("FAF120ED-09D1-4E42-86A6-F0D9FF75E03C")]
-        public void Method() { }
-
-
         #region Allors
         [Id("46395751-D63E-4D84-9110-197BA6930ACC")]
         #endregion
         [Derived]
         public bool Owning { get; set; }
+
+        #region Allors
+        [Id("1198D746-8FEE-4B94-B878-09028A1FCC9F")]
+        #endregion
+        [Derived]
+        public string DatabaseOnlyField { get; set; }
+
+        #region Allors
+        [Id("423735DF-1712-4C19-B5FE-121FF9BEF9F1")]
+        #endregion
+        [Workspace(Default)]
+        [Derived]
+        public string DefaultWorkspaceField { get; set; }
+
+        [Id("FAF120ED-09D1-4E42-86A6-F0D9FF75E03C")]
+        public void Method() { }
 
         #region inherited methods
 
