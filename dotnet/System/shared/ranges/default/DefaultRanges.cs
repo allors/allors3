@@ -25,7 +25,13 @@ namespace Allors.Ranges
                     collection.CopyTo(newArray, 0);
                     return new ArrayRange(newArray);
                 default:
-                    return new ArrayRange(sortedItems.ToArray());
+                    var materialized = sortedItems.ToArray();
+                    if (materialized.Length == 0)
+                    {
+                        return EmptyRange.Instance;
+                    }
+
+                    return new ArrayRange(materialized);
             }
         }
 
@@ -46,7 +52,7 @@ namespace Allors.Ranges
             _ => throw new NotSupportedException($"Ensure is not supported from {nullable.GetType()}")
         };
 
-        public IRange ImportFrom(IEnumerable<long>? unsortedItems)
+        public IRange Import(IEnumerable<long>? unsortedItems)
         {
             switch (unsortedItems)
             {
@@ -63,7 +69,14 @@ namespace Allors.Ranges
                     Array.Sort(newSortedArray);
                     return new ArrayRange(newSortedArray);
                 default:
-                    return new ArrayRange(unsortedItems.OrderBy(v => v).ToArray());
+                    var materialized = unsortedItems.ToArray();
+                    if (materialized.Length == 0)
+                    {
+                        return EmptyRange.Instance;
+                    }
+
+                    Array.Sort(materialized);
+                    return new ArrayRange(materialized);
             }
         }
 

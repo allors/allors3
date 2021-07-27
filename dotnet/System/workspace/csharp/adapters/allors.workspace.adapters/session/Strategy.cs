@@ -227,7 +227,7 @@ namespace Allors.Workspace.Adapters
             this.AssertInput(role);
 
             var ranges = this.Session.Workspace.Ranges;
-            var roleIds = ranges.ImportFrom(role?.Select(v => v.Id));
+            var roleIds = ranges.Import(role?.Select(v => v.Id));
 
             switch (roleType.Origin)
             {

@@ -49,7 +49,7 @@ namespace Allors.Database.Protocol.Json
 
                         if (this.AccessControlLists.EffectivePermissionIdsByAccessControl.TryGetValue(v, out var x))
                         {
-                            response.p = this.ranges.ImportFrom(x).Save();
+                            response.p = this.ranges.Import(x).Save();
                         }
 
                         return response;

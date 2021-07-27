@@ -123,7 +123,7 @@ namespace Allors.Workspace.Adapters.Local
             }
 
             acessControl.Version = accessControl.Strategy.ObjectVersion;
-            acessControl.PermissionIds = this.ranges.ImportFrom(accessControl.Permissions.Select(v => v.Id));
+            acessControl.PermissionIds = this.ranges.Import(accessControl.Permissions.Select(v => v.Id));
 
             return acessControl;
         }

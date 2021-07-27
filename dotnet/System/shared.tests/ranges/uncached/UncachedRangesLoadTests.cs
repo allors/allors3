@@ -7,10 +7,10 @@ namespace Allors.Ranges
 {
     using System.Runtime.CompilerServices;
 
-    public class UncachedRangesFromTests : RangesFromTests
+    public class UncachedRangesLoadTests : RangesLoadTests
     {
         public override IRanges Ranges { get; }
 
-        public UncachedRangesFromTests() => this.Ranges = new DefaultRanges();
+        public UncachedRangesLoadTests() => this.Ranges = new DefaultRanges();
     }
 }

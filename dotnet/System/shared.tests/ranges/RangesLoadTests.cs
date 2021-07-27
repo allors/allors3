@@ -6,14 +6,15 @@
 namespace Allors.Ranges
 {
     using System;
+    using System.Linq;
     using Xunit;
 
-    public abstract class RangesFromTests
+    public abstract class RangesLoadTests
     {
         public abstract IRanges Ranges { get; }
 
         [Fact]
-        public void FromDefault()
+        public void LoadDefault()
         {
             var num = this.Ranges;
 
@@ -23,7 +24,7 @@ namespace Allors.Ranges
         }
 
         [Fact]
-        public void FromValue()
+        public void LoadValue()
         {
             var num = this.Ranges;
 
@@ -33,13 +34,26 @@ namespace Allors.Ranges
         }
 
         [Fact]
-        public void FromPair()
+        public void LoadPair()
         {
             var num = this.Ranges;
 
             var x = num.Load(0L, 1L);
 
             Assert.Equal(new[] { 0L, 1L }, x);
+        }
+
+        [Fact]
+        public void LoadDistinctIterator()
+        {
+            var num = this.Ranges;
+
+            var distinctIterator = Array.Empty<long>().Distinct();
+
+            var x = num.Load(distinctIterator);
+
+            Assert.True(x.IsEmpty);
+            Assert.Null(x.Save());
         }
     }
 }

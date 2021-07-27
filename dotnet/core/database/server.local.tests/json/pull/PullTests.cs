@@ -35,7 +35,7 @@ namespace Tests
 
             var data = new DataBuilder(this.Transaction).WithString("First").Build();
             var permissions = new Permissions(this.Transaction).Extent();
-            var permission = permissions.First(v => Equals(v.Class, this.M.Data));
+            var permission = permissions.First(v => Equals(v.Class, this.M.Data) && v.InWorkspace("Default"));
             data.AddDeniedPermission(permission);
 
             this.Transaction.Commit();
