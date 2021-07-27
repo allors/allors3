@@ -237,11 +237,6 @@ namespace Allors.Workspace.Adapters
         {
             var roleType = associationType.RoleType;
 
-            if (roleType.ObjectType.IsUnit)
-            {
-                throw new ArgumentException("AssociationType should not be for a Unit", nameof(associationType));
-            }
-
             foreach (var association in this.StrategiesForClass(associationType.ObjectType))
             {
                 if (!association.CanRead(roleType))
@@ -261,11 +256,6 @@ namespace Allors.Workspace.Adapters
         public IEnumerable<Strategy> GetCompositesAssociation(long role, IAssociationType associationType)
         {
             var roleType = associationType.RoleType;
-
-            if (roleType.ObjectType.IsUnit)
-            {
-                throw new ArgumentException("AssociationType should not be for a Unit", nameof(associationType));
-            }
 
             foreach (var association in this.StrategiesForClass(associationType.ObjectType))
             {

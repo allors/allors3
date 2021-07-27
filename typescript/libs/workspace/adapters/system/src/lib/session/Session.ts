@@ -8,7 +8,6 @@ import { PushToWorkspaceTracker } from './trackers/PushToWorkspaceTracker';
 import { ChangeSet } from './ChangeSet';
 import { enumerate } from '../collections/Range';
 import { AssociationType, Class, Composite, Origin, RoleType } from '@allors/workspace/meta/system';
-import { IRange } from '@allors/workspace/adapters/system';
 
 export function isNewId(id: number): boolean {
   return id < 0;
@@ -153,34 +152,37 @@ export abstract class Session implements ISession {
     }
   }
 
-  public getCompositeAssociation<T extends IObject>(role: number, associationType: AssociationType): T {
+  public getCompositeAssociation(role: number, associationType: AssociationType): Strategy {
     const roleType = associationType.roleType;
-    for (const association of this.getForAssociation(associationType.objectType as Composite)) {
-      if (association.canRead(roleType)) {
-        if (association.isCompositeAssociationForRole(roleType, role)) {
-          return association.object as T;
-        }
+    for (const association of this.strategiesForClass(associationType.objectType as Composite)) {
+      if (!association.canRead(roleType)) {
+        continue;
+      }
+
+      if (association.isCompositeAssociationForRole(roleType, role)) {
+        return association;
       }
     }
   }
 
-  public getCompositesAssociation<T extends IObject>(role: number, associationType: AssociationType): T[] {
+  public getCompositesAssociation(role: number, associationType: AssociationType): Strategy[] {
     const roleType = associationType.roleType;
 
-    const associations: T[] = [];
+    const associations: Strategy[] = [];
 
-    for (const association of this.getForAssociation(associationType.objectType as Composite)) {
+    for (const association of this.strategiesForClass(associationType.objectType as Composite)) {
       if (!association.canRead(roleType)) {
-        // TODO: Warning!!! continue If
+        continue;
       }
 
       if (association.isCompositesAssociationForRole(roleType, role)) {
-        associations.push(association.object as T);
+        associations.push(association);
       }
     }
 
     return associations;
   }
+
 
   protected addStrategy(strategy: Strategy) {
     this.strategyByWorkspaceId.set(strategy.id, strategy);
@@ -239,12 +241,12 @@ export abstract class Session implements ISession {
     strategy.onDatabasePushResponse(databaseRecord);
   }
 
-  private getForAssociation(objectType: Composite): Strategy[] {
+  private strategiesForClass(objectType: Composite): Strategy[] {
     const classes = objectType.classes;
 
     const strategies: Strategy[] = [];
 
-    for (const [_, strategy] of this.strategyByWorkspaceId) {
+    for (const [, strategy] of this.strategyByWorkspaceId) {
       if (classes.has(strategy.cls)) {
         strategies.push(strategy);
       }
@@ -252,8 +254,6 @@ export abstract class Session implements ISession {
 
     return strategies;
   }
-
-  abstract instantiateDatabaseStrategy(id: number): Strategy;
 
   abstract instantiateWorkspaceStrategy(id: number): Strategy;
 }

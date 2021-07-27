@@ -6,7 +6,7 @@ import { Strategy } from '../Strategy';
 import { RecordBasedOriginState } from './RecordBasedOriginState';
 
 export const UnknownVersion = 0;
-export const InitialVersion = 1;
+export const WorkspaceInitialVersion = 1;
 
 export abstract class DatabaseOriginState extends RecordBasedOriginState {
   databaseRecord: DatabaseRecord;

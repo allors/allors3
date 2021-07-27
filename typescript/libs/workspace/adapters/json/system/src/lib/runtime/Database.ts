@@ -17,8 +17,8 @@ export class Database extends SystemDatabase {
   writePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
   executePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
 
-  constructor(configuration: Configuration, servicesBuilder: ServicesBuilder, idGenerator: IdGenerator, public client: Client) {
-    super(configuration, servicesBuilder, idGenerator);
+  constructor(configuration: Configuration, idGenerator: IdGenerator, private servicesBuilder: ServicesBuilder, public client: Client) {
+    super(configuration, idGenerator);
 
     this.recordsById = new Map();
 

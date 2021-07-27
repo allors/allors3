@@ -1,6 +1,6 @@
 import { IObject, IStrategy, IUnit, Method } from '@allors/workspace/domain/system';
 import { DatabaseRecord } from '../database/DatabaseRecord';
-import { DatabaseOriginState, InitialVersion, UnknownVersion } from './originstate/DatabaseOriginState';
+import { DatabaseOriginState, WorkspaceInitialVersion, UnknownVersion } from './originstate/DatabaseOriginState';
 import { WorkspaceOriginState } from './originstate/WorkspaceOriginState';
 import { isNewId, Session } from './Session';
 import { importFrom, enumerate, IRange, has } from '../collections/Range';
@@ -21,7 +21,7 @@ export abstract class Strategy implements IStrategy {
   public get version(): number {
     switch (this.cls.origin) {
       case Origin.Session:
-        return InitialVersion;
+        return WorkspaceInitialVersion;
       case Origin.Workspace:
         return this.WorkspaceOriginState.Version;
       case Origin.Database:
