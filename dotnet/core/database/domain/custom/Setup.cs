@@ -83,19 +83,22 @@ namespace Allors.Database.Domain
             cyclePerson2.AddCycleMany(cycleOrganisation1);
             cyclePerson2.AddCycleMany(cycleOrganisation2);
 
-            var denied = new DeniedBuilder(this.transaction)
-                .WithDatabaseProperty("DatabaseProp")
-                .WithDefaultWorkspaceProperty("DefaultWorkspaceProp")
-                .WithWorkspaceXProperty("WorkspaceXProp")
-                .Build();
+            if (this.Config.SetupSecurity)
+            {
+                var denied = new DeniedBuilder(this.transaction)
+                    .WithDatabaseProperty("DatabaseProp")
+                    .WithDefaultWorkspaceProperty("DefaultWorkspaceProp")
+                    .WithWorkspaceXProperty("WorkspaceXProp")
+                    .Build();
 
-            var m = denied.M;
+                var m = denied.M;
 
-            var databaseWrite = new Permissions(this.transaction).Extent().First(v => v.OperandType.Equals(m.Denied.DatabaseProperty) && v.Operation == Operations.Write);
-            var defaultWorkspaceWrite = new Permissions(this.transaction).Extent().First(v => v.OperandType.Equals(m.Denied.DefaultWorkspaceProperty) && v.Operation == Operations.Write);
-            var workspaceXWrite = new Permissions(this.transaction).Extent().First(v => v.OperandType.Equals(m.Denied.WorkspaceXProperty) && v.Operation == Operations.Write);
+                var databaseWrite = new Permissions(this.transaction).Extent().First(v => v.OperandType.Equals(m.Denied.DatabaseProperty) && v.Operation == Operations.Write);
+                var defaultWorkspaceWrite = new Permissions(this.transaction).Extent().First(v => v.OperandType.Equals(m.Denied.DefaultWorkspaceProperty) && v.Operation == Operations.Write);
+                var workspaceXWrite = new Permissions(this.transaction).Extent().First(v => v.OperandType.Equals(m.Denied.WorkspaceXProperty) && v.Operation == Operations.Write);
 
-            denied.DeniedPermissions = new[] { databaseWrite, defaultWorkspaceWrite, workspaceXWrite };
+                denied.DeniedPermissions = new[] { databaseWrite, defaultWorkspaceWrite, workspaceXWrite };
+            }
         }
     }
 }
