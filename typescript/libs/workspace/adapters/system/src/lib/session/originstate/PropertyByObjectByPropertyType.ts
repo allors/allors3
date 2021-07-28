@@ -33,26 +33,25 @@ export class PropertyByObjectByPropertyType {
   public checkpoint(): MapMap<PropertyType, number, unknown> {
     try {
       const changeSet = this.changedPropertyByObjectByPropertyType;
-      const original = this.propertyByObjectByPropertyType;
 
-      changeSet.mapMap.forEach((map, propertyType) => {
-        let originalMap = original.mapMap.get(propertyType);
+      changeSet.mapMap.forEach((changedMap, propertyType) => {
+        let propertyByObject = this.propertyByObjectByPropertyType.mapMap.get(propertyType);
 
-        map.forEach((value, object) => {
-          if (value == null) {
-            originalMap?.delete(object);
+        changedMap.forEach((changedProperty, object) => {
+          if (changedProperty == null) {
+            propertyByObject?.delete(object);
           } else {
-            if (originalMap == null) {
-              originalMap = new Map();
-              original.mapMap.set(propertyType, originalMap);
+            if (propertyByObject == null) {
+              propertyByObject = new Map();
+              this.propertyByObjectByPropertyType.mapMap.set(propertyType, propertyByObject);
             }
 
-            originalMap.set(object, value);
+            propertyByObject.set(object, changedProperty);
           }
         });
 
-        if (originalMap.size === 0) {
-          original.mapMap.delete(propertyType);
+        if (propertyByObject.size === 0) {
+          this.propertyByObjectByPropertyType.mapMap.delete(propertyType);
         }
       });
 

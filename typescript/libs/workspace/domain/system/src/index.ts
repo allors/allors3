@@ -41,6 +41,10 @@ export * from './lib/data/Operator';
 export * from './lib/data/Step';
 
 // runtime
+export * from './lib/runtime/diff/ICompositeDiff';
+export * from './lib/runtime/diff/ICompositesDiff';
+export * from './lib/runtime/diff/IDiff';
+export * from './lib/runtime/diff/IUnitDiff';
 export * from './lib/runtime/IChangeSet';
 export * from './lib/runtime/IObject';
 export * from './lib/runtime/IObjectFactory';
@@ -48,6 +52,7 @@ export * from './lib/runtime/ISession';
 export * from './lib/runtime/ISessionServices';
 export * from './lib/runtime/IStrategy';
 export * from './lib/runtime/IWorkspace';
+export * from './lib/runtime/IWorkspaceResult';
 export * from './lib/runtime/IWorkspaceServices';
 export * from './lib/runtime/Method';
 export * from './lib/runtime/Operations';

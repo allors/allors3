@@ -3,7 +3,7 @@ import { IStrategy } from "../IStrategy";
 
 export interface IDiff {
     
-  RelationType : RelationType;
+  relationType : RelationType;
   
-  Assocation : IStrategy;
+  assocation : IStrategy;
 }

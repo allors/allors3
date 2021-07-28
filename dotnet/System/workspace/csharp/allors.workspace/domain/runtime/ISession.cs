@@ -26,15 +26,15 @@ namespace Allors.Workspace
 
         Task<IPushResult> Push();
 
-        Task<IWorkspaceResult> PullFromWorkspace();
+        IWorkspaceResult PullFromWorkspace();
 
-        Task<IWorkspaceResult> PushToWorkspace();
+        IWorkspaceResult PushToWorkspace();
+
+        IChangeSet Checkpoint();
 
         T Create<T>() where T : class, IObject;
 
         T Create<T>(IClass @class) where T : class, IObject;
-
-        IChangeSet Checkpoint();
 
         #region Instantiate
         T Instantiate<T>(IObject @object) where T : class, IObject;

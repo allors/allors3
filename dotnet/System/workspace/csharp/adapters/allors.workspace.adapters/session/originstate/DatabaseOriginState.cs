@@ -19,7 +19,7 @@ namespace Allors.Workspace.Adapters
 
         public long Version => this.DatabaseRecord?.Version ?? Allors.Version.WorkspaceInitial;
 
-        internal bool IsVersionInitial => this.Version == Allors.Version.WorkspaceInitial.Value;
+        private bool IsVersionInitial => this.Version == Allors.Version.WorkspaceInitial.Value;
 
         protected override IEnumerable<IRoleType> RoleTypes => this.Class.DatabaseOriginRoleTypes;
 
@@ -27,9 +27,9 @@ namespace Allors.Workspace.Adapters
 
         protected override IRecord Record => this.DatabaseRecord;
 
-        protected internal DatabaseRecord DatabaseRecord { get; private set; }
+        protected DatabaseRecord DatabaseRecord { get; private set; }
 
-        public bool IsPushed { get; private set; }
+        private bool IsPushed { get; set; }
 
         public bool CanRead(IRoleType roleType)
         {
@@ -40,7 +40,7 @@ namespace Allors.Workspace.Adapters
 
             if (this.IsVersionInitial)
             {
-                // TODO: 
+                // TODO: Security
                 return true;
             }
 
@@ -78,7 +78,7 @@ namespace Allors.Workspace.Adapters
 
             if (this.IsVersionInitial)
             {
-                // TODO: 
+                // TODO: Security
                 return true;
             }
 

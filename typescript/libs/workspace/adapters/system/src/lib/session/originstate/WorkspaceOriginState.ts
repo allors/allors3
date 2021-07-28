@@ -1,13 +1,15 @@
+import { IWorkspaceResult } from '@allors/workspace/domain/system';
 import { RoleType } from '@allors/workspace/meta/system';
 import { IRecord } from '../../IRecord';
+import { UnknownVersion } from '../../Version';
 import { WorkspaceRecord } from '../../workspace/WorkspaceRecord';
+import { WorkspaceResult } from '../../workspace/WorkspaceResult';
 import { Strategy } from '../Strategy';
 import { RecordBasedOriginState } from './RecordBasedOriginState';
 
 export class WorkspaceOriginState extends RecordBasedOriginState {
-
-  public constructor(public strategy: Strategy, private workspaceRecord: WorkspaceRecord) {
-    super(strategy);
+  constructor(public strategy: Strategy, private workspaceRecord: WorkspaceRecord) {
+    super();
     this.previousRecord = this.workspaceRecord;
   }
 
@@ -28,12 +30,23 @@ export class WorkspaceOriginState extends RecordBasedOriginState {
     this.strategy.session.pushToWorkspaceTracker.onChanged(this);
   }
 
-  public push() {
+  push() {
     if (this.hasChanges) {
-      this.workspace.push(this.id, this.class, this.record?.version ?? 0, this.changedRoleByRelationType);
+      this.workspace.push(this.id, this.class, this.record?.version ?? UnknownVersion, this.changedRoleByRelationType);
     }
 
     this.workspaceRecord = this.workspace.getRecord(this.id);
+    this.changedRoleByRelationType = null;
+  }
+
+  onPulled(result: WorkspaceResult) {
+    const newRecord = this.workspace.getRecord(this.id);
+    if (!this.canMerge(newRecord)) {
+      result.addMergeError(this.strategy.object);
+      return;
+    }
+
+    this.workspaceRecord = newRecord;
     this.changedRoleByRelationType = null;
   }
 }

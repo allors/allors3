@@ -2,7 +2,7 @@ import { IDiff } from "./IDiff";
 
 export interface ICompositesDiff extends IDiff {
     
-  OriginalRoleIds : number[];
+  originalRoleIds : number[];
   
-  ChangedRoleIds : number[];
+  changedRoleIds : number[];
 }

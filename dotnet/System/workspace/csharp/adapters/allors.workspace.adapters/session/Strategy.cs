@@ -160,7 +160,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetUnitRole(IRoleType roleType, object value)
         {
-            AssertUnitTag(roleType, value);
+            AssertUnit(roleType, value);
 
             switch (roleType.Origin)
             {
@@ -186,7 +186,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetCompositeRole<T>(IRoleType roleType, T value) where T : class, IObject
         {
-            this.AssertInput(value);
+            this.AssertComposite(value);
 
             if (value != null)
             {
@@ -224,7 +224,7 @@ namespace Allors.Workspace.Adapters
 
         public void SetCompositesRole<T>(IRoleType roleType, in IEnumerable<T> role) where T : class, IObject
         {
-            this.AssertInput(role);
+            this.AssertComposites(role);
 
             var ranges = this.Session.Workspace.Ranges;
             var roleIds = ranges.Import(role?.Select(v => v.Id));
@@ -259,7 +259,7 @@ namespace Allors.Workspace.Adapters
                 return;
             }
 
-            this.AssertInput(value);
+            this.AssertComposite(value);
 
             this.AssertSameType(roleType, value);
 
@@ -297,7 +297,7 @@ namespace Allors.Workspace.Adapters
                 return;
             }
 
-            this.AssertInput(value);
+            this.AssertComposite(value);
 
             switch (roleType.Origin)
             {
@@ -404,7 +404,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        private static void AssertUnitTag(IRoleType roleType, object value)
+        private static void AssertUnit(IRoleType roleType, object value)
         {
             switch (roleType.ObjectType.Tag)
             {
@@ -461,17 +461,20 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        private void AssertInput(IObject input)
+        private void AssertComposite(IObject value)
         {
-            if (input == null)
+            if (value == null)
             {
                 return;
             }
 
-            this.AssertInput(input.Strategy);
+            if (this.Session != value.Strategy.Session)
+            {
+                throw new ArgumentException("Strategy is from a different session");
+            }
         }
 
-        private void AssertInput(IEnumerable<IObject> inputs)
+        private void AssertComposites(IEnumerable<IObject> inputs)
         {
             if (inputs == null)
             {
@@ -480,15 +483,7 @@ namespace Allors.Workspace.Adapters
 
             foreach (var input in inputs)
             {
-                this.AssertInput(input.Strategy);
-            }
-        }
-
-        private void AssertInput(IStrategy input)
-        {
-            if (this.Session != input.Session)
-            {
-                throw new ArgumentException("Strategy is from a different session");
+                this.AssertComposite(input);
             }
         }
     }

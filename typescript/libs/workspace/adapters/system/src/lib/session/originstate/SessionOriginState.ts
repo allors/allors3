@@ -120,7 +120,7 @@ export class SessionOriginState {
     this.propertyByObjectByPropertyType.set(associationId, roleType, roleId);
   }
 
-  private setCompositeRoleMany2One(associationId: number, roleType: RoleType, newRole: number) {
+  private setCompositeRoleMany2One(associationId: number, roleType: RoleType, roleId: number) {
     /*  [if exist]        [then remove]        set
      *
      *  RA ----- R         RA       R       RA    -- R       RA ----- R
@@ -128,15 +128,25 @@ export class SessionOriginState {
      *   A ----- PR         A --x-- PR       A --    PR       A --    PR
      */
     const associationType = roleType.associationType;
+    const previousRoleId = this.propertyByObjectByPropertyType.get(associationId, roleType) as number;
 
-    //  Association
-    const previousRole = this.propertyByObjectByPropertyType.get(associationId, roleType) as number;
-    if (previousRole != null) {
-      this.propertyByObjectByPropertyType.set(previousRole, associationType, null);
+    // R = PR
+    if (roleId == previousRoleId) {
+      return;
     }
 
-    //  Role
-    this.propertyByObjectByPropertyType.set(associationId, roleType, newRole);
+    // A --x-- PR
+    if (previousRoleId != null) {
+      this.removeCompositeRoleMany2One(associationId, roleType, roleId);
+    }
+
+    // A <---- R
+    let associationIds = this.getCompositesRole(roleId, associationType);
+    associationIds = add(associationIds, associationId);
+    this.propertyByObjectByPropertyType.set(roleId, associationType, associationIds);
+
+    // A ----> R
+    this.propertyByObjectByPropertyType.set(associationId, roleType, roleId);
   }
 
   private removeCompositeRoleOne2One(associationId: number, roleType: RoleType, roleId: number) {

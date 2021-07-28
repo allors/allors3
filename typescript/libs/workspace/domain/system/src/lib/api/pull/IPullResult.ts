@@ -14,4 +14,6 @@ export interface IPullResult extends IResult {
   object<T extends IObject>(name: string): T;
 
   value(name: string): IUnit | Array<IUnit>;
+
+  addMergeError(object: IObject);
 }

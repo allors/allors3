@@ -14,15 +14,10 @@ namespace Allors.Workspace.Adapters
 
     public abstract class Session : ISession
     {
-        private static int sessionIdCounter = 0;
-        public int SessionId { get; set; }
-
         private readonly Dictionary<IClass, ISet<Strategy>> strategiesByClass;
 
         protected Session(Workspace workspace, ISessionServices sessionServices)
         {
-            this.SessionId = ++sessionIdCounter;
-
             this.Workspace = workspace;
             this.Services = sessionServices;
 
@@ -52,7 +47,9 @@ namespace Allors.Workspace.Adapters
 
         protected Dictionary<long, Strategy> StrategyByWorkspaceId { get; }
 
-        public override string ToString() => $"session: {this.SessionId}";
+        public override string ToString() => $"session: {base.ToString()}";
+
+        internal static bool IsNewId(long id) => id < 0;
 
         public abstract T Create<T>(IClass @class) where T : class, IObject;
 
@@ -68,7 +65,7 @@ namespace Allors.Workspace.Adapters
 
         public abstract Task<IPushResult> Push();
 
-        public Task<IWorkspaceResult> PullFromWorkspace()
+        public IWorkspaceResult PullFromWorkspace()
         {
             var result = new WorkspaceResult();
 
@@ -82,10 +79,10 @@ namespace Allors.Workspace.Adapters
                 }
             }
 
-            return Task.FromResult((IWorkspaceResult)result);
+            return result;
         }
 
-        public Task<IWorkspaceResult> PushToWorkspace()
+        public IWorkspaceResult PushToWorkspace()
         {
             var pushResult = new WorkspaceResult();
 
@@ -113,7 +110,7 @@ namespace Allors.Workspace.Adapters
             this.PushToWorkspaceTracker.Created = null;
             this.PushToWorkspaceTracker.Changed = null;
 
-            return Task.FromResult((IWorkspaceResult)pushResult);
+            return pushResult;
         }
 
         public IChangeSet Checkpoint()
@@ -271,8 +268,6 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        protected abstract Strategy InstantiateWorkspaceStrategy(long id);
-
         protected void AddStrategy(Strategy strategy)
         {
             this.StrategyByWorkspaceId.Add(strategy.Id, strategy);
@@ -297,12 +292,13 @@ namespace Allors.Workspace.Adapters
             strategy.OnDatabasePushed();
         }
 
-        internal static bool IsNewId(long id) => id < 0;
-
         private IEnumerable<Strategy> StrategiesForClass(IComposite objectType)
         {
             var classes = new HashSet<IClass>(objectType.Classes);
             return this.StrategyByWorkspaceId.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value).Distinct();
         }
+
+        protected abstract Strategy InstantiateWorkspaceStrategy(long id);
+
     }
 }

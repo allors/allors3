@@ -37,7 +37,7 @@ namespace Allors.Workspace.Adapters
         {
             if (this.HasChanges)
             {
-                this.Workspace.Push(this.Id, this.Class, this.Record?.Version ?? 0, this.ChangedRoleByRelationType);
+                this.Workspace.Push(this.Id, this.Class, this.Record?.Version ?? Allors.Version.Unknown.Value, this.ChangedRoleByRelationType);
             }
 
             this.WorkspaceRecord = this.Workspace.GetRecord(this.Id);

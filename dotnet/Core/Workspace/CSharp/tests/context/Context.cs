@@ -97,12 +97,12 @@ namespace Tests.Workspace
                     return session.Create<T>();
                 case WorkspaceMode.Push:
                     var pushObject = session.Create<T>();
-                    await session.PushToWorkspace();
+                    session.PushToWorkspace();
                     return pushObject;
                 case WorkspaceMode.PushAndPull:
                     var pushAndPullObject = session.Create<T>();
-                    await session.PushToWorkspace();
-                    await session.PullFromWorkspace();
+                    session.PushToWorkspace();
+                    session.PullFromWorkspace();
                     return pushAndPullObject;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(mode), mode, $@"Mode [{string.Join(", ", Enum.GetNames(typeof(DatabaseMode)))}]");

@@ -3,6 +3,7 @@ import { Class, RelationType } from '@allors/workspace/meta/system';
 import { Database } from '../Database/Database';
 import { WorkspaceRecord } from './WorkspaceRecord';
 
+// TODO: Koen
 export abstract class Workspace implements IWorkspace {
   workspaceClassByWorkspaceId: Map<number, Class>;
 

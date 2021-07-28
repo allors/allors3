@@ -35,6 +35,7 @@ export class ChangeSet implements IChangeSet {
 
   public diff(association: Strategy, relationType: RelationType, current: unknown, previous: unknown) {
     const roleType = relationType.roleType;
+
     if (roleType.objectType.isUnit) {
       if (current !== previous) {
         this.addAssociation(relationType, association);
@@ -55,6 +56,7 @@ export class ChangeSet implements IChangeSet {
       this.addAssociation(relationType, association);
     } else {
       let hasChange = false;
+
       const addedRoles = difference(current as IRange, previous as IRange);
       for (const v of enumerate(addedRoles)) {
         this.addRole(relationType, (this.session as Session).getStrategy(v));

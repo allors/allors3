@@ -3,7 +3,7 @@ import { IDiff } from "./IDiff";
 
 export interface IUnitDiff extends IDiff {
     
-  OriginalRole : IUnit;
+  originalRole : IUnit;
   
-  ChangedRole : IUnit;
+  changedRole : IUnit;
 }

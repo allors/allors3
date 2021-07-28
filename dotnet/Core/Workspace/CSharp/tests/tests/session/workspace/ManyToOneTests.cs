@@ -13,7 +13,7 @@ namespace Tests.Workspace.OriginSession.SessionWorkspace
 
     public abstract class ManyToOneTests : Test
     {
-        private Func<ISession, Task>[] pushes;
+        private Action<ISession>[] pushes;
 
         private Func<Context>[] contextFactories;
 
@@ -27,11 +27,11 @@ namespace Tests.Workspace.OriginSession.SessionWorkspace
             await base.InitializeAsync();
             await this.Login("administrator");
 
-            this.pushes = new Func<ISession, Task>[]
+            this.pushes = new Action<ISession>[]
             {
-                (session) => Task.CompletedTask,
-                async (session) => await session.PushToWorkspace(),
-                async (session) => {await session.PushToWorkspace(); await session.PullFromWorkspace(); }
+                (session) => { },
+                (session) =>  session.PushToWorkspace(),
+                (session) => { session.PushToWorkspace();  session.PullFromWorkspace(); }
             };
 
             var singleSessionContext = new SingleSessionContext(this, "Single shared");
@@ -64,8 +64,8 @@ namespace Tests.Workspace.OriginSession.SessionWorkspace
                         c1x_1.ShouldNotBeNull(ctx, mode);
                         c1y_2.ShouldNotBeNull(ctx, mode);
 
-                        await session2.PushToWorkspace();
-                        await session1.PullFromWorkspace();
+                        session2.PushToWorkspace();
+                        session1.PullFromWorkspace();
 
                         var c1y_1 = session1.Instantiate(c1y_2);
 
@@ -76,7 +76,7 @@ namespace Tests.Workspace.OriginSession.SessionWorkspace
                         c1x_1.SessionC1WorkspaceC1Many2One.ShouldEqual(c1y_1, ctx, mode);
                         c1y_1.SessionC1sWhereSessionC1WorkspaceC1Many2One.ShouldContains(c1x_1, ctx, mode);
 
-                        await push(session1);
+                        push(session1);
 
                         c1x_1.SessionC1WorkspaceC1Many2One.ShouldEqual(c1y_1, ctx, mode);
                         c1y_1.SessionC1sWhereSessionC1WorkspaceC1Many2One.ShouldContains(c1x_1, ctx, mode);
@@ -103,8 +103,8 @@ namespace Tests.Workspace.OriginSession.SessionWorkspace
                         c1x_1.ShouldNotBeNull(ctx, mode);
                         c1y_2.ShouldNotBeNull(ctx, mode);
 
-                        await session2.PushToWorkspace();
-                        await session1.PullFromWorkspace();
+                        session2.PushToWorkspace();
+                        session1.PullFromWorkspace();
 
                         var c1y_1 = session1.Instantiate(c1y_2);
 
@@ -118,7 +118,7 @@ namespace Tests.Workspace.OriginSession.SessionWorkspace
                         c1x_1.SessionC1WorkspaceC1Many2One.ShouldNotEqual(c1y_1, ctx, mode);
                         c1y_1.SessionC1sWhereSessionC1WorkspaceC1Many2One.ShouldNotEqual(c1x_1, ctx, mode);
 
-                        await push(session1);
+                        push(session1);
 
                         c1x_1.SessionC1WorkspaceC1Many2One.ShouldNotEqual(c1y_1, ctx, mode);
                         c1y_1.SessionC1sWhereSessionC1WorkspaceC1Many2One.ShouldNotEqual(c1x_1, ctx, mode);

@@ -1,17 +1,24 @@
 import { AssociationType, Class, MethodType, RoleType } from '@allors/workspace/meta/system';
+import { IDiff } from './diff/IDiff';
 import { IObject } from './IObject';
 import { ISession } from './ISession';
 import { Method } from './Method';
 import { IUnit } from './Types';
 
 export interface IStrategy {
+  session: ISession;
+
   object: IObject;
 
   cls: Class;
 
   id: number;
 
-  session: ISession;
+  version: number;
+
+  reset(): void;
+
+  diff(): IDiff[];
 
   canRead(roleType: RoleType): boolean;
 
@@ -46,6 +53,4 @@ export interface IStrategy {
   getCompositeAssociation<T extends IObject>(associationType: AssociationType): T;
 
   getCompositesAssociation<T extends IObject>(associationType: AssociationType): ReadonlyArray<T>;
-
-  method(methodType: MethodType): Method;
 }

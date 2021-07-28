@@ -1,28 +1,25 @@
-import { Operations } from '@allors/workspace/domain/system';
+import { IPullResult, Operations } from '@allors/workspace/domain/system';
 import { MethodType, RoleType } from '@allors/workspace/meta/system';
 import { DatabaseRecord } from '../../database/DatabaseRecord';
 import { IRecord } from '../../IRecord';
-import { Strategy } from '../Strategy';
+import { WorkspaceInitialVersion } from '../../Version';
 import { RecordBasedOriginState } from './RecordBasedOriginState';
 
-export const UnknownVersion = 0;
-export const WorkspaceInitialVersion = 1;
-
 export abstract class DatabaseOriginState extends RecordBasedOriginState {
-  databaseRecord: DatabaseRecord;
+  private isPushed: boolean;
 
-  protected constructor(strategy: Strategy, record: DatabaseRecord) {
-    super(strategy);
-    this.databaseRecord = record;
+  protected constructor(public databaseRecord: DatabaseRecord) {
+    super();
     this.previousRecord = this.databaseRecord;
+    this.isPushed = false;
   }
 
-  public get version(): number {
-    return this.databaseRecord?.version ?? UnknownVersion;
+  get version(): number {
+    return this.databaseRecord?.version ?? WorkspaceInitialVersion;
   }
 
-  private get isVersionUnknown(): boolean {
-    return this.version == UnknownVersion;
+  private get isVersionInitial(): boolean {
+    return this.version == WorkspaceInitialVersion;
   }
 
   get roleTypes(): Set<RoleType> {
@@ -37,38 +34,44 @@ export abstract class DatabaseOriginState extends RecordBasedOriginState {
     return this.databaseRecord;
   }
 
-  public canRead(roleType: RoleType): boolean {
+  canRead(roleType: RoleType): boolean {
     if (!this.existRecord) {
       return true;
     }
 
-    if (this.isVersionUnknown) {
-      return false;
+    if (this.isVersionInitial) {
+      // TODO: Security
+      return true;
     }
 
     const permission = this.session.workspace.database.getPermission(this.class, roleType, Operations.Read);
     return this.databaseRecord.isPermitted(permission);
   }
 
-  public canWrite(roleType: RoleType): boolean {
-    if (!this.existRecord) {
-      return true;
+  canWrite(roleType: RoleType): boolean {
+    if (this.isVersionInitial) {
+      return !this.isPushed;
     }
 
-    if (this.isVersionUnknown) {
+    if (this.isPushed) {
       return false;
+    }
+
+    if (!this.existRecord) {
+      return true;
     }
 
     const permission = this.session.workspace.database.getPermission(this.class, roleType, Operations.Write);
     return this.databaseRecord.isPermitted(permission);
   }
 
-  public canExecute(methodType: MethodType): boolean {
+  canExecute(methodType: MethodType): boolean {
     if (!this.existRecord) {
       return true;
     }
 
-    if (this.isVersionUnknown) {
+    if (this.isVersionInitial) {
+      // TODO: Security
       return false;
     }
 
@@ -76,13 +79,23 @@ export abstract class DatabaseOriginState extends RecordBasedOriginState {
     return this.databaseRecord.isPermitted(permission);
   }
 
-  public pushResponse(newDatabaseRecord: DatabaseRecord) {
-    this.databaseRecord = newDatabaseRecord;
-    this.changedRoleByRelationType = null;
+  onPushed() {
+    this.isPushed = true;
   }
 
-  public onPulled() {
-    this.databaseRecord = this.session.workspace.database.getRecord(this.id);
+  onPulled(pull: IPullResult) {
+    const newRecord = this.session.workspace.database.getRecord(this.id);
+    if (!this.isPushed) {
+      if (!this.canMerge(newRecord)) {
+        pull.addMergeError(this.strategy.object);
+        return;
+      }
+    } else {
+      this.changedRoleByRelationType = null;
+      this.isPushed = false;
+    }
+
+    this.databaseRecord = newRecord;
   }
 
   onChange() {

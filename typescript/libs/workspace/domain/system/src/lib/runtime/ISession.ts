@@ -10,21 +10,12 @@ import { IPullResult } from '../api/pull/IPullResult';
 import { IPushResult } from '../api/push/IPushResult';
 import { ISessionServices } from './ISessionServices';
 import { Method } from './Method';
+import { IWorkspaceResult } from './IWorkspaceResult';
 
 export interface ISession {
   workspace: IWorkspace;
 
   services: ISessionServices;
-
-  create(cls: Class): IObject;
-
-  getOne<T extends IObject>(id: number): T;
-
-  getMany<T extends IObject>(ids: number[]): T[];
-
-  getAll<T extends IObject>(objectType?: Composite): T[];
-
-  checkpoint(): IChangeSet;
 
   invoke(method: Method | Method[], options?: InvokeOptions): Promise<IInvokeResult>;
 
@@ -33,4 +24,16 @@ export interface ISession {
   pull(pulls: Pull[]): Promise<IPullResult>;
 
   push(): Promise<IPushResult>;
+
+  pullFromWorkspace(): IWorkspaceResult;
+
+  pushToWorkspace(): IWorkspaceResult;
+
+  checkpoint(): IChangeSet;
+
+  create(cls: Class): IObject;
+
+  instantiate<T extends IObject>(id: number): T;
+  instantiate<T extends IObject>(ids: number[]): T[];
+  instantiate<T extends IObject>(objectType: Composite): T[];
 }
