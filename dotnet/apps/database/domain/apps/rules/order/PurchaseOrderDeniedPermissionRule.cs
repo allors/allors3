@@ -97,6 +97,11 @@ namespace Allors.Database.Domain
                         @this.AddDeniedPermission(keyValuePair.Value);
                     }
                 }
+
+                if (@this.PurchaseOrderState.IsCompleted && @this.PurchaseOrderPaymentState.IsNotPaid && @this.PurchaseOrderShipmentState.IsNa)
+                {
+                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Reopen));
+                }
             }
         }
     }
