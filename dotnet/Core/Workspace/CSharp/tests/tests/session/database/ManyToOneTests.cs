@@ -77,12 +77,12 @@ namespace Tests.Workspace.OriginSession.SessionDatabase
 
                         // TODO: Relation is not working
                         c1x_1.SessionC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode);
-                        c1y_1.SessionC1sWhereSessionC1DatabaseC1Many2One.ShouldContains(c1x_1, ctx, mode);
+                        c1y_1.SessionC1sWhereSessionC1DatabaseC1Many2One.ShouldContain(c1x_1, ctx, mode);
 
                         await push(session1);
 
                         c1x_1.SessionC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode);
-                        c1y_1.SessionC1sWhereSessionC1DatabaseC1Many2One.ShouldContains(c1x_1, ctx, mode);
+                        c1y_1.SessionC1sWhereSessionC1DatabaseC1Many2One.ShouldContain(c1x_1, ctx, mode);
                     }
                 }
             }

@@ -79,12 +79,12 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
                             c1x_1.WorkspaceC1DatabaseC1Many2One = c1y_1;
 
                             c1x_1.WorkspaceC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2One.ShouldContains(c1x_1, ctx, mode1, mode2);
+                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
 
                             push(session1);
 
                             c1x_1.WorkspaceC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2One.ShouldContains(c1x_1, ctx, mode1, mode2);
+                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
                         }
                     }
                 }
@@ -123,17 +123,17 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
                             c1x_1.WorkspaceC1DatabaseC1Many2One = c1y_1;
 
                             c1x_1.WorkspaceC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2One.ShouldContains(c1x_1, ctx, mode1, mode2);
+                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
 
                             c1x_1.RemoveWorkspaceC1DatabaseC1Many2One();
 
                             c1x_1.WorkspaceC1DatabaseC1Many2One.ShouldNotEqual(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2One.ShouldNotContains(c1x_1, ctx, mode1, mode2);
+                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2One.ShouldNotContain(c1x_1, ctx, mode1, mode2);
 
                             push(session1);
 
                             c1x_1.WorkspaceC1DatabaseC1Many2One.ShouldNotEqual(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2One.ShouldNotContains(c1x_1, ctx, mode1, mode2);
+                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2One.ShouldNotContain(c1x_1, ctx, mode1, mode2);
                         }
                     }
                 }

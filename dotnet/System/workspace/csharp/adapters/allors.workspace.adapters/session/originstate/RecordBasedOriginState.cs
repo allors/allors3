@@ -63,6 +63,7 @@ namespace Allors.Workspace.Adapters
         public void AddCompositesRole(IRoleType roleType, long roleToAdd)
         {
             var associationType = roleType.AssociationType;
+            var previousAssociation = this.Session.GetCompositeAssociation(roleToAdd, associationType);
 
             var previousRole = this.GetCompositesRole(roleType);
 
@@ -79,7 +80,6 @@ namespace Allors.Workspace.Adapters
             }
 
             // OneToMany
-            var previousAssociation = this.Session.GetCompositeAssociation(roleToAdd, associationType);
             previousAssociation?.SetRole(roleType, null);
         }
 

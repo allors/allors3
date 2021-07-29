@@ -81,12 +81,12 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
 
                             c1x_1.AddC1C1One2Many(c1y_1);
 
-                            c1x_1.C1C1One2Manies.ShouldContains(c1y_1, ctx, mode1, mode2);
+                            c1x_1.C1C1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
                             c1y_1.C1WhereC1C1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
                             await push(session1);
 
-                            c1x_1.C1C1One2Manies.ShouldContains(c1y_1, ctx, mode1);
+                            c1x_1.C1C1One2Manies.ShouldContain(c1y_1, ctx, mode1);
                             c1y_1.C1WhereC1C1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
                         }
                     }
@@ -131,12 +131,12 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
 
                             c1x_1.AddC1C1One2Many(c1y_1);
 
-                            c1x_1.C1C1One2Manies.ShouldContains(c1y_1, ctx, mode1, mode2);
+                            c1x_1.C1C1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
                             c1y_1.C1WhereC1C1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
                             await push(session1);
 
-                            c1x_1.C1C1One2Manies.ShouldContains(c1y_1, ctx, mode1);
+                            c1x_1.C1C1One2Manies.ShouldContain(c1y_1, ctx, mode1);
                             c1y_1.C1WhereC1C1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
                         }
                     }
@@ -178,17 +178,17 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
 
                             c1x_1.AddC1C1One2Many(c1y_1);
 
-                            c1x_1.C1C1One2Manies.ShouldContains(c1y_1, ctx, mode1, mode2);
+                            c1x_1.C1C1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
                             c1y_1.C1WhereC1C1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
                             c1x_1.RemoveC1C1One2Many(c1y_1);
 
-                            c1x_1.C1C1One2Manies.ShouldNotContains(c1y_1, ctx, mode1, mode2);
+                            c1x_1.C1C1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
                             c1y_1.C1WhereC1C1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
 
                             await push(session1);
 
-                            c1x_1.C1C1One2Manies.ShouldNotContains(c1y_1, ctx, mode1, mode2);
+                            c1x_1.C1C1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
                             c1y_1.C1WhereC1C1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
                         }
                     }
@@ -233,21 +233,21 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
 
                             c1x_1.AddC1C1One2Many(c1y_1);
 
-                            c1x_1.C1C1One2Manies.ShouldContains(c1y_1, ctx, mode1, mode2);
+                            c1x_1.C1C1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
                             c1y_1.C1WhereC1C1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
                             c1x_1.RemoveC1C1One2Many(null);
-                            c1x_1.C1C1One2Manies.ShouldContains(c1y_1, ctx, mode1, mode2);
+                            c1x_1.C1C1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
                             c1y_1.C1WhereC1C1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
                             c1x_1.RemoveC1C1One2Many(c1y_1);
 
-                            c1x_1.C1C1One2Manies.ShouldNotContains(c1y_1, ctx, mode1, mode2);
+                            c1x_1.C1C1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
                             c1y_1.C1WhereC1C1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
 
                             await push(session1);
 
-                            c1x_1.C1C1One2Manies.ShouldNotContains(c1y_1, ctx, mode1, mode2);
+                            c1x_1.C1C1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
                             c1y_1.C1WhereC1C1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
                         }
                     }
