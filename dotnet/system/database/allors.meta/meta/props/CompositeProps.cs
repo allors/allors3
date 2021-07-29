@@ -78,7 +78,7 @@ namespace Allors.Database.Meta
             {
                 this.MetaPopulation.Derive();
                 return this.WorkspaceNames
-                    .ToDictionary(v => v, v => this.AssociationTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)).OrderBy(w=>w.RelationType.Tag));
+                    .ToDictionary(v => v, v => this.AssociationTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)).OrderBy(w => w.RelationType.Tag));
             }
         }
 
@@ -145,7 +145,7 @@ namespace Allors.Database.Meta
                         v => this.ExclusiveRoleTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)).OrderBy(w => w.RelationType.Tag));
             }
         }
-        
+
         public IReadOnlyDictionary<string, IOrderedEnumerable<IRoleType>> WorkspaceExclusiveRoleTypesWithDatabaseOriginByWorkspaceName
         {
             get
@@ -248,8 +248,6 @@ namespace Allors.Database.Meta
                     .ToDictionary(v => v, v => this.RelatedComposites.Where(w => w.WorkspaceNames.Contains(v)).OrderBy(w => w.Tag));
             }
         }
-
-        public bool IsSynced => this.AsComposite.IsSynced;
 
         #region As
         protected abstract ICompositeBase AsComposite { get; }

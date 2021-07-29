@@ -7,11 +7,13 @@
 namespace Allors.Database.Configuration
 {
     using System;
+    using Bogus;
     using Data;
     using Domain;
     using Domain.Derivations.Rules.Default;
     using Meta;
     using Microsoft.AspNetCore.Http;
+    using Ranges;
     using Services;
 
     public abstract class DomainDatabaseServices : IDomainDatabaseServices
@@ -19,6 +21,8 @@ namespace Allors.Database.Configuration
         private readonly IHttpContextAccessor httpContextAccessor;
 
         private IDatabase database;
+
+        private IRanges ranges;
 
         private IMetaCache metaCache;
 
@@ -54,6 +58,8 @@ namespace Allors.Database.Configuration
 
         private IDerivationFactory derivationFactory;
 
+        private Faker faker;
+
         protected DomainDatabaseServices(Engine engine, IHttpContextAccessor httpContextAccessor = null)
         {
             this.Engine = engine;
@@ -69,6 +75,8 @@ namespace Allors.Database.Configuration
         public T Get<T>() =>
             typeof(T).Name switch
             {
+                nameof(IRanges) => (T)(this.ranges ??= new DefaultRanges()),
+
                 nameof(IMetaCache) => (T)(this.metaCache ??= new MetaCache(this.database)),
                 nameof(IClassById) => (T)(this.classById ??= new ClassById()),
                 nameof(IVersionedIdByStrategy) => (T)(this.versionedIdByStrategy ??= new VersionedIdByStrategy()),
@@ -91,6 +99,8 @@ namespace Allors.Database.Configuration
                 nameof(ITemplateObjectCache) => (T)(this.templateObjectCache ??= new TemplateObjectCache()),
 
                 nameof(IDerivationFactory) => (T)(this.derivationFactory ??= this.CreateDerivationFactory()),
+
+                nameof(Faker) => (T)(object)(this.faker ??= new Faker()),
 
                 _ => throw new NotSupportedException($"Service {typeof(T)} not supported")
             };

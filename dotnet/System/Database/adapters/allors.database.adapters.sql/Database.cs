@@ -13,7 +13,7 @@ namespace Allors.Database.Adapters.Sql
     using Allors;
     using Caching;
     using Meta;
-    using Numbers;
+    using Ranges;
 
     public abstract class Database : IDatabase
     {
@@ -113,7 +113,7 @@ namespace Allors.Database.Adapters.Sql
             get;
         }
 
-        internal INumbers Numbers = new ArrayNumbers();
+        internal IRanges Ranges = new DefaultRanges();
 
         public ITransaction CreateTransaction()
         {

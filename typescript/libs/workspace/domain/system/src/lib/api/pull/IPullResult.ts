@@ -1,5 +1,5 @@
 import { IObject } from '../../runtime/IObject';
-import { UnitTypes } from '../../runtime/Types';
+import { IUnit } from '../../runtime/Types';
 import { IResult } from '../IResult';
 
 export interface IPullResult extends IResult {
@@ -7,11 +7,13 @@ export interface IPullResult extends IResult {
 
   objects: Map<string, IObject>;
 
-  values: Map<string, UnitTypes>;
+  values: Map<string, IUnit>;
 
   collection<T extends IObject>(name: string): T[];
 
   object<T extends IObject>(name: string): T;
 
-  value(name: string): UnitTypes | Array<UnitTypes>;
+  value(name: string): IUnit | Array<IUnit>;
+
+  addMergeError(object: IObject);
 }

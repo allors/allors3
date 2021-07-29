@@ -2,17 +2,17 @@ import { DatabaseOriginState } from '../originstate/DatabaseOriginState';
 import { Strategy } from '../Strategy';
 
 export class PushToDatabaseTracker {
-  Created: Set<Strategy>;
+  created: Set<Strategy>;
 
-  Changed: Set<DatabaseOriginState>;
+  changed: Set<DatabaseOriginState>;
 
-  OnCreated(strategy: Strategy) {
-    (this.Created ??= new Set<Strategy>()).add(strategy);
+  onCreated(strategy: Strategy) {
+    (this.created ??= new Set<Strategy>()).add(strategy);
   }
 
-  OnChanged(state: DatabaseOriginState) {
+  onChanged(state: DatabaseOriginState) {
     if (!state.strategy.isNew) {
-      (this.Changed ??= new Set<DatabaseOriginState>()).add(state);
+      (this.changed ??= new Set<DatabaseOriginState>()).add(state);
     }
   }
 }

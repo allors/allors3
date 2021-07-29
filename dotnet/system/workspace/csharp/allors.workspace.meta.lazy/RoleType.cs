@@ -63,7 +63,7 @@ namespace Allors.Workspace.Meta
         {
             if (this.IsOne)
             {
-                var association = strategy.GetComposite<IObject>(this);
+                var association = strategy.GetCompositeRole<IObject>(this);
 
                 if (ofType == null || association == null)
                 {
@@ -74,7 +74,7 @@ namespace Allors.Workspace.Meta
             }
             else
             {
-                var association = strategy.GetComposites<IObject>(this);
+                var association = strategy.GetCompositesRole<IObject>(this);
 
                 if (ofType == null || association == null)
                 {
@@ -110,20 +110,11 @@ namespace Allors.Workspace.Meta
         IRelationTypeInternals IRoleTypeInternals.RelationType { get => this.RelationType; set => this.RelationType = value; }
         #endregion
 
-        ///// <summary>
-        ///// Instantiate the value of the role on this object.
-        ///// </summary>
-        ///// <param name="strategy">
-        ///// The strategy.
-        ///// </param>
-        ///// <returns>
-        ///// The role value.
-        ///// </returns>
         public object Get(IStrategy strategy, IComposite ofType = null)
         {
             if (this.IsOne)
             {
-                var association = strategy.GetComposite<IObject>(this);
+                var association = strategy.GetCompositeRole<IObject>(this);
 
                 if (ofType == null || association == null)
                 {
@@ -134,7 +125,7 @@ namespace Allors.Workspace.Meta
             }
             else
             {
-                var association = strategy.GetComposites<IObject>(this);
+                var association = strategy.GetCompositesRole<IObject>(this);
 
                 if (ofType == null || association == null)
                 {
@@ -145,16 +136,7 @@ namespace Allors.Workspace.Meta
             }
         }
 
-        ///// <summary>
-        ///// Set the value of the role on this object.
-        ///// </summary>
-        ///// <param name="strategy">
-        ///// The strategy.
-        ///// </param>
-        ///// <param name="value">
-        ///// The role value.
-        ///// </param>
-        public void Set(IStrategy strategy, object value) => strategy.Set(this, value);
+        public void Set(IStrategy strategy, object value) => strategy.SetRole(this, value);
 
         public override string ToString() => $"{this.AssociationType.ObjectType.SingularName}.{this.Name}";
 

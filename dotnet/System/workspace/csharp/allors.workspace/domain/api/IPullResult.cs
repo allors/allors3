@@ -9,15 +9,17 @@ namespace Allors.Workspace
 
     public interface IPullResult : IResult
     {
+        IEnumerable<IObject> MergeErrors { get; }
+
         IDictionary<string, IObject[]> Collections { get; }
 
         IDictionary<string, IObject> Objects { get; }
 
         IDictionary<string, object> Values { get; }
 
-        public T[] GetCollection<T>() where T: IObject;
+        public T[] GetCollection<T>() where T : class, IObject;
 
-        public T[] GetCollection<T>(string key) where T : IObject;
+        public T[] GetCollection<T>(string key) where T : class, IObject;
 
         public T GetObject<T>() where T : class, IObject;
 

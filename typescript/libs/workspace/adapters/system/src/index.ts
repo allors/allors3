@@ -1,8 +1,9 @@
 export * from './lib/collections/MapMap'
-export * from './lib/collections/Numbers'
+export * from './lib/collections/Range'
 
 export * from './lib/database/Database'
 export * from './lib/database/DatabaseRecord'
+export * from './lib/database/security/AccessControl'
 
 export * from './lib/session/originstate/DatabaseOriginState'
 export * from './lib/session/originstate/PropertyByObjectByPropertyType'
@@ -24,3 +25,4 @@ export * from './lib/workspace/WorkspaceRecord'
 export * from './lib/Configuration'
 export * from './lib/IRecord'
 export * from './lib/ObjectFactory'
+export * from './lib/Version'

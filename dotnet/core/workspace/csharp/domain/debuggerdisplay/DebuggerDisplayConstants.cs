@@ -5,7 +5,7 @@
 
 public static class DebuggerDisplayConstants
 {
-    public const string id = " [{Strategy.DatabaseId}/{Strategy.WorkspaceId}]";
+    public const string id = " id [{Strategy.Id}]";
 
-    public const string name = "{Name}" + id;
+    public const string session = " session [{Strategy.Session.GetHashCode()}]";
 }

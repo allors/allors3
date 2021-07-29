@@ -21,7 +21,6 @@ namespace Allors.Database.Meta
         private Multiplicity multiplicity;
 
         private bool isDerived;
-        private bool isSynced;
         private bool isIndexed;
 
         private string[] assignedWorkspaceNames;
@@ -74,8 +73,7 @@ namespace Allors.Database.Meta
         IMetaPopulationBase IMetaObjectBase.MetaPopulation => this.metaPopulation;
         IMetaPopulation IMetaObject.MetaPopulation => this.metaPopulation;
         Origin IMetaObject.Origin => this.AssignedOrigin;
-      
-        
+
         public Origin AssignedOrigin { get; set; }
 
         public bool IsDerived
@@ -86,18 +84,6 @@ namespace Allors.Database.Meta
             {
                 this.metaPopulation.AssertUnlocked();
                 this.isDerived = value;
-                this.metaPopulation.Stale();
-            }
-        }
-
-        public bool IsSynced
-        {
-            get => this.isSynced;
-
-            set
-            {
-                this.metaPopulation.AssertUnlocked();
-                this.isSynced = value;
                 this.metaPopulation.Stale();
             }
         }

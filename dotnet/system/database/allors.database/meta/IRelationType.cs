@@ -12,7 +12,7 @@ namespace Allors.Database.Meta
     /// A relation type defines the state and behavior for
     /// a set of association types and role types.
     /// </summary>
-    public interface IRelationType :  IMetaIdentifiableObject, IComparable
+    public interface IRelationType : IMetaIdentifiableObject, IComparable
     {
         IAssociationType AssociationType { get; }
 
@@ -33,8 +33,6 @@ namespace Allors.Database.Meta
         bool IsIndexed { get; }
 
         bool IsDerived { get; }
-
-        bool IsSynced { get; }
 
         string[] WorkspaceNames { get; }
     }

@@ -175,9 +175,9 @@ namespace Allors.Repository
         #region Allors
 
         [Id("d18b7185-0a7c-42a1-b135-0a8f7d459347")]
+
         #endregion
-        public void SetDisplayName()
-        {
-        }
+
+        public void SetDisplayName();
     }
 }

@@ -32,7 +32,7 @@ export class ObjectFactory implements IObjectFactory {
         if (roleType.relationType.isDerived) {
           Object.defineProperty(prototype, roleType.name, {
             get(this: ObjectBase) {
-              return this.strategy.get(roleType);
+              return this.strategy.getRole(roleType);
             },
           });
         } else {
@@ -44,21 +44,21 @@ export class ObjectFactory implements IObjectFactory {
 
           Object.defineProperty(prototype, roleType.name, {
             get(this: ObjectBase) {
-              return this.strategy.get(roleType);
+              return this.strategy.getRole(roleType);
             },
 
             set(this: ObjectBase, value) {
-              this.strategy.set(roleType, value);
+              this.strategy.setRole(roleType, value);
             },
           });
 
           if (roleType.isMany) {
             prototype['Add' + roleType.singularName] = function (this: ObjectBase, value: ObjectBase) {
-              return this.strategy.add(roleType, value);
+              return this.strategy.addCompositesRole(roleType, value);
             };
 
             prototype['Remove' + roleType.singularName] = function (this: ObjectBase, value: ObjectBase) {
-              return this.strategy.remove(roleType, value);
+              return this.strategy.removeCompositesRole(roleType, value);
             };
           }
         }

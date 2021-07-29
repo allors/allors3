@@ -36,33 +36,15 @@ namespace Allors.Database.Domain.Derivations
 
         public static bool HasChangedRoles(this IChangeSet @this, Object derivable, RelationKind relationKind)
         {
-            System.Func<IRoleType, bool> check;
-            switch (relationKind)
+            System.Func<IRoleType, bool> check = relationKind switch
             {
-                case RelationKind.Regular:
-                    check = (roleType) => !roleType.RelationType.IsDerived && !roleType.RelationType.IsSynced;
-                    break;
-
-                case RelationKind.Derived:
-                    check = (roleType) => roleType.RelationType.IsDerived;
-                    break;
-
-                case RelationKind.Synced:
-                    check = (roleType) => roleType.RelationType.IsSynced;
-                    break;
-
-                default:
-                    check = (roleType) => true;
-                    break;
-            }
+                RelationKind.Regular => (roleType) => !roleType.RelationType.IsDerived,
+                RelationKind.Derived => (roleType) => roleType.RelationType.IsDerived,
+                _ => (_) => true,
+            };
 
             @this.RoleTypesByAssociation.TryGetValue(derivable, out var changedRoleTypes);
-            if (changedRoleTypes != null && changedRoleTypes.Any(roleType => check(roleType)))
-            {
-                return true;
-            }
-
-            return false;
+            return changedRoleTypes?.Any(roleType => check(roleType)) == true;
         }
     }
 }

@@ -3,6 +3,7 @@ import { Class, RelationType } from '@allors/workspace/meta/system';
 import { Database } from '../Database/Database';
 import { WorkspaceRecord } from './WorkspaceRecord';
 
+// TODO: Koen
 export abstract class Workspace implements IWorkspace {
   workspaceClassByWorkspaceId: Map<number, Class>;
 
@@ -24,8 +25,17 @@ export abstract class Workspace implements IWorkspace {
   }
 
   push(id: number, cls: Class, version: number, changedRoleByRoleType: Map<RelationType, unknown> | undefined): void {
+    this.workspaceClassByWorkspaceId.set(id, cls);
+    let ids = this.workspaceIdsByWorkspaceClass.get(cls);
+    if (ids == null) {
+      ids = new Set();
+      this.workspaceIdsByWorkspaceClass.set(cls, ids);
+    }
+
+    ids.add(id);
+
     const originalWorkspaceObject = this.recordById.get(id);
-    if (!originalWorkspaceObject) {
+    if (originalWorkspaceObject == null) {
       this.recordById.set(id, new WorkspaceRecord(cls, id, ++version, changedRoleByRoleType));
     } else {
       this.recordById.set(id, WorkspaceRecord.fromOriginal(originalWorkspaceObject, changedRoleByRoleType));

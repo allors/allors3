@@ -21,11 +21,6 @@ namespace Allors.Workspace.Meta
 
         Origin IMetaObject.Origin => Origin.Database;
 
-        bool IMetaObject.HasDatabaseOrigin => true;
-
-        bool IMetaObject.HasWorkspaceOrigin => false;
-
-        bool IMetaObject.HasSessionOrigin => false;
         #endregion
 
         #region IOperandType

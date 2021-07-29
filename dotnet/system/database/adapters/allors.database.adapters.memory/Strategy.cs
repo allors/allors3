@@ -7,6 +7,7 @@ namespace Allors.Database.Adapters.Memory
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Xml;
     using Adapters;
@@ -95,7 +96,7 @@ namespace Allors.Database.Adapters.Memory
             {
                 { } unitRole when unitRole.ObjectType.IsUnit => this.GetUnitRole(roleType),
                 { } compositeRole when compositeRole.IsOne => this.GetCompositeRole(roleType),
-                _ => this.GetCompositeRoles<IObject>(roleType)
+                _ => this.GetCompositesRole<IObject>(roleType)
             };
 
         public void SetRole(IRoleType roleType, object value)
@@ -109,7 +110,7 @@ namespace Allors.Database.Adapters.Memory
                     this.SetCompositeRole(roleType, (IObject)value);
                     break;
                 default:
-                    this.SetCompositeRoles(roleType, (IEnumerable<IObject>)value);
+                    this.SetCompositesRole(roleType, (IEnumerable<IObject>)value);
                     break;
             }
         }
@@ -125,7 +126,7 @@ namespace Allors.Database.Adapters.Memory
                     this.RemoveCompositeRole(roleType);
                     break;
                 default:
-                    this.RemoveCompositeRoles(roleType);
+                    this.RemoveCompositesRole(roleType);
                     break;
             }
         }
@@ -135,7 +136,7 @@ namespace Allors.Database.Adapters.Memory
             {
                 { } unitRole when unitRole.ObjectType.IsUnit => this.ExistUnitRole(roleType),
                 { } compositeRole when compositeRole.IsOne => this.ExistCompositeRole(roleType),
-                _ => this.ExistCompositeRoles(roleType)
+                _ => this.ExistCompositesRole(roleType)
             };
 
         public object GetUnitRole(IRoleType roleType)
@@ -232,7 +233,7 @@ namespace Allors.Database.Adapters.Memory
             return this.compositeRoleByRoleType.ContainsKey(roleType);
         }
 
-        public IEnumerable<T> GetCompositeRoles<T>(IRoleType roleType) where T : IObject
+        public IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : IObject
         {
             this.AssertNotDeleted();
             this.Transaction.OnAccessCompositesRole?.Invoke(this, roleType);
@@ -250,11 +251,11 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        public void SetCompositeRoles(IRoleType roleType, IEnumerable<IObject> roles)
+        public void SetCompositesRole(IRoleType roleType, IEnumerable<IObject> roles)
         {
             if (roles == null || (roles is ICollection<IObject> collection && collection.Count == 0))
             {
-                this.RemoveCompositeRoles(roleType);
+                this.RemoveCompositesRole(roleType);
             }
             else
             {
@@ -274,7 +275,7 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        public void AddCompositeRole(IRoleType roleType, IObject role)
+        public void AddCompositesRole(IRoleType roleType, IObject role)
         {
             this.AssertNotDeleted();
             if (role == null)
@@ -294,7 +295,7 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        public void RemoveCompositeRole(IRoleType roleType, IObject role)
+        public void RemoveCompositesRole(IRoleType roleType, IObject role)
         {
             this.AssertNotDeleted();
 
@@ -315,7 +316,7 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        public void RemoveCompositeRoles(IRoleType roleType)
+        public void RemoveCompositesRole(IRoleType roleType)
         {
             this.AssertNotDeleted();
 
@@ -329,7 +330,7 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        public bool ExistCompositeRoles(IRoleType roleType)
+        public bool ExistCompositesRole(IRoleType roleType)
         {
             this.AssertNotDeleted();
             this.Transaction.OnAccessCompositesRole?.Invoke(this, roleType);
@@ -337,9 +338,9 @@ namespace Allors.Database.Adapters.Memory
             return roleStrategies != null;
         }
 
-        public object GetAssociation(IAssociationType associationType) => associationType.IsMany ? this.GetCompositeAssociations<IObject>(associationType) : (object)this.GetCompositeAssociation(associationType);
+        public object GetAssociation(IAssociationType associationType) => associationType.IsMany ? this.GetCompositesAssociation<IObject>(associationType) : (object)this.GetCompositeAssociation(associationType);
 
-        public bool ExistAssociation(IAssociationType associationType) => associationType.IsMany ? this.ExistCompositeAssociations(associationType) : this.ExistCompositeAssociation(associationType);
+        public bool ExistAssociation(IAssociationType associationType) => associationType.IsMany ? this.ExistCompositesAssociation(associationType) : this.ExistCompositeAssociation(associationType);
 
         public IObject GetCompositeAssociation(IAssociationType associationType)
         {
@@ -351,7 +352,7 @@ namespace Allors.Database.Adapters.Memory
 
         public bool ExistCompositeAssociation(IAssociationType associationType) => this.GetCompositeAssociation(associationType) != null;
 
-        public IEnumerable<T> GetCompositeAssociations<T>(IAssociationType associationType) where T : IObject
+        public IEnumerable<T> GetCompositesAssociation<T>(IAssociationType associationType) where T : IObject
         {
             this.AssertNotDeleted();
             this.Transaction.OnAccessCompositesAssociation?.Invoke(this, associationType);
@@ -369,7 +370,7 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        public bool ExistCompositeAssociations(IAssociationType associationType)
+        public bool ExistCompositesAssociation(IAssociationType associationType)
         {
             this.AssertNotDeleted();
             this.Transaction.OnAccessCompositesAssociation?.Invoke(this, associationType);
@@ -492,12 +493,22 @@ namespace Allors.Database.Adapters.Memory
         {
             if (!this.IsDeleted && !this.Transaction.Database.IsLoading)
             {
+                // TODO: Test
+                /*
                 if (this.rollbackUnitRoleByRoleType != null ||
                     this.rollbackCompositeRoleByRoleType != null ||
                     this.rollbackCompositeRoleByRoleType != null ||
                     this.rollbackCompositeRoleByRoleType != null ||
                     this.rollbackCompositeRoleByRoleType != null ||
                     this.rollbackCompositeRoleByRoleType != null)
+                {
+                    ++this.ObjectVersion;
+                }
+                */
+
+                if (this.rollbackUnitRoleByRoleType != null ||
+                    this.rollbackCompositeRoleByRoleType != null ||
+                    this.rollbackCompositesRoleByRoleType != null)
                 {
                     ++this.ObjectVersion;
                 }
@@ -975,15 +986,7 @@ namespace Allors.Database.Adapters.Memory
             else if (!this.RollbackCompositeAssociationByAssociationType.ContainsKey(associationType))
             {
                 this.compositeAssociationByAssociationType.TryGetValue(associationType, out var strategy);
-
-                if (strategy == null)
-                {
-                    this.RollbackCompositeAssociationByAssociationType[associationType] = null;
-                }
-                else
-                {
-                    this.RollbackCompositeAssociationByAssociationType[associationType] = strategy;
-                }
+                this.RollbackCompositeAssociationByAssociationType[associationType] = strategy;
             }
         }
 
@@ -1044,7 +1047,7 @@ namespace Allors.Database.Adapters.Memory
         private void AddCompositeRoleMany2Many(IRoleType roleType, Strategy add)
         {
             this.compositesRoleByRoleType.TryGetValue(roleType, out var previousRole);
-            if (previousRole != null && previousRole.Contains(add))
+            if (previousRole?.Contains(add) == true)
             {
                 return;
             }
@@ -1081,7 +1084,7 @@ namespace Allors.Database.Adapters.Memory
         private void AddCompositeRoleOne2Many(IRoleType roleType, Strategy add)
         {
             this.compositesRoleByRoleType.TryGetValue(roleType, out var previousRole);
-            if (previousRole != null && previousRole.Contains(add))
+            if (previousRole?.Contains(add) == true)
             {
                 return;
             }
@@ -1137,7 +1140,7 @@ namespace Allors.Database.Adapters.Memory
         private void RemoveCompositeRoleMany2Many(IRoleType roleType, Strategy remove)
         {
             this.compositesRoleByRoleType.TryGetValue(roleType, out var roleStrategies);
-            if (roleStrategies == null || !roleStrategies.Contains(remove))
+            if (roleStrategies?.Contains(remove) != true)
             {
                 return;
             }
@@ -1170,7 +1173,7 @@ namespace Allors.Database.Adapters.Memory
         private void RemoveCompositeRoleOne2Many(IRoleType roleType, Strategy roleToRemove)
         {
             this.compositesRoleByRoleType.TryGetValue(roleType, out var role);
-            if (role == null || !role.Contains(roleToRemove))
+            if (role?.Contains(roleToRemove) != true)
             {
                 return;
             }

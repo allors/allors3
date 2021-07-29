@@ -3,6 +3,8 @@ import { IDerivationError, IObject, IResult, ISession } from '@allors/workspace/
 import { DerivationError } from './DerivationError';
 
 export abstract class Result implements IResult {
+  private _derivationErrors: IDerivationError[];
+
   constructor(public readonly session: ISession, public readonly response: Response) {}
 
   get hasErrors(): boolean {
@@ -26,6 +28,12 @@ export abstract class Result implements IResult {
   }
 
   get derivationErrors(): IDerivationError[] {
-    return this.response._d?.map((v) => new DerivationError(this.session, v)) ?? [];
+    if (this._derivationErrors != null) {
+      return this._derivationErrors;
+    }
+
+    this._derivationErrors = this.response._d?.map((v) => new DerivationError(this.session, v)) ?? [];
+
+    return this._derivationErrors;
   }
 }

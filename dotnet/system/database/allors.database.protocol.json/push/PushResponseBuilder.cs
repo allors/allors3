@@ -231,7 +231,7 @@ namespace Allors.Database.Protocol.Json
                                     {
                                         foreach (var role in roles)
                                         {
-                                            obj.Strategy.AddCompositeRole(roleType, role);
+                                            obj.Strategy.AddCompositesRole(roleType, role);
                                         }
                                     }
                                 }
@@ -252,7 +252,7 @@ namespace Allors.Database.Protocol.Json
                                     {
                                         foreach (var role in roles)
                                         {
-                                            obj.Strategy.RemoveCompositeRole(roleType, role);
+                                            obj.Strategy.RemoveCompositesRole(roleType, role);
                                         }
                                     }
                                 }

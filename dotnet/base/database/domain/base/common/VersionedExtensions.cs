@@ -38,8 +38,8 @@ namespace Allors.Database.Domain
 
                     if (versionRoleType.IsMany)
                     {
-                        var versionedRole = @this.Strategy.GetCompositeRoles<IObject>(versionedRoleType);
-                        var versionRole = currentVersion.Strategy.GetCompositeRoles<IObject>(versionRoleType);
+                        var versionedRole = @this.Strategy.GetCompositesRole<IObject>(versionedRoleType);
+                        var versionRole = currentVersion.Strategy.GetCompositesRole<IObject>(versionRoleType);
                         // TODO: use Numbers
                         if (!(!versionedRole.Any() && !versionRole.Any()) ||
                             versionedRole.Count() != versionRole.Count() ||
@@ -85,7 +85,7 @@ namespace Allors.Database.Domain
                 var allVersionsRole = versionedClass.RoleTypes.First(v => v.Name.Equals("AllVersions"));
 
                 @this.Strategy.SetRole(currentVersionRole, newVersion);
-                @this.Strategy.AddCompositeRole(allVersionsRole, newVersion);
+                @this.Strategy.AddCompositesRole(allVersionsRole, newVersion);
             }
         }
     }

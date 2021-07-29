@@ -17,13 +17,15 @@ namespace Allors.Database.Domain
     public class AccessControlList : IAccessControlList
     {
         private readonly IPermissionsCacheEntry permissionsCacheEntry;
+        private readonly string workspaceName;
 
         private AccessControl[] accessControls;
         private HashSet<long> deniedPermissions;
         private bool lazyLoaded;
 
-        internal AccessControlList(IAccessControlLists accessControlLists, IObject @object)
+        internal AccessControlList(IAccessControlLists accessControlLists, IObject @object, string workspaceName)
         {
+            this.workspaceName = workspaceName;
             this.AccessControlLists = accessControlLists;
             this.Object = (Object)@object;
 
@@ -106,6 +108,8 @@ namespace Allors.Database.Domain
                 var strategy = this.Object.Strategy;
                 var transaction = strategy.Transaction;
 
+                Permission[] delegatedAccessDeniedPermissions = null;
+
                 SecurityToken[] securityTokens;
                 if (this.Object is DelegatedAccessControlledObject controlledObject)
                 {
@@ -116,27 +120,22 @@ namespace Allors.Database.Domain
                         securityTokens = securityTokens.Where(v => v != null).ToArray();
                     }
 
-                    var delegatedAccessDeniedPermissions = delegatedAccess.DeniedPermissions;
-                    if (delegatedAccessDeniedPermissions?.Length > 0)
-                    {
-                        this.deniedPermissions = this.Object.DeniedPermissions.Any() ?
-                                                     new HashSet<long>(this.Object.DeniedPermissions.Union(delegatedAccessDeniedPermissions).Select(v => v.Id)) :
-                                                     new HashSet<long>(delegatedAccessDeniedPermissions.Select(v => v.Id));
-                    }
-                    else if (this.Object.DeniedPermissions.Any())
-                    {
-                        this.deniedPermissions = new HashSet<long>(this.Object.DeniedPermissions.Select(v => v.Id));
-                    }
+                    delegatedAccessDeniedPermissions = delegatedAccess.DeniedPermissions;
                 }
                 else
                 {
                     securityTokens = this.Object.SecurityTokens.ToArray();
-
-                    if (this.Object.DeniedPermissions.Any())
-                    {
-                        this.deniedPermissions = new HashSet<long>(this.Object.DeniedPermissions.Select(v => v.Id));
-                    }
                 }
+
+                var rawDeniedPermissions = delegatedAccessDeniedPermissions?.Length > 0
+                    ? this.Object.DeniedPermissions.Union(delegatedAccessDeniedPermissions)
+                    : this.Object.DeniedPermissions;
+
+                var filteredDeniedPermissions = !string.IsNullOrWhiteSpace(this.workspaceName)
+                    ? rawDeniedPermissions.Where(v => v.InWorkspace(this.workspaceName))
+                    : rawDeniedPermissions;
+
+                this.deniedPermissions = new HashSet<long>(filteredDeniedPermissions.Select(v => v.Id));
 
                 if (securityTokens == null || securityTokens.Length == 0)
                 {

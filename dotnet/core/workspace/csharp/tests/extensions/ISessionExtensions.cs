@@ -13,7 +13,7 @@ namespace Tests.Workspace
 
     public static class ISessionExtensions
     {
-        public static async Task<T> PullObject<T>(this ISession @this, string name) where T : IObject
+        public static async Task<T> PullObject<T>(this ISession @this, string name) where T : class, IObject
         {
             var objectType = (IComposite)@this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>();
             var roleType = objectType.RoleTypes.First(v => v.Name.Equals("Name"));

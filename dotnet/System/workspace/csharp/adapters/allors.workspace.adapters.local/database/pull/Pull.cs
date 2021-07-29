@@ -15,7 +15,7 @@ namespace Allors.Workspace.Adapters.Local
     using Protocol.Direct;
     using IObject = IObject;
 
-    public class Pull : Result, IPullResult, IProcedureOutput
+    public class Pull : Result, IPullResultInternals, IProcedureOutput
     {
         private IDictionary<string, IObject[]> collections;
         private IDictionary<string, IObject> objects;
@@ -98,22 +98,22 @@ namespace Allors.Workspace.Adapters.Local
 
         public IDictionary<string, IObject[]> Collections =>
             this.collections ??= this.DatabaseCollectionsByName.ToDictionary(v => v.Key,
-                v => v.Value.Select(w => this.Session.GetOne<IObject>(w.Id)).ToArray());
+                v => v.Value.Select(w => this.Session.Instantiate<IObject>(w.Id)).ToArray());
 
         public IDictionary<string, IObject> Objects =>
             this.objects ??= this.DatabaseObjectByName.ToDictionary(v => v.Key,
-                v => this.Session.GetOne<IObject>(v.Value.Id));
+                v => this.Session.Instantiate<IObject>(v.Value.Id));
 
         public IDictionary<string, object> Values => this.ValueByName;
 
-        public T[] GetCollection<T>() where T : IObject
+        public T[] GetCollection<T>() where T : class, IObject
         {
             var objectType = this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>();
             var key = objectType.PluralName;
             return this.GetCollection<T>(key);
         }
 
-        public T[] GetCollection<T>(string key) where T : IObject =>
+        public T[] GetCollection<T>(string key) where T : class, IObject =>
             this.Collections.TryGetValue(key, out var collection) ? collection?.Cast<T>().ToArray() : null;
 
         public T GetObject<T>()

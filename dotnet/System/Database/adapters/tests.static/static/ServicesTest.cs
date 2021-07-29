@@ -4007,51 +4007,38 @@ namespace Allors.Database.Adapters
 
                 var obj = this.Transaction.Create<C1>();
 
-                Assert.Equal(1, obj.Strategy.ObjectVersion);
+                Assert.Equal(2, obj.Strategy.ObjectVersion);
 
                 this.Transaction.Commit();
 
                 using (var transaction2 = this.CreateTransaction())
                 {
-                    Assert.Equal(1, transaction2.Instantiate(obj).Strategy.ObjectVersion);
+                    Assert.Equal(2, transaction2.Instantiate(obj).Strategy.ObjectVersion);
                 }
 
-                Assert.Equal(1, obj.Strategy.ObjectVersion);
+                Assert.Equal(2, obj.Strategy.ObjectVersion);
 
                 obj.C1AllorsString = "Changed";
 
-                Assert.Equal(1, obj.Strategy.ObjectVersion);
+                Assert.Equal(2, obj.Strategy.ObjectVersion);
 
                 this.Transaction.Commit();
 
                 using (var transaction2 = this.CreateTransaction())
                 {
                     var transaction2Object = (C1)transaction2.Instantiate(obj);
-                    Assert.Equal(2, transaction2Object.Strategy.ObjectVersion);
+                    Assert.Equal(3, transaction2Object.Strategy.ObjectVersion);
                     transaction2Object.C1AllorsString = "Transaction 2 changed";
                     transaction2.Commit();
 
-                    Assert.Equal(3, transaction2Object.Strategy.ObjectVersion);
+                    Assert.Equal(4, transaction2Object.Strategy.ObjectVersion);
                 }
 
                 this.Transaction.Rollback();
 
-                Assert.Equal(3, obj.Strategy.ObjectVersion);
-
-                obj.C1AllorsString = "Changed again.";
-
-                Assert.Equal(3, obj.Strategy.ObjectVersion);
-
-                this.Transaction.Commit();
-
-                using (var transaction2 = this.CreateTransaction())
-                {
-                    Assert.Equal(4, transaction2.Instantiate(obj).Strategy.ObjectVersion);
-                }
-
                 Assert.Equal(4, obj.Strategy.ObjectVersion);
 
-                obj.RemoveC1AllorsString();
+                obj.C1AllorsString = "Changed again.";
 
                 Assert.Equal(4, obj.Strategy.ObjectVersion);
 
@@ -4063,6 +4050,19 @@ namespace Allors.Database.Adapters
                 }
 
                 Assert.Equal(5, obj.Strategy.ObjectVersion);
+
+                obj.RemoveC1AllorsString();
+
+                Assert.Equal(5, obj.Strategy.ObjectVersion);
+
+                this.Transaction.Commit();
+
+                using (var transaction2 = this.CreateTransaction())
+                {
+                    Assert.Equal(6, transaction2.Instantiate(obj).Strategy.ObjectVersion);
+                }
+
+                Assert.Equal(6, obj.Strategy.ObjectVersion);
             }
         }
 

@@ -29,7 +29,7 @@ namespace Allors.Database.Adapters.Sql
             {
                 this.FlagExistsKnown = true;
                 this.FlagExists = true;
-                this.version = Allors.Version.Initial;
+                this.version = Allors.Version.DatabaseInitial;
             }
         }
 

@@ -157,7 +157,7 @@ namespace Allors.Database.Adapters
         //            },
         //        };
 
-        //        var extent = schemaExtent.Load(this.Transaction);
+        //        var extent = schemaExtent.Import(this.Transaction);
 
         //        var objects = this.Transaction.Resolve<C1>(extent);
 

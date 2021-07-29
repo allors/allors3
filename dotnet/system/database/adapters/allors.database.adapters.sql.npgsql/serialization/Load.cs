@@ -1,4 +1,4 @@
-// <copyright file="Load.cs" company="Allors bvba">
+// <copyright file="Import.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -412,7 +412,7 @@ where c = '{@class.Id}'";
             }
         }
 
-        #region Load Errors
+        #region Import Errors
 
         private void OnObjectNotLoaded(Guid objectTypeId, long allorsObjectId)
         {
@@ -439,6 +439,6 @@ where c = '{@class.Id}'";
             }
         }
 
-        #endregion Load Errors
+        #endregion Import Errors
     }
 }

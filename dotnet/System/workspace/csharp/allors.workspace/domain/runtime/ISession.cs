@@ -16,42 +16,48 @@ namespace Allors.Workspace
 
         ISessionServices Services { get; }
 
-        T Create<T>() where T : class, IObject;
-
-        T Create<T>(IClass @class) where T : class, IObject;
-
-        T GetOne<T>(IObject @object) where T : IObject;
-
-        T GetOne<T>(T @object) where T : IObject;
-
-        T GetOne<T>(long? id) where T : IObject;
-
-        T GetOne<T>(long id) where T : IObject;
-
-        T GetOne<T>(string idAsString) where T : IObject;
-
-        IEnumerable<T> GetMany<T>(IEnumerable<IObject> objects) where T : IObject;
-
-        IEnumerable<T> GetMany<T>(IEnumerable<T> objects) where T : IObject;
-
-        IEnumerable<T> GetMany<T>(IEnumerable<long> identities) where T : IObject;
-
-        IEnumerable<T> GetMany<T>(IEnumerable<string> responseVersionErrors) where T : IObject;
-
-        IEnumerable<T> GetAll<T>() where T : IObject;
-
-        IEnumerable<T> GetAll<T>(IComposite objectType) where T : IObject;
-
         Task<IInvokeResult> Invoke(Method method, InvokeOptions options = null);
 
         Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null);
 
-        Task<IPullResult> Pull(params Pull[] pulls);
+        Task<IPullResult> Call(Procedure procedure, params Pull[] pull);
 
-        Task<IPullResult> Call(Procedure procedure, params Pull[] pulls);
+        Task<IPullResult> Pull(params Pull[] pull);
 
         Task<IPushResult> Push();
 
+        IWorkspaceResult PullFromWorkspace();
+
+        IWorkspaceResult PushToWorkspace();
+
         IChangeSet Checkpoint();
+
+        T Create<T>() where T : class, IObject;
+
+        T Create<T>(IClass @class) where T : class, IObject;
+
+        #region Instantiate
+        T Instantiate<T>(IObject @object) where T : class, IObject;
+
+        T Instantiate<T>(T @object) where T : class, IObject;
+
+        T Instantiate<T>(long? id) where T : class, IObject;
+
+        T Instantiate<T>(long id) where T : class, IObject;
+
+        T Instantiate<T>(string idAsString) where T : class, IObject;
+
+        IEnumerable<T> Instantiate<T>(IEnumerable<IObject> objects) where T : class, IObject;
+
+        IEnumerable<T> Instantiate<T>(IEnumerable<T> objects) where T : class, IObject;
+
+        IEnumerable<T> Instantiate<T>(IEnumerable<long> ids) where T : class, IObject;
+
+        IEnumerable<T> Instantiate<T>(IEnumerable<string> ids) where T : class, IObject;
+
+        IEnumerable<T> Instantiate<T>() where T : class, IObject;
+
+        IEnumerable<T> Instantiate<T>(IComposite objectType) where T : class, IObject;
+        #endregion
     }
 }

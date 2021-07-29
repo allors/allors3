@@ -32,7 +32,7 @@ namespace Allors.Database.Adapters
     public abstract class SerializationTest : Test
     {
         /// <summary>
-        /// Test the Save and Load.
+        /// Test the Save and Import.
         /// </summary>
         [Fact]
         [Trait("Category", "Dynamic")]
@@ -46,11 +46,11 @@ namespace Allors.Database.Adapters
                 transactionPairs[0] = new ITransaction[2];
                 transactionPairs[1] = new ITransaction[2];
 
-                // From/To same population type
+                // New/To same population type
                 transactionPairs[0][0] = this.GetTransaction();
                 transactionPairs[0][1] = this.GetTransaction2();
 
-                // From Memory Population
+                // New Memory Population
                 transactionPairs[1][0] = this.CreateMemoryPopulation().CreateTransaction();
                 transactionPairs[1][1] = this.GetTransaction2();
 
@@ -246,7 +246,7 @@ namespace Allors.Database.Adapters
                                 roles.Remove(0);
                             }
 
-                            association.Strategy.AddCompositeRole(relationType.RoleType, role);
+                            association.Strategy.AddCompositesRole(relationType.RoleType, role);
 
                             if (addTwice)
                             {
@@ -257,7 +257,7 @@ namespace Allors.Database.Adapters
                                     roles.Remove(0);
                                 }
 
-                                association.Strategy.AddCompositeRole(relationType.RoleType, role);
+                                association.Strategy.AddCompositesRole(relationType.RoleType, role);
                             }
                             else
                             {
@@ -317,7 +317,7 @@ namespace Allors.Database.Adapters
                                 roles.Remove(0);
                             }
 
-                            association.Strategy.AddCompositeRole(relationType.RoleType, role);
+                            association.Strategy.AddCompositesRole(relationType.RoleType, role);
 
                             if (addTwice)
                             {
@@ -328,7 +328,7 @@ namespace Allors.Database.Adapters
                                     roles.Remove(0);
                                 }
 
-                                association.Strategy.AddCompositeRole(relationType.RoleType, role);
+                                association.Strategy.AddCompositesRole(relationType.RoleType, role);
                             }
                             else
                             {

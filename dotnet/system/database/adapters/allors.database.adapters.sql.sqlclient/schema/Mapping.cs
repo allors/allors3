@@ -541,7 +541,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             var table = this.tableNameForObjectByClass[@class];
             var name = $"{this.Database.SchemaName}.{ProcedurePrefixForLoad}{@class.Name.ToLowerInvariant()}";
 
-            // Load Objects
+            // Import Objects
             var definition = $@"
 CREATE PROCEDURE {name}
     {this.ParamNameForClass} {SqlTypeForClass},
@@ -571,7 +571,7 @@ BEGIN
     DECLARE  {this.ParamNameForObject} AS {SqlTypeForObject}
 
     INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
-    VALUES ({this.ParamNameForClass}, {(long)Allors.Version.Initial});
+    VALUES ({this.ParamNameForClass}, {(long)Allors.Version.DatabaseInitial});
 
     SELECT {this.ParamNameForObject} = SCOPE_IDENTITY();
 
@@ -605,7 +605,7 @@ BEGIN
         BEGIN
 
         INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
-        VALUES ({this.ParamNameForClass}, {(long)Allors.Version.Initial} );
+        VALUES ({this.ParamNameForClass}, {(long)Allors.Version.DatabaseInitial} );
 
         INSERT INTO @IDS(id)
         VALUES (SCOPE_IDENTITY());

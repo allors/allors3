@@ -1,11 +1,11 @@
-import { UnitTypes } from "@allors/workspace/domain/system";
+import { IUnit } from "@allors/workspace/domain/system";
 
 export interface PushRequestRole {
   /** RelationType */
   t: number;
 
   /** SetUnitRole */
-  u?: UnitTypes;
+  u?: IUnit;
 
   /** SetCompositeRole */
   c?: number;

@@ -13,7 +13,7 @@ namespace Allors.Workspace.Adapters.Local
     using Database.Security;
     using Database.Services;
     using Meta;
-    using Numbers;
+    using Ranges;
     using AccessControl = AccessControl;
     using IRoleType = Database.Meta.IRoleType;
 
@@ -24,13 +24,13 @@ namespace Allors.Workspace.Adapters.Local
         private readonly ConcurrentDictionary<long, DatabaseRecord> recordsById;
 
         private readonly Func<IWorkspaceServices> servicesBuilder;
-        private readonly Func<INumbers> numbersBuilder;
+        private readonly IRanges ranges;
 
-        public DatabaseConnection(Configuration configuration, IDatabase database, Func<IWorkspaceServices> servicesBuilder, Func<INumbers> numbersBuilder) : base(configuration)
+        public DatabaseConnection(Configuration configuration, IDatabase database, Func<IWorkspaceServices> servicesBuilder, Func<IRanges> rangesFactory) : base(configuration, new IdGenerator())
         {
             this.Database = database;
             this.servicesBuilder = servicesBuilder;
-            this.numbersBuilder = numbersBuilder;
+            this.ranges = rangesFactory();
 
             this.recordsById = new ConcurrentDictionary<long, DatabaseRecord>();
             this.permissionCache = this.Database.Services.Get<IPermissionsCache>();
@@ -43,25 +43,6 @@ namespace Allors.Workspace.Adapters.Local
 
         internal void Sync(IEnumerable<IObject> objects, IAccessControlLists accessControlLists)
         {
-            // TODO: Prefetch objects
-            static object GetRole(IObject @object, IRoleType roleType)
-            {
-                if (roleType.ObjectType.IsUnit)
-                {
-                    return @object.Strategy.GetUnitRole(roleType);
-                }
-
-                if (roleType.IsOne)
-                {
-                    return @object.Strategy.GetCompositeRole(roleType)?.Id;
-                }
-
-                var roles = @object.Strategy.GetCompositeRoles<IObject>(roleType);
-                return roles.Any()
-                    ? @object.Strategy.GetCompositeRoles<IObject>(roleType).Select(v => v.Id).ToArray()
-                    : Array.Empty<long>();
-            }
-
             foreach (var @object in objects)
             {
                 var id = @object.Id;
@@ -69,9 +50,7 @@ namespace Allors.Workspace.Adapters.Local
                 var roleTypes = databaseClass.DatabaseRoleTypes.Where(w => w.RelationType.WorkspaceNames.Length > 0);
 
                 var workspaceClass = (IClass)this.Configuration.MetaPopulation.FindByTag(databaseClass.Tag);
-                var roleByRoleType = roleTypes.ToDictionary(w =>
-                        ((IRelationType)this.Configuration.MetaPopulation.FindByTag(w.RelationType.Tag)).RoleType,
-                    w => GetRole(@object, w));
+                var roleByRoleType = roleTypes.ToDictionary(w => ((IRelationType)this.Configuration.MetaPopulation.FindByTag(w.RelationType.Tag)).RoleType, w => this.GetRole(@object, w));
 
                 var acl = accessControlLists[@object];
 
@@ -79,11 +58,11 @@ namespace Allors.Workspace.Adapters.Local
                     ?.Select(this.GetAccessControl)
                     .ToArray() ?? Array.Empty<AccessControl>();
 
-                this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, acl.DeniedPermissionIds, accessControls);
+                this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, this.ranges.Load(acl.DeniedPermissionIds), accessControls);
             }
         }
 
-        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.numbersBuilder());
+        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.ranges);
 
         public override Adapters.DatabaseRecord GetRecord(long id)
         {
@@ -102,27 +81,21 @@ namespace Allors.Workspace.Adapters.Local
             switch (operation)
             {
                 case Operations.Read:
-                    permissionCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(operandId,
-                        out permission);
+                    permissionCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
                     break;
                 case Operations.Write:
-                    permissionCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(operandId,
-                        out permission);
+                    permissionCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
                     break;
+                case Operations.Execute:
+                    permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(operandId, out permission);
+                    break;
+                case Operations.Create:
+                    throw new NotSupportedException("Create is not supported");
                 default:
-                    permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(operandId,
-                        out permission);
-                    break;
+                    throw new ArgumentOutOfRangeException($"Unknown operation {operation}");
             }
 
             return permission;
-        }
-
-        public override Adapters.DatabaseRecord OnPushResponse(IClass @class, long id)
-        {
-            var record = new DatabaseRecord(@class, id);
-            this.recordsById[id] = record;
-            return record;
         }
 
         internal IEnumerable<IObject> ObjectsToSync(Pull pull) =>
@@ -150,9 +123,24 @@ namespace Allors.Workspace.Adapters.Local
             }
 
             acessControl.Version = accessControl.Strategy.ObjectVersion;
-            acessControl.PermissionIds = new HashSet<long>(accessControl.Permissions.Select(v => v.Id));
+            acessControl.PermissionIds = this.ranges.Import(accessControl.Permissions.Select(v => v.Id));
 
             return acessControl;
+        }
+
+        private object GetRole(IObject @object, IRoleType roleType)
+        {
+            if (roleType.ObjectType.IsUnit)
+            {
+                return @object.Strategy.GetUnitRole(roleType);
+            }
+
+            if (roleType.IsOne)
+            {
+                return @object.Strategy.GetCompositeRole(roleType)?.Id;
+            }
+
+            return this.ranges.Load(@object.Strategy.GetCompositesRole<IObject>(roleType).Select(v => v.Id));
         }
     }
 }

@@ -163,10 +163,7 @@ namespace Allors.Database.Adapters.Memory
         internal void Invalidate()
         {
             this.Strategies = null;
-            if (this.parent != null)
-            {
-                this.parent.Invalidate();
-            }
+            this.parent?.Invalidate();
         }
 
         protected abstract void Evaluate();

@@ -11,6 +11,10 @@ namespace Tests.Workspace
 
     public interface IProfile : IAsyncLifetime
     {
+        IDatabaseConnection CreateDatabase();
+
+        IWorkspace CreateWorkspace();
+
         IWorkspace Workspace { get; }
 
         Task Login(string userName);

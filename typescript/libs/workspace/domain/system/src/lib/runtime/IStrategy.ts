@@ -1,17 +1,24 @@
 import { AssociationType, Class, MethodType, RoleType } from '@allors/workspace/meta/system';
+import { IDiff } from './diff/IDiff';
 import { IObject } from './IObject';
 import { ISession } from './ISession';
 import { Method } from './Method';
-import { UnitTypes } from './Types';
+import { IUnit } from './Types';
 
 export interface IStrategy {
+  session: ISession;
+
   object: IObject;
 
   cls: Class;
 
   id: number;
 
-  session: ISession;
+  version: number;
+
+  reset(): void;
+
+  diff(): IDiff[];
 
   canRead(roleType: RoleType): boolean;
 
@@ -19,33 +26,31 @@ export interface IStrategy {
 
   canExecute(methodType: MethodType): boolean;
 
-  exist(roleType: RoleType): boolean;
+  existRole(roleType: RoleType): boolean;
 
-  get(roleType: RoleType): unknown;
+  getRole(roleType: RoleType): unknown;
 
-  getUnit(roleType: RoleType): UnitTypes;
+  getUnitRole(roleType: RoleType): IUnit;
 
-  getComposite<T extends IObject>(roleType: RoleType): T;
+  getCompositeRole<T extends IObject>(roleType: RoleType): T;
 
-  getComposites<T extends IObject>(roleType: RoleType): ReadonlyArray<T>;
+  getCompositesRole<T extends IObject>(roleType: RoleType): ReadonlyArray<T>;
 
-  set(roleType: RoleType, value: unknown): void;
+  setRole(roleType: RoleType, value: unknown): void;
 
-  setUnit(roleType: RoleType, value: UnitTypes): void;
+  setUnitRole(roleType: RoleType, value: IUnit): void;
 
-  setComposite<T extends IObject>(roleType: RoleType, value: T): void;
+  setCompositeRole<T extends IObject>(roleType: RoleType, value: T): void;
 
-  setComposites<T extends IObject>(roleType: RoleType, value: ReadonlyArray<T>): void;
+  setCompositesRole<T extends IObject>(roleType: RoleType, value: ReadonlyArray<T>): void;
 
-  add<T extends IObject>(roleType: RoleType, value: T): void;
+  addCompositesRole<T extends IObject>(roleType: RoleType, value: T): void;
 
-  remove<T extends IObject>(roleType: RoleType, value: T): void;
+  removeCompositesRole<T extends IObject>(roleType: RoleType, value: T): void;
 
-  removeAll(roleType: RoleType): void;
+  removeRole(roleType: RoleType): void;
 
   getCompositeAssociation<T extends IObject>(associationType: AssociationType): T;
 
   getCompositesAssociation<T extends IObject>(associationType: AssociationType): ReadonlyArray<T>;
-
-  method(methodType: MethodType): Method;
 }

@@ -1,4 +1,4 @@
-import { UnitTypes } from '@allors/workspace/domain/system';
+import { IUnit } from '@allors/workspace/domain/system';
 
 export interface PullArgs {
   /** Collections */
@@ -8,7 +8,7 @@ export interface PullArgs {
   o: { [name: string]: number };
 
   /** Values */
-  v: { [name: string]: UnitTypes };
+  v: { [name: string]: IUnit };
 
   /** Pool */
   Pool: number[][];

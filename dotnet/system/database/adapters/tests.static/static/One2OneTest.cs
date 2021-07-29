@@ -102,7 +102,7 @@ namespace Allors.Database.Adapters
                         Assert.False(to.ExistC1WhereC1C1one2one);
 
                         // Multiplicity
-                        // Same From / Same To
+                        // Same New / Same To
                         // Get
                         Assert.Null(from.C1C1one2one);
                         Assert.Null(from.C1C1one2one);
@@ -151,7 +151,7 @@ namespace Allors.Database.Adapters
                         Assert.Null(to.C1WhereC1C1one2one);
                         Assert.Null(to.C1WhereC1C1one2one);
 
-                        // Same From / Different To
+                        // Same New / Different To
                         // Get
                         Assert.Null(to.C1WhereC1C1one2one);
                         Assert.Null(to.C1WhereC1C1one2one);
@@ -234,7 +234,7 @@ namespace Allors.Database.Adapters
                         Assert.False(toAnother.ExistC1WhereC1C1one2one);
                         Assert.False(toAnother.ExistC1WhereC1C1one2one);
 
-                        // Different From / Different To
+                        // Different New / Different To
                         // Get
                         Assert.Null(from.C1C1one2one);
                         Assert.Null(from.C1C1one2one);
@@ -358,7 +358,7 @@ namespace Allors.Database.Adapters
                         Assert.False(toAnother.ExistC1WhereC1C1one2one);
                         Assert.False(toAnother.ExistC1WhereC1C1one2one);
 
-                        // Different From / Same To
+                        // Different New / Same To
                         // Get
                         Assert.Null(from.C1C1one2one);
                         Assert.Null(from.C1C1one2one);
@@ -537,7 +537,7 @@ namespace Allors.Database.Adapters
                         Assert.Null(to.C1WhereC1C1one2one);
                         Assert.Null(to.C1WhereC1C1one2one);
 
-                        // From - Middle - To
+                        // New - Middle - To
                         from = C1.Create(this.Transaction);
                         var middle = C1.Create(this.Transaction);
                         to = C1.Create(this.Transaction);
@@ -594,7 +594,7 @@ namespace Allors.Database.Adapters
                     Assert.Null(to.C1WhereC1C2one2one);
 
                     // Multiplicity
-                    // Same From / Same To
+                    // Same New / Same To
                     from.C1C2one2one = to;
                     from.C1C2one2one = to;
 
@@ -604,7 +604,7 @@ namespace Allors.Database.Adapters
 
                     from.RemoveC1C2one2one();
 
-                    // Same From / Different To
+                    // Same New / Different To
                     from.C1C2one2one = to;
                     from.C1C2one2one = toAnother;
 
@@ -613,7 +613,7 @@ namespace Allors.Database.Adapters
                     Assert.Equal(toAnother, from.C1C2one2one);
                     Assert.Equal(from, toAnother.C1WhereC1C2one2one);
 
-                    // Different From / Different To
+                    // Different New / Different To
                     from.C1C2one2one = to;
                     fromAnother.C1C2one2one = toAnother;
 
@@ -623,7 +623,7 @@ namespace Allors.Database.Adapters
                     Assert.Equal(toAnother, fromAnother.C1C2one2one);
                     Assert.Equal(fromAnother, toAnother.C1WhereC1C2one2one);
 
-                    // Different From / Same To
+                    // Different New / Same To
                     from.C1C2one2one = to;
                     fromAnother.C1C2one2one = to;
 
@@ -687,7 +687,7 @@ namespace Allors.Database.Adapters
                     Assert.Null(to.C1WhereC1I1one2one);
 
                     // Multiplicity
-                    // Same From / Same To
+                    // Same New / Same To
                     from.C1C1one2one = to;
                     from.C1C1one2one = to;
 
@@ -697,7 +697,7 @@ namespace Allors.Database.Adapters
 
                     from.RemoveC1C1one2one();
 
-                    // Same From / Different To
+                    // Same New / Different To
                     from.C1C1one2one = to;
                     from.C1C1one2one = toAnother;
 
@@ -706,7 +706,7 @@ namespace Allors.Database.Adapters
                     Assert.Equal(toAnother, from.C1C1one2one);
                     Assert.Equal(from, toAnother.C1WhereC1C1one2one);
 
-                    // Different From / Different To
+                    // Different New / Different To
                     from.C1C1one2one = to;
                     fromAnother.C1C1one2one = toAnother;
 
@@ -716,7 +716,7 @@ namespace Allors.Database.Adapters
                     Assert.Equal(toAnother, fromAnother.C1C1one2one);
                     Assert.Equal(fromAnother, toAnother.C1WhereC1C1one2one);
 
-                    // Different From / Same To
+                    // Different New / Same To
                     from.C1C1one2one = to;
                     fromAnother.C1C1one2one = to;
 
@@ -780,7 +780,7 @@ namespace Allors.Database.Adapters
                     Assert.Null(to.C1WhereC1I2one2one);
 
                     // Multiplicity
-                    // Same From / Same To
+                    // Same New / Same To
                     from.C1I2one2one = to;
                     from.C1I2one2one = to;
 
@@ -790,7 +790,7 @@ namespace Allors.Database.Adapters
 
                     from.RemoveC1I2one2one();
 
-                    // Same From / Different To
+                    // Same New / Different To
                     from.C1I2one2one = to;
                     from.C1I2one2one = toAnother;
 
@@ -799,7 +799,7 @@ namespace Allors.Database.Adapters
                     Assert.Equal(toAnother, from.C1I2one2one);
                     Assert.Equal(from, toAnother.C1WhereC1I2one2one);
 
-                    // Different From / Different To
+                    // Different New / Different To
                     from.C1I2one2one = to;
                     fromAnother.C1I2one2one = toAnother;
 
@@ -809,7 +809,7 @@ namespace Allors.Database.Adapters
                     Assert.Equal(toAnother, fromAnother.C1I2one2one);
                     Assert.Equal(fromAnother, toAnother.C1WhereC1I2one2one);
 
-                    // Different From / Same To
+                    // Different New / Same To
                     from.C1I2one2one = to;
                     fromAnother.C1I2one2one = to;
 
@@ -873,7 +873,7 @@ namespace Allors.Database.Adapters
                     Assert.Null(to.C3WhereC3C4one2one);
 
                     // Multiplicity
-                    // Same From / Same To
+                    // Same New / Same To
                     from.C3C4one2one = to;
                     from.C3C4one2one = to;
 
@@ -883,7 +883,7 @@ namespace Allors.Database.Adapters
 
                     from.RemoveC3C4one2one();
 
-                    // Same From / Different To
+                    // Same New / Different To
                     from.C3C4one2one = to;
                     from.C3C4one2one = toAnother;
 
@@ -892,7 +892,7 @@ namespace Allors.Database.Adapters
                     Assert.Equal(toAnother, from.C3C4one2one);
                     Assert.Equal(from, toAnother.C3WhereC3C4one2one);
 
-                    // Different From / Different To
+                    // Different New / Different To
                     from.C3C4one2one = to;
                     fromAnother.C3C4one2one = toAnother;
 
@@ -904,7 +904,7 @@ namespace Allors.Database.Adapters
                     Assert.Equal(toAnother, fromAnother.C3C4one2one);
                     Assert.Equal(fromAnother, toAnother.C3WhereC3C4one2one);
 
-                    // Different From / Same To
+                    // Different New / Same To
                     from.C3C4one2one = to;
                     fromAnother.C3C4one2one = to;
 
@@ -1006,7 +1006,7 @@ namespace Allors.Database.Adapters
                         Assert.False(to.ExistI1WhereI1I12one2one);
 
                         // Multiplicity
-                        // Same From / Same To
+                        // Same New / Same To
                         // Get
                         Assert.Null(from.I1I12one2one);
                         Assert.Null(from.I1I12one2one);
@@ -1053,7 +1053,7 @@ namespace Allors.Database.Adapters
                         Assert.Null(to.I1WhereI1I12one2one);
                         Assert.Null(to.I1WhereI1I12one2one);
 
-                        // Same From / Different To
+                        // Same New / Different To
                         // Get
                         Assert.Null(to.I1WhereI1I12one2one);
                         Assert.Null(to.I1WhereI1I12one2one);
@@ -1130,7 +1130,7 @@ namespace Allors.Database.Adapters
                         Assert.False(toAnother.ExistI1WhereI1I12one2one);
                         Assert.False(toAnother.ExistI1WhereI1I12one2one);
 
-                        // Different From / Different To
+                        // Different New / Different To
                         // Get
                         Assert.Null(from.I1I12one2one);
                         Assert.Null(from.I1I12one2one);
@@ -1247,7 +1247,7 @@ namespace Allors.Database.Adapters
                         Assert.False(toAnother.ExistI1WhereI1I12one2one);
                         Assert.False(toAnother.ExistI1WhereI1I12one2one);
 
-                        // Different From / Same To
+                        // Different New / Same To
                         // Get
                         Assert.Null(from.I1I12one2one);
                         Assert.Null(from.I1I12one2one);
@@ -1473,7 +1473,7 @@ namespace Allors.Database.Adapters
                         mark();
 
                         // Multiplicity
-                        // Same From / Same To
+                        // Same New / Same To
                         // Get
                         Assert.Null(from.I1I12one2one);
                         mark();
@@ -1546,7 +1546,7 @@ namespace Allors.Database.Adapters
                         Assert.Null(to.I1WhereI1I12one2one);
                         mark();
 
-                        // Same From / Different To
+                        // Same New / Different To
                         // Get
                         Assert.Null(to.I1WhereI1I12one2one);
                         mark();
@@ -1671,7 +1671,7 @@ namespace Allors.Database.Adapters
                         Assert.False(toAnother.ExistI1WhereI1I12one2one);
                         mark();
 
-                        // Different From / Different To
+                        // Different New / Different To
                         // Get
                         Assert.Null(from.I1I12one2one);
                         mark();
@@ -1868,7 +1868,7 @@ namespace Allors.Database.Adapters
                         Assert.False(toAnother.ExistI1WhereI1I12one2one);
                         mark();
 
-                        // Different From / Same To
+                        // Different New / Same To
                         // Get
                         mark();
                         this.Transaction.Commit();
@@ -2099,7 +2099,7 @@ namespace Allors.Database.Adapters
                     Assert.Null(to.I1WhereI1I1one2one);
 
                     // Multiplicity
-                    // Same From / Same To
+                    // Same New / Same To
                     from.C1C1one2one = to;
                     from.C1C1one2one = to;
 
@@ -2109,7 +2109,7 @@ namespace Allors.Database.Adapters
 
                     from.RemoveC1C1one2one();
 
-                    // Same From / Different To
+                    // Same New / Different To
                     from.C1C1one2one = to;
                     from.C1C1one2one = toAnother;
 
@@ -2118,7 +2118,7 @@ namespace Allors.Database.Adapters
                     Assert.Equal(toAnother, from.C1C1one2one);
                     Assert.Equal(from, toAnother.C1WhereC1C1one2one);
 
-                    // Different From / Different To
+                    // Different New / Different To
                     from.C1C1one2one = to;
                     fromAnother.C1C1one2one = toAnother;
 
@@ -2128,7 +2128,7 @@ namespace Allors.Database.Adapters
                     Assert.Equal(toAnother, fromAnother.C1C1one2one);
                     Assert.Equal(fromAnother, toAnother.C1WhereC1C1one2one);
 
-                    // Different From / Same To
+                    // Different New / Same To
                     from.C1C1one2one = to;
                     fromAnother.C1C1one2one = to;
 
@@ -2149,7 +2149,7 @@ namespace Allors.Database.Adapters
                     mark();
                     Assert.Null(from.C1C1one2one);
 
-                    // From - Middle - To
+                    // New - Middle - To
                     from = C1.Create(this.Transaction);
                     var middle = C1.Create(this.Transaction);
                     to = C1.Create(this.Transaction);
@@ -2205,7 +2205,7 @@ namespace Allors.Database.Adapters
                     Assert.Null(to.I1WhereI1I2one2one);
 
                     // Multiplicity
-                    // Same From / Same To
+                    // Same New / Same To
                     from.I1I2one2one = to;
                     from.I1I2one2one = to;
 
@@ -2215,7 +2215,7 @@ namespace Allors.Database.Adapters
 
                     from.RemoveI1I2one2one();
 
-                    // Same From / Different To
+                    // Same New / Different To
                     from.I1I2one2one = to;
                     from.I1I2one2one = toAnother;
 
@@ -2224,7 +2224,7 @@ namespace Allors.Database.Adapters
                     Assert.Equal(toAnother, from.I1I2one2one);
                     Assert.Equal(from, toAnother.I1WhereI1I2one2one);
 
-                    // Different From / Different To
+                    // Different New / Different To
                     from.I1I2one2one = to;
                     fromAnother.I1I2one2one = toAnother;
 
@@ -2234,7 +2234,7 @@ namespace Allors.Database.Adapters
                     Assert.Equal(toAnother, fromAnother.I1I2one2one);
                     Assert.Equal(fromAnother, toAnother.I1WhereI1I2one2one);
 
-                    // Different From / Same To
+                    // Different New / Same To
                     from.I1I2one2one = to;
                     fromAnother.I1I2one2one = to;
 
@@ -2335,7 +2335,7 @@ namespace Allors.Database.Adapters
                         Assert.False(to.ExistI1WhereI1I34one2one);
 
                         // Multiplicity
-                        // Same From / Same To
+                        // Same New / Same To
                         // Get
                         Assert.Null(from.I1I34one2one);
                         Assert.Null(from.I1I34one2one);
@@ -2382,7 +2382,7 @@ namespace Allors.Database.Adapters
                         Assert.Null(to.I1WhereI1I34one2one);
                         Assert.Null(to.I1WhereI1I34one2one);
 
-                        // Same From / Different To
+                        // Same New / Different To
                         // Get
                         Assert.Null(to.I1WhereI1I34one2one);
                         Assert.Null(to.I1WhereI1I34one2one);
@@ -2459,7 +2459,7 @@ namespace Allors.Database.Adapters
                         Assert.False(toAnother.ExistI1WhereI1I34one2one);
                         Assert.False(toAnother.ExistI1WhereI1I34one2one);
 
-                        // Different From / Different To
+                        // Different New / Different To
                         // Get
                         Assert.Null(from.I1I34one2one);
                         Assert.Null(from.I1I34one2one);
@@ -2576,7 +2576,7 @@ namespace Allors.Database.Adapters
                         Assert.False(toAnother.ExistI1WhereI1I34one2one);
                         Assert.False(toAnother.ExistI1WhereI1I34one2one);
 
-                        // Different From / Same To
+                        // Different New / Same To
                         // Get
                         Assert.Null(from.I1I34one2one);
                         Assert.Null(from.I1I34one2one);
@@ -2743,7 +2743,7 @@ namespace Allors.Database.Adapters
                     Assert.Null(to.I3WhereI3I4one2one);
 
                     // Multiplicity
-                    // Same From / Same To
+                    // Same New / Same To
                     from.I3I4one2one = to;
                     from.I3I4one2one = to;
 
@@ -2753,7 +2753,7 @@ namespace Allors.Database.Adapters
 
                     from.RemoveI3I4one2one();
 
-                    // Same From / Different To
+                    // Same New / Different To
                     from.I3I4one2one = to;
                     from.I3I4one2one = toAnother;
 
@@ -2762,7 +2762,7 @@ namespace Allors.Database.Adapters
                     Assert.Equal(toAnother, from.I3I4one2one);
                     Assert.Equal(from, toAnother.I3WhereI3I4one2one);
 
-                    // Different From / Different To
+                    // Different New / Different To
                     from.I3I4one2one = to;
                     fromAnother.I3I4one2one = toAnother;
 
@@ -2772,7 +2772,7 @@ namespace Allors.Database.Adapters
                     Assert.Equal(toAnother, fromAnother.I3I4one2one);
                     Assert.Equal(fromAnother, toAnother.I3WhereI3I4one2one);
 
-                    // Different From / Same To
+                    // Different New / Same To
                     from.I3I4one2one = to;
                     fromAnother.I3I4one2one = to;
 

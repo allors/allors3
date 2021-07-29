@@ -28,7 +28,7 @@ export class Session extends SystemSession {
       l: methods.map((v) => {
         return {
           i: v.object.id,
-          v: (v.object.strategy as Strategy).DatabaseOriginState.Version,
+          v: (v.object.strategy as Strategy).DatabaseOriginState.version,
           m: v.methodType.tag,
         };
       }),
@@ -66,55 +66,53 @@ export class Session extends SystemSession {
 
   async push(): Promise<IPushResult> {
     const pushRequest: PushRequest = {
-      n: [...this.pushToDatabaseTracker.Created].map((v) => (v.DatabaseOriginState as DatabaseOriginState).PushNew()),
-      o: [...this.pushToDatabaseTracker.Changed].map((v) => (v.strategy.DatabaseOriginState as DatabaseOriginState).PushExisting()),
+      n: [...this.pushToDatabaseTracker.created].map((v) => (v.DatabaseOriginState as DatabaseOriginState).pushNew()),
+      o: [...this.pushToDatabaseTracker.changed].map((v) => (v.strategy.DatabaseOriginState as DatabaseOriginState).pushExisting()),
     };
 
-    const result = await this.database.push(pushRequest);
-    return new PushResult(this, result);
+    const pushResponse = await this.database.push(pushRequest);
 
-    // TODO:
-    //
-    // if (pushResponse.HasErrors) {
-    //     return new PushResult(this, pushResponse);
-    // }
+    const result = new PushResult(this, pushResponse);
 
-    // if ((pushResponse.n != null)) {
-    //     for (let pushResponseNewObject in pushResponse.n) {
-    //         let workspaceId = pushResponseNewObject.w;
-    //         let databaseId = pushResponseNewObject.d;
-    //         this.OnDatabasePushResponseNew(workspaceId, databaseId);
-    //     }
+    if(result.hasErrors){
+      return result;
+    }
 
-    // }
+    if ((pushResponse.n != null)) {
+        for (let pushResponseNewObject of pushResponse.n) {
+            let workspaceId = pushResponseNewObject.w;
+            let databaseId = pushResponseNewObject.d;
+            this.onDatabasePushResponseNew(workspaceId, databaseId);
+        }
+    }
 
-    // this.PushToDatabaseTracker.Created = null;
-    // if ((pushRequest.o != null)) {
-    //     for (let id in pushRequest.o.Select(() => {  }, v.d)) {
-    //         let strategy = this.GetStrategy(id);
-    //         this.OnDatabasePushResponse(strategy);
-    //     }
+    this.pushToDatabaseTracker.created = null;
 
-    // }
+    if ((pushRequest.o != null)) {
+        for (let id of pushRequest.o.map(v => v.d)) {
+            let strategy = this.getStrategy(id);
+            this.onDatabasePushResponse(strategy);
+        }
 
-    // let result = new PushResult(this, pushResponse);
-    // if (!result.HasErrors) {
-    //     this.PushToWorkspace(result);
-    // }
+    }
+
+    if (!result.hasErrors) {
+        this.PushToWorkspace(result);
+    }
   }
 
-  Create<T extends IObject>(cls: Class): T {
+  create<T extends IObject>(cls: Class): T {
     const workspaceId = this.workspace.database.nextId();
     const strategy = new Strategy(this, cls, workspaceId);
     this.addStrategy(strategy);
     if (cls.origin != Origin.Session) {
-      this.pushToWorkspaceTracker.OnCreated(strategy);
+      this.pushToWorkspaceTracker.onCreated(strategy);
       if (cls.origin == Origin.Database) {
-        this.pushToDatabaseTracker.OnCreated(strategy);
+        this.pushToDatabaseTracker.onCreated(strategy);
       }
     }
 
-    this.changeSetTracker.OnCreated(strategy);
+    this.changeSetTracker.onCreated(strategy);
     return strategy.object as T;
   }
 
@@ -122,7 +120,7 @@ export class Session extends SystemSession {
     const databaseRecord = this.workspace.database.getRecord(id) as DatabaseRecord;
     const strategy = Strategy.fromDatabaseRecord(this, databaseRecord);
     this.addStrategy(strategy);
-    this.changeSetTracker.OnInstantiated(strategy);
+    this.changeSetTracker.onInstantiated(strategy);
     return strategy;
   }
 
@@ -134,7 +132,7 @@ export class Session extends SystemSession {
     const cls = this.workspace.workspaceClassByWorkspaceId.get(id);
     const strategy = new Strategy(this, cls, id);
     this.addStrategy(strategy);
-    this.changeSetTracker.OnInstantiated(strategy);
+    this.changeSetTracker.onInstantiated(strategy);
     return strategy;
   }
 
@@ -149,7 +147,7 @@ export class Session extends SystemSession {
           this.instantiateDatabaseStrategy(v.i);
         } else {
           const strategy = this.strategyByWorkspaceId.get(v.i);
-          strategy.DatabaseOriginState.OnPulled();
+          strategy.DatabaseOriginState.onPulled();
         }
       }
 
@@ -166,7 +164,7 @@ export class Session extends SystemSession {
     for (const v of pullResponse.p) {
       if (this.strategyByWorkspaceId.has(v.i)) {
         const strategy = this.strategyByWorkspaceId.get(v.i);
-        strategy.DatabaseOriginState.OnPulled();
+        strategy.DatabaseOriginState.onPulled();
       } else {
         this.instantiateDatabaseStrategy(v.i);
       }

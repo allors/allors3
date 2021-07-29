@@ -8,8 +8,10 @@
 
 namespace Allors.Workspace.Adapters
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Collections;
     using Meta;
 
     public sealed class ChangeSet : IChangeSet
@@ -17,8 +19,8 @@ namespace Allors.Workspace.Adapters
         public ChangeSet(Session session, ISet<IStrategy> created, ISet<IStrategy> instantiated)
         {
             this.Session = session;
-            this.Created = created;
-            this.Instantiated = instantiated;
+            this.Created = created ?? EmptySet<IStrategy>.Instance;
+            this.Instantiated = instantiated ?? EmptySet<IStrategy>.Instance;
             this.AssociationsByRoleType = new Dictionary<IRoleType, ISet<IStrategy>>();
             this.RolesByAssociationType = new Dictionary<IAssociationType, ISet<IStrategy>>();
         }
@@ -35,8 +37,7 @@ namespace Allors.Workspace.Adapters
 
         public IDictionary<IAssociationType, ISet<IStrategy>> RolesByAssociationType { get; }
 
-        public void AddSessionStateChanges(
-            IDictionary<IPropertyType, IDictionary<long, object>> sessionStateChangeSet)
+        public void AddSessionStateChanges(IDictionary<IPropertyType, IDictionary<long, object>> sessionStateChangeSet)
         {
             foreach (var kvp in sessionStateChangeSet)
             {
@@ -51,6 +52,8 @@ namespace Allors.Workspace.Adapters
                     case IRoleType roleType:
                         this.AssociationsByRoleType.Add(roleType, strategies);
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException($"PropertyType {kvp.Key}");
                 }
             }
         }
@@ -87,18 +90,19 @@ namespace Allors.Workspace.Adapters
             }
             else
             {
-                var numbers = this.Session.Workspace.Numbers;
+                var ranges = this.Session.Workspace.Ranges;
                 var hasChange = false;
 
-                var addedRoles = numbers.Except(current, previous);
-                foreach (var v in numbers.Enumerate(addedRoles))
+                var currentRange = ranges.Ensure(current);
+                var previousRange = ranges.Ensure(previous);
+
+                foreach (var v in ranges.Except(currentRange, previousRange))
                 {
                     this.AddRole(relationType, this.Session.GetStrategy(v));
                     hasChange = true;
                 }
 
-                var removedRoles = numbers.Except(previous, current);
-                foreach (var v in numbers.Enumerate(removedRoles))
+                foreach (var v in ranges.Except(previousRange, currentRange))
                 {
                     this.AddRole(relationType, this.Session.GetStrategy(v));
                     hasChange = true;

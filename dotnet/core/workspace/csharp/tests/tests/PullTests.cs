@@ -15,7 +15,6 @@ namespace Tests.Workspace
     using static Names;
     using C1 = Allors.Workspace.Domain.C1;
     using C2 = Allors.Workspace.Domain.C2;
-    using DateTime = Allors.Workspace.Meta.DateTime;
     using I12 = Allors.Workspace.Domain.I12;
     using I2 = Allors.Workspace.Domain.I2;
 
@@ -1968,6 +1967,62 @@ namespace Tests.Workspace
             Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1B);
+        }
+
+        [Fact]
+        public async void WithResultName()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+            var m = this.M;
+
+            var pull = new Pull
+            {
+                Extent = new Filter(m.C1)
+                {
+                    Predicate = new Equals(m.C1.C1AllorsInteger)
+                    {
+                        Value = 2
+                    }
+                },
+                Results = new[]{
+                    new Result
+                    {
+                        Name = "IetsAnders",
+                    }
+                }
+            };
+
+            var result = await session.Pull(pull);
+
+            Assert.Single(result.Collections);
+            Assert.Empty(result.Objects);
+            Assert.Empty(result.Values);
+
+            result.Assert().Collection<C1>("IetsAnders").Equal(c1C, c1D);
+        }
+
+        [Fact]
+        public async void PullWithObjectId()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+            var pull1 = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await session.Pull(pull1);
+            var c1a = result.GetCollection<C1>()[0];
+
+            var pull2 = new Pull
+            {
+                ObjectId = c1a.Id
+            };
+
+            result = await session.Pull(pull2);
+
+            Assert.Single(result.Objects);
+            Assert.Empty(result.Collections);
+            Assert.Empty(result.Values);
         }
     }
 }

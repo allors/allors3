@@ -152,41 +152,42 @@ namespace Allors.Database
         /// </summary>
         /// <param name="roleType">The relation type.</param>
         /// <returns><c>true</c>if the composite role exists; otherwise,<c>false</c>. </returns>
-        bool ExistCompositeRoles(IRoleType roleType);
+        bool ExistCompositesRole(IRoleType roleType);
 
         /// <summary>
         /// Gets the composite roles.
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="roleType">Type of the relation.</param>
         /// <returns>The role objects.</returns>
-        IEnumerable<T> GetCompositeRoles<T>(IRoleType roleType) where T : IObject;
+        IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : IObject;
 
         /// <summary>
         /// Adds the composite role.
         /// </summary>
         /// <param name="roleType">The relation type..</param>
         /// <param name="role">The role.</param>
-        void AddCompositeRole(IRoleType roleType, IObject role);
+        void AddCompositesRole(IRoleType roleType, IObject role);
 
         /// <summary>
         /// Removes the composite role.
         /// </summary>
         /// <param name="roleType">Type of the relation.</param>
         /// <param name="role">The role.</param>
-        void RemoveCompositeRole(IRoleType roleType, IObject role);
+        void RemoveCompositesRole(IRoleType roleType, IObject role);
 
         /// <summary>
         /// Sets the composite roles.
         /// </summary>
         /// <param name="roleType">Type of the relation.</param>
         /// <param name="roles">The roles.</param>
-        void SetCompositeRoles(IRoleType roleType, IEnumerable<IObject> roles);
+        void SetCompositesRole(IRoleType roleType, IEnumerable<IObject> roles);
 
         /// <summary>
         /// Removes the composite roles.
         /// </summary>
         /// <param name="roleType">Type of the relation.</param>
-        void RemoveCompositeRoles(IRoleType roleType);
+        void RemoveCompositesRole(IRoleType roleType);
 
         /// <summary>
         /// Gets a value indicating whether the association exists.
@@ -221,13 +222,13 @@ namespace Allors.Database
         /// </summary>
         /// <param name="associationType">The relation type.</param>
         /// <returns><c>true</c>if the composite associations exists; otherwise,<c>false</c>. </returns>
-        bool ExistCompositeAssociations(IAssociationType associationType);
+        bool ExistCompositesAssociation(IAssociationType associationType);
 
         /// <summary>
         /// Gets the composite associations.
         /// </summary>
         /// <param name="associationType">Type of the relation.</param>
         /// <returns>The association objects.</returns>
-        IEnumerable<T> GetCompositeAssociations<T>(IAssociationType associationType) where T : IObject;
+        IEnumerable<T> GetCompositesAssociation<T>(IAssociationType associationType) where T : IObject;
     }
 }

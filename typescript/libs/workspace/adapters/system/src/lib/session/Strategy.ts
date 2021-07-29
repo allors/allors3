@@ -1,10 +1,11 @@
-import { IObject, IStrategy, Method } from '@allors/workspace/domain/system';
+import { IDiff, IObject, IStrategy, IUnit, Method } from '@allors/workspace/domain/system';
 import { DatabaseRecord } from '../database/DatabaseRecord';
-import { DatabaseOriginState, InitialVersion, UnknownVersion } from './originstate/DatabaseOriginState';
+import { DatabaseOriginState } from './originstate/DatabaseOriginState';
 import { WorkspaceOriginState } from './originstate/WorkspaceOriginState';
 import { isNewId, Session } from './Session';
-import { Numbers, enumerate } from '../collections/Numbers';
-import { AssociationType, Class, MethodType, Origin, RoleType } from '@allors/workspace/meta/system';
+import { importFrom, enumerate, IRange, has } from '../collections/Range';
+import { AssociationType, Class, Composite, MethodType, Origin, RoleType } from '@allors/workspace/meta/system';
+import { UnknownVersion, WorkspaceInitialVersion } from '../Version';
 
 export abstract class Strategy implements IStrategy {
   DatabaseOriginState: DatabaseOriginState;
@@ -18,147 +19,142 @@ export abstract class Strategy implements IStrategy {
     }
   }
 
-  public get version(): number {
+  get version(): number {
     switch (this.cls.origin) {
       case Origin.Session:
-        return InitialVersion;
+        return WorkspaceInitialVersion;
       case Origin.Workspace:
         return this.WorkspaceOriginState.Version;
       case Origin.Database:
-        return this.DatabaseOriginState.Version;
+        return this.DatabaseOriginState.version;
       default:
         throw new Error('Unknown origin');
     }
   }
 
-  public get isNew(): boolean {
+  get isNew(): boolean {
     return isNewId(this.id);
   }
 
-  public get object(): IObject {
+  get object(): IObject {
     return (this._object ??= this.session.workspace.database.configuration.objectFactory.create(this));
   }
 
-  public exist(roleType: RoleType): boolean {
+  reset(): void {
+    this.WorkspaceOriginState?.reset();
+    this.DatabaseOriginState?.reset();
+  }
+
+  diff(): IDiff[] {
+    const diffs: IDiff[] = [];
+    this.WorkspaceOriginState.diff(diffs);
+    this.DatabaseOriginState.diff(diffs);
+    return diffs;
+  }
+
+  existRole(roleType: RoleType): boolean {
     if (roleType.objectType.isUnit) {
-      return this.getUnit(roleType) != null;
+      return this.getUnitRole(roleType) != null;
     }
 
     if (roleType.isOne) {
-      return this.getComposite(roleType) != null;
+      return this.getCompositeRole(roleType) != null;
     }
 
-    return this.getComposites(roleType)?.length > 0;
+    return this.getCompositesRole(roleType)?.length > 0;
   }
 
-  public get(roleType: RoleType): any {
+  getRole(roleType: RoleType): unknown {
+    if (roleType == null) {
+      throw new Error('Argument null');
+    }
+
     if (roleType.objectType.isUnit) {
-      return this.getUnit(roleType);
+      return this.getUnitRole(roleType);
     }
 
     if (roleType.isOne) {
-      return this.getComposite(roleType);
+      return this.getCompositeRole(roleType);
     }
 
-    return this.getComposites(roleType);
+    return this.getCompositesRole(roleType);
   }
 
-  public getUnit(roleType: RoleType): any {
+  getUnitRole(roleType: RoleType): IUnit {
     switch (this.cls.origin) {
       case Origin.Session:
-        return this.session.getRole(this, roleType);
+        return this.session.sessionOriginState.getUnitRole(this.id, roleType);
       case Origin.Workspace:
-        return this.WorkspaceOriginState?.getRole(roleType);
+        return this.WorkspaceOriginState?.getUnitRole(roleType);
       case Origin.Database:
-        if (this.DatabaseOriginState) {
-          if (this.DatabaseOriginState.Version === UnknownVersion) {
-            throw new Error('Uknown version');
-          }
-
-          if (this.canRead(roleType)) {
-            return this.DatabaseOriginState?.getRole(roleType);
-          }
-        }
-
-        return null;
+        return this.canRead(roleType) ? this.DatabaseOriginState?.getUnitRole(roleType) : null;
       default:
         throw new Error('Unknown origin');
     }
   }
 
-  public getComposite<T extends IObject>(roleType: RoleType) {
+  getCompositeRole<T extends IObject>(roleType: RoleType): T {
+    let roleId: number;
     switch (this.cls.origin) {
       case Origin.Session:
-        return this.session.getRole(this, roleType);
-      case Origin.Workspace:
-        return this.WorkspaceOriginState?.getRole(roleType);
-      case Origin.Database:
-        if (this.DatabaseOriginState) {
-          if (this.DatabaseOriginState.Version === UnknownVersion) {
-            throw new Error('Uknown version');
-          }
-
-          if (this.canRead(roleType)) {
-            return this.DatabaseOriginState?.getRole(roleType);
-          }
-        }
-
-        return null;
-      default:
-        throw new Error('Unknown origin');
-    }
-  }
-
-  public getComposites<T extends IObject>(roleType: RoleType): T[] {
-    let roles: IObject[];
-
-    switch (this.cls.origin) {
-      case Origin.Session:
-        roles = this.session.getRole(this, roleType) as IObject[];
+        roleId = this.session.sessionOriginState.getCompositeRole(this.id, roleType) as number;
         break;
       case Origin.Workspace:
-        roles = this.WorkspaceOriginState?.getRole(roleType) as IObject[];
+        roleId = this.WorkspaceOriginState?.getCompositeRole(roleType);
         break;
       case Origin.Database:
-        if (this.DatabaseOriginState) {
-          if (this.DatabaseOriginState.Version === UnknownVersion) {
-            throw new Error('Uknown version');
-          }
-
-          if (this.canRead(roleType)) {
-            roles = this.DatabaseOriginState?.getRole(roleType) as IObject[];
-          }
-        }
-
+        roleId = this.canRead(roleType) ? this.DatabaseOriginState?.getCompositeRole(roleType) : null;
         break;
       default:
         throw new Error('Unknown origin');
     }
 
-    return roles as T[];
+    return this.session.instantiate<T>(roleId);
   }
 
-  public set(roleType: RoleType, value: any) {
+  getCompositesRole<T extends IObject>(roleType: RoleType): T[] {
+    let roleIds: IRange;
+
+    switch (this.cls.origin) {
+      case Origin.Session:
+        roleIds = this.session.sessionOriginState.getCompositesRole(this.id, roleType) as IRange;
+        break;
+      case Origin.Workspace:
+        roleIds = this.WorkspaceOriginState?.getCompositesRole(roleType);
+        break;
+      case Origin.Database:
+        roleIds = this.canRead(roleType) ? this.DatabaseOriginState?.getCompositesRole(roleType) : null;
+        break;
+      default:
+        throw new Error('Unknown origin');
+    }
+
+    return this.session.instantiate<T>(roleIds);
+  }
+
+  setRole(roleType: RoleType, value: unknown) {
     if (roleType.objectType.isUnit) {
-      this.setUnit(roleType, value);
+      this.setUnitRole(roleType, value as IUnit);
     } else if (roleType.isOne) {
-      this.setComposite(roleType, value);
+      this.setCompositeRole(roleType, value as any);
     } else {
-      this.setComposites(roleType, value);
+      this.setCompositesRole(roleType, value as any);
     }
   }
 
-  public setUnit(roleType: RoleType, value: any) {
+  setUnitRole(roleType: RoleType, value: IUnit) {
+    assertUnit(roleType, value);
+
     switch (roleType.origin) {
       case Origin.Session:
-        this.session.sessionOriginState.SetUnitRole(this.id, roleType, value);
+        this.session.sessionOriginState.setUnitRole(this.id, roleType, value);
         break;
       case Origin.Workspace:
-        this.WorkspaceOriginState?.SetUnitRole(roleType, value);
+        this.WorkspaceOriginState?.setUnitRole(roleType, value);
         break;
       case Origin.Database:
         if (this.canWrite(roleType)) {
-          this.DatabaseOriginState?.SetUnitRole(roleType, value);
+          this.DatabaseOriginState?.setUnitRole(roleType, value);
         }
 
         break;
@@ -167,17 +163,30 @@ export abstract class Strategy implements IStrategy {
     }
   }
 
-  public setComposite<T extends IObject>(roleType: RoleType, value: T) {
+  setCompositeRole<T extends IObject>(roleType: RoleType, value: T) {
+    this.assertComposite(value);
+
+    if (value != null)
+    {
+        this.assertSameType(roleType, value);
+        this.assertSameSession(value);
+    }
+
+    if (roleType.isMany)
+    {
+        throw new Error($"Given {nameof(roleType)} is the wrong multiplicity");
+    }
+
     switch (roleType.origin) {
       case Origin.Session:
-        this.session.sessionOriginState.SetCompositeRole(this.id, roleType, value?.id);
+        this.session.sessionOriginState.setCompositeRole(this.id, roleType, value?.id);
         break;
       case Origin.Workspace:
-        this.WorkspaceOriginState?.SetCompositeRole(roleType, value?.id);
+        this.WorkspaceOriginState?.setCompositeRole(roleType, value?.id);
         break;
       case Origin.Database:
         if (this.canWrite(roleType)) {
-          this.DatabaseOriginState?.SetCompositeRole(roleType, value?.id);
+          this.DatabaseOriginState?.setCompositeRole(roleType, value?.id);
         }
 
         break;
@@ -186,22 +195,24 @@ export abstract class Strategy implements IStrategy {
     }
   }
 
-  public setComposites(roleType: RoleType, role: ReadonlyArray<IObject>) {
-    const roleNumbers = Numbers(role?.map((v) => v.id));
+  setCompositesRole(roleType: RoleType, role: ReadonlyArray<IObject>) {
+    this.assertComposites(role);
+
+    const roleIds = importFrom(role?.map((v) => v.id));
 
     switch (roleType.origin) {
       case Origin.Session:
-        this.session.sessionOriginState.SetCompositesRole(this.id, roleType, roleNumbers);
+        this.session.sessionOriginState.setCompositesRole(this.id, roleType, roleIds);
         break;
 
       case Origin.Workspace:
-        this.WorkspaceOriginState?.SetCompositesRole(roleType, roleNumbers);
+        this.WorkspaceOriginState?.setCompositesRole(roleType, roleIds);
 
         break;
 
       case Origin.Database:
         if (this.canWrite(roleType)) {
-          this.DatabaseOriginState?.SetCompositesRole(roleType, roleNumbers);
+          this.DatabaseOriginState?.setCompositesRole(roleType, roleIds);
         }
 
         break;
@@ -210,37 +221,29 @@ export abstract class Strategy implements IStrategy {
     }
   }
 
-  public add(roleType: RoleType, value: any) {
-    switch (roleType.origin) {
-      case Origin.Session:
-        this.session.sessionOriginState.AddRole(this.id, roleType, value.Id);
-        break;
-      case Origin.Workspace:
-        this.WorkspaceOriginState.AddCompositeRole(roleType, value.Id);
-        break;
-      case Origin.Database:
-        if (this.canWrite(roleType)) {
-          this.DatabaseOriginState.AddCompositeRole(roleType, value.Id);
-        }
-
-        break;
-      default:
-        throw new Error('Unsupported Origin');
-        break;
+  addCompositesRole<T extends IObject>(roleType: RoleType, value: T) {
+    if (value == null) {
+      return;
     }
-  }
 
-  public remove(roleType: RoleType, value: any) {
+    this.assertComposite(value);
+
+    this.assertSameType(roleType, value);
+
+    if (roleType.isOne) {
+      throw new Error('wrong multiplicity');
+    }
+
     switch (roleType.origin) {
       case Origin.Session:
-        this.session.sessionOriginState.AddRole(this.id, roleType, value.Id);
+        this.session.sessionOriginState.addCompositesRole(this.id, roleType, value.id);
         break;
       case Origin.Workspace:
-        this.WorkspaceOriginState.RemoveCompositeRole(roleType, value.Id);
+        this.WorkspaceOriginState.addCompositesRole(roleType, value.id);
         break;
       case Origin.Database:
         if (this.canWrite(roleType)) {
-          this.DatabaseOriginState.RemoveCompositeRole(roleType, value.Id);
+          this.DatabaseOriginState.addCompositesRole(roleType, value.id);
         }
 
         break;
@@ -249,80 +252,148 @@ export abstract class Strategy implements IStrategy {
     }
   }
 
-  public removeAll(roleType: RoleType) {
+  removeCompositesRole<T extends IObject>(roleType: RoleType, value: T) {
+    if (value == null) {
+      return;
+    }
+
+    this.assertComposite(value);
+
+    switch (roleType.origin) {
+      case Origin.Session:
+        this.session.sessionOriginState.addCompositesRole(this.id, roleType, value.id);
+        break;
+      case Origin.Workspace:
+        this.WorkspaceOriginState.removeCompositesRole(roleType, value.id);
+        break;
+      case Origin.Database:
+        if (this.canWrite(roleType)) {
+          this.DatabaseOriginState.removeCompositesRole(roleType, value.id);
+        }
+
+        break;
+      default:
+        throw new Error('Unsupported Origin');
+    }
+  }
+
+  removeRole(roleType: RoleType) {
     if (roleType.objectType.isUnit) {
-      this.setUnit(roleType, null);
+      this.setUnitRole(roleType, null);
     } else if (roleType.isOne) {
-      this.setComposite(roleType, null);
+      this.setCompositeRole(roleType, null);
     } else {
-      this.setComposites(roleType, null);
+      this.setCompositesRole(roleType, null);
     }
   }
 
-  public getCompositeAssociation<T extends IObject>(associationType: AssociationType): T {
+  getCompositeAssociation<T extends IObject>(associationType: AssociationType): T {
     if (associationType.origin != Origin.Session) {
-      return this.session.getCompositeAssociation(this.id, associationType);
+      return this.session.getCompositeAssociation(this.id, associationType)?.object as T;
     }
 
-    const association = this.session.sessionOriginState.Get(this.id, associationType);
-    return association != null ? this.session.getOne(association) : null;
+    const association = this.session.sessionOriginState.getCompositeRole(this.id, associationType);
+    return association != null ? this.session.instantiate(association) : null;
   }
 
-  public getCompositesAssociation<T extends IObject>(associationType: AssociationType): T[] {
+  getCompositesAssociation<T extends IObject>(associationType: AssociationType): T[] {
     const composites: T[] = [];
 
     if (associationType.origin != Origin.Session) {
-      composites.push(...this.session.getCompositesAssociation<T>(this.id, associationType));
+      composites.push(...this.session.getCompositesAssociation<T>(this.id, associationType).map((v) => v.object as T));
     }
 
-    const association = this.session.sessionOriginState.Get(this.id, associationType);
+    const association = this.session.sessionOriginState.getCompositesRole(this.id, associationType);
 
     for (const id of enumerate(association)) {
-      composites.push(this.session.getOne(id));
+      composites.push(this.session.instantiate(id));
     }
 
     return composites;
   }
 
-  public canRead(roleType: RoleType): boolean {
-    return this.DatabaseOriginState?.CanRead(roleType) ?? true;
+  canRead(roleType: RoleType): boolean {
+    return this.DatabaseOriginState?.canRead(roleType) ?? true;
   }
 
-  public canWrite(roleType: RoleType): boolean {
-    return this.DatabaseOriginState?.CanWrite(roleType) ?? true;
+  canWrite(roleType: RoleType): boolean {
+    return this.DatabaseOriginState?.canWrite(roleType) ?? true;
   }
 
-  public canExecute(methodType: MethodType): boolean {
-    return this.DatabaseOriginState?.CanExecute(methodType) ?? false;
+  canExecute(methodType: MethodType): boolean {
+    return this.DatabaseOriginState?.canExecute(methodType) ?? false;
   }
 
-  method(methodType: MethodType): Method {
-    return {
-      object: this.object,
-      methodType,
-    };
-  }
-
-  public isAssociationForRole(roleType: RoleType, forRoleId: number): boolean {
-    const role = this.session.sessionOriginState.Get(this.id, roleType);
+  isCompositeAssociationForRole(roleType: RoleType, forRoleId: number): boolean {
+    const role = this.session.sessionOriginState.getCompositeRole(this.id, roleType);
 
     switch (roleType.origin) {
       case Origin.Session:
         return role === forRoleId;
       case Origin.Workspace:
-        return this.WorkspaceOriginState?.IsAssociationForRole(roleType, forRoleId) ?? false;
+        return this.WorkspaceOriginState?.isAssociationForRole(roleType, forRoleId) ?? false;
       case Origin.Database:
-        return this.DatabaseOriginState?.IsAssociationForRole(roleType, forRoleId) ?? false;
+        return this.DatabaseOriginState?.isAssociationForRole(roleType, forRoleId) ?? false;
       default:
         throw new Error('Unsupported Origin');
     }
   }
 
-  public onDatabasePushNewId(newId: number) {
+  isCompositesAssociationForRole(roleType: RoleType, forRoleId: number): boolean {
+    switch (roleType.origin) {
+      case Origin.Session:
+        return has(this.session.sessionOriginState.getCompositesRole(this.id, roleType), forRoleId);
+      case Origin.Workspace:
+        return this.WorkspaceOriginState?.isAssociationForRole(roleType, forRoleId) ?? false;
+      case Origin.Database:
+        return this.DatabaseOriginState?.isAssociationForRole(roleType, forRoleId) ?? false;
+      default:
+        throw new Error('Unsupported Origin');
+    }
+  }
+
+  onDatabasePushNewId(newId: number) {
     this.id = newId;
   }
 
-  public onDatabasePushResponse(databaseRecord: DatabaseRecord) {
-    this.DatabaseOriginState.PushResponse(databaseRecord);
+  onDatabasePushed() {
+    this.DatabaseOriginState.onPushed();
   }
+
+  assertSameType(roleType: RoleType, value: IObject) {
+    const composite = roleType.objectType as Composite;
+    if (!composite.isAssignableFrom(value.strategy.cls)) {
+      throw new Error(`Types do not match: ${composite} and ${value.strategy.cls}`);
+    }
+  }
+
+  assertSameSession(value: IObject) {
+    if (this.session != value.strategy.session)
+    {
+        throw new Error($"Sessions do not match");
+    }
+  }
+
+  assertUnit(roleType: RoleType, value: unknown) {
+    // TODO:
+  }
+
+  assertComposite(value: IObject) {
+    if (value == null) {
+      return;
+    }
+
+    if (this.session != value.strategy.session) {
+      throw new Error('Strategy is from a different session');
+    }
+  }
+
+  assertComposites(inputs: ReadonlyArray<IObject>) {
+    if (inputs == null) {
+      return;
+    }
+
+    inputs.forEach((v) => this.assertComposite(v));
+  }
+
 }

@@ -8,9 +8,9 @@ namespace Allors.Protocol.Json.Api
     public class ResponseDerivationError
     {
         /// <summary>
-        /// ErrorMessage
+        /// Message
         /// </summary>
-        public string e { get; set; }
+        public string m { get; set; }
 
         /// <summary>
         /// Roles

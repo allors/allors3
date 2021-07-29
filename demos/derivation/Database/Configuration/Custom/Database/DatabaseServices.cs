@@ -1,4 +1,4 @@
-// <copyright file="DatabaseContext.cs" company="Allors bvba">
+// <copyright file="DefaultDatabaseScope.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -6,86 +6,100 @@
 
 namespace Allors.Database.Configuration
 {
-    using Database.Data;
+    using System;
+    using Data;
     using Domain;
+    using Domain.Derivations.Rules.Default;
     using Meta;
     using Microsoft.AspNetCore.Http;
+    using Services;
 
     public abstract class DatabaseServices : IDomainDatabaseServices
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        protected DatabaseServices(IHttpContextAccessor httpContextAccessor = null) => this.httpContextAccessor = httpContextAccessor;
+        private IDatabase database;
 
-        public virtual void OnInit(IDatabase database)
+        private IMetaCache metaCache;
+
+        private IClassById classById;
+
+        private IVersionedIdByStrategy versionedIdByStrategy;
+
+        private IPrefetchPolicyCache prefetchPolicyCache;
+
+        private IPreparedSelects preparedSelects;
+
+        private IPreparedExtents preparedExtents;
+
+        private ITreeCache treeCache;
+
+        private IPermissionsCache permissionsCache;
+
+        private IAccessControlCache accessControlCache;
+
+        private ITime time;
+
+        private ICaches caches;
+
+        private ISingletonId singletonId;
+
+        private IPasswordHasher passwordHasher;
+
+        private IMailer mailer;
+
+        private IBarcodeGenerator barcodeGenerator;
+
+        private ITemplateObjectCache templateObjectCache;
+
+        private IDerivationFactory derivationFactory;
+
+        protected DatabaseServices(IHttpContextAccessor httpContextAccessor = null)
         {
-            this.Database = database;
-
-            this.M = (MetaPopulation)database.ObjectFactory.MetaPopulation;
-            this.MetaCache = new MetaCache(this);
-            this.ClassById = new ClassById();
-            this.VersionedIdByStrategy = new VersionedIdByStrategy();
-
-            this.PrefetchPolicyCache = new PrefetchPolicyCache(this);
-            this.PreparedSelects = new PreparedSelects(this);
-            this.PreparedExtents = new PreparedExtents(this);
-            this.TreeCache = new TreeCache();
-
-            this.PermissionsCache = new PermissionsCache(this);
-            this.AccessControlCache = new AccessControlCache();
-
-            this.Time = new Time();
-            this.Caches = new Caches();
-            this.SingletonId = new SingletonId();
-
-            this.PasswordHasher = new PasswordHasher();
-            this.Mailer = new MailKitMailer();
-            this.BarcodeGenerator = new ZXingBarcodeGenerator();
-            this.TemplateObjectCache = new TemplateObjectCache();
+            this.httpContextAccessor = httpContextAccessor;
         }
 
-        public IDatabase Database { get; private set; }
+        public virtual void OnInit(IDatabase database) => this.database = database;
 
-        public MetaPopulation M { get; private set; }
-
-        public IMetaCache MetaCache { get; private set; }
-
-        public IPrefetchPolicyCache PrefetchPolicyCache { get; set; }
-
-        public IPreparedSelects PreparedSelects { get; private set; }
-
-        public IPreparedExtents PreparedExtents { get; private set; }
-
-        public ITreeCache TreeCache { get; private set; }
-
-        public IClassById ClassById { get; private set; }
-
-        public IVersionedIdByStrategy VersionedIdByStrategy { get; private set; }
-
-        public IPermissionsCache PermissionsCache { get; private set; }
-
-        public IAccessControlCache AccessControlCache { get; private set; }
-
-        public ITime Time { get; private set; }
-
-        public ICaches Caches { get; private set; }
-
-        public ISingletonId SingletonId { get; private set; }
-
-        public IPasswordHasher PasswordHasher { get; private set; }
-
-        public IMailer Mailer { get; private set; }
-
-        public IBarcodeGenerator BarcodeGenerator { get; private set; }
-
-        public ITemplateObjectCache TemplateObjectCache { get; private set; }
-
-        public IDerivationFactory DerivationFactory { get; protected set; }
+        public MetaPopulation M => (MetaPopulation)this.database.MetaPopulation;
 
         public ITransactionServices CreateTransactionServices() => new DefaultTransactionServices(this.httpContextAccessor);
 
-        public void Dispose()
-        {
-        }
+        public T Get<T>() =>
+            typeof(T).Name switch
+            {
+                nameof(IMetaCache) => (T)(this.metaCache ??= new MetaCache(this.database)),
+                nameof(IClassById) => (T)(this.classById ??= new ClassById()),
+                nameof(IVersionedIdByStrategy) => (T)(this.versionedIdByStrategy ??= new VersionedIdByStrategy()),
+
+                nameof(IPrefetchPolicyCache) => (T)(this.prefetchPolicyCache ??= new PrefetchPolicyCache(this)),
+                nameof(IPreparedSelects) => (T)(this.preparedSelects ??= new PreparedSelects(this.database)),
+                nameof(IPreparedExtents) => (T)(this.preparedExtents ??= new PreparedExtents(this.database)),
+                nameof(ITreeCache) => (T)(this.treeCache ??= new TreeCache()),
+
+                nameof(IPermissionsCache) => (T)(this.permissionsCache ??= new PermissionsCache(this, this.database)),
+                nameof(IAccessControlCache) => (T)(this.accessControlCache ??= new AccessControlCache()),
+
+                nameof(ITime) => (T)(this.time ??= new Time()),
+                nameof(ICaches) => (T)(this.caches ??= new Caches()),
+                nameof(ISingletonId) => (T)(this.singletonId ??= new SingletonId()),
+                nameof(IPasswordHasher) => (T)(this.passwordHasher ??= this.CreatePasswordHasher()),
+
+                nameof(IMailer) => (T)(this.mailer ??= new MailKitMailer()),
+                nameof(IBarcodeGenerator) => (T)(this.barcodeGenerator ??= new ZXingBarcodeGenerator()),
+                nameof(ITemplateObjectCache) => (T)(this.templateObjectCache ??= new TemplateObjectCache()),
+
+                nameof(IDerivationFactory) => (T)(this.derivationFactory ??= this.CreateDerivationFactory()),
+
+                _ => throw new NotSupportedException($"Service {typeof(T)} not supported")
+            };
+
+        protected IPasswordHasher CreatePasswordHasher() => new PasswordHasher();
+
+        protected IDerivationFactory CreateDerivationFactory() => new DefaultDerivationFactory(this.Engine);
+
+        protected Engine Engine { get; set; }
+
+        public void Dispose() { }
     }
 }

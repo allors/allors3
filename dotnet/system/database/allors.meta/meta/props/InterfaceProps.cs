@@ -16,8 +16,6 @@ namespace Allors.Database.Meta
 
         public IEnumerable<IComposite> Subtypes => this.@interface.Subtypes;
 
-        public bool AssignedIsSynced => this.@interface.AssignedIsSynced;
-
         #region As
         protected override IMetaObjectBase AsMetaObject => this.@interface;
 

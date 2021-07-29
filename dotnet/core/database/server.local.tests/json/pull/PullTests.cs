@@ -9,6 +9,7 @@ namespace Tests
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Allors;
     using Allors.Database.Configuration;
     using Allors.Database.Domain;
     using Allors.Protocol.Json.Api.Pull;
@@ -34,7 +35,7 @@ namespace Tests
 
             var data = new DataBuilder(this.Transaction).WithString("First").Build();
             var permissions = new Permissions(this.Transaction).Extent();
-            var permission = permissions.First(v => Equals(v.Class, this.M.Data));
+            var permission = permissions.First(v => Equals(v.Class, this.M.Data) && v.InWorkspace("Default"));
             data.AddDeniedPermission(permission);
 
             this.Transaction.Commit();
@@ -72,8 +73,40 @@ namespace Tests
 
             Assert.Equal(data.Strategy.ObjectId, @object.i);
             Assert.Equal(data.Strategy.ObjectVersion, @object.v);
-            Assert.Equal(acl.AccessControls.Select(v=>v.Strategy.ObjectId), @object.a);
+            Assert.Equal(acl.AccessControls.Select(v => v.Strategy.ObjectId), @object.a);
             Assert.Equal(acl.DeniedPermissionIds, @object.d);
+        }
+
+        [Fact]
+        public void WithDeniedPermissionsFromDatabaseAndOtherWorkspace()
+        {
+            var m = this.M;
+            var user = this.SetUser("jane@example.com");
+
+            var pull = new Pull { Extent = new Extent(m.Denied) };
+
+            var pullRequest = new PullRequest
+            {
+                l = new[]
+                {
+                    pull.ToJson(this.UnitConvert)
+                },
+            };
+
+            var api = new Api(this.Transaction, "Default");
+            var pullResponse = api.Pull(pullRequest);
+
+            var pullResponseObject = pullResponse.p[0];
+
+            var databaseWrite = new Permissions(this.Transaction).Extent().First(v => v.OperandType.Equals(m.Denied.DatabaseProperty) && v.Operation == Operations.Write);
+            var defaultWorkspaceWrite = new Permissions(this.Transaction).Extent().First(v => v.OperandType.Equals(m.Denied.DefaultWorkspaceProperty) && v.Operation == Operations.Write);
+            var workspaceXWrite = new Permissions(this.Transaction).Extent().First(v => v.OperandType.Equals(m.Denied.WorkspaceXProperty) && v.Operation == Operations.Write);
+
+            Assert.Single(pullResponseObject.d);
+
+            Assert.Contains(defaultWorkspaceWrite.Id, pullResponseObject.d);
+            Assert.DoesNotContain(databaseWrite.Id, pullResponseObject.d);
+            Assert.DoesNotContain(workspaceXWrite.Id, pullResponseObject.d);
         }
 
         [Fact]
@@ -172,7 +205,7 @@ namespace Tests
 
             Assert.Equal(data.Strategy.ObjectId, @object.i);
             Assert.Equal(data.Strategy.ObjectVersion, @object.v);
-            Assert.Equal(acl.AccessControls.Select(v=>v.Strategy.ObjectId), @object.a);
+            Assert.Equal(acl.AccessControls.Select(v => v.Strategy.ObjectId), @object.a);
         }
 
         [Fact]
@@ -226,7 +259,7 @@ namespace Tests
 
             Assert.Equal(data.Strategy.ObjectId, @object.i);
             Assert.Equal(data.Strategy.ObjectVersion, @object.v);
-            Assert.Equal(acl.AccessControls.Select(v=>v.Strategy.ObjectId), @object.a);
+            Assert.Equal(acl.AccessControls.Select(v => v.Strategy.ObjectId), @object.a);
         }
     }
 }

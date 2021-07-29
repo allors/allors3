@@ -17,7 +17,7 @@ namespace Allors.Database.Adapters.Memory
 
         internal Not(ExtentFiltered extent) => this.extent = extent;
 
-        internal override bool Include => this.predicate != null && this.predicate.Include;
+        internal override bool Include => this.predicate?.Include == true;
 
         public ICompositePredicate AddAnd()
         {

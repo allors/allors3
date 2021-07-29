@@ -168,7 +168,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Synced]
+        [Derived]
         [Workspace(Default)]
         public Shipment SyncedShipment { get; set; }
 

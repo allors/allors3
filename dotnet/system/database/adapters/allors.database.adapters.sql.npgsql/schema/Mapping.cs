@@ -416,7 +416,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             var table = this.tableNameForObjectByClass[@class];
             var name = this.Database.SchemaName + "." + ProcedurePrefixForLoad + @class.Name.ToLowerInvariant();
 
-            // Load Objects
+            // Import Objects
             var definition = $@"
 DROP FUNCTION IF EXISTS {name}({SqlTypeForClass},{this.ObjectArrayParam.TypeName});
 CREATE FUNCTION {name}(
@@ -450,7 +450,7 @@ DECLARE {this.ParamNameForObject} {SqlTypeForObject};
 BEGIN
 
     INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
-    VALUES ({this.ParamNameForClass}, {(long)Allors.Version.Initial})
+    VALUES ({this.ParamNameForClass}, {(long)Allors.Version.DatabaseInitial})
     RETURNING {ColumnNameForObject} INTO {this.ParamNameForObject};
 
     INSERT INTO {table} ({ColumnNameForObject},{ColumnNameForClass})
@@ -481,7 +481,7 @@ BEGIN
     WHILE COUNTER < {this.ParamNameForCount} LOOP
 
         INSERT INTO {this.TableNameForObjects} ({ColumnNameForClass}, {ColumnNameForVersion})
-        VALUES ({this.ParamNameForClass}, {(long)Allors.Version.Initial} )
+        VALUES ({this.ParamNameForClass}, {(long)Allors.Version.DatabaseInitial} )
         RETURNING {ColumnNameForObject} INTO ID;
 
         INSERT INTO {this.tableNameForObjectByClass[@class.ExclusiveDatabaseClass]} ({ColumnNameForObject},{ColumnNameForClass})

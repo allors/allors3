@@ -49,7 +49,7 @@ namespace Allors.Database.Adapters.Memory
                 {
                     if (!strategy.IsDeleted)
                     {
-                        if (this.filter == null || !this.filter.Include || this.filter.Evaluate(strategy) == ThreeValuedLogic.True)
+                        if (this.filter?.Include != true || this.filter.Evaluate(strategy) == ThreeValuedLogic.True)
                         {
                             this.Strategies.Add(strategy);
                         }

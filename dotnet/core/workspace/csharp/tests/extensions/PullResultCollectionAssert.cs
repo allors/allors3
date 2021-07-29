@@ -4,11 +4,11 @@ namespace Tests.Workspace
     using Allors.Workspace;
     using Xunit;
 
-    public class PullResultCollectionAssert<T> where T : IObject
+    public class PullResultCollectionAssert<T> where T : class, IObject
     {
         private readonly T[] collection;
 
-        public PullResultCollectionAssert(IPullResult pullResult) => this.collection = pullResult.GetCollection<T>();
+        public PullResultCollectionAssert(IPullResult pullResult, string name = null) => this.collection = name != null ? pullResult.GetCollection<T>(name) : pullResult.GetCollection<T>();
 
         public void Single() => Assert.Single(this.collection);
 

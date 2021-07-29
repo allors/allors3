@@ -1,26 +1,25 @@
 import { IChangeSet, IStrategy, ISession } from '@allors/workspace/domain/system';
 import { AssociationType, PropertyType, RelationType, RoleType } from '@allors/workspace/meta/system';
 import { MapMap } from '../collections/MapMap';
-import { difference, enumerate } from '../collections/Numbers';
+import { difference, enumerate, IRange } from '../collections/Range';
 import { Session } from './Session';
 import { Strategy } from './Strategy';
 
 export class ChangeSet implements IChangeSet {
   associationsByRoleType: Map<RoleType, Set<IStrategy>>;
-
   rolesByAssociationType: Map<AssociationType, Set<IStrategy>>;
 
-  public constructor(public Session: ISession, public Created: Set<IStrategy>, public Instantiated: Set<IStrategy>) {
+  public constructor(public session: ISession, public created: Set<IStrategy>, public instantiated: Set<IStrategy>) {
     this.associationsByRoleType = new Map();
     this.rolesByAssociationType = new Map();
   }
 
-  public AddSessionStateChanges(sessionStateChangeSet: MapMap<PropertyType, number, any>) {
+  public addSessionStateChanges(sessionStateChangeSet: MapMap<PropertyType, number, unknown>) {
     for (const [propertyType, map] of sessionStateChangeSet.mapMap) {
       const strategies = new Set<IStrategy>();
 
       for (const [id] of map) {
-        const strategy = (this.Session as Session).getStrategy(id);
+        const strategy = (this.session as Session).getStrategy(id);
         strategies.add(strategy);
       }
 
@@ -28,15 +27,18 @@ export class ChangeSet implements IChangeSet {
         this.rolesByAssociationType.set(propertyType as AssociationType, strategies);
       } else if (propertyType.isRoleType) {
         this.associationsByRoleType.set(propertyType as RoleType, strategies);
+      } else {
+        throw new Error(`PropertyType ${propertyType.name} is not supported`);
       }
     }
   }
 
-  public Diff(association: Strategy, relationType: RelationType, current: any, previous: any) {
+  public diff(association: Strategy, relationType: RelationType, current: unknown, previous: unknown) {
     const roleType = relationType.roleType;
+
     if (roleType.objectType.isUnit) {
       if (current !== previous) {
-        this.AddAssociation(relationType, association);
+        this.addAssociation(relationType, association);
       }
     } else if (roleType.isOne) {
       if (current === previous) {
@@ -44,35 +46,36 @@ export class ChangeSet implements IChangeSet {
       }
 
       if (previous != null) {
-        this.AddRole(relationType, (this.Session as Session).getStrategy(<number>previous));
+        this.addRole(relationType, (this.session as Session).getStrategy(<number>previous));
       }
 
       if (current != null) {
-        this.AddRole(relationType, (this.Session as Session).getStrategy(<number>current));
+        this.addRole(relationType, (this.session as Session).getStrategy(<number>current));
       }
 
-      this.AddAssociation(relationType, association);
+      this.addAssociation(relationType, association);
     } else {
       let hasChange = false;
-      const addedRoles = difference(current, previous);
+
+      const addedRoles = difference(current as IRange, previous as IRange);
       for (const v of enumerate(addedRoles)) {
-        this.AddRole(relationType, (this.Session as Session).getStrategy(v));
+        this.addRole(relationType, (this.session as Session).getStrategy(v));
         hasChange = true;
       }
 
-      const removedRoles = difference(previous, current);
+      const removedRoles = difference(previous as IRange, current as IRange);
       for (const v of enumerate(removedRoles)) {
-        this.AddRole(relationType, (this.Session as Session).getStrategy(v));
+        this.addRole(relationType, (this.session as Session).getStrategy(v));
         hasChange = true;
       }
 
       if (hasChange) {
-        this.AddAssociation(relationType, association);
+        this.addAssociation(relationType, association);
       }
     }
   }
 
-  private AddAssociation(relationType: RelationType, association: Strategy) {
+  private addAssociation(relationType: RelationType, association: Strategy) {
     const roleType = relationType.roleType;
 
     let associations: Set<Strategy>;
@@ -84,7 +87,7 @@ export class ChangeSet implements IChangeSet {
     associations.add(association);
   }
 
-  private AddRole(relationType: RelationType, role: Strategy) {
+  private addRole(relationType: RelationType, role: Strategy) {
     const associationType = relationType.associationType;
 
     let roles: Set<IStrategy>;

@@ -1,4 +1,4 @@
-import { IObject, IPullResult, ISession, IWorkspace, UnitTypes } from '@allors/workspace/domain/system';
+import { IObject, IPullResult, ISession, IWorkspace, IUnit } from '@allors/workspace/domain/system';
 import { PullResponse } from '@allors/protocol/json/system';
 import { Result } from '../Result';
 
@@ -7,7 +7,7 @@ export class PullResult extends Result implements IPullResult {
 
   collections: Map<string, IObject[]>;
 
-  values: Map<string, UnitTypes>;
+  values: Map<string, IUnit>;
 
   workspace: IWorkspace;
 
@@ -16,17 +16,20 @@ export class PullResult extends Result implements IPullResult {
 
     this.workspace = session.workspace;
 
-    this.objects = new Map(Object.keys(response.o).map((v) => [v, session.getOne(response.o[v])]));
-    this.collections = new Map(Object.keys(response.c).map((v) => [v, response.c[v].map((w) => session.getOne(w))]));
-    this.values = new Map(Object.keys(response.v).map((v) => [v, response.v[v]]));
+    this.objects = new Map(Object.keys(response.o).map((v) => [v.toUpperCase(), session.getOne(response.o[v])]));
+    this.collections = new Map(Object.keys(response.c).map((v) => [v.toUpperCase(), response.c[v].map((w) => session.getOne(w))]));
+    this.values = new Map(Object.keys(response.v).map((v) => [v.toUpperCase(), response.v[v]]));
   }
-  collection(name: string): IObject[] {
-    return this.collections.get(name);
+
+  collection<T extends IObject>(name: string): T[] {
+    return this.collections.get(name.toUpperCase()) as T[];
   }
-  object(name: string): IObject {
-    return this.objects.get(name);
+
+  object<T extends IObject>(name: string): T {
+    return this.objects.get(name.toUpperCase()) as T;
   }
-  value(name: string): UnitTypes | UnitTypes[] {
-    return this.values.get(name);
+
+  value(name: string): IUnit | IUnit[] {
+    return this.values.get(name.toUpperCase());
   }
 }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\dotnet\System\Database\Allors.Database.Protocol.Json\Allors.Database.Protocol.Json.csproj" />
-    <ProjectReference Include="..\..\..\..\dotnet\system\protocol\allors.protocol.json.default\Allors.Protocol.Json.Default.csproj" />
+    <ProjectReference Include="..\..\..\..\dotnet\System\protocol\allors.protocol.json.systemtext\Allors.Protocol.Json.SystemText.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
   </ItemGroup>

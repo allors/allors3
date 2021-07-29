@@ -42,14 +42,14 @@ namespace Allors.Database.Adapters.Sql
 
         public IDictionary<IRoleType, ISet<IObject>> AssociationsByRoleType => this.associationsByRoleType ??=
             (from kvp in this.RoleTypesByAssociation
-                from value in kvp.Value
-                group kvp.Key by value)
+             from value in kvp.Value
+             group kvp.Key by value)
             .ToDictionary(grp => grp.Key, grp => new HashSet<IObject>(grp) as ISet<IObject>);
 
         public IDictionary<IAssociationType, ISet<IObject>> RolesByAssociationType => this.rolesByAssociationType ??=
             (from kvp in this.AssociationTypesByRole
-                from value in kvp.Value
-                group kvp.Key by value)
+             from value in kvp.Value
+             group kvp.Key by value)
             .ToDictionary(grp => grp.Key, grp => new HashSet<IObject>(grp) as ISet<IObject>);
     }
 }

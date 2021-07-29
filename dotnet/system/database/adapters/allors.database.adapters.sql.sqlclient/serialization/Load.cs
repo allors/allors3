@@ -402,7 +402,7 @@ where c = '{@class.Id}'";
             }
         }
 
-        #region Load Errors
+        #region Import Errors
 
         private void OnObjectNotLoaded(Guid objectTypeId, long allorsObjectId)
         {
@@ -429,6 +429,6 @@ where c = '{@class.Id}'";
             }
         }
 
-        #endregion Load Errors
+        #endregion Import Errors
     }
 }

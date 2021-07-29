@@ -30,12 +30,6 @@ namespace Allors.Workspace.Meta
         IMetaPopulation IMetaObject.MetaPopulation => this.MetaPopulation;
 
         Origin IMetaObject.Origin => Origin.Database;
-
-        bool IMetaObject.HasDatabaseOrigin => true;
-
-        bool IMetaObject.HasWorkspaceOrigin => false;
-
-        bool IMetaObject.HasSessionOrigin => false;
         #endregion
 
         #region IMetaIdentifiableObject

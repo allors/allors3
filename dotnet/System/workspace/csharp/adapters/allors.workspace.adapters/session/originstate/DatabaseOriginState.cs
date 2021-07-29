@@ -14,30 +14,34 @@ namespace Allors.Workspace.Adapters
         {
             this.DatabaseRecord = record;
             this.PreviousRecord = this.DatabaseRecord;
+            this.IsPushed = false;
         }
 
-        public long Version => this.DatabaseRecord?.Version ?? Allors.Version.Unknown;
+        public long Version => this.DatabaseRecord?.Version ?? Allors.Version.WorkspaceInitial;
 
-        internal bool IsVersionUnknown => this.Version == Allors.Version.Unknown.Value;
-
-        protected bool ExistDatabaseRecord => this.Record != null;
+        private bool IsVersionInitial => this.Version == Allors.Version.WorkspaceInitial.Value;
 
         protected override IEnumerable<IRoleType> RoleTypes => this.Class.DatabaseOriginRoleTypes;
 
+        protected bool ExistRecord => this.Record != null;
+
         protected override IRecord Record => this.DatabaseRecord;
 
-        protected DatabaseRecord DatabaseRecord { get; set; }
+        protected DatabaseRecord DatabaseRecord { get; private set; }
+
+        private bool IsPushed { get; set; }
 
         public bool CanRead(IRoleType roleType)
         {
-            if (!this.ExistDatabaseRecord)
+            if (!this.ExistRecord)
             {
                 return true;
             }
 
-            if (this.IsVersionUnknown)
+            if (this.IsVersionInitial)
             {
-                return false;
+                // TODO: Security
+                return true;
             }
 
             var permission = this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, roleType, Operations.Read);
@@ -46,46 +50,64 @@ namespace Allors.Workspace.Adapters
 
         public bool CanWrite(IRoleType roleType)
         {
-            if (!this.ExistDatabaseRecord)
+            if (this.IsVersionInitial)
             {
-                return true;
+                return !this.IsPushed;
             }
 
-            if (this.IsVersionUnknown)
+            if (this.IsPushed)
             {
                 return false;
             }
 
-            var permission =
-                this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, roleType, Operations.Write);
+            if (!this.ExistRecord)
+            {
+                return true;
+            }
+
+            var permission = this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, roleType, Operations.Write);
             return this.DatabaseRecord.IsPermitted(permission);
         }
 
         public bool CanExecute(IMethodType methodType)
         {
-            if (!this.ExistDatabaseRecord)
+            if (!this.ExistRecord)
             {
                 return true;
             }
 
-            if (this.IsVersionUnknown)
+            if (this.IsVersionInitial)
             {
-                return false;
+                // TODO: Security
+                return true;
             }
 
-            var permission =
-                this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, methodType, Operations.Execute);
+            var permission = this.Session.Workspace.DatabaseConnection.GetPermission(this.Class, methodType, Operations.Execute);
             return this.DatabaseRecord.IsPermitted(permission);
         }
 
-        public void PushResponse(DatabaseRecord newDatabaseRecord)
+        public void OnPushed() => this.IsPushed = true;
+
+        public void OnPulled(IPullResultInternals pull)
         {
-            this.DatabaseRecord = newDatabaseRecord;
-            this.ChangedRoleByRelationType = null;
+            var newRecord = this.Session.Workspace.DatabaseConnection.GetRecord(this.Id);
+
+            if (!this.IsPushed)
+            {
+                if (!this.CanMerge(newRecord))
+                {
+                    pull.AddMergeError(this.Strategy.Object);
+                    return;
+                }
+            }
+            else
+            {
+                this.ChangedRoleByRelationType = null;
+                this.IsPushed = false;
+            }
+
+            this.DatabaseRecord = newRecord;
         }
-        public void OnPulled() =>
-            // TODO: check for overwrites
-            this.DatabaseRecord = this.Session.Workspace.DatabaseConnection.GetRecord(this.Id);
 
         protected override void OnChange()
         {

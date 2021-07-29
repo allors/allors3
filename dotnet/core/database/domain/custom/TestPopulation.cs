@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
         private void Full()
         {
             new PersonBuilder(this.transaction).WithUserName("noacl").WithFirstName("no").WithLastName("acl").Build();
-            
+
             var noperm = new PersonBuilder(this.transaction).WithUserName("noperm").WithFirstName("no").WithLastName("perm").Build();
             var emptyRole = new RoleBuilder(this.transaction).WithName("Empty").Build();
             var defaultSecurityToken = new SecurityTokens(this.transaction).DefaultSecurityToken;
@@ -53,7 +53,7 @@ namespace Allors.Database.Domain
             c2B.C2AllorsString = "ᴀbra";
             c2C.C2AllorsString = "ᴀbracadabra";
             c2D.C2AllorsString = "ᴀbracadabra";
-           // exclusive interface
+            // exclusive interface
             c1B.I1AllorsString = "ᴀbra";
             c1C.I1AllorsString = "ᴀbracadabra";
             c1D.I1AllorsString = "ᴀbracadabra";
@@ -217,7 +217,7 @@ namespace Allors.Database.Domain
             c1B.C1AllorsUnique = new Guid("8B3C4978-72D3-40BA-B302-114EB331FE04");
             c1C.C1AllorsUnique = new Guid("0FD4EC2C-08DB-46B9-B71A-10152EBE4569");
             c1D.C1AllorsUnique = new Guid("AF01C994-379A-449A-8C4D-8D3B7207EC91");
-            
+
             c1B.I1AllorsUnique = new Guid("7F7BF8EF-DDF2-47E6-B33F-627BE7DEAD6D");
             c1C.I1AllorsUnique = new Guid("08BFF7DE-51B9-4A53-BFBA-1212F23A342D");
             c1D.I1AllorsUnique = new Guid("59A349CB-E197-43B7-A17E-90630A87873C");

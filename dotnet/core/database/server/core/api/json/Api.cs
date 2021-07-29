@@ -18,6 +18,7 @@ namespace Allors.Database.Protocol.Json
     using Derivations;
     using Domain;
     using Meta;
+    using Ranges;
     using Services;
     using User = Domain.User;
 
@@ -31,6 +32,7 @@ namespace Allors.Database.Protocol.Json
             var databaseServices = transaction.Database.Services();
             var metaCache = databaseServices.Get<IMetaCache>();
 
+            this.Ranges = databaseServices.Get<IRanges>();
             this.User = transactionServices.User;
             this.AccessControlLists = new WorkspaceAccessControlLists(workspaceName, this.User);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(workspaceName);
@@ -44,7 +46,10 @@ namespace Allors.Database.Protocol.Json
             this.UnitConvert = new UnitConvert();
         }
 
+
         public ITransaction Transaction { get; }
+
+        public IRanges Ranges { get; }
 
         public User User { get; }
 
@@ -74,7 +79,7 @@ namespace Allors.Database.Protocol.Json
 
         public PullResponse Pull(PullRequest pullRequest)
         {
-            var response = new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert);
+            var response = new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges);
             return response.Build(pullRequest);
         }
 
@@ -104,17 +109,17 @@ namespace Allors.Database.Protocol.Json
                 }
             }
 
-            var responseBuilder = new SyncResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, Prefetch, this.UnitConvert);
+            var responseBuilder = new SyncResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, Prefetch, this.UnitConvert, this.Ranges);
             return responseBuilder.Build(syncRequest);
         }
 
         public SecurityResponse Security(SecurityRequest securityRequest)
         {
-            var responseBuilder = new SecurityResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses);
+            var responseBuilder = new SecurityResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.Ranges);
             return responseBuilder.Build(securityRequest);
         }
 
         // TODO: Delete
-        public PullResponseBuilder CreatePullResponseBuilder() => new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert);
+        public PullResponseBuilder CreatePullResponseBuilder() => new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges);
     }
 }

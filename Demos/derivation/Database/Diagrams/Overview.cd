@@ -3,7 +3,7 @@
   <Interface Name="Allors.Domain.Person">
     <Position X="3.25" Y="3.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAEAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <HashCode>AAAAAEAAQAAAAAABAAAQAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
@@ -19,31 +19,17 @@
   </Interface>
   <Interface Name="Allors.Domain.Scoreboard">
     <Position X="1.25" Y="0.75" Width="1.5" />
-    <AssociationLine Name="__AccumulatedScores" Type="Allors.Domain.Score" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="1.375" Y="1.747" />
-        <Point X="1.375" Y="5.948" />
-        <Point X="8" Y="5.948" />
-        <Point X="8" Y="4.483" />
-      </Path>
-    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>QAQAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAACAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Players" />
       <Property Name="Games" />
-      <Property Name="__AccumulatedScores" />
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.Game">
     <Position X="4" Y="0.75" Width="1.5" />
-    <AssociationLine Name="__Scores" Type="Allors.Domain.Score">
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="0.068" Y="0.081" />
-      </MemberNameLabel>
-    </AssociationLine>
     <AssociationLine Name="Winners" Type="Allors.Domain.Person">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.076" Y="0.272" />
@@ -60,19 +46,19 @@
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAABAAAAAAAAAAAAAAAAEgAAQAAAEAAAAAAEAAAAY=</HashCode>
+      <HashCode>AAAAABAAAAAAAAAAAAAAAAAiAAAAAAEAAgAABEAAAAI=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="__Scores" />
-      <Property Name="GameType" />
       <Property Name="Winners" />
       <Property Name="Declarers" />
       <Property Name="_Defenders" />
+      <Property Name="_Scores" />
+      <Property Name="GameMode" />
     </ShowAsAssociation>
   </Interface>
-  <Interface Name="Allors.Domain.GameType">
-    <Position X="7.75" Y="0.75" Width="1.5" />
+  <Interface Name="Allors.Domain.GameMode">
+    <Position X="7.5" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>

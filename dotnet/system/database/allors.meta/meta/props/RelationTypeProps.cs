@@ -38,8 +38,6 @@ namespace Allors.Database.Meta
 
         public bool IsDerived => this.relationType.IsDerived;
 
-        public bool IsSynced => this.relationType.IsSynced;
-
         public string[] WorkspaceNames => this.relationType.WorkspaceNames;
 
         public string Name => this.relationType.Name;

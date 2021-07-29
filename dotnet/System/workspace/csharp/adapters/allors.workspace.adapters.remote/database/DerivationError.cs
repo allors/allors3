@@ -12,8 +12,8 @@ namespace Allors.Workspace.Adapters.Remote
 
     public class DerivationError : IDerivationError
     {
-        private readonly ResponseDerivationError responseDerivationError;
         private readonly ISession session;
+        private readonly ResponseDerivationError responseDerivationError;
 
         public DerivationError(ISession session, ResponseDerivationError responseDerivationError)
         {
@@ -21,11 +21,11 @@ namespace Allors.Workspace.Adapters.Remote
             this.responseDerivationError = responseDerivationError;
         }
 
-        public string Message => this.responseDerivationError.e;
+        public string Message => this.responseDerivationError.m;
 
         public IEnumerable<Role> Roles =>
             from r in this.responseDerivationError.r
-            let association = this.session.GetOne<IObject>(r[0])
+            let association = this.session.Instantiate<IObject>(r[0])
             let relationType = (IRelationType)this.session.Workspace.DatabaseConnection.Configuration.MetaPopulation.FindByTag((int)r[1])
             select new Role(association, relationType);
     }

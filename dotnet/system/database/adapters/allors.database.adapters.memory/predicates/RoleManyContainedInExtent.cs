@@ -23,6 +23,6 @@ namespace Allors.Database.Adapters.Memory
             this.containingExtent = containingExtent;
         }
 
-        internal override ThreeValuedLogic Evaluate(Strategy strategy) => strategy.GetCompositeRoles<IObject>(this.roleType).Any(role => this.containingExtent.Contains(role)) ? ThreeValuedLogic.True : ThreeValuedLogic.False;
+        internal override ThreeValuedLogic Evaluate(Strategy strategy) => strategy.GetCompositesRole<IObject>(this.roleType).Any(role => this.containingExtent.Contains(role)) ? ThreeValuedLogic.True : ThreeValuedLogic.False;
     }
 }

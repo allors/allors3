@@ -28,8 +28,7 @@ namespace Allors.Workspace.Adapters
             this.id = originalRecord.id;
             this.@class = originalRecord.@class;
             this.Version = ++originalRecord.Version;
-            this.roleByRelationType = this.Import(changedRoleByRoleType, originalRecord.roleByRelationType)
-                .ToDictionary(v => v.Key, v => v.Value);
+            this.roleByRelationType = this.Import(changedRoleByRoleType, originalRecord.roleByRelationType).ToDictionary(v => v.Key, v => v.Value);
         }
 
         public long Version { get; private set; }
@@ -41,9 +40,7 @@ namespace Allors.Workspace.Adapters
             return @object;
         }
 
-        private IEnumerable<KeyValuePair<IRelationType, object>> Import(
-            IReadOnlyDictionary<IRelationType, object> changedRoleByRoleType,
-            IReadOnlyDictionary<IRelationType, object> originalRoleByRoleType = null)
+        private IEnumerable<KeyValuePair<IRelationType, object>> Import(IReadOnlyDictionary<IRelationType, object> changedRoleByRoleType, IReadOnlyDictionary<IRelationType, object> originalRoleByRoleType = null)
         {
             foreach (var roleType in this.@class.WorkspaceOriginRoleTypes)
             {
@@ -56,8 +53,7 @@ namespace Allors.Workspace.Adapters
                         yield return new KeyValuePair<IRelationType, object>(relationType, role);
                     }
                 }
-                else if (originalRoleByRoleType != null &&
-                         originalRoleByRoleType.TryGetValue(roleType.RelationType, out role))
+                else if (originalRoleByRoleType != null && originalRoleByRoleType.TryGetValue(roleType.RelationType, out role))
                 {
                     yield return new KeyValuePair<IRelationType, object>(relationType, role);
                 }

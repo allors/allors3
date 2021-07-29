@@ -8,15 +8,13 @@ export type ServicesBuilder = () => IWorkspaceServices;
 export type IdGenerator = () => number;
 
 export abstract class Database {
-  constructor(public configuration: Configuration, protected servicesBuilder: ServicesBuilder, protected idGenerator: IdGenerator) {}
+  constructor(public configuration: Configuration, private idGenerator: IdGenerator) {}
 
   abstract createWorkspace(): IWorkspace;
 
+  abstract getRecord(id: number): DatabaseRecord | undefined;
+
   abstract getPermission(cls: Class, operandType: OperandType, operation: Operations): number | undefined;
-
-  abstract onPushResponse(cls: Class, id: number): DatabaseRecord;
-
-  abstract getRecord(identity: number): DatabaseRecord | undefined;
   
   nextId(): number {
     return this.idGenerator();

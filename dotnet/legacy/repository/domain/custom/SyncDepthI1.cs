@@ -10,7 +10,6 @@ namespace Allors.Repository
     #region Allors
     [Id("FBC46730-B636-4333-989C-53D5F76A32A0")]
     #endregion
-    [Synced]
     public partial interface SyncDepthI1 : Object, DerivationCounted
     {
         #region Allors
@@ -18,7 +17,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Synced]
+        [Derived]
         SyncDepth2 SyncDepth2 { get; set; }
 
         #region Allors

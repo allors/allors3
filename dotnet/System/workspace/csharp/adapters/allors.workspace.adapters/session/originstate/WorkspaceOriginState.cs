@@ -37,10 +37,24 @@ namespace Allors.Workspace.Adapters
         {
             if (this.HasChanges)
             {
-                this.Workspace.Push(this.Id, this.Class, this.Record?.Version ?? 0, this.ChangedRoleByRelationType);
+                this.Workspace.Push(this.Id, this.Class, this.Record?.Version ?? Allors.Version.Unknown.Value, this.ChangedRoleByRelationType);
             }
 
             this.WorkspaceRecord = this.Workspace.GetRecord(this.Id);
+            this.ChangedRoleByRelationType = null;
+        }
+
+        public void OnPulled(WorkspaceResult result)
+        {
+            var newRecord = this.Workspace.GetRecord(this.Id);
+
+            if (!this.CanMerge(newRecord))
+            {
+                result.AddMergeError(this.Strategy.Object);
+                return;
+            }
+
+            this.WorkspaceRecord = newRecord;
             this.ChangedRoleByRelationType = null;
         }
     }

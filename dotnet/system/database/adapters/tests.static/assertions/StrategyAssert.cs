@@ -25,7 +25,7 @@ namespace Allors.Database.Adapters
                 }
                 else
                 {
-                    allorsObject.Strategy.GetCompositeAssociations<IObject>(associationType).ToArray();
+                    allorsObject.Strategy.GetCompositesAssociation<IObject>(associationType).ToArray();
                 }
             }
             catch
@@ -50,7 +50,7 @@ namespace Allors.Database.Adapters
                 }
                 else
                 {
-                    allorsObject.Strategy.GetCompositeAssociations<IObject>(associationType).ToArray();
+                    allorsObject.Strategy.GetCompositesAssociation<IObject>(associationType).ToArray();
                 }
             }
             catch
@@ -104,7 +104,7 @@ namespace Allors.Database.Adapters
                 }
                 else
                 {
-                    allorsObject.Strategy.GetCompositeRoles<IObject>(roleType).ToArray();
+                    allorsObject.Strategy.GetCompositesRole<IObject>(roleType).ToArray();
                 }
             }
             catch
@@ -129,7 +129,7 @@ namespace Allors.Database.Adapters
                 }
                 else
                 {
-                    allorsObject.Strategy.GetCompositeRoles<IObject>(roleType).ToArray();
+                    allorsObject.Strategy.GetCompositesRole<IObject>(roleType).ToArray();
                 }
             }
             catch

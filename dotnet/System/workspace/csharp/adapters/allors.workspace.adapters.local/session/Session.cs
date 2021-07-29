@@ -5,6 +5,7 @@
 
 namespace Allors.Workspace.Adapters.Local
 {
+    using System;
     using System.Threading.Tasks;
     using Meta;
 
@@ -24,21 +25,34 @@ namespace Allors.Workspace.Adapters.Local
             return Task.FromResult<IInvokeResult>(result);
         }
 
-        public override Task<IPullResult> Pull(params Data.Pull[] pulls)
+        public override Task<IPullResult> Call(Data.Procedure procedure, params Data.Pull[] pull)
         {
             var result = new Pull(this, this.Workspace);
-            result.Execute(pulls);
+
+            result.Execute(procedure);
+            result.Execute(pull);
 
             this.OnPulled(result);
 
             return Task.FromResult<IPullResult>(result);
         }
 
-        public override Task<IPullResult> Call(Data.Procedure procedure, params Data.Pull[] pulls)
+        public override Task<IPullResult> Pull(params Data.Pull[] pulls)
         {
-            var result = new Pull(this, this.Workspace);
+            foreach (var pull in pulls)
+            {
+                if (pull.ObjectId < 0 || pull.Object?.Id < 0)
+                {
+                    throw new ArgumentException($"Id is not in the database");
+                }
 
-            result.Execute(procedure);
+                if (pull.Object != null && pull.Object.Strategy.Class.Origin != Origin.Database)
+                {
+                    throw new ArgumentException($"Origin is not Database");
+                }
+            }
+
+            var result = new Pull(this, this.Workspace);
             result.Execute(pulls);
 
             this.OnPulled(result);
@@ -75,12 +89,7 @@ namespace Allors.Workspace.Adapters.Local
             foreach (var @object in result.Objects)
             {
                 var strategy = this.GetStrategy(@object.Id);
-                this.OnDatabasePushResponse(strategy);
-            }
-
-            if (!result.HasErrors)
-            {
-                this.PushToWorkspace(result);
+                strategy.OnDatabasePushed();
             }
 
             return Task.FromResult<IPushResult>(result);
@@ -88,7 +97,7 @@ namespace Allors.Workspace.Adapters.Local
 
         public override T Create<T>(IClass @class)
         {
-            var workspaceId = this.Workspace.WorkspaceIdGenerator.Next();
+            var workspaceId = this.Workspace.DatabaseConnection.NextId();
             var strategy = new Strategy(this, @class, workspaceId);
             this.AddStrategy(strategy);
 
@@ -106,15 +115,13 @@ namespace Allors.Workspace.Adapters.Local
             return (T)strategy.Object;
         }
 
-        public override Adapters.Strategy InstantiateDatabaseStrategy(long id)
+        private void InstantiateDatabaseStrategy(long id)
         {
             var databaseRecord = this.Workspace.DatabaseConnection.GetRecord(id);
             var strategy = new Strategy(this, (DatabaseRecord)databaseRecord);
             this.AddStrategy(strategy);
 
             this.ChangeSetTracker.OnInstantiated(strategy);
-
-            return strategy;
         }
 
         protected override Adapters.Strategy InstantiateWorkspaceStrategy(long id)
@@ -141,7 +148,7 @@ namespace Allors.Workspace.Adapters.Local
             {
                 if (this.StrategyByWorkspaceId.TryGetValue(databaseObject.Id, out var strategy))
                 {
-                    ((DatabaseOriginState)strategy.DatabaseOriginState).OnPulled();
+                    strategy.DatabaseOriginState.OnPulled(pull);
                 }
                 else
                 {

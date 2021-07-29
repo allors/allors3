@@ -34,7 +34,7 @@ namespace Allors.Database.Meta
         IEnumerable<IMethodType> InheritedMethodTypes { get; }
 
         IEnumerable<IMethodType> ExclusiveMethodTypes { get; }
-        
+
         bool ExistDatabaseClass { get; }
 
         IEnumerable<IClass> DatabaseClasses { get; }
@@ -42,8 +42,6 @@ namespace Allors.Database.Meta
         bool ExistExclusiveDatabaseClass { get; }
 
         IClass ExclusiveDatabaseClass { get; }
-
-        bool IsSynced { get; }
 
         bool ExistSupertype(IInterface @interface);
 

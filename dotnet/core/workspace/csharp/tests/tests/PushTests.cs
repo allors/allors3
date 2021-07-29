@@ -35,19 +35,19 @@ namespace Tests.Workspace
 
             foreach (var roleType in this.M.C1.RoleTypes)
             {
-                Assert.False(newObject.Strategy.Exist(roleType));
+                Assert.False(newObject.Strategy.ExistRole(roleType));
             }
 
             foreach (var associationType in this.M.C1.AssociationTypes)
             {
                 if (associationType.IsOne)
                 {
-                    var association = newObject.Strategy.GetComposite<IObject>(associationType);
+                    var association = newObject.Strategy.GetCompositeAssociation<IObject>(associationType);
                     Assert.Null(association);
                 }
                 else
                 {
-                    var association = newObject.Strategy.GetComposites<IObject>(associationType);
+                    var association = newObject.Strategy.GetCompositesAssociation<IObject>(associationType);
                     Assert.Empty(association);
                 }
             }
@@ -87,7 +87,7 @@ namespace Tests.Workspace
             };
 
             var result = await session.Pull(pull);
-            var c1a = result.GetCollection<C1>().First();
+            var c1a = result.GetCollection<C1>()[0];
 
             c1a.C1AllorsString = "X";
 
@@ -168,33 +168,11 @@ namespace Tests.Workspace
             person.FirstName = "Johny";
             person.LastName = "Doey";
 
-            Assert.Equal(Version.Unknown.Value, person.Strategy.Version);
+            Assert.Equal(Version.WorkspaceInitial.Value, person.Strategy.Version);
 
             Assert.False((await session.Push()).HasErrors);
 
-            Assert.Equal(Version.Unknown.Value, person.Strategy.Version);
-        }
-
-
-        [Fact]
-        public async void PushShouldNotSync()
-        {
-            await this.Login("administrator");
-
-            var session = this.Workspace.CreateSession();
-
-            var c1 = session.Create<C1>();
-            c1.C1AllorsString = "A string";
-            c1.C1C1One2One = c1;
-            c1.AddC1C1One2Many(c1);
-
-            Assert.Equal(Version.Unknown.Value, c1.Strategy.Version);
-
-            Assert.False((await session.Push()).HasErrors);
-
-            Assert.Throws<Exception>(() => c1.C1AllorsString);
-            Assert.Throws<Exception>(() => c1.C1C1One2One);
-            Assert.Throws<Exception>(() => c1.C1C1One2Manies.Any());
+            Assert.Equal(Version.WorkspaceInitial.Value, person.Strategy.Version);
         }
 
         [Fact]
@@ -218,6 +196,36 @@ namespace Tests.Workspace
             Assert.False((await session.Pull(pull)).HasErrors);
 
             Assert.Equal("Johny Doey", person.DomainFullName);
+        }
+
+        [Fact]
+        public async void PushTwice()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var c1x_1 = session.Create<C1>();
+            var c1y_2 = session.Create<C1>();
+
+            await session.Push();
+
+            var result = await session.Pull(new Pull { Object = c1y_2 });
+
+            var c1y_1 = (C1)result.Objects.Values.First();
+
+            if (!c1x_1.CanWriteC1C1Many2One)
+            {
+                await session.Pull(new Pull { Object = c1x_1 });
+            }
+
+            c1x_1.C1C1Many2One = c1y_1;
+
+            var pushResult = await session.Push();
+            Assert.False(pushResult.HasErrors);
+
+            pushResult = await session.Push();
+            Assert.False(pushResult.HasErrors);
         }
     }
 }

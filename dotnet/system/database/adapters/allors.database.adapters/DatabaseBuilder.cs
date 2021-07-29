@@ -61,7 +61,7 @@ namespace Allors.Database.Adapters
                     });
 
                 default:
-                    throw new NotSupportedException(adapter);
+                    throw new ArgumentOutOfRangeException(adapter);
             }
         }
     }

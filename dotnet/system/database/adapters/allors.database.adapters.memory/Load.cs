@@ -1,4 +1,4 @@
-// <copyright file="Load.cs" company="Allors bvba">
+// <copyright file="Import.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -160,7 +160,7 @@ namespace Allors.Database.Adapters.Memory
                                     var objectId = long.Parse(objectArray[0]);
                                     var objectVersion = objectArray.Length > 1
                                         ? long.Parse(objectArray[1])
-                                        : (long) Version.Initial;
+                                        : (long) Version.DatabaseInitial;
 
                                     if (objectType is IClass)
                                     {

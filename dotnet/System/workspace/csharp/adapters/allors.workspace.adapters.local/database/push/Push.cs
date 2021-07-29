@@ -13,7 +13,7 @@ namespace Allors.Workspace.Adapters.Local
     using Database.Meta;
     using Database.Security;
     using Database.Services;
-    using Numbers;
+    using Ranges;
 
     public class Push : Result, IPushResult
     {
@@ -50,8 +50,6 @@ namespace Allors.Workspace.Adapters.Local
         private Func<IClass, IObject> Build { get; }
 
         private Func<IValidation> Derive { get; }
-
-        private INumbers Numbers => this.Workspace.Numbers;
 
         internal void Execute(PushToDatabaseTracker tracker)
         {
@@ -153,6 +151,8 @@ namespace Allors.Workspace.Adapters.Local
             var roleTypes = composite.DatabaseRoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0);
             var acl = this.AccessControlLists[obj];
 
+            var ranges = this.Workspace.Ranges;
+
             foreach (var keyValuePair in local.DatabaseOriginState.ChangedRoleByRelationType)
             {
                 var relationType = keyValuePair.Key;
@@ -186,14 +186,19 @@ namespace Allors.Workspace.Adapters.Local
 
                         obj.Strategy.SetCompositeRole(roleType, role);
                     }
-                    else if (this.ObjectByNewId == null)
-                    {
-                        var roles = this.Transaction.Instantiate(this.Numbers.Enumerate(roleValue));
-                        obj.Strategy.SetCompositeRoles(roleType, this.GetRoles(roles));
-                    }
                     else
                     {
-                        obj.Strategy.SetCompositeRoles(roleType, this.GetRoles(roleValue));
+                        var objectIds = ranges.Ensure(roleValue);
+
+                        if (this.ObjectByNewId == null)
+                        {
+                            var roles = this.Transaction.Instantiate(objectIds);
+                            obj.Strategy.SetCompositesRole(roleType, roles);
+                        }
+                        else
+                        {
+                            obj.Strategy.SetCompositesRole(roleType, this.GetRoles(objectIds));
+                        }
                     }
                 }
                 else
@@ -203,15 +208,15 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        private IEnumerable<IObject> GetRoles(object ids)
+        private IEnumerable<IObject> GetRoles(IRange ids)
         {
-            foreach (var v in this.Numbers.Enumerate(ids).Where(v => v < 0))
+            foreach (var v in ids.Where(v => v < 0))
             {
                 this.ObjectByNewId.TryGetValue(v, out var role);
                 yield return role;
-            };
+            }
 
-            var existingIds = this.Numbers.Enumerate(ids).Where(v => v > 0);
+            var existingIds = ids.Where(v => v > 0);
             foreach (var role in this.Transaction.Instantiate(existingIds))
             {
                 yield return role;

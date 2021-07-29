@@ -113,7 +113,7 @@ namespace Allors.Database.Data
                             }
                             else
                             {
-                                foreach (var role in @object.Strategy.GetCompositeRoles<IObject>(roleType))
+                                foreach (var role in @object.Strategy.GetCompositesRole<IObject>(roleType))
                                 {
                                     objects.Add(role);
                                     foreach (var node in this.Nodes)
@@ -140,7 +140,7 @@ namespace Allors.Database.Data
                         }
                         else
                         {
-                            foreach (var association in @object.Strategy.GetCompositeAssociations<IObject>(associationType))
+                            foreach (var association in @object.Strategy.GetCompositesAssociation<IObject>(associationType))
                             {
                                 objects.Add(association);
                                 foreach (var node in this.Nodes)

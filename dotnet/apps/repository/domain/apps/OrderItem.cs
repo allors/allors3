@@ -167,7 +167,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Synced]
+        [Derived]
         Order SyncedOrder { get; set; }
 
         #region Allors
