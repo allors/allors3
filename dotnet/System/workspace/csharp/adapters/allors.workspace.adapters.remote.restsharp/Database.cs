@@ -24,7 +24,7 @@ namespace Allors.Workspace.Adapters.Remote.ResthSharp
     {
         private readonly Client client;
 
-        public DatabaseConnection(Configuration configuration, Func<IWorkspaceServices> servicesBuilder, Client client, IdGenerator idGenerator, IRanges ranges) : base(configuration, servicesBuilder, idGenerator, ranges)
+        public DatabaseConnection(Configuration configuration, Func<IWorkspaceServices> servicesBuilder, Client client, IdGenerator idGenerator, IRanges ranges) : base(configuration, idGenerator, servicesBuilder, ranges)
         {
             this.client = client;
             this.UnitConvert = new UnitConvert();

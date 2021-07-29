@@ -32,6 +32,7 @@ export class DatabaseRecord extends SystemDatabaseRecord {
           const relationType = metaPopulation.metaObjectByTag.get(v.t) as RelationType;
           const roleType = relationType.roleType;
           const objectType = roleType.objectType;
+
           let role: unknown;
 
           if (objectType.isUnit) {

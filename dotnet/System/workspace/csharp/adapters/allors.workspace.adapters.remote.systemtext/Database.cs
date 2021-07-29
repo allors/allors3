@@ -27,7 +27,7 @@ namespace Allors.Workspace.Adapters.Remote.SystemText
     {
         private string userId;
 
-        public DatabaseConnection(Configuration configuration, Func<IWorkspaceServices> servicesBuilder, HttpClient httpClient, IdGenerator idGenerator, IRanges ranges) : base(configuration, servicesBuilder, idGenerator, ranges)
+        public DatabaseConnection(Configuration configuration, Func<IWorkspaceServices> servicesBuilder, HttpClient httpClient, IdGenerator idGenerator, IRanges ranges) : base(configuration, idGenerator, servicesBuilder, ranges)
         {
             this.HttpClient = httpClient;
             this.HttpClient.DefaultRequestHeaders.Accept.Clear();

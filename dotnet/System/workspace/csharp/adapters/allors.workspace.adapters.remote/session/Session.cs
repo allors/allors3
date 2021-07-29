@@ -90,8 +90,8 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var pushRequest = new PushRequest
             {
-                n = this.PushToDatabaseTracker.Created?.Select(v => ((Strategy)v).DatabasePushNew()).ToArray(),
-                o = this.PushToDatabaseTracker.Changed?.Select(v => ((Strategy)v.Strategy).DatabasePushExisting()).ToArray()
+                n = this.PushToDatabaseTracker.Created?.Select(v => ((DatabaseOriginState)((Strategy)v).DatabaseOriginState).PushNew()).ToArray(),
+                o = this.PushToDatabaseTracker.Changed?.Select(v => ((DatabaseOriginState)((Strategy)v.Strategy).DatabaseOriginState).PushExisting()).ToArray()
             };
             var pushResponse = await this.Workspace.DatabaseConnection.Push(pushRequest);
 
@@ -100,13 +100,13 @@ namespace Allors.Workspace.Adapters.Remote
                 return new PushResult(this, pushResponse);
             }
 
+
             if (pushResponse.n != null)
             {
                 foreach (var pushResponseNewObject in pushResponse.n)
                 {
                     var workspaceId = pushResponseNewObject.w;
                     var databaseId = pushResponseNewObject.d;
-
                     this.OnDatabasePushResponseNew(workspaceId, databaseId);
                 }
             }
@@ -142,7 +142,6 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             this.ChangeSetTracker.OnCreated(strategy);
-
             return (T)strategy.Object;
         }
 
@@ -197,7 +196,6 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     var securityResponse = await database.Security(securityRequest);
                     securityRequest = database.SecurityResponse(securityResponse);
-
                     if (securityRequest != null)
                     {
                         securityResponse = await database.Security(securityRequest);

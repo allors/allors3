@@ -3,7 +3,6 @@ import { Class, RelationType } from '@allors/workspace/meta/system';
 import { Database } from '../Database/Database';
 import { WorkspaceRecord } from './WorkspaceRecord';
 
-// TODO: Koen
 export abstract class Workspace implements IWorkspace {
   workspaceClassByWorkspaceId: Map<number, Class>;
 
@@ -20,8 +19,8 @@ export abstract class Workspace implements IWorkspace {
 
   abstract createSession(): ISession;
 
-  getRecord(identity: number): WorkspaceRecord | undefined {
-    return this.recordById.get(identity);
+  getRecord(id: number): WorkspaceRecord | undefined {
+    return this.recordById.get(id);
   }
 
   push(id: number, cls: Class, version: number, changedRoleByRoleType: Map<RelationType, unknown> | undefined): void {
@@ -34,11 +33,11 @@ export abstract class Workspace implements IWorkspace {
 
     ids.add(id);
 
-    const originalWorkspaceObject = this.recordById.get(id);
-    if (originalWorkspaceObject == null) {
+    const originalWorkspaceRecord = this.recordById.get(id);
+    if (originalWorkspaceRecord == null) {
       this.recordById.set(id, new WorkspaceRecord(cls, id, ++version, changedRoleByRoleType));
     } else {
-      this.recordById.set(id, WorkspaceRecord.fromOriginal(originalWorkspaceObject, changedRoleByRoleType));
+      this.recordById.set(id, WorkspaceRecord.fromOriginal(originalWorkspaceRecord, changedRoleByRoleType));
     }
   }
 }

@@ -11,7 +11,7 @@ export class DerivationError implements IDerivationError {
   get roles(): Role[] {
     return this.responseDerivationError.r.map((r) => {
       return {
-        object: this.session.getOne(r[0]),
+        object: this.session.instantiate(r[0]),
         relationType: this.session.workspace.database.configuration.metaPopulation.metaObjectByTag.get(r[1]),
       } as Role;
     });

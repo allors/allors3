@@ -24,5 +24,5 @@ export * from './lib/workspace/WorkspaceRecord'
 
 export * from './lib/Configuration'
 export * from './lib/IRecord'
-export * from './lib/ObjectFactory'
+export * from './lib/PrototypeObjectFactory'
 export * from './lib/Version'

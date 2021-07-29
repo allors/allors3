@@ -5,10 +5,10 @@ import { Strategy } from '../session/Strategy';
 export class WorkspaceRecord implements IRecord {
   constructor(public cls: Class, public id: number, public version: number, public roleByRelationType: Map<RelationType, any>) {}
 
-  static fromOriginal(originalWorkspaceObject: WorkspaceRecord, changedRoleByRoleType: Map<RelationType, unknown>): WorkspaceRecord {
-    const cls = originalWorkspaceObject.cls;
+  static fromOriginal(originalRecord: WorkspaceRecord, changedRoleByRoleType: Map<RelationType, unknown>): WorkspaceRecord {
+    const cls = originalRecord.cls;
 
-    const originalRoleByRelationType = originalWorkspaceObject.roleByRelationType;
+    const originalRoleByRelationType = originalRecord.roleByRelationType;
 
     const roleByRelationType = new Map(
       Array.from(cls.roleTypes)
@@ -28,13 +28,13 @@ export class WorkspaceRecord implements IRecord {
               }
             }
           } else {
-            const role = originalWorkspaceObject.roleByRelationType.get(relationType) as unknown;
+            const role = originalRecord.roleByRelationType.get(relationType) as unknown;
             return [relationType, role];
           }
         })
     );
 
-    return new WorkspaceRecord(cls, originalWorkspaceObject.id, ++originalWorkspaceObject.version, roleByRelationType);
+    return new WorkspaceRecord(cls, originalRecord.id, ++originalRecord.version, roleByRelationType);
   }
 
   getRole(roleType: RoleType): unknown {

@@ -3,6 +3,8 @@ import { IUnit } from '../../runtime/Types';
 import { IResult } from '../IResult';
 
 export interface IPullResult extends IResult {
+  mergeErrors: IObject[];
+
   collections: Map<string, ReadonlyArray<IObject>>;
 
   objects: Map<string, IObject>;

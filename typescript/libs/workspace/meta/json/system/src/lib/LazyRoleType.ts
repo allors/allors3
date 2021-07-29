@@ -8,6 +8,7 @@ import { InternalUnit } from './internal/InternalUnit';
 import { LazyAssociationType } from './LazyAssociationType';
 import { InternalComposite } from './internal/InternalComposite';
 import { Lookup } from './utils/Lookup';
+import { Console } from 'node:console';
 
 export class LazyRoleType implements InternalRoleType {
   readonly isRoleType = true;
@@ -34,7 +35,7 @@ export class LazyRoleType implements InternalRoleType {
   private _pluralName?: string;
 
   constructor(public relationType: InternalRelationType, associationObjectType: InternalComposite, roleObjectType: InternalObjectType, multiplicity: Multiplicity, data: RelationTypeData, lookup: Lookup) {
-    this.isOne = (multiplicity & 2) == 0;
+    this.isOne = (multiplicity & 1) == 0;
     this.isMany = !this.isOne;
     this.origin = relationType.origin;
     this.operandTag = relationType.tag;
@@ -49,6 +50,10 @@ export class LazyRoleType implements InternalRoleType {
 
     this.singularName = (!Number.isInteger(v0) ? (v0 as string) : undefined) ?? this.objectType.singularName;
     this._pluralName = !Number.isInteger(v1) ? (v1 as string) : undefined;
+
+    if (this.singularName === 'C1C2One2Many') {
+      console.debug(this);
+    }
 
     if (this.objectType.isUnit) {
       const unit = this.objectType as InternalUnit;

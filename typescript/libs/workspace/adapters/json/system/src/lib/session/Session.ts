@@ -3,24 +3,23 @@ import { Session as SystemSession } from '@allors/workspace/adapters/system';
 import { IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, ISessionServices, Method, Procedure, Pull } from '@allors/workspace/domain/system';
 import { Class, Origin } from '@allors/workspace/meta/system';
 import { procedureToJson, pullToJson } from '../json/toJson';
-import { Database } from './Database';
-import { DatabaseOriginState } from './DatabaseOriginState';
-import { DatabaseRecord } from './DatabaseRecord';
-import { InvokeResult } from './invoke/InvokeResult';
-import { PullResult } from './pull/PullResult';
-import { PushResult } from './push/PushResult';
+import { Database } from '../database/Database';
+import { DatabaseRecord } from '../database/DatabaseRecord';
+import { InvokeResult } from '../database/invoke/InvokeResult';
+import { PullResult } from '../database/pull/PullResult';
+import { PushResult } from '../database/push/PushResult';
+import { Workspace } from '../workspace/Workspace';
+import { DatabaseOriginState } from './originstate/DatabaseOriginState';
 import { Strategy } from './Strategy';
-import { Workspace } from './Workspace';
 
 export class Session extends SystemSession {
-  get database(): Database {
-    return this.workspace.database as Database;
-  }
+  database: Database;
 
   constructor(workspace: Workspace, services: ISessionServices) {
     super(workspace, services);
 
     this.services.onInit(this);
+    this.database = this.workspace.database as Database;
   }
 
   async invoke(methods: Method[], options: InvokeOptions): Promise<IInvokeResult> {
@@ -41,17 +40,27 @@ export class Session extends SystemSession {
           : null,
     };
 
-    const response = await this.database.invoke(invokeRequest);
-    return new InvokeResult(this, response);
+    const invokeResponse = await this.database.invoke(invokeRequest);
+    return new InvokeResult(this, invokeResponse);
   }
 
   async pull(pulls: Pull[]): Promise<IPullResult> {
+    for (const pull of pulls) {
+      if (pull.objectId < 0 || pull.object?.id < 0) {
+        throw new Error('Id is not in the database');
+      }
+
+      if (pull.object != null && pull.object.strategy.cls.origin != Origin.Database) {
+        throw new Error('Origin is not Database');
+      }
+    }
+
     const pullRequest: PullRequest = {
       l: pulls.map((v) => pullToJson(v)),
     };
 
-    const result = await this.database.pull(pullRequest);
-    return this.OnPull(result);
+    const pullResponse = await this.database.pull(pullRequest);
+    return await this.onPull(pullResponse);
   }
 
   async call(procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult> {
@@ -60,8 +69,8 @@ export class Session extends SystemSession {
       l: pulls.map((v) => pullToJson(v)),
     };
 
-    const response = await this.database.pull(pullRequest);
-    return await this.OnPull(response);
+    const pullResponse = await this.database.pull(pullRequest);
+    return await this.onPull(pullResponse);
   }
 
   async push(): Promise<IPushResult> {
@@ -72,39 +81,38 @@ export class Session extends SystemSession {
 
     const pushResponse = await this.database.push(pushRequest);
 
-    const result = new PushResult(this, pushResponse);
+    const pushResult = new PushResult(this, pushResponse);
 
-    if(result.hasErrors){
-      return result;
+    if (pushResult.hasErrors) {
+      return pushResult;
     }
 
-    if ((pushResponse.n != null)) {
-        for (let pushResponseNewObject of pushResponse.n) {
-            let workspaceId = pushResponseNewObject.w;
-            let databaseId = pushResponseNewObject.d;
-            this.onDatabasePushResponseNew(workspaceId, databaseId);
-        }
+    if (pushResponse.n != null) {
+      for (const pushResponseNewObject of pushResponse.n) {
+        const workspaceId = pushResponseNewObject.w;
+        const databaseId = pushResponseNewObject.d;
+        this.onDatabasePushResponseNew(workspaceId, databaseId);
+      }
     }
 
     this.pushToDatabaseTracker.created = null;
+    this.pushToDatabaseTracker.changed = null;
 
-    if ((pushRequest.o != null)) {
-        for (let id of pushRequest.o.map(v => v.d)) {
-            let strategy = this.getStrategy(id);
-            this.onDatabasePushResponse(strategy);
-        }
-
+    if (pushRequest.o != null) {
+      for (const id of pushRequest.o.map((v) => v.d)) {
+        const strategy = this.getStrategy(id);
+        strategy.onDatabasePushed();
+      }
     }
 
-    if (!result.hasErrors) {
-        this.PushToWorkspace(result);
-    }
+    return pushResult;
   }
 
   create<T extends IObject>(cls: Class): T {
     const workspaceId = this.workspace.database.nextId();
     const strategy = new Strategy(this, cls, workspaceId);
     this.addStrategy(strategy);
+
     if (cls.origin != Origin.Session) {
       this.pushToWorkspaceTracker.onCreated(strategy);
       if (cls.origin == Origin.Database) {
@@ -116,12 +124,11 @@ export class Session extends SystemSession {
     return strategy.object as T;
   }
 
-  instantiateDatabaseStrategy(id: number): Strategy {
+  instantiateDatabaseStrategy(id: number): void {
     const databaseRecord = this.workspace.database.getRecord(id) as DatabaseRecord;
     const strategy = Strategy.fromDatabaseRecord(this, databaseRecord);
     this.addStrategy(strategy);
     this.changeSetTracker.onInstantiated(strategy);
-    return strategy;
   }
 
   instantiateWorkspaceStrategy(id: number): Strategy {
@@ -130,24 +137,31 @@ export class Session extends SystemSession {
     }
 
     const cls = this.workspace.workspaceClassByWorkspaceId.get(id);
+
     const strategy = new Strategy(this, cls, id);
     this.addStrategy(strategy);
+
     this.changeSetTracker.onInstantiated(strategy);
+
     return strategy;
   }
 
-  private async OnPull(pullResponse: PullResponse): Promise<IPullResult> {
+  private async onPull(pullResponse: PullResponse): Promise<IPullResult> {
+
+    const pullResult = new PullResult(this, pullResponse);
+
     const syncRequest = (this.workspace.database as Database).onPullResonse(pullResponse);
     if (syncRequest.o.length > 0) {
       const database = this.workspace.database as Database;
       const syncResponse = await database.sync(syncRequest);
       let securityRequest = database.onSyncResponse(syncResponse);
+
       for (const v of syncResponse.o) {
         if (!this.strategyByWorkspaceId.has(v.i)) {
           this.instantiateDatabaseStrategy(v.i);
         } else {
           const strategy = this.strategyByWorkspaceId.get(v.i);
-          strategy.DatabaseOriginState.onPulled();
+          strategy.DatabaseOriginState.onPulled(pullResult);
         }
       }
 
@@ -164,12 +178,12 @@ export class Session extends SystemSession {
     for (const v of pullResponse.p) {
       if (this.strategyByWorkspaceId.has(v.i)) {
         const strategy = this.strategyByWorkspaceId.get(v.i);
-        strategy.DatabaseOriginState.onPulled();
+        strategy.DatabaseOriginState.onPulled(pullResult);
       } else {
         this.instantiateDatabaseStrategy(v.i);
       }
     }
 
-    return new PullResult(this, pullResponse);
+    return pullResult;
   }
 }

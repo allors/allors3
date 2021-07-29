@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly Dictionary<IClass, Dictionary<IOperandType, long>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, long>> executePermissionByOperandTypeByClass;
 
-        protected DatabaseConnection(Adapters.Configuration configuration, Func<IWorkspaceServices> servicesBuilder, IdGenerator idGenerator, IRanges ranges) : base(configuration, idGenerator)
+        protected DatabaseConnection(Adapters.Configuration configuration, IdGenerator idGenerator, Func<IWorkspaceServices> servicesBuilder, IRanges ranges) : base(configuration, idGenerator)
         {
             this.Ranges = ranges;
             this.servicesBuilder = servicesBuilder;
@@ -127,8 +127,7 @@ namespace Allors.Workspace.Adapters.Remote
                     switch (operation)
                     {
                         case Operations.Read:
-                            if (!this.readPermissionByOperandTypeByClass.TryGetValue(@class,
-                                out var readPermissionByOperandType))
+                            if (!this.readPermissionByOperandTypeByClass.TryGetValue(@class, out var readPermissionByOperandType))
                             {
                                 readPermissionByOperandType = new Dictionary<IOperandType, long>();
                                 this.readPermissionByOperandTypeByClass[@class] = readPermissionByOperandType;
@@ -139,8 +138,7 @@ namespace Allors.Workspace.Adapters.Remote
                             break;
 
                         case Operations.Write:
-                            if (!this.writePermissionByOperandTypeByClass.TryGetValue(@class,
-                                out var writePermissionByOperandType))
+                            if (!this.writePermissionByOperandTypeByClass.TryGetValue(@class, out var writePermissionByOperandType))
                             {
                                 writePermissionByOperandType = new Dictionary<IOperandType, long>();
                                 this.writePermissionByOperandTypeByClass[@class] = writePermissionByOperandType;
@@ -151,8 +149,7 @@ namespace Allors.Workspace.Adapters.Remote
                             break;
 
                         case Operations.Execute:
-                            if (!this.executePermissionByOperandTypeByClass.TryGetValue(@class,
-                                out var executePermissionByOperandType))
+                            if (!this.executePermissionByOperandTypeByClass.TryGetValue(@class, out var executePermissionByOperandType))
                             {
                                 executePermissionByOperandType = new Dictionary<IOperandType, long>();
                                 this.executePermissionByOperandTypeByClass[@class] = executePermissionByOperandType;

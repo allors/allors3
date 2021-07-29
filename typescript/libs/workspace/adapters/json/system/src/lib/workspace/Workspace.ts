@@ -1,7 +1,7 @@
 import { Workspace as SystemWorkspace } from '@allors/workspace/adapters/system';
 import { ISession, IWorkspaceServices } from '@allors/workspace/domain/system';
-import { Database } from './Database';
-import { Session } from './Session';
+import { Database } from '../database/Database';
+import { Session } from '../session/Session';
 
 export class Workspace extends SystemWorkspace {
 

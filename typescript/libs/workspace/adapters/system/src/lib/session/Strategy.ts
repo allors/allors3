@@ -143,7 +143,7 @@ export abstract class Strategy implements IStrategy {
   }
 
   setUnitRole(roleType: RoleType, value: IUnit) {
-    assertUnit(roleType, value);
+    this.assertUnit(roleType, value);
 
     switch (roleType.origin) {
       case Origin.Session:
@@ -166,15 +166,13 @@ export abstract class Strategy implements IStrategy {
   setCompositeRole<T extends IObject>(roleType: RoleType, value: T) {
     this.assertComposite(value);
 
-    if (value != null)
-    {
-        this.assertSameType(roleType, value);
-        this.assertSameSession(value);
+    if (value != null) {
+      this.assertSameType(roleType, value);
+      this.assertSameSession(value);
     }
 
-    if (roleType.isMany)
-    {
-        throw new Error($"Given {nameof(roleType)} is the wrong multiplicity");
+    if (roleType.isMany) {
+      throw new Error('Wrong multiplicity');
     }
 
     switch (roleType.origin) {
@@ -300,7 +298,7 @@ export abstract class Strategy implements IStrategy {
     const composites: T[] = [];
 
     if (associationType.origin != Origin.Session) {
-      composites.push(...this.session.getCompositesAssociation<T>(this.id, associationType).map((v) => v.object as T));
+      composites.push(...this.session.getCompositesAssociation(this.id, associationType).map((v) => v.object as T));
     }
 
     const association = this.session.sessionOriginState.getCompositesRole(this.id, associationType);
@@ -368,9 +366,8 @@ export abstract class Strategy implements IStrategy {
   }
 
   assertSameSession(value: IObject) {
-    if (this.session != value.strategy.session)
-    {
-        throw new Error($"Sessions do not match");
+    if (this.session != value.strategy.session) {
+      throw new Error('Sessions do not match');
     }
   }
 
@@ -395,5 +392,4 @@ export abstract class Strategy implements IStrategy {
 
     inputs.forEach((v) => this.assertComposite(v));
   }
-
 }

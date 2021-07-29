@@ -5,7 +5,6 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
-    using Allors.Protocol.Json.Api.Push;
     using Meta;
 
     public sealed class Strategy : Adapters.Strategy
@@ -21,9 +20,5 @@ namespace Allors.Workspace.Adapters.Remote
         internal Strategy(Session session, DatabaseRecord databaseRecord) : base(session, databaseRecord) => this.DatabaseOriginState = new DatabaseOriginState(this, databaseRecord);
 
         public new Session Session => (Session)base.Session;
-
-        internal PushRequestNewObject DatabasePushNew() => ((DatabaseOriginState)this.DatabaseOriginState).PushNew();
-
-        internal PushRequestObject DatabasePushExisting() => ((DatabaseOriginState)this.DatabaseOriginState).PushExisting();
     }
 }

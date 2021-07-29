@@ -62,6 +62,7 @@ export abstract class RecordBasedOriginState {
 
   addCompositesRole(roleType: RoleType, roleToAdd: number) {
     const associationType = roleType.associationType;
+    const previousAssociation = this.session.getCompositeAssociation(roleToAdd, associationType);
 
     const previousRole = this.getCompositesRole(roleType);
 
@@ -76,7 +77,6 @@ export abstract class RecordBasedOriginState {
     }
 
     //  OneToMany
-    const previousAssociation = this.session.getCompositeAssociation(roleToAdd, associationType);
     previousAssociation?.setRole(roleType, null);
   }
 
@@ -205,7 +205,7 @@ export abstract class RecordBasedOriginState {
         if (original !== newOriginal) {
           return false;
         }
-      } else if (!equals(original, newOriginal)) {
+      } else if (!equals(original as number[], newOriginal as number[])) {
         return false;
       }
     }

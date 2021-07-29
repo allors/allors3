@@ -2,7 +2,7 @@ import { IObject, IObjectFactory, IStrategy } from '@allors/workspace/domain/sys
 import { MetaPopulation, ObjectType } from '@allors/workspace/meta/system';
 import { ObjectBase } from './ObjectBase';
 
-export class ObjectFactory implements IObjectFactory {
+export class PrototypeObjectFactory implements IObjectFactory {
   constructorByObjectType: Map<ObjectType, any>;
 
   constructor(public metaPopulation: MetaPopulation) {
@@ -89,7 +89,7 @@ export class ObjectFactory implements IObjectFactory {
 
         Object.defineProperty(prototype, methodType.name, {
           get(this: ObjectBase) {
-            return this.strategy.method(methodType);
+            return { object: this, methodType };
           },
         });
       });

@@ -10,7 +10,6 @@ import { LazyRelationType } from './LazyRelationType';
 import { LazyMethodType } from './LazyMethodType';
 import { Lookup } from './utils/Lookup';
 import { Origin, pluralize, RoleType } from '@allors/workspace/meta/system';
-import { Workspace } from '../../../../../adapters/json/system/src/lib/runtime/Workspace';
 import { ObjectTypeData } from '@allors/protocol/json/system';
 
 export abstract class LazyComposite implements InternalComposite {

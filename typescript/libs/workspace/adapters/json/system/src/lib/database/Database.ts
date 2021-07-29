@@ -5,7 +5,7 @@ import { Class, MethodType, OperandType, RelationType } from '@allors/workspace/
 import { Client } from './Client';
 import { DatabaseRecord } from './DatabaseRecord';
 import { ResponseContext } from './Security/ResponseContext';
-import { Workspace } from './Workspace';
+import { Workspace } from '../workspace/Workspace';
 
 export class Database extends SystemDatabase {
   private recordsById: Map<number, DatabaseRecord>;
@@ -103,6 +103,10 @@ export class Database extends SystemDatabase {
           case Operations.Execute:
             this.executePermissionByOperandTypeByClass.set(cls, operandType, id);
             break;
+          case Operations.Create:
+            throw new Error('Create is not supported');
+          default:
+            throw new Error('Argument out of range');
         }
       }
     }
@@ -121,7 +125,8 @@ export class Database extends SystemDatabase {
               continue;
             }
 
-            (missingPermissionIds ??= new Set()).add(permissionId);
+            missingPermissionIds ??= new Set();
+            missingPermissionIds.add(permissionId);
           }
         }
       }
@@ -134,12 +139,6 @@ export class Database extends SystemDatabase {
     }
 
     return undefined;
-  }
-
-  onPushResponse(cls: Class, id: number): DatabaseRecord {
-    const record = new DatabaseRecord(this, cls, id, 0);
-    this.recordsById.set(id, record);
-    return record;
   }
 
   getPermission(cls: Class, operandType: OperandType, operation: Operations): number | undefined {
