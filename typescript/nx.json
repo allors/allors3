@@ -19,6 +19,9 @@
     }
   },
   "projects": {
+    "angular-base-app": {
+      "tags": []
+    },
     "protocol-json-system": {
       "tags": []
     },
@@ -34,13 +37,25 @@
     "workspace-adapters-system-tests": {
       "tags": []
     },
+    "workspace-angular-base": {
+      "tags": []
+    },
+    "workspace-domain-base": {
+      "tags": []
+    },
     "workspace-domain-core": {
       "tags": []
     },
     "workspace-domain-system": {
       "tags": []
     },
+    "workspace-meta-base": {
+      "tags": []
+    },
     "workspace-meta-core": {
+      "tags": []
+    },
+    "workspace-meta-json-base": {
       "tags": []
     },
     "workspace-meta-json-core": {

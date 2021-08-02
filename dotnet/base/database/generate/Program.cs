@@ -20,7 +20,6 @@ namespace Allors.Database
             {
                 { "../Core/Database/Templates/domain.cs.stg", "DataBase/Domain/generated" },
                 { "../Core/Database/Templates/uml.cs.stg", "DataBase/domain.diagrams/generated" },
-                // { "../Core/Database/Templates/uml.java.stg", "DataBase/Diagrams.java/allors" },
             };
 
             string[,] workspace =
@@ -28,8 +27,9 @@ namespace Allors.Database
                 { "../Core/Workspace/CSharp/Templates/meta.cs.stg", "Workspace/CSharp/Meta/generated" },
                 { "../Core/Workspace/CSharp/Templates/domain.cs.stg", "Workspace/CSharp/Domain/generated" },
 
-                //{ "../Core/Workspace/Typescript/Templates/meta.ts.stg", "Workspace/Typescript/libs/meta/generated/src" },
-                //{ "../Core/Workspace/Typescript/Templates/domain.ts.stg", "Workspace/Typescript/libs/domain/generated/src" },
+                { "../../typescript/templates/workspace.meta.ts.stg", "../../typescript/libs/workspace/meta/base/src/lib/generated" },
+                { "../../typescript/templates/workspace.meta.json.ts.stg", "../../typescript/libs/workspace/meta/json/base/src/lib/generated" },
+                { "../../typescript/templates/workspace.domain.ts.stg", "../../typescript/libs/workspace/domain/base/src/lib/generated" },
             };
 
             var metaPopulation = MetaBuilder.Build();

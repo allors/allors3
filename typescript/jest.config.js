@@ -11,5 +11,10 @@ module.exports = {
     '<rootDir>/libs/workspace/domain/system',
     '<rootDir>/libs/workspace/adapters/system',
     '<rootDir>/libs/workspace/adapters/json/system-tests',
+    '<rootDir>/libs/workspace/angular/base',
+    '<rootDir>/apps/angular/base/app',
+    '<rootDir>/libs/workspace/domain/base',
+    '<rootDir>/libs/workspace/meta/base',
+    '<rootDir>/libs/workspace/meta/json/base',
   ],
 };
