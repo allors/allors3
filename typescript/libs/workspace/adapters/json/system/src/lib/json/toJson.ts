@@ -17,7 +17,7 @@ import { Extent, ExtentKind, Predicate, Procedure, Pull, Result, Select, Sort, S
 
 export function unitToJson(from: unknown): IUnit {
   if (from == null) {
-    return;
+    return null;
   }
 
   switch (typeof from) {
@@ -40,7 +40,7 @@ export function procedureToJson(from: DataProcedure): Procedure {
 
 export function pullToJson(from: DataPull): Pull {
   if (from == null) {
-    return;
+    return null;
   }
 
   return {
@@ -55,7 +55,7 @@ export function pullToJson(from: DataPull): Pull {
 
 export function extentToJson(from: DataExtent): Extent {
   if (from == null) {
-    return;
+    return null;
   }
 
   switch (from.kind) {
@@ -81,9 +81,10 @@ export function extentToJson(from: DataExtent): Extent {
 
 export function predicateToJson(from: DataPredicate): Predicate {
   if (from == null) {
-    return;
+    return null;
   }
 
+  // TODO: Koen
   switch (from.kind) {
     case 'And':
       return {
@@ -110,11 +111,13 @@ export function predicateToJson(from: DataPredicate): Predicate {
         pa: roleTypeToJson(from.path),
       };
   }
+
+  throw new Error("Not implemented yet")
 }
 
 function sortingsToJson(from: DataSort[]): Sort[] {
   if (from == null) {
-    return;
+    return null;
   }
 
   return undefined;
@@ -122,7 +125,7 @@ function sortingsToJson(from: DataSort[]): Sort[] {
 
 function resultToJson(from: DataResult): Result {
   if (from == null) {
-    return;
+    return null;
   }
 
   return {
@@ -136,7 +139,7 @@ function resultToJson(from: DataResult): Result {
 
 function selectToJson(from: DataSelect): Select {
   if (from == null) {
-    return;
+    return null;
   }
 
   return {
@@ -147,7 +150,7 @@ function selectToJson(from: DataSelect): Select {
 
 function stepToJson(from: DataStep): Step {
   if (from == null) {
-    return;
+    return null;
   }
 
   return {
@@ -160,7 +163,7 @@ function stepToJson(from: DataStep): Step {
 
 function nodeToJson(from: DataNode): Node {
   if (from == null) {
-    return;
+    return null;
   }
 
   return {
@@ -172,7 +175,7 @@ function nodeToJson(from: DataNode): Node {
 
 function argumentsToJson(from: { [name: string]: TypeForParameter }): { [name: string]: string } {
   if (from == null) {
-    return;
+    return null;
   }
 
   return undefined;
@@ -204,12 +207,16 @@ export function asAssociationTypeToJson(from: PropertyType): number {
   if (from?.isAssociationType) {
     return (from as AssociationType).relationType.tag;
   }
+
+  return null;
 }
 
 export function asRoleTypeToJson(from: PropertyType): number {
   if (from?.isRoleType) {
     return (from as RoleType).relationType.tag;
   }
+
+  return null;
 }
 
 export function objectToJson(from: IObject): number {

@@ -22,10 +22,10 @@ export class OrganisationComponent extends TestScope implements OnInit, AfterVie
   peopleFilter: SearchFactory;
 
   selected: ISessionObject;
-  people!: Person[];
-  organisation!: Organisation;
+  people: Person[];
+  organisation: Organisation;
 
-  private subscription!: Subscription;
+  private subscription: Subscription;
 
   private refresh$: BehaviorSubject<Date>;
 

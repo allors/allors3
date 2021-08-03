@@ -22,6 +22,9 @@
     "angular-base-app": {
       "tags": []
     },
+    "angular-core-app": {
+      "tags": []
+    },
     "protocol-json-system": {
       "tags": []
     },
@@ -38,6 +41,9 @@
       "tags": []
     },
     "workspace-angular-base": {
+      "tags": []
+    },
+    "workspace-angular-core": {
       "tags": []
     },
     "workspace-domain-base": {
@@ -68,6 +74,9 @@
       "tags": []
     },
     "workspace-meta-system": {
+      "tags": []
+    },
+    "workspace-meta-system-tests": {
       "tags": []
     }
   },

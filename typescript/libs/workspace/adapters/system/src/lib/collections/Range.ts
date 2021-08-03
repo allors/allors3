@@ -71,6 +71,8 @@ export function save(set: IRange) {
   } else if (set != null) {
     return [set];
   }
+
+  return null;
 }
 
 export function has(set: IRange, value: number): boolean {

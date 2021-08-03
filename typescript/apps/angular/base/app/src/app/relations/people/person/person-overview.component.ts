@@ -19,9 +19,9 @@ export class PersonOverviewComponent extends TestScope implements OnInit, AfterV
   public title: string;
   public m: Meta;
 
-  public person!: Person;
-  public locales!: Locale[];
-  private subscription!: Subscription;
+  public person: Person;
+  public locales: Locale[];
+  private subscription: Subscription;
 
   constructor(
     @Self() private allors: ContextService,

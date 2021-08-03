@@ -8,7 +8,6 @@ import { InternalUnit } from './internal/InternalUnit';
 import { LazyAssociationType } from './LazyAssociationType';
 import { InternalComposite } from './internal/InternalComposite';
 import { Lookup } from './utils/Lookup';
-import { Console } from 'node:console';
 
 export class LazyRoleType implements InternalRoleType {
   readonly isRoleType = true;

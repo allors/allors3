@@ -158,11 +158,13 @@ export abstract class Session implements ISession {
 
       return all;
     }
+
+    return null;
   }
 
   public getStrategy(id: number): Strategy {
     if (id == 0) {
-      return;
+      return null;
     }
 
     if (this.strategyByWorkspaceId.has(id)) {

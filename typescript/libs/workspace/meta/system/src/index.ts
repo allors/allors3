@@ -15,4 +15,7 @@ export * from './lib/RoleType';
 export * from './lib/Unit';
 export * from './lib/UnitTags';
 
+export * from './lib/text/humanize';
 export * from './lib/text/pluralize';
+
+export * from './lib/utils/assert';

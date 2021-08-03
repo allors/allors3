@@ -16,6 +16,7 @@ npm install date-fns
 npm install easymde
 
 npx nx g @nrwl/angular:application angular/base/app --routing=true --style=scss --e2eTestRunner=none
+npx nx g @nrwl/angular:application angular/core/app --routing=true --style=scss --e2eTestRunner=none
 
 npx nx g @nrwl/workspace:library protocol/json/system
 
@@ -25,6 +26,7 @@ npx nx g @nrwl/workspace:library workspace/adapters/system
 npx nx g @nrwl/workspace:library workspace/adapters/system-tests
 
 npx nx g @nrwl/workspace:library workspace/angular/base
+npx nx g @nrwl/workspace:library workspace/angular/core
 
 npx nx g @nrwl/workspace:library workspace/domain/base
 npx nx g @nrwl/workspace:library workspace/domain/core
@@ -37,3 +39,4 @@ npx nx g @nrwl/workspace:library workspace/meta/json/core
 npx nx g @nrwl/workspace:library workspace/meta/json/system
 npx nx g @nrwl/workspace:library workspace/meta/json/system-tests
 npx nx g @nrwl/workspace:library workspace/meta/system
+npx nx g @nrwl/workspace:library workspace/meta/system-tests

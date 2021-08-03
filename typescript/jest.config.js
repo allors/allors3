@@ -16,5 +16,8 @@ module.exports = {
     '<rootDir>/libs/workspace/domain/base',
     '<rootDir>/libs/workspace/meta/base',
     '<rootDir>/libs/workspace/meta/json/base',
+    '<rootDir>/apps/angular/core/app',
+    '<rootDir>/libs/workspace/angular/core',
+    '<rootDir>/libs/workspace/meta/system-tests',
   ],
 };
