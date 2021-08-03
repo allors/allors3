@@ -12,6 +12,8 @@ export * from './lib/api/pull/InvokeOptions';
 
 export * from './lib/api/push/IPushResult';
 
+export * from './lib/api/IClientAsync';
+
 // data
 export * from './lib/data/Node';
 export * from './lib/data/Select';
@@ -46,6 +48,7 @@ export * from './lib/runtime/diff/ICompositesDiff';
 export * from './lib/runtime/diff/IDiff';
 export * from './lib/runtime/diff/IUnitDiff';
 export * from './lib/runtime/IChangeSet';
+export * from './lib/runtime/IConfiguration';
 export * from './lib/runtime/IObject';
 export * from './lib/runtime/IObjectFactory';
 export * from './lib/runtime/ISession';

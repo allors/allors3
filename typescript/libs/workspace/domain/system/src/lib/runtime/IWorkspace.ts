@@ -1,10 +1,10 @@
-import { IDatabase } from './IDatabase';
+import { IConfiguration } from './IConfiguration';
 import { ISession } from './ISession';
 import { IWorkspaceServices } from './IWorkspaceServices';
 
 export interface IWorkspace {
 
-  database: IDatabase;
+  configuration: IConfiguration;
 
   services: IWorkspaceServices;
 

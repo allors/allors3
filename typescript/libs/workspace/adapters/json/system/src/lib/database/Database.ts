@@ -160,22 +160,6 @@ export class Database extends SystemDatabase {
     return this.recordsById.get(id);
   }
 
-  pull(pullRequest: PullRequest): Promise<PullResponse> {
-    return this.client.pull(pullRequest);
-  }
-
-  sync(syncRequest: SyncRequest): Promise<SyncResponse> {
-    return this.client.sync(syncRequest);
-  }
-
-  push(pushRequest: PushRequest): Promise<PushResponse> {
-    return this.client.push(pushRequest);
-  }
-
-  invoke(invokeRequest: InvokeRequest): Promise<InvokeResponse> {
-    return this.client.invoke(invokeRequest);
-  }
-
   security(securityRequest: SecurityRequest): Promise<SecurityResponse> {
     return this.client.security(securityRequest);
   }

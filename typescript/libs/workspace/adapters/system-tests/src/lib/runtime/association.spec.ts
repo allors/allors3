@@ -1,5 +1,4 @@
-import { Database } from '@allors/workspace/adapters/system';
-import { Pull } from '@allors/workspace/domain/system';
+import { Pull, IClientAsync, IWorkspace } from '@allors/workspace/domain/system';
 import { Fixture, name_c1C, name_c2C } from '../Fixture';
 import '../Matchers';
 import '@allors/workspace/domain/core';
@@ -10,14 +9,13 @@ it('dummy', () => {
   expect(true).toBeTruthy();
 });
 
-
-export async function initAssociation(database: Database, login: (login: string) => Promise<boolean>) {
-  fixture = new Fixture(database, login);
+export async function initAssociation(client: IClientAsync, workspace: IWorkspace, login: (login: string) => Promise<boolean>) {
+  fixture = new Fixture(client, workspace, login);
 }
 
 export async function databaseGetOne2Many() {
-  const session = fixture.workspace.createSession();
-  const m = fixture.m;
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
 
   //  Class
   const pull: Pull = {
@@ -39,7 +37,7 @@ export async function databaseGetOne2Many() {
     ],
   };
 
-  const result = await session.pull([pull]);
+  const result = await client.pullAsync(session, [pull]);
 
   const c2s = result.collection('C2s');
 

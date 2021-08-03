@@ -12,7 +12,7 @@ export class DerivationError implements IDerivationError {
     return this.responseDerivationError.r.map((r) => {
       return {
         object: this.session.instantiate(r[0]),
-        relationType: this.session.workspace.database.configuration.metaPopulation.metaObjectByTag.get(r[1]),
+        relationType: this.session.workspace.configuration.metaPopulation.metaObjectByTag.get(r[1]),
       } as Role;
     });
   }

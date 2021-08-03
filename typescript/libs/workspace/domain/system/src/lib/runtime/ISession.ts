@@ -17,14 +17,6 @@ export interface ISession {
 
   services: ISessionServices;
 
-  invoke(method: Method | Method[], options?: InvokeOptions): Promise<IInvokeResult>;
-
-  call(procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult>;
-
-  pull(pulls: Pull[]): Promise<IPullResult>;
-
-  push(): Promise<IPushResult>;
-
   pullFromWorkspace(): IWorkspaceResult;
 
   pushToWorkspace(): IWorkspaceResult;

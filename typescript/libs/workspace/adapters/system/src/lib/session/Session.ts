@@ -6,8 +6,7 @@ import { ChangeSetTracker } from './trackers/ChangSetTracker';
 import { PushToDatabaseTracker } from './trackers/PushToDatabaseTracker';
 import { PushToWorkspaceTracker } from './trackers/PushToWorkspaceTracker';
 import { ChangeSet } from './ChangeSet';
-import { enumerate } from '../collections/Range';
-import { AssociationType, Class, Composite, Origin, RoleType } from '@allors/workspace/meta/system';
+import { AssociationType, Class, Composite, Origin } from '@allors/workspace/meta/system';
 import { WorkspaceResult } from '../workspace/WorkspaceResult';
 
 export function isNewId(id: number): boolean {
@@ -38,14 +37,6 @@ export abstract class Session implements ISession {
   }
 
   abstract create(cls: Composite): IObject;
-
-  abstract invoke(method: Method | Method[], options?: InvokeOptions): Promise<IResult>;
-
-  abstract call(procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult>;
-
-  abstract pull(pulls: Pull[]): Promise<IPullResult>;
-
-  abstract push(): Promise<IResult>;
 
   pullFromWorkspace(): IWorkspaceResult {
     const result = new WorkspaceResult();
@@ -217,7 +208,7 @@ export abstract class Session implements ISession {
     strategies.add(strategy);
   }
 
-  protected onDatabasePushResponseNew(workspaceId: number, databaseId: number) {
+  onDatabasePushResponseNew(workspaceId: number, databaseId: number) {
     const strategy = this.strategyByWorkspaceId[workspaceId];
     this.pushToDatabaseTracker.created.delete(strategy);
     strategy.OnDatabasePushNewId(databaseId);

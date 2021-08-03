@@ -1,9 +1,12 @@
-import { ISession, IWorkspace, IWorkspaceServices } from '@allors/workspace/domain/system';
+import { IConfiguration, ISession, IWorkspace, IWorkspaceServices } from '@allors/workspace/domain/system';
 import { Class, RelationType } from '@allors/workspace/meta/system';
 import { Database } from '../Database/Database';
 import { WorkspaceRecord } from './WorkspaceRecord';
 
 export abstract class Workspace implements IWorkspace {
+
+  configuration: IConfiguration;
+
   workspaceClassByWorkspaceId: Map<number, Class>;
 
   workspaceIdsByWorkspaceClass: Map<Class, Set<number>>;

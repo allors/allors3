@@ -50,10 +50,6 @@ export class LazyRoleType implements InternalRoleType {
     this.singularName = (!Number.isInteger(v0) ? (v0 as string) : undefined) ?? this.objectType.singularName;
     this._pluralName = !Number.isInteger(v1) ? (v1 as string) : undefined;
 
-    if (this.singularName === 'C1C2One2Many') {
-      console.debug(this);
-    }
-
     if (this.objectType.isUnit) {
       const unit = this.objectType as InternalUnit;
       if (unit.isString || unit.isDecimal) {

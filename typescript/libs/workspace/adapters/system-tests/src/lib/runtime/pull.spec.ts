@@ -1,5 +1,4 @@
-import { Database } from '@allors/workspace/adapters/system';
-import { Pull } from '@allors/workspace/domain/system';
+import { IClientAsync, IWorkspace, Pull } from '@allors/workspace/domain/system';
 import { Fixture, name_c1B, name_c2B } from '../Fixture';
 import '../Matchers';
 import '@allors/workspace/domain/core';
@@ -10,13 +9,13 @@ it('dummy', () => {
   expect(true).toBeTruthy();
 });
 
-export async function initPull(database: Database, login: (login: string) => Promise<boolean>) {
-  fixture = new Fixture(database, login);
+export async function initPull(client: IClientAsync, workspace: IWorkspace, login: (login: string) => Promise<boolean>) {
+  fixture = new Fixture(client, workspace, login);
 }
 
 export async function andGreaterThanLessThan() {
-  const session = fixture.workspace.createSession();
-  const m = fixture.m;
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
 
   //  Class
   let pull: Pull = {
@@ -41,7 +40,7 @@ export async function andGreaterThanLessThan() {
     },
   };
 
-  let result = await session.pull([pull]);
+  let result = await client.pullAsync(session, [pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -74,7 +73,7 @@ export async function andGreaterThanLessThan() {
     },
   };
 
-  result = await session.pull([pull]);
+  result = await client.pullAsync(session, [pull]);
 
   expect(result.collections.size).toEqual(1);
   expect(result.objects.size).toBe(0);
