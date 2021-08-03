@@ -4,8 +4,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { BehaviorSubject } from 'rxjs';
 
-import { Action } from '@allors/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
+
+import { Action } from '../../../components/actions/Action';
 
 import { TableConfig } from './TableConfig';
 import { BaseTable } from './BaseTable';

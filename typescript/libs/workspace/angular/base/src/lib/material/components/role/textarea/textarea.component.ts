@@ -3,7 +3,7 @@ import { NgForm } from '@angular/forms';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { take } from 'rxjs/operators';
 
-import { RoleField } from '@allors/angular/core';
+import { RoleField } from '../../../../components/forms/RoleField';
 
 @Component({
   // tslint:disable-next-line:component-selector

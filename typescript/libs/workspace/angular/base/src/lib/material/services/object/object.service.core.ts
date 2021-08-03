@@ -2,11 +2,14 @@ import { Injectable, Inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, throwError } from 'rxjs';
 
-import { IObject, IObject } from '@allors/workspace/domain/system';
-import { Context } from '@allors/angular/services/core';
+import { IObject } from '@allors/workspace/domain/system';
 import { ObjectType } from '@allors/workspace/meta/system';
-import { ObjectService, OBJECT_CREATE_TOKEN, OBJECT_EDIT_TOKEN, ObjectData } from '@allors/angular/material/services/core';
 
+import { Context } from '../../../services/framework/Context';
+
+import { ObjectService } from './object.service';
+import { OBJECT_CREATE_TOKEN, OBJECT_EDIT_TOKEN } from './object.tokens';
+import { ObjectData } from './object.data';
 
 @Injectable()
 export class ObjectServiceCore extends ObjectService {

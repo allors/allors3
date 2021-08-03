@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, ElementRef, ViewEncapsulation, Optional, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import { RoleField } from '@allors/angular/core';
+import { RoleField } from '../../../../components/forms/RoleField';
+
 import * as EasyMDE from 'easymde';
 
 @Component({

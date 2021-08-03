@@ -20,7 +20,7 @@ import {
   InvokeResponse,
   InvokeOptions,
   services,
-} from '@allors/protocol/system';
+} from '@allors/protocol/json/system';
 
 export class Database {
   constructor(private http: HttpClient, public url: string) {}

@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Input, Optional, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import { RoleField } from '@allors/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
+
+import { RoleField } from '../../../../components/forms/RoleField';
 
 @Component({
   // tslint:disable-next-line:component-selector

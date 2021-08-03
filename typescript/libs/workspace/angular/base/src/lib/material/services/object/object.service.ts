@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { IObject, IObject } from '@allors/workspace/domain/system';
-import { Context } from '@allors/angular/services/core';
+import { IObject } from '@allors/workspace/domain/system';
 import { ObjectType } from '@allors/workspace/meta/system';
+
+import { Context } from '../../../services/framework/Context';
 
 import { ObjectData } from './object.data';
 

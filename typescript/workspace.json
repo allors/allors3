@@ -58,10 +58,12 @@
           "executor": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "angular-base-app:build:production"
+              "browserTarget": "angular-base-app:build:production",
+              "proxyConfig": "apps/angular/base/app/proxy.conf.json"
             },
             "development": {
-              "browserTarget": "angular-base-app:build:development"
+              "browserTarget": "angular-base-app:build:development",
+              "proxyConfig": "apps/angular/base/app/proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

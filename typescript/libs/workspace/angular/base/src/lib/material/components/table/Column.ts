@@ -1,5 +1,6 @@
 import { humanize } from '@allors/workspace/meta/system';
-import { Action } from '@allors/angular/core';
+
+import { Action } from '../../../components/actions/Action';
 
 export class Column {
 

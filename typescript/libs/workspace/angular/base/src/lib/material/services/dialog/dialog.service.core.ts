@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
-import { AllorsMaterialDialogService, DialogConfig } from '@allors/angular/material/services/core';
-
 import { AllorsMaterialDialogComponent } from '../../components/dialog/dialog.component';
+
+import { AllorsMaterialDialogService } from './dialog.service';
 import { DialogData } from './dialog.data';
+import { DialogConfig } from './dialog.config';
 
 @Injectable()
 export class AllorsMaterialDialogServiceCore extends AllorsMaterialDialogService {

@@ -6,7 +6,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 
 import { IObject } from '@allors/workspace/domain/system';
-import { Action } from '@allors/angular/core';
+
+import { Action } from '../../../components/actions/Action';
 
 import { Column } from './Column';
 import { BehaviorSubject } from 'rxjs';

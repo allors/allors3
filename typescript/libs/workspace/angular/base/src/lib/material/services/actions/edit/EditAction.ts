@@ -2,10 +2,11 @@ import { Subject } from 'rxjs';
 
 import { RoleType } from '@allors/workspace/meta/system';
 import { IObject } from '@allors/workspace/domain/system';
-import { ActionTarget, Action } from '@allors/angular/core';
-import { ObjectService } from '@allors/angular/material/services/core';
 
-import { RefreshService } from '@allors/angular/services/core';
+import { Action } from '../../../../components/actions/Action';
+import { ObjectService } from '../../object/object.service';
+import { RefreshService } from '../../../../services/refresh/refresh.service';
+import { ActionTarget } from '../../../../components/actions/ActionTarget';
 
 export class EditAction implements Action {
 

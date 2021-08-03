@@ -1,7 +1,7 @@
 import { Observable, of } from 'rxjs';
 
 import { ObjectType } from '@allors/workspace/meta/system';
-import { ISession, Session, Method, IObject, Workspace } from '@allors/workspace/domain/system';
+import { ISession, Method, IObject, IWorkspace } from '@allors/workspace/domain/system';
 import {
   PullResponse,
   SyncRequest,
@@ -13,7 +13,7 @@ import {
   InvokeResponse,
   SecurityResponse,
   SecurityRequest,
-} from '@allors/protocol/system';
+} from '@allors/protocol/json/system';
 
 import { Loaded } from './responses/Loaded';
 import { switchMap, map } from 'rxjs/operators';
@@ -24,7 +24,7 @@ import { Database } from './Database';
 export class Context {
   session: ISession;
 
-  constructor(public database: Database, public workspace: Workspace) {
+  constructor(public database: Database, public workspace: IWorkspace) {
     this.session = new Session(this.workspace);
   }
 

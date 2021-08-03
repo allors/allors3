@@ -1,6 +1,6 @@
 import { assert } from '@allors/workspace/meta/system';
 import { ISession, IObject } from '@allors/workspace/domain/system';
-import { PullResponse } from '@allors/protocol/system';
+import { PullResponse } from '@allors/protocol/json/system';
 
 export class Loaded {
   public objects: { [name: string]: IObject } = {};

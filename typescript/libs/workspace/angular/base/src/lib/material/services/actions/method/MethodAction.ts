@@ -3,12 +3,14 @@ import { Subject } from 'rxjs';
 
 import { MethodType } from '@allors/workspace/meta/system';
 import { IObject } from '@allors/workspace/domain/system';
-import {  ActionTarget, Action } from '@allors/angular/core';
+
+import { Action } from '../../../../components/actions/Action';
+import { RefreshService } from '../../../../services/refresh/refresh.service';
+import { Context } from '../../../../services/framework/Context';
+import { SaveService } from '../../save/save.service';
+import { ActionTarget } from '../../../../components/actions/ActionTarget';
 
 import { MethodConfig } from './MethodConfig';
-
-import { RefreshService, Context } from '@allors/angular/services/core';
-import { SaveService } from '@allors/angular/material/services/core';
 
 export class MethodAction implements Action {
   name = 'method';

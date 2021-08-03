@@ -1,10 +1,13 @@
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
 
-import { RefreshService, Context, Invoked } from '@allors/angular/services/core';
 import { Deletable } from '@allors/workspace/domain/base';
-import { ActionTarget, Action } from '@allors/angular/core';
-import { AllorsMaterialDialogService, SaveService } from '@allors/angular/material/services/core';
+import { Action } from '../../../../components/actions/Action';
+import { RefreshService } from '../../../../services/refresh/refresh.service';
+import { AllorsMaterialDialogService } from '../../dialog/dialog.service';
+import { SaveService } from '../../save/save.service';
+import { Context } from '../../../../services/framework/Context';
+import { ActionTarget } from '../../../../components/actions/ActionTarget';
 
 export class DeleteAction implements Action {
   name = 'delete';

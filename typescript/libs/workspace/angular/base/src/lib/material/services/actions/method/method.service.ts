@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { MethodType } from '@allors/workspace/meta/system';
-import { RefreshService, Context } from '@allors/angular/services/core';
-import { Action } from '@allors/angular/core';
-import { SaveService } from '@allors/angular/material/services/core';
+
+import { RefreshService } from '../../../../services/refresh/refresh.service';
+import { SaveService } from '../../save/save.service';
+import { Action } from '../../../../components/actions/Action';
+import { Context } from '../../../../services/framework/Context';
 
 import { MethodAction } from './MethodAction';
 import { MethodConfig } from './MethodConfig';

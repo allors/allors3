@@ -1,7 +1,7 @@
 import { Component, Optional } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import { LocalisedRoleField } from '@allors/angular/core';
+import { LocalisedRoleField } from '../../../../components/forms/LocalisedRoleField';
 
 @Component({
   // tslint:disable-next-line:component-selector

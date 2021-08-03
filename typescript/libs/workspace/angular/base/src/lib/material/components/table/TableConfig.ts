@@ -1,6 +1,6 @@
 import { Sort, SortDirection } from '@angular/material/sort';
 
-import { Action } from '@allors/angular/core';
+import { Action } from '../../../components/actions/Action';
 
 import { Column } from './Column';
 

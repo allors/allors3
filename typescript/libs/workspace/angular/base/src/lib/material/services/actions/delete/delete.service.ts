@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { RefreshService } from '../../../../services/refresh/refresh.service';
 
-import { RefreshService, Context } from '@allors/angular/services/core';
-import { Action } from '@allors/angular/core';
+import { SaveService } from '../../save/save.service';
+import { Context } from '../../../../services/framework/Context';
+import { Action } from '../../../../components/actions/Action';
 
 import { DeleteAction } from './DeleteAction';
-import { AllorsMaterialDialogService, SaveService } from '@allors/angular/material/services/core';
+import { AllorsMaterialDialogService } from '../../dialog/dialog.service';
 
 @Injectable({
   providedIn: 'root',

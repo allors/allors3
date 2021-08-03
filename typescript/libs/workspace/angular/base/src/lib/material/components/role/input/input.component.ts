@@ -1,7 +1,7 @@
 import { Component, Optional, Input } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import { RoleField } from '@allors/angular/core';
+import { RoleField } from '../../../../components/forms/RoleField';
 
 @Component({
   // tslint:disable-next-line:component-selector

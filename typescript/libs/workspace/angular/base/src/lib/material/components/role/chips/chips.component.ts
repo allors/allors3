@@ -8,8 +8,6 @@ import { IObject, ParameterTypes } from '@allors/workspace/domain/system';
 
 import { RoleField } from '../../../../components/forms/RoleField';
 
-// TODO: Koen
-
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'a-mat-chips',

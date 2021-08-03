@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Workspace } from '@allors/workspace/domain/system';
+import { IWorkspace } from '@allors/workspace/domain/system';
 
 @Injectable()
 export class WorkspaceService {
-  public workspace: Workspace;
+  public workspace: IWorkspace;
 }
