@@ -8,7 +8,7 @@ import { Procedure } from './pull/Procedure';
 import { Pull } from './pull/Pull';
 import { IPushResult } from './push/IPushResult';
 
-export interface IClientAsync {
+export interface IPromiseApi {
   invokeAsync(session: ISession, method: Method | Method[], options?: InvokeOptions): Promise<IInvokeResult>;
 
   callAsync(session: ISession, procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult>;

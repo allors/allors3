@@ -1,5 +1,5 @@
 import { InvokeRequest, PullRequest, PushRequest } from '@allors/protocol/json/system';
-import { IClientAsync, IInvokeResult, InvokeOptions, IPullResult, IPushResult, ISession, Method, Procedure, Pull } from '@allors/workspace/domain/system';
+import { IPromiseApi, IInvokeResult, InvokeOptions, IPullResult, IPushResult, ISession, Method, Procedure, Pull } from '@allors/workspace/domain/system';
 import { Origin } from '@allors/workspace/meta/system';
 import { procedureToJson, pullToJson } from '../json/toJson';
 import { DatabaseOriginState } from '../session/originstate/DatabaseOriginState';
@@ -9,7 +9,7 @@ import { Client } from './Client';
 import { InvokeResult } from './invoke/InvokeResult';
 import { PushResult } from './push/PushResult';
 
-export class ClientAsync implements IClientAsync {
+export class ClientAsync implements IPromiseApi {
   constructor(public client: Client) {}
 
   async invokeAsync(session: ISession, methods: Method[], options: InvokeOptions): Promise<IInvokeResult> {

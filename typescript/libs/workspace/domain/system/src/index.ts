@@ -12,7 +12,7 @@ export * from './lib/api/pull/InvokeOptions';
 
 export * from './lib/api/push/IPushResult';
 
-export * from './lib/api/IClientAsync';
+export * from './lib/api/IPromiseApi';
 
 // data
 export * from './lib/data/Node';
