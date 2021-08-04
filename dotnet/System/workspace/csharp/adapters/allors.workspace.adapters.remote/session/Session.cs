@@ -5,16 +5,9 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
-    using System;
-    using System.Linq;
     using System.Threading.Tasks;
-    using Allors.Protocol.Json.Api.Invoke;
     using Allors.Protocol.Json.Api.Pull;
-    using Allors.Protocol.Json.Api.Push;
-    using Data;
     using Meta;
-    using Protocol.Json;
-    using InvokeOptions = InvokeOptions;
 
     public class Session : Adapters.Session
     {
@@ -27,104 +20,6 @@ namespace Allors.Workspace.Adapters.Remote
         private DatabaseConnection DatabaseConnection { get; }
 
         public new Workspace Workspace => (Workspace)base.Workspace;
-
-        public override async Task<IInvokeResult> Invoke(Method method, InvokeOptions options = null) => await this.Invoke(new[] { method }, options);
-
-        public override async Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null)
-        {
-            var invokeRequest = new InvokeRequest
-            {
-                l = methods.Select(v => new Invocation
-                {
-                    i = v.Object.Id,
-                    v = ((Strategy)v.Object.Strategy).DatabaseOriginState.Version,
-                    m = v.MethodType.Tag
-                }).ToArray(),
-                o = options != null
-                    ? new Allors.Protocol.Json.Api.Invoke.InvokeOptions
-                    {
-                        c = options.ContinueOnError,
-                        i = options.Isolated
-                    }
-                    : null
-            };
-
-            var invokeResponse = await this.Workspace.DatabaseConnection.Invoke(invokeRequest);
-            return new InvokeResult(this, invokeResponse);
-        }
-
-        public override async Task<IPullResult> Pull(params Pull[] pulls)
-        {
-            foreach (var pull in pulls)
-            {
-                if (pull.ObjectId < 0 || pull.Object?.Id < 0)
-                {
-                    throw new ArgumentException($"Id is not in the database");
-                }
-
-                if (pull.Object != null && pull.Object.Strategy.Class.Origin != Origin.Database)
-                {
-                    throw new ArgumentException($"Origin is not Database");
-                }
-            }
-
-            var pullRequest = new PullRequest { l = pulls.Select(v => v.ToJson(this.DatabaseConnection.UnitConvert)).ToArray() };
-
-            var pullResponse = await this.Workspace.DatabaseConnection.Pull(pullRequest);
-            return await this.OnPull(pullResponse);
-        }
-
-        public override async Task<IPullResult> Call(Procedure procedure, params Pull[] pull)
-        {
-            var pullRequest = new PullRequest
-            {
-                p = procedure.ToJson(this.DatabaseConnection.UnitConvert),
-                l = pull.Select(v => v.ToJson(this.DatabaseConnection.UnitConvert)).ToArray()
-            };
-
-            var pullResponse = await this.Workspace.DatabaseConnection.Pull(pullRequest);
-            return await this.OnPull(pullResponse);
-        }
-
-        public override async Task<IPushResult> Push()
-        {
-            var pushRequest = new PushRequest
-            {
-                n = this.PushToDatabaseTracker.Created?.Select(v => ((DatabaseOriginState)((Strategy)v).DatabaseOriginState).PushNew()).ToArray(),
-                o = this.PushToDatabaseTracker.Changed?.Select(v => ((DatabaseOriginState)((Strategy)v.Strategy).DatabaseOriginState).PushExisting()).ToArray()
-            };
-            var pushResponse = await this.Workspace.DatabaseConnection.Push(pushRequest);
-
-            if (pushResponse.HasErrors)
-            {
-                return new PushResult(this, pushResponse);
-            }
-
-
-            if (pushResponse.n != null)
-            {
-                foreach (var pushResponseNewObject in pushResponse.n)
-                {
-                    var workspaceId = pushResponseNewObject.w;
-                    var databaseId = pushResponseNewObject.d;
-                    this.OnDatabasePushResponseNew(workspaceId, databaseId);
-                }
-            }
-
-            this.PushToDatabaseTracker.Created = null;
-            this.PushToDatabaseTracker.Changed = null;
-
-            if (pushRequest.o != null)
-            {
-                foreach (var id in pushRequest.o.Select(v => v.d))
-                {
-                    var strategy = this.GetStrategy(id);
-                    strategy.OnDatabasePushed();
-                }
-            }
-
-            return new PushResult(this, pushResponse);
-        }
 
         public override T Create<T>(IClass @class)
         {
@@ -169,7 +64,7 @@ namespace Allors.Workspace.Adapters.Remote
             return strategy;
         }
 
-        private async Task<IPullResult> OnPull(PullResponse pullResponse)
+        internal async Task<IPullResult> OnPull(PullResponse pullResponse)
         {
             var pullResult = new PullResult(this, pullResponse);
 

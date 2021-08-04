@@ -36,8 +36,8 @@ namespace Tests.Workspace
             Assert.NotNull(c1_1);
             Assert.NotNull(c2_1);
 
-            await session1.Push();
-            var result = await session1.Pull(new Pull { Object = c1_1 });
+            await this.AsyncDatabaseClient.PushAsync(session1);
+            var result = await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1_1 });
             var c1_2 = (C1)result.Objects.Values.First();
 
             Assert.NotNull(c1_2);

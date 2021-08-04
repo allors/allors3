@@ -5,8 +5,6 @@
 
 namespace Allors.Workspace
 {
-    using System.Threading.Tasks;
-    using Data;
     using Meta;
     using System.Collections.Generic;
 
@@ -15,16 +13,6 @@ namespace Allors.Workspace
         IWorkspace Workspace { get; }
 
         ISessionServices Services { get; }
-
-        Task<IInvokeResult> Invoke(Method method, InvokeOptions options = null);
-
-        Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null);
-
-        Task<IPullResult> Call(Procedure procedure, params Pull[] pull);
-
-        Task<IPullResult> Pull(params Pull[] pull);
-
-        Task<IPushResult> Push();
 
         IWorkspaceResult PullFromWorkspace();
 

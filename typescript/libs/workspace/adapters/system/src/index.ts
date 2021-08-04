@@ -1,7 +1,7 @@
 export * from './lib/collections/MapMap'
 export * from './lib/collections/Range'
 
-export * from './lib/database/Database'
+export * from './lib/database/DatabaseConnection'
 export * from './lib/database/DatabaseRecord'
 export * from './lib/database/security/AccessControl'
 

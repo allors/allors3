@@ -40,7 +40,7 @@ namespace Tests.Workspace.OriginDatabase
 
             try
             {
-                var result = await session2.Pull(new Pull { Object = c1 });
+                var result = await this.AsyncDatabaseClient.PullAsync(session2, new Pull { Object = c1 });
                 hasErrors = false;
             }
             catch (Exception)

@@ -7,7 +7,7 @@ namespace Allors.Workspace
 {
     public interface IWorkspace
     {
-        IDatabaseConnection DatabaseConnection { get; }
+        IConfiguration Configuration { get; }
 
         IWorkspaceServices Services { get; }
 

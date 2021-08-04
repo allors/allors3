@@ -25,14 +25,14 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
 
             c1a.C1AllorsString = "X";
 
             Assert.Equal("X", c1a.C1AllorsString);
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             Assert.Equal("X", c1a.C1AllorsString);
 
@@ -49,22 +49,22 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
 
             c1a.C1AllorsString = "X";
 
             Assert.Equal("X", c1a.C1AllorsString);
 
-            await session.Push();
-            result = await session.Pull(pull);
+            await this.AsyncDatabaseClient.PushAsync(session);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c2a = result.GetCollection<C1>()[0];
 
             Assert.Equal("X", c1a.C1AllorsString);
 
             c2a.C1AllorsString = "Y";
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             Assert.Equal("Y", c2a.C1AllorsString);
 
@@ -81,7 +81,7 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
@@ -90,7 +90,7 @@ namespace Tests.Workspace
             Assert.Equal(c1b, c1a.C1C1One2One);
             Assert.Equal(c1a, c1b.C1WhereC1C1One2One);
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             c1a.Strategy.Reset();
 
@@ -106,7 +106,7 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
@@ -115,8 +115,8 @@ namespace Tests.Workspace
             Assert.Equal(c1b, c1a.C1C1One2One);
             Assert.Equal(c1a, c1b.C1WhereC1C1One2One);
 
-            await session.Push();
-            result = await session.Pull(pull);
+            await this.AsyncDatabaseClient.PushAsync(session);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             c1a.RemoveC1C1One2One();
 
@@ -137,7 +137,7 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
@@ -146,7 +146,7 @@ namespace Tests.Workspace
             Assert.Equal(c1b, c1a.C1C1Many2One);
             Assert.Contains(c1a, c1b.C1sWhereC1C1Many2One);
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             c1a.Strategy.Reset();
 
@@ -162,7 +162,7 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
@@ -171,8 +171,8 @@ namespace Tests.Workspace
             Assert.Equal(c1b, c1a.C1C1Many2One);
             Assert.Contains(c1a, c1b.C1sWhereC1C1Many2One);
 
-            await session.Push();
-            result = await session.Pull(pull);
+            await this.AsyncDatabaseClient.PushAsync(session);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             c1a.RemoveC1C1Many2One();
 
@@ -193,7 +193,7 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
@@ -202,7 +202,7 @@ namespace Tests.Workspace
             Assert.Contains(c1b, c1a.C1C1One2Manies);
             Assert.Equal(c1a, c1b.C1WhereC1C1One2Many);
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             c1a.Strategy.Reset();
 
@@ -218,13 +218,13 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
             var c1x = session.Create<C1>();
             c1x.Name = "c1x";
 
-            await session.Push();
-            result = await session.Pull(new Pull { Object = c1x });
+            await this.AsyncDatabaseClient.PushAsync(session);
+            result = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = c1x });
             Assert.False(result.HasErrors);
             var c1x_2 = (C1)result.Objects.Values.First();
 
@@ -233,12 +233,12 @@ namespace Tests.Workspace
             Assert.Contains(c1x_2, c1a.C1C1One2Manies);
             Assert.Equal(c1a, c1x_2.C1WhereC1C1One2Many);
 
-            var pushResult = await session.Push();
+            var pushResult = await this.AsyncDatabaseClient.PushAsync(session);
             Assert.False(pushResult.HasErrors);
 
             Assert.Contains(c1x_2, c1a.C1C1One2Manies);
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             Assert.False(result.HasErrors);
 
             c1a = result.GetCollection<C1>()[0];
@@ -265,7 +265,7 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
@@ -274,7 +274,7 @@ namespace Tests.Workspace
             Assert.Contains(c1b, c1a.C1C1Many2Manies);
             Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             c1a.Strategy.Reset();
 
@@ -290,12 +290,12 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
-            await session.Push();
-            result = await session.Pull(new Pull { Object = c1b });
+            await this.AsyncDatabaseClient.PushAsync(session);
+            result = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = c1b });
             var c1b_2 = (C1)result.Objects.Values.First();
 
             c1a.AddC1C1Many2Many(c1b_2);
@@ -303,8 +303,8 @@ namespace Tests.Workspace
             Assert.Contains(c1b_2, c1a.C1C1Many2Manies);
             Assert.Contains(c1a, c1b_2.C1sWhereC1C1Many2Many);
 
-            await session.Push();
-            result = await session.Pull(pull);
+            await this.AsyncDatabaseClient.PushAsync(session);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             c1a = result.GetCollection<C1>()[0];
 
             c1a.RemoveC1C1Many2Many(c1b_2);
@@ -326,13 +326,13 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
 
             c1a.C1AllorsString = "X";
 
-            await session.Push();
-            result = await session.Pull(pull);
+            await this.AsyncDatabaseClient.PushAsync(session);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c2a = result.GetCollection<C1>()[0];
 
             var c2aString = c2a.C1AllorsString;

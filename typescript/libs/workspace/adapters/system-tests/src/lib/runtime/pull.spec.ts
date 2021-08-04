@@ -1,4 +1,4 @@
-import { IPromiseApi, IWorkspace, Pull } from '@allors/workspace/domain/system';
+import { IAsyncDatabaseClient, IWorkspace, Pull } from '@allors/workspace/domain/system';
 import { Fixture, name_c1B, name_c2B } from '../Fixture';
 import '../Matchers';
 import '@allors/workspace/domain/core';
@@ -9,7 +9,7 @@ it('dummy', () => {
   expect(true).toBeTruthy();
 });
 
-export async function initPull(client: IPromiseApi, workspace: IWorkspace, login: (login: string) => Promise<boolean>) {
+export async function initPull(client: IAsyncDatabaseClient, workspace: IWorkspace, login: (login: string) => Promise<boolean>) {
   fixture = new Fixture(client, workspace, login);
 }
 

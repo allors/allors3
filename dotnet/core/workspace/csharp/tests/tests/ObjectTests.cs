@@ -31,7 +31,7 @@ namespace Tests.Workspace
                     Values = new Dictionary<string, string> { { "step", "0" } }
                 };
 
-                await session.Call(procedure);
+                await this.AsyncDatabaseClient.CallAsync(session, procedure);
             }
             catch (Exception)
             {

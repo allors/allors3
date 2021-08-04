@@ -1,6 +1,6 @@
 import { IConfiguration, ISession, IWorkspace, IWorkspaceServices } from '@allors/workspace/domain/system';
 import { Class, RelationType } from '@allors/workspace/meta/system';
-import { Database } from '../Database/Database';
+import { DatabaseConnection } from '../Database/DatabaseConnection';
 import { WorkspaceRecord } from './WorkspaceRecord';
 
 export abstract class Workspace implements IWorkspace {
@@ -13,7 +13,7 @@ export abstract class Workspace implements IWorkspace {
 
   private readonly recordById: Map<number, WorkspaceRecord>;
 
-  constructor(public database: Database, public services: IWorkspaceServices) {
+  constructor(public database: DatabaseConnection, public services: IWorkspaceServices) {
     this.workspaceClassByWorkspaceId = new Map();
     this.workspaceIdsByWorkspaceClass = new Map();
 

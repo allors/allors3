@@ -55,16 +55,6 @@ namespace Allors.Workspace.Adapters
 
         public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>());
 
-        public abstract Task<IInvokeResult> Invoke(Method method, InvokeOptions options = null);
-
-        public abstract Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null);
-
-        public abstract Task<IPullResult> Call(Procedure procedure, params Pull[] pull);
-
-        public abstract Task<IPullResult> Pull(params Pull[] pull);
-
-        public abstract Task<IPushResult> Push();
-
         public IWorkspaceResult PullFromWorkspace()
         {
             var result = new WorkspaceResult();
@@ -283,7 +273,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        protected void OnDatabasePushResponseNew(long workspaceId, long databaseId)
+        public void OnDatabasePushResponseNew(long workspaceId, long databaseId)
         {
             var strategy = this.StrategyByWorkspaceId[workspaceId];
             this.PushToDatabaseTracker.Created.Remove(strategy);

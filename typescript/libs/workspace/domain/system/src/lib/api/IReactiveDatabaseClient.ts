@@ -10,7 +10,7 @@ import { IPushResult } from './push/IPushResult';
 
 import type { Observable } from 'rxjs';
 
-export interface IObservableApi {
+export interface IReactiveDatabaseClient {
   invokeObservable(session: ISession, method: Method | Method[], options?: InvokeOptions): Observable<IInvokeResult>;
 
   callObservable(session: ISession, procedure: Procedure, ...pulls: Pull[]): Observable<IPullResult>;

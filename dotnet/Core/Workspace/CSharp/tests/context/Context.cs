@@ -17,14 +17,15 @@ namespace Tests.Workspace
             this.Name = name;
             this.SharedDatabaseWorkspace = this.Test.Profile.CreateWorkspace();
             this.SharedDatabaseSession = this.SharedDatabaseWorkspace.CreateSession();
-            this.ExclusiveDatabase = this.Test.Profile.CreateDatabase();
-            this.ExclusiveDatabaseWorkspace = this.ExclusiveDatabase.CreateWorkspace();
+            this.ExclusiveDatabaseWorkspace = this.Test.Profile.CreateExclusiveWorkspace();
             this.ExclusiveDatabaseSession = this.ExclusiveDatabaseWorkspace.CreateSession();
         }
 
         public Test Test { get; }
 
         public string Name { get; }
+
+        public IAsyncDatabaseClient AsyncDatabaseClient => this.Test.AsyncDatabaseClient;
 
         public ISession Session1 { get; protected set; }
 
@@ -33,8 +34,6 @@ namespace Tests.Workspace
         public IWorkspace SharedDatabaseWorkspace { get; }
 
         public ISession SharedDatabaseSession { get; }
-
-        public IDatabaseConnection ExclusiveDatabase { get; set; }
 
         public IWorkspace ExclusiveDatabaseWorkspace { get; }
 
@@ -48,7 +47,7 @@ namespace Tests.Workspace
 
         public async Task<T> Create<T>(ISession session, DatabaseMode mode) where T : class, IObject
         {
-            var @class = (IClass)session.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>();
+            var @class = (IClass)session.Workspace.Configuration.ObjectFactory.GetObjectType<T>();
             if (@class.Origin != Origin.Database)
             {
                 throw new ArgumentException($@"Origin is not {Origin.Database}", nameof(mode));
@@ -60,23 +59,23 @@ namespace Tests.Workspace
                     return session.Create<T>();
                 case DatabaseMode.Push:
                     var pushObject = session.Create<T>();
-                    await session.Push();
+                    await this.AsyncDatabaseClient.PushAsync(session);
                     return pushObject;
                 case DatabaseMode.PushAndPull:
                     var pushAndPullObject = session.Create<T>();
-                    var result = await session.Push();
+                    var result = await this.AsyncDatabaseClient.PushAsync(session);
                     Assert.False(result.HasErrors);
-                    await session.Pull(new Pull { Object = pushAndPullObject });
+                    await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = pushAndPullObject });
                     return pushAndPullObject;
                 case DatabaseMode.SharedDatabase:
                     var sharedDatabaseObject = this.SharedDatabaseSession.Create<T>();
-                    await this.SharedDatabaseSession.Push();
-                    var sharedResult = await session.Pull(new Pull { Object = sharedDatabaseObject });
+                    await this.AsyncDatabaseClient.PushAsync(this.SharedDatabaseSession);
+                    var sharedResult = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = sharedDatabaseObject });
                     return (T)sharedResult.Objects.Values.First();
                 case DatabaseMode.ExclusiveDatabase:
                     var exclusiveDatabaseObject = this.ExclusiveDatabaseSession.Create<T>();
-                    await this.ExclusiveDatabaseSession.Push();
-                    var exclusiveResult = await session.Pull(new Pull { Object = exclusiveDatabaseObject });
+                    await this.AsyncDatabaseClient.PushAsync(this.ExclusiveDatabaseSession);
+                    var exclusiveResult = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = exclusiveDatabaseObject });
                     return (T)exclusiveResult.Objects.Values.First();
                 default:
                     throw new ArgumentOutOfRangeException(nameof(mode), mode, $@"Mode [{string.Join(", ", Enum.GetNames(typeof(DatabaseMode)))}]");
@@ -85,7 +84,7 @@ namespace Tests.Workspace
 
         public async Task<T> Create<T>(ISession session, WorkspaceMode mode) where T : class, IObject
         {
-            var @class = (IClass)session.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>();
+            var @class = (IClass)session.Workspace.Configuration.ObjectFactory.GetObjectType<T>();
             if (@class.Origin != Origin.Workspace)
             {
                 throw new ArgumentException($@"Origin is not {Origin.Workspace}", nameof(mode));

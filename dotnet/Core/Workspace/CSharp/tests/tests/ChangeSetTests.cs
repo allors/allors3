@@ -37,7 +37,7 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            await session.Pull(pull);
+            await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             var changeSet = session.Checkpoint();
 
@@ -52,12 +52,12 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
 
             c1a.C1AllorsString = "X";
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             var changeSet = session.Checkpoint();
 
@@ -72,17 +72,17 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a_1 = result.GetCollection<C1>()[0];
 
             c1a_1.C1AllorsString = "X";
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             var changeSet = session.Checkpoint();
             Assert.Single(changeSet.AssociationsByRoleType);
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a_2 = result.GetCollection<C1>()[0];
 
             c1a_2.C1AllorsString = "Y";
@@ -100,22 +100,22 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
 
             c1a.C1AllorsString = "X";
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             var changeSet = session.Checkpoint();
             Assert.Single(changeSet.AssociationsByRoleType);
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1b = result.GetCollection<C1>()[0];
 
             c1b.C1AllorsString = "Y";
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             changeSet = session.Checkpoint();
 
@@ -131,12 +131,12 @@ namespace Tests.Workspace
 
             var c1 = session.Create<C1>();
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
             var changeSet = session.Checkpoint();
 
             Assert.Single(changeSet.Created);
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
             changeSet = session.Checkpoint();
             Assert.Empty(changeSet.Created);
         }
@@ -149,14 +149,14 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
 
             c1a.C1AllorsString = "X";
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
-            await session.Pull(pull);
+            await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             var changeSet = session.Checkpoint();
 
@@ -171,18 +171,18 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
 
-            await session.Push();
-            await session.Pull(pull);
+            await this.AsyncDatabaseClient.PushAsync(session);
+            await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             var changeSet = session.Checkpoint();
 
             Assert.Empty(changeSet.Created);
             Assert.Empty(changeSet.AssociationsByRoleType);
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
             changeSet = session.Checkpoint();
 
             Assert.Empty(changeSet.Created);
@@ -197,13 +197,13 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
             c1a.C1C1One2One = c1b;
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             var changeSet = session.Checkpoint();
 
@@ -211,7 +211,7 @@ namespace Tests.Workspace
             Assert.Single(changeSet.AssociationsByRoleType);
             Assert.Single(changeSet.RolesByAssociationType);
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
             changeSet = session.Checkpoint();
 
             Assert.Empty(changeSet.Created);
@@ -227,13 +227,13 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>().First();
             var c1b = session.Create<C1>();
 
             c1a.C1C1One2One = c1b;
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             var changeSet = session.Checkpoint();
 
@@ -241,7 +241,7 @@ namespace Tests.Workspace
             Assert.Single(changeSet.AssociationsByRoleType);
             Assert.Single(changeSet.RolesByAssociationType);
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
             changeSet = session.Checkpoint();
 
             Assert.Empty(changeSet.Created);
@@ -249,12 +249,12 @@ namespace Tests.Workspace
             Assert.Empty(changeSet.RolesByAssociationType);
 
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             //var c1b_2 = (C1)result.Objects.Values.First();
 
             c1a.RemoveC1C1One2One();
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             changeSet = session.Checkpoint();
 
@@ -270,13 +270,13 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
             c1a.C1C1Many2One = c1b;
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             var changeSet = session.Checkpoint();
 
@@ -284,7 +284,7 @@ namespace Tests.Workspace
             Assert.Single(changeSet.AssociationsByRoleType);
             Assert.Single(changeSet.RolesByAssociationType);
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
             changeSet = session.Checkpoint();
 
             Assert.Empty(changeSet.Created);
@@ -300,18 +300,18 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>().First();
             var c1b = session.Create<C1>();
 
-            await session.Push();
-            result = await session.Pull(new Pull { Object = c1b });
+            await this.AsyncDatabaseClient.PushAsync(session);
+            result = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = c1b });
 
             var c2b = result.GetObject<C1>();
 
             c1a.C1C1Many2One = c1b;
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             var changeSet = session.Checkpoint();
 
@@ -319,11 +319,11 @@ namespace Tests.Workspace
             Assert.Single(changeSet.AssociationsByRoleType);
             Assert.Single(changeSet.RolesByAssociationType);
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             c1a.RemoveC1C1Many2One();
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             changeSet = session.Checkpoint();
 
@@ -339,13 +339,13 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
             c1a.AddC1C1One2Many(c1b);
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             var changeSet = session.Checkpoint();
 
@@ -353,7 +353,7 @@ namespace Tests.Workspace
             Assert.Single(changeSet.AssociationsByRoleType);
             Assert.Single(changeSet.RolesByAssociationType);
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
             changeSet = session.Checkpoint();
 
             Assert.Empty(changeSet.Created);
@@ -369,13 +369,13 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>().First();
             var c1b = session.Create<C1>();
 
             c1a.AddC1C1One2Many(c1b);
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             var changeSet = session.Checkpoint();
 
@@ -383,11 +383,11 @@ namespace Tests.Workspace
             Assert.Single(changeSet.AssociationsByRoleType);
             Assert.Single(changeSet.RolesByAssociationType);
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             c1a.RemoveC1C1One2Manies();
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             changeSet = session.Checkpoint();
 
@@ -403,13 +403,13 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
             var c1b = session.Create<C1>();
 
             c1a.AddC1C1Many2Many(c1b);
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             var changeSet = session.Checkpoint();
 
@@ -417,7 +417,7 @@ namespace Tests.Workspace
             Assert.Single(changeSet.AssociationsByRoleType);
             Assert.Single(changeSet.RolesByAssociationType);
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
             changeSet = session.Checkpoint();
 
             Assert.Empty(changeSet.Created);
@@ -433,13 +433,13 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>().First();
             var c1b = session.Create<C1>();
 
             c1a.AddC1C1Many2Many(c1b);
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             var changeSet = session.Checkpoint();
 
@@ -447,19 +447,19 @@ namespace Tests.Workspace
             Assert.Single(changeSet.AssociationsByRoleType);
             Assert.Single(changeSet.RolesByAssociationType);
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
             changeSet = session.Checkpoint();
 
             Assert.Empty(changeSet.Created);
             Assert.Empty(changeSet.AssociationsByRoleType);
             Assert.Empty(changeSet.RolesByAssociationType);
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             Assert.False(result.HasErrors);
 
             c1a.RemoveC1C1Many2Manies();
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             changeSet = session.Checkpoint();
 
@@ -474,7 +474,7 @@ namespace Tests.Workspace
 
             var session = this.Workspace.CreateSession();
 
-            await session.Pull();
+            await this.AsyncDatabaseClient.PullAsync(session);
 
             var changeSet = session.Checkpoint();
             Assert.Empty(changeSet.AssociationsByRoleType);
@@ -494,7 +494,7 @@ namespace Tests.Workspace
 
             sessionC1a.SessionC1AllorsString = "X";
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             var changeSet = session.Checkpoint();
 
@@ -517,7 +517,7 @@ namespace Tests.Workspace
 
             sessionC1a.SessionC1AllorsString = "X";
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             var changeSet = session.Checkpoint();
 
@@ -545,21 +545,21 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
 
             c1a.C1AllorsString = "X";
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             Assert.False(result.HasErrors);
 
             var c1b = result.GetCollection<C1>()[0];
 
             c1b.C1AllorsString = "Y";
 
-            await session.Push();
+            await this.AsyncDatabaseClient.PushAsync(session);
 
             c1b.Strategy.Reset();
             c1b.Strategy.Reset();

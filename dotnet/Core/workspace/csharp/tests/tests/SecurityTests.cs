@@ -30,7 +30,7 @@ namespace Tests.Workspace
         {
             var session = this.Workspace.CreateSession();
 
-            var result = await session.Pull(new Pull { Extent = new Filter(this.M.Denied) });
+            var result = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Extent = new Filter(this.M.Denied) });
             var denied = result.GetCollection<Denied>()[0];
 
             Assert.True(denied.CanReadDefaultWorkspaceProperty);

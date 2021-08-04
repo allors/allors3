@@ -14,87 +14,7 @@ namespace Allors.Workspace.Adapters.Local
         internal Session(Adapters.Workspace workspace, ISessionServices sessionServices) : base(workspace, sessionServices) => this.Services.OnInit(this);
 
         public new Workspace Workspace => (Workspace)base.Workspace;
-
-        public override Task<IInvokeResult> Invoke(Method method, InvokeOptions options = null) =>
-            this.Invoke(new[] { method }, options);
-
-        public override Task<IInvokeResult> Invoke(Method[] methods, InvokeOptions options = null)
-        {
-            var result = new Invoke(this, this.Workspace);
-            result.Execute(methods, options);
-            return Task.FromResult<IInvokeResult>(result);
-        }
-
-        public override Task<IPullResult> Call(Data.Procedure procedure, params Data.Pull[] pull)
-        {
-            var result = new Pull(this, this.Workspace);
-
-            result.Execute(procedure);
-            result.Execute(pull);
-
-            this.OnPulled(result);
-
-            return Task.FromResult<IPullResult>(result);
-        }
-
-        public override Task<IPullResult> Pull(params Data.Pull[] pulls)
-        {
-            foreach (var pull in pulls)
-            {
-                if (pull.ObjectId < 0 || pull.Object?.Id < 0)
-                {
-                    throw new ArgumentException($"Id is not in the database");
-                }
-
-                if (pull.Object != null && pull.Object.Strategy.Class.Origin != Origin.Database)
-                {
-                    throw new ArgumentException($"Origin is not Database");
-                }
-            }
-
-            var result = new Pull(this, this.Workspace);
-            result.Execute(pulls);
-
-            this.OnPulled(result);
-
-            return Task.FromResult<IPullResult>(result);
-        }
-
-        public override Task<IPushResult> Push()
-        {
-            var result = new Push(this);
-
-            result.Execute(this.PushToDatabaseTracker);
-
-            if (result.HasErrors)
-            {
-                return Task.FromResult<IPushResult>(result);
-            }
-
-            this.PushToDatabaseTracker.Changed = null;
-
-            if (result.ObjectByNewId?.Count > 0)
-            {
-                foreach (var kvp in result.ObjectByNewId)
-                {
-                    var workspaceId = kvp.Key;
-                    var databaseId = kvp.Value.Id;
-
-                    this.OnDatabasePushResponseNew(workspaceId, databaseId);
-                }
-            }
-
-            this.PushToDatabaseTracker.Created = null;
-
-            foreach (var @object in result.Objects)
-            {
-                var strategy = this.GetStrategy(@object.Id);
-                strategy.OnDatabasePushed();
-            }
-
-            return Task.FromResult<IPushResult>(result);
-        }
-
+        
         public override T Create<T>(IClass @class)
         {
             var workspaceId = this.Workspace.DatabaseConnection.NextId();
@@ -139,7 +59,7 @@ namespace Allors.Workspace.Adapters.Local
             return strategy;
         }
 
-        private void OnPulled(Pull pull)
+        internal void OnPulled(Pull pull)
         {
             var syncObjects = this.Workspace.DatabaseConnection.ObjectsToSync(pull);
             this.Workspace.DatabaseConnection.Sync(syncObjects, pull.AccessControlLists);

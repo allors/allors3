@@ -1,5 +1,5 @@
 import { IValidation } from "./IValidation";
 
-export interface DerivationException {
+export interface IDerivationException {
   validation: IValidation;
 }

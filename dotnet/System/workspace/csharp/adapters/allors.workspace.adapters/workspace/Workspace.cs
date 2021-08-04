@@ -25,8 +25,9 @@ namespace Allors.Workspace.Adapters
             this.recordById = new Dictionary<long, WorkspaceRecord>();
         }
 
-        IDatabaseConnection IWorkspace.DatabaseConnection => this.DatabaseConnection;
         public DatabaseConnection DatabaseConnection { get; }
+
+        public IConfiguration Configuration => this.DatabaseConnection.Configuration;
 
         public IWorkspaceServices Services { get; }
 

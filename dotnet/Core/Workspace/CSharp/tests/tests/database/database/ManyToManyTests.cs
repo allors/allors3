@@ -35,7 +35,7 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
             this.pushes = new Func<ISession, Task>[]
             {
                 (session) => Task.CompletedTask,
-                async (session) => await session.Push()
+                async (session) => await this.AsyncDatabaseClient.PushAsync(session)
             };
 
             this.contextFactories = new Func<Context>[]
@@ -67,8 +67,8 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            await session2.Push();
-                            var result = await session1.Pull(new Pull { Object = c1y_2 });
+                            await this.AsyncDatabaseClient.PushAsync(session2);
+                            var result = await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1y_2 });
 
                             var c1y_1 = (C1)result.Objects.Values.First();
 
@@ -76,7 +76,7 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
 
                             if (!c1x_1.CanWriteC1C1Many2Manies)
                             {
-                                await session1.Pull(new Pull { Object = c1x_1 });
+                                await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1x_1 });
                             }
 
                             c1x_1.AddC1C1Many2Many(c1y_1);
@@ -117,8 +117,8 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            await session2.Push();
-                            var result = await session1.Pull(new Pull { Object = c1y_2 });
+                            await this.AsyncDatabaseClient.PushAsync(session2);
+                            var result = await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1y_2 });
 
                             var c1y_1 = (C1)result.Objects.Values.First();
 
@@ -126,7 +126,7 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
 
                             if (!c1x_1.CanWriteC1C1Many2Manies)
                             {
-                                await session1.Pull(new Pull { Object = c1x_1 });
+                                await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1x_1 });
                             }
 
                             c1x_1.AddC1C1Many2Many(null);
@@ -171,8 +171,8 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            await session2.Push();
-                            var result = await session1.Pull(new Pull { Object = c1y_2 });
+                            await this.AsyncDatabaseClient.PushAsync(session2);
+                            var result = await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1y_2 });
 
                             var c1y_1 = (C1)result.Objects.Values.First();
 
@@ -180,7 +180,7 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
 
                             if (!c1x_1.CanWriteC1C1Many2Manies)
                             {
-                                await session1.Pull(new Pull { Object = c1x_1 });
+                                await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1x_1 });
                             }
 
                             c1x_1.AddC1C1Many2Many(c1y_1);
@@ -224,8 +224,8 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            await session2.Push();
-                            var result = await session1.Pull(new Pull { Object = c1y_2 });
+                            await this.AsyncDatabaseClient.PushAsync(session2);
+                            var result = await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1y_2 });
 
                             var c1y_1 = (C1)result.Objects.Values.First();
 
@@ -233,7 +233,7 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
 
                             if (!c1x_1.CanWriteC1C1Many2Manies)
                             {
-                                await session1.Pull(new Pull { Object = c1x_1 });
+                                await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1x_1 });
                             }
 
                             c1x_1.AddC1C1Many2Many(null);

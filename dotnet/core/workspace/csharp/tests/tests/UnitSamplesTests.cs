@@ -28,7 +28,7 @@ namespace Tests.Workspace
                 Values = new Dictionary<string, string> { { "step", "0" } }
             };
 
-            var result = await session.Call(procedure);
+            var result = await this.AsyncDatabaseClient.CallAsync(session, procedure);
 
             var unitSample = result.GetObject<UnitSample>("unitSample");
 
@@ -53,7 +53,7 @@ namespace Tests.Workspace
                 Values = new Dictionary<string, string> { { "step", "1" } }
             };
 
-            var result = await session.Call(procedure);
+            var result = await this.AsyncDatabaseClient.CallAsync(session, procedure);
 
             var unitSample = result.GetObject<UnitSample>("unitSample");
 

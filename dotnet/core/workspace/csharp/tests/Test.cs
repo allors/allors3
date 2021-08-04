@@ -17,6 +17,8 @@ namespace Tests.Workspace
         {
         }
 
+        public IAsyncDatabaseClient AsyncDatabaseClient => this.Profile.AsyncDatabaseClient;
+
         public IWorkspace Workspace => this.Profile.Workspace;
 
         public M M => this.Workspace.Context().M;

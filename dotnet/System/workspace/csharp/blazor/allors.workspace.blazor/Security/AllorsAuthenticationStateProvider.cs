@@ -11,12 +11,12 @@ namespace Allors.Workspace.Blazor
 
         private readonly AllorsAuthenticationStateProviderConfig Config;
 
-        private readonly IDatabaseConnection Database;
+        private readonly IWorkspace workspace;
 
-        public AllorsAuthenticationStateProvider(AllorsAuthenticationStateProviderConfig config, IDatabaseConnection database)
+        public AllorsAuthenticationStateProvider(AllorsAuthenticationStateProviderConfig config, IWorkspace workspace)
         {
             this.Config = config;
-            this.Database = database;
+            this.workspace = workspace;
         }
 
         public override Task<AuthenticationState> GetAuthenticationStateAsync()

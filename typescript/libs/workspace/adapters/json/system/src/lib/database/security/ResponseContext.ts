@@ -1,8 +1,8 @@
 import { IRange, enumerate } from '@allors/workspace/adapters/system';
-import { Database } from '../Database';
+import { DatabaseConnection } from '../DatabaseConnection';
 
 export class ResponseContext {
-  constructor(private readonly database: Database) {
+  constructor(private readonly database: DatabaseConnection) {
     this.missingAccessControlIds = new Set();
     this.missingPermissionIds = new Set();
   }

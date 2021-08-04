@@ -31,7 +31,7 @@ namespace Tests.Workspace
             };
 
             var session = this.Workspace.CreateSession();
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             var people = result.GetCollection<Person>();
 

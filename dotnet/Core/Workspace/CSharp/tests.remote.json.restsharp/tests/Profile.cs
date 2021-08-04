@@ -10,6 +10,7 @@ namespace Tests.Workspace.Remote
     using Allors.Ranges;
     using Allors.Workspace;
     using Allors.Workspace.Adapters;
+    using Allors.Workspace.Adapters.Remote;
     using Allors.Workspace.Adapters.Remote.ResthSharp;
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
@@ -35,7 +36,7 @@ namespace Tests.Workspace.Remote
 
         IWorkspace IProfile.Workspace => this.Workspace;
 
-        public DatabaseConnection Database { get; private set; }
+        public DatabaseConnection DatabaseConnection { get; private set; }
 
         public IWorkspace Workspace { get; private set; }
 
@@ -58,17 +59,25 @@ namespace Tests.Workspace.Remote
             Assert.True(response.IsSuccessful);
 
             this.client = new Client(this.CreateRestClient);
-            this.Database = new DatabaseConnection(this.configuration, () => new WorkspaceContext(), this.client, this.idGenerator, this.defaultRanges);
-            this.Workspace = this.Database.CreateWorkspace();
+            this.DatabaseConnection = new DatabaseConnection(this.configuration, () => new WorkspaceContext(), this.client, this.idGenerator, this.defaultRanges);
+            this.Workspace = this.DatabaseConnection.CreateWorkspace();
+
+            this.AsyncDatabaseClient = new AsyncDatabaseClient(this.DatabaseConnection);
 
             await this.Login("administrator");
         }
 
         public Task DisposeAsync() => Task.CompletedTask;
 
-        public IDatabaseConnection CreateDatabase() => new DatabaseConnection(this.configuration, () => new WorkspaceContext(), this.client, this.idGenerator, this.defaultRanges);
+        public IAsyncDatabaseClient AsyncDatabaseClient { get; private set; }
 
-        public IWorkspace CreateWorkspace() => this.Database.CreateWorkspace();
+        public IWorkspace CreateExclusiveWorkspace()
+        {
+            var database = new DatabaseConnection(this.configuration, () => new WorkspaceContext(), this.client, this.idGenerator, this.defaultRanges);
+            return database.CreateWorkspace();
+        }
+
+        public IWorkspace CreateWorkspace() => this.DatabaseConnection.CreateWorkspace();
 
         public async Task Login(string user)
         {

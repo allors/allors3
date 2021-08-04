@@ -1,7 +1,7 @@
 // api
 export * from './lib/api/IDerivationError';
+export * from './lib/api/IDerivationException';
 export * from './lib/api/IResult';
-export * from './lib/api/DerivationException';
 export * from './lib/api/IValidation';
 
 export * from './lib/api/pull/Procedure';
@@ -12,7 +12,8 @@ export * from './lib/api/pull/InvokeOptions';
 
 export * from './lib/api/push/IPushResult';
 
-export * from './lib/api/IPromiseApi';
+export * from './lib/api/IAsyncDatabaseClient';
+export * from './lib/api/IReactiveDatabaseClient';
 
 // data
 export * from './lib/data/Node';

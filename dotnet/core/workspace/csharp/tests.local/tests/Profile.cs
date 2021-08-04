@@ -15,6 +15,7 @@ namespace Tests.Workspace.Local
     using Allors.Database.Adapters.Memory;
     using Allors.Ranges;
     using Allors.Workspace.Adapters;
+    using Allors.Workspace.Adapters.Local;
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta.Lazy;
     using Configuration = Allors.Database.Adapters.Memory.Configuration;
@@ -30,7 +31,7 @@ namespace Tests.Workspace.Local
 
         private User user;
 
-        public Database Database { get; private set; }
+        public Database Database { get; }
 
         public DatabaseConnection DatabaseConnection { get; private set; }
 
@@ -44,6 +45,8 @@ namespace Tests.Workspace.Local
         {
             this.rangesFactory = () => new DefaultRanges();
             this.servicesBuilder = () => new WorkspaceContext();
+
+            this.AsyncDatabaseClient = new AsyncDatabaseClient();
 
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
@@ -77,8 +80,13 @@ namespace Tests.Workspace.Local
 
         public Task DisposeAsync() => Task.CompletedTask;
 
-        public IDatabaseConnection CreateDatabase() => new DatabaseConnection(this.configuration, this.Database, this.servicesBuilder, this.rangesFactory) { UserId = this.user.Id };
+        public IAsyncDatabaseClient AsyncDatabaseClient { get; }
 
+        public IWorkspace CreateExclusiveWorkspace()
+        {
+            var database = new DatabaseConnection(this.configuration, this.Database, this.servicesBuilder, this.rangesFactory) { UserId = this.user.Id };
+            return database.CreateWorkspace();
+        }
         public IWorkspace CreateWorkspace() => this.DatabaseConnection.CreateWorkspace();
 
         public Task Login(string userName)

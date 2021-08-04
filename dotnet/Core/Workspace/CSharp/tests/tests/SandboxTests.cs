@@ -33,7 +33,7 @@ namespace Tests.Workspace
                 //(session) => Task.CompletedTask,
                 async (session) =>
                 {
-                    var result = await session.Push();
+                    var result = await this.AsyncDatabaseClient.PushAsync(session);
                     Assert.False(result.HasErrors);
                 }
             };
@@ -69,10 +69,10 @@ namespace Tests.Workspace
                 c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                 c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
-                var pushResult = await session2.Push();
+                var pushResult = await this.AsyncDatabaseClient.PushAsync(session2);
                 Assert.False(pushResult.HasErrors);
 
-                var result = await session1.Pull(new Pull { Object = c1y_2 });
+                var result = await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1y_2 });
 
                 var c1y_1 = (C1)result.Objects.Values.First();
 
@@ -80,7 +80,7 @@ namespace Tests.Workspace
 
                 if (!c1x_1.CanWriteC1C1Many2One)
                 {
-                    await session1.Pull(new Pull { Object = c1x_1 });
+                    await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1x_1 });
                 }
 
                 c1x_1.C1C1Many2One = c1y_1;
@@ -93,10 +93,10 @@ namespace Tests.Workspace
                 c1x_1.C1C1Many2One.ShouldEqual(c1y_1, ctx, mode1);
                 c1y_1.C1sWhereC1C1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
 
-                pushResult = await session1.Push();
+                pushResult = await this.AsyncDatabaseClient.PushAsync(session1);
                 Assert.False(pushResult.HasErrors);
 
-                pushResult = await session2.Push();
+                pushResult = await this.AsyncDatabaseClient.PushAsync(session2);
                 Assert.False(pushResult.HasErrors);
             }
 
@@ -113,10 +113,10 @@ namespace Tests.Workspace
                 c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                 c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
-                var pushResult = await session2.Push();
+                var pushResult = await this.AsyncDatabaseClient.PushAsync(session2);
                 Assert.False(pushResult.HasErrors);
 
-                var result = await session1.Pull(new Pull { Object = c1y_2 });
+                var result = await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1y_2 });
 
                 var c1y_1 = (C1)result.Objects.Values.First();
 
@@ -124,7 +124,7 @@ namespace Tests.Workspace
 
                 if (!c1x_1.CanWriteC1C1Many2One)
                 {
-                    await session1.Pull(new Pull { Object = c1x_1 });
+                    await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1x_1 });
                 }
 
                 c1x_1.C1C1Many2One = c1y_1;
@@ -137,10 +137,10 @@ namespace Tests.Workspace
                 c1x_1.C1C1Many2One.ShouldEqual(c1y_1, ctx, mode1);
                 c1y_1.C1sWhereC1C1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
 
-                pushResult = await session1.Push();
+                pushResult = await this.AsyncDatabaseClient.PushAsync(session1);
                 Assert.False(pushResult.HasErrors);
 
-                pushResult = await session2.Push();
+                pushResult = await this.AsyncDatabaseClient.PushAsync(session2);
                 Assert.False(pushResult.HasErrors);
             }
         }

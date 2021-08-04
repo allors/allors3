@@ -35,7 +35,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public T[] GetCollection<T>() where T : class, IObject
         {
-            var objectType = this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>();
+            var objectType = this.Workspace.Configuration.ObjectFactory.GetObjectType<T>();
             var key = objectType.PluralName.ToUpperInvariant();
             return this.GetCollection<T>(key);
         }
@@ -44,7 +44,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public T GetObject<T>() where T : class, IObject
         {
-            var objectType = this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>();
+            var objectType = this.Workspace.Configuration.ObjectFactory.GetObjectType<T>();
             var key = objectType.SingularName.ToUpperInvariant();
             return this.GetObject<T>(key);
         }

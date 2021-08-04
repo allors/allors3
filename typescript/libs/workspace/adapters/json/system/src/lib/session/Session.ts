@@ -1,25 +1,21 @@
-import { InvokeRequest, PullRequest, PullResponse, PushRequest } from '@allors/protocol/json/system';
+import { PullResponse } from '@allors/protocol/json/system';
 import { Session as SystemSession } from '@allors/workspace/adapters/system';
-import { IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, ISessionServices, Method, Procedure, Pull } from '@allors/workspace/domain/system';
+import { IObject, IPullResult, ISessionServices } from '@allors/workspace/domain/system';
 import { Class, Origin } from '@allors/workspace/meta/system';
-import { procedureToJson, pullToJson } from '../json/toJson';
-import { Database } from '../database/Database';
+import { DatabaseConnection } from '../database/DatabaseConnection';
 import { DatabaseRecord } from '../database/DatabaseRecord';
-import { InvokeResult } from '../database/invoke/InvokeResult';
 import { PullResult } from '../database/pull/PullResult';
-import { PushResult } from '../database/push/PushResult';
 import { Workspace } from '../workspace/Workspace';
-import { DatabaseOriginState } from './originstate/DatabaseOriginState';
 import { Strategy } from './Strategy';
 
 export class Session extends SystemSession {
-  database: Database;
+  database: DatabaseConnection;
 
   constructor(workspace: Workspace, services: ISessionServices) {
     super(workspace, services);
 
     this.services.onInit(this);
-    this.database = this.workspace.database as Database;
+    this.database = this.workspace.database as DatabaseConnection;
   }
  
   create<T extends IObject>(cls: Class): T {
@@ -64,9 +60,9 @@ export class Session extends SystemSession {
 
     const pullResult = new PullResult(this, pullResponse);
 
-    const syncRequest = (this.workspace.database as Database).onPullResonse(pullResponse);
+    const syncRequest = (this.workspace.database as DatabaseConnection).onPullResonse(pullResponse);
     if (syncRequest.o.length > 0) {
-      const database = this.workspace.database as Database;
+      const database = this.workspace.database as DatabaseConnection;
       const syncResponse = await database.client.sync(syncRequest);
       let securityRequest = database.onSyncResponse(syncResponse);
 

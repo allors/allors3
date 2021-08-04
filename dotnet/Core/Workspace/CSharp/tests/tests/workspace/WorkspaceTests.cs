@@ -32,14 +32,14 @@ namespace Tests.Workspace.OriginWorkspace
             var c1 = session1.Create<WorkspaceC1>();
             Assert.NotNull(c1);
 
-            await session1.Push();
+            await this.AsyncDatabaseClient.PushAsync(session1);
 
             var session2 = this.Workspace.CreateSession();
             bool hasErrors;
 
             try
             {
-                var result = await session2.Pull(new Pull { Object = c1 });
+                var result = await this.AsyncDatabaseClient.PullAsync(session2, new Pull { Object = c1 });
                 hasErrors = false;
             }
             catch (Exception)

@@ -28,12 +28,12 @@ namespace Tests.Workspace
                 Extent = new Filter(this.M.C1)
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             var c1s = result.GetCollection<C1>("C1s");
             Assert.Equal(4, c1s.Length);
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             var c1s2 = result.GetCollection<C1>("C1s");
             Assert.Equal(4, c1s2.Length);
@@ -51,7 +51,7 @@ namespace Tests.Workspace
                 Extent = new Filter(this.M.C1)
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             foreach (var c1 in result.GetCollection<C1>("C1s"))
             {
@@ -88,7 +88,7 @@ namespace Tests.Workspace
                 Extent = new Filter(this.M.C1)
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             foreach (var c1 in result.GetCollection<C1>("C1s"))
             {

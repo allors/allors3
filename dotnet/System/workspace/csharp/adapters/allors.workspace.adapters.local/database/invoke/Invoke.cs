@@ -17,9 +17,9 @@ namespace Allors.Workspace.Adapters.Local
 
     public class Invoke : Result
     {
-        internal Invoke(Session session, Workspace workspace) : base(session)
+        internal Invoke(Session session) : base(session)
         {
-            this.Workspace = workspace;
+            this.Workspace = session.Workspace;
             this.Transaction = this.Workspace.DatabaseConnection.Database.CreateTransaction();
 
             var metaCache = this.Transaction.Database.Services.Get<IMetaCache>();

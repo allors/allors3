@@ -38,7 +38,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             var c1s = result.GetCollection<C1>();
             var c1b = c1s.Single(v => v.Name == "c1B");

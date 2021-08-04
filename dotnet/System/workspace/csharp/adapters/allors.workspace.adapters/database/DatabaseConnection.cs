@@ -7,7 +7,7 @@ namespace Allors.Workspace.Adapters
 {
     using Meta;
 
-    public abstract class DatabaseConnection : IDatabaseConnection
+    public abstract class DatabaseConnection
     {
         private readonly IdGenerator idGenerator;
 
@@ -17,7 +17,6 @@ namespace Allors.Workspace.Adapters
             this.idGenerator = idGenerator;
         }
 
-        IConfiguration IDatabaseConnection.Configuration => this.Configuration;
         public Configuration Configuration { get; }
 
         public abstract IWorkspace CreateWorkspace();

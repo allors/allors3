@@ -7,7 +7,7 @@ export type ServicesBuilder = () => IWorkspaceServices;
 
 export type IdGenerator = () => number;
 
-export abstract class Database {
+export abstract class DatabaseConnection {
   constructor(public configuration: Configuration, private idGenerator: IdGenerator) {}
 
   abstract createWorkspace(): IWorkspace;

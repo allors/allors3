@@ -67,8 +67,8 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            await session2.Push();
-                            var result = await session1.Pull(new Pull { Object = c1y_2 });
+                            await this.AsyncDatabaseClient.PushAsync(session2);
+                            var result = await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1y_2 });
 
                             var c1y_1 = (C1)result.Objects.Values.First();
 
@@ -112,8 +112,8 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            await session2.Push();
-                            var result = await session1.Pull(new Pull { Object = c1y_2 });
+                            await this.AsyncDatabaseClient.PushAsync(session2);
+                            var result = await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1y_2 });
 
                             var c1y_1 = (C1)result.Objects.Values.First();
 
@@ -160,8 +160,8 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            await session2.Push();
-                            var result = await session1.Pull(new Pull { Object = c1y_2 });
+                            await this.AsyncDatabaseClient.PushAsync(session2);
+                            var result = await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1y_2 });
 
                             var c1y_1 = (C1)result.Objects.Values.First();
 
@@ -208,8 +208,8 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            await session2.Push();
-                            var result = await session1.Pull(new Pull { Object = c1y_2 });
+                            await this.AsyncDatabaseClient.PushAsync(session2);
+                            var result = await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1y_2 });
 
                             var c1y_1 = (C1)result.Objects.Values.First();
 

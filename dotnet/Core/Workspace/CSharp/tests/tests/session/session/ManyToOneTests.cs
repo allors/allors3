@@ -30,7 +30,7 @@ namespace Tests.Workspace.OriginSession.SessionSession
             this.pushes = new Func<ISession, Task>[]
             {
                 (session) => Task.CompletedTask,
-                async (session) => await session.Push()
+                async (session) => await this.AsyncDatabaseClient.PushAsync(session)
             };
 
             var multipleSessionContext = new MultipleSessionContext(this, "Multiple shared");
@@ -58,7 +58,7 @@ namespace Tests.Workspace.OriginSession.SessionSession
                     c1x_1.ShouldNotBeNull(ctx);
                     c1y_2.ShouldNotBeNull(ctx);
 
-                    await session1.Push();
+                    await this.AsyncDatabaseClient.PushAsync(session1);
 
                     c1x_1.SessionC1SessionC1Many2One = c1y_2;
 
@@ -89,7 +89,7 @@ namespace Tests.Workspace.OriginSession.SessionSession
                     c1x_1.ShouldNotBeNull(ctx);
                     c1y_2.ShouldNotBeNull(ctx);
 
-                    await session1.Push();
+                    await this.AsyncDatabaseClient.PushAsync(session1);
 
                     c1x_1.SessionC1SessionC1Many2One = c1y_2;
                     c1x_1.SessionC1SessionC1Many2One.ShouldEqual(c1y_2, ctx);

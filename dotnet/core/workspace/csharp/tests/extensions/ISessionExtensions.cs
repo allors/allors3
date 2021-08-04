@@ -13,12 +13,12 @@ namespace Tests.Workspace
 
     public static class ISessionExtensions
     {
-        public static async Task<T> PullObject<T>(this ISession @this, string name) where T : class, IObject
+        public static async Task<T> PullObject<T>(this IAsyncDatabaseClient @this, ISession session, string name) where T : class, IObject
         {
-            var objectType = (IComposite)@this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>();
+            var objectType = (IComposite)session.Workspace.Configuration.ObjectFactory.GetObjectType<T>();
             var roleType = objectType.RoleTypes.First(v => v.Name.Equals("Name"));
             var pull = new Pull { Extent = new Filter(objectType) { Predicate = new Equals(roleType) { Value = name } } };
-            var result = await @this.Pull(pull);
+            var result = await @this.PullAsync(session, pull);
             var collection = result.GetCollection<T>();
             return collection[0];
         }

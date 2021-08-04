@@ -23,7 +23,7 @@ namespace Tests.Workspace
 
             var session1 = this.Workspace.CreateSession();
 
-            var result = await session1.Pull(new[]
+            var result = await this.AsyncDatabaseClient.PullAsync(session1, new[]
             {
                 new Pull
                 {
@@ -36,7 +36,7 @@ namespace Tests.Workspace
 
             workspaceOrganisation1.WorkspaceDatabaseOwner = databasePerson1;
 
-            await session1.Push();
+            await this.AsyncDatabaseClient.PushAsync(session1);
             session1.PushToWorkspace();
 
             var session2 = this.Workspace.CreateSession();
@@ -63,16 +63,16 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session1.Pull(pulls);
+            var result = await this.AsyncDatabaseClient.PullAsync(session1, pulls);
 
             var workspaceOrganisation1 = session1.Create<WorkspaceOrganisation>();
             workspaceOrganisation1.WorkspaceDatabaseOwner = result.GetCollection<Person>()[0];
 
-            await session1.Push();
+            await this.AsyncDatabaseClient.PushAsync(session1);
             session1.PushToWorkspace();
 
             var session2 = this.Workspace.CreateSession();
-            await session2.Pull(pulls);
+            await this.AsyncDatabaseClient.PullAsync(session2, pulls);
 
             var workspaceOrganisation2 = session2.Instantiate(workspaceOrganisation1);
 
@@ -81,7 +81,7 @@ namespace Tests.Workspace
             Assert.Null(workspaceOrganisation1.WorkspaceDatabaseOwner);
             Assert.NotNull(workspaceOrganisation2.WorkspaceDatabaseOwner);
 
-            await session1.Push();
+            await this.AsyncDatabaseClient.PushAsync(session1);
             session1.PushToWorkspace();
 
             session2.PullFromWorkspace();
@@ -102,7 +102,7 @@ namespace Tests.Workspace
 
             workspaceOrganisation1.WorkspaceWorkspaceOwner = workspacePerson1;
 
-            await session1.Push();
+            await this.AsyncDatabaseClient.PushAsync(session1);
             session1.PushToWorkspace();
 
             var session2 = this.Workspace.CreateSession();
@@ -124,7 +124,7 @@ namespace Tests.Workspace
             var workspaceOrganisation1 = session1.Create<WorkspaceOrganisation>();
             workspaceOrganisation1.WorkspaceWorkspaceOwner = session1.Create<WorkspacePerson>();
 
-            await session1.Push();
+            await this.AsyncDatabaseClient.PushAsync(session1);
             session1.PushToWorkspace();
 
             var session2 = this.Workspace.CreateSession();
@@ -155,7 +155,7 @@ namespace Tests.Workspace
             var organisation1 = session1.Create<Organisation>();
             organisation1.Name = "Allors";
 
-            await session1.Push();
+            await this.AsyncDatabaseClient.PushAsync(session1);
 
             var session2 = this.Workspace.CreateSession();
 
@@ -176,19 +176,19 @@ namespace Tests.Workspace
             };
             #endregion
 
-            var result = await session2.Pull(pulls);
+            var result = await this.AsyncDatabaseClient.PullAsync(session2, pulls);
 
             var organisation2 = result.GetObject<Organisation>();
 
-            await session1.Pull(pulls);
+            await this.AsyncDatabaseClient.PullAsync(session1, pulls);
             organisation1.Owner = session1.Create<Person>();
 
-            await session1.Push();
+            await this.AsyncDatabaseClient.PushAsync(session1);
 
             Assert.NotNull(organisation1.Owner);
             Assert.Null(organisation2.Owner);
 
-            await session2.Pull(pulls);
+            await this.AsyncDatabaseClient.PullAsync(session2, pulls);
 
             Assert.NotNull(organisation1.Owner);
             Assert.NotNull(organisation2.Owner);
@@ -209,7 +209,7 @@ namespace Tests.Workspace
 
             Assert.Equal(person1, organisation1.Owner);
 
-            await session1.Push();
+            await this.AsyncDatabaseClient.PushAsync(session1);
 
             var session2 = this.Workspace.CreateSession();
 
@@ -230,7 +230,7 @@ namespace Tests.Workspace
             };
             #endregion
 
-            var pullResult = await session2.Pull(pulls);
+            var pullResult = await this.AsyncDatabaseClient.PullAsync(session2, pulls);
 
             var organisation2 = pullResult.GetObject<Organisation>();
             var person2 = organisation2.Owner;
@@ -240,7 +240,7 @@ namespace Tests.Workspace
 
             var canRemoveBeforePull = organisation1.CanWriteOwner;
 
-            await session1.Pull(pulls);
+            await this.AsyncDatabaseClient.PullAsync(session1, pulls);
 
             var canRemoveAfterPull = organisation1.CanWriteOwner;
 
@@ -249,12 +249,12 @@ namespace Tests.Workspace
             Assert.Null(organisation1.Owner);
             Assert.NotNull(organisation2.Owner);
 
-            var pushResult = await session1.Push();
+            var pushResult = await this.AsyncDatabaseClient.PushAsync(session1);
 
             Assert.Null(organisation1.Owner);
             Assert.NotNull(organisation2.Owner);
 
-            await session2.Pull(pulls);
+            await this.AsyncDatabaseClient.PullAsync(session2, pulls);
 
             person2 = organisation2.Owner;
 

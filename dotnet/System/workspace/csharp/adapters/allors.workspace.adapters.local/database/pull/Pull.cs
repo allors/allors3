@@ -20,9 +20,9 @@ namespace Allors.Workspace.Adapters.Local
         private IDictionary<string, IObject[]> collections;
         private IDictionary<string, IObject> objects;
 
-        public Pull(Session session, Workspace workspace) : base(session)
+        public Pull(Session session) : base(session)
         {
-            this.Workspace = workspace;
+            this.Workspace = session.Workspace;
 
             var database = this.Workspace.DatabaseConnection.Database;
             this.Transaction = database.CreateTransaction();

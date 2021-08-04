@@ -46,7 +46,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -70,7 +70,7 @@ namespace Tests.Workspace
                 }
             };
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -102,7 +102,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Empty(result.Collections);
             Assert.Empty(result.Objects);
@@ -120,7 +120,7 @@ namespace Tests.Workspace
                 }
             };
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -143,7 +143,7 @@ namespace Tests.Workspace
                 }
             };
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -160,7 +160,7 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
             var m = this.M;
 
-            var c1c = await session.PullObject<C1>(c1C);
+            var c1c = await this.AsyncDatabaseClient.PullObject<C1>(session, c1C);
 
             // Full
             var pull = new Pull
@@ -174,7 +174,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -200,7 +200,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -231,7 +231,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -248,7 +248,7 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
             var m = this.M;
 
-            var c1c = await session.PullObject<C1>(c1C);
+            var c1c = await this.AsyncDatabaseClient.PullObject<C1>(session, c1C);
 
             // Full
             var pull = new Pull
@@ -262,7 +262,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -293,7 +293,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -310,8 +310,8 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
             var m = this.M;
 
-            var c1b = await session.PullObject<C1>(c1B);
-            var c1c = await session.PullObject<C1>(c1C);
+            var c1b = await this.AsyncDatabaseClient.PullObject<C1>(session, c1B);
+            var c1c = await this.AsyncDatabaseClient.PullObject<C1>(session, c1C);
 
             var pull = new Pull
             {
@@ -324,7 +324,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -343,7 +343,7 @@ namespace Tests.Workspace
                 }
             };
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -369,7 +369,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -386,7 +386,7 @@ namespace Tests.Workspace
                 }
             };
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -411,7 +411,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -442,7 +442,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -459,8 +459,8 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
             var m = this.M;
 
-            var c1b = await session.PullObject<C1>(c1B);
-            var c1c = await session.PullObject<C1>(c1C);
+            var c1b = await this.AsyncDatabaseClient.PullObject<C1>(session, c1B);
+            var c1c = await this.AsyncDatabaseClient.PullObject<C1>(session, c1C);
 
             var pull = new Pull
             {
@@ -473,7 +473,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -492,7 +492,7 @@ namespace Tests.Workspace
                 }
             };
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -518,7 +518,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -534,7 +534,7 @@ namespace Tests.Workspace
                 }
             };
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -559,7 +559,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -575,7 +575,7 @@ namespace Tests.Workspace
                 }
             };
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -592,7 +592,7 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
             var m = this.M;
 
-            var c1c = await session.PullObject<C1>(c1C);
+            var c1c = await this.AsyncDatabaseClient.PullObject<C1>(session, c1C);
 
             var pull = new Pull
             {
@@ -602,7 +602,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -624,7 +624,7 @@ namespace Tests.Workspace
                 Extent = new Filter(m.I12)
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -652,7 +652,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -669,7 +669,7 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
             var m = this.M;
 
-            var c1c = await session.PullObject<C1>(c1C);
+            var c1c = await this.AsyncDatabaseClient.PullObject<C1>(session, c1C);
 
             var pull = new Pull
             {
@@ -682,7 +682,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -699,8 +699,8 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
             var m = this.M;
 
-            var c1b = await session.PullObject<C1>(c1B);
-            var c1c = await session.PullObject<C1>(c1C);
+            var c1b = await this.AsyncDatabaseClient.PullObject<C1>(session, c1B);
+            var c1c = await this.AsyncDatabaseClient.PullObject<C1>(session, c1C);
 
             var pull = new Pull
             {
@@ -717,7 +717,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -748,7 +748,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -780,7 +780,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -809,7 +809,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -837,7 +837,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -869,7 +869,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -897,7 +897,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -925,7 +925,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -953,7 +953,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -981,7 +981,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1009,7 +1009,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1037,7 +1037,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1065,7 +1065,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1093,7 +1093,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1121,7 +1121,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1149,7 +1149,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1177,7 +1177,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1205,7 +1205,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1233,7 +1233,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1261,7 +1261,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1289,7 +1289,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1317,7 +1317,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1345,7 +1345,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1373,7 +1373,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1401,7 +1401,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1429,7 +1429,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1457,7 +1457,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1485,7 +1485,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1513,7 +1513,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1541,7 +1541,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1569,7 +1569,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1597,7 +1597,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1622,7 +1622,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1650,7 +1650,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1678,7 +1678,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1706,7 +1706,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1734,7 +1734,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1766,7 +1766,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Empty(result.Collections);
             Assert.Empty(result.Objects);
@@ -1784,7 +1784,7 @@ namespace Tests.Workspace
                 }
             };
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1807,7 +1807,7 @@ namespace Tests.Workspace
                 }
             };
 
-            result = await session.Pull(pull);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1824,7 +1824,7 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
             var m = this.M;
 
-            var c2c = await session.PullObject<C2>(c2C);
+            var c2c = await this.AsyncDatabaseClient.PullObject<C2>(session, c2C);
 
             var pull = new Pull
             {
@@ -1837,7 +1837,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1868,7 +1868,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1885,7 +1885,7 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
             var m = this.M;
 
-            var c2d = await session.PullObject<C2>(c2D);
+            var c2d = await this.AsyncDatabaseClient.PullObject<C2>(session, c2D);
 
             var pull = new Pull
             {
@@ -1898,7 +1898,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1929,7 +1929,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1960,7 +1960,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -1994,7 +1994,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await session.Pull(pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             Assert.Single(result.Collections);
             Assert.Empty(result.Objects);
@@ -2010,7 +2010,7 @@ namespace Tests.Workspace
 
             var session = this.Workspace.CreateSession();
             var pull1 = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await session.Pull(pull1);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull1);
             var c1a = result.GetCollection<C1>()[0];
 
             var pull2 = new Pull
@@ -2018,7 +2018,7 @@ namespace Tests.Workspace
                 ObjectId = c1a.Id
             };
 
-            result = await session.Pull(pull2);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull2);
 
             Assert.Single(result.Objects);
             Assert.Empty(result.Collections);
