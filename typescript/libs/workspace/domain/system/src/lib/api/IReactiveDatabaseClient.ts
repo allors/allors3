@@ -11,11 +11,11 @@ import { IPushResult } from './push/IPushResult';
 import type { Observable } from 'rxjs';
 
 export interface IReactiveDatabaseClient {
-  invokeObservable(session: ISession, method: Method | Method[], options?: InvokeOptions): Observable<IInvokeResult>;
+  invokeReactive(session: ISession, method: Method | Method[], options?: InvokeOptions): Observable<IInvokeResult>;
 
-  callObservable(session: ISession, procedure: Procedure, ...pulls: Pull[]): Observable<IPullResult>;
+  callReactive(session: ISession, procedure: Procedure, ...pulls: Pull[]): Observable<IPullResult>;
 
-  pullObservable(session: ISession, pulls: Pull[]): Observable<IPullResult>;
+  pullReactive(session: ISession, pulls: Pull[]): Observable<IPullResult>;
 
-  pushObservable(session: ISession): Observable<IPushResult>;
+  pushReactive(session: ISession): Observable<IPushResult>;
 }
