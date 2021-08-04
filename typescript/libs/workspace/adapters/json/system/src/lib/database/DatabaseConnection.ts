@@ -2,7 +2,6 @@ import { PullResponse, SecurityRequest, SecurityResponse, SyncRequest, SyncRespo
 import { AccessControl, Configuration, DatabaseConnection as SystemDatabaseConnection, equals, IdGenerator, MapMap, ServicesBuilder } from '@allors/workspace/adapters/system';
 import { IWorkspace, Operations } from '@allors/workspace/domain/system';
 import { Class, MethodType, OperandType, RelationType } from '@allors/workspace/meta/system';
-import { Client } from './Client';
 import { DatabaseRecord } from './DatabaseRecord';
 import { ResponseContext } from './Security/ResponseContext';
 import { Workspace } from '../workspace/Workspace';
@@ -17,7 +16,7 @@ export class DatabaseConnection extends SystemDatabaseConnection {
   writePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
   executePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
 
-  constructor(configuration: Configuration, idGenerator: IdGenerator, private servicesBuilder: ServicesBuilder, public client: Client) {
+  constructor(configuration: Configuration, idGenerator: IdGenerator, private servicesBuilder: ServicesBuilder) {
     super(configuration, idGenerator);
 
     this.recordsById = new Map();
@@ -158,9 +157,5 @@ export class DatabaseConnection extends SystemDatabaseConnection {
 
   getRecord(id: number): DatabaseRecord | undefined {
     return this.recordsById.get(id);
-  }
-
-  security(securityRequest: SecurityRequest): Promise<SecurityResponse> {
-    return this.client.security(securityRequest);
   }
 }

@@ -1,16 +1,19 @@
-import { InvokeRequest, PullRequest, PushRequest } from '@allors/protocol/json/system';
+import { InvokeRequest, PullRequest, PullResponse, PushRequest } from '@allors/protocol/json/system';
 import { IAsyncDatabaseClient, IInvokeResult, InvokeOptions, IPullResult, IPushResult, ISession, Method, Procedure, Pull } from '@allors/workspace/domain/system';
 import { Origin } from '@allors/workspace/meta/system';
-import { procedureToJson, pullToJson } from '../json/toJson';
-import { DatabaseOriginState } from '../session/originstate/DatabaseOriginState';
-import { Session } from '../session/Session';
-import { Strategy } from '../session/Strategy';
-import { Client } from './Client';
-import { InvokeResult } from './invoke/InvokeResult';
-import { PushResult } from './push/PushResult';
+import { procedureToJson, pullToJson } from './json/toJson';
+import { DatabaseOriginState } from './session/originstate/DatabaseOriginState';
+import { Session } from './session/Session';
+import { Strategy } from './session/Strategy';
+import { InvokeResult } from './database/invoke/InvokeResult';
+import { PushResult } from './database/push/PushResult';
+import { PullResult } from './database/pull/PullResult';
+
+import { IAsyncDatabaseJsonClient } from './IAsyncDatabaseJsonClient';
+import { DatabaseConnection } from './database/DatabaseConnection';
 
 export class AsyncDatabaseClient implements IAsyncDatabaseClient {
-  constructor(public client: Client) {}
+  constructor(public client: IAsyncDatabaseJsonClient) {}
 
   async invokeAsync(session: ISession, methods: Method[], options: InvokeOptions): Promise<IInvokeResult> {
     const invokeRequest: InvokeRequest = {
@@ -50,7 +53,8 @@ export class AsyncDatabaseClient implements IAsyncDatabaseClient {
     };
 
     const pullResponse = await this.client.pull(pullRequest);
-    return await (session as Session).onPull(pullResponse);
+    return await this.onPull(session as Session, pullResponse);
+
   }
 
   async callAsync(session: ISession, procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult> {
@@ -60,7 +64,7 @@ export class AsyncDatabaseClient implements IAsyncDatabaseClient {
     };
 
     const pullResponse = await this.client.pull(pullRequest);
-    return await (session as Session).onPull(pullResponse);
+    return await this.onPull(session as Session, pullResponse);
   }
 
   async pushAsync(session: ISession): Promise<IPushResult> {
@@ -98,5 +102,45 @@ export class AsyncDatabaseClient implements IAsyncDatabaseClient {
     }
 
     return pushResult;
+  }
+
+  private async onPull(session: Session, pullResponse: PullResponse): Promise<IPullResult> {
+    const pullResult = new PullResult(session, pullResponse);
+
+    const syncRequest = (session.workspace.database as DatabaseConnection).onPullResonse(pullResponse);
+    if (syncRequest.o.length > 0) {
+      const database = session.workspace.database as DatabaseConnection;
+      const syncResponse = await this.client.sync(syncRequest);
+      let securityRequest = database.onSyncResponse(syncResponse);
+
+      for (const v of syncResponse.o) {
+        if (!session.strategyByWorkspaceId.has(v.i)) {
+          session.instantiateDatabaseStrategy(v.i);
+        } else {
+          const strategy = session.strategyByWorkspaceId.get(v.i);
+          strategy.DatabaseOriginState.onPulled(pullResult);
+        }
+      }
+
+      if (securityRequest != null) {
+        let securityResponse = await this.client.security(securityRequest);
+        securityRequest = database.securityResponse(securityResponse);
+        if (securityRequest != null) {
+          securityResponse = await this.client.security(securityRequest);
+          database.securityResponse(securityResponse);
+        }
+      }
+    }
+
+    for (const v of pullResponse.p) {
+      if (session.strategyByWorkspaceId.has(v.i)) {
+        const strategy = session.strategyByWorkspaceId.get(v.i);
+        strategy.DatabaseOriginState.onPulled(pullResult);
+      } else {
+        session.instantiateDatabaseStrategy(v.i);
+      }
+    }
+
+    return pullResult;
   }
 }

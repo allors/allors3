@@ -30,8 +30,7 @@ export class Fixture {
       () => nextId--,
       () => {
         return new WorkspaceServices();
-      },
-      this.client
+      }
     );
   }
 }

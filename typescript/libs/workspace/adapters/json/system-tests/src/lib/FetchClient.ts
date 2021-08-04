@@ -1,6 +1,6 @@
 import fetch from 'cross-fetch';
 import { InvokeRequest, PullRequest, PullResponse, PushRequest, PushResponse, Response, SecurityRequest, SecurityResponse, SyncRequest, SyncResponse } from '@allors/protocol/json/system';
-import { Client } from '@allors/workspace/adapters/json/system';
+import { IAsyncDatabaseJsonClient } from '@allors/workspace/adapters/json/system';
 
 interface AuthenticationTokenRequest {
   /** login */
@@ -21,7 +21,7 @@ interface AuthenticationTokenResponse {
   t: string;
 }
 
-export class FetchClient implements Client {
+export class FetchClient implements IAsyncDatabaseJsonClient {
   userId: number;
   jwtToken: string;
 

@@ -1,9 +1,6 @@
 import { InvokeRequest, InvokeResponse, PullRequest, PullResponse, PushRequest, PushResponse, SecurityRequest, SecurityResponse, SyncRequest, SyncResponse } from '@allors/protocol/json/system';
 
-export interface Client {
-  baseUrl: string;
-  userId: number;
-  jwtToken: string;
+export interface IAsyncDatabaseJsonClient {
 
   pull(pullRequest: PullRequest): Promise<PullResponse>;
 
