@@ -6,7 +6,7 @@ let fixture: Fixture;
 beforeEach(async () => {
   fixture = new Fixture();
   await fixture.init();
-  await initAssociation(fixture.asyncDatabaseClient, fixture.databaseConnection.createWorkspace(), (login) => fixture.client.login(login));
+  await initAssociation(null, fixture.reactiveDatabaseClient, fixture.databaseConnection.createWorkspace(), (login) => fixture.client.login(login));
 });
 
 test('databaseGetOne2Many', async () => {

@@ -73,7 +73,7 @@ export class FetchClient implements IAsyncDatabaseJsonClient {
   async invoke(invokeRequest: InvokeRequest): Promise<Response> {
     return await this.post('invoke', invokeRequest);
   }
-  
+
   async security(securityRequest: SecurityRequest): Promise<SecurityResponse> {
     return await this.post('security', securityRequest);
   }

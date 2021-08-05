@@ -31,7 +31,10 @@
     "workspace-adapters-json-system": {
       "tags": []
     },
-    "workspace-adapters-json-system-tests": {
+    "workspace-adapters-json-system-tests-async": {
+      "tags": []
+    },
+    "workspace-adapters-json-system-tests-reactive": {
       "tags": []
     },
     "workspace-adapters-system": {

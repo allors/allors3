@@ -6,7 +6,7 @@ let fixture: Fixture;
 beforeEach(async () => {
   fixture = new Fixture();
   await fixture.init();
-  await initPull(fixture.asyncDatabaseClient, fixture.databaseConnection.createWorkspace(), (login) => fixture.client.login(login));
+  await initPull(fixture.asyncDatabaseClient, null, fixture.databaseConnection.createWorkspace(), (login) => fixture.client.login(login));
 });
 
 test('andGreaterThanLessThan', async () => {

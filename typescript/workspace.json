@@ -221,22 +221,43 @@
         }
       }
     },
-    "workspace-adapters-json-system-tests": {
-      "root": "libs/workspace/adapters/json/system-tests",
-      "sourceRoot": "libs/workspace/adapters/json/system-tests/src",
+    "workspace-adapters-json-system-tests-async": {
+      "root": "libs/workspace/adapters/json/system-tests-async",
+      "sourceRoot": "libs/workspace/adapters/json/system-tests-async/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/workspace/adapters/json/system-tests/**/*.ts"]
+            "lintFilePatterns": ["libs/workspace/adapters/json/system-tests-async/**/*.ts"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/adapters/json/system-tests"],
+          "outputs": ["coverage/libs/workspace/adapters/json/system-tests-async"],
           "options": {
-            "jestConfig": "libs/workspace/adapters/json/system-tests/jest.config.js",
+            "jestConfig": "libs/workspace/adapters/json/system-tests-async/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-adapters-json-system-tests-reactive": {
+      "root": "libs/workspace/adapters/json/system-tests-reactive",
+      "sourceRoot": "libs/workspace/adapters/json/system-tests-reactive/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/adapters/json/system-tests-reactive/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/adapters/json/system-tests-reactive"],
+          "options": {
+            "jestConfig": "libs/workspace/adapters/json/system-tests-reactive/jest.config.js",
             "passWithNoTests": true
           }
         }

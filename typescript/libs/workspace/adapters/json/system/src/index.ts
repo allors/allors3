@@ -7,3 +7,5 @@ export * from './lib/workspace/Workspace';
 
 export * from './lib/AsyncDatabaseClient';
 export * from './lib/IAsyncDatabaseJsonClient';
+export * from './lib/ReactiveDatabaseClient';
+export * from './lib/IReactiveDatabaseJsonClient';

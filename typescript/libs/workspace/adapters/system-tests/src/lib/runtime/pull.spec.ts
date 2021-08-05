@@ -1,4 +1,4 @@
-import { IAsyncDatabaseClient, IWorkspace, Pull } from '@allors/workspace/domain/system';
+import { IAsyncDatabaseClient, IReactiveDatabaseClient, IWorkspace, Pull } from '@allors/workspace/domain/system';
 import { Fixture, name_c1B, name_c2B } from '../Fixture';
 import '../Matchers';
 import '@allors/workspace/domain/core';
@@ -9,8 +9,8 @@ it('dummy', () => {
   expect(true).toBeTruthy();
 });
 
-export async function initPull(client: IAsyncDatabaseClient, workspace: IWorkspace, login: (login: string) => Promise<boolean>) {
-  fixture = new Fixture(client, workspace, login);
+export async function initPull(asyncClient: IAsyncDatabaseClient, reactiveClient: IReactiveDatabaseClient, workspace: IWorkspace, login: (login: string) => Promise<boolean>) {
+  fixture = new Fixture(asyncClient, reactiveClient, workspace, login);
 }
 
 export async function andGreaterThanLessThan() {

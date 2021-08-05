@@ -1,4 +1,4 @@
-import { InvokeRequest, PullRequest, PushRequest } from '@allors/protocol/json/system';
+import { InvokeRequest, PullRequest, PullResponse, PushRequest } from '@allors/protocol/json/system';
 import { IReactiveDatabaseClient, IInvokeResult, InvokeOptions, IPullResult, IPushResult, ISession, Method, Procedure, Pull } from '@allors/workspace/domain/system';
 import { Origin } from '@allors/workspace/meta/system';
 import { procedureToJson, pullToJson } from './json/toJson';
@@ -13,7 +13,7 @@ import { IReactiveDatabaseJsonClient } from './IReactiveDatabaseJsonClient';
 import { DatabaseConnection } from './database/DatabaseConnection';
 
 import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { concatMap, map, switchMap, tap } from 'rxjs/operators';
 
 export class ReactiveDatabaseClient implements IReactiveDatabaseClient {
   constructor(public client: IReactiveDatabaseJsonClient) {}
@@ -107,36 +107,51 @@ export class ReactiveDatabaseClient implements IReactiveDatabaseClient {
 
   private pull(session: Session, pullRequest: PullRequest): Observable<IPullResult> {
     return this.client.pull(pullRequest).pipe(
-      switchMap((pullResponse) => {
+      concatMap((pullResponse) => {
         const pullResult = new PullResult(session, pullResponse);
+
         const syncRequest = (session.workspace.database as DatabaseConnection).onPullResonse(pullResponse);
+        if (syncRequest.o.length > 0) {
+          const database = session.workspace.database as DatabaseConnection;
+          return this.client.sync(syncRequest).pipe(
+            concatMap((syncResponse) => {
+              const securityRequest = database.onSyncResponse(syncResponse);
 
-        // TODO: Koen
+              for (const v of syncResponse.o) {
+                if (!session.strategyByWorkspaceId.has(v.i)) {
+                  session.instantiateDatabaseStrategy(v.i);
+                } else {
+                  const strategy = session.strategyByWorkspaceId.get(v.i);
+                  strategy.DatabaseOriginState.onPulled(pullResult);
+                }
+              }
 
-        // if (syncRequest.o.length > 0) {
-        //   const database = session.workspace.database as DatabaseConnection;
-        //   const syncResponse = await this.client.sync(syncRequest);
-        //   let securityRequest = database.onSyncResponse(syncResponse);
-
-        //   for (const v of syncResponse.o) {
-        //     if (!session.strategyByWorkspaceId.has(v.i)) {
-        //       session.instantiateDatabaseStrategy(v.i);
-        //     } else {
-        //       const strategy = session.strategyByWorkspaceId.get(v.i);
-        //       strategy.DatabaseOriginState.onPulled(pullResult);
-        //     }
-        //   }
-
-        //   if (securityRequest != null) {
-        //     let securityResponse = await this.client.security(securityRequest);
-        //     securityRequest = database.securityResponse(securityResponse);
-        //     if (securityRequest != null) {
-        //       securityResponse = await this.client.security(securityRequest);
-        //       database.securityResponse(securityResponse);
-        //     }
-        //   }
-        // }
-
+              if (securityRequest != null) {
+                return this.client.security(securityRequest).pipe(
+                  concatMap((securityResponse) => {
+                    const securityRequest = database.securityResponse(securityResponse);
+                    if (securityRequest != null) {
+                      return this.client.security(securityRequest).pipe(
+                        concatMap((securityResponse) => {
+                          database.securityResponse(securityResponse);
+                          return of({ pullResult, pullResponse });
+                        })
+                      );
+                    } else {
+                      return of({ pullResult, pullResponse });
+                    }
+                  })
+                );
+              } else {
+                return of({ pullResult, pullResponse });
+              }
+            })
+          );
+        } else {
+          return of({ pullResult, pullResponse });
+        }
+      }),
+      map(({ pullResult, pullResponse }) => {
         for (const v of pullResponse.p) {
           if (session.strategyByWorkspaceId.has(v.i)) {
             const strategy = session.strategyByWorkspaceId.get(v.i);
@@ -146,7 +161,7 @@ export class ReactiveDatabaseClient implements IReactiveDatabaseClient {
           }
         }
 
-        return of(pullResult);
+        return pullResult;
       })
     );
   }

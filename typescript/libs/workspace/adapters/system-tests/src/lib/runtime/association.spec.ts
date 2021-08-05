@@ -1,4 +1,4 @@
-import { Pull, IAsyncDatabaseClient, IWorkspace } from '@allors/workspace/domain/system';
+import { Pull, IAsyncDatabaseClient, IWorkspace, IReactiveDatabaseClient } from '@allors/workspace/domain/system';
 import { Fixture, name_c1C, name_c2C } from '../Fixture';
 import '../Matchers';
 import '@allors/workspace/domain/core';
@@ -9,8 +9,8 @@ it('dummy', () => {
   expect(true).toBeTruthy();
 });
 
-export async function initAssociation(client: IAsyncDatabaseClient, workspace: IWorkspace, login: (login: string) => Promise<boolean>) {
-  fixture = new Fixture(client, workspace, login);
+export async function initAssociation(asyncClient: IAsyncDatabaseClient, reactiveClient: IReactiveDatabaseClient, workspace: IWorkspace, login: (login: string) => Promise<boolean>) {
+  fixture = new Fixture(asyncClient, reactiveClient, workspace, login);
 }
 
 export async function databaseGetOne2Many() {

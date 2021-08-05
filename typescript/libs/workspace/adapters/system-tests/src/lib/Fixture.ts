@@ -2,7 +2,8 @@ import { MetaPopulation } from '@allors/workspace/meta/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { M } from '@allors/workspace/meta/core';
 import { data } from '@allors/workspace/meta/json/core';
-import { IAsyncDatabaseClient, IWorkspace } from '@allors/workspace/domain/system';
+import { IAsyncDatabaseClient, IReactiveDatabaseClient, IWorkspace } from '@allors/workspace/domain/system';
+import { ClientAdapter } from './ClientAdapter';
 
 export const name_c1A = 'c1A';
 export const name_c1B = 'c1B';
@@ -17,8 +18,12 @@ export class Fixture {
   metaPopulation: MetaPopulation;
   m: M;
 
-  constructor(public client: IAsyncDatabaseClient, public workspace: IWorkspace, public login: (login: string) => Promise<boolean>) {
+  client: IAsyncDatabaseClient;
+
+  constructor(public asyncClient: IAsyncDatabaseClient, reactiveClient: IReactiveDatabaseClient, public workspace: IWorkspace, public login: (login: string) => Promise<boolean>) {
     this.metaPopulation = new LazyMetaPopulation(data);
     this.m = this.metaPopulation as MetaPopulation as M;
+
+    this.client = asyncClient ?? new ClientAdapter(reactiveClient);
   }
 }
