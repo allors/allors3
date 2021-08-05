@@ -21,7 +21,6 @@ module.exports = {
       },
     ],
   ],
-  // Allors: sequential with extra time
   maxWorkers: 1,
   testTimeout: 60000,
 };
