@@ -1,11 +1,10 @@
-import { IDiff, IObject, IStrategy, IUnit, Method } from '@allors/workspace/domain/system';
-import { DatabaseRecord } from '../database/DatabaseRecord';
+import { IDiff, IObject, IStrategy, IUnit } from '@allors/workspace/domain/system';
 import { DatabaseOriginState } from './originstate/DatabaseOriginState';
 import { WorkspaceOriginState } from './originstate/WorkspaceOriginState';
 import { isNewId, Session } from './Session';
 import { importFrom, enumerate, IRange, has } from '../collections/Range';
 import { AssociationType, Class, Composite, MethodType, Origin, RoleType } from '@allors/workspace/meta/system';
-import { UnknownVersion, WorkspaceInitialVersion } from '../Version';
+import { WorkspaceInitialVersion } from '../Version';
 
 export abstract class Strategy implements IStrategy {
   DatabaseOriginState: DatabaseOriginState;
@@ -391,5 +390,14 @@ export abstract class Strategy implements IStrategy {
     }
 
     inputs.forEach((v) => this.assertComposite(v));
+  }
+
+  toString() {
+    return JSON.stringify(this);
+  }
+  toJSON() {
+    return {
+      id: this.id,
+    };
   }
 }

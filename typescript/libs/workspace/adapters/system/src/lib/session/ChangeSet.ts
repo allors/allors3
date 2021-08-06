@@ -10,9 +10,12 @@ export class ChangeSet implements IChangeSet {
   associationsByRoleType: Map<RoleType, Set<IStrategy>>;
   rolesByAssociationType: Map<AssociationType, Set<IStrategy>>;
 
-  public constructor(public session: ISession, public created: Readonly<Set<IStrategy>> = frozenEmptySet as Readonly<Set<IStrategy>>, public instantiated: Readonly<Set<IStrategy>> = frozenEmptySet as Readonly<Set<IStrategy>>) {
+  public constructor(public session: ISession, public created: Readonly<Set<IStrategy>>, public instantiated: Readonly<Set<IStrategy>>) {
     this.associationsByRoleType = new Map();
     this.rolesByAssociationType = new Map();
+
+    this.created ??= frozenEmptySet as Readonly<Set<IStrategy>>;
+    this.instantiated ??= frozenEmptySet as Readonly<Set<IStrategy>>;
   }
 
   public addSessionStateChanges(sessionStateChangeSet: MapMap<PropertyType, number, unknown>) {
@@ -79,8 +82,8 @@ export class ChangeSet implements IChangeSet {
   private addAssociation(relationType: RelationType, association: Strategy) {
     const roleType = relationType.roleType;
 
-    let associations: Set<Strategy>;
-    if (!this.associationsByRoleType.has(roleType)) {
+    let associations = this.associationsByRoleType.get(roleType);
+    if (!associations) {
       associations = new Set();
       this.associationsByRoleType.set(roleType, associations);
     }
@@ -91,8 +94,8 @@ export class ChangeSet implements IChangeSet {
   private addRole(relationType: RelationType, role: Strategy) {
     const associationType = relationType.associationType;
 
-    let roles: Set<IStrategy>;
-    if (!this.rolesByAssociationType.has(associationType)) {
+    let roles = this.rolesByAssociationType.get(associationType);
+    if (!roles) {
       roles = new Set();
       this.rolesByAssociationType.set(associationType, roles);
     }

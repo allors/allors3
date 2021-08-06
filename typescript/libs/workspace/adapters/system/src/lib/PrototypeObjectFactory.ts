@@ -22,6 +22,15 @@ export class PrototypeObjectFactory implements IObjectFactory {
       this.constructorByObjectType.set(objectType, DynamicClass as any);
 
       const prototype = DynamicClass.prototype;
+
+      prototype.toString = function () {
+        return this.strategy.toString();
+      };
+
+      prototype.toJSON = function () {
+        return this.strategy.ToJSON();
+      };
+
       objectType.roleTypes.forEach((roleType) => {
         Object.defineProperty(prototype, 'CanRead' + roleType.name, {
           get(this: ObjectBase) {

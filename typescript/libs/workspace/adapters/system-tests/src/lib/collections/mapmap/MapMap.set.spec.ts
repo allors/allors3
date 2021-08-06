@@ -12,7 +12,7 @@ describe('MapMap', () => {
 
       it('should have that value', () => {
         const a = mm(mapMap).get('a');
-        expect(a?.get('b')).toEqual(importFrom([1]));
+        expect(a?.get('b')).toBe(importFrom([1]));
       });
     });
 
@@ -38,7 +38,7 @@ describe('MapMap', () => {
       });
 
       it('should have that value', () => {
-        expect(mm(mapMap).get('a')?.get('b')).toEqual(importFrom([1]));
+        expect(mm(mapMap).get('a')?.get('b')).toBe(importFrom([1]));
       });
     });
   });
@@ -56,7 +56,7 @@ describe('MapMap', () => {
       });
 
       it('should return value', () => {
-        expect(mm(mapMap).get('a')?.get('b')).toEqual(importFrom([1]));
+        expect(mm(mapMap).get('a')?.get('b')).toBe(importFrom([1]));
       });
     });
   });

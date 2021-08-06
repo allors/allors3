@@ -739,7 +739,7 @@ describe('Unit Relation in MetaPopulation', () => {
     it('should have the same RoleType', () => {
       expect(namedRoleType).toBeDefined();
       expect(organisationRoleType).toBeDefined();
-      expect(organisationRoleType).toEqual(namedRoleType);
+      expect(organisationRoleType).toBe(namedRoleType);
     });
   });
 });

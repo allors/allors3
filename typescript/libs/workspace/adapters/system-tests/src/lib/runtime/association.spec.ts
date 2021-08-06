@@ -51,7 +51,7 @@ export async function databaseGetOne2Many() {
   const c1WhereC1C2One2Many = c2C.C1WhereC1C2One2Many;
 
   expect(c1WhereC1C2One2Many).toBeDefined();
-  expect(c1WhereC1C2One2Many.Name).toEqual(name_c1C);
+  expect(c1WhereC1C2One2Many.Name).toBe(name_c1C);
 }
 
 export async function databaseGetOne2One() {
@@ -91,5 +91,5 @@ export async function databaseGetOne2One() {
   const c1WhereC1C2One2One = c2C.C1WhereC1C2One2One;
 
   expect(c1WhereC1C2One2One).toBeDefined();
-  expect(c1WhereC1C2One2One.Name).toEqual(name_c1C);
+  expect(c1WhereC1C2One2One.Name).toBe(name_c1C);
 }

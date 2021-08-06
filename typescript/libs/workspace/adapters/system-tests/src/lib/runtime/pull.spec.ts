@@ -76,7 +76,7 @@ export async function andGreaterThanLessThan() {
 
   result = await client.pullAsync(session, [pull]);
 
-  expect(result.collections.size).toEqual(1);
+  expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
   expect(result.values.size).toBe(0);
 

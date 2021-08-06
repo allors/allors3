@@ -5,7 +5,6 @@ npx create-nx-workspace@latest allors --preset=empty --cli=nx --nx-cloud=false
 cd allors
 
 npm install -D jest-chain
-npm install -D jest-extended
 npm install -D jest-trx-results-processor
 npm install -D @nrwl/angular
 

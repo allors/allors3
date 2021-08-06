@@ -45,7 +45,7 @@ describe('MethodType in MetaPopulation', () => {
     it('should have the same RoleType', () => {
       expect(actionDo).toBeDefined();
       expect(organisationDo).toBeDefined();
-      expect(organisationDo).toEqual(actionDo);
+      expect(organisationDo).toBe(actionDo);
     });
   });
 });

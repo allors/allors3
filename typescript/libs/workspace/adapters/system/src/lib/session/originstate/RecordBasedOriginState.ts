@@ -124,7 +124,7 @@ export abstract class RecordBasedOriginState {
 
       //  Previous changed roles
       this.changedRoleByRelationType.forEach((current, relationType) => {
-        const previous = this.previousChangedRoleByRelationType.get(relationType);
+        const previous = this.previousChangedRoleByRelationType?.get(relationType);
         changeSet.diff(this.strategy, relationType, current, previous);
       });
     } else {

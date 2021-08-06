@@ -16,7 +16,7 @@ describe('IRange', () => {
       });
 
       it('should contain other elements', () => {
-        expect((added as number[]).length).toEqual(1);
+        expect((added as number[]).length).toBe(1);
       });
     });
   });
@@ -40,7 +40,7 @@ describe('IRange', () => {
       });
 
       it('should contain two elements', () => {
-        expect(added.length).toEqual(2);
+        expect(added.length).toBe(2);
       });
     });
   });

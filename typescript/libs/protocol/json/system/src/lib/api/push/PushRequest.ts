@@ -3,8 +3,8 @@ import { PushRequestObject } from "./PushRequestObject";
 
 export interface PushRequest {
   /** NewObjects*/
-  n: PushRequestNewObject[];
+  n?: PushRequestNewObject[];
 
   /** Objects */
-  o: PushRequestObject[];
+  o?: PushRequestObject[];
 }

@@ -54,7 +54,6 @@ export class AsyncDatabaseClient implements IAsyncDatabaseClient {
 
     const pullResponse = await this.client.pull(pullRequest);
     return await this.onPull(session as Session, pullResponse);
-
   }
 
   async callAsync(session: ISession, procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult> {
@@ -70,10 +69,15 @@ export class AsyncDatabaseClient implements IAsyncDatabaseClient {
   async pushAsync(session: ISession): Promise<IPushResult> {
     const pushToDatabaseTracker = (session as Session).pushToDatabaseTracker;
 
-    const pushRequest: PushRequest = {
-      n: [...pushToDatabaseTracker.created].map((v) => (v.DatabaseOriginState as DatabaseOriginState).pushNew()),
-      o: [...pushToDatabaseTracker.changed].map((v) => (v.strategy.DatabaseOriginState as DatabaseOriginState).pushExisting()),
-    };
+    const pushRequest: PushRequest = {};
+
+    if (pushToDatabaseTracker.created) {
+      pushRequest.n = [...pushToDatabaseTracker.created].map((v) => (v.DatabaseOriginState as DatabaseOriginState).pushNew());
+    }
+
+    if (pushToDatabaseTracker.changed) {
+      pushRequest.o = [...pushToDatabaseTracker.changed].map((v) => (v.strategy.DatabaseOriginState as DatabaseOriginState).pushExisting());
+    }
 
     const pushResponse = await this.client.push(pushRequest);
 

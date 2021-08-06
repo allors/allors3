@@ -14,6 +14,7 @@ export abstract class Workspace implements IWorkspace {
   private readonly recordById: Map<number, WorkspaceRecord>;
 
   constructor(public database: DatabaseConnection, public services: IWorkspaceServices) {
+    this.configuration = database.configuration;
     this.workspaceClassByWorkspaceId = new Map();
     this.workspaceIdsByWorkspaceClass = new Map();
 

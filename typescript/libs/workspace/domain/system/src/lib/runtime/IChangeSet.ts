@@ -1,6 +1,6 @@
-import { AssociationType, RoleType } from '@allors/workspace/meta/system';
-import { ISession } from './ISession';
-import { IStrategy } from './IStrategy';
+import { AssociationType, RoleType } from "@allors/workspace/meta/system";
+import { ISession } from "./ISession";
+import { IStrategy } from "./IStrategy";
 
 export interface IChangeSet {
   session: ISession;

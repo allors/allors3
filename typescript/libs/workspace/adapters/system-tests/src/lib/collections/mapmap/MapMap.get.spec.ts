@@ -39,7 +39,7 @@ describe('MapMap', () => {
       const value = mapMap.get('a', 'b');
 
       it('should return value', () => {
-        expect(value).toEqual(importFrom([0]));
+        expect(value).toBe(importFrom([0]));
       });
     });
   });

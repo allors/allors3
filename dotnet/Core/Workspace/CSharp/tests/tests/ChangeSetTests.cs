@@ -37,11 +37,15 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             var changeSet = session.Checkpoint();
 
             Assert.Single(changeSet.Instantiated);
+
+            var c1a = result.GetCollection<C1>()[0];
+
+            Assert.Equal(c1a.Strategy, changeSet.Instantiated.First());
         }
 
         [Fact]

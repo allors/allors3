@@ -32,7 +32,7 @@ describe('IRange', () => {
       });
 
       it('should contain one element', () => {
-        expect((removed as []).length).toEqual(1);
+        expect((removed as []).length).toBe(1);
       });
 
       it('should only contain the original element', () => {
