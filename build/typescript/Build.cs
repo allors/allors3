@@ -29,7 +29,7 @@ partial class Build
             .SetProcessWorkingDirectory(Paths.Typescript)
             .SetCommand("test:workspace-adapters-system")));
 
-    private Target TypescriptWorkspaceAdaptersJsonSystem => _ => _
+    private Target TypescriptWorkspaceAdaptersJsonAsyncSystem => _ => _
         .After(DotnetCoreInstall)
         .After(TypescriptInstall)
         .DependsOn(EnsureDirectories)
@@ -45,15 +45,34 @@ partial class Build
             NpmRun(s => s
                 .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
                 .SetProcessWorkingDirectory(Paths.Typescript)
-                .SetCommand("test:workspace-adapters-json-system"));
+                .SetCommand("test:workspace-adapters-json-async-system"));
         });
 
+    private Target TypescriptWorkspaceAdaptersJsonReactiveSystem => _ => _
+        .After(DotnetCoreInstall)
+        .After(TypescriptInstall)
+        .DependsOn(EnsureDirectories)
+        .DependsOn(DotnetCoreGenerate)
+        .DependsOn(DotnetCorePublishServer)
+        .DependsOn(DotnetCorePublishCommands)
+        .DependsOn(DotnetCoreResetDatabase)
+        .Executes(async () =>
+        {
+            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
+            using var server = new Server(Paths.ArtifactsCoreServer);
+            await server.Ready();
+            NpmRun(s => s
+                .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+                .SetProcessWorkingDirectory(Paths.Typescript)
+                .SetCommand("test:workspace-adapters-json-reactive-system"));
+        });
 
     private Target TypescriptWorkspaceTest => _ => _
          .After(TypescriptInstall)
          .DependsOn(TypescriptWorkspaceMetaJsonSystem)
          .DependsOn(TypescriptWorkspaceAdaptersSystem)
-         .DependsOn(TypescriptWorkspaceAdaptersJsonSystem);
+         .DependsOn(TypescriptWorkspaceAdaptersJsonAsyncSystem)
+         .DependsOn(TypescriptWorkspaceAdaptersJsonReactiveSystem);
 
     private Target TypescriptTest => _ => _
         .DependsOn(TypescriptWorkspaceTest);
