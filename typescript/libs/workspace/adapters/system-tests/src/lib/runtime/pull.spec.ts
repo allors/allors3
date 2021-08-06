@@ -6,6 +6,7 @@ import '@allors/workspace/domain/core';
 let fixture: Fixture;
 
 it('dummy', () => {
+  // otherwise jest will complain that there are no specs
   expect(true).toBeTruthy();
 });
 

@@ -29,7 +29,7 @@ partial class Build
             .SetProcessWorkingDirectory(Paths.Typescript)
             .SetCommand("test:workspace-adapters-system")));
 
-    private Target TypescriptWorkspaceAdaptersJsonAsyncSystem => _ => _
+    private Target TypescriptWorkspaceAdaptersJsonSystemAsync => _ => _
         .After(DotnetCoreInstall)
         .After(TypescriptInstall)
         .DependsOn(EnsureDirectories)
@@ -45,10 +45,10 @@ partial class Build
             NpmRun(s => s
                 .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
                 .SetProcessWorkingDirectory(Paths.Typescript)
-                .SetCommand("test:workspace-adapters-json-async-system"));
+                .SetCommand("test:workspace-adapters-json-system-async"));
         });
 
-    private Target TypescriptWorkspaceAdaptersJsonReactiveSystem => _ => _
+    private Target TypescriptWorkspaceAdaptersJsonSystemReactive => _ => _
         .After(DotnetCoreInstall)
         .After(TypescriptInstall)
         .DependsOn(EnsureDirectories)
@@ -64,15 +64,15 @@ partial class Build
             NpmRun(s => s
                 .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
                 .SetProcessWorkingDirectory(Paths.Typescript)
-                .SetCommand("test:workspace-adapters-json-reactive-system"));
+                .SetCommand("test:workspace-adapters-json-system-reactive"));
         });
 
     private Target TypescriptWorkspaceTest => _ => _
          .After(TypescriptInstall)
          .DependsOn(TypescriptWorkspaceMetaJsonSystem)
          .DependsOn(TypescriptWorkspaceAdaptersSystem)
-         .DependsOn(TypescriptWorkspaceAdaptersJsonAsyncSystem)
-         .DependsOn(TypescriptWorkspaceAdaptersJsonReactiveSystem);
+         .DependsOn(TypescriptWorkspaceAdaptersJsonSystemAsync)
+         .DependsOn(TypescriptWorkspaceAdaptersJsonSystemReactive);
 
     private Target TypescriptTest => _ => _
         .DependsOn(TypescriptWorkspaceTest);

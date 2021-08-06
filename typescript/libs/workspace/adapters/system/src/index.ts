@@ -1,3 +1,4 @@
+export * from './lib/collections/frozenEmptySet'
 export * from './lib/collections/MapMap'
 export * from './lib/collections/Range'
 

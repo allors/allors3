@@ -1,15 +1,15 @@
-import { AssociationType, RoleType } from "@allors/workspace/meta/system";
-import { ISession } from "./ISession";
-import { IStrategy } from "./IStrategy";
+import { AssociationType, RoleType } from '@allors/workspace/meta/system';
+import { ISession } from './ISession';
+import { IStrategy } from './IStrategy';
 
 export interface IChangeSet {
   session: ISession;
 
-  created: Set<IStrategy>;
+  created: Readonly<Set<IStrategy>>;
 
-  instantiated: Set<IStrategy>;
+  instantiated: Readonly<Set<IStrategy>>;
 
-  associationsByRoleType: Map<RoleType, Set<IStrategy>>;
+  associationsByRoleType: Readonly<Map<RoleType, Set<IStrategy>>>;
 
-  rolesByAssociationType: Map<AssociationType, Set<IStrategy>>;
+  rolesByAssociationType: Readonly<Map<AssociationType, Set<IStrategy>>>;
 }

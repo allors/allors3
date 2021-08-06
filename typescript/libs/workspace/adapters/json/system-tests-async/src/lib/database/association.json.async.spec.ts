@@ -1,4 +1,4 @@
-import { initAssociation, databaseGetOne2Many } from '@allors/workspace/adapters/system-tests';
+import { initAssociation, databaseGetOne2Many, databaseGetOne2One } from '@allors/workspace/adapters/system-tests';
 import { Fixture } from '../Fixture';
 
 let fixture: Fixture;
@@ -11,4 +11,8 @@ beforeEach(async () => {
 
 test('databaseGetOne2Many', async () => {
   await databaseGetOne2Many();
+});
+
+test('databaseGetOne2One', async () => {
+  await databaseGetOne2One();
 });

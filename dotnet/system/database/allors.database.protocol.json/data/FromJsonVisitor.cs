@@ -24,7 +24,7 @@ namespace Allors.Database.Protocol.Json
     {
         private readonly ITransaction transaction;
         private readonly IUnitConvert unitConvert;
-        private IMetaPopulation metaPopulation;
+        private readonly IMetaPopulation metaPopulation;
 
         private readonly Stack<Data.IExtent> extents;
         private readonly Stack<Data.IPredicate> predicates;

@@ -93,6 +93,18 @@ export function predicateToJson(from: DataPredicate): Predicate {
         ops: predicatesToJson(from.operands),
       };
 
+    case 'Equals':
+      return {
+        k: PredicateKind[from.kind],
+        d: from.dependencies,
+        a: asAssociationTypeToJson(from.propertyType),
+        r: asRoleTypeToJson(from.propertyType),
+        ob: from.object?.id,
+        v: unitToJson(from.value),
+        pa: roleTypeToJson(from.path),
+        p: from.parameter
+      };
+
     case 'GreaterThan':
       return {
         k: PredicateKind[from.kind],
@@ -100,6 +112,7 @@ export function predicateToJson(from: DataPredicate): Predicate {
         r: roleTypeToJson(from.roleType),
         v: unitToJson(from.value),
         pa: roleTypeToJson(from.path),
+        p: from.parameter
       };
 
     case 'LessThan':
@@ -109,10 +122,11 @@ export function predicateToJson(from: DataPredicate): Predicate {
         r: roleTypeToJson(from.roleType),
         v: unitToJson(from.value),
         pa: roleTypeToJson(from.path),
+        p: from.parameter
       };
   }
 
-  throw new Error("Not implemented yet")
+  throw new Error('Not implemented yet');
 }
 
 function sortingsToJson(from: DataSort[]): Sort[] {

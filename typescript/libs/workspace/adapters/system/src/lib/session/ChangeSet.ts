@@ -4,12 +4,13 @@ import { MapMap } from '../collections/MapMap';
 import { difference, enumerate, IRange } from '../collections/Range';
 import { Session } from './Session';
 import { Strategy } from './Strategy';
+import { frozenEmptySet } from '../collections/frozenEmptySet';
 
 export class ChangeSet implements IChangeSet {
   associationsByRoleType: Map<RoleType, Set<IStrategy>>;
   rolesByAssociationType: Map<AssociationType, Set<IStrategy>>;
 
-  public constructor(public session: ISession, public created: Set<IStrategy>, public instantiated: Set<IStrategy>) {
+  public constructor(public session: ISession, public created: Readonly<Set<IStrategy>> = frozenEmptySet as Readonly<Set<IStrategy>>, public instantiated: Readonly<Set<IStrategy>> = frozenEmptySet as Readonly<Set<IStrategy>>) {
     this.associationsByRoleType = new Map();
     this.rolesByAssociationType = new Map();
   }
