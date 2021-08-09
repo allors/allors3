@@ -23,7 +23,7 @@ export interface ISession {
 
   checkpoint(): IChangeSet;
 
-  create(cls: Class): IObject;
+  create<T extends IObject>(cls: Class): T;
 
   instantiate<T extends IObject>(id: number): T;
   instantiate<T extends IObject>(ids: number[]): T[];

@@ -1,4 +1,4 @@
-import { IChangeSet, InvokeOptions, IObject, IPullResult, IPushResult, IResult, ISession, ISessionServices, IWorkspaceResult, Method, Procedure, Pull } from '@allors/workspace/domain/system';
+import { IChangeSet, IObject, ISession, ISessionServices, IWorkspaceResult } from '@allors/workspace/domain/system';
 import { Workspace } from '../workspace/Workspace';
 import { SessionOriginState } from './originstate/SessionOriginState';
 import { Strategy } from './Strategy';
@@ -36,7 +36,7 @@ export abstract class Session implements ISession {
     this.pushToWorkspaceTracker = new PushToWorkspaceTracker();
   }
 
-  abstract create(cls: Composite): IObject;
+  abstract create<T extends IObject>(cls: Composite): T;
 
   pullFromWorkspace(): IWorkspaceResult {
     const result = new WorkspaceResult();
@@ -209,9 +209,9 @@ export abstract class Session implements ISession {
   }
 
   onDatabasePushResponseNew(workspaceId: number, databaseId: number) {
-    const strategy = this.strategyByWorkspaceId[workspaceId];
+    const strategy = this.strategyByWorkspaceId.get(workspaceId);
     this.pushToDatabaseTracker.created.delete(strategy);
-    strategy.OnDatabasePushNewId(databaseId);
+    strategy.onDatabasePushNewId(databaseId);
     this.addStrategy(strategy);
     strategy.onDatabasePushed();
   }

@@ -69,10 +69,16 @@ export class ReactiveDatabaseClient implements IReactiveDatabaseClient {
   pushReactive(session: ISession): Observable<IPushResult> {
     const pushToDatabaseTracker = (session as Session).pushToDatabaseTracker;
 
-    const pushRequest: PushRequest = {
-      n: [...pushToDatabaseTracker.created].map((v) => (v.DatabaseOriginState as DatabaseOriginState).pushNew()),
-      o: [...pushToDatabaseTracker.changed].map((v) => (v.strategy.DatabaseOriginState as DatabaseOriginState).pushExisting()),
-    };
+    const pushRequest: PushRequest = {};
+
+    if (pushToDatabaseTracker.created) {
+      pushRequest.n = [...pushToDatabaseTracker.created].map((v) => (v.DatabaseOriginState as DatabaseOriginState).pushNew());
+    }
+
+    if (pushToDatabaseTracker.changed) {
+      pushRequest.o = [...pushToDatabaseTracker.changed].map((v) => (v.strategy.DatabaseOriginState as DatabaseOriginState).pushExisting());
+    }
+
 
     return this.client.push(pushRequest).pipe(
       switchMap((pushResponse) => {
