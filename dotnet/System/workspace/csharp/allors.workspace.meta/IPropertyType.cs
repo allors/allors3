@@ -26,7 +26,5 @@ namespace Allors.Workspace.Meta
         bool IsOne { get; }
 
         bool IsMany { get; }
-
-        object Get(IStrategy strategy, IComposite ofType = null);
     }
 }

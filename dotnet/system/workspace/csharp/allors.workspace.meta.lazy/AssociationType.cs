@@ -50,32 +50,6 @@ namespace Allors.Workspace.Meta
         bool IPropertyType.IsOne => this.IsOne;
 
         bool IPropertyType.IsMany => this.IsMany;
-
-        object IPropertyType.Get(IStrategy strategy, IComposite ofType)
-        {
-            if (this.IsOne)
-            {
-                var association = strategy.GetCompositeAssociation<IObject>(this);
-
-                if (ofType == null || association == null)
-                {
-                    return association;
-                }
-
-                return !ofType.IsAssignableFrom(((IObject)association).Strategy.Class) ? null : association;
-            }
-            else
-            {
-                var association = strategy.GetCompositesAssociation<IObject>(this);
-
-                if (ofType == null || association == null)
-                {
-                    return association;
-                }
-
-                return association.Where(v => ofType.IsAssignableFrom(v.Strategy.Class));
-            }
-        }
         #endregion
 
         #region IAssociationType

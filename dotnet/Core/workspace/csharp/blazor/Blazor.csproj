@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\System\Workspace\CSharp\Allors.Workspace\Allors.Workspace.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Workspace\CSharp\Allors.Workspace.Domain\Allors.Workspace.Domain.csproj" />
     <ProjectReference Include="..\..\..\..\System\workspace\csharp\blazor\Allors.Workspace.Blazor\Allors.Workspace.Blazor.csproj" />
   </ItemGroup>
 

@@ -59,31 +59,6 @@ namespace Allors.Workspace.Meta
 
         bool IPropertyType.IsMany => this.IsMany;
 
-        object IPropertyType.Get(IStrategy strategy, IComposite ofType)
-        {
-            if (this.IsOne)
-            {
-                var association = strategy.GetCompositeRole<IObject>(this);
-
-                if (ofType == null || association == null)
-                {
-                    return association;
-                }
-
-                return !ofType.IsAssignableFrom(((IObject)association).Strategy.Class) ? null : association;
-            }
-            else
-            {
-                var association = strategy.GetCompositesRole<IObject>(this);
-
-                if (ofType == null || association == null)
-                {
-                    return association;
-                }
-
-                return association.Where(v => ofType.IsAssignableFrom(v.Strategy.Class));
-            }
-        }
         #endregion
 
         #region IRoleType
@@ -109,35 +84,7 @@ namespace Allors.Workspace.Meta
 
         IRelationTypeInternals IRoleTypeInternals.RelationType { get => this.RelationType; set => this.RelationType = value; }
         #endregion
-
-        public object Get(IStrategy strategy, IComposite ofType = null)
-        {
-            if (this.IsOne)
-            {
-                var association = strategy.GetCompositeRole<IObject>(this);
-
-                if (ofType == null || association == null)
-                {
-                    return association;
-                }
-
-                return !ofType.IsAssignableFrom(((IObject)association).Strategy.Class) ? null : association;
-            }
-            else
-            {
-                var association = strategy.GetCompositesRole<IObject>(this);
-
-                if (ofType == null || association == null)
-                {
-                    return association;
-                }
-
-                return association.Where(v => ofType.IsAssignableFrom(v.Strategy.Class));
-            }
-        }
-
-        public void Set(IStrategy strategy, object value) => strategy.SetRole(this, value);
-
+        
         public override string ToString() => $"{this.AssociationType.ObjectType.SingularName}.{this.Name}";
 
         public void Init(string singularName = null, string pluralName = null, int? size = null, int? precision = null, int? scale = null, bool isRequired = false, bool isUnique = false, string mediaType = null)
