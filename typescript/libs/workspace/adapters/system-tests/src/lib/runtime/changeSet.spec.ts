@@ -670,13 +670,13 @@ export async function changeSetAfterDoubleReset() {
   let result = await client.pullAsync(session, [pull]);
   const c1a_1 = result.collection<C1>('C1s')[0];
 
+  session.checkpoint();
+
   c1a_1.C1AllorsString = 'X';
 
   await client.pushAsync(session);
   result = await client.pullAsync(session, [pull]);
   const c1a_2 = result.collection<C1>('C1s')[0];
-
-  session.checkpoint();
 
   c1a_2.C1AllorsString = 'Y';
 
