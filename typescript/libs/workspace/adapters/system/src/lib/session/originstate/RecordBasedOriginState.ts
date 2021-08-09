@@ -120,13 +120,14 @@ export abstract class RecordBasedOriginState {
             changeSet.diff(this.strategy, relationType, current, previous);
           });
         }
+      } else {
+        this.changedRoleByRelationType.forEach((current, relationType) => {
+          const previous = this.previousChangedRoleByRelationType?.get(relationType);
+          changeSet.diff(this.strategy, relationType, current, previous);
+        });
       }
 
       //  Previous changed roles
-      this.changedRoleByRelationType.forEach((current, relationType) => {
-        const previous = this.previousChangedRoleByRelationType?.get(relationType);
-        changeSet.diff(this.strategy, relationType, current, previous);
-      });
     } else {
       //  Different record
       this.roleTypes.forEach((roleType) => {

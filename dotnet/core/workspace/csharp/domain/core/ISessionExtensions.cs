@@ -3,14 +3,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-
 namespace Allors.Workspace.Domain
 {
     using System;
     using Derivations;
     using Workspace;
     using Workspace.Derivations;
-    using Workspace.Domain;
 
     public static partial class ISessionExtensions
     {
