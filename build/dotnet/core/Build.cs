@@ -97,7 +97,7 @@ partial class Build
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
             .SetProcessWorkingDirectory(Paths.DotnetCoreWorkspaceTypescript)));
 
-    private Target DotnetCoreWorkspaceCSharpTest => _ => _
+    private Target DotnetCoreWorkspaceLocalTest => _ => _
         .DependsOn(DotnetCorePublishServer)
         .DependsOn(DotnetCorePublishCommands)
         .DependsOn(DotnetCoreResetDatabase)
@@ -111,7 +111,17 @@ partial class Build
                     .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTestsLocal.trx")
                     .SetResultsDirectory(Paths.ArtifactsTests));
             }
+        });
 
+    private Target DotnetCoreWorkspaceRemoteJsonSystemTextTest => _ => _
+        .DependsOn(DotnetCorePublishServer)
+        .DependsOn(DotnetCorePublishCommands)
+        .DependsOn(DotnetCoreResetDatabase)
+        .Executes(async () =>
+        {
+            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
+
+           
             {
                 using var server = new Server(Paths.ArtifactsCoreServer);
                 await server.Ready();
@@ -122,6 +132,15 @@ partial class Build
                     .SetResultsDirectory(Paths.ArtifactsTests));
             }
 
+        });
+
+    private Target DotnetCoreWorkspaceRemoteJsonRestSharpTest => _ => _
+        .DependsOn(DotnetCorePublishServer)
+        .DependsOn(DotnetCorePublishCommands)
+        .DependsOn(DotnetCoreResetDatabase)
+        .Executes(async () =>
+        {
+            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
             {
                 using var server = new Server(Paths.ArtifactsCoreServer);
                 await server.Ready();
@@ -138,8 +157,11 @@ partial class Build
         .DependsOn(DotnetCoreDatabaseTestDomain)
         .DependsOn(DotnetCoreDatabaseTestServerLocal)
         .DependsOn(DotnetCoreDatabaseTestServerRemote);
+
     private Target DotnetCoreWorkspaceTest => _ => _
-        .DependsOn(DotnetCoreWorkspaceCSharpTest);
+        .DependsOn(DotnetCoreWorkspaceLocalTest)
+        .DependsOn(DotnetCoreWorkspaceRemoteJsonSystemTextTest)
+        .DependsOn(DotnetCoreWorkspaceRemoteJsonRestSharpTest);
 
     private Target DotnetCoreTest => _ => _
         .DependsOn(DotnetCoreDatabaseTest)

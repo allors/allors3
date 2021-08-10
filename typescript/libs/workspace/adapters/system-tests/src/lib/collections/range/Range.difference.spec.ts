@@ -56,7 +56,7 @@ describe('IRange', () => {
       const diff = difference(self, other);
 
       it('should return self', () => {
-        expect(diff).toBe(self);
+        expect(diff).toEqual(self);
       });
     });
 
@@ -74,7 +74,7 @@ describe('IRange', () => {
       const diff = difference(self, other);
 
       it('should return self', () => {
-        expect(diff).toBe(self);
+        expect(diff).toEqual(self);
       });
     });
 
@@ -83,7 +83,7 @@ describe('IRange', () => {
       const diff = difference(self, other);
 
       it('should return self', () => {
-        expect(diff).toBe(self);
+        expect(diff).toEqual(self);
       });
     });
 
@@ -113,7 +113,7 @@ describe('IRange', () => {
       const diff = difference(self, other);
 
       it('should return self', () => {
-        expect(diff).toBe(self);
+        expect(diff).toEqual(self);
       });
     });
 
@@ -122,7 +122,7 @@ describe('IRange', () => {
       const diff = difference(self, other);
 
       it('should return undefined', () => {
-        expect(diff).toBe([0, 5, 6]);
+        expect(diff).toEqual([0, 5, 6]);
       });
     });
 
@@ -131,7 +131,7 @@ describe('IRange', () => {
       const diff = difference(self, other);
 
       it('should return self', () => {
-        expect(diff).toBe(self);
+        expect(diff).toEqual(self);
       });
     });
 
@@ -140,7 +140,7 @@ describe('IRange', () => {
       const diff = difference(self, other);
 
       it('should return self', () => {
-        expect(diff).toBe(self);
+        expect(diff).toEqual(self);
       });
     });
 
@@ -158,7 +158,7 @@ describe('IRange', () => {
       const diff = difference(self, other);
 
       it('should return undefined', () => {
-        expect(diff).toBe([0, 6]);
+        expect(diff).toEqual([0, 6]);
       });
     });
   });
