@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     {
         public static void AppsOnInit(this CommunicationEvent @this, ObjectOnInit method)
         {
-            if (!@this.ExistOwner && @this.Strategy.Transaction.Services().User is Person owner)
+            if (!@this.ExistOwner && @this.Strategy.Transaction.Services.Get<IUserService>().User is Person owner)
             {
                 @this.Owner = owner;
             }

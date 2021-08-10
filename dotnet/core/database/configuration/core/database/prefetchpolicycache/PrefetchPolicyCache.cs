@@ -7,21 +7,18 @@ namespace Allors.Database.Configuration
 {
     using Database;
     using Domain;
+    using Meta;
 
     public partial class PrefetchPolicyCache : IPrefetchPolicyCache
     {
-        public PrefetchPolicyCache(IDomainDatabaseServices domainDatabaseServices)
+        public PrefetchPolicyCache(IDatabase database)
         {
-            this.DomainDatabaseServices = domainDatabaseServices;
-
-            var m = this.DomainDatabaseServices.M;
+            var m = database.Services.Get<MetaPopulation>();
 
             this.PermissionsWithClass = new PrefetchPolicyBuilder()
                     .WithRule(m.Permission.ClassPointer)
                     .Build();
         }
-
-        public IDomainDatabaseServices DomainDatabaseServices { get; }
 
         public PrefetchPolicy PermissionsWithClass { get; }
     }

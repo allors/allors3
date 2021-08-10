@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     {
         public static void CoreOnPostDerive(this Auditable @this, ObjectOnPostDerive method)
         {
-            var user = @this.Strategy.Transaction.Services().User;
+            var user = @this.Strategy.Transaction.Services.Get<IUserService>().User;
             if (user != null)
             {
                 var derivation = method.Derivation;

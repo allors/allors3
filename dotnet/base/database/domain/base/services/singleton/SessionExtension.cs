@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     {
         public static Singleton GetSingleton(this ITransaction @this)
         {
-            var singletonId = @this.Database.Services().Get<ISingletonId>();
+            var singletonId = @this.Database.Services.Get<ISingletonId>();
 
             var singleton = (Singleton)@this.Instantiate(singletonId.Id);
             if (singleton == null)

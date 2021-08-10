@@ -52,7 +52,7 @@ namespace Allors.Database.Domain
         {
             var derivation = method.Derivation;
             var @class = (Class)@this.Strategy.Class;
-            var metaService = @this.DatabaseServices().Get<IMetaCache>();
+            var metaService = ((IDatabaseServices)@this.Strategy.Transaction.Database.Services).Get<IMetaCache>();
 
             foreach (var roleType in metaService.GetRequiredRoleTypes(@class))
             {

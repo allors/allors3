@@ -28,16 +28,16 @@ namespace Allors.Database.Protocol.Json
         {
             this.Transaction = transaction;
 
-            var transactionServices = transaction.Services();
-            var databaseServices = transaction.Database.Services();
+            var transactionServices = (ITransactionServices)transaction.Services;
+            var databaseServices = (IDatabaseServices)transaction.Database.Services;
             var metaCache = databaseServices.Get<IMetaCache>();
 
             this.Ranges = databaseServices.Get<IRanges>();
-            this.User = transactionServices.User;
+            this.User = transactionServices.Get<IUserService>().User;
             this.AccessControlLists = new WorkspaceAccessControlLists(workspaceName, this.User);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(workspaceName);
-            this.M = databaseServices.M;
-            this.MetaPopulation = databaseServices.M;
+            this.M = databaseServices.Get<MetaPopulation>();
+            this.MetaPopulation = this.M;
             this.PreparedSelects = databaseServices.Get<IPreparedSelects>();
             this.PreparedExtents = databaseServices.Get<IPreparedExtents>();
             this.Build = @class => (IObject)DefaultObjectBuilder.Build(transaction, @class);

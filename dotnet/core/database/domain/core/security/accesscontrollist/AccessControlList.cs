@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
             this.AccessControlLists = accessControlLists;
             this.Object = (Object)@object;
 
-            var permissionsCache = @object.DatabaseServices().Get<IPermissionsCache>();
+            var permissionsCache = ((IDatabaseServices)@object.Strategy.Transaction.Database.Services).Get<IPermissionsCache>();
             this.permissionsCacheEntry = permissionsCache.Get(this.Object.Strategy.Class.Id);
 
             this.lazyLoaded = false;

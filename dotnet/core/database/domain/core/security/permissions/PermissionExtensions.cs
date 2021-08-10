@@ -9,8 +9,8 @@ namespace Allors.Database.Domain
 
     public static partial class PermissionExtensions
     {
-        public static void CoreOnPostDerive(this Permission @this, ObjectOnPostDerive _) => @this.DatabaseServices().Get<IPermissionsCache>().Clear();
+        public static void CoreOnPostDerive(this Permission @this, ObjectOnPostDerive _) => ((IDatabaseServices)@this.Strategy.Transaction.Database.Services).Get<IPermissionsCache>().Clear();
 
-        public static void CoreDelete(this Permission @this, DeletableDelete _) => @this.DatabaseServices().Get<IPermissionsCache>().Clear();
+        public static void CoreDelete(this Permission @this, DeletableDelete _) => ((IDatabaseServices)@this.Strategy.Transaction.Database.Services).Get<IPermissionsCache>().Clear();
     }
 }

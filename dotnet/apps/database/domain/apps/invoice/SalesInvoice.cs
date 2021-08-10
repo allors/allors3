@@ -557,7 +557,7 @@ namespace Allors.Database.Domain
             if (this.ExistInvoiceNumber)
             {
                 var transaction = this.Strategy.Transaction;
-                var barcodeGenerator = transaction.Database.Services().Get<IBarcodeGenerator>();
+                var barcodeGenerator = transaction.Database.Services.Get<IBarcodeGenerator>();
                 var barcode = barcodeGenerator.Generate(this.InvoiceNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                 images.Add("Barcode", barcode);
             }

@@ -7,6 +7,10 @@
 namespace Allors.Database.Domain.TestPopulation
 {
     using System.Linq;
+    using Meta;
+    using InvoiceItemType = Domain.InvoiceItemType;
+    using SerialisedItemAvailability = Domain.SerialisedItemAvailability;
+    using UnifiedGood = Domain.UnifiedGood;
 
     public static partial class SalesInvoiceItemBuilderExtensions
     {
@@ -32,7 +36,7 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static SalesInvoiceItemBuilder WithProductItemDefaults(this SalesInvoiceItemBuilder @this)
         {
-            var m = @this.Transaction.Database.Services().M;
+            var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
             var faker = @this.Transaction.Faker();
             var invoiceItemType = @this.Transaction.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId));
 
@@ -56,7 +60,7 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static SalesInvoiceItemBuilder WithPartItemDefaults(this SalesInvoiceItemBuilder @this)
         {
-            var m = @this.Transaction.Database.Services().M;
+            var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
             var faker = @this.Transaction.Faker();
             var invoiceItemType = @this.Transaction.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId));
 

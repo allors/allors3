@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
     {
         public static IObject Build(ITransaction transaction, IClass @class)
         {
-            var metaCache = transaction.Database.Services().Get<IMetaCache>();
+            var metaCache = ((IDatabaseServices)transaction.Database.Services).Get<IMetaCache>();
             var builderType = metaCache.GetBuilderType(@class);
             object[] parameters = { transaction };
             var builder = (IObjectBuilder)Activator.CreateInstance(builderType, parameters);

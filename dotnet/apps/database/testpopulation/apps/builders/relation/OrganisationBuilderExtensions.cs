@@ -7,12 +7,14 @@ namespace Allors.Database.Domain.TestPopulation
 {
     using System.Linq;
     using Bogus;
+    using Meta;
+    using LegalForm = Domain.LegalForm;
 
     public static partial class OrganisationBuilderExtensions
     {
         public static OrganisationBuilder WithDefaults(this OrganisationBuilder @this)
         {
-            var m = @this.Transaction.Database.Services().M;
+            var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
             var faker = @this.Transaction.Faker();
 
             var euCountry = new Countries(@this.Transaction).FindBy(m.Country.IsoCode, faker.PickRandom(Countries.EuMemberStates));
@@ -69,7 +71,7 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static OrganisationBuilder WithInternalOrganisationDefaults(this OrganisationBuilder @this)
         {
-            var m = @this.Transaction.Database.Services().M;
+            var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
             var faker = @this.Transaction.Faker();
 
             var company = faker.Company;

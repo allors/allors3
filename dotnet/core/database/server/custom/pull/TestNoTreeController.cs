@@ -17,7 +17,7 @@ namespace Allors.Server.Controllers
         {
             this.WorkspaceService = workspaceService;
             this.Transaction = transactionService.Transaction;
-            this.TreeCache = this.Transaction.Database.Services().Get<ITreeCache>();
+            this.TreeCache = ((IDatabaseServices)this.Transaction.Database.Services).Get<ITreeCache>();
         }
 
         private ITransaction Transaction { get; }

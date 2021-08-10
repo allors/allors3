@@ -9,7 +9,8 @@ namespace Allors.Database.Configuration
     using System.Collections.Concurrent;
     using System.Linq;
     using Data;
-    using Domain;
+    using Meta;
+    using PersistentPreparedSelect = Domain.PersistentPreparedSelect;
 
     public class PreparedSelects : IPreparedSelects
     {
@@ -30,7 +31,7 @@ namespace Allors.Database.Configuration
                 var transaction = this.Database.CreateTransaction();
                 try
                 {
-                    var m = transaction.Database.Services().M;
+                    var m = transaction.Database.Services.Get<MetaPopulation>();
 
                     var filter = new Extent(m.PersistentPreparedSelect)
                     {

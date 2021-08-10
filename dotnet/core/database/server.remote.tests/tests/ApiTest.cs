@@ -51,7 +51,7 @@ namespace Allors.Server.Tests
             var rules = Rules.Create(metaPopulation);
             var engine = new Engine(rules);
             var database = new Database(
-                new DefaultDomainDatabaseServices(engine),
+                new DefaultDatabaseServices(engine),
                 new Configuration
                 {
                     ConnectionString = configuration["ConnectionStrings:DefaultConnection"],
@@ -73,7 +73,7 @@ namespace Allors.Server.Tests
             this.Transaction = database.CreateTransaction();
         }
 
-        public MetaPopulation M => this.Transaction.Database.Services().M;
+        public MetaPopulation M => ((IDatabaseServices)this.Transaction.Database.Services).Get<Allors.Database.Meta.MetaPopulation>();
 
         public IConfigurationRoot Configuration { get; set; }
 

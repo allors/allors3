@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System;
+    using Meta;
 
     public static partial class UniquelyIdentifiableExtensions
     {
@@ -13,7 +14,7 @@ namespace Allors.Database.Domain
         {
             if (!@this.ExistUniqueId)
             {
-                @this.Strategy.SetUnitRole(@this.Transaction().Database.Services().M.UniquelyIdentifiable.UniqueId, Guid.NewGuid());
+                @this.Strategy.SetUnitRole(((IDatabaseServices)@this.Transaction().Database.Services).Get<Allors.Database.Meta.MetaPopulation>().UniquelyIdentifiable.UniqueId, Guid.NewGuid());
             }
         }
     }

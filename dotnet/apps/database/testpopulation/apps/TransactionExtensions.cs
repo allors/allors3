@@ -7,10 +7,9 @@ namespace Allors
 {
     using Bogus;
     using Database;
-    using Database.Domain;
 
     public static class TransactionExtensions
     {
-        public static Faker Faker(this ITransaction @this) => @this.Database.Services().Get<Faker>();
+        public static Faker Faker(this ITransaction @this) => @this.Database.Services.Get<Faker>();
     }
 }

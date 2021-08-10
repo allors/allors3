@@ -95,7 +95,7 @@ namespace Allors.Database.Domain
             if (this.ExistQuoteNumber)
             {
                 var transaction = this.Strategy.Transaction;
-                var barcodeGenerator = transaction.Database.Services().Get<IBarcodeGenerator>();
+                var barcodeGenerator = transaction.Database.Services.Get<IBarcodeGenerator>();
                 var barcode = barcodeGenerator.Generate(this.QuoteNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                 images.Add("Barcode", barcode);
             }

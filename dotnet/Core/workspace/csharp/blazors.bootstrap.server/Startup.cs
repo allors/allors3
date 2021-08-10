@@ -88,7 +88,7 @@ namespace Blazors.Bootstrap.Server
             var metaPopulation = new MetaBuilder().Build();
             var engine = new Engine(Rules.Create(metaPopulation));
             var objectFactory = new ObjectFactory(metaPopulation, typeof(Allors.Database.Domain.User));
-            var databaseScope = new DefaultDomainDatabaseServices(engine, httpContextAccessor);
+            var databaseScope = new DefaultDatabaseServices(engine, httpContextAccessor);
             var databaseBuilder = new DatabaseBuilder(databaseScope, this.Configuration, objectFactory);
             app.ApplicationServices.GetRequiredService<IDatabaseService>().Database = databaseBuilder.Build();
 

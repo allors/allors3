@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         {
             var key = $"{type}.{roleType}";
 
-            var caches = @this.Database.Services().Get<ICaches>();
+            var caches = ((IDatabaseServices)@this.Database.Services).Get<ICaches>();
             var cache = caches.Get<T>(key);
             if (cache == null)
             {

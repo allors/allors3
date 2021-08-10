@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
     {
         public static void AppsMonthly(ITransaction transaction)
         {
-            var m = transaction.Database.Services().M;
+            var m = transaction.Database.Services.Get<MetaPopulation>();
 
             var customers = new Parties(transaction).Extent();
             customers.Filter.AddEquals(m.Party.CollectiveWorkEffortInvoice, true);

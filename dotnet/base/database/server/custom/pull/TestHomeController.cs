@@ -10,6 +10,7 @@ namespace Allors.Database.Server.Controllers
     using Data;
     using Microsoft.AspNetCore.Mvc;
     using Database;
+    using Meta;
     using Protocol.Json;
     
 
@@ -19,7 +20,7 @@ namespace Allors.Database.Server.Controllers
         {
             this.WorkspaceService = workspaceService;
             this.Transaction = sessionService.Transaction;
-            this.TreeCache = this.Transaction.Database.Services().Get<ITreeCache>();
+            this.TreeCache = this.Transaction.Database.Services.Get<ITreeCache>();
         }
 
         private ITransaction Transaction { get; }
@@ -34,8 +35,8 @@ namespace Allors.Database.Server.Controllers
             var api = new Api(this.Transaction, this.WorkspaceService.Name);
             var response = api.CreatePullResponseBuilder();
 
-            var m = this.Transaction.Database.Services().M;
-            var organisation = new Organisations(this.Transaction).FindBy(m.Organisation.Owner, this.Transaction.Services().User);
+            var m = this.Transaction.Database.Services.Get<MetaPopulation>();
+            var organisation = new Organisations(this.Transaction).FindBy(m.Organisation.Owner, this.Transaction.Services.Get<IUserService>().User);
             response.AddObject("root", organisation, new[] {
                 new Node(m.Organisation.Shareholders)
                     .Add(m.Person.Photo),

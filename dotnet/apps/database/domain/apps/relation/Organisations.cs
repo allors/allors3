@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System.Linq;
+    using Meta;
 
     public partial class Organisations
     {
@@ -77,7 +78,7 @@ namespace Allors.Database.Domain
             PurchaseShipmentSequence purchaseShipmentSequence,
             WorkEffortSequence workEffortSequence)
             {
-            var m = transaction.Database.Services().M;
+            var m = transaction.Database.Services.Get<MetaPopulation>();
 
             var postalAddress1 = new PostalAddressBuilder(transaction)
                     .WithAddress1(address)

@@ -8,6 +8,10 @@ namespace Allors.Database.Domain.TestPopulation
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Meta;
+    using Organisation = Domain.Organisation;
+    using PaymentMethod = Domain.PaymentMethod;
+    using Person = Domain.Person;
 
     public static partial class SalesOrderBuilderExtensions
     {
@@ -19,7 +23,7 @@ namespace Allors.Database.Domain.TestPopulation
          **/
         public static SalesOrderBuilder WithOrganisationInternalDefaults(this SalesOrderBuilder @this, Organisation sellerOrganisation)
         {
-            var m = @this.Transaction.Database.Services().M;
+            var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
             var faker = @this.Transaction.Faker();
 
             var internalOrganisations = @this.Transaction.Extent<Organisation>();

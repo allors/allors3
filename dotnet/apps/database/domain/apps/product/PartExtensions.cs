@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System.Linq;
+    using Meta;
 
     public static partial class PartExtensions
     {
@@ -18,7 +19,7 @@ namespace Allors.Database.Domain
         }
         public static void AppsOnInit(this Part @this, ObjectOnInit method)
         {
-            var m = @this.Strategy.Transaction.Database.Services().M;
+            var m = @this.Strategy.Transaction.Database.Services.Get<MetaPopulation>();
             var settings = @this.Strategy.Transaction.GetSingleton().Settings;
 
             var part = new ProductIdentificationTypes(@this.Strategy.Transaction).Part;

@@ -12,7 +12,7 @@ namespace Allors.Database.Domain
         where TObject : class, UniquelyIdentifiable
     {
         public UniquelyIdentifiableCache(ITransaction transaction)
-            : base(transaction, transaction.Database.Services().M.UniquelyIdentifiable.UniqueId)
+            : base(transaction, ((IDatabaseServices)transaction.Database.Services).Get<Allors.Database.Meta.MetaPopulation>().UniquelyIdentifiable.UniqueId)
         {
         }
     }

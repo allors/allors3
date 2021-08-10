@@ -25,7 +25,7 @@ namespace Commands
             this.Logger.Info("Begin");
 
             var scheduler = new AutomatedAgents(transaction).System;
-            transaction.Services().User = scheduler;
+            transaction.Services.Get<IUserService>().User = scheduler;
 
             var m = this.Parent.M;
             var printDocuments = new PrintDocuments(transaction).Extent();

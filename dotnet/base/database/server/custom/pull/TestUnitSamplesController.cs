@@ -12,7 +12,7 @@ namespace Allors.Database.Server.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Database;
     using Protocol.Json;
-    
+
 
     public class TestUnitSamplesController : Controller
     {
@@ -20,7 +20,7 @@ namespace Allors.Database.Server.Controllers
         {
             this.WorkspaceService = workspaceService;
             this.Transaction = sessionService.Transaction;
-            this.TreeCache = this.Transaction.Database.Services().Get<ITreeCache>();
+            this.TreeCache = this.Transaction.Database.Services.Get<ITreeCache>();
         }
 
         private ITransaction Transaction { get; }

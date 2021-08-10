@@ -8,12 +8,17 @@
 namespace Allors.Database.Domain.TestPopulation
 {
     using System;
+    using Meta;
+    using Organisation = Domain.Organisation;
+    using Ownership = Domain.Ownership;
+    using SerialisedItemAvailability = Domain.SerialisedItemAvailability;
+    using SerialisedItemState = Domain.SerialisedItemState;
 
     public static partial class SerialisedItemBuilderExtensions
     {
         public static SerialisedItemBuilder WithDefaults(this SerialisedItemBuilder @this, Organisation internalOrganisation)
         {
-            var m = @this.Transaction.Database.Services().M;
+            var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
             var faker = @this.Transaction.Faker();
 
             var availability = faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>());

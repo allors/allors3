@@ -6,11 +6,15 @@
 
 namespace Allors.Database.Domain.TestPopulation
 {
+    using Meta;
+    using Organisation = Domain.Organisation;
+    using VatRegime = Domain.VatRegime;
+
     public static partial class NonUnifiedGoodBuilderExtensions
     {
         public static NonUnifiedGoodBuilder WithNonSerialisedDefaults(this NonUnifiedGoodBuilder @this, Organisation internalOrganisation)
         {
-            var m = @this.Transaction.Database.Services().M;
+            var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
             var faker = @this.Transaction.Faker();
 
             var dutchLocale = new Locales(@this.Transaction).DutchNetherlands;
@@ -71,7 +75,7 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static NonUnifiedGoodBuilder WithSerialisedDefaults(this NonUnifiedGoodBuilder @this, Organisation internalOrganisation)
         {
-            var m = @this.Transaction.Database.Services().M;
+            var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
             var faker = @this.Transaction.Faker();
 
             var dutchLocale = new Locales(@this.Transaction).DutchNetherlands;

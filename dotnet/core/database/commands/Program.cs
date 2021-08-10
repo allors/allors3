@@ -80,7 +80,7 @@ namespace Commands
                     var metaPopulation = new MetaBuilder().Build();
                     var engine = new Engine(Rules.Create(metaPopulation));
                     var objectFactory = new ObjectFactory(metaPopulation, typeof(User));
-                    var databaseBuilder = new DatabaseBuilder(new DefaultDomainDatabaseServices(engine), this.Configuration, objectFactory, this.IsolationLevel, this.CommandTimeout);
+                    var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseServices(engine), this.Configuration, objectFactory, this.IsolationLevel, this.CommandTimeout);
                     this.database = databaseBuilder.Build();
                 }
 
@@ -88,7 +88,7 @@ namespace Commands
             }
         }
 
-        public MetaPopulation M => this.Database.Services().M;
+        public MetaPopulation M => ((IDatabaseServices)this.Database.Services).Get<Allors.Database.Meta.MetaPopulation>();
 
         public static int Main(string[] args)
         {

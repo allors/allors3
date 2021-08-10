@@ -5,11 +5,13 @@
 
 namespace Allors.Database.Domain
 {
+    using Meta;
+
     internal static class PriceableExtensions
     {
         public static decimal SetUnitSurcharge(this Priceable @this, PriceComponent priceComponent, decimal revenueBreakSurcharge)
         {
-            var m = @this.DatabaseServices().M;
+            var m = @this.Strategy.Transaction.Database.Services.Get<MetaPopulation>();
             if (priceComponent.Strategy.Class.Equals(m.SurchargeComponent))
             {
                 var surchargeComponent = (SurchargeComponent)priceComponent;
@@ -33,7 +35,7 @@ namespace Allors.Database.Domain
 
         internal static decimal SetUnitDiscount(this Priceable @this, PriceComponent priceComponent, decimal revenueBreakDiscount)
         {
-            var m = @this.DatabaseServices().M;
+            var m = @this.Strategy.Transaction.Database.Services.Get<MetaPopulation>();
             if (priceComponent.Strategy.Class.Equals(m.DiscountComponent))
             {
                 var discountComponent = (DiscountComponent)priceComponent;

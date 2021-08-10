@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
         protected ObjectsBase(ITransaction transaction)
         {
             this.Transaction = transaction;
-            this.M = this.Transaction.Database.Services().M;
+            this.M = ((IDatabaseServices)this.Transaction.Database.Services).Get<Allors.Database.Meta.MetaPopulation>();
         }
 
         public MetaPopulation M { get; }

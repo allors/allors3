@@ -12,14 +12,14 @@ namespace Allors.Database.Server.Controllers
     using System.Security.Cryptography;
     using Allors.Services;
     using Domain;
-    using Database;
+    using Meta;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Net.Http.Headers;
     using SkiaSharp;
 
-    public abstract partial class BaseImageController : Controller
+    public abstract class BaseImageController : Controller
     {
         protected const int OneYearInSeconds = 60 * 60 * 24 * 356;
 
@@ -40,63 +40,57 @@ namespace Allors.Database.Server.Controllers
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = OneYearInSeconds)]
         public virtual IActionResult Get(string idString, string revisionString, string name, int? w, int? q, string t, string b, string o)
         {
-            var m = ((IDomainDatabaseServices) this.Transaction.Database.Services()).M;
+            var m = this.Transaction.Database.Services.Get<MetaPopulation>();
 
             this.Request.Headers.TryGetValue(HeaderNames.IfNoneMatch, out var requestEtagValues);
             var requestEtag = requestEtagValues.FirstOrDefault();
-            if (requestEtag != null && this.ETagByPath.TryGetValue(requestEtag, out var etagPath))
+            if (requestEtag != null && this.ETagByPath.TryGetValue(requestEtag, out var etagPath) && etagPath.Equals(this.Request.Path))
             {
-                if (etagPath.Equals(this.Request.Path))
-                {
-                    return this.NotModified();
-                }
+                return this.NotModified();
             }
 
-            if (Guid.TryParse(idString, out var id))
+            if (Guid.TryParse(idString, out var id) && Guid.TryParse(revisionString, out var revision))
             {
-                if (Guid.TryParse(revisionString, out var revision))
+                var media = new Medias(this.Transaction).FindBy(m.Media.UniqueId, id);
+                if (media != null)
                 {
-                    var media = new Medias(this.Transaction).FindBy(m.Media.UniqueId, id);
-                    if (media != null)
+                    if (media.Revision != revision)
                     {
-                        if (media.Revision != revision)
-                        {
-                            return this.RedirectPermanent($"/image/{id}/{media.Revision}");
-                        }
-
-                        if (media.MediaContent?.Data == null)
-                        {
-                            return this.NoContent();
-                        }
-
-                        var data = media.MediaContent.Data;
-
-                        var mediaType = media.Type.ToLowerInvariant();
-                        if ("image/jpeg".Equals(mediaType) || "image/png".Equals(mediaType))
-                        {
-                            var width = w;
-                            var type = t;
-                            var quality = q;
-                            var background = b;
-                            var overlay = o;
-
-                            if (width != null || !string.IsNullOrWhiteSpace(overlay))
-                            {
-                                data = this.Process(data, w.Value, overlay);
-                            }
-                        }
-
-                        var responseEtag = this.Etag(data);
-
-                        if (responseEtag.Equals(requestEtag))
-                        {
-                            return this.NotModified();
-                        }
-
-                        this.Response.Headers[HeaderNames.ETag] = responseEtag;
-
-                        return this.File(data, media.MediaContent.Type, name ?? media.FileName);
+                        return this.RedirectPermanent($"/image/{id}/{media.Revision}");
                     }
+
+                    if (media.MediaContent?.Data == null)
+                    {
+                        return this.NoContent();
+                    }
+
+                    var data = media.MediaContent.Data;
+
+                    var mediaType = media.Type.ToLowerInvariant();
+                    if ("image/jpeg".Equals(mediaType) || "image/png".Equals(mediaType))
+                    {
+                        var width = w;
+                        var type = t;
+                        var quality = q;
+                        var background = b;
+                        var overlay = o;
+
+                        if (width != null || !string.IsNullOrWhiteSpace(overlay))
+                        {
+                            data = this.Process(data, w.Value, overlay);
+                        }
+                    }
+
+                    var responseEtag = this.Etag(data);
+
+                    if (responseEtag.Equals(requestEtag))
+                    {
+                        return this.NotModified();
+                    }
+
+                    this.Response.Headers[HeaderNames.ETag] = responseEtag;
+
+                    return this.File(data, media.MediaContent.Type, name ?? media.FileName);
                 }
             }
 

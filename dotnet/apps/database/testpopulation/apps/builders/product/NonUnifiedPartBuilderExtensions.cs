@@ -8,12 +8,14 @@ namespace Allors.Database.Domain.TestPopulation
 {
     using System.Linq;
     using Bogus;
+    using Meta;
+    using Organisation = Domain.Organisation;
 
     public static partial class NonUnifiedPartBuilderExtensions
     {
         public static NonUnifiedPartBuilder WithNonSerialisedDefaults(this NonUnifiedPartBuilder @this, Organisation internalOrganisation)
         {
-            var m = @this.Transaction.Database.Services().M;
+            var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
             var faker = @this.Transaction.Faker();
 
             var dutchLocale = new Locales(@this.Transaction).DutchNetherlands;
@@ -82,7 +84,7 @@ namespace Allors.Database.Domain.TestPopulation
 
         public static NonUnifiedPartBuilder WithSerialisedDefaults(this NonUnifiedPartBuilder @this, Organisation internalOrganisation, Faker faker)
         {
-            var m = @this.Transaction.Database.Services().M;
+            var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
             var dutchLocale = new Locales(@this.Transaction).DutchNetherlands;
             var brand = new BrandBuilder(@this.Transaction).WithDefaults().Build();
 

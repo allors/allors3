@@ -6,13 +6,16 @@
 namespace Allors.Database.Domain.Print.WorkTaskModel
 {
     using System.Linq;
+    using Meta;
+    using SerialisedItem = Domain.SerialisedItem;
+    using WorkEffortFixedAssetAssignment = Domain.WorkEffortFixedAssetAssignment;
 
     public class FixedAssetAssignmentModel
     {
         public FixedAssetAssignmentModel(WorkEffortFixedAssetAssignment assignment)
         {
             var transaction = assignment.Strategy.Transaction;
-            var m = transaction.Database.Services().M;
+            var m = transaction.Database.Services.Get<MetaPopulation>();
 
             this.Name = assignment.FixedAsset?.Name;
             this.Comment = assignment.FixedAsset?.Comment?.Split('\n');

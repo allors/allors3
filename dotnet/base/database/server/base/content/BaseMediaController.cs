@@ -9,13 +9,15 @@ namespace Allors.Database.Server.Controllers
     using System.Linq;
     using Allors.Services;
     using Domain;
-    using Database;
+    using Meta;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Primitives;
     using Microsoft.Net.Http.Headers;
+    using Printable = Domain.Printable;
 
-    public abstract partial class BaseMediaController : Controller
+    public abstract class BaseMediaController : Controller
     {
         protected const int OneYearInSeconds = 60 * 60 * 24 * 356;
 
@@ -58,7 +60,7 @@ namespace Allors.Database.Server.Controllers
         [HttpGet("/media/{idString}/{*name}")]
         public virtual IActionResult RedirectOrNotFound(string idString, string name)
         {
-            var m = ((IDomainDatabaseServices) this.Transaction.Database.Services()).M;
+            var m = this.Transaction.Database.Services.Get<MetaPopulation>();
 
             if (Guid.TryParse(idString, out var id))
             {
@@ -78,7 +80,7 @@ namespace Allors.Database.Server.Controllers
         [HttpGet("/media/{idString}/{revisionString}/{*name}")]
         public virtual IActionResult Get(string idString, string revisionString, string name)
         {
-            var m = ((IDomainDatabaseServices) this.Transaction.Database.Services()).M;
+            var m = this.Transaction.Database.Services.Get<MetaPopulation>();
 
             if (Guid.TryParse(idString, out var id))
             {
@@ -107,19 +109,15 @@ namespace Allors.Database.Server.Controllers
                     if (requestEtagValues != StringValues.Empty)
                     {
                         var etagValueString = requestEtagValues.FirstOrDefault()?.Replace("\"", string.Empty);
-                        if (Guid.TryParse(etagValueString, out var etagValue))
+                        if (Guid.TryParse(etagValueString, out var etagValue) && media.Revision.Equals(etagValue))
                         {
-                            if (media.Revision.Equals(etagValue))
-                            {
-                                this.Response.StatusCode = Microsoft.AspNetCore.Http.StatusCodes.Status304NotModified;
-                                this.Response.ContentLength = 0L;
-                                return this.Content(string.Empty);
-                            }
+                            this.Response.StatusCode = StatusCodes.Status304NotModified;
+                            this.Response.ContentLength = 0L;
+                            return this.Content(string.Empty);
                         }
                     }
 
                     this.Response.Headers[HeaderNames.ETag] = $"\"{media.Revision}\"";
-
 
                     var data = media.MediaContent.Data;
                     return this.File(data, media.MediaContent.Type, name ?? media.FileName);

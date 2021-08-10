@@ -166,7 +166,7 @@ namespace Allors.Database.Domain
 		public $class.name$(Allors.Database.IStrategy strategy)
 		{
 			this.strategy = strategy;
-            this.m = strategy.Transaction.Database.Services().M;
+            this.m = strategy.Transaction.Database.Services.Get<Allors.Database.Meta.MetaPopulation>();
 		}
 
 		public Allors.Database.Meta.MetaPopulation M => m;
@@ -506,7 +506,7 @@ $if(methodType._.ObjectType._.IsClass)$
 		{
 			get
 			{
-			    var m = this.Object.Strategy.Transaction.Database.Services().M;
+			    var m = this.Object.Strategy.Transaction.Database.Services.Get<Allors.Database.Meta.MetaPopulation>();
 				return new Allors.Database.Meta.MethodInvocation(m.$methodType._.ObjectType._.SingularName$, m.$methodType._.ObjectType._.SingularName$.$methodType._.Name$);
 			}
 		}
@@ -535,7 +535,7 @@ methodTypeLeafClass() ::= <<
 		{
 			get
 			{
-			    var m = this.Object.Strategy.Transaction.Database.Services().M;
+			    var m = this.Object.Strategy.Transaction.Database.Services.Get<Allors.Database.Meta.MetaPopulation>();;
 				return new Allors.Database.Meta.MethodInvocation(m.$class.SingularName$, m.$class.SingularName$.$methodType._.Name$);
 			}
 		}

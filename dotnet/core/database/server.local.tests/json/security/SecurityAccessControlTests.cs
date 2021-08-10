@@ -6,6 +6,7 @@
 namespace Tests
 {
     using System.Linq;
+    using Allors.Database;
     using Allors.Database.Domain;
     using Allors.Protocol.Json.Api.Security;
     using Allors.Database.Protocol.Json;
@@ -20,7 +21,7 @@ namespace Tests
         public void SameWorkspace()
         {
             var workspaceName = "X";
-            var metaCache = this.Transaction.Database.Services().Get<IMetaCache>();
+            var metaCache = ((IDatabaseServices)this.Transaction.Database.Services).Get<IMetaCache>();
             var accessControl = new AccessControls(this.Transaction).Administrator;
 
             this.SetUser("jane@example.com");
@@ -62,7 +63,7 @@ namespace Tests
         public void NoneWorkspace()
         {
             var workspaceName = "None";
-            var metaCache = this.Transaction.Database.Services().Get<IMetaCache>();
+            var metaCache = ((IDatabaseServices)this.Transaction.Database.Services).Get<IMetaCache>();
             var accessControl = new AccessControls(this.Transaction).Administrator;
 
             this.SetUser("jane@example.com");

@@ -8,6 +8,7 @@ namespace Tests.Workspace.Local
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using Allors.Database;
     using Allors.Workspace;
     using Allors.Workspace.Meta;
     using Allors.Database.Configuration;
@@ -53,7 +54,7 @@ namespace Tests.Workspace.Local
             this.configuration = new Allors.Workspace.Adapters.Local.Configuration("Default", metaPopulation, objectFactory);
 
             this.Database = new Database(
-                new DefaultDomainDatabaseServices(fixture.Engine),
+                new DefaultDatabaseServices(fixture.Engine),
                 new Configuration
                 {
                     ObjectFactory = new Allors.Database.ObjectFactory(fixture.M, typeof(Person)),
@@ -69,7 +70,7 @@ namespace Tests.Workspace.Local
 
             var administrator = new PersonBuilder(transaction).WithUserName("administrator").Build();
             new UserGroups(transaction).Administrators.AddMember(administrator);
-            transaction.Services().User = administrator;
+            ((ITransactionServices)transaction.Services).Get<IUserService>().User = administrator;
 
             new TestPopulation(transaction, "full").Apply();
             transaction.Derive();
@@ -93,7 +94,7 @@ namespace Tests.Workspace.Local
         {
             using var transaction = this.Database.CreateTransaction();
             this.user = new Users(transaction).Extent().ToArray().First(v => v.UserName.Equals(userName, StringComparison.InvariantCultureIgnoreCase));
-            transaction.Services().User = this.user;
+            ((ITransactionServices)transaction.Services).Get<IUserService>().User = this.user;
 
             this.DatabaseConnection = new DatabaseConnection(this.configuration, this.Database, this.servicesBuilder, this.rangesFactory) { UserId = this.user.Id };
 

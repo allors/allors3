@@ -5,8 +5,9 @@
 
 namespace Allors.Database.Domain
 {
-    using System;
     using System.Linq;
+    using Meta;
+    using DateTime = System.DateTime;
 
     public static partial class InternalOrganisationExtensions
     {
@@ -338,7 +339,7 @@ namespace Allors.Database.Domain
                 return false;
             }
 
-            var m = @this.Strategy.Transaction.Database.Services().M;
+            var m = @this.Strategy.Transaction.Database.Services.Get<MetaPopulation>();
 
             var supplierRelationships = @this.SupplierRelationshipsWhereInternalOrganisation.Where(v => Equals(supplier, v.Supplier));
             return supplierRelationships.Any(relationship => relationship.FromDate.Date <= date && (!relationship.ExistThroughDate || relationship.ThroughDate >= date));

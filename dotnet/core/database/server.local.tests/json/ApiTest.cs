@@ -22,13 +22,13 @@ namespace Tests
         public ApiTest(Fixture fixture, bool populate = true)
         {
             var database = new Database(
-                new DefaultDomainDatabaseServices(fixture.Engine),
+                new DefaultDatabaseServices(fixture.Engine),
                 new Configuration
                 {
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(C1)),
                 });
 
-            this.M = database.Services().M;
+            this.M = ((IDatabaseServices)((IDatabase)database).Services).Get<Allors.Database.Meta.MetaPopulation>();
 
             this.Setup(database, populate);
         }
@@ -39,9 +39,9 @@ namespace Tests
 
         public ITransaction Transaction { get; private set; }
 
-        public ITime Time => this.Transaction.Database.Services().Get<ITime>();
+        public ITime Time => ((IDatabaseServices)this.Transaction.Database.Services).Get<ITime>();
 
-        public IDerivationFactory DerivationFactory => this.Transaction.Database.Services().Get<IDerivationFactory>();
+        public IDerivationFactory DerivationFactory => ((IDatabaseServices)this.Transaction.Database.Services).Get<IDerivationFactory>();
 
         public TimeSpan? TimeShift
         {
@@ -69,7 +69,7 @@ namespace Tests
             }
         }
 
-        protected User SetUser(string userName) => this.Transaction.Services().User = new Users(this.Transaction).FindBy(this.M.User.UserName, userName);
+        protected User SetUser(string userName) => ((ITransactionServices)this.Transaction.Services).Get<IUserService>().User = new Users(this.Transaction).FindBy(this.M.User.UserName, userName);
 
         protected Stream GetResource(string name)
         {

@@ -10,13 +10,17 @@ namespace Allors.Database.Domain.Print.ProductQuoteModel
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using Meta;
+    using NonUnifiedGood = Domain.NonUnifiedGood;
+    using QuoteItem = Domain.QuoteItem;
+    using UnifiedGood = Domain.UnifiedGood;
 
     public class QuoteItemModel
     {
         public QuoteItemModel(QuoteItem item, Dictionary<string, byte[]> imageByImageName)
         {
             var transaction = item.Strategy.Transaction;
-            var m = transaction.Database.Services().M;
+            var m = transaction.Database.Services.Get<MetaPopulation>();
 
             var product = item.Product;
             var serialisedItem = item.SerialisedItem;

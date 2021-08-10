@@ -5,8 +5,9 @@
 
 namespace Allors.Database.Domain
 {
-    using System;
     using System.Linq;
+    using Meta;
+    using DateTime = System.DateTime;
 
     public static class PartyExtensions
     {
@@ -35,7 +36,7 @@ namespace Allors.Database.Domain
 
         public static CustomerShipment AppsGetPendingCustomerShipmentForStore(this Party @this, PostalAddress address, Store store, ShipmentMethod shipmentMethod)
         {
-            var m = @this.Strategy.Transaction.Database.Services().M;
+            var m = @this.Strategy.Transaction.Database.Services.Get<MetaPopulation>();
 
             var shipments = @this.ShipmentsWhereShipToParty.OfType<CustomerShipment>();
             if (address != null)

@@ -11,12 +11,15 @@ namespace Allors
     using Database.Domain;
     using Database.Domain.TestPopulation;
     using Bogus;
+    using Database.Meta;
+    using SerialisedItemSoldOn = Database.Domain.SerialisedItemSoldOn;
+    using Singleton = Database.Domain.Singleton;
 
     public static class SingletonExtensions
     {
         public static void Full(this Singleton @this, DirectoryInfo dataPath, Faker faker)
         {
-            var m = @this.Strategy.Transaction.Database.Services().M;
+            var m = @this.Strategy.Transaction.Database.Services.Get<MetaPopulation>();
 
             var dutchLocale = new Locales(@this.Transaction()).DutchNetherlands;
             @this.AddAdditionalLocale(dutchLocale);

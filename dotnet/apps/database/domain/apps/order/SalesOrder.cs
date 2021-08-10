@@ -500,7 +500,7 @@ namespace Allors.Database.Domain
             if (this.ExistOrderNumber)
             {
                 var transaction = this.Strategy.Transaction;
-                var barcodeGenerator = transaction.Database.Services().Get<IBarcodeGenerator>();
+                var barcodeGenerator = transaction.Database.Services.Get<IBarcodeGenerator>();
                 var barcode = barcodeGenerator.Generate(this.OrderNumber, BarcodeType.CODE_128, 320, 80, pure: true);
                 images.Add("Barcode", barcode);
             }
@@ -518,12 +518,9 @@ namespace Allors.Database.Domain
             var addresses = new Dictionary<PostalAddress, Party>();
             foreach (SalesOrderItem item in this.ValidOrderItems)
             {
-                if (item.QuantityRequestsShipping > 0)
+                if (item.QuantityRequestsShipping > 0 && !addresses.ContainsKey(item.DerivedShipToAddress))
                 {
-                    if (!addresses.ContainsKey(item.DerivedShipToAddress))
-                    {
-                        addresses.Add(item.DerivedShipToAddress, item.DerivedShipToParty);
-                    }
+                    addresses.Add(item.DerivedShipToAddress, item.DerivedShipToParty);
                 }
             }
 

@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<User>().Where(v => v.ExistInUserPassword))
             {
-                var passwordHasher = @this.Transaction().Database.Services().Get<IPasswordHasher>();
+                var passwordHasher = ((IDatabaseServices)@this.Transaction().Database.Services).Get<IPasswordHasher>();
                 @this.UserPasswordHash = passwordHasher.HashPassword(@this.UserName, @this.InUserPassword);
                 @this.RemoveInUserPassword();
             }

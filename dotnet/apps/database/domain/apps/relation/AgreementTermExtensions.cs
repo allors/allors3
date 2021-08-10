@@ -5,11 +5,13 @@
 
 namespace Allors.Database.Domain
 {
+    using Meta;
+
     public static partial class AgreementTermExtensions
     {
         public static void AppsOnPostDerive(this AgreementTerm @this, ObjectOnPostDerive method)
         {
-            var m = @this.DatabaseServices().M;
+            var m = @this.Strategy.Transaction.Database.Services.Get<MetaPopulation>();
             method.Derivation.Validation.AssertAtLeastOne(@this, m.AgreementTerm.TermType, m.AgreementTerm.Description);
         }
     }

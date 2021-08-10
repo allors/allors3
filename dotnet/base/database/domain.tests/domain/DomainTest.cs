@@ -23,13 +23,13 @@ namespace Allors.Database.Domain.Tests
         public DomainTest(Fixture fixture, bool populate = true)
         {
             var database = new Database(
-                new TestDomainDatabaseServices(fixture.Engine),
+                new TestDatabaseServices(fixture.Engine),
                 new Configuration
                 {
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
                 });
 
-            this.M = database.Services().M;
+            this.M = database.Services.Get<MetaPopulation>();
 
             this.Setup(database, populate);
         }
@@ -40,9 +40,9 @@ namespace Allors.Database.Domain.Tests
 
         public ITransaction Session { get; private set; }
 
-        public ITime Time => this.Session.Database.Services().Get<ITime>();
+        public ITime Time => this.Session.Database.Services.Get<ITime>();
 
-        public IDerivationFactory DerivationFactory => this.Session.Database.Services().Get<IDerivationFactory>();
+        public IDerivationFactory DerivationFactory => this.Session.Database.Services.Get<IDerivationFactory>();
 
         public TimeSpan? TimeShift
         {

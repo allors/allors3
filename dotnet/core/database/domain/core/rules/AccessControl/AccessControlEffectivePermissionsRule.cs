@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
                 accessControl.EffectivePermissions = (accessControl.Role?.Permissions.ToArray());
 
                 // Invalidate cache
-                accessControl.DatabaseServices().Get<IAccessControlCache>().Clear(accessControl.Id);
+                ((IDatabaseServices)((IObject)accessControl).Strategy.Transaction.Database.Services).Get<IAccessControlCache>().Clear(accessControl.Id);
             }
         }
     }

@@ -41,7 +41,7 @@ namespace Allors.Database.Domain
             if (this.ExistWorkEffortNumber)
             {
                 var transaction = this.Strategy.Transaction;
-                var barcodeGenerator = transaction.Database.Services().Get<IBarcodeGenerator>();
+                var barcodeGenerator = transaction.Database.Services.Get<IBarcodeGenerator>();
                 images["Barcode"] = barcodeGenerator.Generate(this.WorkEffortNumber, BarcodeType.CODE_128, 320, 80, pure: true);
             }
 

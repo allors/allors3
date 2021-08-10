@@ -23,14 +23,14 @@ namespace Allors.Workspace.Adapters.Local
         public Pull(Session session) : base(session)
         {
             this.Workspace = session.Workspace;
-
             var database = this.Workspace.DatabaseConnection.Database;
             this.Transaction = database.CreateTransaction();
 
             this.AllowedClasses = database.Services.Get<IMetaCache>().GetWorkspaceClasses(this.Workspace.DatabaseConnection.Configuration.Name);
-            this.AccessControlLists = this.Transaction.Services.Get<IWorkspaceAclsService>().Create(this.Workspace.DatabaseConnection.Configuration.Name);
             this.PreparedSelects = database.Services.Get<IPreparedSelects>();
             this.PreparedExtents = database.Services.Get<IPreparedExtents>();
+
+            this.AccessControlLists = this.Transaction.Services.Get<IWorkspaceAclsService>().Create(this.Workspace.DatabaseConnection.Configuration.Name);
 
             this.DatabaseObjects = new HashSet<Database.IObject>();
         }

@@ -14,13 +14,7 @@ namespace Allors.Database.Configuration
 
     public class PermissionsCache : IPermissionsCache
     {
-        public PermissionsCache(IDomainDatabaseServices domainDatabaseServices, IDatabase database)
-        {
-            this.DomainDatabaseServices = domainDatabaseServices;
-            this.Database = database;
-        }
-
-        public IDomainDatabaseServices DomainDatabaseServices { get; }
+        public PermissionsCache(IDatabase database) => this.Database = database;
 
         public IDatabase Database { get; }
 
@@ -37,7 +31,7 @@ namespace Allors.Database.Configuration
                 try
                 {
                     var permissions = new Permissions(transaction).Extent();
-                    transaction.Prefetch(this.DomainDatabaseServices.Get<IPrefetchPolicyCache>().PermissionsWithClass, permissions);
+                    transaction.Prefetch(this.Database.Services.Get<IPrefetchPolicyCache>().PermissionsWithClass, permissions);
 
                     permissionCacheEntryByClassId = permissions
                         .GroupBy(v => v.ClassPointer)

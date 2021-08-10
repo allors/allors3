@@ -13,8 +13,11 @@ namespace Allors.Security
     using Database.Domain;
     using Services;
     using Database;
+    using Database.Meta;
     using Microsoft.AspNetCore.Identity;
+    using Deletable = Database.Domain.Deletable;
     using Task = System.Threading.Tasks.Task;
+    using User = Database.Domain.User;
 
     public class AllorsUserStore : IUserPasswordStore<IdentityUser>,
                                    IUserLoginStore<IdentityUser>,
@@ -173,7 +176,7 @@ namespace Allors.Security
 
         public async Task<IdentityUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
-            var m = this.database.Services().M;
+            var m = ((IDatabaseServices)this.database.Services).Get<MetaPopulation>();
 
             cancellationToken.ThrowIfCancellationRequested();
             using (var transaction = this.database.CreateTransaction())
@@ -231,7 +234,7 @@ namespace Allors.Security
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var m = this.database.Services().M;
+            var m = ((IDatabaseServices)this.database.Services).Get<Allors.Database.Meta.MetaPopulation>();
 
             using (var transaction = this.database.CreateTransaction())
             {
@@ -259,7 +262,7 @@ namespace Allors.Security
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var m = this.database.Services().M;
+            var m = ((IDatabaseServices)this.database.Services).Get<Allors.Database.Meta.MetaPopulation>();
 
             using (var transaction = this.database.CreateTransaction())
             {
@@ -276,7 +279,7 @@ namespace Allors.Security
         }
 
         #endregion
-        
+
         #region IUserSecurityStampStore
         public async Task<string> GetSecurityStampAsync(IdentityUser identityUser, CancellationToken cancellationToken)
         {
@@ -312,7 +315,7 @@ namespace Allors.Security
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var m = this.database.Services().M;
+            var m = ((IDatabaseServices)this.database.Services).Get<Allors.Database.Meta.MetaPopulation>();
 
             using (var transaction = this.database.CreateTransaction())
             {

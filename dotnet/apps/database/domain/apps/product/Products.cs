@@ -5,8 +5,9 @@
 
 namespace Allors.Database.Domain
 {
-    using System;
     using System.Linq;
+    using Meta;
+    using DateTime = System.DateTime;
 
     public partial class Products
     {
@@ -16,7 +17,7 @@ namespace Allors.Database.Domain
             Product product,
             DateTime date)
         {
-            var m = salesOrder.Strategy.Transaction.Database.Services().M;
+            var m = salesOrder.Strategy.Transaction.Database.Services.Get<MetaPopulation>();
 
             var productBasePrice = 0M;
             var productDiscount = 0M;

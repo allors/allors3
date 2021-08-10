@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
 
         public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
         {
-            var m = cycle.Transaction.Database.Services().M;
+            var m = cycle.Transaction.Database.Services.Get<MetaPopulation>();
             foreach (var @this in matches.Cast<SupplierOffering>())
             {
                 if (!@this.ExistCurrency)

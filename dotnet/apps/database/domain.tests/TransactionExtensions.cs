@@ -10,8 +10,8 @@ namespace Allors.Database.Domain.Tests
 
     public static class TransactionExtensions
     {
-        public static User GetUser(this ITransaction @this) => @this.Services().User;
+        public static User GetUser(this ITransaction @this) => @this.Services.Get<IUserService>().User;
 
-        public static void SetUser(this ITransaction @this, User user) => @this.Services().User = user;
+        public static void SetUser(this ITransaction @this, User user) => @this.Services.Get<IUserService>().User = user;
     }
 }

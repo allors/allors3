@@ -7,11 +7,13 @@
 
 namespace Allors.Database.Domain.TestPopulation
 {
+    using Meta;
+
     public static partial class PostalAddressBuilderExtensions
     {
         public static PostalAddressBuilder WithDefaults(this PostalAddressBuilder @this)
         {
-            var m = @this.Transaction.Database.Services().M;
+            var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
             var faker = @this.Transaction.Faker();
 
             @this.WithAddress1(faker.Address.StreetAddress())
