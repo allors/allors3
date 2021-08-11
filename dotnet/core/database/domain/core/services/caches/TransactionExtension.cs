@@ -8,7 +8,6 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-
     using Meta;
 
     public static partial class TransactionExtension
@@ -17,7 +16,7 @@ namespace Allors.Database.Domain
         {
             var key = $"{type}.{roleType}";
 
-            var caches = ((IDatabaseServices)@this.Database.Services).Get<ICaches>();
+            var caches = @this.Database.Services.Get<ICaches>();
             var cache = caches.Get<T>(key);
             if (cache == null)
             {

@@ -5,11 +5,11 @@
 
 namespace Allors.Database.Domain
 {
-    using Allors.Database.Meta;
     using Database.Data;
+    using Meta;
 
     // TODO: Remove
-    public partial interface ITreeCache
+    public interface ITreeCache
     {
         Node[] Get(IComposite composite);
 

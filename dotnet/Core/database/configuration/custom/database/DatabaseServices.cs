@@ -70,6 +70,7 @@ namespace Allors.Database.Configuration
             typeof(T) switch
             {
                 { } type when type == typeof(MetaPopulation) => (T)(object)this.M,
+                { } type when type == typeof(IDerivationService) => (T)(this.derivationService ??= this.CreateDerivationFactory()),
                 { } type when type == typeof(IRanges) => (T)(this.ranges ??= new DefaultRanges()),
                 { } type when type == typeof(IMetaCache) => (T)(this.metaCache ??= new MetaCache(this.database)),
                 { } type when type == typeof(IClassById) => (T)(this.classById ??= new ClassById()),
@@ -83,7 +84,6 @@ namespace Allors.Database.Configuration
                 { } type when type == typeof(ITime) => (T)(this.time ??= new Time()),
                 { } type when type == typeof(ICaches) => (T)(this.caches ??= new Caches()),
                 { } type when type == typeof(IPasswordHasher) => (T)(this.passwordHasher ??= this.CreatePasswordHasher()),
-                { } type when type == typeof(IDerivationService) => (T)(this.derivationService ??= this.CreateDerivationFactory()),
                 _ => throw new NotSupportedException($"Service {typeof(T)} not supported")
             };
 

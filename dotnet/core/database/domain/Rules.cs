@@ -8,7 +8,7 @@ namespace Allors.Database.Domain
     using Derivations.Rules;
     using Meta;
 
-    public static partial class Rules
+    public static class Rules
     {
         public static Rule[] Create(MetaPopulation m) =>
             new Rule[]

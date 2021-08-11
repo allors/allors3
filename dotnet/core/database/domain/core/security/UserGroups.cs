@@ -8,7 +8,6 @@ namespace Allors.Database.Domain
 {
     using System;
 
-
     public partial class UserGroups
     {
         public static readonly Guid AdministratorsId = new Guid("CDC04209-683B-429C-BED2-440851F430DF");

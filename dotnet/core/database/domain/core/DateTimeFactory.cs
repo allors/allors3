@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     using System;
 
-    public static partial class DateTimeFactory
+    public static class DateTimeFactory
     {
         public static DateTime CreateDate(int year, int month, int day) => new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc);
 

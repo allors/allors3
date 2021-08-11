@@ -8,7 +8,6 @@ namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Allors;
     using Database.Services;
     using Meta;
 
@@ -16,7 +15,7 @@ namespace Allors.Database.Domain
     {
         public Permission Get(Class @class, IRoleType roleType, Operations operation)
         {
-            var permissionCacheEntry = ((IDatabaseServices)this.Transaction.Database.Services).Get<IPermissionsCache>().Get(@class.Id);
+            var permissionCacheEntry = this.Transaction.Database.Services.Get<IPermissionsCache>().Get(@class.Id);
             if (permissionCacheEntry != null)
             {
                 long id = 0;
@@ -39,7 +38,7 @@ namespace Allors.Database.Domain
 
         public Permission Get(Class @class, IMethodType methodType)
         {
-            var permissionCacheEntry = ((IDatabaseServices)this.Transaction.Database.Services).Get<IPermissionsCache>().Get(@class.Id);
+            var permissionCacheEntry = this.Transaction.Database.Services.Get<IPermissionsCache>().Get(@class.Id);
             if (permissionCacheEntry != null)
             {
                 var id = permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId[methodType.Id];
@@ -52,9 +51,9 @@ namespace Allors.Database.Domain
         public void Sync()
         {
             var permissions = new Permissions(this.Transaction).Extent();
-            this.Transaction.Prefetch(((IDatabaseServices)((IObjects)this).Transaction.Database.Services).Get<IPrefetchPolicyCache>().PermissionsWithClass, permissions);
+            this.Transaction.Prefetch(((IObjects)this).Transaction.Database.Services.Get<IPrefetchPolicyCache>().PermissionsWithClass, permissions);
 
-            var permissionsCache = ((IDatabaseServices)this.Transaction.Database.Services).Get<IPermissionsCache>();
+            var permissionsCache = this.Transaction.Database.Services.Get<IPermissionsCache>();
 
             var permissionCacheEntryByClassId = permissions
                 .GroupBy(v => v.ClassPointer)
@@ -65,7 +64,7 @@ namespace Allors.Database.Domain
             var permissionIds = new HashSet<long>();
 
             // Create new permissions
-            foreach (var @class in ((IDatabaseServices)((IObjects)this).Transaction.Database.Services).Get<Allors.Database.Meta.MetaPopulation>().Classes)
+            foreach (var @class in ((IObjects)this).Transaction.Database.Services.Get<MetaPopulation>().Classes)
             {
                 if (permissionCacheEntryByClassId.TryGetValue(@class.Id, out var permissionCacheEntry))
                 {

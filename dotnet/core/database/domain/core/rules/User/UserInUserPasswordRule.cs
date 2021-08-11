@@ -8,8 +8,8 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Meta;
     using Derivations.Rules;
+    using Meta;
 
     public class UserInUserPasswordRule : Rule
     {
@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<User>().Where(v => v.ExistInUserPassword))
             {
-                var passwordHasher = ((IDatabaseServices)@this.Transaction().Database.Services).Get<IPasswordHasher>();
+                var passwordHasher = @this.Transaction().Database.Services.Get<IPasswordHasher>();
                 @this.UserPasswordHash = passwordHasher.HashPassword(@this.UserName, @this.InUserPassword);
                 @this.RemoveInUserPassword();
             }

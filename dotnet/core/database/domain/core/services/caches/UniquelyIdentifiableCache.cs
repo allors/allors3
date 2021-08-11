@@ -6,13 +6,13 @@
 namespace Allors.Database.Domain
 {
     using System;
-    using Domain;
+    using Meta;
 
     public class UniquelyIdentifiableCache<TObject> : Cache<Guid, TObject>
         where TObject : class, UniquelyIdentifiable
     {
         public UniquelyIdentifiableCache(ITransaction transaction)
-            : base(transaction, ((IDatabaseServices)transaction.Database.Services).Get<Allors.Database.Meta.MetaPopulation>().UniquelyIdentifiable.UniqueId)
+            : base(transaction, transaction.Database.Services.Get<MetaPopulation>().UniquelyIdentifiable.UniqueId)
         {
         }
     }

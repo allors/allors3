@@ -10,7 +10,7 @@ namespace Allors.Database.Domain.Derivations.Rules
     using System.Collections.Generic;
     using Meta;
 
-    public abstract partial class Rule : IRule
+    public abstract class Rule : IRule
     {
         protected Rule(MetaPopulation m, Guid id)
         {

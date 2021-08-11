@@ -8,13 +8,13 @@ namespace Allors.Database.Domain
     using System;
     using Meta;
 
-    public static partial class UniquelyIdentifiableExtensions
+    public static class UniquelyIdentifiableExtensions
     {
         public static void CoreOnBuild(this UniquelyIdentifiable @this, ObjectOnBuild method)
         {
             if (!@this.ExistUniqueId)
             {
-                @this.Strategy.SetUnitRole(((IDatabaseServices)@this.Transaction().Database.Services).Get<Allors.Database.Meta.MetaPopulation>().UniquelyIdentifiable.UniqueId, Guid.NewGuid());
+                @this.Strategy.SetUnitRole(@this.Transaction().Database.Services.Get<MetaPopulation>().UniquelyIdentifiable.UniqueId, Guid.NewGuid());
             }
         }
     }

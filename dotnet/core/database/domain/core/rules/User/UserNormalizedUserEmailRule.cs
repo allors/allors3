@@ -8,8 +8,8 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Meta;
     using Derivations.Rules;
+    using Meta;
 
     public class UserNormalizedUserEmailRule : Rule
     {

@@ -7,10 +7,8 @@ namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Domain;
-    using Meta;
-    using Database;
     using Database.Data;
+    using Meta;
 
     public static partial class ObjectExtensions
     {

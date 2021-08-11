@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
         {
             var objectFactory = transaction.Database.ObjectFactory;
             var type = objectFactory.Assembly.GetType(objectFactory.Namespace + "." + objectType.PluralName);
-            return (IObjects)Activator.CreateInstance(type, new object[] { transaction });
+            return (IObjects)Activator.CreateInstance(type, transaction);
         }
     }
 }

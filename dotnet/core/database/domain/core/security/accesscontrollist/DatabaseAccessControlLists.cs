@@ -8,7 +8,7 @@ namespace Allors.Database.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Database.Security;
-
+    using Meta;
 
     public class DatabaseAccessControlLists : IAccessControlLists
     {
@@ -47,7 +47,7 @@ namespace Allors.Database.Domain
 
             var transaction = this.User.Transaction();
             var database = transaction.Database;
-            var accessControlCache = ((IDatabaseServices)database.Services).Get<IAccessControlCache>();
+            var accessControlCache = database.Services.Get<IAccessControlCache>();
 
             List<AccessControl> misses = null;
             foreach (var accessControl in this.User.AccessControlsWhereEffectiveUser)
@@ -69,7 +69,7 @@ namespace Allors.Database.Domain
                 if (misses.Count > 1)
                 {
                     // TODO: Cache
-                    var m = ((IDatabaseServices)database.Services).Get<Allors.Database.Meta.MetaPopulation>();
+                    var m = database.Services.Get<MetaPopulation>();
                     var prefetchPolicy = new PrefetchPolicyBuilder()
                         .WithRule(m.AccessControl.EffectivePermissions)
                         .Build();

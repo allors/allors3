@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using Database;
-
     public abstract partial class ObjectsBase<T> where T : IObject
     {
         public void Prepare(Setup setup)

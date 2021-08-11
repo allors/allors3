@@ -4,11 +4,11 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Derivations;
 
-    public static partial class ITransactionExtensions
+    public static class ITransactionExtensions
     {
         public static IValidation Derive(this ITransaction transaction, bool throwExceptionOnError = true, bool continueOnError = false)
         {
-            var derivationFactory = ((IDatabaseServices)transaction.Database.Services).Get<IDerivationService>();
+            var derivationFactory = transaction.Database.Services.Get<IDerivationService>();
             var derivation = derivationFactory.CreateDerivation(transaction, continueOnError);
             var validation = derivation.Derive();
             if (throwExceptionOnError && validation.HasErrors)
@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
         {
             var now = DateTime.UtcNow;
 
-            var time = ((IDatabaseServices)transaction.Database.Services).Get<ITime>();
+            var time = transaction.Database.Services.Get<ITime>();
             var timeShift = time.Shift;
             if (timeShift != null)
             {

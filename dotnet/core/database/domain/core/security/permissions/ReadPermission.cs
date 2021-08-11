@@ -7,9 +7,8 @@ namespace Allors.Database.Domain
 {
     using System.Linq;
     using System.Text;
-
-    using Meta;
     using Database.Security;
+    using Meta;
 
     public partial class ReadPermission : IReadPermission
     {

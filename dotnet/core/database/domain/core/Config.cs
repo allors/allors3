@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     using System.IO;
 
-    public partial class Config
+    public class Config
     {
         public DirectoryInfo DataPath { get; set; }
 

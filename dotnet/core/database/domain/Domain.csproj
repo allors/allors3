@@ -4,6 +4,7 @@
     <LangVersion>9</LangVersion>
     <RootNamespace>Allors.Domain</RootNamespace>
   </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Resources\about.md" />
     <None Remove="Resources\avatar.png" />

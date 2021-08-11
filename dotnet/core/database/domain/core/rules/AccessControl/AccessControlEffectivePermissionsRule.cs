@@ -8,8 +8,8 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Meta;
     using Derivations.Rules;
+    using Meta;
 
     public class AccessControlEffectivePermissionsRule : Rule
     {
@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
                 accessControl.EffectivePermissions = (accessControl.Role?.Permissions.ToArray());
 
                 // Invalidate cache
-                ((IDatabaseServices)((IObject)accessControl).Strategy.Transaction.Database.Services).Get<IAccessControlCache>().Clear(accessControl.Id);
+                ((IObject)accessControl).Strategy.Transaction.Database.Services.Get<IAccessControlCache>().Clear(accessControl.Id);
             }
         }
     }

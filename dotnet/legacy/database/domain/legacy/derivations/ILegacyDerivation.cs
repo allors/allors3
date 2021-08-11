@@ -14,9 +14,9 @@ namespace Allors.Database.Domain.Derivations.Legacy
     public interface ILegacyDerivation : IDerivation
     {
         object this[string name] { get; set; }
-        
+
         ISet<Object> DerivedObjects { get; }
-        
+
         ICycle Cycle { get; }
 
         void Mark(Object @object);

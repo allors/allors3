@@ -5,9 +5,7 @@
 
 namespace Allors.Database.Domain
 {
-    using Database;
-
-    public partial interface IPrefetchPolicyCache
+    public interface IPrefetchPolicyCache
     {
         PrefetchPolicy PermissionsWithClass { get; }
     }

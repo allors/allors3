@@ -7,15 +7,13 @@ namespace Allors.Database.Domain
 {
     using System.Linq;
     using Meta;
-    using Database;
-    
 
     public abstract partial class ObjectsBase<T> : IObjects where T : IObject
     {
         protected ObjectsBase(ITransaction transaction)
         {
             this.Transaction = transaction;
-            this.M = ((IDatabaseServices)this.Transaction.Database.Services).Get<Allors.Database.Meta.MetaPopulation>();
+            this.M = this.Transaction.Database.Services.Get<MetaPopulation>();
         }
 
         public MetaPopulation M { get; }

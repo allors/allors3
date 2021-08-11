@@ -5,11 +5,10 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Text;
     using System.Linq;
-
-    using Meta;
+    using System.Text;
     using Database.Security;
+    using Meta;
 
     public partial class ExecutePermission : IExecutePermission
     {

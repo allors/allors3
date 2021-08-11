@@ -8,7 +8,7 @@ namespace Allors.Database.Domain
     /// <summary>
     /// Shared.
     /// </summary>
-    public partial class One
+    public class One
     {
         public void ShareMethod()
         {

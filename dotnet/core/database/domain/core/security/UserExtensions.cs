@@ -8,7 +8,6 @@ namespace Allors.Database.Domain
     using System;
     using System.Linq;
 
-
     public static partial class UserExtensions
     {
         public static bool IsAdministrator(this User @this)
@@ -20,7 +19,7 @@ namespace Allors.Database.Domain
         public static T SetPassword<T>(this T @this, string clearTextPassword)
             where T : User
         {
-            var passwordService = ((IDatabaseServices)@this.Transaction().Database.Services).Get<IPasswordHasher>();
+            var passwordService = @this.Transaction().Database.Services.Get<IPasswordHasher>();
             @this.UserPasswordHash = passwordService.HashPassword(@this.UserName, clearTextPassword);
             return @this;
         }
@@ -32,7 +31,7 @@ namespace Allors.Database.Domain
                 return false;
             }
 
-            var passwordService = ((IDatabaseServices)@this.Transaction().Database.Services).Get<IPasswordHasher>();
+            var passwordService = @this.Transaction().Database.Services.Get<IPasswordHasher>();
             return passwordService.VerifyHashedPassword(@this.UserName, @this.UserPasswordHash, clearTextPassword);
         }
 

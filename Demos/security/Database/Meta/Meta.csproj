@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\..\dotnet\System\Database\Allors.Meta\Meta*\**\*.cs" />
-    <Compile Include="..\..\..\..\dotnet\Core\Database\Meta\Core*\**\*.cs" />
-    <Compile Include="..\..\..\..\dotnet\Base\Database\Meta\Base*\**\*.cs" />
+    <Compile Include="..\..\..\..\dotnet\system\database\allors.database.meta.props\props*\**\*.cs" />
+    <Compile Include="..\..\..\..\dotnet\core\database\meta\core*\**\*.cs" />
+    <Compile Include="..\..\..\..\dotnet\base\database\meta\base*\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\dotnet\System\Database\Allors.Database\Allors.Database.csproj" />
+    <ProjectReference Include="..\..\..\..\dotnet\system\database\allors.database\Allors.Database.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,10 +7,10 @@ namespace Allors.Database.Domain
 {
     using Database.Services;
 
-    public static partial class PermissionExtensions
+    public static class PermissionExtensions
     {
-        public static void CoreOnPostDerive(this Permission @this, ObjectOnPostDerive _) => ((IDatabaseServices)@this.Strategy.Transaction.Database.Services).Get<IPermissionsCache>().Clear();
+        public static void CoreOnPostDerive(this Permission @this, ObjectOnPostDerive _) => @this.Strategy.Transaction.Database.Services.Get<IPermissionsCache>().Clear();
 
-        public static void CoreDelete(this Permission @this, DeletableDelete _) => ((IDatabaseServices)@this.Strategy.Transaction.Database.Services).Get<IPermissionsCache>().Clear();
+        public static void CoreDelete(this Permission @this, DeletableDelete _) => @this.Strategy.Transaction.Database.Services.Get<IPermissionsCache>().Clear();
     }
 }

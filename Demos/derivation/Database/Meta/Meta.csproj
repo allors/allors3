@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\..\dotnet\System\Database\Allors.Meta\Meta*\**\*.cs" />
+    <Compile Include="..\..\..\..\dotnet\System\Database\Allors.Database.Meta.Props\props*\**\*.cs" />
     <Compile Include="..\..\..\..\dotnet\Core\Database\Meta\Core*\**\*.cs" />
     <Compile Include="..\..\..\..\dotnet\Base\Database\Meta\Base*\**\*.cs" />
   </ItemGroup>

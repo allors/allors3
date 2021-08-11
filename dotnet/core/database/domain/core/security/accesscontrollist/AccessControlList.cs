@@ -7,9 +7,9 @@ namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Meta;
     using Database.Security;
     using Database.Services;
+    using Meta;
 
     /// <summary>
     /// List of permissions for an object/user combination.
@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
             this.AccessControlLists = accessControlLists;
             this.Object = (Object)@object;
 
-            var permissionsCache = ((IDatabaseServices)@object.Strategy.Transaction.Database.Services).Get<IPermissionsCache>();
+            var permissionsCache = @object.Strategy.Transaction.Database.Services.Get<IPermissionsCache>();
             this.permissionsCacheEntry = permissionsCache.Get(this.Object.Strategy.Class.Id);
 
             this.lazyLoaded = false;

@@ -9,12 +9,8 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Meta;
 
-    public static partial class PrefetchPolicyBuilderExtensions
+    public static class PrefetchPolicyBuilderExtensions
     {
-        static PrefetchPolicyBuilderExtensions()
-        {
-        }
-
         public static void WithWorkspaceRules(this PrefetchPolicyBuilder @this, IClass @class)
         {
             // TODO: Cache
