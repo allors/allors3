@@ -16,6 +16,6 @@ namespace Allors.Database.Configuration
 
         protected override IPasswordHasher CreatePasswordHasher() => new PasswordHasher();
 
-        protected override IDerivationFactory CreateDerivationFactory() => new DefaultDerivationFactory(this.Engine);
+        protected override IDerivationService CreateDerivationFactory() => new DefaultDerivationService(this.Engine);
     }
 }

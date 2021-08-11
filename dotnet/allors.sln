@@ -243,6 +243,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Workspace.Domain", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Workspace.Meta", "System\workspace\csharp\allors.workspace.meta\Allors.Workspace.Meta.csproj", "{3FD43D90-578E-4E37-AB32-32854DB7B184}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Builder", "System\Database\adapters\allors.database.builder\Allors.Database.Builder.csproj", "{BBC67A1E-15B4-44C5-8F9A-EF1FCA8E646B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -625,6 +627,10 @@ Global
 		{3FD43D90-578E-4E37-AB32-32854DB7B184}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FD43D90-578E-4E37-AB32-32854DB7B184}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FD43D90-578E-4E37-AB32-32854DB7B184}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBC67A1E-15B4-44C5-8F9A-EF1FCA8E646B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBC67A1E-15B4-44C5-8F9A-EF1FCA8E646B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBC67A1E-15B4-44C5-8F9A-EF1FCA8E646B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBC67A1E-15B4-44C5-8F9A-EF1FCA8E646B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -745,6 +751,7 @@ Global
 		{4DAC07CD-CA41-4DC1-A1EC-4EAE8DAE9225} = {6072307B-EF34-4264-866C-49AC54A6C245}
 		{3D234CDA-1AEB-4556-A7A2-5B4EF445CFCC} = {DD3FE7E0-FA32-442B-869E-2554424B3BAC}
 		{3FD43D90-578E-4E37-AB32-32854DB7B184} = {DD3FE7E0-FA32-442B-869E-2554424B3BAC}
+		{BBC67A1E-15B4-44C5-8F9A-EF1FCA8E646B} = {6F829382-0804-4D82-8679-C69B14230287}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00D78C3D-8536-4549-B1EE-C19BD0C50387}

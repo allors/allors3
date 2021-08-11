@@ -42,7 +42,7 @@ namespace Allors.Database.Domain.Tests
 
         public ITime Time => this.Session.Database.Services.Get<ITime>();
 
-        public IDerivationFactory DerivationFactory => this.Session.Database.Services.Get<IDerivationFactory>();
+        public IDerivationService DerivationService => this.Session.Database.Services.Get<IDerivationService>();
 
         public TimeSpan? TimeShift
         {

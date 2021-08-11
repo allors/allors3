@@ -8,7 +8,7 @@ namespace Allors.Database.Domain
     using Database;
     using Derivations;
 
-    public interface IDerivationFactory
+    public interface IDerivationService
     {
         IDerivation CreateDerivation(ITransaction transaction, bool continueOnError = false);
     }

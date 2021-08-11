@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters\Allors.Database.Adapters.csproj" />
+    <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Builder\Allors.Database.Builder.csproj" />
     <ProjectReference Include="..\..\..\System\Database\Allors.Database.Protocol.Json\Allors.Database.Protocol.Json.csproj" />
     <ProjectReference Include="..\..\..\System\protocol\allors.protocol.json.systemtext\Allors.Protocol.Json.SystemText.csproj" />
     <ProjectReference Include="..\Configuration\Configuration.csproj" />

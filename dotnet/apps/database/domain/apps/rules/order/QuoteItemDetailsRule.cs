@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<QuoteItem>())
             {
-                if (cycle.ChangeSet.IsCreated(@this) && !@this.ExistDetails)
+                if (cycle.ChangeSet.Created.Contains(@this) && !@this.ExistDetails)
                 {
                     if (@this.ExistSerialisedItem)
                     {

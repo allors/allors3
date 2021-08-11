@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters\Allors.Database.Adapters.csproj" />
+    <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Builder\Allors.Database.Builder.csproj" />
     <ProjectReference Include="..\Configuration\Configuration.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />

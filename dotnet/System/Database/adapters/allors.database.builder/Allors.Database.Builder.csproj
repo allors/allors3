@@ -7,5 +7,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Allors.Database\Allors.Database.csproj" />
+    <ProjectReference Include="..\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj" />
+    <ProjectReference Include="..\allors.database.adapters.sql.npgsql\Allors.Database.Adapters.Sql.Npgsql.csproj" />
+    <ProjectReference Include="..\allors.database.adapters.sql.sqlclient\Allors.Database.Adapters.Sql.SqlClient.csproj" />
   </ItemGroup>
 </Project>

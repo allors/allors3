@@ -55,7 +55,7 @@ namespace Allors.Database.Configuration
 
         private ITemplateObjectCache templateObjectCache;
 
-        private IDerivationFactory derivationFactory;
+        private IDerivationService derivationService;
 
         protected DatabaseServices(Engine engine, IHttpContextAccessor httpContextAccessor = null)
         {
@@ -91,7 +91,7 @@ namespace Allors.Database.Configuration
                 { } type when type == typeof(ITime) => (T)(this.time ??= new Time()),
                 { } type when type == typeof(ICaches) => (T)(this.caches ??= new Caches()),
                 { } type when type == typeof(IPasswordHasher) => (T)(this.passwordHasher ??= this.CreatePasswordHasher()),
-                { } type when type == typeof(IDerivationFactory) => (T)(this.derivationFactory ??= this.CreateDerivationFactory()),
+                { } type when type == typeof(IDerivationService) => (T)(this.derivationService ??= this.CreateDerivationFactory()),
                 // Base
                 { } type when type == typeof(ISingletonId) => (T)(this.singletonId ??= new SingletonId()),
                 { } type when type == typeof(IMailer) => (T)(this.mailer ??= new MailKitMailer()),
@@ -102,7 +102,7 @@ namespace Allors.Database.Configuration
 
         protected abstract IPasswordHasher CreatePasswordHasher();
 
-        protected abstract IDerivationFactory CreateDerivationFactory();
+        protected abstract IDerivationService CreateDerivationFactory();
 
         protected Engine Engine { get; }
 

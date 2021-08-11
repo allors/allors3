@@ -10,6 +10,7 @@ namespace Allors.Workspace.Adapters.Local
     using System.Linq;
     using Database;
     using Database.Derivations;
+    using Database.Domain;
     using Database.Meta;
     using Database.Security;
     using Database.Services;
@@ -28,7 +29,7 @@ namespace Allors.Workspace.Adapters.Local
             this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.DatabaseConnection.Configuration.Name);
             this.M = this.Transaction.Database.MetaPopulation;
             this.Build = @class => this.Transaction.Services.Get<IObjectBuilderService>().Build(@class);
-            this.Derive = () => this.Transaction.Services.Get<IDeriveService>().Derive();
+            this.Derive = () => this.Transaction.Services.Get<IDerivationService>().CreateDerivation(this.Transaction).Derive();
 
             this.Objects = new HashSet<IObject>();
         }

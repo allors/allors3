@@ -142,7 +142,6 @@ namespace Allors.Database.Adapters.Memory
         public object GetUnitRole(IRoleType roleType)
         {
             this.AssertNotDeleted();
-            this.Transaction.OnAccessUnitRole?.Invoke(this, roleType);
             return this.GetInternalizedUnitRole(roleType);
         }
 
@@ -182,14 +181,12 @@ namespace Allors.Database.Adapters.Memory
         public bool ExistUnitRole(IRoleType roleType)
         {
             this.AssertNotDeleted();
-            this.Transaction.OnAccessUnitRole?.Invoke(this, roleType);
             return this.unitRoleByRoleType.ContainsKey(roleType);
         }
 
         public IObject GetCompositeRole(IRoleType roleType)
         {
             this.AssertNotDeleted();
-            this.Transaction.OnAccessCompositeRole?.Invoke(this, roleType);
             this.compositeRoleByRoleType.TryGetValue(roleType, out var strategy);
             return strategy?.GetObject();
         }
@@ -229,14 +226,12 @@ namespace Allors.Database.Adapters.Memory
         public bool ExistCompositeRole(IRoleType roleType)
         {
             this.AssertNotDeleted();
-            this.Transaction.OnAccessCompositeRole?.Invoke(this, roleType);
             return this.compositeRoleByRoleType.ContainsKey(roleType);
         }
 
         public IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : IObject
         {
             this.AssertNotDeleted();
-            this.Transaction.OnAccessCompositesRole?.Invoke(this, roleType);
 
             this.compositesRoleByRoleType.TryGetValue(roleType, out var strategies);
 
@@ -333,7 +328,6 @@ namespace Allors.Database.Adapters.Memory
         public bool ExistCompositesRole(IRoleType roleType)
         {
             this.AssertNotDeleted();
-            this.Transaction.OnAccessCompositesRole?.Invoke(this, roleType);
             this.compositesRoleByRoleType.TryGetValue(roleType, out var roleStrategies);
             return roleStrategies != null;
         }
@@ -345,7 +339,6 @@ namespace Allors.Database.Adapters.Memory
         public IObject GetCompositeAssociation(IAssociationType associationType)
         {
             this.AssertNotDeleted();
-            this.Transaction.OnAccessCompositeAssociation?.Invoke(this, associationType);
             this.compositeAssociationByAssociationType.TryGetValue(associationType, out var strategy);
             return strategy?.GetObject();
         }
@@ -355,7 +348,6 @@ namespace Allors.Database.Adapters.Memory
         public IEnumerable<T> GetCompositesAssociation<T>(IAssociationType associationType) where T : IObject
         {
             this.AssertNotDeleted();
-            this.Transaction.OnAccessCompositesAssociation?.Invoke(this, associationType);
 
             this.compositesAssociationByAssociationType.TryGetValue(associationType, out var strategies);
 
@@ -373,7 +365,6 @@ namespace Allors.Database.Adapters.Memory
         public bool ExistCompositesAssociation(IAssociationType associationType)
         {
             this.AssertNotDeleted();
-            this.Transaction.OnAccessCompositesAssociation?.Invoke(this, associationType);
             this.compositesAssociationByAssociationType.TryGetValue(associationType, out var strategies);
             return strategies != null;
         }

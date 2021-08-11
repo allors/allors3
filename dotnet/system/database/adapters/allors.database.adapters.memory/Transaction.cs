@@ -11,10 +11,9 @@ namespace Allors.Database.Adapters.Memory
     using System.Xml;
 
     using Meta;
-    using Tracing;
     using Version = Allors.Version;
 
-    public class Transaction : ITransaction, IOnAccess
+    public class Transaction : ITransaction
     {
         private static readonly HashSet<Strategy> EmptyStrategies = new HashSet<Strategy>();
 
@@ -47,18 +46,6 @@ namespace Allors.Database.Adapters.Memory
         IDatabase ITransaction.Database => this.Database;
 
         public ITransactionServices Services { get; }
-
-        public Action<IStrategy, IRoleType> OnAccessUnitRole { get; set; }
-
-        public Action<IStrategy, IRoleType> OnAccessCompositeRole { get; set; }
-
-        public Action<IStrategy, IRoleType> OnAccessCompositesRole { get; set; }
-
-        public Action<IStrategy, IAssociationType> OnAccessCompositeAssociation { get; set; }
-
-        public Action<IStrategy, IAssociationType> OnAccessCompositesAssociation { get; set; }
-
-        public bool IsProfilingEnabled => false;
 
         internal ChangeLog ChangeLog { get; private set; }
 

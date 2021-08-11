@@ -8,7 +8,7 @@ namespace Allors.Database.Domain
     {
         public static IValidation Derive(this ITransaction transaction, bool throwExceptionOnError = true, bool continueOnError = false)
         {
-            var derivationFactory = ((IDatabaseServices)transaction.Database.Services).Get<IDerivationFactory>();
+            var derivationFactory = ((IDatabaseServices)transaction.Database.Services).Get<IDerivationService>();
             var derivation = derivationFactory.CreateDerivation(transaction, continueOnError);
             var validation = derivation.Derive();
             if (throwExceptionOnError && validation.HasErrors)

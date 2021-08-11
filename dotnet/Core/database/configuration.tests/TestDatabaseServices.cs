@@ -16,7 +16,7 @@ namespace Allors.Database.Configuration
 
         protected override IPasswordHasher CreatePasswordHasher() => new TestPasswordHasher();
 
-        protected override IDerivationFactory CreateDerivationFactory() => new DefaultDerivationFactory(this.Engine);
+        protected override IDerivationService CreateDerivationFactory() => new DefaultDerivationService(this.Engine);
 
         private class TestPasswordHasher : IPasswordHasher
         {

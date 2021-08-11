@@ -7,9 +7,9 @@ namespace Allors.Database.Domain.Derivations.Rules.Default
 {
     using Domain;
 
-    public class DefaultDerivationFactory : IDerivationFactory
+    public class DefaultDerivationService : IDerivationService
     {
-        public DefaultDerivationFactory(Engine engine) => this.Engine = engine;
+        public DefaultDerivationService(Engine engine) => this.Engine = engine;
 
         public Engine Engine { get; }
 

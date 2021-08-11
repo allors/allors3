@@ -51,7 +51,6 @@ namespace Allors.Database.Adapters
 
                 case "SQLCLIENT":
 
-
                     return new Sql.SqlClient.Database(this.scope, new Sql.Configuration
                     {
                         ObjectFactory = this.objectFactory,

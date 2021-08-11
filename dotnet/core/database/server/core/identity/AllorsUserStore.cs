@@ -16,6 +16,7 @@ namespace Allors.Security
     using Microsoft.AspNetCore.Identity;
     using Services;
     using Deletable = Database.Domain.Deletable;
+    using Task = System.Threading.Tasks.Task;
     using User = Database.Domain.User;
 
     public class AllorsUserStore : IUserPasswordStore<IdentityUser>,
