@@ -19,7 +19,6 @@ namespace Allors.Database.Configuration
     {
         private readonly HttpUserService userService;
 
-        private IDeriveService deriveService;
         private IDatabaseAclsService databaseAclsService;
         private IWorkspaceAclsService workspaceAclsService;
         private IObjectBuilderService objectBuilderService;
@@ -38,7 +37,6 @@ namespace Allors.Database.Configuration
             typeof(T) switch
             {
                 { } type when type == typeof(IUserService) => (T)(IUserService)this.userService,
-                { } type when type == typeof(IDeriveService) => (T)(this.deriveService ??= new DefaultDeriveService(this.Transaction)),
                 { } type when type == typeof(IDatabaseAclsService) => (T)(this.databaseAclsService ??= new DatabaseAclsService(this.userService.User)),
                 { } type when type == typeof(IWorkspaceAclsService) => (T)(this.workspaceAclsService ??= new WorkspaceAclsService(this.userService.User)),
                 { } type when type == typeof(IObjectBuilderService) => (T)(this.objectBuilderService ??= new ObjectBuilderService(this.Transaction)),

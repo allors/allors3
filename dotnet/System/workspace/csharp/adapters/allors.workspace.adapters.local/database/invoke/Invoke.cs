@@ -27,7 +27,7 @@ namespace Allors.Workspace.Adapters.Local
 
             this.AccessControlLists = this.Transaction.Services.Get<IWorkspaceAclsService>().Create(this.Workspace.DatabaseConnection.Configuration.Name);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.DatabaseConnection.Configuration.Name);
-            this.Derive = () => this.Transaction.Services.Get<IDerivationService>().CreateDerivation(this.Transaction).Derive();
+            this.Derive = () => this.Transaction.Database.Services.Get<IDerivationService>().CreateDerivation(this.Transaction).Derive();
         }
 
         private Workspace Workspace { get; }
