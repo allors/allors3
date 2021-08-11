@@ -38,7 +38,7 @@ namespace Allors.Database.Domain.Tests
 
         public ITransaction Transaction { get; private set; }
 
-        public ITime Time => this.Transaction.Database.Services().Get<ITime>();
+        public ITime Time => this.Transaction.Database.Services.Get<ITime>();
 
         public TimeSpan? TimeShift
         {
@@ -82,7 +82,7 @@ namespace Allors.Database.Domain.Tests
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
                 });
 
-            this.M = database.Services().M;
+            this.M = database.Services.Get<MetaPopulation>();
 
             this.Setup(database, populate);
         }

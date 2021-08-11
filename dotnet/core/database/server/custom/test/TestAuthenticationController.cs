@@ -6,13 +6,12 @@
 namespace Allors.Server
 {
     using System.Threading.Tasks;
-
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
-    using Security;
     using Protocol.Json.Auth;
+    using Security;
 
     public class TestAuthenticationController : Controller
     {

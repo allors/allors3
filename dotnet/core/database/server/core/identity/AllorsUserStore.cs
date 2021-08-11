@@ -10,13 +10,12 @@ namespace Allors.Security
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Database.Domain;
-    using Services;
     using Database;
+    using Database.Domain;
     using Database.Meta;
     using Microsoft.AspNetCore.Identity;
+    using Services;
     using Deletable = Database.Domain.Deletable;
-    using Task = System.Threading.Tasks.Task;
     using User = Database.Domain.User;
 
     public class AllorsUserStore : IUserPasswordStore<IdentityUser>,
@@ -149,7 +148,7 @@ namespace Allors.Security
 
                     if (user is Deletable)
                     {
-                        ((Deletable)user).Delete();
+                        user.Delete();
                     }
 
                     transaction.Derive();
@@ -176,7 +175,7 @@ namespace Allors.Security
 
         public async Task<IdentityUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
-            var m = ((IDatabaseServices)this.database.Services).Get<MetaPopulation>();
+            var m = this.database.Services.Get<MetaPopulation>();
 
             cancellationToken.ThrowIfCancellationRequested();
             using (var transaction = this.database.CreateTransaction())
@@ -234,7 +233,7 @@ namespace Allors.Security
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var m = ((IDatabaseServices)this.database.Services).Get<Allors.Database.Meta.MetaPopulation>();
+            var m = this.database.Services.Get<MetaPopulation>();
 
             using (var transaction = this.database.CreateTransaction())
             {
@@ -262,7 +261,7 @@ namespace Allors.Security
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var m = ((IDatabaseServices)this.database.Services).Get<Allors.Database.Meta.MetaPopulation>();
+            var m = this.database.Services.Get<MetaPopulation>();
 
             using (var transaction = this.database.CreateTransaction())
             {
@@ -315,7 +314,7 @@ namespace Allors.Security
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var m = ((IDatabaseServices)this.database.Services).Get<Allors.Database.Meta.MetaPopulation>();
+            var m = this.database.Services.Get<MetaPopulation>();
 
             using (var transaction = this.database.CreateTransaction())
             {

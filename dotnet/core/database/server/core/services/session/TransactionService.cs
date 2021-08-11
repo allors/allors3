@@ -8,7 +8,7 @@ namespace Allors.Services
     using System;
     using Database;
 
-    public partial class TransactionService : ITransactionService, IDisposable
+    public class TransactionService : ITransactionService, IDisposable
     {
         public TransactionService(IDatabaseService databaseService) => this.Transaction = databaseService.Database.CreateTransaction();
 

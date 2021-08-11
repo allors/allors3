@@ -6,11 +6,11 @@
 namespace Allors.Server.Controllers
 {
     using System;
-    using Database.Domain;
-    using Services;
     using Database;
+    using Database.Domain;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Services;
 
     public class TestController : Controller
     {
@@ -88,7 +88,7 @@ namespace Allors.Server.Controllers
         {
             try
             {
-                var timeService = ((IDatabaseServices)this.Database.Services).Get<ITime>();
+                var timeService = this.Database.Services.Get<ITime>();
                 timeService.Shift = new TimeSpan(days, hours, minutes, seconds);
                 return this.Ok();
             }

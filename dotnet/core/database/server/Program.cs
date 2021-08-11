@@ -5,6 +5,7 @@ namespace Allors.Server
     using Database.Configuration;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
+    using NLog;
     using NLog.Web;
 
     public class Program
@@ -26,7 +27,7 @@ namespace Allors.Server
             }
             finally
             {
-                NLog.LogManager.Shutdown();
+                LogManager.Shutdown();
             }
         }
 

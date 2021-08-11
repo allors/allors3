@@ -28,8 +28,8 @@ namespace Allors.Database.Protocol.Json
         {
             this.Transaction = transaction;
 
-            var transactionServices = (ITransactionServices)transaction.Services;
-            var databaseServices = (IDatabaseServices)transaction.Database.Services;
+            var transactionServices = transaction.Services;
+            var databaseServices = transaction.Database.Services;
             var metaCache = databaseServices.Get<IMetaCache>();
 
             this.Ranges = databaseServices.Get<IRanges>();
@@ -40,7 +40,7 @@ namespace Allors.Database.Protocol.Json
             this.MetaPopulation = this.M;
             this.PreparedSelects = databaseServices.Get<IPreparedSelects>();
             this.PreparedExtents = databaseServices.Get<IPreparedExtents>();
-            this.Build = @class => (IObject)DefaultObjectBuilder.Build(transaction, @class);
+            this.Build = @class => DefaultObjectBuilder.Build(transaction, @class);
             this.Derive = () => this.Transaction.Derive(false);
 
             this.UnitConvert = new UnitConvert();

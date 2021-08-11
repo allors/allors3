@@ -5,11 +5,11 @@
 
 namespace Allors.Server.Controllers
 {
-    using Services;
     using Database;
     using Database.Domain;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Services;
 
     public class TestTransactionController : Controller
     {
@@ -17,7 +17,7 @@ namespace Allors.Server.Controllers
         {
             this.WorkspaceService = workspaceService;
             this.Transaction = transactionService.Transaction;
-            this.TreeCache = ((IDatabaseServices)this.Transaction.Database.Services).Get<ITreeCache>();
+            this.TreeCache = this.Transaction.Database.Services.Get<ITreeCache>();
         }
 
         private ITransaction Transaction { get; }
@@ -31,8 +31,8 @@ namespace Allors.Server.Controllers
         [Authorize]
         public IActionResult UserName()
         {
-            var user = ((ITransactionServices)this.Transaction.Services).Get<User>();
-            var result = user?.UserName;
+            var userService = this.Transaction.Services.Get<IUserService>();
+            var result = userService?.User?.UserName ?? string.Empty;
             return this.Content(result);
         }
     }

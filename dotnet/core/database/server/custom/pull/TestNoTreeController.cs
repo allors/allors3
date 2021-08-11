@@ -5,11 +5,11 @@
 
 namespace Allors.Server.Controllers
 {
-    using Database.Domain;
-    using Services;
-    using Microsoft.AspNetCore.Mvc;
     using Database;
+    using Database.Domain;
     using Database.Protocol.Json;
+    using Microsoft.AspNetCore.Mvc;
+    using Services;
 
     public class TestNoTreeController : Controller
     {
@@ -17,7 +17,7 @@ namespace Allors.Server.Controllers
         {
             this.WorkspaceService = workspaceService;
             this.Transaction = transactionService.Transaction;
-            this.TreeCache = ((IDatabaseServices)this.Transaction.Database.Services).Get<ITreeCache>();
+            this.TreeCache = this.Transaction.Database.Services.Get<ITreeCache>();
         }
 
         private ITransaction Transaction { get; }

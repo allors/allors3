@@ -15,41 +15,36 @@ namespace Allors.Database.Configuration
     using Domain;
     using Microsoft.AspNetCore.Http;
 
-    public class DefaultTransactionServices : IDomainTransactionServices
+    public class TransactionServices : ITransactionServices
     {
-        private readonly HttpContext httpContext;
+        private readonly HttpUserService userService;
 
         private IDeriveService deriveService;
         private IDatabaseAclsService databaseAclsService;
         private IWorkspaceAclsService workspaceAclsService;
         private IObjectBuilderService objectBuilderService;
 
-        public DefaultTransactionServices(IHttpContextAccessor httpContextAccessor) => this.httpContext = new HttpContext(httpContextAccessor);
+        public TransactionServices(IHttpContextAccessor httpContextAccessor) => this.userService = new HttpUserService(httpContextAccessor);
 
         public virtual void OnInit(ITransaction transaction)
         {
             this.Transaction = transaction;
-            this.httpContext.OnInit(transaction);
+            this.userService.OnInit(transaction);
         }
 
         public ITransaction Transaction { get; private set; }
 
-        public User User
-        {
-            get => this.httpContext.User;
-            set => this.httpContext.User = value;
-        }
-
         public T Get<T>() =>
-            typeof(T).Name switch
+            typeof(T) switch
             {
-                nameof(IDeriveService) => (T)(this.deriveService ??= new DefaultDeriveService(this.Transaction)),
-                nameof(IDatabaseAclsService) => (T)(this.databaseAclsService ??= new DatabaseAclsService(this.User)),
-                nameof(IWorkspaceAclsService) => (T)(this.workspaceAclsService ??= new WorkspaceAclsService(this.User)),
-                nameof(IObjectBuilderService) => (T)(this.objectBuilderService ??= new ObjectBuilderService(this.Transaction)),
-
+                { } type when type == typeof(IUserService) => (T)(IUserService)this.userService,
+                { } type when type == typeof(IDeriveService) => (T)(this.deriveService ??= new DefaultDeriveService(this.Transaction)),
+                { } type when type == typeof(IDatabaseAclsService) => (T)(this.databaseAclsService ??= new DatabaseAclsService(this.userService.User)),
+                { } type when type == typeof(IWorkspaceAclsService) => (T)(this.workspaceAclsService ??= new WorkspaceAclsService(this.userService.User)),
+                { } type when type == typeof(IObjectBuilderService) => (T)(this.objectBuilderService ??= new ObjectBuilderService(this.Transaction)),
                 _ => throw new NotSupportedException($"Service {typeof(T)} not supported")
             };
+
         public void Dispose()
         {
         }

@@ -6,13 +6,14 @@
 namespace Allors.Server.Controllers
 {
     using System;
-
-    using Database.Domain;
-    using Services;
-    using Microsoft.AspNetCore.Mvc;
     using Database;
     using Database.Data;
+    using Database.Domain;
+    using Database.Meta;
     using Database.Protocol.Json;
+    using Microsoft.AspNetCore.Mvc;
+    using Services;
+    using User = Database.Domain.User;
 
     public class TestShareHoldersController : Controller
     {
@@ -20,7 +21,7 @@ namespace Allors.Server.Controllers
         {
             this.WorkspaceService = workspaceService;
             this.Transaction = transactionService.Transaction;
-            this.TreeCache = ((IDatabaseServices)this.Transaction.Database.Services).Get<ITreeCache>();
+            this.TreeCache = this.Transaction.Database.Services.Get<ITreeCache>();
         }
 
         private ITransaction Transaction { get; }
@@ -37,8 +38,8 @@ namespace Allors.Server.Controllers
                 var api = new Api(this.Transaction, this.WorkspaceService.Name);
                 var response = api.CreatePullResponseBuilder();
 
-                var m = ((IDatabaseServices)this.Transaction.Database.Services).Get<Allors.Database.Meta.MetaPopulation>();
-                var organisation = new Organisations(this.Transaction).FindBy(m.Organisation.Owner, ((ITransactionServices)this.Transaction.Services).Get<User>());
+                var m = this.Transaction.Database.Services.Get<MetaPopulation>();
+                var organisation = new Organisations(this.Transaction).FindBy(m.Organisation.Owner, this.Transaction.Services.Get<User>());
                 response.AddObject("root", organisation,
                     new[] {
                                 new Node(m.Organisation.Shareholders)

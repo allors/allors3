@@ -6,13 +6,12 @@
 namespace Allors.Server.Controllers
 {
     using System.Threading.Tasks;
-
+    using Database;
     using Database.Domain;
-    using Services;
+    using Database.Protocol.Json;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Database;
-    using Database.Protocol.Json;
+    using Services;
 
     public class PeopleController : Controller
     {
@@ -20,7 +19,7 @@ namespace Allors.Server.Controllers
         {
             this.WorkspaceService = workspaceService;
             this.Transaction = transactionService.Transaction;
-            this.TreeCache = ((IDatabaseServices)this.Transaction.Database.Services).Get<ITreeCache>();
+            this.TreeCache = this.Transaction.Database.Services.Get<ITreeCache>();
         }
 
         private ITransaction Transaction { get; }

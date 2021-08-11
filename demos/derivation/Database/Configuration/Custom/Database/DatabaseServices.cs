@@ -4,6 +4,8 @@
 // </copyright>
 // <summary>Defines the DomainTest type.</summary>
 
+using Allors.Ranges;
+
 namespace Allors.Database.Configuration
 {
     using System;
@@ -14,11 +16,13 @@ namespace Allors.Database.Configuration
     using Microsoft.AspNetCore.Http;
     using Services;
 
-    public abstract class DatabaseServices : IDomainDatabaseServices
+    public abstract class DatabaseServices : IDatabaseServices
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 
         private IDatabase database;
+
+        private IRanges ranges;
 
         private IMetaCache metaCache;
 
@@ -63,34 +67,32 @@ namespace Allors.Database.Configuration
 
         public MetaPopulation M => (MetaPopulation)this.database.MetaPopulation;
 
-        public ITransactionServices CreateTransactionServices() => new DefaultTransactionServices(this.httpContextAccessor);
+        public ITransactionServices CreateTransactionServices() => new TransactionServices(this.httpContextAccessor);
 
         public T Get<T>() =>
-            typeof(T).Name switch
+            typeof(T) switch
             {
-                nameof(IMetaCache) => (T)(this.metaCache ??= new MetaCache(this.database)),
-                nameof(IClassById) => (T)(this.classById ??= new ClassById()),
-                nameof(IVersionedIdByStrategy) => (T)(this.versionedIdByStrategy ??= new VersionedIdByStrategy()),
-
-                nameof(IPrefetchPolicyCache) => (T)(this.prefetchPolicyCache ??= new PrefetchPolicyCache(this)),
-                nameof(IPreparedSelects) => (T)(this.preparedSelects ??= new PreparedSelects(this.database)),
-                nameof(IPreparedExtents) => (T)(this.preparedExtents ??= new PreparedExtents(this.database)),
-                nameof(ITreeCache) => (T)(this.treeCache ??= new TreeCache()),
-
-                nameof(IPermissionsCache) => (T)(this.permissionsCache ??= new PermissionsCache(this, this.database)),
-                nameof(IAccessControlCache) => (T)(this.accessControlCache ??= new AccessControlCache()),
-
-                nameof(ITime) => (T)(this.time ??= new Time()),
-                nameof(ICaches) => (T)(this.caches ??= new Caches()),
-                nameof(ISingletonId) => (T)(this.singletonId ??= new SingletonId()),
-                nameof(IPasswordHasher) => (T)(this.passwordHasher ??= this.CreatePasswordHasher()),
-
-                nameof(IMailer) => (T)(this.mailer ??= new MailKitMailer()),
-                nameof(IBarcodeGenerator) => (T)(this.barcodeGenerator ??= new ZXingBarcodeGenerator()),
-                nameof(ITemplateObjectCache) => (T)(this.templateObjectCache ??= new TemplateObjectCache()),
-
-                nameof(IDerivationFactory) => (T)(this.derivationFactory ??= this.CreateDerivationFactory()),
-
+                // Core
+                { } type when type == typeof(MetaPopulation) => (T)(object)this.M,
+                { } type when type == typeof(IRanges) => (T)(this.ranges ??= new DefaultRanges()),
+                { } type when type == typeof(IMetaCache) => (T)(this.metaCache ??= new MetaCache(this.database)),
+                { } type when type == typeof(IClassById) => (T)(this.classById ??= new ClassById()),
+                { } type when type == typeof(IVersionedIdByStrategy) => (T)(this.versionedIdByStrategy ??= new VersionedIdByStrategy()),
+                { } type when type == typeof(IPrefetchPolicyCache) => (T)(this.prefetchPolicyCache ??= new PrefetchPolicyCache(this.database)),
+                { } type when type == typeof(IPreparedSelects) => (T)(this.preparedSelects ??= new PreparedSelects(this.database)),
+                { } type when type == typeof(IPreparedExtents) => (T)(this.preparedExtents ??= new PreparedExtents(this.database)),
+                { } type when type == typeof(ITreeCache) => (T)(this.treeCache ??= new TreeCache()),
+                { } type when type == typeof(IPermissionsCache) => (T)(this.permissionsCache ??= new PermissionsCache(this.database)),
+                { } type when type == typeof(IAccessControlCache) => (T)(this.accessControlCache ??= new AccessControlCache()),
+                { } type when type == typeof(ITime) => (T)(this.time ??= new Time()),
+                { } type when type == typeof(ICaches) => (T)(this.caches ??= new Caches()),
+                { } type when type == typeof(IPasswordHasher) => (T)(this.passwordHasher ??= this.CreatePasswordHasher()),
+                { } type when type == typeof(IDerivationFactory) => (T)(this.derivationFactory ??= this.CreateDerivationFactory()),
+                // Base
+                { } type when type == typeof(ISingletonId) => (T)(this.singletonId ??= new SingletonId()),
+                { } type when type == typeof(IMailer) => (T)(this.mailer ??= new MailKitMailer()),
+                { } type when type == typeof(IBarcodeGenerator) => (T)(this.barcodeGenerator ??= new ZXingBarcodeGenerator()),
+                { } type when type == typeof(ITemplateObjectCache) => (T)(this.templateObjectCache ??= new TemplateObjectCache()),
                 _ => throw new NotSupportedException($"Service {typeof(T)} not supported")
             };
 

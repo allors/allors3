@@ -6,16 +6,14 @@
 namespace Allors.Server
 {
     using System.Threading.Tasks;
-
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
-
-    using Services;
     using Protocol.Json.Auth;
     using Security;
+    using Services;
 
     public class AuthenticationController : Controller
     {
