@@ -8,9 +8,9 @@ namespace Allors.Database.Domain.Derivations.Legacy.Default
     using Domain;
     using Rules.Default;
 
-    public class LegacyDerivationFactory : IDerivationFactory
+    public class LegacyDerivationService : IDerivationService
     {
-        public LegacyDerivationFactory(Engine engine) => this.Engine = engine;
+        public LegacyDerivationService(Engine engine) => this.Engine = engine;
 
         public Engine Engine { get; }
 

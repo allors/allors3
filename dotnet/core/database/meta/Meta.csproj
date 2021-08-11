@@ -6,7 +6,7 @@
     <ProjectReference Include="..\..\..\System\Database\Allors.Database\Allors.Database.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\System\Database\Allors.Meta\Meta*\**\*.cs" />
+    <Compile Include="..\..\..\system\database\Allors.Database.Meta.Props\props*\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="generated\" />

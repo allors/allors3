@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\System\Database\Allors.Meta\Meta*\**\*.cs" />
+    <Compile Include="..\..\..\system\database\Allors.Database.Meta.Props\props*\**\*.cs" />
     <Compile Include="..\..\..\Core\Database\Meta\Core*\**\*.cs" />
   </ItemGroup>
 </Project>
