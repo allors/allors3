@@ -18,6 +18,7 @@ namespace Tests.Workspace.Remote
     using Xunit;
     using Configuration = Allors.Workspace.Adapters.Remote.Configuration;
     using DatabaseConnection = Allors.Workspace.Adapters.Remote.SystemText.DatabaseConnection;
+    using IWorkspaceServices = Allors.Workspace.IWorkspaceServices;
 
     public class Profile : IProfile
     {
@@ -35,7 +36,7 @@ namespace Tests.Workspace.Remote
 
         public Profile()
         {
-            this.servicesBuilder = () => new WorkspaceContext();
+            this.servicesBuilder = () => new WorkspaceServices();
             this.idGenerator = new IdGenerator();
             this.defaultRanges = new DefaultRanges();
 
@@ -50,7 +51,7 @@ namespace Tests.Workspace.Remote
 
         public IWorkspace Workspace { get; private set; }
 
-        public M M => this.Workspace.Context().M;
+        public M M => ((IWorkspaceServices)this.Workspace.Services).Get<M>();
 
         public async Task InitializeAsync()
         {

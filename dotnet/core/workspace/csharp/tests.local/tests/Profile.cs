@@ -21,6 +21,7 @@ namespace Tests.Workspace.Local
     using Allors.Workspace.Meta.Lazy;
     using Configuration = Allors.Workspace.Adapters.Local.Configuration;
     using DatabaseConnection = Allors.Workspace.Adapters.Local.DatabaseConnection;
+    using IWorkspaceServices = Allors.Workspace.IWorkspaceServices;
     using Person = Allors.Workspace.Domain.Person;
     using User = Allors.Database.Domain.User;
 
@@ -40,12 +41,12 @@ namespace Tests.Workspace.Local
 
         public IWorkspace Workspace { get; private set; }
 
-        public M M => this.Workspace.Context().M;
+        public M M => ((IWorkspaceServices)this.Workspace.Services).Get<M>();
 
         public Profile(Fixture fixture)
         {
             this.rangesFactory = () => new DefaultRanges();
-            this.servicesBuilder = () => new WorkspaceContext();
+            this.servicesBuilder = () => new WorkspaceServices();
 
             this.AsyncDatabaseClient = new AsyncDatabaseClient();
 

@@ -40,7 +40,7 @@ namespace Tests.Workspace.Remote
 
         public IWorkspace Workspace { get; private set; }
 
-        public M M => this.Workspace.Context().M;
+        public M M => ((IWorkspaceServices)this.Workspace.Services).Get<M>();
 
         public Profile()
         {
@@ -59,7 +59,7 @@ namespace Tests.Workspace.Remote
             Assert.True(response.IsSuccessful);
 
             this.client = new Client(this.CreateRestClient);
-            this.DatabaseConnection = new DatabaseConnection(this.configuration, () => new WorkspaceContext(), this.client, this.idGenerator, this.defaultRanges);
+            this.DatabaseConnection = new DatabaseConnection(this.configuration, () => new WorkspaceServices(), this.client, this.idGenerator, this.defaultRanges);
             this.Workspace = this.DatabaseConnection.CreateWorkspace();
 
             this.AsyncDatabaseClient = new AsyncDatabaseClient(this.DatabaseConnection);
@@ -73,7 +73,7 @@ namespace Tests.Workspace.Remote
 
         public IWorkspace CreateExclusiveWorkspace()
         {
-            var database = new DatabaseConnection(this.configuration, () => new WorkspaceContext(), this.client, this.idGenerator, this.defaultRanges);
+            var database = new DatabaseConnection(this.configuration, () => new WorkspaceServices(), this.client, this.idGenerator, this.defaultRanges);
             return database.CreateWorkspace();
         }
 

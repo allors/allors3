@@ -14,8 +14,8 @@ namespace Allors.Workspace.Domain
     {
         public static IValidation Derive(this ISession session, bool throwExceptionOnError = true)
         {
-            var derivationFactory = session.Workspace.Context().DerivationFactory;
-            var derivation = derivationFactory.CreateDerivation(session);
+            var derivationService = ((IWorkspaceServices)session.Workspace.Services).Get<IDerivationService>();
+            var derivation = derivationService.CreateDerivation(session);
             var validation = derivation.Execute();
             if (throwExceptionOnError && validation.HasErrors)
             {
@@ -29,7 +29,7 @@ namespace Allors.Workspace.Domain
         {
             var now = DateTime.UtcNow;
 
-            var timeService = transaction.Workspace.Context().Time;
+            var timeService = ((IWorkspaceServices)transaction.Workspace.Services).Get<ITime>();
             var timeShift = timeService.Shift;
             if (timeShift != null)
             {

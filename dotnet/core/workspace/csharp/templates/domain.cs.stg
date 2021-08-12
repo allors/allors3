@@ -147,7 +147,7 @@ namespace Allors.Workspace.Domain
 		public $class._.name$(IStrategy strategy)
 		{
             this.Strategy = strategy;
-            this.m = strategy.Session.Workspace.Context().M;
+            this.m = strategy.Session.Workspace.Services.Get<Allors.Workspace.Meta.M>();
         }
 
 $if(class._.HasDatabaseOrigin)$

@@ -19,7 +19,7 @@ namespace Tests.Workspace
 
         public IWorkspace Workspace => this.Profile.Workspace;
 
-        public M M => this.Workspace.Context().M;
+        public M M => ((IWorkspaceServices)this.Workspace.Services).Get<M>();
 
         public abstract IProfile Profile { get; }
 

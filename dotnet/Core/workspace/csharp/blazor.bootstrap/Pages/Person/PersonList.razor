@@ -37,7 +37,7 @@
 
     ISession Session;
 
-    M M => this.Workspace.Context().M;
+    M M => ((IWorkspaceServices)this.Workspace.Services).Get<M>();
 
     Person[] people;
 
