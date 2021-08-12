@@ -8,6 +8,7 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Database.Derivations;
     using Derivations.Rules;
     using Meta;
 
@@ -23,7 +24,7 @@ namespace Allors.Database.Domain
                 m.Quote.RolePattern(v => v.IssueDate),
             };
 
-        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<Quote>().Where(v => v.QuoteState.IsCreated))
             {

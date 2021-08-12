@@ -8909,12 +8909,12 @@ namespace Allors.Database.Adapters
                 Extent<Company> parents = this.Transaction.Extent(m.Company);
 
                 Extent<Company> children = this.Transaction.Extent(m.Company);
-                children.Filter.AddContainedIn(m.Company.CompanyWhereChild, (Extent)parents);
+                children.Filter.AddContainedIn(m.Company.CompanyWhereChild, parents);
 
                 Extent<Person> persons = this.Transaction.Extent(m.Person);
                 var or = persons.Filter.AddOr();
-                or.AddContainedIn(m.Person.Company, (Extent)parents);
-                or.AddContainedIn(m.Person.Company, (Extent)children);
+                or.AddContainedIn(m.Person.Company, parents);
+                or.AddContainedIn(m.Person.Company, children);
 
                 Assert.Empty(persons);
             }
@@ -16725,12 +16725,12 @@ namespace Allors.Database.Adapters
                 Extent<Company> parents = this.Transaction.Extent(m.Company);
 
                 Extent<Company> children = this.Transaction.Extent(m.Company);
-                children.Filter.AddContainedIn(m.Company.CompanyWhereChild, (Extent)parents);
+                children.Filter.AddContainedIn(m.Company.CompanyWhereChild, parents);
 
                 Extent<Company> allCompanies = this.Transaction.Union(parents, children);
 
                 Extent<Person> persons = this.Transaction.Extent(m.Person);
-                persons.Filter.AddContainedIn(m.Person.Company, (Extent)allCompanies);
+                persons.Filter.AddContainedIn(m.Person.Company, allCompanies);
 
                 Assert.Empty(persons);
             }

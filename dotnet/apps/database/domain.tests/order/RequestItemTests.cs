@@ -6,11 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Derivations;
-    using Derivations.Errors;
-    using Meta;
+    using Database.Derivations;
     using Resources;
     using Xunit;
     using Permission = Domain.Permission;
@@ -30,7 +27,7 @@ namespace Allors.Database.Domain.Tests
             var requestItem = new RequestItemBuilder(this.Transaction).Build();
             request.AddRequestItem(requestItem);
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtLeastOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtLeastOne>();
             Assert.Contains(this.M.RequestItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.RequestItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -45,7 +42,7 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.Product = new UnifiedGoodBuilder(this.Transaction).Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Contains(this.M.RequestItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.RequestItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -60,7 +57,7 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.ProductFeature = new ColourBuilder(this.Transaction).Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Contains(this.M.RequestItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.RequestItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -75,7 +72,7 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.Description = "Description";
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Contains(this.M.RequestItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.RequestItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -90,7 +87,7 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.NeededSkill = new NeededSkillBuilder(this.Transaction).Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Contains(this.M.RequestItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.RequestItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -105,7 +102,7 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.Deliverable = new DeliverableBuilder(this.Transaction).Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>().ToList();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>().ToList();
             Assert.Contains(this.M.RequestItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.RequestItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -120,7 +117,7 @@ namespace Allors.Database.Domain.Tests
 
             requestItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Contains(this.M.RequestItem.SerialisedItem, errors.SelectMany(v => v.RoleTypes));
             Assert.Contains(this.M.RequestItem.ProductFeature, errors.SelectMany(v => v.RoleTypes));
         }

@@ -11,7 +11,7 @@ namespace Allors.Database.Data.Tests
     using System.Linq;
     using Domain.Tests;
     using Xunit;
-    
+
     public class NodesTests : DomainTest, IClassFixture<Fixture>
     {
         public NodesTests(Fixture fixture) : base(fixture) { }

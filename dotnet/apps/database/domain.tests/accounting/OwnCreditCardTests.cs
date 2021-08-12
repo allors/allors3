@@ -6,10 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Derivations;
-    using Derivations.Errors;
+    using Database.Derivations;
     using Meta;
     using Xunit;
 
@@ -207,7 +205,7 @@ namespace Allors.Database.Domain.Tests
 
             this.InternalOrganisation.AddPaymentMethod(ownCreditCard);
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtLeastOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.OwnBankAccount.GeneralLedgerAccount,
@@ -223,7 +221,7 @@ namespace Allors.Database.Domain.Tests
 
             ownCreditCard.GeneralLedgerAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.OwnCreditCard.GeneralLedgerAccount,
@@ -239,7 +237,7 @@ namespace Allors.Database.Domain.Tests
 
             ownCreditCard.Journal = new JournalBuilder(this.Transaction).Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.OwnCreditCard.GeneralLedgerAccount,

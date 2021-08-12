@@ -6,8 +6,6 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
-    using Allors;
-    using Domain;
     using Meta;
     using Xunit;
     using Permission = Domain.Permission;

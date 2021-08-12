@@ -5,7 +5,8 @@
 // <summary>Defines the DomainTest type.</summary>
 
 using System;
-using Allors.Database.Domain.Derivations.Rules.Default;
+using Allors.Database.Configuration.Derivations.Default;
+using Allors.Database.Derivations;
 using Allors.Database.Services;
 using Allors.Ranges;
 
@@ -103,7 +104,7 @@ namespace Allors.Database.Configuration
 
         protected IPasswordHasher CreatePasswordHasher() => new PasswordHasher();
 
-        protected IDerivationService CreateDerivationFactory() => new DefaultDerivationService(this.Engine);
+        protected IDerivationService CreateDerivationFactory() => new DerivationService(this.Engine);
 
         protected Engine Engine { get; }
 

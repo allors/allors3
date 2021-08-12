@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
                 m.SalesInvoiceItem.RolePattern(v => v.Quantity, v => v.WorkEffortSalesInvoiceItemAssignmentWhereSalesInvoiceItem.WorkEffortSalesInvoiceItemAssignment.Assignment),
             };
 
-        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<WorkEffort>())
             {

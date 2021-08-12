@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
             {
                 iteration.Schedule(@this);
             }
-            else if (!iteration.Cycle.Derivation.DerivedObjects.Contains(@this))
+            else if (!iteration.LegacyCycle.Derivation.DerivedObjects.Contains(@this))
             {
                 if (changeSet.IsCreated(@this) || changeSet.HasChangedRoles(@this))
                 {

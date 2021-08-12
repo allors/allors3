@@ -9,10 +9,8 @@ namespace Allors.Database.Domain.Tests
     using Xunit;
     using TestPopulation;
     using Resources;
-    using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Derivations;
-    using Derivations.Errors;
+    using Database.Derivations;
     using Meta;
     using Permission = Domain.Permission;
 
@@ -140,7 +138,7 @@ namespace Allors.Database.Domain.Tests
 
             serialisedItem.AcquisitionYear = 2020;
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SerialisedItem.AcquiredDate,
@@ -156,7 +154,7 @@ namespace Allors.Database.Domain.Tests
 
             serialisedItem.AcquiredDate = this.Transaction.Now();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SerialisedItem.AcquiredDate,

@@ -6,10 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Derivations;
-    using Derivations.Errors;
+    using Database.Derivations;
     using Meta;
     using Resources;
     using Xunit;
@@ -37,7 +35,7 @@ namespace Allors.Database.Domain.Tests
             var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithPart(good1.Part).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.ShipmentItem.UnitPurchasePrice,
@@ -66,7 +64,7 @@ namespace Allors.Database.Domain.Tests
             shipmentItem.RemoveNextSerialisedItemAvailability();
 
             {
-                var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
+                var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
                 Assert.Equal(new IRoleType[]
                 {
                     this.M.ShipmentItem.NextSerialisedItemAvailability,
@@ -88,7 +86,7 @@ namespace Allors.Database.Domain.Tests
             shipmentItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
             {
-                var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
+                var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
                 Assert.Contains(this.M.ShipmentItem.NextSerialisedItemAvailability, errors.SelectMany(v => v.RoleTypes));
             }
         }
@@ -321,7 +319,7 @@ namespace Allors.Database.Domain.Tests
 
             shipmentItem.RemoveUnitPurchasePrice();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.ShipmentItem.UnitPurchasePrice,
@@ -340,7 +338,7 @@ namespace Allors.Database.Domain.Tests
 
             shipmentItem.Part = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
             Assert.Contains(this.M.ShipmentItem.UnitPurchasePrice, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
     }

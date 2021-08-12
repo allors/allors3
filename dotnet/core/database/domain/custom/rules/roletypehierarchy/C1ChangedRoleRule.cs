@@ -8,6 +8,7 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Database.Derivations;
     using Derivations.Rules;
     using Meta;
 
@@ -19,7 +20,7 @@ namespace Allors.Database.Domain
                 new RolePattern(m.C1, m.S12.ChangedRolePingC1)
             };
 
-        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var c1 in matches.Cast<C1>())
             {

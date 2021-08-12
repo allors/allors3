@@ -9,8 +9,9 @@ namespace Allors.Database.Configuration
     using System;
     using Bogus;
     using Data;
+    using Database.Derivations;
+    using Derivations.Default;
     using Domain;
-    using Domain.Derivations.Rules.Default;
     using Meta;
     using Microsoft.AspNetCore.Http;
     using Ranges;

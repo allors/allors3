@@ -6,10 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Collections.Generic;
     using System.Linq;
     using Allors.Database.Derivations;
-    using Derivations.Errors;
     using Meta;
     using Xunit;
 
@@ -58,7 +56,7 @@ namespace Allors.Database.Domain.Tests
 
             discountComponent.Price = 1;
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.DiscountComponent.Price,
@@ -74,7 +72,7 @@ namespace Allors.Database.Domain.Tests
 
             discountComponent.Percentage = 1;
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.DiscountComponent.Price,

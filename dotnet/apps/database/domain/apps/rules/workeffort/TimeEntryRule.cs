@@ -8,6 +8,7 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Database.Derivations;
     using Derivations;
     using Derivations.Rules;
     using Meta;
@@ -54,7 +55,7 @@ namespace Allors.Database.Domain
             m.PartyRate.RolePattern(v => v.ThroughDate, v => v.PartyWherePartyRate.Party.AsOrganisation.WorkEffortsWhereExecutedBy.WorkEffort.ServiceEntriesWhereWorkEffort, m.TimeEntry),
         };
 
-        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             var transaction = cycle.Transaction;
             var validation = cycle.Validation;

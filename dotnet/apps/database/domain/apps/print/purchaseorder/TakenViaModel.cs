@@ -14,7 +14,7 @@ namespace Allors.Database.Domain.Print.PurchaseOrderModel
             var contactMechanisam = order.DerivedTakenViaContactMechanism;
 
             var billTo = takenVia;
-            var billToOrganisation = billTo as Organisation;
+            var billToOrganisation = billTo;
             if (billTo != null)
             {
                 this.Name = billTo.PartyName;

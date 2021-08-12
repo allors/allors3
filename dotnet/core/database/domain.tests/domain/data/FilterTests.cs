@@ -8,7 +8,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using Allors.Database.Data;
+    using Database.Data;
     using Xunit;
 
     public class FilterTests : DomainTest, IClassFixture<Fixture>

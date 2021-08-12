@@ -44,11 +44,6 @@ namespace Allors.Database
         /// </returns>
         public override string ToString() => this.ObjectTypeId + ":" + this.ObjectId;
     }
-}
-
-namespace Allors
-{
-    using Database;
 
     /// <summary>
     /// The loader raises an ObjectNotLoaded event when either the object's

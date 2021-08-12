@@ -6,10 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Derivations;
-    using Derivations.Errors;
+    using Database.Derivations;
     using Meta;
     using Xunit;
 
@@ -159,7 +157,7 @@ namespace Allors.Database.Domain.Tests
 
             agreementTerm.RemoveTermType();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtLeastOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.InvoiceTerm.TermType,

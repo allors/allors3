@@ -8,9 +8,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Derivations;
     using Xunit;
 
     public class PassportTests : DomainTest, IClassFixture<Fixture>

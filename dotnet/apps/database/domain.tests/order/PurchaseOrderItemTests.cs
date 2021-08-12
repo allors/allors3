@@ -6,11 +6,9 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Collections.Generic;
     using System.Linq;
-    using TestPopulation;
     using Database.Derivations;
-    using Derivations.Errors;
+    using TestPopulation;
     using Meta;
     using Resources;
     using Xunit;
@@ -653,7 +651,7 @@ namespace Allors.Database.Domain.Tests
 
             orderItem.Part = serialisedPart;
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtLeastOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrderItem.SerialisedItem,
@@ -674,7 +672,7 @@ namespace Allors.Database.Domain.Tests
 
             orderItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrderItem.SerialisedItem,
@@ -695,7 +693,7 @@ namespace Allors.Database.Domain.Tests
 
             orderItem.SerialNumber = "number";
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrderItem.SerialisedItem,

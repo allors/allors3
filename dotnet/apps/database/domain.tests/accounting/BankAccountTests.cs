@@ -6,10 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Collections.Generic;
     using System.Linq;
     using Database.Derivations;
-    using Derivations.Errors;
     using Meta;
     using Resources;
 
@@ -228,7 +226,7 @@ namespace Allors.Database.Domain.Tests
 
             var validation = this.Derive();
 
-            var errors = validation.Errors.OfType<DerivationErrorRequired>().ToArray();
+            var errors = validation.Errors.OfType<IDerivationErrorRequired>().ToArray();
             Assert.Equal(new IRoleType[]
             {
                 this.M.BankAccount.Bank,

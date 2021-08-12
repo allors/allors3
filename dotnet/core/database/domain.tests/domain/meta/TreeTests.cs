@@ -10,9 +10,7 @@ namespace Allors.Database.Domain.Tests
 {
     using System;
     using System.Collections.Generic;
-    using Database;
-    using Allors.Database.Data;
-    using Domain;
+    using Database.Data;
     using Xunit;
 
     public class TreeTests : DomainTest, IClassFixture<Fixture>

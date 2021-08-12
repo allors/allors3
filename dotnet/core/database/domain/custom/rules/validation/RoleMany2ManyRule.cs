@@ -8,6 +8,7 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Database.Derivations;
     using Derivations.Rules;
     using Meta;
 
@@ -21,7 +22,7 @@ namespace Allors.Database.Domain
             };
 
 
-        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var aa in matches.Cast<AA>())
             {

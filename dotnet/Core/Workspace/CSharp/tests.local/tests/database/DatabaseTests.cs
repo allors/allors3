@@ -5,11 +5,12 @@
 
 namespace Tests.Workspace.OriginDatabase.Local
 {
+    using Workspace.Local;
     using Xunit;
 
     public class DatabaseTests : OriginDatabase.DatabaseTests, IClassFixture<Fixture>
     {
-        public DatabaseTests(Fixture fixture) : base(fixture) => this.Profile = new Workspace.Local.Profile(fixture);
+        public DatabaseTests(Fixture fixture) : base(fixture) => this.Profile = new Profile(fixture);
 
         public override IProfile Profile { get; }
     }

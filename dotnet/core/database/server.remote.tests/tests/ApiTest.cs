@@ -18,7 +18,7 @@ namespace Allors.Server.Tests
     using Database.Adapters.Sql;
     using Database.Domain;
     using Database.Configuration;
-    using Database.Domain.Derivations.Rules.Default;
+    using Database.Configuration.Derivations.Default;
     using Database.Meta;
     using Microsoft.Extensions.Configuration;
     using Protocol.Json.Auth;
@@ -73,7 +73,7 @@ namespace Allors.Server.Tests
             this.Transaction = database.CreateTransaction();
         }
 
-        public MetaPopulation M => ((IDatabaseServices)this.Transaction.Database.Services).Get<Allors.Database.Meta.MetaPopulation>();
+        public MetaPopulation M => this.Transaction.Database.Services.Get<Allors.Database.Meta.MetaPopulation>();
 
         public IConfigurationRoot Configuration { get; set; }
 

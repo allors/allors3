@@ -11,6 +11,7 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
     using System.Text;
+    using Database.Derivations;
     using Derivations;
 
     public class QuoteItemDetailsRule : Rule
@@ -22,7 +23,7 @@ namespace Allors.Database.Domain
                 m.QuoteItem.RolePattern(v => v.Product),
             };
 
-        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
             var transaction = cycle.Transaction;

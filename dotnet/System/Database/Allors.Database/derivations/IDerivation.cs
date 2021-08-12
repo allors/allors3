@@ -4,10 +4,9 @@
 // </copyright>
 
 // ReSharper disable StyleCop.SA1121
-namespace Allors.Database.Domain.Derivations
+namespace Allors.Database.Derivations
 {
     using System;
-    using Database.Derivations;
 
     public interface IDerivation
     {

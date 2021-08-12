@@ -33,12 +33,12 @@ namespace Allors.Database.Domain.Derivations
             return false;
         }
 
-        public static bool HasChangedRoles(this IChangeSet @this, Object derivable, RelationKind relationKind)
+        public static bool HasChangedRoles(this IChangeSet @this, Object derivable, LegacyRelationKind legacyRelationKind)
         {
-            System.Func<IRoleType, bool> check = relationKind switch
+            System.Func<IRoleType, bool> check = legacyRelationKind switch
             {
-                RelationKind.Regular => (roleType) => !roleType.RelationType.IsDerived,
-                RelationKind.Derived => (roleType) => roleType.RelationType.IsDerived,
+                LegacyRelationKind.Regular => (roleType) => !roleType.RelationType.IsDerived,
+                LegacyRelationKind.Derived => (roleType) => roleType.RelationType.IsDerived,
                 _ => (_) => true,
             };
 

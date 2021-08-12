@@ -11,8 +11,6 @@ namespace Allors.Database.Domain.Tests
     using TestPopulation;
     using Resources;
     using Xunit;
-    using System.Collections.Generic;
-    using Database.Derivations;
 
     public class SalesInvoiceTests : DomainTest, IClassFixture<Fixture>
     {

@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the IDomainDerivation type.</summary>
 
-namespace Allors.Database.Domain.Derivations.Rules
+namespace Allors.Database.Derivations
 {
     using System.Collections.Generic;
     using Database.Data;

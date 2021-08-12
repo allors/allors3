@@ -8,6 +8,7 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Database.Derivations;
     using Meta;
     using Derivations.Rules;
 
@@ -24,7 +25,7 @@ namespace Allors.Database.Domain
             m.SalesInvoice.AssociationPattern(v => v.RepeatingSalesInvoiceWhereSource),
         };
 
-        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             var transaction = cycle.Transaction;
             var validation = cycle.Validation;

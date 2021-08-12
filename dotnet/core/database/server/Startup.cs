@@ -9,8 +9,8 @@ namespace Allors.Server
     using System.Text;
     using Database.Adapters;
     using Database.Configuration;
+    using Database.Configuration.Derivations.Default;
     using Database.Domain;
-    using Database.Domain.Derivations.Rules.Default;
     using Database.Meta;
     using JSNLog;
     using Microsoft.AspNetCore.Authentication.JwtBearer;

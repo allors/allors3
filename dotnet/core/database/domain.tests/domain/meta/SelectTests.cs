@@ -6,8 +6,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
-    using Allors.Database.Data;
-    using Domain;
+    using Database.Data;
     using Xunit;
 
     public class SelectTests : DomainTest, IClassFixture<Fixture>
@@ -98,12 +97,12 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Select.TryParse(this.M.C2, "C1WhereC1C2One2Many", out var @select);
+            Select.TryParse(this.M.C2, "C1WhereC1C2One2Many", out var select);
 
-            var result = (C1)@select.Get(c2A, this.AclsMock.Object);
+            var result = (C1)select.Get(c2A, this.AclsMock.Object);
             Assert.Equal(result, c1A);
 
-            result = (C1)@select.Get(c2B, this.AclsMock.Object);
+            result = (C1)select.Get(c2B, this.AclsMock.Object);
             Assert.Equal(result, c1B);
         }
     }

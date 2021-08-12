@@ -6,8 +6,6 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
-    using Database;
-    using Domain;
     using Configuration;
     using Services;
     using Xunit;
@@ -21,7 +19,7 @@ namespace Allors.Database.Domain.Tests
         {
             var organisations = new Organisations(this.Transaction).Extent().ToArray();
 
-            var extentService = ((IDatabaseServices)this.Transaction.Database.Services).Get<IPreparedExtents>();
+            var extentService = this.Transaction.Database.Services.Get<IPreparedExtents>();
             var organizationByName = extentService.Get(PreparedExtents.OrganisationByName);
 
             var arguments = new Arguments(new Dictionary<string, object> { { "name", "Acme" }, });

@@ -5,11 +5,12 @@
 
 namespace Tests.Workspace.OriginWorkspace.WorkspaceWorkspace.Local
 {
+    using Workspace.Local;
     using Xunit;
 
     public class ManyToManyTests : WorkspaceWorkspace.ManyToManyTests, IClassFixture<Fixture>
     {
-        public ManyToManyTests(Fixture fixture) : base(fixture) => this.Profile = new Workspace.Local.Profile(fixture);
+        public ManyToManyTests(Fixture fixture) : base(fixture) => this.Profile = new Profile(fixture);
 
         public override IProfile Profile { get; }
     }

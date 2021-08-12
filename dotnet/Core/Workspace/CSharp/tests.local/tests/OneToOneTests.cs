@@ -7,7 +7,7 @@ namespace Tests.Workspace.Local
 {
     using Xunit;
 
-    public class OneToOneTests : Workspace.One2OneTests, IClassFixture<Fixture>
+    public class OneToOneTests : One2OneTests, IClassFixture<Fixture>
     {
         public OneToOneTests(Fixture fixture) : base(fixture) => this.Profile = new Profile(fixture);
 

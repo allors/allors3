@@ -9,7 +9,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
-    using Allors.Database.Data;
+    using Database.Data;
     using Xunit;
 
     public class ParametrizedTests : DomainTest, IClassFixture<Fixture>
@@ -48,7 +48,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(extent.ToArray(), queryExtent.ToArray());
 
-            arguments = new Arguments(new Dictionary<string, object>() { { "useFirstname", "x" } });
+            arguments = new Arguments(new Dictionary<string, object> { { "useFirstname", "x" } });
             queryExtent = filter.Build(this.Transaction, arguments);
 
             extent = this.Transaction.Extent(this.M.Person);

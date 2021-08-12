@@ -6,11 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Derivations;
-    using Derivations.Errors;
-    using Meta;
+    using Database.Derivations;
     using Resources;
     using TestPopulation;
     using Xunit;
@@ -172,7 +169,7 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.InvoiceItemType = new InvoiceItemTypes(this.Transaction).ProductItem;
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtLeastOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtLeastOne>();
             Assert.Contains(this.M.QuoteItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.QuoteItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -195,7 +192,7 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.Product = product;
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Contains(this.M.QuoteItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.QuoteItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.QuoteItem.WorkEffort, errors.SelectMany(v => v.RoleTypes).Distinct());
@@ -219,7 +216,7 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.ProductFeature = productFeature;
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Contains(this.M.QuoteItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.QuoteItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.QuoteItem.WorkEffort, errors.SelectMany(v => v.RoleTypes).Distinct());
@@ -243,7 +240,7 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.Deliverable = deliverable;
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>().ToList();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>().ToList();
             Assert.Contains(this.M.QuoteItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.QuoteItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -266,7 +263,7 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.WorkEffort = workTask;
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Contains(this.M.QuoteItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.QuoteItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.QuoteItem.WorkEffort, errors.SelectMany(v => v.RoleTypes).Distinct());
@@ -290,7 +287,7 @@ namespace Allors.Database.Domain.Tests
 
             quoteItem.SerialisedItem = serialisedItem;
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Contains(this.M.QuoteItem.SerialisedItem, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.QuoteItem.ProductFeature, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.QuoteItem.Deliverable, errors.SelectMany(v => v.RoleTypes).Distinct());

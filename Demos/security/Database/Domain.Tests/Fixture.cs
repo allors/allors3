@@ -5,11 +5,12 @@
 // <summary>Defines the DomainTest type.</summary>
 
 
+using Allors.Database.Configuration.Derivations.Default;
+
 namespace Allors.Database.Domain.Tests
 {
     using System;
     using Meta;
-    using Derivations.Rules.Default;
 
     public class Fixture : IDisposable
     {

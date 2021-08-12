@@ -74,7 +74,7 @@ namespace Allors.Workspace.Meta
                 .Union(this.Classes)
                 .Union(this.RelationTypes)
                 .Union(this.MethodTypes)
-                .ToDictionary(v => ((IMetaObject)v).Tag, v => v);
+                .ToDictionary(v => v.Tag, v => v);
 
             this.Composites = this.Interfaces.Cast<ICompositeInternals>().Union(this.Classes).ToArray();
             this.CompositeByLowercaseName = this.Composites.ToDictionary(v => v.SingularName.ToLowerInvariant());

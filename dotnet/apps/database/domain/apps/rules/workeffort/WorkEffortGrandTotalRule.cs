@@ -22,7 +22,7 @@ namespace Allors.Database.Domain
                 m.WorkEffort.RolePattern(v => v.TotalOtherRevenue),
             };
 
-        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<WorkEffort>())
             {

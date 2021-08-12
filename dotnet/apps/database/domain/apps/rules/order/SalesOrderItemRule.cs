@@ -8,6 +8,7 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Database.Derivations;
     using Meta;
     using Derivations.Rules;
     using Resources;
@@ -21,7 +22,7 @@ namespace Allors.Database.Domain
                 m.SalesOrderItem.RolePattern(v => v.QuantityOrdered),
             };
 
-        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
             var transaction = cycle.Transaction;

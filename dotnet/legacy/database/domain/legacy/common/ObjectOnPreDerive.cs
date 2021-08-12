@@ -11,19 +11,19 @@ namespace Allors.Database.Domain
 
     public abstract partial class ObjectOnPreDerive
     {
-        public IIteration Iteration { get; set; }
+        public ILegacyIteration LegacyIteration { get; set; }
 
-        public ObjectOnPreDerive WithIteration(IIteration iteration)
+        public ObjectOnPreDerive WithIteration(ILegacyIteration legacyIteration)
         {
-            this.Iteration = iteration;
+            this.LegacyIteration = legacyIteration;
             return this;
         }
 
-        public void Deconstruct(out IIteration iteration, out IChangeSet changeSet, out ISet<Object> derivedObjects)
+        public void Deconstruct(out ILegacyIteration legacyIteration, out IChangeSet changeSet, out ISet<Object> derivedObjects)
         {
-            changeSet = this.Iteration.ChangeSet;
-            iteration = this.Iteration;
-            derivedObjects = this.Iteration.Cycle.Derivation.DerivedObjects;
+            changeSet = this.LegacyIteration.ChangeSet;
+            legacyIteration = this.LegacyIteration;
+            derivedObjects = this.LegacyIteration.LegacyCycle.Derivation.DerivedObjects;
         }
     }
 }

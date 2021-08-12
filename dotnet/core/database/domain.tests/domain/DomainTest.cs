@@ -9,11 +9,10 @@ namespace Allors.Database.Domain.Tests
     using System;
     using System.IO;
     using System.Reflection;
-    using Database;
     using Adapters.Memory;
-    using Domain;
-    using Allors.Database.Security;
     using Configuration;
+    using Database.Derivations;
+    using Database.Security;
     using Meta;
     using Moq;
     using User = Domain.User;
@@ -29,7 +28,7 @@ namespace Allors.Database.Domain.Tests
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
                 });
 
-            this.M = ((IDatabaseServices)((IDatabase)database).Services).Get<Allors.Database.Meta.MetaPopulation>();
+            this.M = ((IDatabase)database).Services.Get<MetaPopulation>();
 
             this.Setup(database, populate);
         }
@@ -40,9 +39,9 @@ namespace Allors.Database.Domain.Tests
 
         public ITransaction Transaction { get; private set; }
 
-        public ITime Time => ((IDatabaseServices)this.Transaction.Database.Services).Get<ITime>();
+        public ITime Time => this.Transaction.Database.Services.Get<ITime>();
 
-        public IDerivationService DerivationService => ((IDatabaseServices)this.Transaction.Database.Services).Get<IDerivationService>();
+        public IDerivationService DerivationService => this.Transaction.Database.Services.Get<IDerivationService>();
 
         public TimeSpan? TimeShift
         {

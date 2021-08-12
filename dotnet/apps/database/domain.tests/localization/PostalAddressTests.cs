@@ -6,10 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Derivations;
-    using Derivations.Errors;
+    using Database.Derivations;
     using Meta;
     using Xunit;
 
@@ -64,7 +62,7 @@ namespace Allors.Database.Domain.Tests
 
             postalAddress.Locality = "locality";
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PostalAddress.PostalAddressBoundaries,
@@ -82,7 +80,7 @@ namespace Allors.Database.Domain.Tests
 
             postalAddress.Region = "Region";
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PostalAddress.PostalAddressBoundaries,
@@ -100,7 +98,7 @@ namespace Allors.Database.Domain.Tests
 
             postalAddress.PostalCode = "PostalCode";
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PostalAddress.PostalAddressBoundaries,
@@ -118,7 +116,7 @@ namespace Allors.Database.Domain.Tests
 
             postalAddress.Country = new CountryBuilder(this.Transaction).Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PostalAddress.PostalAddressBoundaries,
@@ -136,7 +134,7 @@ namespace Allors.Database.Domain.Tests
 
             postalAddress.AddPostalAddressBoundary(new CityBuilder(this.Transaction).Build());
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PostalAddress.PostalAddressBoundaries,
@@ -154,7 +152,7 @@ namespace Allors.Database.Domain.Tests
 
             postalAddress.RemoveCountry();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
             Assert.Contains(this.M.PostalAddress.Country, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
@@ -168,7 +166,7 @@ namespace Allors.Database.Domain.Tests
 
             postalAddress.RemoveLocality();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
             Assert.Contains(this.M.PostalAddress.Locality, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
     }

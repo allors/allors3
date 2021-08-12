@@ -6,12 +6,10 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Derivations;
     using Allors.Database.Domain.TestPopulation;
-    using Derivations.Errors;
-    using Meta;
+    using Configuration.Derivations.Default;
+    using Database.Derivations;
     using Xunit;
     using PartyContactMechanism = Domain.PartyContactMechanism;
 
@@ -68,7 +66,7 @@ namespace Allors.Database.Domain.Tests
 
             partyContactMechanism.UseAsDefault = true;
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
             Assert.Contains(this.M.PartyContactMechanism.ContactPurposes, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
@@ -89,7 +87,7 @@ namespace Allors.Database.Domain.Tests
             partyContactMechanism.RemoveContactPurposes();
 
             {
-                var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
+                var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
                 Assert.Contains(this.M.PartyContactMechanism.ContactPurposes, errors.SelectMany(v => v.RoleTypes));
             }
         }

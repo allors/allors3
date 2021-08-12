@@ -6,15 +6,13 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Derivations;
     using Allors.Database.Domain.TestPopulation;
-    using Derivations.Errors;
+    using Configuration.Derivations.Default;
+    using Database.Derivations;
     using Resources;
     using Xunit;
     using IRoleType = Meta.IRoleType;
-    using MetaPopulation = Meta.MetaPopulation;
 
     public class SalesOrderItemTests : DomainTest, IClassFixture<Fixture>
     {
@@ -1596,7 +1594,7 @@ namespace Allors.Database.Domain.Tests
 
             item.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
             Assert.Contains(this.M.SalesOrderItem.NextSerialisedItemAvailability, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
@@ -1611,7 +1609,7 @@ namespace Allors.Database.Domain.Tests
 
             item.RemoveNextSerialisedItemAvailability();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
             Assert.Contains(this.M.SalesOrderItem.NextSerialisedItemAvailability, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
@@ -1751,7 +1749,7 @@ namespace Allors.Database.Domain.Tests
 
             item.AddOrderedWithFeature(new SalesOrderItemBuilder(this.Transaction).Build());
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
             Assert.Contains(this.M.SalesOrderItem.ProductFeature, errors.SelectMany(v => v.RoleTypes));
         }
 
@@ -1846,7 +1844,7 @@ namespace Allors.Database.Domain.Tests
 
             item.ProductFeature = new ColourBuilder(this.Transaction).Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrderItem.Product,
@@ -1866,7 +1864,7 @@ namespace Allors.Database.Domain.Tests
 
             item.Product = product;
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrderItem.Product,
@@ -1886,7 +1884,7 @@ namespace Allors.Database.Domain.Tests
 
             item.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrderItem.SerialisedItem,
@@ -1906,7 +1904,7 @@ namespace Allors.Database.Domain.Tests
 
             item.ProductFeature = new ColourBuilder(this.Transaction).Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrderItem.SerialisedItem,
@@ -1936,7 +1934,7 @@ namespace Allors.Database.Domain.Tests
 
             item.ReservedFromNonSerialisedInventoryItem = nonSerialisedInventoryItem;
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Contains(this.M.SalesOrderItem.ReservedFromNonSerialisedInventoryItem, errors.SelectMany(v => v.RoleTypes));
             Assert.Contains(this.M.SalesOrderItem.ReservedFromSerialisedInventoryItem, errors.SelectMany(v => v.RoleTypes));
         }
@@ -1963,7 +1961,7 @@ namespace Allors.Database.Domain.Tests
 
             item.ReservedFromSerialisedInventoryItem = serialisedInventoryItem;
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.SalesOrderItem.ReservedFromSerialisedInventoryItem,
@@ -1981,7 +1979,7 @@ namespace Allors.Database.Domain.Tests
 
             item.AddDiscountAdjustment(new DiscountAdjustmentBuilder(this.Transaction).Build());
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Contains(this.M.SalesOrderItem.AssignedUnitPrice, errors.SelectMany(v => v.RoleTypes));
             Assert.Contains(this.M.SalesOrderItem.DiscountAdjustments, errors.SelectMany(v => v.RoleTypes));
             Assert.Contains(this.M.SalesOrderItem.SurchargeAdjustments, errors.SelectMany(v => v.RoleTypes));
@@ -1997,7 +1995,7 @@ namespace Allors.Database.Domain.Tests
 
             item.AddSurchargeAdjustment(new SurchargeAdjustmentBuilder(this.Transaction).Build());
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Contains(this.M.SalesOrderItem.AssignedUnitPrice, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.SalesOrderItem.SurchargeAdjustments, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -2012,7 +2010,7 @@ namespace Allors.Database.Domain.Tests
 
             item.AssignedUnitPrice = 1;
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Contains(this.M.SalesOrderItem.AssignedUnitPrice, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.SalesOrderItem.DiscountAdjustments, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.SalesOrderItem.SurchargeAdjustments, errors.SelectMany(v => v.RoleTypes).Distinct());

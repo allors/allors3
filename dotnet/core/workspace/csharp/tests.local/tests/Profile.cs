@@ -9,26 +9,26 @@ namespace Tests.Workspace.Local
     using System.Linq;
     using System.Threading.Tasks;
     using Allors.Database;
-    using Allors.Workspace;
-    using Allors.Workspace.Meta;
+    using Allors.Database.Adapters.Memory;
     using Allors.Database.Configuration;
     using Allors.Database.Domain;
-    using Allors.Database.Adapters.Memory;
     using Allors.Ranges;
+    using Allors.Workspace;
     using Allors.Workspace.Adapters;
     using Allors.Workspace.Adapters.Local;
     using Allors.Workspace.Domain;
+    using Allors.Workspace.Meta;
     using Allors.Workspace.Meta.Lazy;
-    using Configuration = Allors.Database.Adapters.Memory.Configuration;
+    using Configuration = Allors.Workspace.Adapters.Local.Configuration;
     using DatabaseConnection = Allors.Workspace.Adapters.Local.DatabaseConnection;
-    using Person = Allors.Database.Domain.Person;
+    using Person = Allors.Workspace.Domain.Person;
     using User = Allors.Database.Domain.User;
 
     public class Profile : IProfile
     {
         private readonly Func<IRanges> rangesFactory;
         private readonly Func<IWorkspaceServices> servicesBuilder;
-        private readonly Allors.Workspace.Adapters.Local.Configuration configuration;
+        private readonly Configuration configuration;
 
         private User user;
 
@@ -50,14 +50,14 @@ namespace Tests.Workspace.Local
             this.AsyncDatabaseClient = new AsyncDatabaseClient();
 
             var metaPopulation = new MetaBuilder().Build();
-            var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
-            this.configuration = new Allors.Workspace.Adapters.Local.Configuration("Default", metaPopulation, objectFactory);
+            var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Person));
+            this.configuration = new Configuration("Default", metaPopulation, objectFactory);
 
             this.Database = new Database(
                 new DefaultDatabaseServices(fixture.Engine),
-                new Configuration
+                new Allors.Database.Adapters.Memory.Configuration
                 {
-                    ObjectFactory = new Allors.Database.ObjectFactory(fixture.M, typeof(Person)),
+                    ObjectFactory = new ObjectFactory(fixture.M, typeof(Allors.Database.Domain.Person)),
                 });
 
             this.Database.Init();
@@ -70,7 +70,7 @@ namespace Tests.Workspace.Local
 
             var administrator = new PersonBuilder(transaction).WithUserName("administrator").Build();
             new UserGroups(transaction).Administrators.AddMember(administrator);
-            ((ITransactionServices)transaction.Services).Get<IUserService>().User = administrator;
+            transaction.Services.Get<IUserService>().User = administrator;
 
             new TestPopulation(transaction, "full").Apply();
             transaction.Derive();
@@ -94,7 +94,7 @@ namespace Tests.Workspace.Local
         {
             using var transaction = this.Database.CreateTransaction();
             this.user = new Users(transaction).Extent().ToArray().First(v => v.UserName.Equals(userName, StringComparison.InvariantCultureIgnoreCase));
-            ((ITransactionServices)transaction.Services).Get<IUserService>().User = this.user;
+            transaction.Services.Get<IUserService>().User = this.user;
 
             this.DatabaseConnection = new DatabaseConnection(this.configuration, this.Database, this.servicesBuilder, this.rangesFactory) { UserId = this.user.Id };
 

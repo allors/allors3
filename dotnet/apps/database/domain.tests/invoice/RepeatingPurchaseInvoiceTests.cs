@@ -7,10 +7,9 @@
 namespace Allors.Database.Domain.Tests
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Derivations;
-    using Derivations.Errors;
+    using Configuration.Derivations.Default;
+    using Database.Derivations;
     using Meta;
     using Resources;
     using Xunit;
@@ -42,7 +41,7 @@ namespace Allors.Database.Domain.Tests
 
             repeatingInvoice.RemoveDayOfWeek();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
             Assert.Contains(this.M.RepeatingPurchaseInvoice.DayOfWeek, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 

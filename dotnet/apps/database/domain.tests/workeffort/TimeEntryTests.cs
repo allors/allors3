@@ -7,11 +7,8 @@
 namespace Allors.Database.Domain.Tests
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Derivations;
-    using Derivations.Errors;
-    using Meta;
+    using Database.Derivations;
     using Xunit;
 
     public class TimeEntryTests : DomainTest, IClassFixture<Fixture>
@@ -1123,7 +1120,7 @@ namespace Allors.Database.Domain.Tests
 
             timeEntry.RemoveBillingFrequency();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
             Assert.Contains(this.M.TimeEntry.BillingFrequency, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 

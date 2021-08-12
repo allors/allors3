@@ -7,8 +7,8 @@
 namespace Tests
 {
     using System;
+    using Allors.Database.Configuration.Derivations.Default;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.Derivations.Rules.Default;
     using Allors.Database.Meta;
 
     public class Fixture : IDisposable

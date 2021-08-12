@@ -21,7 +21,7 @@ namespace Tests
         public void SameWorkspace()
         {
             var workspaceName = "X";
-            var metaCache = ((IDatabaseServices)this.Transaction.Database.Services).Get<IMetaCache>();
+            var metaCache = this.Transaction.Database.Services.Get<IMetaCache>();
             var accessControl = new AccessControls(this.Transaction).Administrator;
 
             this.SetUser("jane@example.com");
@@ -63,7 +63,7 @@ namespace Tests
         public void NoneWorkspace()
         {
             var workspaceName = "None";
-            var metaCache = ((IDatabaseServices)this.Transaction.Database.Services).Get<IMetaCache>();
+            var metaCache = this.Transaction.Database.Services.Get<IMetaCache>();
             var accessControl = new AccessControls(this.Transaction).Administrator;
 
             this.SetUser("jane@example.com");

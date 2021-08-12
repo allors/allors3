@@ -5,8 +5,6 @@
 // <summary>Defines the DomainTest type.</summary>
 
 using System;
-using Allors.Database.Derivations;
-using Allors.Database.Domain.Derivations.Rules.Default;
 using Allors.Database.Services;
 
 namespace Allors.Database.Configuration

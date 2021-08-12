@@ -8,6 +8,7 @@ namespace Allors.Database.Domain.Derivations.Rules
 {
     using System.Collections.Generic;
     using Database.Data;
+    using Database.Derivations;
     using Meta;
 
     public abstract class Pattern : IPattern

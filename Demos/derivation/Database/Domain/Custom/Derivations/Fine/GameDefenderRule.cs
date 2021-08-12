@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using Allors.Database.Derivations;
+
 namespace Allors.Database.Domain
 {
     using System;
@@ -19,7 +21,7 @@ namespace Allors.Database.Domain
                 new RolePattern(m.Game.Declarers),
             };
      
-        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var game in matches.Cast<Game>())
             {

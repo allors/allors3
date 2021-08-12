@@ -6,8 +6,9 @@
 
 namespace Allors.Database.Configuration
 {
+    using Database.Derivations;
+    using Derivations.Default;
     using Domain;
-    using Domain.Derivations.Rules.Default;
     using Microsoft.AspNetCore.Http;
 
     public class TestDatabaseServices : DatabaseServices
@@ -16,7 +17,7 @@ namespace Allors.Database.Configuration
 
         protected override IPasswordHasher CreatePasswordHasher() => new TestPasswordHasher();
 
-        protected override IDerivationService CreateDerivationFactory() => new DefaultDerivationService(this.Engine);
+        protected override IDerivationService CreateDerivationFactory() => new DerivationService(this.Engine);
 
         private class TestPasswordHasher : IPasswordHasher
         {

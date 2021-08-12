@@ -11,6 +11,7 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
     using Allors.Database.Data;
+    using Database.Derivations;
 
     public class SalesOrderTransferRule : Rule
     {
@@ -20,7 +21,7 @@ namespace Allors.Database.Domain
                 m.SalesOrderTransfer.RolePattern(v => v.ToInternalOrganisation),
             };
 
-        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<SalesOrderTransfer>().Where(v => v.ExistFrom && v.From.SalesOrderState.IsProvisional && v.ExistToInternalOrganisation && !v.ExistToSalesOrder))
             {

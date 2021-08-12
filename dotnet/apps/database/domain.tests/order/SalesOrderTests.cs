@@ -7,16 +7,12 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
+    using Database.Derivations;
     using TestPopulation;
     using Resources;
     using Xunit;
-    using System.Collections.Generic;
-    using Database.Derivations;
-    using Derivations.Errors;
-    using Meta;
     using CustomerShipment = Domain.CustomerShipment;
     using NonSerialisedInventoryItem = Domain.NonSerialisedInventoryItem;
-    using SalesInvoice = Domain.SalesInvoice;
     using SalesInvoiceItem = Domain.SalesInvoiceItem;
     using SalesOrderItem = Domain.SalesOrderItem;
     using ShipmentItem = Domain.ShipmentItem;
@@ -300,7 +296,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             var salesInvoiceitem = (SalesInvoiceItem)shipment.ShipmentItems.ElementAt(0).ShipmentItemBillingsWhereShipmentItem.ElementAt(0).InvoiceItem;
-            var invoice1 = (SalesInvoice)salesInvoiceitem.SalesInvoiceWhereSalesInvoiceItem;
+            var invoice1 = salesInvoiceitem.SalesInvoiceWhereSalesInvoiceItem;
             invoice1.Send();
 
             new ReceiptBuilder(this.Transaction)
@@ -353,7 +349,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             salesInvoiceitem = (SalesInvoiceItem)shipment.ShipmentItems.ElementAt(0).ShipmentItemBillingsWhereShipmentItem.ElementAt(0).InvoiceItem;
-            var invoice2 = (SalesInvoice)salesInvoiceitem.SalesInvoiceWhereSalesInvoiceItem;
+            var invoice2 = salesInvoiceitem.SalesInvoiceWhereSalesInvoiceItem;
             invoice2.Send();
 
             new ReceiptBuilder(this.Transaction)
@@ -3278,7 +3274,7 @@ namespace Allors.Database.Domain.Tests
 
             order.RemoveDerivedShipToAddress();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
             Assert.Contains(this.M.SalesOrder.DerivedShipToAddress, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 
@@ -3299,7 +3295,7 @@ namespace Allors.Database.Domain.Tests
 
             order.RemoveDerivedBillToContactMechanism();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
             Assert.Contains(this.M.SalesOrder.DerivedBillToContactMechanism, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 

@@ -8,6 +8,7 @@ namespace Allors.Database.Domain.Derivations.Legacy
 {
     using System;
     using System.Collections.Generic;
+    using Database.Derivations;
     using Derivations;
     using Object = Object;
 
@@ -17,7 +18,7 @@ namespace Allors.Database.Domain.Derivations.Legacy
 
         ISet<Object> DerivedObjects { get; }
 
-        ICycle Cycle { get; }
+        ILegacyCycle LegacyCycle { get; }
 
         void Mark(Object @object);
 

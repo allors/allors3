@@ -8,6 +8,7 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Database.Derivations;
     using Meta;
     using Derivations.Rules;
 
@@ -40,7 +41,7 @@ namespace Allors.Database.Domain
             m.UnifiedProduct.AssociationPattern(v => v.WorkEffortGoodStandardsWhereUnifiedProduct, m.UnifiedGood),
         };
 
-        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             var transaction = cycle.Transaction;
             var validation = cycle.Validation;

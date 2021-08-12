@@ -12,6 +12,7 @@ namespace Tests
     using Allors.Database;
     using Allors.Database.Adapters.Memory;
     using Allors.Database.Configuration;
+    using Allors.Database.Derivations;
     using Allors.Database.Domain;
     using Allors.Database.Meta;
     using C1 = Allors.Database.Domain.C1;
@@ -28,7 +29,7 @@ namespace Tests
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(C1)),
                 });
 
-            this.M = ((IDatabaseServices)((IDatabase)database).Services).Get<Allors.Database.Meta.MetaPopulation>();
+            this.M = ((IDatabase)database).Services.Get<Allors.Database.Meta.MetaPopulation>();
 
             this.Setup(database, populate);
         }
@@ -39,9 +40,9 @@ namespace Tests
 
         public ITransaction Transaction { get; private set; }
 
-        public ITime Time => ((IDatabaseServices)this.Transaction.Database.Services).Get<ITime>();
+        public ITime Time => this.Transaction.Database.Services.Get<ITime>();
 
-        public IDerivationService DerivationService => ((IDatabaseServices)this.Transaction.Database.Services).Get<IDerivationService>();
+        public IDerivationService DerivationService => this.Transaction.Database.Services.Get<IDerivationService>();
 
         public TimeSpan? TimeShift
         {
@@ -69,7 +70,7 @@ namespace Tests
             }
         }
 
-        protected User SetUser(string userName) => ((ITransactionServices)this.Transaction.Services).Get<IUserService>().User = new Users(this.Transaction).FindBy(this.M.User.UserName, userName);
+        protected User SetUser(string userName) => this.Transaction.Services.Get<IUserService>().User = new Users(this.Transaction).FindBy(this.M.User.UserName, userName);
 
         protected Stream GetResource(string name)
         {

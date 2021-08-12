@@ -12,6 +12,7 @@ namespace Allors.Database.Domain.Tests
     using Domain;
     using Configuration;
     using Database;
+    using Database.Derivations;
     using Meta;
     using User = Domain.User;
 

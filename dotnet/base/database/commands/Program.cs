@@ -11,8 +11,8 @@ namespace Commands
     using Allors.Database;
     using Allors.Database.Adapters;
     using Allors.Database.Configuration;
+    using Allors.Database.Configuration.Derivations.Default;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.Derivations.Rules.Default;
     using Allors.Database.Meta;
     using McMaster.Extensions.CommandLineUtils;
 

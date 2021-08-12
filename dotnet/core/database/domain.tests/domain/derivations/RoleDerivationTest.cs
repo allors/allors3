@@ -8,7 +8,6 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using Domain;
     using Xunit;
 
     public class RoleDerivationTest : DomainTest, IClassFixture<Fixture>

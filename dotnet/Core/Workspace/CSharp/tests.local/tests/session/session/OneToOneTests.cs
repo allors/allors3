@@ -5,11 +5,12 @@
 
 namespace Tests.Workspace.OriginSession.SessionSession.Local
 {
+    using Workspace.Local;
     using Xunit;
 
     public class OneToOneTests : SessionSession.OneToOneTests, IClassFixture<Fixture>
     {
-        public OneToOneTests(Fixture fixture) : base(fixture) => this.Profile = new Workspace.Local.Profile(fixture);
+        public OneToOneTests(Fixture fixture) : base(fixture) => this.Profile = new Profile(fixture);
 
         public override IProfile Profile { get; }
     }

@@ -8,6 +8,7 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Database.Derivations;
     using Derivations.Rules;
     using Meta;
 
@@ -20,7 +21,7 @@ namespace Allors.Database.Domain
                 m.SalesOrder.RolePattern(v => v.SalesOrderState, v => v.BillToCustomer.Party.PartyFinancialRelationshipsWhereFinancialParty),
             };
 
-        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<PartyFinancialRelationship>())
             {

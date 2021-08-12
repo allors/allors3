@@ -10,7 +10,6 @@ namespace Allors.Workspace.Adapters.Local
     using System.Linq;
     using Database;
     using Database.Derivations;
-    using Database.Domain;
     using Database.Meta;
     using Database.Security;
     using Database.Services;

@@ -8,8 +8,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using Domain;
-    using Derivations.Errors;
+    using Configuration.Derivations.Default;
     using Xunit;
 
     public class UserGroupTests : DomainTest, IClassFixture<Fixture>

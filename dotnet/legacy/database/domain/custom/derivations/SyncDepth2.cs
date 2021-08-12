@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
         {
             var (iteration, changeSet, derivedObjects) = method;
 
-            if (!changeSet.IsCreated(this) && changeSet.HasChangedRoles(this, RelationKind.Regular))
+            if (!changeSet.IsCreated(this) && changeSet.HasChangedRoles(this, LegacyRelationKind.Regular))
             {
                 iteration.AddDependency(this, this.SyncDepthI1WhereSyncDepth2);
                 iteration.Mark(this, this.SyncDepthI1WhereSyncDepth2);

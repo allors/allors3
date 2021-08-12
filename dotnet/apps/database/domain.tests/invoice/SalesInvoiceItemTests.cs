@@ -7,12 +7,9 @@
 namespace Allors.Database.Domain.Tests
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
-    using TestPopulation;
     using Database.Derivations;
-    using Derivations.Errors;
-    using Meta;
+    using TestPopulation;
     using Resources;
     using Xunit;
     using BasePrice = Domain.BasePrice;
@@ -2019,7 +2016,7 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithProduct(product).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Contains(this.M.SalesInvoiceItem.Product, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.SalesInvoiceItem.Part, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -2035,7 +2032,7 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProductFeature(colour).WithProduct(product).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Contains(this.M.SalesInvoiceItem.Product, errors.SelectMany(v => v.RoleTypes));
             Assert.Contains(this.M.SalesInvoiceItem.ProductFeatures, errors.SelectMany(v => v.RoleTypes));
         }
@@ -2051,7 +2048,7 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithProductFeature(colour).WithSerialisedItem(serialisedItem).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Contains(this.M.SalesInvoiceItem.SerialisedItem, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.SalesInvoiceItem.ProductFeatures, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -2067,7 +2064,7 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithPart(part).WithSerialisedItem(serialisedItem).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Contains(this.M.SalesInvoiceItem.SerialisedItem, errors.SelectMany(v => v.RoleTypes).Distinct());
             Assert.Contains(this.M.SalesInvoiceItem.Part, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
@@ -2082,7 +2079,7 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithSerialisedItem(serialisedItem).Build();
             salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorRequired>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
             Assert.Contains(this.M.SalesInvoiceItem.NextSerialisedItemAvailability, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
 

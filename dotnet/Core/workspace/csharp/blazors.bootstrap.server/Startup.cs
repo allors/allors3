@@ -3,15 +3,14 @@ namespace Blazors.Bootstrap.Server
     using System.Linq;
     using Allors.Database.Adapters;
     using Allors.Database.Configuration;
+    using Allors.Database.Configuration.Derivations.Default;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.Derivations.Rules.Default;
     using Allors.Database.Meta;
     using Allors.Ranges;
     using Allors.Security;
     using Allors.Services;
     using Allors.Workspace;
     using Allors.Workspace.Adapters;
-    using Allors.Workspace.Meta;
     using Blazors.Bootstrap.Server.Areas.Identity;
     using BlazorStrap;
     using Microsoft.AspNetCore.Builder;
@@ -21,10 +20,8 @@ namespace Blazors.Bootstrap.Server
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Data = Allors.Database.Domain.Data;
     using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
     using ObjectFactory = Allors.Database.ObjectFactory;
-    using User = Allors.Database.Meta.User;
 
     public class Startup
     {

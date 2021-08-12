@@ -9,6 +9,7 @@ namespace Allors.Database.Domain
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using Database.Derivations;
     using Meta;
     using Derivations.Rules;
     using Resources;
@@ -21,7 +22,7 @@ namespace Allors.Database.Domain
                 m.Bank.RolePattern(v => v.Bic),
             };
 
-        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
 

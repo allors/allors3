@@ -7,12 +7,10 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
+    using Database.Derivations;
     using TestPopulation;
     using Resources;
     using Xunit;
-    using System.Collections.Generic;
-    using Allors.Database.Derivations;
-    using Derivations.Errors;
     using Meta;
     using ContactMechanism = Domain.ContactMechanism;
     using Permission = Domain.Permission;
@@ -694,7 +692,7 @@ namespace Allors.Database.Domain.Tests
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtLeastOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrder.TakenViaSupplier,
@@ -712,7 +710,7 @@ namespace Allors.Database.Domain.Tests
 
             order.TakenViaSupplier = this.InternalOrganisation.ActiveSuppliers.FirstOrDefault();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrder.TakenViaSupplier,
@@ -730,7 +728,7 @@ namespace Allors.Database.Domain.Tests
 
             order.TakenViaSubcontractor = this.InternalOrganisation.ActiveSubContractors.FirstOrDefault();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrder.TakenViaSupplier,

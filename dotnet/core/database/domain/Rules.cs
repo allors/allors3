@@ -22,6 +22,7 @@ namespace Allors.Database.Domain
                 
                 // Custom
                 new PersonFullNameRule(m),
+                new PersonCustomFullNameRule(m),
                 new PersonGreetingRule(m),
                 new PersonOwningRule(m),
                 new OrganisationJustDidItRule(m),

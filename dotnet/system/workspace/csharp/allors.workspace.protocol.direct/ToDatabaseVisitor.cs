@@ -54,7 +54,7 @@ namespace Allors.Workspace.Protocol.Direct
                 _ => throw new Exception($"Unknown implementation of IExtent: {ws.GetType()}")
             };
 
-        private Database.Data.Extent Visit(Data.Filter ws) => new Database.Data.Extent((IComposite)this.Visit(ws.ObjectType))
+        private Database.Data.Extent Visit(Data.Filter ws) => new Database.Data.Extent(this.Visit(ws.ObjectType))
         {
             Predicate = this.Visit(ws.Predicate)
         };

@@ -4,7 +4,8 @@
 // </copyright>
 // <summary>Defines the DomainTest type.</summary>
 
-using Allors.Database.Domain.Derivations.Rules.Default;
+
+using Allors.Database.Configuration.Derivations.Default;
 
 namespace Allors.Database.Configuration
 {

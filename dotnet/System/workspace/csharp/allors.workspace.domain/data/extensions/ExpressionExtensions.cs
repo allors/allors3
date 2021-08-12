@@ -66,7 +66,7 @@ namespace Allors.Workspace.Data
             }
 
             var root = visitor.MemberExpressions[0].Member.DeclaringType;
-            var composite = (IComposite) metaPopulation.FindByName(root.Name);
+            var composite = metaPopulation.FindByName(root.Name);
 
             foreach (var memberExpression in visitor.MemberExpressions)
             {
@@ -74,7 +74,7 @@ namespace Allors.Workspace.Data
                 {
                     var propertyInfo = (PropertyInfo) memberExpression.Member;
                     var propertyType = propertyInfo.PropertyType;
-                    composite = (IComposite) metaPopulation.FindByName(propertyType.Name);
+                    composite = metaPopulation.FindByName(propertyType.Name);
 
                     if (currentPath != null && !currentPath.PropertyType.ObjectType.Equals(composite))
                     {

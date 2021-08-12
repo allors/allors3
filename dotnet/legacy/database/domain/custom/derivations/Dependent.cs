@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void CustomOnPreDerive(ObjectOnPreDerive method) => method.Iteration.Mark(this);
+        public void CustomOnPreDerive(ObjectOnPreDerive method) => method.LegacyIteration.Mark(this);
 
         public void CustomOnDerive(ObjectOnDerive method)
         {

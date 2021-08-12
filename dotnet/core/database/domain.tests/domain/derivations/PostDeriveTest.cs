@@ -8,8 +8,6 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System;
-    using Domain;
     using Xunit;
 
     public class PostDeriveTest : DomainTest, IClassFixture<Fixture>

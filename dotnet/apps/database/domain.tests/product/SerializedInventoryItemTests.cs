@@ -8,8 +8,6 @@ namespace Allors.Database.Domain.Tests
 {
     using Xunit;
     using System.Linq;
-    using Allors.Database.Derivations;
-    using System.Collections.Generic;
 
     public class SerialisedInventoryItemTests : DomainTest, IClassFixture<Fixture>
     {

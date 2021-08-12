@@ -6,9 +6,6 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
-    using Allors;
-    using Database;
-    using Domain;
     using Meta;
     using Xunit;
     using AccessControl = Domain.AccessControl;

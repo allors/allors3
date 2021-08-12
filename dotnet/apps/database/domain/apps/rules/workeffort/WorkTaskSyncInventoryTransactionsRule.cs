@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
             m.WorkEffortInventoryAssignment.RolePattern(v => v.InventoryItem, v => v.Assignment),
         };
 
-        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             var transaction = cycle.Transaction;
             var validation = cycle.Validation;

@@ -6,9 +6,10 @@
 
 namespace Allors.Database.Domain.Derivations.Rules
 {
+    using Database.Derivations;
     using Meta;
 
-    public class RolePattern : Pattern
+    public class RolePattern : Pattern, IRolePattern
     {
         public RolePattern(IRoleType roleType) => this.RoleType = roleType;
 

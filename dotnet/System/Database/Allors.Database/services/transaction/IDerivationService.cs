@@ -3,10 +3,9 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Domain
+namespace Allors.Database.Derivations
 {
     using Database;
-    using Derivations;
 
     public interface IDerivationService
     {

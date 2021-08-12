@@ -4,6 +4,8 @@
 // </copyright>
 
 
+using Allors.Database.Derivations;
+
 namespace Allors.Database.Domain
 {
     using System;
@@ -29,7 +31,7 @@ namespace Allors.Database.Domain
                 m.Score.RolePattern(v=>v.Value, v=>v.GameWhereScore.Game.ScoreboardWhereGame)
             };
 
-        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             // TODO: implement cross derive optimizations
 

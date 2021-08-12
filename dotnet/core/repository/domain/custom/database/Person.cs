@@ -139,6 +139,13 @@ namespace Allors.Repository
         [Derived]
         public string DomainGreeting { get; set; }
 
+        #region Allors
+        [Id("9B98B181-E2E6-499B-BD17-82C6E1D6679A")]
+        [Size(256)]
+        #endregion
+        [Workspace(Default)]
+        [Derived]
+        public string CustomFullName { get; set; }
 
         #region Allors
         [Id("a8a3b4b8-c4f2-4054-ab2a-2eac6fd058e4")]

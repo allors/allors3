@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using Domain;
     using Xunit;
 
     public class BuilderTest : DomainTest, IClassFixture<Fixture>

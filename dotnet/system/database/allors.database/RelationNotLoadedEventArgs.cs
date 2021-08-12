@@ -51,11 +51,6 @@ namespace Allors.Database
         /// </returns>
         public override string ToString() => "RelationType: " + this.RelationTypeId + ", Association: " + this.AssociationId + ", Role: " + this.RoleContents;
     }
-}
-
-namespace Allors
-{
-    using Database;
 
     /// <summary>
     /// The loader raises an RoleNotLoaded event when either the object's

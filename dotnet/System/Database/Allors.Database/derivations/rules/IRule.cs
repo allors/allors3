@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the IDomainDerivation type.</summary>
 
-namespace Allors.Database.Domain.Derivations.Rules
+namespace Allors.Database.Derivations
 {
     using System;
     using System.Collections.Generic;
@@ -13,8 +13,8 @@ namespace Allors.Database.Domain.Derivations.Rules
     {
         Guid Id { get; }
 
-        IPattern[] Patterns { get; }
+        IEnumerable<IPattern> Patterns { get; }
 
-        void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches);
+        void Derive(ICycle cycle, IEnumerable<IObject> matches);
     }
 }

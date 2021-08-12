@@ -5,12 +5,13 @@
 // <summary>Defines the DomainTest type.</summary>
 
 
+using Allors.Database.Configuration.Derivations.Default;
+
 namespace Allors.Database.Configuration
 {
     using Microsoft.AspNetCore.Http;
     using Domain;
     using Domain.Derivations.Rules;
-    using Domain.Derivations.Rules.Default;
 
     public class CourseDatabaseServices : DatabaseServices
     {

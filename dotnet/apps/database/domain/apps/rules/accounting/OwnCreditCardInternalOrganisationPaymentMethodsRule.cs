@@ -9,6 +9,7 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Database.Derivations;
     using Meta;
     using Derivations.Rules;
     using Derivations;
@@ -23,7 +24,7 @@ namespace Allors.Database.Domain
                 m.PaymentMethod.AssociationPattern(v => v.InternalOrganisationWherePaymentMethod, m.OwnCreditCard),
             };
 
-        public override void Derive(IDomainDerivationCycle cycle, IEnumerable<IObject> matches)
+        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
 

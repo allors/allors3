@@ -14,6 +14,7 @@ namespace Allors.Database.Domain.Tests
     using Domain;
     using Allors.Database.Security;
     using Configuration;
+    using Database.Derivations;
     using Meta;
     using Moq;
     using User = Domain.User;

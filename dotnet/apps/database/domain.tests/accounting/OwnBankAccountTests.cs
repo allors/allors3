@@ -6,10 +6,9 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Derivations;
-    using Derivations.Errors;
+    using Configuration.Derivations.Default;
+    using Database.Derivations;
     using Meta;
     using Xunit;
 
@@ -199,7 +198,7 @@ namespace Allors.Database.Domain.Tests
 
             this.InternalOrganisation.DefaultCollectionMethod = ownBankAccount;
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtLeastOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtLeastOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.OwnBankAccount.GeneralLedgerAccount,
@@ -215,7 +214,7 @@ namespace Allors.Database.Domain.Tests
 
             ownBankAccount.GeneralLedgerAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.Cash.GeneralLedgerAccount,
@@ -231,7 +230,7 @@ namespace Allors.Database.Domain.Tests
 
             ownBankAccount.Journal = new JournalBuilder(this.Transaction).Build();
 
-            var errors = this.Derive().Errors.OfType<DerivationErrorAtMostOne>();
+            var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
             Assert.Equal(new IRoleType[]
             {
                 this.M.Cash.GeneralLedgerAccount,

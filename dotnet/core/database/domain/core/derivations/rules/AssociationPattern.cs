@@ -6,9 +6,10 @@
 
 namespace Allors.Database.Domain.Derivations.Rules
 {
+    using Database.Derivations;
     using Meta;
 
-    public class AssociationPattern : Pattern
+    public class AssociationPattern : Pattern, IAssociationPattern
     {
         public AssociationPattern(IAssociationType associationType) => this.AssociationType = associationType;
 
