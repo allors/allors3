@@ -49,6 +49,9 @@
     "workspace-angular-core": {
       "tags": []
     },
+    "workspace-configuration-core": {
+      "tags": []
+    },
     "workspace-domain-base": {
       "tags": []
     },

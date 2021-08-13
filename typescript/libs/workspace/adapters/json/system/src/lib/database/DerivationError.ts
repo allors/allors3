@@ -1,7 +1,7 @@
 import { ResponseDerivationError } from '@allors/protocol/json/system';
-import { IDerivationError, ISession, Role } from '@allors/workspace/domain/system';
+import { IDatabaseDerivationError, ISession, Role } from '@allors/workspace/domain/system';
 
-export class DerivationError implements IDerivationError {
+export class DerivationError implements IDatabaseDerivationError {
   constructor(private session: ISession, private responseDerivationError: ResponseDerivationError) {}
 
   get message() {

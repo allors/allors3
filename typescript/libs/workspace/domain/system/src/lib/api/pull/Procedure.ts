@@ -1,4 +1,4 @@
-import { IObject } from "../../runtime/IObject";
+import { IObject } from "../../IObject";
 
 export interface Procedure {
   name: string;

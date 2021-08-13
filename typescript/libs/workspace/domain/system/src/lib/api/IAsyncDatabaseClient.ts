@@ -1,5 +1,5 @@
-import { ISession } from '../runtime/ISession';
-import { Method } from '../runtime/Method';
+import { ISession } from '../ISession';
+import { Method } from '../Method';
 
 import { IInvokeResult } from './pull/IInvokeResult';
 import { InvokeOptions } from './pull/InvokeOptions';

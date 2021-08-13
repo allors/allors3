@@ -23,6 +23,7 @@
       "@allors/workspace/adapters/system-tests": ["libs/workspace/adapters/system-tests/src/index.ts"],
       "@allors/workspace/angular/base": ["libs/workspace/angular/base/src/index.ts"],
       "@allors/workspace/angular/core": ["libs/workspace/angular/core/src/index.ts"],
+      "@allors/workspace/configuration/core": ["libs/workspace/configuration/core/src/index.ts"],
       "@allors/workspace/domain/base": ["libs/workspace/domain/base/src/index.ts"],
       "@allors/workspace/domain/core": ["libs/workspace/domain/core/src/index.ts"],
       "@allors/workspace/domain/system": ["libs/workspace/domain/system/src/index.ts"],

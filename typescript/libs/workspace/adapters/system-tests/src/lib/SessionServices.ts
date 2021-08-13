@@ -6,4 +6,6 @@ export class SessionServices implements ISessionServices {
   onInit(session: ISession): void {
     this.session = session;
   }
+
+  derivationService: any;
 }

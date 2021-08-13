@@ -16,27 +16,27 @@ export async function initDerivation(asyncClient: IAsyncDatabaseClient, reactive
 }
 
 export async function xxx() {
-  // const { client, workspace, m } = fixture;
-  // const session = workspace.createSession();
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
 
-  // const pull: Pull = {
-  //   extent: {
-  //     kind: 'Filter',
-  //     objectType: m.Person,
-  //     predicate: {
-  //       kind: 'Equals',
-  //       propertyType: m.Person.FirstName,
-  //       value: 'Jane',
-  //     },
-  //   },
-  // };
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.Person,
+      predicate: {
+        kind: 'Equals',
+        propertyType: m.Person.FirstName,
+        value: 'Jane',
+      },
+    },
+  };
 
-  // const result = await client.pullAsync(session, [pull]);
-  // const jane = result.collection<Person>('People')[0];
+  const result = await client.pullAsync(session, [pull]);
+  const jane = result.collection<Person>('People')[0];
 
-  // expect(jane.SessionFullName).toBeUndefined();
+  expect(jane.SessionFullName).toBeUndefined();
 
-  // session.derive();
+  const validation = session.services.derive();
 
-  // expect(jane.SessionFullName).toBe("Jane Doe");
+  expect(jane.SessionFullName).toBe("Jane Doe");
 }

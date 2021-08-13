@@ -1,8 +1,8 @@
 // api
-export * from './lib/api/IDerivationError';
-export * from './lib/api/IDerivationException';
+export * from './lib/api/derivation/IDatabaseDerivationError';
+export * from './lib/api/derivation/IDatabaseDerivationException';
+export * from './lib/api/derivation/IDatabaseValidation';
 export * from './lib/api/IResult';
-export * from './lib/api/IValidation';
 
 export * from './lib/api/pull/Procedure';
 export * from './lib/api/pull/Pull';
@@ -43,22 +43,36 @@ export * from './lib/data/Result';
 export * from './lib/data/Operator';
 export * from './lib/data/Step';
 
-// runtime
-export * from './lib/runtime/diff/ICompositeDiff';
-export * from './lib/runtime/diff/ICompositesDiff';
-export * from './lib/runtime/diff/IDiff';
-export * from './lib/runtime/diff/IUnitDiff';
-export * from './lib/runtime/IChangeSet';
-export * from './lib/runtime/IConfiguration';
-export * from './lib/runtime/IObject';
-export * from './lib/runtime/IObjectFactory';
-export * from './lib/runtime/ISession';
-export * from './lib/runtime/ISessionServices';
-export * from './lib/runtime/IStrategy';
-export * from './lib/runtime/IWorkspace';
-export * from './lib/runtime/IWorkspaceResult';
-export * from './lib/runtime/IWorkspaceServices';
-export * from './lib/runtime/Method';
-export * from './lib/runtime/Operations';
-export * from './lib/runtime/Role';
-export * from './lib/runtime/Types';
+// derivation
+export * from './lib/derivation/rules/IAssociationPattern';
+export * from './lib/derivation/rules/ICycle';
+export * from './lib/derivation/rules/IPattern';
+export * from './lib/derivation/rules/IRolePattern';
+export * from './lib/derivation/rules/IRule';
+export * from './lib/derivation/IDerivation';
+export * from './lib/derivation/IValidation';
+
+// diff
+export * from './lib/diff/ICompositeDiff';
+export * from './lib/diff/ICompositesDiff';
+export * from './lib/diff/IDiff';
+export * from './lib/diff/IUnitDiff';
+
+// services
+export * from './lib/services/ISessionServices';
+export * from './lib/services/IWorkspaceServices';
+export * from './lib/services/derivation/IDerivationService';
+
+export * from './lib/IChangeSet';
+export * from './lib/IConfiguration';
+export * from './lib/IObject';
+export * from './lib/IObjectFactory';
+export * from './lib/ISession';
+export * from './lib/IStrategy';
+export * from './lib/IWorkspace';
+export * from './lib/IWorkspaceResult';
+export * from './lib/Method';
+export * from './lib/Operations';
+export * from './lib/Role';
+export * from './lib/Types';
+

@@ -20,5 +20,6 @@ module.exports = {
     '<rootDir>/libs/workspace/angular/core',
     '<rootDir>/libs/workspace/meta/system-tests',
     '<rootDir>/libs/workspace/adapters/json/system-tests-reactive',
+    '<rootDir>/libs/workspace/configuration/core',
   ],
 };

@@ -1,6 +1,6 @@
 import { PropertyType, RoleType } from '@allors/workspace/meta/system';
-import { IObject } from '../runtime/IObject';
-import { IUnit } from '../runtime/Types';
+import { IObject } from '../IObject';
+import { IUnit } from '../Types';
 import { ParameterizablePredicateBase } from './ParameterizablePredicate';
 
 export interface Equals extends ParameterizablePredicateBase {

@@ -1,5 +1,5 @@
 import { PropertyType } from '@allors/workspace/meta/system';
-import { IObject } from '../runtime/IObject';
+import { IObject } from '../IObject';
 import { Extent } from './Extent';
 import { ParameterizablePredicateBase } from './ParameterizablePredicate';
 

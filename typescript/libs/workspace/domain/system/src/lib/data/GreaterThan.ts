@@ -1,5 +1,5 @@
 import { RoleType } from "@allors/workspace/meta/system";
-import { IUnit } from "../runtime/Types";
+import { IUnit } from "../Types";
 import { ParameterizablePredicateBase } from "./ParameterizablePredicate";
 
 export interface GreaterThan extends ParameterizablePredicateBase {

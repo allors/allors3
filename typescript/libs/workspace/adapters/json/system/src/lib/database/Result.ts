@@ -1,9 +1,9 @@
 import { Response } from '@allors/protocol/json/system';
-import { IDerivationError, IObject, IResult, ISession } from '@allors/workspace/domain/system';
+import { IDatabaseDerivationError, IObject, IResult, ISession } from '@allors/workspace/domain/system';
 import { DerivationError } from './DerivationError';
 
 export abstract class Result implements IResult {
-  private _derivationErrors: IDerivationError[];
+  private _derivationErrors: IDatabaseDerivationError[];
 
   constructor(public readonly session: ISession, public readonly response: Response) {}
 
@@ -27,7 +27,7 @@ export abstract class Result implements IResult {
     return this.session.instantiate(this.response._m);
   }
 
-  get derivationErrors(): IDerivationError[] {
+  get derivationErrors(): IDatabaseDerivationError[] {
     if (this._derivationErrors != null) {
       return this._derivationErrors;
     }

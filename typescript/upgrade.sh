@@ -28,6 +28,8 @@ npx nx g @nrwl/workspace:library workspace/adapters/system-tests
 npx nx g @nrwl/workspace:library workspace/angular/base
 npx nx g @nrwl/workspace:library workspace/angular/core
 
+npx nx g @nrwl/workspace:library workspace/configuration/core
+
 npx nx g @nrwl/workspace:library workspace/domain/base
 npx nx g @nrwl/workspace:library workspace/domain/core
 npx nx g @nrwl/workspace:library workspace/domain/system

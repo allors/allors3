@@ -1,5 +1,5 @@
-import { IObject } from '../../runtime/IObject';
-import { IUnit } from '../../runtime/Types';
+import { IObject } from '../../IObject';
+import { IUnit } from '../../Types';
 import { IResult } from '../IResult';
 
 export interface IPullResult extends IResult {

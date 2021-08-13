@@ -1,5 +1,5 @@
-import { IObject } from '../runtime/IObject';
-import { IDerivationError } from './IDerivationError';
+import { IObject } from '../IObject';
+import { IDatabaseDerivationError } from './derivation/IDatabaseDerivationError';
 
 export interface IResult {
   errorMessage: string;
@@ -10,5 +10,5 @@ export interface IResult {
 
   missingErrors: IObject[];
 
-  derivationErrors: IDerivationError[];
+  derivationErrors: IDatabaseDerivationError[];
 }
