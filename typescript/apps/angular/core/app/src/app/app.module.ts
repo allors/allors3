@@ -5,18 +5,17 @@ import { FormsModule } from '@angular/forms';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { Configuration, PrototypeObjectFactory } from '@allors/workspace/adapters/system';
-import { Database } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/core';
 
 import { FetchClient } from '../allors/FetchClient';
-import { WorkspaceServices } from '../allors/WorkspaceServices';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { QueryComponent } from './query/query.component';
 import { FetchComponent } from './fetch/fetch.component';
 import { environment } from '../environments/environment';
+
 export function appInitFactory(workspaceService: WorkspaceService) {
   return async () => {
     const client = new FetchClient(environment.baseUrl, environment.authUrl);
@@ -28,7 +27,7 @@ export function appInitFactory(workspaceService: WorkspaceService) {
       new Configuration('Default', metaPopulation, new PrototypeObjectFactory(metaPopulation)),
       () => nextId--,
       () => {
-        return new WorkspaceServices();
+        return new WorkspaceServices([]);
       },
       client
     );

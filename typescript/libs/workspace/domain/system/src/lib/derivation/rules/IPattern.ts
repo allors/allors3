@@ -1,14 +1,14 @@
-import { Composite } from "@allors/workspace/meta/system";
-import { IAssociationPattern } from "./IAssociationPattern";
-import { IRolePattern } from "./IRolePattern";
+import { Composite } from '@allors/workspace/meta/system';
+import { Node } from '../../data/Node';
+import { IAssociationPattern } from './IAssociationPattern';
+import { IRolePattern } from './IRolePattern';
 
 export interface IPatternBase {
-    
-    Tree : Node[];
-    
-    ofType : Composite;
-    
-    objectType : Composite;
+  tree?: Node[];
+
+  ofType?: Composite;
+
+  objectType?: Composite;
 }
 
 export type IPattern = IRolePattern | IAssociationPattern;

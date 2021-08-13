@@ -90,12 +90,7 @@ namespace Allors.Workspace.Configuration.Derivations.Default
                                     matchesByRule.Add(rule, matches);
                                 }
 
-                                IEnumerable<IObject> source = new IObject[] { association.Object };
-
-                                if (pattern.Tree != null)
-                                {
-                                    source = source.SelectMany(v => pattern.Tree.SelectMany(w => w.Resolve(v)));
-                                }
+                                var source = pattern.Tree != null ? pattern.Tree.SelectMany(w => w.Resolve(association.Object)) : new[] { association.Object };
 
                                 if (pattern.OfType != null)
                                 {
@@ -126,12 +121,7 @@ namespace Allors.Workspace.Configuration.Derivations.Default
                                     matchesByRule.Add(rule, matches);
                                 }
 
-                                IEnumerable<IObject> source = new IObject[] { role.Object };
-
-                                if (pattern.Tree != null)
-                                {
-                                    source = source.SelectMany(v => pattern.Tree.SelectMany(w => w.Resolve(v)));
-                                }
+                                var source = pattern.Tree != null ? pattern.Tree.SelectMany(w => w.Resolve(role.Object)) : new[] { role.Object };
 
                                 if (pattern.OfType != null)
                                 {
@@ -146,9 +136,9 @@ namespace Allors.Workspace.Configuration.Derivations.Default
 
                 foreach (var kvp in matchesByRule)
                 {
-                    var domainDerivation = kvp.Key;
+                    var rule = kvp.Key;
                     var matches = kvp.Value;
-                    domainDerivation.Derive(cycle, matches);
+                    rule.Derive(cycle, matches);
                 }
 
                 changeSet = this.Session.Checkpoint();

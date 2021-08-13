@@ -1,0 +1,108 @@
+import { IAssociationPattern, IPattern, IRolePattern, IRule } from '@allors/workspace/domain/system';
+import { AssociationType, Class, Composite, RoleType } from '@allors/workspace/meta/system';
+
+export class Engine {
+  classesByRule: Map<IRule, Set<Class>>;
+
+  rulesByClass: Map<Class, IRule[]>;
+
+  patternsByRoleTypeByClass: Map<Class, Map<RoleType, Set<IRolePattern>>>;
+
+  patternsByAssociationTypeByClass: Map<Class, Map<AssociationType, Set<IAssociationPattern>>>;
+
+  ruleByPattern: Map<IPattern, IRule>;
+
+  public constructor(rules: IRule[]) {
+    this.classesByRule = new Map();
+    this.patternsByRoleTypeByClass = new Map();
+    this.patternsByAssociationTypeByClass = new Map();
+    this.ruleByPattern = new Map();
+
+    for (const rule of rules) {
+      let ruleClasses = new Set<Class>();
+
+      for (const pattern of rule.patterns) {
+        this.ruleByPattern.set(pattern, rule);
+
+        let patternClasses: Set<Class>;
+
+        switch (pattern.kind) {
+          case 'RolePattern':
+            if (pattern.objectType) {
+              patternClasses = pattern.objectType.classes;
+            } else {
+              patternClasses = (pattern.roleType.associationType.objectType as Composite).classes;
+            }
+            break;
+          case 'AssociationPattern':
+            if (pattern.AssociationType.roleType.objectType.isComposite) {
+              ruleClasses = new Set([...ruleClasses, ...(pattern.AssociationType.roleType.objectType as Composite).classes]);
+            }
+            break;
+        }
+
+        if (patternClasses) {
+          ruleClasses = new Set([...ruleClasses, ...patternClasses]);
+
+          switch (pattern.kind) {
+            case 'RolePattern':
+              for (const patternClass of patternClasses) {
+                let patternsByRoleType = this.patternsByRoleTypeByClass.get(patternClass);
+                if (patternsByRoleType == null) {
+                  patternsByRoleType = new Map();
+                  this.patternsByRoleTypeByClass.set(patternClass, patternsByRoleType);
+                }
+
+                const roleType = pattern.roleType;
+
+                let patterns = patternsByRoleType.get(roleType);
+                if (patterns == null) {
+                  patterns = new Set();
+                  patternsByRoleType.set(roleType, patterns);
+                }
+
+                patterns.add(pattern);
+              }
+
+              break;
+
+            case 'AssociationPattern':
+              for (const patternClass of patternClasses) {
+                let patternsByAssociationType = this.patternsByAssociationTypeByClass.get(patternClass);
+                if (patternsByAssociationType == null) {
+                  patternsByAssociationType = new Map();
+                  this.patternsByAssociationTypeByClass.set(patternClass, patternsByAssociationType);
+                }
+
+                const AssociationType = pattern.AssociationType;
+
+                let patterns = patternsByAssociationType.get(AssociationType);
+                if (patterns == null) {
+                  patterns = new Set();
+                  patternsByAssociationType.set(AssociationType, patterns);
+                }
+
+                patterns.add(pattern);
+              }
+
+              break;
+          }
+        }
+      }
+
+      this.classesByRule.set(rule, ruleClasses);
+    }
+
+    const classes = new Set<Class>();
+    for (const [, classes] of this.classesByRule) {
+      for (const cls of classes) {
+        classes.add(cls);
+      }
+    }
+
+    for (const cls of classes) {
+      const classRules = rules.filter((v) => this.classesByRule.get(v)?.has(cls));
+      this.rulesByClass.set(cls, classRules);
+    }
+  }
+}

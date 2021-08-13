@@ -1,4 +1,4 @@
-import { ISession, ISessionServices } from '@allors/workspace/domain/system';
+import { ISession, ISessionServices, IValidation } from '@allors/workspace/domain/system';
 
 export class SessionServices implements ISessionServices {
   session: ISession;
@@ -7,5 +7,9 @@ export class SessionServices implements ISessionServices {
     this.session = session;
   }
 
-  derivationService: any;
+  derive(): IValidation {
+    const derivationService = this.session.workspace.services.derivationService;
+    const derivation = derivationService.create(this.session);
+    return derivation.execute();
+  }
 }
