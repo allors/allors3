@@ -6,6 +6,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System;
     using System.IO;
     using Domain;
     using Xunit;
@@ -37,7 +38,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void BuilderWithEmptyData()
         {
-            var binary = new byte[0];
+            var binary = Array.Empty<byte>();
             var media = new MediaBuilder(this.Session).WithInData(binary).Build();
 
             var derivationLog = this.Session.Derive(false);

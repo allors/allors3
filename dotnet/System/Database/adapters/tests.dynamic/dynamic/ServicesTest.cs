@@ -3640,7 +3640,7 @@ namespace Allors.Database.Adapters
                                     this.Commit(transactionFlag);
                                 }
 
-                                ids = new string[0];
+                                ids = Array.Empty<string>();
                                 for (var repeatIndex = 0; repeatIndex < repeat; repeatIndex++)
                                 {
                                     var allorsObjects = this.GetTransaction().Instantiate(ids);

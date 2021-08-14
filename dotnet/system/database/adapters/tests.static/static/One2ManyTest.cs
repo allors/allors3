@@ -542,7 +542,7 @@ namespace Allors.Database.Adapters
                         from.C1C1one2manies = new C1[] { null };
                         mark();
                         Assert.Empty(from.C1C1one2manies);
-                        from.C1C1one2manies = new C1[0];
+                        from.C1C1one2manies = Array.Empty<C1>();
                         mark();
                         Assert.Empty(from.C1C1one2manies);
 
@@ -965,11 +965,11 @@ namespace Allors.Database.Adapters
                     Assert.Empty(from.C1C2one2manies);
 
                     // Set Empty Array
-                    from.C1C2one2manies = new C2[0];
+                    from.C1C2one2manies = Array.Empty<C2>();
                     mark();
                     Assert.Empty(from.C1C2one2manies);
                     from.AddC1C2one2many(to1);
-                    from.C1C2one2manies = new C2[0];
+                    from.C1C2one2manies = Array.Empty<C2>();
                     mark();
                     Assert.Empty(from.C1C2one2manies);
 
@@ -1298,11 +1298,11 @@ namespace Allors.Database.Adapters
                     Assert.Empty(from.C1I1one2manies);
 
                     // Set Empty Array
-                    from.C1I1one2manies = new C1[0];
+                    from.C1I1one2manies = Array.Empty<C1>();
                     mark();
                     Assert.Empty(from.C1I1one2manies);
                     from.AddC1I1one2many(to1);
-                    from.C1I1one2manies = new C1[0];
+                    from.C1I1one2manies = Array.Empty<C1>();
                     mark();
                     Assert.Empty(from.C1I1one2manies);
 
@@ -1614,11 +1614,11 @@ namespace Allors.Database.Adapters
                     Assert.Empty(from.C1I2one2manies);
 
                     // Set Empty Array
-                    from.C1I2one2manies = new C2[0];
+                    from.C1I2one2manies = Array.Empty<C2>();
                     mark();
                     Assert.Empty(from.C1I2one2manies);
                     from.AddC1I2one2many(to1);
-                    from.C1I2one2manies = new C2[0];
+                    from.C1I2one2manies = Array.Empty<C2>();
                     mark();
                     Assert.Empty(from.C1I2one2manies);
 
@@ -1929,11 +1929,11 @@ namespace Allors.Database.Adapters
                     Assert.Empty(from.C3C4one2manies);
 
                     // Set Empty Array
-                    from.C3C4one2manies = new C4[0];
+                    from.C3C4one2manies = Array.Empty<C4>();
                     mark();
                     Assert.Empty(from.C3C4one2manies);
                     from.AddC3C4one2many(to1);
-                    from.C3C4one2manies = new C4[0];
+                    from.C3C4one2manies = Array.Empty<C4>();
                     mark();
                     Assert.Empty(from.C3C4one2manies);
 
@@ -2486,11 +2486,11 @@ namespace Allors.Database.Adapters
                         Assert.Empty(from.I1I12one2manies);
 
                         // Set Empty Array
-                        from.I1I12one2manies = new C1[0];
+                        from.I1I12one2manies = Array.Empty<C1>();
                         mark();
                         Assert.Empty(from.I1I12one2manies);
                         from.AddI1I12one2many(to1);
-                        from.I1I12one2manies = new C2[0];
+                        from.I1I12one2manies = Array.Empty<C2>();
                         mark();
                         Assert.Empty(from.I1I12one2manies);
 
@@ -2821,11 +2821,11 @@ namespace Allors.Database.Adapters
                     Assert.Empty(from.I1I1one2manies);
 
                     // Set Empty Array
-                    from.I1I1one2manies = new C1[0];
+                    from.I1I1one2manies = Array.Empty<C1>();
                     mark();
                     Assert.Empty(from.I1I1one2manies);
                     from.AddI1I1one2many(to1);
-                    from.I1I1one2manies = new C1[0];
+                    from.I1I1one2manies = Array.Empty<C1>();
                     mark();
                     Assert.Empty(from.I1I1one2manies);
 
@@ -3148,11 +3148,11 @@ namespace Allors.Database.Adapters
                     Assert.Empty(from.I1I2one2manies);
 
                     // Set Empty Array
-                    from.I1I2one2manies = new C2[0];
+                    from.I1I2one2manies = Array.Empty<C2>();
                     mark();
                     Assert.Empty(from.I1I2one2manies);
                     from.AddI1I2one2many(to1);
-                    from.I1I2one2manies = new C2[0];
+                    from.I1I2one2manies = Array.Empty<C2>();
                     mark();
                     Assert.Empty(from.I1I2one2manies);
 
@@ -3706,11 +3706,11 @@ namespace Allors.Database.Adapters
                         Assert.Empty(from.I1I34one2manies);
 
                         // Set Empty Array
-                        from.I1I34one2manies = new C3[0];
+                        from.I1I34one2manies = Array.Empty<C3>();
                         mark();
                         Assert.Empty(from.I1I34one2manies);
                         from.AddI1I34one2many(to1);
-                        from.I1I34one2manies = new C4[0];
+                        from.I1I34one2manies = Array.Empty<C4>();
                         mark();
                         Assert.Empty(from.I1I34one2manies);
 

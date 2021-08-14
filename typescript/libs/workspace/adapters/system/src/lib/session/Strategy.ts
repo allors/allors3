@@ -80,7 +80,7 @@ export abstract class Strategy implements IStrategy {
   }
 
   getUnitRole(roleType: RoleType): IUnit {
-    switch (this.cls.origin) {
+    switch (roleType.origin) {
       case Origin.Session:
         return this.session.sessionOriginState.getUnitRole(this.id, roleType);
       case Origin.Workspace:
@@ -94,7 +94,7 @@ export abstract class Strategy implements IStrategy {
 
   getCompositeRole<T extends IObject>(roleType: RoleType): T {
     let roleId: number;
-    switch (this.cls.origin) {
+    switch (roleType.origin) {
       case Origin.Session:
         roleId = this.session.sessionOriginState.getCompositeRole(this.id, roleType) as number;
         break;
@@ -114,7 +114,7 @@ export abstract class Strategy implements IStrategy {
   getCompositesRole<T extends IObject>(roleType: RoleType): T[] {
     let roleIds: IRange;
 
-    switch (this.cls.origin) {
+    switch (roleType.origin) {
       case Origin.Session:
         roleIds = this.session.sessionOriginState.getCompositesRole(this.id, roleType) as IRange;
         break;

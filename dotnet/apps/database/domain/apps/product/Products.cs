@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Domain
 {
+    using System;
     using System.Linq;
     using Meta;
     using DateTime = System.DateTime;
@@ -23,7 +24,7 @@ namespace Allors.Database.Domain
             var productDiscount = 0M;
             var productSurcharge = 0M;
 
-            var baseprices = new PriceComponent[0];
+            var baseprices = Array.Empty<PriceComponent>();
             if (product.ExistBasePrices)
             {
                 baseprices = product.BasePrices.ToArray();

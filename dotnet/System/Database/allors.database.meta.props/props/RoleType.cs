@@ -248,13 +248,13 @@ namespace Allors.Database.Meta
                 return role;
             }
 
-            if (this.IsMany)
+            if (this.IsOne)
             {
-                var extent = (Extent)role;
-                return extent.Where(v => ofType.IsAssignableFrom(v.Strategy.Class));
+                return ofType.IsAssignableFrom(((IObject)role).Strategy.Class) ? role : null;
             }
 
-            return !ofType.IsAssignableFrom(((IObject)role).Strategy.Class) ? null : role;
+            var extent = (Extent)role;
+            return extent.Where(v => ofType.IsAssignableFrom(v.Strategy.Class));
         }
 
         /// <summary>

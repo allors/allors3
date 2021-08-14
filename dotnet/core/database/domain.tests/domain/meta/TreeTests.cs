@@ -149,7 +149,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void Prefetch()
         {
-            var tree = new Node[0];
+            var tree = Array.Empty<Node>();
             tree.BuildPrefetchPolicy();
 
             tree = new[] { new Node(this.M.C1.C1AllorsBinary) };

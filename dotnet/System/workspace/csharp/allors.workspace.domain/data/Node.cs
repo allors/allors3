@@ -5,6 +5,7 @@
 
 namespace Allors.Workspace.Data
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
@@ -16,7 +17,7 @@ namespace Allors.Workspace.Data
         public Node(IPropertyType propertyType = null, IEnumerable<Node> nodes = null)
         {
             this.PropertyType = propertyType;
-            this.Nodes = nodes?.ToArray() ?? new Node[0];
+            this.Nodes = nodes?.ToArray() ?? Array.Empty<Node>();
         }
 
         public IPropertyType PropertyType { get; }

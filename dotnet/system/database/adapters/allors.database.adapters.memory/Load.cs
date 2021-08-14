@@ -16,7 +16,7 @@ namespace Allors.Database.Adapters.Memory
 
     public class Load
     {
-        private static readonly byte[] emptyByteArray = new byte[0];
+        private static readonly byte[] emptyByteArray = Array.Empty<byte>();
 
         private readonly Transaction transaction;
         private readonly XmlReader reader;

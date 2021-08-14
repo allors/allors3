@@ -3653,15 +3653,15 @@ namespace Allors.Database.Adapters
 
                     this.Transaction.Commit();
 
-                    Assert.Empty(this.Transaction.Instantiate(new IObject[0]));
+                    Assert.Empty(this.Transaction.Instantiate(Array.Empty<IObject>()));
 
                     this.Transaction.Commit();
 
-                    Assert.Empty(this.Transaction.Instantiate(new string[0]));
+                    Assert.Empty(this.Transaction.Instantiate(Array.Empty<string>()));
 
                     this.Transaction.Commit();
 
-                    Assert.Empty(this.Transaction.Instantiate(new long[0]));
+                    Assert.Empty(this.Transaction.Instantiate(Array.Empty<long>()));
 
                     this.Transaction.Commit();
 

@@ -1,4 +1,4 @@
-import { ICycle, IDerivation, IObject, IRule, ISession, IValidation, Node } from '@allors/workspace/domain/system';
+import { ICycle, IDerivation, IObject, IRule, ISession, IValidation, Node, resolve } from '@allors/workspace/domain/system';
 import { Engine } from './Engine';
 
 export class Derivation implements IDerivation {
@@ -53,7 +53,7 @@ export class Derivation implements IDerivation {
       }
 
       for (const [roleType, associations] of changeSet.associationsByRoleType) {
-        for (const association of associations.values()) {
+        for (const association of associations) {
           const cls = association.cls;
           const patterns = this.engine.patternsByRoleTypeByClass.get(cls)?.get(roleType);
           if (patterns != null) {
@@ -69,7 +69,7 @@ export class Derivation implements IDerivation {
 
               if (pattern.tree != null) {
                 source = pattern.tree.reduce((acc, v) => {
-                  acc.push(v.resolve(association.object));
+                  acc.push(resolve(association.object, v));
                   return acc;
                 }, []);
               } else {
@@ -105,7 +105,7 @@ export class Derivation implements IDerivation {
 
               if (pattern.tree != null) {
                 source = pattern.tree.reduce((acc, v) => {
-                  acc.push(v.resolve(association.object));
+                  acc.push(resolve(association.object, v));
                   return acc;
                 }, []);
               } else {

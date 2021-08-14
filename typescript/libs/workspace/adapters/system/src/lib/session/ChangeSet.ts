@@ -10,12 +10,12 @@ export class ChangeSet implements IChangeSet {
   associationsByRoleType: Map<RoleType, Set<IStrategy>>;
   rolesByAssociationType: Map<AssociationType, Set<IStrategy>>;
 
-  public constructor(public session: ISession, public created: Readonly<Set<IStrategy>>, public instantiated: Readonly<Set<IStrategy>>) {
+  public constructor(public session: ISession, public created: Set<IStrategy>, public instantiated: Set<IStrategy>) {
     this.associationsByRoleType = new Map();
     this.rolesByAssociationType = new Map();
 
-    this.created ??= frozenEmptySet as Readonly<Set<IStrategy>>;
-    this.instantiated ??= frozenEmptySet as Readonly<Set<IStrategy>>;
+    this.created ??= frozenEmptySet as Set<IStrategy>;
+    this.instantiated ??= frozenEmptySet as Set<IStrategy>;
   }
 
   public addSessionStateChanges(sessionStateChangeSet: MapMap<PropertyType, number, unknown>) {

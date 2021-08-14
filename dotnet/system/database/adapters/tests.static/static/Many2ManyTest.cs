@@ -1667,8 +1667,8 @@ namespace Allors.Database.Adapters
                         Assert.Empty(from1.C1C1many2manies);
                         Assert.Empty(from1.C1C1many2manies);
 
-                        from1.C1C1many2manies = new C1[0];
-                        from1.C1C1many2manies = new C1[0];
+                        from1.C1C1many2manies = Array.Empty<C1>();
+                        from1.C1C1many2manies = Array.Empty<C1>();
 
                         mark();
                         Assert.Empty(from1.C1C1many2manies);
@@ -1676,8 +1676,8 @@ namespace Allors.Database.Adapters
 
                         from1.AddC1C1many2many(to1);
                         from1.AddC1C1many2many(to1);
-                        from1.C1C1many2manies = new C1[0];
-                        from1.C1C1many2manies = new C1[0];
+                        from1.C1C1many2manies = Array.Empty<C1>();
+                        from1.C1C1many2manies = Array.Empty<C1>();
 
                         mark();
                         Assert.Empty(from1.C1C1many2manies);
@@ -1687,8 +1687,8 @@ namespace Allors.Database.Adapters
                         Assert.False(from1.ExistC1C1many2manies);
                         Assert.False(from1.ExistC1C1many2manies);
 
-                        from1.C1C1many2manies = new C1[0];
-                        from1.C1C1many2manies = new C1[0];
+                        from1.C1C1many2manies = Array.Empty<C1>();
+                        from1.C1C1many2manies = Array.Empty<C1>();
 
                         mark();
                         Assert.False(from1.ExistC1C1many2manies);
@@ -1696,8 +1696,8 @@ namespace Allors.Database.Adapters
 
                         from1.AddC1C1many2many(to1);
                         from1.AddC1C1many2many(to1);
-                        from1.C1C1many2manies = new C1[0];
-                        from1.C1C1many2manies = new C1[0];
+                        from1.C1C1many2manies = Array.Empty<C1>();
+                        from1.C1C1many2manies = Array.Empty<C1>();
 
                         mark();
                         Assert.False(from1.ExistC1C1many2manies);
@@ -3449,8 +3449,8 @@ namespace Allors.Database.Adapters
                         Assert.Empty(from1.I1I12many2manies);
                         Assert.Empty(from1.I1I12many2manies);
 
-                        from1.I1I12many2manies = new C1[0];
-                        from1.I1I12many2manies = new C1[0];
+                        from1.I1I12many2manies = Array.Empty<C1>();
+                        from1.I1I12many2manies = Array.Empty<C1>();
 
                         mark();
                         Assert.Empty(from1.I1I12many2manies);
@@ -3458,8 +3458,8 @@ namespace Allors.Database.Adapters
 
                         from1.AddI1I12many2many(to1);
                         from1.AddI1I12many2many(to1);
-                        from1.I1I12many2manies = new C1[0];
-                        from1.I1I12many2manies = new C1[0];
+                        from1.I1I12many2manies = Array.Empty<C1>();
+                        from1.I1I12many2manies = Array.Empty<C1>();
 
                         mark();
                         Assert.Empty(from1.I1I12many2manies);
@@ -3469,8 +3469,8 @@ namespace Allors.Database.Adapters
                         Assert.False(from1.ExistI1I12many2manies);
                         Assert.False(from1.ExistI1I12many2manies);
 
-                        from1.I1I12many2manies = new C1[0];
-                        from1.I1I12many2manies = new C1[0];
+                        from1.I1I12many2manies = Array.Empty<C1>();
+                        from1.I1I12many2manies = Array.Empty<C1>();
 
                         mark();
                         Assert.False(from1.ExistI1I12many2manies);
@@ -3478,8 +3478,8 @@ namespace Allors.Database.Adapters
 
                         from1.AddI1I12many2many(to1);
                         from1.AddI1I12many2many(to1);
-                        from1.I1I12many2manies = new C1[0];
-                        from1.I1I12many2manies = new C1[0];
+                        from1.I1I12many2manies = Array.Empty<C1>();
+                        from1.I1I12many2manies = Array.Empty<C1>();
 
                         mark();
                         Assert.False(from1.ExistI1I12many2manies);
@@ -5189,8 +5189,8 @@ namespace Allors.Database.Adapters
                         Assert.Empty(from1.C3C4many2manies);
                         Assert.Empty(from1.C3C4many2manies);
 
-                        from1.C3C4many2manies = new C4[0];
-                        from1.C3C4many2manies = new C4[0];
+                        from1.C3C4many2manies = Array.Empty<C4>();
+                        from1.C3C4many2manies = Array.Empty<C4>();
 
                         mark();
                         Assert.Empty(from1.C3C4many2manies);
@@ -5198,8 +5198,8 @@ namespace Allors.Database.Adapters
 
                         from1.AddC3C4many2many(to1);
                         from1.AddC3C4many2many(to1);
-                        from1.C3C4many2manies = new C4[0];
-                        from1.C3C4many2manies = new C4[0];
+                        from1.C3C4many2manies = Array.Empty<C4>();
+                        from1.C3C4many2manies = Array.Empty<C4>();
 
                         mark();
                         Assert.Empty(from1.C3C4many2manies);
@@ -5209,8 +5209,8 @@ namespace Allors.Database.Adapters
                         Assert.False(from1.ExistC3C4many2manies);
                         Assert.False(from1.ExistC3C4many2manies);
 
-                        from1.C3C4many2manies = new C4[0];
-                        from1.C3C4many2manies = new C4[0];
+                        from1.C3C4many2manies = Array.Empty<C4>();
+                        from1.C3C4many2manies = Array.Empty<C4>();
 
                         mark();
                         Assert.False(from1.ExistC3C4many2manies);
@@ -5218,8 +5218,8 @@ namespace Allors.Database.Adapters
 
                         from1.AddC3C4many2many(to1);
                         from1.AddC3C4many2many(to1);
-                        from1.C3C4many2manies = new C4[0];
-                        from1.C3C4many2manies = new C4[0];
+                        from1.C3C4many2manies = Array.Empty<C4>();
+                        from1.C3C4many2manies = Array.Empty<C4>();
 
                         mark();
                         Assert.False(from1.ExistC3C4many2manies);

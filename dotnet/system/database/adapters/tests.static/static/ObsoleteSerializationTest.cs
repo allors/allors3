@@ -682,7 +682,7 @@ namespace Allors.Database.Adapters
                     this.c1B = C1.Create(otherTransaction);
                     this.c1C = C1.Create(otherTransaction);
 
-                    this.c1A.C1AllorsBinary = new byte[0];
+                    this.c1A.C1AllorsBinary = Array.Empty<byte>();
                     this.c1B.C1AllorsBinary = new byte[] { 1, 2, 3, 4 };
                     this.c1C.C1AllorsBinary = null;
 
@@ -1113,7 +1113,7 @@ namespace Allors.Database.Adapters
             Assert.Equal(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc), c1ACopy.C1AllorsDateTime);
             Assert.Equal(new Guid(GuidString), c1ACopy.C1AllorsUnique);
 
-            Assert.Equal(new byte[0], c1ACopy.C1AllorsBinary);
+            Assert.Equal(Array.Empty<byte>(), c1ACopy.C1AllorsBinary);
             Assert.Equal(new byte[] { 0, 1, 2, 3 }, c1BCopy.C1AllorsBinary);
             Assert.Null(c1CCopy.C1AllorsBinary);
 
@@ -1172,7 +1172,7 @@ namespace Allors.Database.Adapters
             this.c1A.C1AllorsBoolean = true;
             this.c1A.C1AllorsDateTime = new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc);
             this.c1A.C1AllorsUnique = new Guid(GuidString);
-            this.c1A.C1AllorsBinary = new byte[0];
+            this.c1A.C1AllorsBinary = Array.Empty<byte>();
 
             this.c1B.C1AllorsString = "c1b";
             this.c1B.C1AllorsBinary = new byte[] { 0, 1, 2, 3 };

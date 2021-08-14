@@ -14,6 +14,7 @@ export class Engine {
 
   public constructor(rules: IRule[]) {
     this.classesByRule = new Map();
+    this.rulesByClass = new Map();
     this.patternsByRoleTypeByClass = new Map();
     this.patternsByAssociationTypeByClass = new Map();
     this.ruleByPattern = new Map();
@@ -94,9 +95,9 @@ export class Engine {
     }
 
     const classes = new Set<Class>();
-    for (const [, classes] of this.classesByRule) {
-      for (const cls of classes) {
-        classes.add(cls);
+    for (const [, ruleClasses] of this.classesByRule) {
+      for (const ruleClass of ruleClasses) {
+        classes.add(ruleClass);
       }
     }
 

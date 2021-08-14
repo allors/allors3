@@ -15,7 +15,7 @@ export async function initDerivation(asyncClient: IAsyncDatabaseClient, reactive
   fixture = new Fixture(asyncClient, reactiveClient, workspace, login);
 }
 
-export async function xxx() {
+export async function fullName() {
   const { client, workspace, m } = fixture;
   const session = workspace.createSession();
 

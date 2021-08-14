@@ -1,5 +1,5 @@
 import { IObject, IObjectFactory, IStrategy } from '@allors/workspace/domain/system';
-import { MetaPopulation, ObjectType } from '@allors/workspace/meta/system';
+import { MetaPopulation, ObjectType, Origin } from '@allors/workspace/meta/system';
 import { ObjectBase } from './ObjectBase';
 
 export class PrototypeObjectFactory implements IObjectFactory {
@@ -38,19 +38,23 @@ export class PrototypeObjectFactory implements IObjectFactory {
           },
         });
 
-        if (roleType.relationType.isDerived) {
+        Object.defineProperty(prototype, 'CanWrite' + roleType.name, {
+          get(this: ObjectBase) {
+            return this.strategy.canWrite(roleType);
+          },
+        });
+
+        const relationType = roleType.relationType;
+        const isDatabase = relationType.origin === Origin.Database;
+        const isDerived = relationType.isDerived;
+
+        if (isDatabase && isDerived) {
           Object.defineProperty(prototype, roleType.name, {
             get(this: ObjectBase) {
               return this.strategy.getRole(roleType);
             },
           });
         } else {
-          Object.defineProperty(prototype, 'CanWrite' + roleType.name, {
-            get(this: ObjectBase) {
-              return this.strategy.canWrite(roleType);
-            },
-          });
-
           Object.defineProperty(prototype, roleType.name, {
             get(this: ObjectBase) {
               return this.strategy.getRole(roleType);

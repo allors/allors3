@@ -5,11 +5,11 @@ import { IStrategy } from "./IStrategy";
 export interface IChangeSet {
   session: ISession;
 
-  created: Readonly<Set<IStrategy>>;
+  created: Set<IStrategy>;
 
-  instantiated: Readonly<Set<IStrategy>>;
+  instantiated: Set<IStrategy>;
 
-  associationsByRoleType: Readonly<Map<RoleType, Set<IStrategy>>>;
+  associationsByRoleType: Map<RoleType, Set<IStrategy>>;
 
-  rolesByAssociationType: Readonly<Map<AssociationType, Set<IStrategy>>>;
+  rolesByAssociationType: Map<AssociationType, Set<IStrategy>>;
 }

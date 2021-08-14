@@ -17,7 +17,7 @@ export class FullNameRule implements IRule {
 
   derive(cycle: ICycle, matches: Person[]) {
     for (const person of matches) {
-      person.CustomFullName = `${person.FirstName} ${person.LastName}`;
+      person.SessionFullName = `${person.FirstName} ${person.LastName}`;
     }
   }
 }

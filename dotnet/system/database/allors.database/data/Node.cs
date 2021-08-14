@@ -24,7 +24,7 @@ namespace Allors.Database.Data
                 this.Nodes = nodes?.Select(this.AssertAssignable).ToArray();
             }
 
-            this.Nodes ??= new Node[0];
+            this.Nodes ??= Array.Empty<Node>();
         }
 
         public IPropertyType PropertyType { get; }
