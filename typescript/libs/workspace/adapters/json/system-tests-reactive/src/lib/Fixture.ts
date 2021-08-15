@@ -5,6 +5,8 @@ import { data } from '@allors/workspace/meta/json/core';
 import { ReactiveDatabaseClient, DatabaseConnection } from '@allors/workspace/adapters/json/system';
 import { Configuration, PrototypeObjectFactory } from '@allors/workspace/adapters/system';
 import { WorkspaceServices } from '@allors/workspace/adapters/system-tests';
+import { ruleBuilder } from '@allors/workspace/domain/core';
+import { M } from '@allors/workspace/meta/core';
 
 const BASE_URL = 'http://localhost:5000/allors/';
 const AUTH_URL = 'TestAuthentication/Token';
@@ -29,7 +31,7 @@ export class Fixture {
       new Configuration('Default', this.metaPopulation, new PrototypeObjectFactory(this.metaPopulation)),
       () => nextId--,
       () => {
-        return new WorkspaceServices();
+        return new WorkspaceServices(ruleBuilder(this.metaPopulation as M));
       }
     );
   }
