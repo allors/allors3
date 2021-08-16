@@ -79,7 +79,6 @@ export class ReactiveDatabaseClient implements IReactiveDatabaseClient {
       pushRequest.o = [...pushToDatabaseTracker.changed].map((v) => (v.strategy.DatabaseOriginState as DatabaseOriginState).pushExisting());
     }
 
-
     return this.client.push(pushRequest).pipe(
       switchMap((pushResponse) => {
         const pushResult = new PushResult(session, pushResponse);
@@ -122,16 +121,6 @@ export class ReactiveDatabaseClient implements IReactiveDatabaseClient {
           return this.client.sync(syncRequest).pipe(
             concatMap((syncResponse) => {
               const securityRequest = database.onSyncResponse(syncResponse);
-
-              for (const v of syncResponse.o) {
-                if (!session.strategyByWorkspaceId.has(v.i)) {
-                  session.instantiateDatabaseStrategy(v.i);
-                } else {
-                  const strategy = session.strategyByWorkspaceId.get(v.i);
-                  strategy.DatabaseOriginState.onPulled(pullResult);
-                }
-              }
-
               if (securityRequest != null) {
                 return this.client.security(securityRequest).pipe(
                   concatMap((securityResponse) => {

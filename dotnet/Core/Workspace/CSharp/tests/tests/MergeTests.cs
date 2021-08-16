@@ -18,7 +18,7 @@ namespace Tests.Workspace
         protected MergeTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public async void MergeTwoDifferentVersions()
+        public async void DatabaseMergeError()
         {
             await this.Login("administrator");
 
@@ -28,22 +28,24 @@ namespace Tests.Workspace
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
 
             var result = await this.AsyncDatabaseClient.PullAsync(session1, pull);
-            var c1a = result.GetCollection<C1>()[0];
+            var c1a_1 = result.GetCollection<C1>()[0];
 
             result = await this.AsyncDatabaseClient.PullAsync(session2, pull);
-            var c1b = result.GetCollection<C1>()[0];
+            var c1a_2 = result.GetCollection<C1>()[0];
 
-            c1a.C1AllorsString = "X";
-            c1b.C1AllorsString = "Y";
-
-            Assert.Equal("X", c1a.C1AllorsString);
-            Assert.Equal("Y", c1b.C1AllorsString);
+            c1a_1.C1AllorsString = "X";
+            c1a_2.C1AllorsString = "Y";
 
             await this.AsyncDatabaseClient.PushAsync(session2);
 
             result = await this.AsyncDatabaseClient.PullAsync(session1, pull);
 
             Assert.True(result.HasErrors);
+            Assert.Single(result.MergeErrors);
+
+            var mergeError = result.MergeErrors.First();
+
+            Assert.Equal(c1a_1.Strategy, mergeError.Strategy);
         }
     }
 }

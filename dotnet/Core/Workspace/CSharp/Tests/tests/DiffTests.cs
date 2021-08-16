@@ -8,7 +8,6 @@
 
 namespace Tests.Workspace
 {
-    using System.Collections.Generic;
     using System.Linq;
     using Allors.Workspace;
     using Allors.Workspace.Data;
@@ -20,7 +19,7 @@ namespace Tests.Workspace
         protected DiffTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public async void DiffTest()
+        public async void DatabaseUnitDiffTest()
         {
             await this.Login("administrator");
 
@@ -28,28 +27,28 @@ namespace Tests.Workspace
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
             var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
-            var c1a = result.GetCollection<C1>()[0];
+            var c1a_1 = result.GetCollection<C1>()[0];
 
-            c1a.C1AllorsString = "X";
+            c1a_1.C1AllorsString = "X";
 
             await this.AsyncDatabaseClient.PushAsync(session);
 
             result = await this.AsyncDatabaseClient.PullAsync(session, pull);
-            var c1b = result.GetCollection<C1>()[0];
+            var c1a_2 = result.GetCollection<C1>()[0];
 
-            c1b.C1AllorsString = "Y";
+            c1a_2.C1AllorsString = "Y";
 
-            var diff = c1b.Strategy.Diff();
-            Assert.Single(diff);
+            var diffs = c1a_2.Strategy.Diff();
+            Assert.Single(diffs);
 
-            var unitdiff = (IUnitDiff)diff[0];
-            Assert.Equal("X", unitdiff.OriginalRole);
-            Assert.Equal("Y", unitdiff.ChangedRole);
-            Assert.Equal(this.M.C1.C1AllorsString.RelationType, unitdiff.RelationType);
+            var diff = (IUnitDiff)diffs[0];
+            Assert.Equal("X", diff.OriginalRole);
+            Assert.Equal("Y", diff.ChangedRole);
+            Assert.Equal(this.M.C1.C1AllorsString.RelationType, diff.RelationType);
         }
 
         [Fact]
-        public async void DiffBeforeAndAfterResetTest()
+        public async void DatabaseUnitDiffAfterResetTest()
         {
             await this.Login("administrator");
 
@@ -57,29 +56,25 @@ namespace Tests.Workspace
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
             var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
-            var c1a = result.GetCollection<C1>()[0];
+            var c1a_1 = result.GetCollection<C1>()[0];
 
-            c1a.C1AllorsString = "X";
+            c1a_1.C1AllorsString = "X";
 
             await this.AsyncDatabaseClient.PushAsync(session);
 
             result = await this.AsyncDatabaseClient.PullAsync(session, pull);
-            var c1b = result.GetCollection<C1>()[0];
+            var c1a_2 = result.GetCollection<C1>()[0];
 
-            c1b.C1AllorsString = "Y";
+            c1a_2.C1AllorsString = "Y";
 
-            var diff = c1b.Strategy.Diff();
-
-            Assert.Single(diff);
-
-            c1b.Strategy.Reset();
-            diff = c1b.Strategy.Diff();
+            c1a_2.Strategy.Reset();
+            var diff = c1a_2.Strategy.Diff();
 
             Assert.Empty(diff);
         }
 
         [Fact]
-        public async void DiffAfterDoubleReset()
+        public async void DatabaseUnitDiffAfterDoubleResetTest()
         {
             await this.Login("administrator");
 
@@ -108,7 +103,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void DiffTestIntAndString()
+        public async void DatabaseMultipleUnitDiffTest()
         {
             await this.Login("administrator");
 
@@ -129,26 +124,73 @@ namespace Tests.Workspace
             c1b.C1AllorsString = "Y";
             c1b.C1AllorsInteger = 2;
 
-            var diff = c1b.Strategy.Diff();
+            var diffs = c1b.Strategy.Diff();
 
-            Assert.Equal(2, diff.Count);
-            var unitDiffs = new List<IUnitDiff>();
+            Assert.Equal(2, diffs.Count);
 
-            foreach (var diffToAdd in diff)
-            {
-                unitDiffs.Add((IUnitDiff)diffToAdd);
-            }
+            var stringDiff = diffs.First(v => v.RelationType == this.M.C1.C1AllorsString.RelationType) as IUnitDiff;
+            var intDiff = diffs.First(v => v.RelationType == this.M.C1.C1AllorsInteger.RelationType) as IUnitDiff;
 
-            var unitdiffString = unitDiffs.First(v => v.RelationType == this.M.C1.C1AllorsString.RelationType);
-            var unitdiffInt = unitDiffs.First(v => v.RelationType == this.M.C1.C1AllorsInteger.RelationType);
+            Assert.Equal("X", stringDiff.OriginalRole);
+            Assert.Equal("Y", stringDiff.ChangedRole);
+            Assert.Equal(this.M.C1.C1AllorsString.RelationType, stringDiff.RelationType);
 
-            Assert.Equal("X", unitdiffString.OriginalRole);
-            Assert.Equal("Y", unitdiffString.ChangedRole);
-            Assert.Equal(this.M.C1.C1AllorsString.RelationType, unitdiffString.RelationType);
-
-            Assert.Equal(1, unitdiffInt.OriginalRole);
-            Assert.Equal(2, unitdiffInt.ChangedRole);
-            Assert.Equal(this.M.C1.C1AllorsInteger.RelationType, unitdiffInt.RelationType);
+            Assert.Equal(1, intDiff.OriginalRole);
+            Assert.Equal(2, intDiff.ChangedRole);
+            Assert.Equal(this.M.C1.C1AllorsInteger.RelationType, intDiff.RelationType);
         }
+
+        [Fact]
+        public async void WorkspaceUnitDiffTest()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var c1a = result.GetCollection<C1>()[0];
+
+            c1a.WorkspaceC1AllorsString = "X";
+
+            session.PushToWorkspace();
+            session.PullFromWorkspace();
+
+            c1a.WorkspaceC1AllorsString = "Y";
+
+            var diffs = c1a.Strategy.Diff();
+            Assert.Single(diffs);
+
+            var diff = (IUnitDiff)diffs[0];
+            Assert.Equal("X", diff.OriginalRole);
+            Assert.Equal("Y", diff.ChangedRole);
+            Assert.Equal(this.M.C1.WorkspaceC1AllorsString.RelationType, diff.RelationType);
+        }
+
+        [Fact]
+        public async void WorkspaceUnitDiffAfterResetTest()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var c1a = result.GetCollection<C1>()[0];
+
+            c1a.WorkspaceC1AllorsString = "X";
+
+            session.PushToWorkspace();
+            session.PullFromWorkspace();
+
+            c1a.WorkspaceC1AllorsString = "Y";
+
+            c1a.Strategy.Reset();
+
+            var diffs = c1a.Strategy.Diff();
+            Assert.Empty(diffs);
+        }
+
+        // TODO: More variations
     }
 }

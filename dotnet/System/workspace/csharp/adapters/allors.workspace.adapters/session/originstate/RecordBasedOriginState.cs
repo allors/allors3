@@ -6,7 +6,6 @@
 namespace Allors.Workspace.Adapters
 {
     using System.Collections.Generic;
-    using System.Text;
     using Meta;
     using Ranges;
 

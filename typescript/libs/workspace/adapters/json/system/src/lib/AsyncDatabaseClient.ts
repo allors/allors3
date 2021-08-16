@@ -117,15 +117,6 @@ export class AsyncDatabaseClient implements IAsyncDatabaseClient {
       const syncResponse = await this.client.sync(syncRequest);
       let securityRequest = database.onSyncResponse(syncResponse);
 
-      for (const v of syncResponse.o) {
-        if (!session.strategyByWorkspaceId.has(v.i)) {
-          session.instantiateDatabaseStrategy(v.i);
-        } else {
-          const strategy = session.strategyByWorkspaceId.get(v.i);
-          strategy.DatabaseOriginState.onPulled(pullResult);
-        }
-      }
-
       if (securityRequest != null) {
         let securityResponse = await this.client.security(securityRequest);
         securityRequest = database.securityResponse(securityResponse);

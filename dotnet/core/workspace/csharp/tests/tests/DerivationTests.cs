@@ -18,7 +18,7 @@ namespace Tests.Workspace
         protected DerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public async void UnitRoles()
+        public async void SessionFullName()
         {
             await this.Login("administrator");
 

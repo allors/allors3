@@ -19,6 +19,10 @@ export class PullResult extends Result implements IPullResult {
     this.workspace = session.workspace;
   }
 
+  get hasErrors(): boolean {
+    return super.hasErrors || this.mergeErrors.length > 0;
+  }
+
   get collections(): Map<string, IObject[]> {
     return (this._collections ??= new Map(Object.keys(this.pullResponse.c).map((v) => [v.toUpperCase(), this.pullResponse.c[v].map((w) => this.session.instantiate(w))])));
   }

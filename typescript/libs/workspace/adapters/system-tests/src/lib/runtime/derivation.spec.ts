@@ -15,7 +15,7 @@ export async function initDerivation(asyncClient: IAsyncDatabaseClient, reactive
   fixture = new Fixture(asyncClient, reactiveClient, workspace, login);
 }
 
-export async function fullName() {
+export async function sessionFullName() {
   const { client, workspace, m } = fixture;
   const session = workspace.createSession();
 
@@ -36,7 +36,8 @@ export async function fullName() {
 
   expect(jane.SessionFullName).toBeUndefined();
 
-  const validation = session.services.derive();
+  session.services.derive();
 
-  expect(jane.SessionFullName).toBe("Jane Doe");
+  expect(jane.SessionFullName).toBe('Jane Doe');
 }
+

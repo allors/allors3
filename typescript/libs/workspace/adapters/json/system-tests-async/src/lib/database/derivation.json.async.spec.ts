@@ -1,6 +1,6 @@
 import {
   initDerivation,
-  fullName,
+  sessionFullName,
 } from '@allors/workspace/adapters/system-tests';
 import { Fixture } from '../Fixture';
 
@@ -12,6 +12,6 @@ beforeEach(async () => {
   await initDerivation(fixture.asyncDatabaseClient, null, fixture.databaseConnection.createWorkspace(), (login) => fixture.client.login(login));
 });
 
-test('fullName', async () => {
-  await fullName();
+test('sessionFullName', async () => {
+  await sessionFullName();
 });
