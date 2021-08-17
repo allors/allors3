@@ -1,4 +1,4 @@
-// <copyright file="UnitSamplesTests.cs" company="Allors bvba">
+// <copyright file="ObjectTests.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -11,14 +11,14 @@ namespace Tests.Workspace
     using Allors.Workspace.Domain;
     using Xunit;
 
-    public abstract class UnitSamplesTests : Test
+    public abstract class ProcedureTests : Test
     {
-        protected UnitSamplesTests(Fixture fixture) : base(fixture)
+        protected ProcedureTests(Fixture fixture) : base(fixture)
         {
         }
 
         [Fact]
-        public async void Null()
+        public async void TestUnitSamplesWithNulls()
         {
             await this.Login("administrator");
             var session = this.Workspace.CreateSession();
@@ -29,6 +29,8 @@ namespace Tests.Workspace
             };
 
             var result = await this.AsyncDatabaseClient.CallAsync(session, procedure);
+
+            Assert.False(result.HasErrors);
 
             var unitSample = result.GetObject<UnitSample>("unitSample");
 
@@ -43,7 +45,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void Values()
+        public async void TestUnitSamplesWithValues()
         {
             await this.Login("administrator");
             var session = this.Workspace.CreateSession();
@@ -54,6 +56,8 @@ namespace Tests.Workspace
             };
 
             var result = await this.AsyncDatabaseClient.CallAsync(session, procedure);
+
+            Assert.False(result.HasErrors);
 
             var unitSample = result.GetObject<UnitSample>("unitSample");
 
@@ -74,6 +78,23 @@ namespace Tests.Workspace
             Assert.Equal(1000, unitSample.AllorsInteger);
             Assert.Equal("a string", unitSample.AllorsString);
             Assert.Equal(new Guid("2946CF37-71BE-4681-8FE6-D0024D59BEFF"), unitSample.AllorsUnique);
+        }
+
+        [Fact]
+        public async void NonExistingProcedure()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var procedure = new Procedure("ThisIsWrong")
+            {
+                Values = new Dictionary<string, string> { { "step", "0" } }
+            };
+
+            var result = await this.AsyncDatabaseClient.CallAsync(session, procedure);
+
+            Assert.True(result.HasErrors);
         }
     }
 }

@@ -15,7 +15,8 @@ import { DatabaseConnection } from './database/DatabaseConnection';
 export class AsyncDatabaseClient implements IAsyncDatabaseClient {
   constructor(public client: IAsyncDatabaseJsonClient) {}
 
-  async invokeAsync(session: ISession, methods: Method[], options: InvokeOptions): Promise<IInvokeResult> {
+  async invokeAsync(session: ISession, methodOrMethods: Method | Method[], options: InvokeOptions): Promise<IInvokeResult> {
+    const methods = Array.isArray(methodOrMethods) ? methodOrMethods : [methodOrMethods];
     const invokeRequest: InvokeRequest = {
       l: methods.map((v) => {
         return {
@@ -110,6 +111,10 @@ export class AsyncDatabaseClient implements IAsyncDatabaseClient {
 
   private async onPull(session: Session, pullResponse: PullResponse): Promise<IPullResult> {
     const pullResult = new PullResult(session, pullResponse);
+
+    if (pullResult.hasErrors) {
+      return pullResult;
+    }
 
     const syncRequest = (session.workspace.database as DatabaseConnection).onPullResonse(pullResponse);
     if (syncRequest.o.length > 0) {

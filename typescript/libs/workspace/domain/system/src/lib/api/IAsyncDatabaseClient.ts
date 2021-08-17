@@ -9,7 +9,7 @@ import { Pull } from './pull/Pull';
 import { IPushResult } from './push/IPushResult';
 
 export interface IAsyncDatabaseClient {
-  invokeAsync(session: ISession, method: Method | Method[], options?: InvokeOptions): Promise<IInvokeResult>;
+  invokeAsync(session: ISession, methodOrMethods: Method | Method[], options?: InvokeOptions): Promise<IInvokeResult>;
 
   callAsync(session: ISession, procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult>;
 

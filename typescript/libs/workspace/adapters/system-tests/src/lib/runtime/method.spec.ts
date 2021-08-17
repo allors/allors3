@@ -1,8 +1,9 @@
 import { IAsyncDatabaseClient, IWorkspace, IReactiveDatabaseClient, Pull } from '@allors/workspace/domain/system';
+import '@allors/workspace/domain/core';
+import { Organisation } from '@allors/workspace/domain/core';
+
 import { Fixture } from '../Fixture';
 import '../Matchers';
-import '@allors/workspace/domain/core';
-import { C1, SessionC1 } from '@allors/workspace/domain/core';
 
 let fixture: Fixture;
 
@@ -15,40 +16,88 @@ export async function initMethod(asyncClient: IAsyncDatabaseClient, reactiveClie
   fixture = new Fixture(asyncClient, reactiveClient, workspace, login);
 }
 
-export async function xxx() {
+export async function callSingle() {
   const { client, workspace, m } = fixture;
-  const session1 = workspace.createSession();
-  const session2 = workspace.createSession();
+  const session = workspace.createSession();
 
   const pull: Pull = {
     extent: {
       kind: 'Filter',
-      objectType: m.C1,
-      predicate: {
-        kind: 'Equals',
-        propertyType: m.C1.Name,
-        value: 'C1A',
-      },
+      objectType: m.Organisation,
     },
   };
 
-  let result = await client.pullAsync(session1, [pull]);
-  const c1a_1 = result.collection<C1>('C1s')[0];
+  let result = await client.pullAsync(session, [pull]);
+  const organisation = result.collection<Organisation>(m.Organisation)[0];
 
-  result = await client.pullAsync(session2, [pull]);
-  const c1a_2 = result.collection<C1>('C1s')[0];
+  expect(organisation.JustDidIt).toBeFalsy();
 
-  c1a_1.C1AllorsString = "X";
-  c1a_2.C1AllorsString = "Y";
+  const invokeResult = await client.invokeAsync(session, organisation.JustDoIt);
 
-  await client.pushAsync(session2);
+  expect(invokeResult.hasErrors).toBeFalsy();
 
-  result = await client.pullAsync(session1, [pull]);
+  result = await client.pullAsync(session, [{ object: organisation }]);
 
-  expect(result.hasErrors).toBeTruthy();
-  expect(result.mergeErrors.length).toBe(1);
+  expect(organisation.JustDidIt).toBeTruthy();
+  expect(organisation.JustDidItDerived).toBeTruthy();
+}
 
-  const mergeError = result.mergeErrors[0];
+export async function callMultiple() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
 
-  expect(mergeError.strategy).toBe(c1a_1.strategy);
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.Organisation,
+    },
+  };
+
+  let result = await client.pullAsync(session, [pull]);
+  const organisation1 = result.collection<Organisation>(m.Organisation)[0];
+  const organisation2 = result.collection<Organisation>(m.Organisation)[1];
+
+  expect(organisation1.JustDidIt).toBeFalsy();
+
+  const invokeResult = await client.invokeAsync(session, [organisation1.JustDoIt, organisation2.JustDoIt]);
+
+  expect(invokeResult.hasErrors).toBeFalsy();
+
+  result = await client.pullAsync(session, [pull]);
+
+  expect(organisation1.JustDidIt).toBeTruthy();
+  expect(organisation1.JustDidItDerived).toBeTruthy();
+
+  expect(organisation2.JustDidIt).toBeTruthy();
+  expect(organisation2.JustDidItDerived).toBeTruthy();
+}
+
+export async function callMultipleIsolated() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.Organisation,
+    },
+  };
+
+  let result = await client.pullAsync(session, [pull]);
+  const organisation1 = result.collection<Organisation>(m.Organisation)[0];
+  const organisation2 = result.collection<Organisation>(m.Organisation)[1];
+
+  expect(organisation1.JustDidIt).toBeFalsy();
+
+  const invokeResult = await client.invokeAsync(session, [organisation1.JustDoIt, organisation2.JustDoIt], { isolated: true });
+
+  expect(invokeResult.hasErrors).toBeFalsy();
+
+  result = await client.pullAsync(session, [pull]);
+
+  expect(organisation1.JustDidIt).toBeTruthy();
+  expect(organisation1.JustDidItDerived).toBeTruthy();
+
+  expect(organisation2.JustDidIt).toBeTruthy();
+  expect(organisation2.JustDidItDerived).toBeTruthy();
 }

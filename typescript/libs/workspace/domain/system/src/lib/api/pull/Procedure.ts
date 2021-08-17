@@ -1,13 +1,13 @@
-import { IObject } from "../../IObject";
+import { IObject } from '../../IObject';
 
 export interface Procedure {
   name: string;
 
-  collections?: Map<string, IObject[]>;
+  collections?: { [name: string]: IObject[] } | Map<string, IObject[]>;
 
-  objects?: Map<string, IObject>;
+  objects?: { [name: string]: IObject } | Map<string, IObject>;
 
-  values?: Map<string, string>;
+  values?: { [name: string]: string } | Map<string, string>;
 
   pool?: Map<IObject, number>;
 }

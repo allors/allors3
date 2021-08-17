@@ -7,4 +7,5 @@ export * from './lib/runtime/derivation.spec';
 export * from './lib/runtime/diff.spec';
 export * from './lib/runtime/merge.spec';
 export * from './lib/runtime/method.spec';
+export * from './lib/runtime/procedure.spec';
 export * from './lib/runtime/pull.spec';

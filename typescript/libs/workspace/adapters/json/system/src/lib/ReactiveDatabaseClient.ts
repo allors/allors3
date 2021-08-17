@@ -18,7 +18,8 @@ import { concatMap, map, switchMap, tap } from 'rxjs/operators';
 export class ReactiveDatabaseClient implements IReactiveDatabaseClient {
   constructor(public client: IReactiveDatabaseJsonClient) {}
 
-  invokeReactive(session: ISession, methods: Method[], options: InvokeOptions): Observable<IInvokeResult> {
+  invokeReactive(session: ISession, methodOrMethods: Method | Method[], options: InvokeOptions): Observable<IInvokeResult> {
+    const methods = Array.isArray(methodOrMethods) ? methodOrMethods : [methodOrMethods];
     const invokeRequest: InvokeRequest = {
       l: methods.map((v) => {
         return {

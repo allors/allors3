@@ -68,6 +68,11 @@ namespace Allors.Workspace.Adapters.Remote
         {
             var pullResult = new PullResult(this, pullResponse);
 
+            if (pullResult.HasErrors)
+            {
+                return pullResult;
+            }
+
             var syncRequest = this.Workspace.DatabaseConnection.OnPullResponse(pullResponse);
             if (syncRequest.o.Length > 0)
             {

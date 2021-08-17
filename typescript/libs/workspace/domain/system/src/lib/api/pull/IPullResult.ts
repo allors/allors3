@@ -1,3 +1,4 @@
+import { Class } from '@allors/workspace/meta/system';
 import { IObject } from '../../IObject';
 import { IUnit } from '../../Types';
 import { IResult } from '../IResult';
@@ -11,9 +12,9 @@ export interface IPullResult extends IResult {
 
   values: Map<string, IUnit>;
 
-  collection<T extends IObject>(name: string): T[];
+  collection<T extends IObject>(nameOrClass: string | Class): T[];
 
-  object<T extends IObject>(name: string): T;
+  object<T extends IObject>(nameOrClass: string | Class): T;
 
   value(name: string): IUnit | Array<IUnit>;
 

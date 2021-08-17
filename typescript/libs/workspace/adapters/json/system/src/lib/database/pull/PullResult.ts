@@ -1,6 +1,7 @@
 import { IObject, IPullResult, ISession, IWorkspace, IUnit } from '@allors/workspace/domain/system';
 import { PullResponse } from '@allors/protocol/json/system';
 import { Result } from '../Result';
+import { Class } from '@allors/workspace/meta/system';
 
 export class PullResult extends Result implements IPullResult {
   mergeErrors: IObject[];
@@ -20,7 +21,7 @@ export class PullResult extends Result implements IPullResult {
   }
 
   get hasErrors(): boolean {
-    return super.hasErrors || this.mergeErrors.length > 0;
+    return super.hasErrors || this.mergeErrors?.length > 0;
   }
 
   get collections(): Map<string, IObject[]> {
@@ -35,11 +36,13 @@ export class PullResult extends Result implements IPullResult {
     return this._values ?? new Map(Object.keys(this.pullResponse.v).map((v) => [v.toUpperCase(), this.pullResponse.v[v]]));
   }
 
-  collection<T extends IObject>(name: string): T[] {
+  collection<T extends IObject>(nameOrClass: string | Class): T[] {
+    const name = typeof(nameOrClass) === 'string' ? nameOrClass : nameOrClass.pluralName;
     return this.collections.get(name.toUpperCase()) as T[];
   }
 
-  object<T extends IObject>(name: string): T {
+  object<T extends IObject>(nameOrClass: string | Class): T {
+    const name = typeof(nameOrClass) === 'string' ? nameOrClass : nameOrClass.singularName;
     return this.objects.get(name.toUpperCase()) as T;
   }
 

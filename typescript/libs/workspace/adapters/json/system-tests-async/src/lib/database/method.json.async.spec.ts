@@ -1,6 +1,8 @@
 import {
+  callMultiple,
+  callMultipleIsolated,
+  callSingle,
   initMethod,
-  xxx,
 } from '@allors/workspace/adapters/system-tests';
 import { Fixture } from '../Fixture';
 
@@ -12,6 +14,14 @@ beforeEach(async () => {
   await initMethod(fixture.asyncDatabaseClient, null, fixture.databaseConnection.createWorkspace(), (login) => fixture.client.login(login));
 });
 
-test('xxx', async () => {
-  await xxx();
+test('callSingle', async () => {
+  await callSingle();
+});
+
+test('callMultiple', async () => {
+  await callMultiple();
+});
+
+test('callMultipleIsolated', async () => {
+  await callMultipleIsolated();
 });
