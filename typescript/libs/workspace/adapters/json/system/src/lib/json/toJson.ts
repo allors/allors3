@@ -103,6 +103,27 @@ export function predicateToJson(from: DataPredicate): Predicate {
         ops: predicatesToJson(from.operands),
       };
 
+    case 'ContainedIn':
+      return {
+        k: PredicateKind.ContainedIn,
+        d: from.dependencies,
+        a: asAssociationTypeToJson(from.propertyType),
+        r: asRoleTypeToJson(from.propertyType),
+        vs: from.objects?.map((v) => v.id),
+        p: from.parameter,
+        e: extentToJson(from.extent),
+      };
+
+    case 'Contains':
+      return {
+        k: PredicateKind.Contains,
+        d: from.dependencies,
+        a: asAssociationTypeToJson(from.propertyType),
+        r: asRoleTypeToJson(from.propertyType),
+        ob: from.object?.id,
+        p: from.parameter,
+      };
+
     case 'Equals':
       return {
         k: PredicateKind[from.kind],

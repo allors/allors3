@@ -1,7 +1,8 @@
 import { MetaPopulation } from '@allors/workspace/meta/system';
 import { M } from '@allors/workspace/meta/core';
-import { IAsyncDatabaseClient, IReactiveDatabaseClient, IWorkspace } from '@allors/workspace/domain/system';
+import { IAsyncDatabaseClient, IReactiveDatabaseClient, ISession, IWorkspace, Pull } from '@allors/workspace/domain/system';
 import { ClientAdapter } from './ClientAdapter';
+import { C1, C2 } from '@allors/workspace/domain/core';
 
 export const name_c1A = 'c1A';
 export const name_c1B = 'c1B';
@@ -22,5 +23,43 @@ export class Fixture {
     this.m = this.metaPopulation as MetaPopulation as M;
 
     this.client = asyncClient ?? new ClientAdapter(reactiveClient);
+  }
+
+  async pullC1(session: ISession, name: string): Promise<C1> {
+    const { client, m } = this;
+
+    const pull: Pull = {
+      extent: {
+        kind: 'Filter',
+        objectType: m.C1,
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.C1.Name,
+          value: name,
+        },
+      },
+    };
+
+    const result = await client.pullAsync(session, [pull]);
+    return result.collection<C1>(m.C1)[0];
+  }
+
+  async pullC2(session: ISession, name: string): Promise<C2> {
+    const { client, m } = this;
+
+    const pull: Pull = {
+      extent: {
+        kind: 'Filter',
+        objectType: m.C2,
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.C2.Name,
+          value: name,
+        },
+      },
+    };
+
+    const result = await client.pullAsync(session, [pull]);
+    return result.collection<C2>(m.C2)[0];
   }
 }

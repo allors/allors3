@@ -112,7 +112,7 @@ export class AsyncDatabaseClient implements IAsyncDatabaseClient {
   private async onPull(session: Session, pullResponse: PullResponse): Promise<IPullResult> {
     const pullResult = new PullResult(session, pullResponse);
 
-    if (pullResult.hasErrors) {
+    if (pullResponse.p == null || pullResult.hasErrors) {
       return pullResult;
     }
 
