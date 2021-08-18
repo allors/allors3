@@ -59,7 +59,8 @@ namespace Allors.Workspace.Adapters.Local
             var proc = this.Transaction.Database.Procedures.Get(this.procedure.Name);
             if (proc == null)
             {
-                throw new Exception($"Missing procedure {this.procedure.Name}");
+                pullResponse.ErrorMessage = $"Missing procedure {this.procedure.Name}";
+                return;
             }
 
             var input = new ProcedureInput(this.Transaction.Database.ObjectFactory, this.procedure);

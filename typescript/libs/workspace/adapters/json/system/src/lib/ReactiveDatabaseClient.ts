@@ -116,6 +116,10 @@ export class ReactiveDatabaseClient implements IReactiveDatabaseClient {
       concatMap((pullResponse) => {
         const pullResult = new PullResult(session, pullResponse);
 
+        if (pullResponse.p == null || pullResult.hasErrors) {
+          return of({ pullResult, pullResponse });
+        }
+
         const syncRequest = (session.workspace.database as DatabaseConnection).onPullResonse(pullResponse);
         if (syncRequest.o.length > 0) {
           const database = session.workspace.database as DatabaseConnection;
@@ -148,6 +152,11 @@ export class ReactiveDatabaseClient implements IReactiveDatabaseClient {
         }
       }),
       map(({ pullResult, pullResponse }) => {
+
+        if (pullResponse.p == null || pullResult.hasErrors) {
+          return pullResult;
+        }
+
         for (const v of pullResponse.p) {
           if (session.strategyByWorkspaceId.has(v.i)) {
             const strategy = session.strategyByWorkspaceId.get(v.i);

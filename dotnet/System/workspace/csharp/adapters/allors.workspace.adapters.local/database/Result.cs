@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters.Local
 
         protected Session Session { get; }
 
-        public string ErrorMessage { get; protected set; }
+        public string ErrorMessage { get; set; }
 
         public IEnumerable<IObject> VersionErrors => this.versionErrors?.Select(v => this.Session.Instantiate<IObject>(v));
 
