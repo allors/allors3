@@ -22,6 +22,8 @@ import {
   operatorExcept,
   operatorIntersect,
   operatorUnion,
+  roleDateTimeBetweenPath,
+  roleDateTimeBetweenValue,
 } from '@allors/workspace/adapters/system-tests';
 import { Fixture } from '../Fixture';
 
@@ -121,3 +123,10 @@ test('operatorUnion', async () => {
   await operatorUnion();
 });
 
+test('roleDateTimeBetweenPath', async () => {
+  await roleDateTimeBetweenPath();
+});
+
+test('roleDateTimeBetweenValue', async () => {
+  await roleDateTimeBetweenValue();
+});

@@ -906,3 +906,57 @@ export async function operatorUnion() {
 
   expect(c1s).toEqualObjects([name_c1A, name_c1B]);
 }
+
+export async function roleDateTimeBetweenPath() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Between',
+        roleType: m.C1.C1AllorsDateTime,
+        paths: [m.C1.C1DateTimeBetweenA, m.C1.C1DateTimeBetweenB],
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1C, name_c1D]);
+}
+
+export async function roleDateTimeBetweenValue() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Between',
+        roleType: m.C1.C1AllorsDateTime,
+        values: [new Date('Sat Jan 01 2000 00:00:04 GMT+0000'), new Date('Sat Jan 01 2000 00:00:06 GMT+0000')],
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B, name_c1C, name_c1D]);
+}

@@ -103,6 +103,16 @@ export function predicateToJson(from: DataPredicate): Predicate {
         ops: predicatesToJson(from.operands),
       };
 
+    case 'Between':
+      return {
+        k: PredicateKind.Between,
+        d: from.dependencies,
+        r: roleTypeToJson(from.roleType),
+        vs: from.values?.map((v) => unitToJson(v)),
+        pas: pathsToJson(from.paths),
+        p: from.parameter,
+      };
+
     case 'ContainedIn':
       return {
         k: PredicateKind.ContainedIn,
@@ -261,6 +271,7 @@ function argumentsToJson(from: { [name: string]: TypeForParameter }): { [name: s
 export function extentsToJson(from: DataExtent[]): Extent[] {
   return from?.map(extentToJson);
 }
+
 export function predicatesToJson(from: DataPredicate[]): Predicate[] {
   return from?.map(predicateToJson);
 }
@@ -323,6 +334,10 @@ export function poolToJson(from: Map<IObject, number>): number[][] {
   }
 
   return Array.from(from, ([obj, version]) => [obj.id, version]);
+}
+
+export function pathsToJson(from: RoleType[]): number[] {
+  return from?.map((v) => v.relationType.tag);
 }
 
 function map<T1, T2>(from: { [name: string]: T1 } | Map<string, T1>, fn: (T1) => T2): { [name: string]: T2 } {
