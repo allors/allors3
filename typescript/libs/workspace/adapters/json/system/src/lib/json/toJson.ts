@@ -136,6 +136,15 @@ export function predicateToJson(from: DataPredicate): Predicate {
         p: from.parameter,
       };
 
+    case 'Exists':
+      return {
+        k: PredicateKind[from.kind],
+        d: from.dependencies,
+        a: asAssociationTypeToJson(from.propertyType),
+        r: asRoleTypeToJson(from.propertyType),
+        p: from.parameter,
+      };
+
     case 'GreaterThan':
       return {
         k: PredicateKind[from.kind],
@@ -146,6 +155,15 @@ export function predicateToJson(from: DataPredicate): Predicate {
         p: from.parameter,
       };
 
+    case 'Instanceof':
+      return {
+        k: PredicateKind[from.kind],
+        d: from.dependencies,
+        o: objectTypeToJson(from.objectType),
+        a: asAssociationTypeToJson(from.propertyType),
+        r: asRoleTypeToJson(from.propertyType),
+      };
+
     case 'LessThan':
       return {
         k: PredicateKind[from.kind],
@@ -154,6 +172,20 @@ export function predicateToJson(from: DataPredicate): Predicate {
         v: unitToJson(from.value),
         pa: roleTypeToJson(from.path),
         p: from.parameter,
+      };
+
+    case 'Not':
+      return {
+        k: PredicateKind[from.kind],
+        d: from.dependencies,
+        op: predicateToJson(from.operand),
+      };
+
+    case 'Or':
+      return {
+        k: PredicateKind[from.kind],
+        d: from.dependencies,
+        ops: predicatesToJson(from.operands),
       };
   }
 

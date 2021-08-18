@@ -585,7 +585,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void Equalz()
+        public async void ObjectEquals()
         {
             await this.Login("administrator");
 
@@ -612,7 +612,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void Interface()
+        public async void ExtentInterface()
         {
             await this.Login("administrator");
 
@@ -725,6 +725,7 @@ namespace Tests.Workspace
 
             result.Assert().Collection<C1>().Equal(c1B, c1C);
         }
+
         [Fact]
         public async void OperatorExcept()
         {

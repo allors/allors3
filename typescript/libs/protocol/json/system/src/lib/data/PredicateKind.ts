@@ -5,7 +5,7 @@ export enum PredicateKind {
 
   Not = 3,
 
-  InstanceOf = 4,
+  Instanceof = 4,
 
   Exists = 5,
 

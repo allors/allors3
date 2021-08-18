@@ -5,7 +5,7 @@ import { ParameterizablePredicateBase } from './ParameterizablePredicate';
 
 export interface Equals extends ParameterizablePredicateBase {
   kind: 'Equals';
-  propertyType: PropertyType;
+  propertyType?: PropertyType;
   value?: IUnit;
   object?: IObject;
   path?: RoleType;
