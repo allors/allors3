@@ -21,7 +21,7 @@ export class WorkspaceOriginState extends RecordBasedOriginState {
     return this.workspaceRecord;
   }
 
-  get Version(): number {
+  get version(): number {
     return this.workspaceRecord.version;
   }
 

@@ -10,7 +10,6 @@ namespace Tests.Workspace.OriginSession.SessionSession
     using Allors.Workspace;
     using Xunit;
     using System;
-    using System.Linq;
 
     public abstract class OneToOneTests : Test
     {

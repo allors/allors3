@@ -7,11 +7,9 @@ namespace Tests.Workspace.OriginSession
 {
     using System.Threading.Tasks;
     using Allors.Workspace.Domain;
-    using Allors.Workspace;
     using Xunit;
     using System;
     using Allors.Workspace.Data;
-    using System.Linq;
 
     public abstract class SessionTests : Test
     {

@@ -360,11 +360,11 @@ namespace Allors.Workspace.Adapters
             return association.IsEmpty ? Array.Empty<T>() : association.Select(v => this.Session.Instantiate<T>(v)).ToArray();
         }
 
-        public bool CanRead(IRoleType roleType) => this.DatabaseOriginState?.CanRead(roleType) ?? true;
+        public bool CanRead(IRoleType roleType) => roleType.RelationType.Origin != Origin.Database || (this.DatabaseOriginState?.CanRead(roleType) ?? true);
 
-        public bool CanWrite(IRoleType roleType) => this.DatabaseOriginState?.CanWrite(roleType) ?? true;
+        public bool CanWrite(IRoleType roleType) => roleType.RelationType.Origin != Origin.Database || (this.DatabaseOriginState?.CanWrite(roleType) ?? true);
 
-        public bool CanExecute(IMethodType methodType) => this.DatabaseOriginState?.CanExecute(methodType) ?? false;
+        public bool CanExecute(IMethodType methodType) => methodType.Origin == Origin.Database && (this.DatabaseOriginState?.CanExecute(methodType) ?? false);
 
         public bool IsCompositeAssociationForRole(IRoleType roleType, long forRoleId) =>
             roleType.Origin switch

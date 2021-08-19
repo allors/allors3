@@ -5,6 +5,7 @@ import { isNewId, Session } from './Session';
 import { importFrom, enumerate, IRange, has } from '../collections/Range';
 import { AssociationType, Class, Composite, MethodType, Origin, RoleType } from '@allors/workspace/meta/system';
 import { WorkspaceInitialVersion } from '../Version';
+import { frozenEmptyArray } from '../collections/frozenEmptyArray';
 
 export abstract class Strategy implements IStrategy {
   DatabaseOriginState: DatabaseOriginState;
@@ -23,7 +24,7 @@ export abstract class Strategy implements IStrategy {
       case Origin.Session:
         return WorkspaceInitialVersion;
       case Origin.Workspace:
-        return this.WorkspaceOriginState.Version;
+        return this.WorkspaceOriginState.version;
       case Origin.Database:
         return this.DatabaseOriginState.version;
       default:
@@ -108,7 +109,7 @@ export abstract class Strategy implements IStrategy {
         throw new Error('Unknown origin');
     }
 
-    return this.session.instantiate<T>(roleId);
+    return roleId ? this.session.instantiate<T>(roleId) : null;
   }
 
   getCompositesRole<T extends IObject>(roleType: RoleType): T[] {
@@ -128,7 +129,7 @@ export abstract class Strategy implements IStrategy {
         throw new Error('Unknown origin');
     }
 
-    return this.session.instantiate<T>(roleIds);
+    return roleIds ? this.session.instantiate<T>(roleIds) : (frozenEmptyArray as T[]);
   }
 
   setRole(roleType: RoleType, value: unknown) {
@@ -286,7 +287,7 @@ export abstract class Strategy implements IStrategy {
 
   getCompositeAssociation<T extends IObject>(associationType: AssociationType): T {
     if (associationType.origin != Origin.Session) {
-      return this.session.getCompositeAssociation(this.id, associationType)?.object as T;
+      return (this.session.getCompositeAssociation(this.id, associationType)?.object as T) ?? null;
     }
 
     const association = this.session.sessionOriginState.getCompositeRole(this.id, associationType);
@@ -310,15 +311,15 @@ export abstract class Strategy implements IStrategy {
   }
 
   canRead(roleType: RoleType): boolean {
-    return this.DatabaseOriginState?.canRead(roleType) ?? true;
+    return roleType.origin === Origin.Database ? this.DatabaseOriginState?.canRead(roleType) ?? true : true;
   }
 
   canWrite(roleType: RoleType): boolean {
-    return this.DatabaseOriginState?.canWrite(roleType) ?? true;
+    return roleType.origin === Origin.Database ? this.DatabaseOriginState?.canWrite(roleType) ?? true : true;
   }
 
   canExecute(methodType: MethodType): boolean {
-    return this.DatabaseOriginState?.canExecute(methodType) ?? false;
+    return methodType.origin === Origin.Database ? this.DatabaseOriginState?.canExecute(methodType) ?? false : false;
   }
 
   isCompositeAssociationForRole(roleType: RoleType, forRoleId: number): boolean {

@@ -7,7 +7,6 @@ namespace Tests.Workspace
 {
     using System.Threading.Tasks;
     using Allors.Workspace;
-    using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
     using Xunit;
 

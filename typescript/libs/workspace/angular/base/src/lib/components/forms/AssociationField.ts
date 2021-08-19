@@ -51,7 +51,7 @@ export abstract class AssociationField extends Field implements AfterViewInit, O
   }
 
   get model(): IObject | undefined {
-    const model = this.existObject && this.associationType ? this.object.getAssociation(this.associationType) : undefined;
+    const model = this.existObject && this.associationType ? this.object.getAssociation(this.associationType) : null;
 
     return model;
   }

@@ -5,7 +5,6 @@
 
 namespace Tests.Workspace
 {
-    using System;
     using Allors.Workspace;
 
     public static class IPullResultExtensions

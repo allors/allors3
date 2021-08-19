@@ -61,7 +61,7 @@ export class AllorsMaterialAutocompleteComponent extends RoleField implements On
           const lowerCaseSearch = search.trim().toLowerCase();
           return this.options
             .filter((v: IObject) => {
-              const optionDisplay: string = (v as any)[this.display] ? (v as any)[this.display].toString().toLowerCase() : undefined;
+              const optionDisplay: string = (v as any)[this.display] ? (v as any)[this.display].toString().toLowerCase() : null;
               if (optionDisplay) {
                 return optionDisplay.indexOf(lowerCaseSearch) !== -1;
               }

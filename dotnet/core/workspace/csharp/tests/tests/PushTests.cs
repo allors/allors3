@@ -5,7 +5,6 @@
 
 namespace Tests.Workspace
 {
-    using System;
     using System.Linq;
     using Allors.Workspace;
     using Allors.Workspace.Data;
@@ -31,10 +30,44 @@ namespace Tests.Workspace
             var result = await this.AsyncDatabaseClient.PushAsync(session);
             Assert.False(result.HasErrors);
 
+            foreach (var roleType in this.M.C1.RoleTypes)
+            {
+                Assert.True(newObject.Strategy.CanRead(roleType));
+                Assert.False(newObject.Strategy.ExistRole(roleType));
+            }
+
+            foreach (var associationType in this.M.C1.AssociationTypes)
+            {
+                if (associationType.IsOne)
+                {
+                    var association = newObject.Strategy.GetCompositeAssociation<IObject>(associationType);
+                    Assert.Null(association);
+                }
+                else
+                {
+                    var association = newObject.Strategy.GetCompositesAssociation<IObject>(associationType);
+                    Assert.Empty(association);
+                }
+            }
+        }
+
+        [Fact]
+        public async void PushAndPullNewObject()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var newObject = session.Create<C1>();
+
+            var result = await this.AsyncDatabaseClient.PushAsync(session);
+            Assert.False(result.HasErrors);
+
             await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = newObject });
 
             foreach (var roleType in this.M.C1.RoleTypes)
             {
+                Assert.True(newObject.Strategy.CanRead(roleType));
                 Assert.False(newObject.Strategy.ExistRole(roleType));
             }
 
@@ -98,7 +131,6 @@ namespace Tests.Workspace
 
             Assert.Equal("X", c1a.C1AllorsString);
         }
-
 
         [Fact]
         public async void ChangesBeforeCheckpointShouldBePushed()
@@ -205,21 +237,9 @@ namespace Tests.Workspace
 
             var session = this.Workspace.CreateSession();
 
-            var c1x_1 = session.Create<C1>();
-            var c1y_2 = session.Create<C1>();
-
-            await this.AsyncDatabaseClient.PushAsync(session);
-
-            var result = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = c1y_2 });
-
-            var c1y_1 = (C1)result.Objects.Values.First();
-
-            if (!c1x_1.CanWriteC1C1Many2One)
-            {
-                await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = c1x_1 });
-            }
-
-            c1x_1.C1C1Many2One = c1y_1;
+            var c1x = session.Create<C1>();
+            var c1y = session.Create<C1>();
+            c1x.C1C1Many2One = c1y;
 
             var pushResult = await this.AsyncDatabaseClient.PushAsync(session);
             Assert.False(pushResult.HasErrors);
