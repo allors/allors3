@@ -24,6 +24,45 @@ import {
   operatorUnion,
   roleDateTimeBetweenPath,
   roleDateTimeBetweenValue,
+  roleDateTimeGreaterThanPath,
+  roleDateTimeGreaterThanValue,
+  roleDateTimeLessThanPath,
+  roleDateTimeLessThanValue,
+  roleDateTimeEquals,
+  roleDecimalBetweenPath,
+  roleDecimalBetweenValue,
+  roleDecimalGreaterThanPath,
+  roleDecimalGreaterThanValue,
+  roleDecimalLessThanPath,
+  roleDecimalLessThanValue,
+  roleDecimalEquals,
+  roleDoubleBetweenPath,
+  roleDoubleBetweenValue,
+  roleDoubleGreaterThanPath,
+  roleDoubleGreaterThanValue,
+  roleDoubleLessThanPath,
+  roleDoubleLessThanValue,
+  roleDoubleEquals,
+  roleIntegerBetweenPath,
+  roleIntegerBetweenValue,
+  roleIntegerGreaterThanPath,
+  roleIntegerGreaterThanValue,
+  roleIntegerLessThanPath,
+  roleIntegerLessThanValue,
+  roleIntegerEquals,
+  roleIntegerExist,
+  roleStringEqualsPath,
+  roleStringEqualsValue,
+  roleStringLike,
+  roleUniqueEquals,
+  roleMany2ManyContainedIn,
+  roleMany2ManyContains,
+  roleOne2ManyContainedIn,
+  roleOne2ManyContains,
+  roleMany2OneContainedIn,
+  roleOne2OneContainedIn,
+  withResultName,
+  pullWithObjectId,
 } from '@allors/workspace/adapters/system-tests';
 import { Fixture } from '../Fixture';
 
@@ -130,3 +169,161 @@ test('roleDateTimeBetweenPath', async () => {
 test('roleDateTimeBetweenValue', async () => {
   await roleDateTimeBetweenValue();
 });
+
+test('roleDateTimeGreaterThanPath', async () => {
+  await roleDateTimeGreaterThanPath();
+});
+
+test('roleDateTimeGreaterThanValue', async () => {
+  await roleDateTimeGreaterThanValue();
+});
+
+test('roleDateTimeLessThanPath', async () => {
+  await roleDateTimeLessThanPath();
+});
+
+test('roleDateTimeLessThanValue', async () => {
+  await roleDateTimeLessThanValue();
+});
+
+test('roleDateTimeEquals', async () => {
+  await roleDateTimeEquals();
+});
+
+test('roleDecimalBetweenPath', async () => {
+  await roleDecimalBetweenPath();
+});
+
+test('roleDecimalBetweenValue', async () => {
+  await roleDecimalBetweenValue();
+});
+
+test('roleDecimalGreaterThanPath', async () => {
+  await roleDecimalGreaterThanPath();
+});
+
+test('roleDecimalGreaterThanValue', async () => {
+  await roleDecimalGreaterThanValue();
+});
+
+test('roleDecimalLessThanPath', async () => {
+  await roleDecimalLessThanPath();
+});
+
+test('roleDecimalLessThanValue', async () => {
+  await roleDecimalLessThanValue();
+});
+
+test('roleDecimalEquals', async () => {
+  await roleDecimalEquals();
+});
+
+test('roleDoubleBetweenPath', async () => {
+  await roleDoubleBetweenPath();
+});
+
+test('roleDoubleBetweenValue', async () => {
+  await roleDoubleBetweenValue();
+});
+
+test('roleDoubleGreaterThanPath', async () => {
+  await roleDoubleGreaterThanPath();
+});
+
+test('roleDoubleGreaterThanValue', async () => {
+  await roleDoubleGreaterThanValue();
+});
+
+test('roleDoubleLessThanPath', async () => {
+  await roleDoubleLessThanPath();
+});
+
+test('roleDoubleLessThanValue', async () => {
+  await roleDoubleLessThanValue();
+});
+
+test('roleDoubleEquals', async () => {
+  await roleDoubleEquals();
+});
+
+test('roleIntegerBetweenPath', async () => {
+  await roleIntegerBetweenPath();
+});
+
+test('roleIntegerBetweenValue', async () => {
+  await roleIntegerBetweenValue();
+});
+
+test('roleIntegerGreaterThanPath', async () => {
+  await roleIntegerGreaterThanPath();
+});
+
+test('roleIntegerGreaterThanValue', async () => {
+  await roleIntegerGreaterThanValue();
+});
+
+test('roleIntegerLessThanPath', async () => {
+  await roleIntegerLessThanPath();
+});
+
+test('roleIntegerLessThanValue', async () => {
+  await roleIntegerLessThanValue();
+});
+
+test('roleIntegerEquals', async () => {
+  await roleIntegerEquals();
+});
+
+test('roleIntegerExist', async () => {
+  await roleIntegerExist();
+});
+
+test('roleStringEqualsPath', async () => {
+  await roleStringEqualsPath();
+});
+
+test('roleStringEqualsValue', async () => {
+  await roleStringEqualsValue();
+});
+
+test('roleStringLike', async () => {
+  await roleStringLike();
+});
+
+test('roleUniqueEquals', async () => {
+  await roleUniqueEquals();
+});
+
+test('roleMany2ManyContainedIn', async () => {
+  await roleMany2ManyContainedIn();
+});
+
+test('roleMany2ManyContains', async () => {
+  await roleMany2ManyContains();
+});
+
+test('roleOne2ManyContainedIn', async () => {
+  await roleOne2ManyContainedIn();
+});
+
+test('roleOne2ManyContains', async () => {
+  await roleOne2ManyContains();
+});
+
+test('roleMany2OneContainedIn', async () => {
+  await roleMany2OneContainedIn();
+});
+
+test('roleOne2OneContainedIn', async () => {
+  await roleOne2OneContainedIn();
+});
+
+test('withResultName', async () => {
+  await withResultName();
+});
+
+test('pullWithObjectId', async () => {
+  await pullWithObjectId();
+});
+
+

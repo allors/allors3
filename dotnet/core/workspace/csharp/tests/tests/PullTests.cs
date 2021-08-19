@@ -1633,34 +1633,6 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleStringEqualsValue()
-        {
-            await this.Login("administrator");
-
-            var session = this.Workspace.CreateSession();
-            var m = this.M;
-
-            var pull = new Pull
-            {
-                Extent = new Filter(m.C1)
-                {
-                    Predicate = new Equals(m.C1.C1AllorsString)
-                    {
-                        Value = "ᴀbra"
-                    }
-                }
-            };
-
-            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
-
-            Assert.Single(result.Collections);
-            Assert.Empty(result.Objects);
-            Assert.Empty(result.Values);
-
-            result.Assert().Collection<C1>().Equal(c1B);
-        }
-
-        [Fact]
         public async void RoleStringEqualsPath()
         {
             await this.Login("administrator");
@@ -1686,6 +1658,34 @@ namespace Tests.Workspace
             Assert.Empty(result.Values);
 
             result.Assert().Collection<C1>().Equal(c1C);
+        }
+
+        [Fact]
+        public async void RoleStringEqualsValue()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+            var m = this.M;
+
+            var pull = new Pull
+            {
+                Extent = new Filter(m.C1)
+                {
+                    Predicate = new Equals(m.C1.C1AllorsString)
+                    {
+                        Value = "ᴀbra"
+                    }
+                }
+            };
+
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+
+            Assert.Single(result.Collections);
+            Assert.Empty(result.Objects);
+            Assert.Empty(result.Values);
+
+            result.Assert().Collection<C1>().Equal(c1B);
         }
 
         [Fact]
@@ -1951,7 +1951,7 @@ namespace Tests.Workspace
             {
                 Extent = new Filter(this.M.C1)
                 {
-                    Predicate = new ContainedIn(m.C1.C1I12Many2One)
+                    Predicate = new ContainedIn(m.C1.C1I12One2One)
                     {
                         Extent = new Filter(this.M.I12)
                         {
@@ -1967,7 +1967,7 @@ namespace Tests.Workspace
             Assert.Empty(result.Objects);
             Assert.Empty(result.Values);
 
-            result.Assert().Collection<C1>().Equal(c1B);
+            result.Assert().Collection<C1>().Equal(c1B, c1C);
         }
 
         [Fact]

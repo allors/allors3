@@ -33,7 +33,7 @@ namespace Allors.Database.Server.Controllers
         private void Full()
         {
             new PersonBuilder(this.session).WithUserName("noacl").WithFirstName("no").WithLastName("acl").Build();
-            
+
             var noperm = new PersonBuilder(this.session).WithUserName("noperm").WithFirstName("no").WithLastName("perm").Build();
             var emptyRole = new RoleBuilder(this.session).WithName("Empty").Build();
             var defaultSecurityToken = new SecurityTokens(this.session).DefaultSecurityToken;
@@ -149,12 +149,12 @@ namespace Allors.Database.Server.Controllers
             c2B.I12AllorsInteger = 1;
             c2C.I12AllorsInteger = 2;
             c2D.I12AllorsInteger = 2;
-            
+
             // Unique
             c1B.C1AllorsUnique = new Guid("8B3C4978-72D3-40BA-B302-114EB331FE04");
             c1C.C1AllorsUnique = new Guid("0FD4EC2C-08DB-46B9-B71A-10152EBE4569");
             c1D.C1AllorsUnique = new Guid("AF01C994-379A-449A-8C4D-8D3B7207EC91");
-            
+
             c1B.I1AllorsUnique = new Guid("7F7BF8EF-DDF2-47E6-B33F-627BE7DEAD6D");
             c1C.I1AllorsUnique = new Guid("08BFF7DE-51B9-4A53-BFBA-1212F23A342D");
             c1D.I1AllorsUnique = new Guid("59A349CB-E197-43B7-A17E-90630A87873C");

@@ -1,4 +1,4 @@
-import { IAsyncDatabaseClient, IObject, IReactiveDatabaseClient, ISession, IWorkspace, Pull } from '@allors/workspace/domain/system';
+import { IAsyncDatabaseClient, IReactiveDatabaseClient, IWorkspace, Pull } from '@allors/workspace/domain/system';
 import { Fixture, name_c1A, name_c1B, name_c1C, name_c1D, name_c2A, name_c2B, name_c2C, name_c2D } from '../Fixture';
 import '../Matchers';
 import '@allors/workspace/domain/core';
@@ -959,4 +959,1146 @@ export async function roleDateTimeBetweenValue() {
   const c1s = result.collection(m.C1);
 
   expect(c1s).toEqualObjects([name_c1B, name_c1C, name_c1D]);
+}
+
+export async function roleDateTimeGreaterThanPath() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'GreaterThan',
+        roleType: m.C1.C1AllorsDateTime,
+        path: m.C1.C1DateTimeGreaterThan,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B]);
+}
+
+export async function roleDateTimeGreaterThanValue() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'GreaterThan',
+        roleType: m.C1.C1AllorsDateTime,
+        value: new Date('Sat Jan 01 2000 00:00:04 GMT+0000'),
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1C, name_c1D]);
+}
+
+export async function roleDateTimeLessThanPath() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'LessThan',
+        roleType: m.C1.C1AllorsDateTime,
+        path: m.C1.C1DateTimeLessThan,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1D]);
+}
+
+export async function roleDateTimeLessThanValue() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'LessThan',
+        roleType: m.C1.C1AllorsDateTime,
+        value: new Date('Sat Jan 01 2000 00:00:05 GMT+0000'),
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B]);
+}
+
+export async function roleDateTimeEquals() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Equals',
+        propertyType: m.C1.C1AllorsDateTime,
+        value: new Date('Sat Jan 01 2000 00:00:04 GMT+0000'),
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B]);
+}
+
+export async function roleDecimalBetweenPath() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Between',
+        roleType: m.C1.C1AllorsDecimal,
+        paths: [m.C1.C1DecimalBetweenA, m.C1.C1DecimalBetweenB],
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1D]);
+}
+
+export async function roleDecimalBetweenValue() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Between',
+        roleType: m.C1.C1AllorsDecimal,
+        values: ['2.1', '2.3'],
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1C, name_c1D]);
+}
+
+export async function roleDecimalGreaterThanPath() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'GreaterThan',
+        roleType: m.C1.C1AllorsDecimal,
+        path: m.C1.C1DecimalGreaterThan,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B, name_c1C]);
+}
+
+export async function roleDecimalGreaterThanValue() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'GreaterThan',
+        roleType: m.C1.C1AllorsDecimal,
+        value: '1.5',
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1C, name_c1D]);
+}
+
+export async function roleDecimalLessThanPath() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'LessThan',
+        roleType: m.C1.C1AllorsDecimal,
+        path: m.C1.C1DecimalLessThan,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1D]);
+}
+
+export async function roleDecimalLessThanValue() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'LessThan',
+        roleType: m.C1.C1AllorsDecimal,
+        value: '1.9',
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B]);
+}
+
+export async function roleDecimalEquals() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Equals',
+        propertyType: m.C1.C1AllorsDecimal,
+        value: '2.2',
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1C, name_c1D]);
+}
+
+export async function roleDoubleBetweenPath() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Between',
+        roleType: m.C1.C1AllorsDouble,
+        paths: [m.C1.C1DoubleBetweenA, m.C1.C1DoubleBetweenB],
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1D]);
+}
+
+export async function roleDoubleBetweenValue() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Between',
+        roleType: m.C1.C1AllorsDouble,
+        values: [2.1, 2.3],
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1C, name_c1D]);
+}
+
+export async function roleDoubleGreaterThanPath() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'GreaterThan',
+        roleType: m.C1.C1AllorsDouble,
+        path: m.C1.C1DoubleGreaterThan,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B, name_c1C]);
+}
+
+export async function roleDoubleGreaterThanValue() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'GreaterThan',
+        roleType: m.C1.C1AllorsDouble,
+        value: 1.5,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1C, name_c1D]);
+}
+
+export async function roleDoubleLessThanPath() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'LessThan',
+        roleType: m.C1.C1AllorsDouble,
+        path: m.C1.C1DoubleLessThan,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1D]);
+}
+
+export async function roleDoubleLessThanValue() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'LessThan',
+        roleType: m.C1.C1AllorsDouble,
+        value: 1.9,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B]);
+}
+
+export async function roleDoubleEquals() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Equals',
+        propertyType: m.C1.C1AllorsDouble,
+        value: 2.2,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1C, name_c1D]);
+}
+
+export async function roleIntegerBetweenPath() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Between',
+        roleType: m.C1.C1AllorsInteger,
+        paths: [m.C1.C1IntegerBetweenA, m.C1.C1IntegerBetweenB],
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1C, name_c1D]);
+}
+
+export async function roleIntegerBetweenValue() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Between',
+        roleType: m.C1.C1AllorsInteger,
+        values: [1, 2],
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B, name_c1C, name_c1D]);
+}
+
+export async function roleIntegerGreaterThanPath() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'GreaterThan',
+        roleType: m.C1.C1AllorsInteger,
+        path: m.C1.C1IntegerGreaterThan,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B]);
+}
+
+export async function roleIntegerGreaterThanValue() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'GreaterThan',
+        roleType: m.C1.C1AllorsInteger,
+        value: 1,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1C, name_c1D]);
+}
+
+export async function roleIntegerLessThanPath() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'LessThan',
+        roleType: m.C1.C1AllorsInteger,
+        path: m.C1.C1IntegerLessThan,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1D]);
+}
+
+export async function roleIntegerLessThanValue() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'LessThan',
+        roleType: m.C1.C1AllorsInteger,
+        value: 2,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B]);
+}
+
+export async function roleIntegerEquals() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Equals',
+        propertyType: m.C1.C1AllorsInteger,
+        value: 2,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1C, name_c1D]);
+}
+
+export async function roleIntegerExist() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Exists',
+        propertyType: m.C1.C1AllorsInteger,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B, name_c1C, name_c1D]);
+}
+
+export async function roleStringEqualsPath() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Equals',
+        propertyType: m.C1.C1AllorsString,
+        path: m.C1.C1AllorsStringEquals,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1C]);
+}
+
+export async function roleStringEqualsValue() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Equals',
+        propertyType: m.C1.C1AllorsString,
+        value: 'ᴀbra',
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B]);
+}
+
+export async function roleStringLike() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Like',
+        roleType: m.C1.C1AllorsString,
+        value: 'ᴀ%',
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B, name_c1C, name_c1D]);
+}
+
+export async function roleUniqueEquals() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Equals',
+        propertyType: m.C1.C1AllorsUnique,
+        value: '8B3C4978-72D3-40BA-B302-114EB331FE04',
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B]);
+}
+
+export async function roleMany2ManyContainedIn() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  //  Empty
+  let pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'ContainedIn',
+        propertyType: m.C1.C1I12Many2Manies,
+        extent: {
+          kind: 'Filter',
+          objectType: m.I12,
+          predicate: {
+            kind: 'Equals',
+            propertyType: m.I12.I12AllorsString,
+            value: 'Nothing here!',
+          },
+        },
+      },
+    },
+  };
+
+  let result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(0);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  //  Full
+  pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'ContainedIn',
+        propertyType: m.C1.C1I12Many2Manies,
+        extent: {
+          kind: 'Filter',
+          objectType: m.I12,
+        },
+      },
+    },
+  };
+
+  result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  let c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B, name_c1C, name_c1D]);
+
+  //  Filtered
+  pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'ContainedIn',
+        propertyType: m.C1.C1I12Many2Manies,
+        extent: {
+          kind: 'Filter',
+          objectType: m.I12,
+          predicate: {
+            kind: 'Equals',
+            propertyType: m.I12.I12AllorsString,
+            value: 'ᴀbra',
+          },
+        },
+      },
+    },
+  };
+
+  result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B, name_c1C, name_c1D]);
+}
+
+export async function roleMany2ManyContains() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const c2c = await fixture.pullC2(session, name_c2C);
+
+  //  Empty
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Contains',
+        propertyType: m.C1.C1C2Many2Manies,
+        object: c2c,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1C, name_c1D]);
+}
+
+export async function roleOne2ManyContainedIn() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'ContainedIn',
+        propertyType: m.C1.C1I12One2Manies,
+        extent: {
+          kind: 'Filter',
+          objectType: m.I12,
+          predicate: {
+            kind: 'Equals',
+            propertyType: m.I12.I12AllorsString,
+            value: 'ᴀbra',
+          },
+        },
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B]);
+}
+
+export async function roleOne2ManyContains() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const c2d = await fixture.pullC2(session, name_c2D);
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Contains',
+        propertyType: m.C1.C1C2One2Manies,
+        object: c2d,
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1C]);
+}
+
+export async function roleMany2OneContainedIn() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'ContainedIn',
+        propertyType: m.C1.C1I12Many2One,
+        extent: {
+          kind: 'Filter',
+          objectType: m.I12,
+          predicate: {
+            kind: 'Equals',
+            propertyType: m.I12.I12AllorsString,
+            value: 'ᴀbra',
+          },
+        },
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B]);
+}
+
+export async function roleOne2OneContainedIn() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'ContainedIn',
+        propertyType: m.C1.C1I12One2One,
+        extent: {
+          kind: 'Filter',
+          objectType: m.I12,
+          predicate: {
+            kind: 'Equals',
+            propertyType: m.I12.I12AllorsString,
+            value: 'ᴀbra',
+          },
+        },
+      },
+    },
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection(m.C1);
+
+  expect(c1s).toEqualObjects([name_c1B, name_c1C]);
+}
+
+export async function withResultName() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Equals',
+        propertyType: m.C1.C1AllorsInteger,
+        value: 2,
+      },
+    },
+    results: [
+      {
+        name: 'IetsAnders',
+      },
+    ],
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection('IetsAnders');
+
+  expect(c1s).toEqualObjects([name_c1C, name_c1D]);
+}
+
+export async function pullWithObjectId() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const c1a_1 = await fixture.pullC1(session, name_c1A);
+
+  const pull: Pull = {
+    objectId: c1a_1.id,
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(0);
+  expect(result.objects.size).toBe(1);
+  expect(result.values.size).toBe(0);
+
+  const c1a_2 = result.object(m.C1);
+
+  expect([c1a_2]).toEqualObjects([name_c1A]);
 }

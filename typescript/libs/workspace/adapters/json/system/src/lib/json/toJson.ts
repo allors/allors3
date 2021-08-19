@@ -184,6 +184,15 @@ export function predicateToJson(from: DataPredicate): Predicate {
         p: from.parameter,
       };
 
+    case 'Like':
+      return {
+        k: PredicateKind[from.kind],
+        d: from.dependencies,
+        r: roleTypeToJson(from.roleType),
+        v: unitToJson(from.value),
+        p: from.parameter,
+      };
+
     case 'Not':
       return {
         k: PredicateKind[from.kind],
