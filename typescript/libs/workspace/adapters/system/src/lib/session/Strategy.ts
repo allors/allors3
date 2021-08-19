@@ -3,7 +3,7 @@ import { DatabaseOriginState } from './originstate/DatabaseOriginState';
 import { WorkspaceOriginState } from './originstate/WorkspaceOriginState';
 import { isNewId, Session } from './Session';
 import { importFrom, enumerate, IRange, has } from '../collections/Range';
-import { AssociationType, Class, Composite, MethodType, Origin, RoleType } from '@allors/workspace/meta/system';
+import { AssociationType, Class, Composite, MethodType, Origin, RoleType, UnitTags } from '@allors/workspace/meta/system';
 import { WorkspaceInitialVersion } from '../Version';
 import { frozenEmptyArray } from '../collections/frozenEmptyArray';
 
@@ -372,7 +372,32 @@ export abstract class Strategy implements IStrategy {
   }
 
   assertUnit(roleType: RoleType, value: unknown) {
-    // TODO:
+    let error = false;
+
+    switch (roleType.objectType.tag) {
+      case UnitTags.Binary:
+      case UnitTags.Decimal:
+      case UnitTags.String:
+      case UnitTags.Unique:
+        error = typeof value !== 'string';
+        break;
+      case UnitTags.Boolean:
+        error = typeof value !== 'boolean';
+        break;
+      case UnitTags.DateTime:
+        error = !(value instanceof Date);
+        break;
+      case UnitTags.Float:
+        error = isNaN(value as number);
+        break;
+      case UnitTags.Integer:
+        error = !Number.isInteger(value as number);
+        break;
+    }
+
+    if (error) {
+      throw new Error(`value is not a ${roleType.objectType.singularName}`);
+    }
   }
 
   assertComposite(value: IObject) {

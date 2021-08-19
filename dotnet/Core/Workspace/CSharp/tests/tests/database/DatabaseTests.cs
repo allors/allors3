@@ -10,6 +10,7 @@ namespace Tests.Workspace.OriginDatabase
     using Xunit;
     using Allors.Workspace.Data;
     using System;
+    using System.Linq;
 
     public abstract class DatabaseTests : Test
     {
@@ -47,6 +48,32 @@ namespace Tests.Workspace.OriginDatabase
             }
 
             Assert.True(hasErrors);
+        }
+
+        [Fact]
+        public async void Unit()
+        {
+            await this.Login("administrator");
+
+            var pull = new[]
+            {
+                new Pull
+                {
+                    Extent = new Filter(this.M.C1)
+                }
+            };
+
+            var session = this.Workspace.CreateSession();
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+
+            var c1s = result.GetCollection<C1>();
+
+            var c1A = c1s.First(v => v.Name.Equals("c1A"));
+            var c1B = c1s.First(v => v.Name.Equals("c1B"));
+            var c1C = c1s.First(v => v.Name.Equals("c1C"));
+            var c1D = c1s.First(v => v.Name.Equals("c1D"));
+
+            Assert.Equal("ᴀbra", c1B.C1AllorsString);
         }
     }
 }

@@ -25,6 +25,22 @@ namespace Tests.Workspace.OriginWorkspace
         }
 
         [Fact]
+        public async void Instantiate()
+        {
+            await this.Login("administrator");
+
+            var session1 = this.Workspace.CreateSession();
+
+            var workspaceOrganisation1 = session1.Create<WorkspaceOrganisation>();
+
+            var session2 = this.Workspace.CreateSession();
+
+            var workspaceOrganisation2 = session2.Instantiate(workspaceOrganisation1);
+
+            Assert.NotNull(workspaceOrganisation1);
+        }
+
+        [Fact]
         public async void PullingAWorkspaceObjectShouldThrowError()
         {
             var session1 = this.Workspace.CreateSession();

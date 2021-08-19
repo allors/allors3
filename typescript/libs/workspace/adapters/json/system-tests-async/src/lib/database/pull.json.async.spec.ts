@@ -63,6 +63,7 @@ import {
   roleOne2OneContainedIn,
   withResultName,
   pullWithObjectId,
+  pullWithInclude,
 } from '@allors/workspace/adapters/system-tests';
 import { Fixture } from '../Fixture';
 
@@ -326,4 +327,7 @@ test('pullWithObjectId', async () => {
   await pullWithObjectId();
 });
 
+test('pullWithInclude', async () => {
+  await pullWithInclude();
+});
 

@@ -2102,3 +2102,43 @@ export async function pullWithObjectId() {
 
   expect([c1a_2]).toEqualObjects([name_c1A]);
 }
+
+export async function pullWithInclude() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+    },
+    results: [
+      {
+        select: {
+          include: [
+            {
+              kind: 'Node',
+              propertyType: m.C1.C1C2One2One,
+            },
+          ],
+        },
+      },
+    ],
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+
+  expect(result.collections.size).toBe(1);
+  expect(result.objects.size).toBe(0);
+  expect(result.values.size).toBe(0);
+
+  const c1s = result.collection<C1>(m.C1);
+
+  const c1b = c1s.find((v) => v.Name === name_c1B);
+  const c1c = c1s.find((v) => v.Name === name_c1C);
+  const c1d = c1s.find((v) => v.Name === name_c1D);
+
+  expect(c1b.C1C2One2One.Name).toBe(name_c2B);
+  expect(c1c.C1C2One2One.Name).toBe(name_c2C);
+  expect(c1d.C1C2One2One.Name).toBe(name_c2D);
+}
