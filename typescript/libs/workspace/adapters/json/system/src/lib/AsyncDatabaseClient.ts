@@ -38,7 +38,9 @@ export class AsyncDatabaseClient implements IAsyncDatabaseClient {
     return new InvokeResult(session, invokeResponse);
   }
 
-  async pullAsync(session: ISession, pulls: Pull[]): Promise<IPullResult> {
+  async pullAsync(session: ISession, pullOrPulls: Pull | Pull[]): Promise<IPullResult> {
+    const pulls = Array.isArray(pullOrPulls) ? pullOrPulls : [pullOrPulls];
+
     for (const pull of pulls) {
       if (pull.objectId < 0 || pull.object?.id < 0) {
         throw new Error('Id is not in the database');

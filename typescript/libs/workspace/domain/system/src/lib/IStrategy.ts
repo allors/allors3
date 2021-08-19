@@ -2,7 +2,6 @@ import { AssociationType, Class, MethodType, RoleType } from '@allors/workspace/
 import { IDiff } from './diff/IDiff';
 import { IObject } from './IObject';
 import { ISession } from './ISession';
-import { Method } from './Method';
 import { IUnit } from './Types';
 
 export interface IStrategy {

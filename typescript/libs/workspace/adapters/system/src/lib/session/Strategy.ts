@@ -83,11 +83,11 @@ export abstract class Strategy implements IStrategy {
   getUnitRole(roleType: RoleType): IUnit {
     switch (roleType.origin) {
       case Origin.Session:
-        return this.session.sessionOriginState.getUnitRole(this.id, roleType);
+        return this.session.sessionOriginState.getUnitRole(this.id, roleType) ?? null;
       case Origin.Workspace:
-        return this.WorkspaceOriginState?.getUnitRole(roleType);
+        return this.WorkspaceOriginState?.getUnitRole(roleType) ?? null;
       case Origin.Database:
-        return this.canRead(roleType) ? this.DatabaseOriginState?.getUnitRole(roleType) : null;
+        return (this.canRead(roleType) ? this.DatabaseOriginState?.getUnitRole(roleType) : null) ?? null;
       default:
         throw new Error('Unknown origin');
     }

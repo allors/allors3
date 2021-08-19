@@ -108,7 +108,7 @@ export abstract class Session implements ISession {
     }
 
     if (Array.isArray(args)) {
-      return args.map((v) => this.getStrategy(v)).filter((v) => v != null) as unknown as T[];
+      return args.map((v) => this.getStrategy(v)?.object).filter((v) => v != null) as unknown as T[];
     }
 
     if (args['classes']) {

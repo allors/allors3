@@ -18,7 +18,7 @@ namespace Tests.Workspace
         protected ResetTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public async void ResetTest()
+        public async void ResetUnitWithoutPush()
         {
             await this.Login("administrator");
 
@@ -30,7 +30,30 @@ namespace Tests.Workspace
 
             c1a.C1AllorsString = "X";
 
-            Assert.Equal("X", c1a.C1AllorsString);
+            await this.AsyncDatabaseClient.PushAsync(session);
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var c2a = result.GetCollection<C1>()[0];
+
+            var c2aString = c2a.C1AllorsString;
+
+            c1a.Strategy.Reset();
+
+            Assert.Equal(c2aString, c1a.C1AllorsString);
+
+        }
+
+        [Fact]
+        public async void ResetUnitAfterPushTest()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var c1a = result.GetCollection<C1>()[0];
+
+            c1a.C1AllorsString = "X";
 
             await this.AsyncDatabaseClient.PushAsync(session);
 
@@ -42,7 +65,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetwithMultipleChanges()
+        public async void ResetUnitAfterDoublePush()
         {
             await this.Login("administrator");
 
@@ -54,19 +77,13 @@ namespace Tests.Workspace
 
             c1a.C1AllorsString = "X";
 
-            Assert.Equal("X", c1a.C1AllorsString);
-
             await this.AsyncDatabaseClient.PushAsync(session);
             result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c2a = result.GetCollection<C1>()[0];
 
-            Assert.Equal("X", c1a.C1AllorsString);
-
             c2a.C1AllorsString = "Y";
 
             await this.AsyncDatabaseClient.PushAsync(session);
-
-            Assert.Equal("Y", c2a.C1AllorsString);
 
             c1a.Strategy.Reset();
 
@@ -74,7 +91,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetWithOne2One()
+        public async void ResetOne2OneWithoutPush()
         {
             await this.Login("administrator");
 
@@ -87,8 +104,25 @@ namespace Tests.Workspace
 
             c1a.C1C1One2One = c1b;
 
-            Assert.Equal(c1b, c1a.C1C1One2One);
-            Assert.Equal(c1a, c1b.C1WhereC1C1One2One);
+            c1a.Strategy.Reset();
+
+            Assert.Null(c1a.C1C1One2One);
+            Assert.Null(c1b.C1WhereC1C1One2One);
+        }
+
+        [Fact]
+        public async void ResetOne2OneAfterPush()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var c1a = result.GetCollection<C1>()[0];
+            var c1b = session.Create<C1>();
+
+            c1a.C1C1One2One = c1b;
 
             await this.AsyncDatabaseClient.PushAsync(session);
 
@@ -99,7 +133,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetWithOne2OneRemove()
+        public async void ResetOne2OneRemoveAfterPush()
         {
             await this.Login("administrator");
 
@@ -130,7 +164,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetWithMany2One()
+        public async void ResetMany2OneWithoutPush()
         {
             await this.Login("administrator");
 
@@ -143,8 +177,25 @@ namespace Tests.Workspace
 
             c1a.C1C1Many2One = c1b;
 
-            Assert.Equal(c1b, c1a.C1C1Many2One);
-            Assert.Contains(c1a, c1b.C1sWhereC1C1Many2One);
+            c1a.Strategy.Reset();
+
+            Assert.Null(c1a.C1C1Many2One);
+            Assert.Empty(c1b.C1sWhereC1C1Many2One);
+        }
+
+        [Fact]
+        public async void ResetMany2OneAfterPush()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var c1a = result.GetCollection<C1>()[0];
+            var c1b = session.Create<C1>();
+
+            c1a.C1C1Many2One = c1b;
 
             await this.AsyncDatabaseClient.PushAsync(session);
 
@@ -155,7 +206,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetWithMany2OneRemove()
+        public async void ResetMany2OneRemoveAfterPush()
         {
             await this.Login("administrator");
 
@@ -186,7 +237,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetWithOne2Many()
+        public async void ResetOne2ManyWithoutPush()
         {
             await this.Login("administrator");
 
@@ -199,8 +250,25 @@ namespace Tests.Workspace
 
             c1a.AddC1C1One2Many(c1b);
 
-            Assert.Contains(c1b, c1a.C1C1One2Manies);
-            Assert.Equal(c1a, c1b.C1WhereC1C1One2Many);
+            c1a.Strategy.Reset();
+
+            Assert.Empty(c1a.C1C1One2Manies);
+            Assert.Null(c1b.C1WhereC1C1One2Many);
+        }
+
+        [Fact]
+        public async void ResetOne2ManyAfterPush()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var c1a = result.GetCollection<C1>()[0];
+            var c1b = session.Create<C1>();
+
+            c1a.AddC1C1One2Many(c1b);
 
             await this.AsyncDatabaseClient.PushAsync(session);
 
@@ -211,7 +279,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetWithOne2ManyRemove()
+        public async void ResetOne2ManyRemoveAfterPush()
         {
             await this.Login("administrator");
 
@@ -221,44 +289,27 @@ namespace Tests.Workspace
             var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
             var c1x = session.Create<C1>();
-            c1x.Name = "c1x";
 
             await this.AsyncDatabaseClient.PushAsync(session);
             result = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = c1x });
-            Assert.False(result.HasErrors);
-            var c1x_2 = (C1)result.Objects.Values.First();
 
-            c1a.AddC1C1One2Many(c1x_2);
+            c1a.AddC1C1One2Many(c1x);
 
-            Assert.Contains(c1x_2, c1a.C1C1One2Manies);
-            Assert.Equal(c1a, c1x_2.C1WhereC1C1One2Many);
-
-            var pushResult = await this.AsyncDatabaseClient.PushAsync(session);
-            Assert.False(pushResult.HasErrors);
-
-            Assert.Contains(c1x_2, c1a.C1C1One2Manies);
-
-            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
-            Assert.False(result.HasErrors);
+            await this.AsyncDatabaseClient.PushAsync(session);
+            await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             c1a = result.GetCollection<C1>()[0];
 
-            Assert.Contains(c1x_2, c1a.C1C1One2Manies);
-            Assert.Equal(c1a, c1x_2.C1WhereC1C1One2Many);
-
-            c1a.RemoveC1C1One2Many(c1x_2);
-
-            Assert.Empty(c1a.C1C1One2Manies);
-            Assert.Null(c1x_2.C1WhereC1C1One2Many);
+            c1a.RemoveC1C1One2Many(c1x);
 
             c1a.Strategy.Reset();
 
-            Assert.Contains(c1x_2, c1a.C1C1One2Manies);
-            Assert.Equal(c1a, c1x_2.C1WhereC1C1One2Many);
+            Assert.Contains(c1x, c1a.C1C1One2Manies);
+            Assert.Equal(c1a, c1x.C1WhereC1C1One2Many);
         }
 
         [Fact]
-        public async void ResetWithMany2Many()
+        public async void ResetMany2ManyWithoutPush()
         {
             await this.Login("administrator");
 
@@ -271,8 +322,25 @@ namespace Tests.Workspace
 
             c1a.AddC1C1Many2Many(c1b);
 
-            Assert.Contains(c1b, c1a.C1C1Many2Manies);
-            Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+            c1a.Strategy.Reset();
+
+            Assert.Empty(c1a.C1C1Many2Manies);
+            Assert.Empty(c1b.C1sWhereC1C1Many2Many);
+        }
+
+        [Fact]
+        public async void ResetMany2ManyAfterPush()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var c1a = result.GetCollection<C1>()[0];
+            var c1b = session.Create<C1>();
+
+            c1a.AddC1C1Many2Many(c1b);
 
             await this.AsyncDatabaseClient.PushAsync(session);
 
@@ -283,7 +351,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetWithMany2ManyRemove()
+        public async void ResetMany2ManyRemoveAfterPush()
         {
             await this.Login("administrator");
 
@@ -316,31 +384,6 @@ namespace Tests.Workspace
 
             Assert.Contains(c1b, c1a.C1C1Many2Manies);
             Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
-        }
-
-        [Fact]
-        public async void ResetWithoutPush()
-        {
-            await this.Login("administrator");
-
-            var session = this.Workspace.CreateSession();
-
-            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
-            var c1a = result.GetCollection<C1>()[0];
-
-            c1a.C1AllorsString = "X";
-
-            await this.AsyncDatabaseClient.PushAsync(session);
-            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
-            var c2a = result.GetCollection<C1>()[0];
-
-            var c2aString = c2a.C1AllorsString;
-
-            c1a.Strategy.Reset();
-
-            Assert.Equal(c2aString, c1a.C1AllorsString);
-
         }
     }
 }

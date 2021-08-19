@@ -13,7 +13,7 @@ export interface IAsyncDatabaseClient {
 
   callAsync(session: ISession, procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult>;
 
-  pullAsync(session: ISession, pulls: Pull[]): Promise<IPullResult>;
+  pullAsync(session: ISession, pulls: Pull | Pull[]): Promise<IPullResult>;
 
   pushAsync(session: ISession): Promise<IPushResult>;
 }
