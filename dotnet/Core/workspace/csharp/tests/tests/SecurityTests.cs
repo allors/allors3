@@ -6,6 +6,7 @@
 namespace Tests.Workspace
 {
     using System.Threading.Tasks;
+    using Allors;
     using Allors.Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
@@ -15,7 +16,6 @@ namespace Tests.Workspace
     {
         protected SecurityTests(Fixture fixture) : base(fixture)
         {
-
         }
 
         public override async Task InitializeAsync()
@@ -39,12 +39,14 @@ namespace Tests.Workspace
             var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
             var c1s = result.GetCollection<C1>("C1s");
-            Assert.Equal(4, c1s.Length);
-
-            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
-
-            var c1s2 = result.GetCollection<C1>("C1s");
-            Assert.Equal(4, c1s2.Length);
+            foreach (var c1 in result.GetCollection<C1>())
+            {
+                foreach (var roleType in this.M.C1.DatabaseOriginRoleTypes)
+                {
+                    Assert.True(c1.Strategy.CanRead(roleType));
+                    Assert.True(c1.Strategy.CanWrite(roleType));
+                }
+            }
         }
 
         [Fact]
@@ -61,24 +63,19 @@ namespace Tests.Workspace
 
             var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
-            foreach (var c1 in result.GetCollection<C1>("C1s"))
+            foreach (var c1 in result.GetCollection<C1>())
             {
                 foreach (var roleType in this.M.C1.DatabaseOriginRoleTypes)
                 {
-                    Assert.False(c1.Strategy.ExistRole(roleType));
-                }
-
-                foreach (var associationType in this.M.C1.AssociationTypes)
-                {
-                    if (associationType.IsOne)
+                    if (roleType.Origin == Origin.Database)
                     {
-                        var association = c1.Strategy.GetCompositeAssociation<IObject>(associationType);
-                        Assert.Null(association);
+                        Assert.False(c1.Strategy.CanRead(roleType));
+                        Assert.False(c1.Strategy.CanWrite(roleType));
                     }
                     else
                     {
-                        var association = c1.Strategy.GetCompositesAssociation<IObject>(associationType);
-                        Assert.Empty(association);
+                        Assert.True(c1.Strategy.CanRead(roleType));
+                        Assert.True(c1.Strategy.CanWrite(roleType));
                     }
                 }
             }
@@ -98,39 +95,47 @@ namespace Tests.Workspace
 
             var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
 
-            foreach (var c1 in result.GetCollection<C1>("C1s"))
+            foreach (var c1 in result.GetCollection<C1>())
             {
                 foreach (var roleType in this.M.C1.DatabaseOriginRoleTypes)
                 {
-                    Assert.False(c1.Strategy.ExistRole(roleType));
-                }
-
-                foreach (var associationType in this.M.C1.AssociationTypes)
-                {
-                    if (associationType.IsOne)
+                    if (roleType.Origin == Origin.Database)
                     {
-                        var association = c1.Strategy.GetCompositeAssociation<IObject>(associationType);
-                        Assert.Null(association);
+                        Assert.False(c1.Strategy.CanRead(roleType));
+                        Assert.False(c1.Strategy.CanWrite(roleType));
                     }
                     else
                     {
-                        var association = c1.Strategy.GetCompositesAssociation<IObject>(associationType);
-                        Assert.Empty(association);
+                        Assert.True(c1.Strategy.CanRead(roleType));
+                        Assert.True(c1.Strategy.CanWrite(roleType));
                     }
                 }
             }
         }
 
         [Fact]
-        public async void CanWriteDeniedPermissions()
+        public async void DeniedPermissions()
         {
             var session = this.Workspace.CreateSession();
 
             var result = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Extent = new Filter(this.M.Denied) });
-            var denied = result.GetCollection<Denied>()[0];
 
-            Assert.True(denied.CanReadDefaultWorkspaceProperty);
-            Assert.False(denied.CanWriteDefaultWorkspaceProperty);
+            foreach (var denied in result.GetCollection<Denied>())
+            {
+                foreach (var roleType in this.M.C1.DatabaseOriginRoleTypes)
+                {
+                    if (roleType.Origin == Origin.Database)
+                    {
+                        Assert.False(denied.Strategy.CanRead(roleType));
+                        Assert.False(denied.Strategy.CanWrite(roleType));
+                    }
+                    else
+                    {
+                        Assert.True(denied.Strategy.CanRead(roleType));
+                        Assert.True(denied.Strategy.CanWrite(roleType));
+                    }
+                }
+            }
         }
     }
 }

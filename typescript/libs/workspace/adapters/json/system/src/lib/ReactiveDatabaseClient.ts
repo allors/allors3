@@ -40,7 +40,9 @@ export class ReactiveDatabaseClient implements IReactiveDatabaseClient {
     return this.client.invoke(invokeRequest).pipe(switchMap((invokeResponse) => of(new InvokeResult(session, invokeResponse))));
   }
 
-  pullReactive(session: ISession, pulls: Pull[]): Observable<IPullResult> {
+  pullReactive(session: ISession,  pullOrPulls: Pull | Pull[]): Observable<IPullResult> {
+    const pulls = Array.isArray(pullOrPulls) ? pullOrPulls : [pullOrPulls];
+    
     for (const pull of pulls) {
       if (pull.objectId < 0 || pull.object?.id < 0) {
         throw new Error('Id is not in the database');

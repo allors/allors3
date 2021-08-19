@@ -291,7 +291,7 @@ namespace Tests.Workspace
             var c1x = session.Create<C1>();
 
             await this.AsyncDatabaseClient.PushAsync(session);
-            result = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = c1x });
+            result = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Extent = new Filter(M.C1) });
 
             c1a.AddC1C1One2Many(c1x);
 
