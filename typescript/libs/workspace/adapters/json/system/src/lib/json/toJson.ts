@@ -57,7 +57,7 @@ export function pullToJson(from: DataPull): Pull {
     er: extentRefToJson(from.extentRef),
     e: extentToJson(from.extent),
     t: objectTypeToJson(from.objectType),
-    o: objectToJson(from.object),
+    o: from.objectId ?? objectToJson(from.object),
     r: resultsToJson(from.results),
     a: argumentsToJson(from.arguments),
   };
