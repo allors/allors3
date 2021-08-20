@@ -1,3 +1,4 @@
+export * from './lib/runtime/database/database/manyToMany.spec';
 export * from './lib/runtime/database/lifecycle.spec';
 export * from './lib/runtime/database/unit.spec';
 

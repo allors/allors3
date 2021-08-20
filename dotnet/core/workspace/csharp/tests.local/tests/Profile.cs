@@ -41,7 +41,7 @@ namespace Tests.Workspace.Local
 
         public IWorkspace Workspace { get; private set; }
 
-        public M M => ((IWorkspaceServices)this.Workspace.Services).Get<M>();
+        public M M => this.Workspace.Services.Get<M>();
 
         public Profile(Fixture fixture)
         {

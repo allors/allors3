@@ -18,7 +18,14 @@ export class Fixture {
   m: M;
 
   client: IAsyncDatabaseClient;
-  constructor(public asyncClient: IAsyncDatabaseClient, reactiveClient: IReactiveDatabaseClient, public workspace: IWorkspace, public login: (login: string) => Promise<boolean>) {
+  constructor(
+    public asyncClient: IAsyncDatabaseClient,
+    reactiveClient: IReactiveDatabaseClient,
+    public workspace: IWorkspace,
+    public login: (login: string) => Promise<boolean>,
+    public createWorkspace: () => IWorkspace = null,
+    public createExclusiveWorkspace: () => IWorkspace = null
+  ) {
     this.metaPopulation = workspace.configuration.metaPopulation;
     this.m = this.metaPopulation as MetaPopulation as M;
 
