@@ -31,14 +31,14 @@ export async function testUnitSamplesWithNulls() {
 
   const unitSample = result.object<UnitSample>(m.UnitSample);
 
-  expect(unitSample.AllorsBinary).toBeUndefined();
-  expect(unitSample.AllorsBoolean).toBeUndefined();
-  expect(unitSample.AllorsDateTime).toBeUndefined();
-  expect(unitSample.AllorsDecimal).toBeUndefined();
-  expect(unitSample.AllorsDouble).toBeUndefined();
-  expect(unitSample.AllorsInteger).toBeUndefined();
-  expect(unitSample.AllorsString).toBeUndefined();
-  expect(unitSample.AllorsUnique).toBeUndefined();
+  expect(unitSample.AllorsBinary).toBeNull();
+  expect(unitSample.AllorsBoolean).toBeNull();
+  expect(unitSample.AllorsDateTime).toBeNull();
+  expect(unitSample.AllorsDecimal).toBeNull();
+  expect(unitSample.AllorsDouble).toBeNull();
+  expect(unitSample.AllorsInteger).toBeNull();
+  expect(unitSample.AllorsString).toBeNull();
+  expect(unitSample.AllorsUnique).toBeNull();
 }
 
 export async function testUnitSamplesWithValues() {

@@ -35,7 +35,7 @@ export async function sessionFullName() {
   const result = await client.pullAsync(session, [pull]);
   const jane = result.collection<Person>('People')[0];
 
-  expect(jane.SessionFullName).toBeUndefined();
+  expect(jane.SessionFullName).toBeNull();
 
   session.services.derive();
 
