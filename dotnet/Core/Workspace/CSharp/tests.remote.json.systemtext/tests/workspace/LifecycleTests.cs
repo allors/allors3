@@ -7,9 +7,9 @@ namespace Tests.Workspace.OriginWorkspace.Remote
 {
     using Xunit;
 
-    public class WorkspaceTests : OriginWorkspace.WorkspaceTests, IClassFixture<Fixture>
+    public class LifecycleTests : OriginWorkspace.LifecycleTests, IClassFixture<Fixture>
     {
-        public WorkspaceTests(Fixture fixture) : base(fixture) => this.Profile = new Workspace.Remote.Profile();
+        public LifecycleTests(Fixture fixture) : base(fixture) => this.Profile = new Workspace.Remote.Profile();
 
         public override IProfile Profile { get; }
     }

@@ -32,13 +32,13 @@ export class PrototypeObjectFactory implements IObjectFactory {
       };
 
       objectType.roleTypes.forEach((roleType) => {
-        Object.defineProperty(prototype, 'CanRead' + roleType.name, {
+        Object.defineProperty(prototype, 'canRead' + roleType.name, {
           get(this: ObjectBase) {
             return this.strategy.canRead(roleType);
           },
         });
 
-        Object.defineProperty(prototype, 'CanWrite' + roleType.name, {
+        Object.defineProperty(prototype, 'canWrite' + roleType.name, {
           get(this: ObjectBase) {
             return this.strategy.canWrite(roleType);
           },
@@ -66,11 +66,11 @@ export class PrototypeObjectFactory implements IObjectFactory {
           });
 
           if (roleType.isMany) {
-            prototype['Add' + roleType.singularName] = function (this: ObjectBase, value: ObjectBase) {
+            prototype['add' + roleType.singularName] = function (this: ObjectBase, value: ObjectBase) {
               return this.strategy.addCompositesRole(roleType, value);
             };
 
-            prototype['Remove' + roleType.singularName] = function (this: ObjectBase, value: ObjectBase) {
+            prototype['remove' + roleType.singularName] = function (this: ObjectBase, value: ObjectBase) {
               return this.strategy.removeCompositesRole(roleType, value);
             };
           }
@@ -94,7 +94,7 @@ export class PrototypeObjectFactory implements IObjectFactory {
       });
 
       objectType.methodTypes.forEach((methodType) => {
-        Object.defineProperty(prototype, 'CanExecute' + methodType.name, {
+        Object.defineProperty(prototype, 'canExecute' + methodType.name, {
           get(this: ObjectBase) {
             return this.strategy.canExecute(methodType);
           },

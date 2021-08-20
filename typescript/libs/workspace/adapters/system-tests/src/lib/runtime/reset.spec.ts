@@ -171,7 +171,7 @@ export async function resetOne2ManyWithoutPush() {
   const c1a = await fixture.pullC1(session, name_c1A);
   const c1b = await fixture.pullC1(session, name_c1B);
 
-  c1a.AddC1C1One2Many(c1b);
+  c1a.addC1C1One2Many(c1b);
 
   c1a.strategy.reset();
 
@@ -185,7 +185,7 @@ export async function resetOne2ManyAfterPush() {
   const c1a = await fixture.pullC1(session, name_c1A);
   const c1b = await fixture.pullC1(session, name_c1B);
 
-  c1a.AddC1C1One2Many(c1b);
+  c1a.addC1C1One2Many(c1b);
 
   await client.pushAsync(session);
 
@@ -201,12 +201,12 @@ export async function resetOne2ManyRemoveAfterPush() {
   const c1a = await fixture.pullC1(session, name_c1A);
   const c1b = await fixture.pullC1(session, name_c1B);
 
-  c1a.AddC1C1One2Many(c1b);
+  c1a.addC1C1One2Many(c1b);
 
   await client.pushAsync(session);
   await client.pullAsync(session, { object: c1a });
 
-  c1a.RemoveC1C1One2Many(c1b);
+  c1a.removeC1C1One2Many(c1b);
 
   await client.pushAsync(session);
 
@@ -223,7 +223,7 @@ export async function resetMany2ManyWithoutPush() {
   const c1a = await fixture.pullC1(session, name_c1A);
   const c1b = await fixture.pullC1(session, name_c1B);
 
-  c1a.AddC1C1Many2Many(c1b);
+  c1a.addC1C1Many2Many(c1b);
 
   c1a.strategy.reset();
 
@@ -237,7 +237,7 @@ export async function resetMany2ManyAfterPush() {
   const c1a = await fixture.pullC1(session, name_c1A);
   const c1b = await fixture.pullC1(session, name_c1B);
 
-  c1a.AddC1C1Many2Many(c1b);
+  c1a.addC1C1Many2Many(c1b);
 
   await client.pushAsync(session);
 
@@ -253,12 +253,12 @@ export async function resetMany2ManyRemoveAfterPush() {
   const c1a = await fixture.pullC1(session, name_c1A);
   const c1b = await fixture.pullC1(session, name_c1B);
 
-  c1a.AddC1C1Many2Many(c1b);
+  c1a.addC1C1Many2Many(c1b);
 
   await client.pushAsync(session);
   await client.pullAsync(session, { object: c1a });
 
-  c1a.RemoveC1C1Many2Many(c1b);
+  c1a.removeC1C1Many2Many(c1b);
 
   await client.pushAsync(session);
 

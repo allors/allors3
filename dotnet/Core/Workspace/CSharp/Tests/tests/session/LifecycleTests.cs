@@ -11,9 +11,9 @@ namespace Tests.Workspace.OriginSession
     using System;
     using Allors.Workspace.Data;
 
-    public abstract class SessionTests : Test
+    public abstract class LifecycleTests : Test
     {
-        protected SessionTests(Fixture fixture) : base(fixture)
+        protected LifecycleTests(Fixture fixture) : base(fixture)
         {
 
         }
@@ -25,29 +25,27 @@ namespace Tests.Workspace.OriginSession
         }
 
         [Fact]
-        public async void Instantiate()
+        public async void InstantiateOtherSession()
         {
             await this.Login("administrator");
 
             var session1 = this.Workspace.CreateSession();
 
-            var sessionOrganisation1 = session1.Create<SessionOrganisation>();
+            var objectSession1 = session1.Create<SessionC1>();
 
             var session2 = this.Workspace.CreateSession();
 
-            var sessionOrganisation2 = session2.Instantiate(sessionOrganisation1);
+            var objectSession2 = session2.Instantiate(objectSession1);
 
-            Assert.Null(sessionOrganisation2);
+            Assert.Null(objectSession2);
         }
 
-
         [Fact]
-        public async void PullingASessionObjectShouldThrowError()
+        public async void PullOtherSessionShouldThrowError()
         {
             var session1 = this.Workspace.CreateSession();
 
-            var c1 = session1.Create<SessionC1>();
-            Assert.NotNull(c1);
+            var objectSession1 = session1.Create<SessionC1>();
 
             await this.AsyncDatabaseClient.PushAsync(session1);
 
@@ -56,7 +54,7 @@ namespace Tests.Workspace.OriginSession
 
             try
             {
-                var result = await this.AsyncDatabaseClient.PullAsync(session2, new Pull { Object = c1 });
+                var result = await this.AsyncDatabaseClient.PullAsync(session2, new Pull { Object = objectSession1 });
                 hasErrors = false;
             }
             catch (ArgumentException)
@@ -73,16 +71,14 @@ namespace Tests.Workspace.OriginSession
             var session1 = this.Workspace.CreateSession();
             var session2 = this.Workspace.CreateSession();
 
-            var c1x = session1.Create<SessionC1>();
-            var c1y = session2.Create<SessionC1>();
-            Assert.NotNull(c1x);
-            Assert.NotNull(c1y);
+            var objectSession1 = session1.Create<SessionC1>();
+            var objectSession2 = session2.Create<SessionC1>();
 
             bool hasErrors;
 
             try
             {
-                c1x.AddSessionC1SessionC1Many2Many(c1y);
+                objectSession1.AddSessionC1SessionC1Many2Many(objectSession2);
                 hasErrors = false;
             }
             catch (Exception)

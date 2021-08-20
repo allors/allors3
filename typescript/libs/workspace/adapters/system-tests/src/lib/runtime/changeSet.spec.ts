@@ -439,7 +439,7 @@ export async function changeSetAfterPushOne2Many() {
   const c1a = result.collection<C1>('C1s')[0];
   const c1b = session.create<C1>(m.C1);
 
-  c1a.AddC1C1One2Many(c1b);
+  c1a.addC1C1One2Many(c1b);
 
   await client.pushAsync(session);
 
@@ -481,7 +481,7 @@ export async function changeSetAfterPushOne2ManyRemove() {
   const c1a = result.collection<C1>('C1s')[0];
   const c1b = session.create<C1>(m.C1);
 
-  c1a.AddC1C1One2Many(c1b);
+  c1a.addC1C1One2Many(c1b);
 
   await client.pushAsync(session);
   await client.pullAsync(session, [pull]);
@@ -520,7 +520,7 @@ export async function changeSetAfterPushMany2Many() {
   const c1a = result.collection<C1>('C1s')[0];
   const c1b = session.create<C1>(m.C1);
 
-  c1a.AddC1C1Many2Many(c1b);
+  c1a.addC1C1Many2Many(c1b);
 
   await client.pushAsync(session);
 
@@ -562,7 +562,7 @@ export async function changeSetAfterPushMany2ManyRemove() {
   const c1a = result.collection<C1>('C1s')[0];
   const c1b = session.create<C1>(m.C1);
 
-  c1a.AddC1C1Many2Many(c1b);
+  c1a.addC1C1Many2Many(c1b);
 
   await client.pushAsync(session);
   await client.pullAsync(session, [pull]);

@@ -8,6 +8,7 @@ import { PushToWorkspaceTracker } from './trackers/PushToWorkspaceTracker';
 import { ChangeSet } from './ChangeSet';
 import { AssociationType, Class, Composite, Origin } from '@allors/workspace/meta/system';
 import { WorkspaceResult } from '../workspace/WorkspaceResult';
+import { ObjectBase } from '../ObjectBase';
 
 export function isNewId(id: number): boolean {
   return id < 0;
@@ -102,9 +103,14 @@ export abstract class Session implements ISession {
   instantiate<T extends IObject>(id: number): T;
   instantiate<T extends IObject>(ids: number[]): T[];
   instantiate<T extends IObject>(objectType: Composite): T[];
+  instantiate<T extends IObject>(obj: T): T[];
   instantiate<T extends IObject>(args: unknown): unknown {
     if (typeof args === 'number') {
-      return this.getStrategy(args)?.object as unknown as T;
+      return this.getStrategy(args)?.object as unknown as T ?? null;
+    }
+
+    if (args instanceof ObjectBase){
+      return this.getStrategy(args.id)?.object as unknown as T ?? null;
     }
 
     if (Array.isArray(args)) {

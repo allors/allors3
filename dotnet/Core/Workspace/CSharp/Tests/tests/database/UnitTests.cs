@@ -9,12 +9,11 @@ namespace Tests.Workspace.OriginDatabase
     using Allors.Workspace.Domain;
     using Xunit;
     using Allors.Workspace.Data;
-    using System;
     using System.Linq;
 
-    public abstract class DatabaseTests : Test
+    public abstract class UnitTests : Test
     {
-        protected DatabaseTests(Fixture fixture) : base(fixture)
+        protected UnitTests(Fixture fixture) : base(fixture)
         {
 
         }
@@ -23,31 +22,6 @@ namespace Tests.Workspace.OriginDatabase
         {
             await base.InitializeAsync();
             await this.Login("administrator");
-        }
-
-        [Fact]
-        public async void PullingANotPushedObjectShouldThrowException()
-        {
-            var session1 = this.Workspace.CreateSession();
-
-            var c1 = session1.Create<C1>();
-            Assert.NotNull(c1);
-
-            var session2 = this.Workspace.CreateSession();
-
-            bool hasErrors;
-
-            try
-            {
-                var result = await this.AsyncDatabaseClient.PullAsync(session2, new Pull { Object = c1 });
-                hasErrors = false;
-            }
-            catch (Exception)
-            {
-                hasErrors = true;
-            }
-
-            Assert.True(hasErrors);
         }
 
         [Fact]

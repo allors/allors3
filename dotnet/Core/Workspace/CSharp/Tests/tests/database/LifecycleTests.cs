@@ -3,17 +3,17 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.OriginWorkspace
+namespace Tests.Workspace.OriginDatabase
 {
     using System.Threading.Tasks;
     using Allors.Workspace.Domain;
     using Xunit;
-    using System;
     using Allors.Workspace.Data;
+    using System;
 
-    public abstract class WorkspaceTests : Test
+    public abstract class LifecycleTests : Test
     {
-        protected WorkspaceTests(Fixture fixture) : base(fixture)
+        protected LifecycleTests(Fixture fixture) : base(fixture)
         {
 
         }
@@ -25,32 +25,38 @@ namespace Tests.Workspace.OriginWorkspace
         }
 
         [Fact]
-        public async void Instantiate()
+        public async void PullSameSessionNotPushedException()
         {
-            await this.Login("administrator");
+            var session = this.Workspace.CreateSession();
 
-            var session1 = this.Workspace.CreateSession();
+            var c1 = session.Create<C1>();
+            Assert.NotNull(c1);
 
-            var workspaceOrganisation1 = session1.Create<WorkspaceOrganisation>();
+            bool hasErrors;
 
-            var session2 = this.Workspace.CreateSession();
+            try
+            {
+                var result = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = c1 });
+                hasErrors = false;
+            }
+            catch (Exception)
+            {
+                hasErrors = true;
+            }
 
-            var workspaceOrganisation2 = session2.Instantiate(workspaceOrganisation1);
-
-            Assert.NotNull(workspaceOrganisation1);
+            Assert.True(hasErrors);
         }
 
         [Fact]
-        public async void PullingAWorkspaceObjectShouldThrowError()
+        public async void PullOtherSessionNotPushedException()
         {
             var session1 = this.Workspace.CreateSession();
 
-            var c1 = session1.Create<WorkspaceC1>();
+            var c1 = session1.Create<C1>();
             Assert.NotNull(c1);
 
-            await this.AsyncDatabaseClient.PushAsync(session1);
-
             var session2 = this.Workspace.CreateSession();
+
             bool hasErrors;
 
             try

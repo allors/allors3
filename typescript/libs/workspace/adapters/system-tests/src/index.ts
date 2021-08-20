@@ -1,5 +1,11 @@
-export * from './lib/SessionServices';
-export * from './lib/WorkspaceServices';
+export * from './lib/runtime/database/lifecycle.spec';
+export * from './lib/runtime/database/unit.spec';
+
+export * from './lib/runtime/session/lifecycle.spec';
+export * from './lib/runtime/session/unit.spec';
+
+export * from './lib/runtime/workspace/lifecycle.spec';
+export * from './lib/runtime/workspace/unit.spec';
 
 export * from './lib/runtime/association.spec';
 export * from './lib/runtime/changeSet.spec';
@@ -13,3 +19,6 @@ export * from './lib/runtime/push.spec';
 export * from './lib/runtime/reset.spec';
 export * from './lib/runtime/security.spec';
 export * from './lib/runtime/strategy.spec';
+
+export * from './lib/SessionServices';
+export * from './lib/WorkspaceServices';
