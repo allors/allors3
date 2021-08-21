@@ -6,7 +6,14 @@ let fixture: Fixture;
 beforeEach(async () => {
   fixture = new Fixture();
   await fixture.init();
-  await initDatabaseManyToMany(fixture.asyncDatabaseClient, null, fixture.databaseConnection.createWorkspace(), (login) => fixture.client.login(login));
+  await initDatabaseManyToMany(
+    fixture.asyncDatabaseClient,
+    null,
+    fixture.databaseConnection.createWorkspace(),
+    (login) => fixture.client.login(login),
+    () => fixture.databaseConnection.createWorkspace(),
+    () => fixture.createDatabaseConnection().createWorkspace()
+  );
 });
 
 test('databaseManyToManySetRole', async () => {

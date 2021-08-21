@@ -17,6 +17,17 @@ export class Fixture {
   metaPopulation: MetaPopulation;
   databaseConnection: DatabaseConnection;
 
+  createDatabaseConnection(): DatabaseConnection {
+    let nextId = -1;
+    return new DatabaseConnection(
+      new Configuration('Default', this.metaPopulation, new PrototypeObjectFactory(this.metaPopulation)),
+      () => nextId--,
+      () => {
+        return new WorkspaceServices(ruleBuilder(this.metaPopulation as M));
+      }
+    );
+  }
+
   async init(population?: string) {
     this.client = new FetchClient(BASE_URL, AUTH_URL);
     this.asyncDatabaseClient = new AsyncDatabaseClient(this.client);
@@ -26,13 +37,6 @@ export class Fixture {
 
     this.metaPopulation = new LazyMetaPopulation(data);
 
-    let nextId = -1;
-    this.databaseConnection = new DatabaseConnection(
-      new Configuration('Default', this.metaPopulation, new PrototypeObjectFactory(this.metaPopulation)),
-      () => nextId--,
-      () => {
-        return new WorkspaceServices(ruleBuilder(this.metaPopulation as M));
-      }
-    );
+    this.databaseConnection = this.createDatabaseConnection();
   }
 }

@@ -30,6 +30,12 @@ export async function initDatabaseManyToMany(
   multipleSessionContext = new MultipleSessionContext(fixture, 'Multiple shared');
 }
 
+const pushes = [
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async (session) => {},
+  async (session) => await fixture.asyncClient.pushAsync(session),
+];
+
 function* contextFactories() {
   yield () => singleSessionContext;
   yield () => new SingleSessionContext(fixture, 'Single');
@@ -38,15 +44,19 @@ function* contextFactories() {
 }
 
 export async function databaseManyToManySetRole() {
-  for (const contextFactory of contextFactories()) {
-    const ctx = contextFactory();
-    const { session1, session2 } = ctx;
-    const { m } = fixture;
+  for (const push of pushes) {
+    for (const contextFactory of contextFactories()) {
+      const ctx = contextFactory();
+      const { session1, session2 } = ctx;
+      const { m } = fixture;
 
-    const c1x_1 = await ctx.create<C1>(session1, m.C1, DatabaseMode.NoPush);
-    const c1y_2 = await ctx.create<C1>(session2, m.C1, DatabaseMode.NoPush);
+      const c1x_1 = await ctx.create<C1>(session1, m.C1, DatabaseMode.NoPush);
+      const c1y_2 = await ctx.create<C1>(session2, m.C1, DatabaseMode.NoPush);
 
-    expect(c1x_1).toBeDefined();
-    expect(c1y_2).toBeDefined();
+      expect(c1x_1).toBeDefined();
+      expect(c1y_2).toBeDefined();
+
+      await push(session1);
+    }
   }
 }
