@@ -295,19 +295,12 @@ export abstract class Strategy implements IStrategy {
   }
 
   getCompositesAssociation<T extends IObject>(associationType: AssociationType): T[] {
-    const composites: T[] = [];
-
     if (associationType.origin != Origin.Session) {
-      composites.push(...this.session.getCompositesAssociation(this.id, associationType).map((v) => v.object as T));
+      return this.session.getCompositesAssociation(this.id, associationType).map((v) => v.object as T);
     }
 
     const association = this.session.sessionOriginState.getCompositesRole(this.id, associationType);
-
-    for (const id of enumerate(association)) {
-      composites.push(this.session.instantiate(id));
-    }
-
-    return composites;
+    return association ? association.map((v) => this.session.instantiate(v)) : (frozenEmptyArray as T[]);
   }
 
   canRead(roleType: RoleType): boolean {

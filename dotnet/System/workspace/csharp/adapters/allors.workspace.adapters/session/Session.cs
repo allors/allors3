@@ -282,6 +282,7 @@ namespace Allors.Workspace.Adapters
 
         private IEnumerable<Strategy> StrategiesForClass(IComposite objectType)
         {
+            // TODO: Optimize
             var classes = new HashSet<IClass>(objectType.Classes);
             return this.StrategyByWorkspaceId.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value).Distinct();
         }

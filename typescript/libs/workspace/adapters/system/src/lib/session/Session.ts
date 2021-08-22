@@ -106,11 +106,11 @@ export abstract class Session implements ISession {
   instantiate<T extends IObject>(obj: T): T[];
   instantiate<T extends IObject>(args: unknown): unknown {
     if (typeof args === 'number') {
-      return this.getStrategy(args)?.object as unknown as T ?? null;
+      return (this.getStrategy(args)?.object as unknown as T) ?? null;
     }
 
-    if (args instanceof ObjectBase){
-      return this.getStrategy(args.id)?.object as unknown as T ?? null;
+    if (args instanceof ObjectBase) {
+      return (this.getStrategy(args.id)?.object as unknown as T) ?? null;
     }
 
     if (Array.isArray(args)) {
@@ -225,10 +225,10 @@ export abstract class Session implements ISession {
   private strategiesForClass(objectType: Composite): Strategy[] {
     const classes = objectType.classes;
 
+    // TODO: Optimize
     const strategies: Strategy[] = [];
-
     for (const [, strategy] of this.strategyByWorkspaceId) {
-      if (classes.has(strategy.cls)) {
+      if (classes.has(strategy.cls) && strategies.indexOf(strategy) < 0) {
         strategies.push(strategy);
       }
     }

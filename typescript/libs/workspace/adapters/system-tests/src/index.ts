@@ -19,6 +19,7 @@ export * from './lib/runtime/pull.spec';
 export * from './lib/runtime/push.spec';
 export * from './lib/runtime/reset.spec';
 export * from './lib/runtime/security.spec';
+export * from './lib/runtime/sandbox.spec';
 export * from './lib/runtime/strategy.spec';
 
 export * from './lib/SessionServices';
