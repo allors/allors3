@@ -127,7 +127,16 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
                             }
 
                             c1x_1.AddC1C1One2Many(null);
+
                             Assert.Empty(c1x_1.C1C1One2Manies);
+                            c1y_1.C1WhereC1C1One2Many.ShouldEqual(null, ctx, mode1, mode2);
+
+                            await push(session1);
+
+                            if (!c1x_1.CanWriteC1C1One2Manies)
+                            {
+                                await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1x_1 });
+                            }
 
                             c1x_1.AddC1C1One2Many(c1y_1);
 
@@ -228,17 +237,29 @@ namespace Tests.Workspace.OriginDatabase.DatabaseDatabase
                                 await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1x_1 });
                             }
 
-                            c1x_1.AddC1C1One2Many(null);
-                            Assert.Empty(c1x_1.C1C1One2Manies);
-
                             c1x_1.AddC1C1One2Many(c1y_1);
 
+                            await push(session1);
+
+                            if (!c1x_1.CanWriteC1C1One2Manies)
+                            {
+                                await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1x_1 });
+                            }
+
+                            c1x_1.RemoveC1C1One2Many(null);
+
                             c1x_1.C1C1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
                             c1y_1.C1WhereC1C1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
-                            c1x_1.RemoveC1C1One2Many(null);
+                            await push(session1);
+
                             c1x_1.C1C1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
                             c1y_1.C1WhereC1C1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
+
+                            if (!c1x_1.CanWriteC1C1One2Manies)
+                            {
+                                await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1x_1 });
+                            }
 
                             c1x_1.RemoveC1C1One2Many(c1y_1);
 

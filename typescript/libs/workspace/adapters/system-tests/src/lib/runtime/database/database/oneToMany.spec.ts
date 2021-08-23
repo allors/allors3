@@ -17,7 +17,7 @@ it('dummy', () => {
   expect(true).toBeTruthy();
 });
 
-export async function initDatabaseManyToMany(
+export async function initDatabaseOneToMany(
   asyncClient: IAsyncDatabaseClient,
   reactiveClient: IReactiveDatabaseClient,
   workspace: IWorkspace,
@@ -43,12 +43,11 @@ function* contextFactories() {
   yield () => new MultipleSessionContext(fixture, 'Multiple');
 }
 
-export async function databaseManyToManySetRole() {
+export async function databaseOneToManySetRole() {
   for (const push of pushes) {
     for (const mode1 of databaseModes) {
       for (const mode2 of databaseModes) {
         for (const contextFactory of contextFactories()) {
-
           const ctx = contextFactory();
           const { session1, session2 } = ctx;
           const { m, client } = fixture;
@@ -70,31 +69,28 @@ export async function databaseManyToManySetRole() {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
-          c1x_1.addC1C1Many2Many(c1y_1);
+          c1x_1.addC1C1One2Many(c1y_1);
 
-          expect(c1x_1.C1C1Many2Manies.length).toBe(1);
-          expect(c1y_1.C1sWhereC1C1Many2Many.length).toBe(1);
-          expect(c1x_1.C1C1Many2Manies).toContain(c1y_1);
-          expect(c1y_1.C1sWhereC1C1Many2Many).toContain(c1x_1);
+          expect(c1x_1.C1C1One2Manies.length).toBe(1);
+          expect(c1x_1.C1C1One2Manies).toContain(c1y_1);
+          expect(c1y_1.C1WhereC1C1One2Many).toBe(c1x_1);
 
           await push(session1);
 
-          expect(c1x_1.C1C1Many2Manies.length).toBe(1);
-          expect(c1y_1.C1sWhereC1C1Many2Many.length).toBe(1);
-          expect(c1x_1.C1C1Many2Manies).toContain(c1y_1);
-          expect(c1y_1.C1sWhereC1C1Many2Many).toContain(c1x_1);
+          expect(c1x_1.C1C1One2Manies.length).toBe(1);
+          expect(c1x_1.C1C1One2Manies).toContain(c1y_1);
+          expect(c1y_1.C1WhereC1C1One2Many).toBe(c1x_1);
         }
       }
     }
   }
 }
 
-export async function databaseManyToManySetRoleToNull() {
+export async function databaseOneToManySetRoleToNull() {
   for (const push of pushes) {
     for (const mode1 of databaseModes) {
       for (const mode2 of databaseModes) {
         for (const contextFactory of contextFactories()) {
-
           const ctx = contextFactory();
           const { session1, session2 } = ctx;
           const { m, client } = fixture;
@@ -116,22 +112,35 @@ export async function databaseManyToManySetRoleToNull() {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
-          c1x_1.addC1C1Many2Many(null);
+          c1x_1.addC1C1One2Many(null);
 
-          expect(c1x_1.C1C1Many2Manies.length).toBe(0);
-          expect(c1y_1.C1sWhereC1C1Many2Many.length).toBe(0);
+          expect(c1x_1.C1C1One2Manies.length).toBe(0);
+          expect(c1y_1.C1WhereC1C1One2Many).toBe(null);
 
           await push(session1);
 
-          expect(c1x_1.C1C1Many2Manies.length).toBe(0);
-          expect(c1y_1.C1sWhereC1C1Many2Many.length).toBe(0);
+          if (!c1x_1.canWriteC1C1Many2Manies) {
+            await client.pullAsync(session1, { object: c1x_1 });
+          }
+
+          c1x_1.addC1C1One2Many(c1y_1);
+
+          expect(c1x_1.C1C1One2Manies.length).toBe(1);
+          expect(c1x_1.C1C1One2Manies).toContain(c1y_1);
+          expect(c1y_1.C1WhereC1C1One2Many).toBe(c1x_1);
+
+          await push(session1);
+
+          expect(c1x_1.C1C1One2Manies.length).toBe(1);
+          expect(c1x_1.C1C1One2Manies).toContain(c1y_1);
+          expect(c1y_1.C1WhereC1C1One2Many).toBe(c1x_1);
         }
       }
     }
   }
 }
 
-export async function databaseManyToManyRemoveRole() {
+export async function databaseOneToManyRemoveRole() {
   for (const push of pushes) {
     for (const mode1 of databaseModes) {
       for (const mode2 of databaseModes) {
@@ -157,30 +166,30 @@ export async function databaseManyToManyRemoveRole() {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
-          c1x_1.addC1C1Many2Many(c1y_1);
-         
+          c1x_1.addC1C1One2Many(c1y_1);
+
           await push(session1);
 
           if (!c1x_1.canWriteC1C1Many2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
-          c1x_1.removeC1C1Many2Many(c1y_1);
+          c1x_1.removeC1C1One2Many(c1y_1);
 
-          expect(c1x_1.C1C1Many2Manies.length).toBe(0);
-          expect(c1y_1.C1sWhereC1C1Many2Many.length).toBe(0);
+          expect(c1x_1.C1C1One2Manies.length).toBe(0);
+          expect(c1y_1.C1WhereC1C1One2Many).toBe(null);
 
           await push(session1);
 
-          expect(c1x_1.C1C1Many2Manies.length).toBe(0);
-          expect(c1y_1.C1sWhereC1C1Many2Many.length).toBe(0);
+          expect(c1x_1.C1C1One2Manies.length).toBe(0);
+          expect(c1y_1.C1WhereC1C1One2Many).toBe(null);
         }
       }
     }
   }
 }
 
-export async function databaseManyToManyRemoveNullRole() {
+export async function databaseOneToManyRemoveNullRole() {
   for (const push of pushes) {
     for (const mode1 of databaseModes) {
       for (const mode2 of databaseModes) {
@@ -206,41 +215,39 @@ export async function databaseManyToManyRemoveNullRole() {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
-          c1x_1.addC1C1Many2Many(c1y_1);
-         
+          c1x_1.addC1C1One2Many(c1y_1);
+
           await push(session1);
 
           if (!c1x_1.canWriteC1C1Many2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
-          c1x_1.removeC1C1Many2Many(null);
+          c1x_1.removeC1C1One2Many(null);
 
-          expect(c1x_1.C1C1Many2Manies.length).toBe(1);
-          expect(c1y_1.C1sWhereC1C1Many2Many.length).toBe(1);
-          expect(c1x_1.C1C1Many2Manies).toContain(c1y_1);
-          expect(c1y_1.C1sWhereC1C1Many2Many).toContain(c1x_1);
+          expect(c1x_1.C1C1One2Manies.length).toBe(1);
+          expect(c1x_1.C1C1One2Manies).toContain(c1y_1);
+          expect(c1y_1.C1WhereC1C1One2Many).toBe(c1x_1);
 
           await push(session1);
 
-          expect(c1x_1.C1C1Many2Manies.length).toBe(1);
-          expect(c1y_1.C1sWhereC1C1Many2Many.length).toBe(1);
-          expect(c1x_1.C1C1Many2Manies).toContain(c1y_1);
-          expect(c1y_1.C1sWhereC1C1Many2Many).toContain(c1x_1);
+          expect(c1x_1.C1C1One2Manies.length).toBe(1);
+          expect(c1x_1.C1C1One2Manies).toContain(c1y_1);
+          expect(c1y_1.C1WhereC1C1One2Many).toBe(c1x_1);
 
           if (!c1x_1.canWriteC1C1Many2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
-          c1x_1.removeC1C1Many2Many(c1y_1);
+          c1x_1.removeC1C1One2Many(c1y_1);
 
-          expect(c1x_1.C1C1Many2Manies.length).toBe(0);
-          expect(c1y_1.C1sWhereC1C1Many2Many.length).toBe(0);
+          expect(c1x_1.C1C1One2Manies.length).toBe(0);
+          expect(c1y_1.C1WhereC1C1One2Many).toBe(null);
 
           await push(session1);
 
-          expect(c1x_1.C1C1Many2Manies.length).toBe(0);
-          expect(c1y_1.C1sWhereC1C1Many2Many.length).toBe(0);
+          expect(c1x_1.C1C1One2Manies.length).toBe(0);
+          expect(c1y_1.C1WhereC1C1One2Many).toBe(null);
         }
       }
     }

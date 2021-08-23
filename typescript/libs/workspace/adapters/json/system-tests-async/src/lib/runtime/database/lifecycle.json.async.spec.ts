@@ -1,4 +1,4 @@
-import { initDatabaseLifecycle, databasePullOtherSessionNotPushedException, databasePullSameSessionNotPushedException } from '@allors/workspace/adapters/system-tests';
+import { initDatabaseLifecycle,  databasePullSameSessionNotPushedException, databasPullOtherSessionNotPushedException } from '@allors/workspace/adapters/system-tests';
 import { Fixture } from '../../Fixture';
 
 let fixture: Fixture;
@@ -13,6 +13,6 @@ test('pullSameSessionNotPushedException', async () => {
   await databasePullSameSessionNotPushedException();
 });
 
-test('databasePullOtherSessionNotPushedException', async () => {
-  await databasePullOtherSessionNotPushedException();
+test('databasPullOtherSessionNotPushedException', async () => {
+  await databasPullOtherSessionNotPushedException();
 });
