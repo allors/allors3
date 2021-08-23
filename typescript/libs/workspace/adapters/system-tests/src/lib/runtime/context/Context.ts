@@ -24,8 +24,8 @@ export abstract class Context {
 
   exclusiveDatabaseSession: ISession;
 
-  get asyncClient() {
-    return this.fixture.asyncClient;
+  get client() {
+    return this.fixture.client;
   }
 
   async create<T extends IObject>(session: ISession, cls: Class, mode: DatabaseMode): Promise<T>;
@@ -37,26 +37,26 @@ export abstract class Context {
           return session.create<T>(cls);
         case DatabaseMode.Push: {
           const pushObject = session.create<T>(cls);
-          await this.asyncClient.pushAsync(session);
+          await this.client.pushAsync(session);
           return pushObject;
         }
         case DatabaseMode.PushAndPull: {
           const pushAndPullObject = session.create<T>(cls);
-          const result = await this.asyncClient.pushAsync(session);
+          const result = await this.client.pushAsync(session);
           if (result.hasErrors) throw new Error();
-          await this.asyncClient.pullAsync(session, { object: pushAndPullObject });
+          await this.client.pullAsync(session, { object: pushAndPullObject });
           return pushAndPullObject;
         }
         case DatabaseMode.SharedDatabase: {
           const sharedDatabaseObject = this.sharedDatabaseSession.create<T>(cls);
-          await this.asyncClient.pushAsync(this.sharedDatabaseSession);
-          const sharedResult = await this.asyncClient.pullAsync(session, { object: sharedDatabaseObject });
+          await this.client.pushAsync(this.sharedDatabaseSession);
+          const sharedResult = await this.client.pullAsync(session, { object: sharedDatabaseObject });
           return sharedResult.objects.values().next().value;
         }
         case DatabaseMode.ExclusiveDatabase: {
           const exclusiveDatabaseObject = this.exclusiveDatabaseSession.create<T>(cls);
-          await this.asyncClient.pushAsync(this.exclusiveDatabaseSession);
-          const exclusiveResult = await this.asyncClient.pullAsync(session, { object: exclusiveDatabaseObject });
+          await this.client.pushAsync(this.exclusiveDatabaseSession);
+          const exclusiveResult = await this.client.pullAsync(session, { object: exclusiveDatabaseObject });
           return exclusiveResult.objects.values().next().value;
         }
         default:

@@ -37,6 +37,14 @@ namespace Tests.Workspace.OriginWorkspace
 
             var objectSession2 = session2.Instantiate(objectSession1);
 
+            Assert.Null(objectSession2);
+
+            session1.PushToWorkspace();
+
+            session2 = this.Workspace.CreateSession();
+
+            objectSession2 = session2.Instantiate(objectSession1);
+
             Assert.NotNull(objectSession2);
         }
 

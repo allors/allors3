@@ -16,15 +16,22 @@ export async function initWorkspaceLifecycle(asyncClient: IAsyncDatabaseClient, 
 }
 
 export async function workspaceInstantiateOtherSession() {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session1 = workspace.createSession();
   const session2 = workspace.createSession();
 
   const objectSession1 = session1.create<WorkspaceC1>(m.WorkspaceC1);
 
-  const objectSession2 = session2.instantiate(objectSession1);
+  let objectSession2 = session2.instantiate(objectSession1);
 
-  expect(objectSession2).toBeDefined();
+  expect(objectSession2).toBeNull();
+
+  session1.pushToWorkspace();
+
+  objectSession2 = session2.instantiate(objectSession1);
+
+  expect(objectSession2).not.toBeNull();
+
 }
 
 export async function workspacePullOtherSessionShouldThrowError() {

@@ -33,7 +33,7 @@ export async function initDatabaseManyToMany(
 const pushes = [
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   async (session) => {},
-  async (session) => await fixture.asyncClient.pushAsync(session),
+  async (session) => await fixture.client.pushAsync(session),
 ];
 
 function* contextFactories() {
@@ -51,7 +51,7 @@ export async function databaseManyToManySetRole() {
 
           const ctx = contextFactory();
           const { session1, session2 } = ctx;
-          const { m, asyncClient } = fixture;
+          const { m, client } = fixture;
 
           const c1x_1 = await ctx.create<C1>(session1, m.C1, mode1);
           const c1y_2 = await ctx.create<C1>(session2, m.C1, mode2);
@@ -59,15 +59,15 @@ export async function databaseManyToManySetRole() {
           expect(c1x_1).toBeDefined();
           expect(c1y_2).toBeDefined();
 
-          await asyncClient.pushAsync(session2);
-          const result = await asyncClient.pullAsync(session1, { object: c1y_2 });
+          await client.pushAsync(session2);
+          const result = await client.pullAsync(session1, { object: c1y_2 });
 
           const c1y_1 = result.objects.values().next().value as C1;
 
           expect(c1y_1).toBeDefined();
 
           if (!c1x_1.canWriteC1C1Many2Manies) {
-            await asyncClient.pullAsync(session1, { object: c1x_1 });
+            await client.pullAsync(session1, { object: c1x_1 });
           }
 
           c1x_1.addC1C1Many2Many(c1y_1);
