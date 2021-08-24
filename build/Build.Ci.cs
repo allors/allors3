@@ -57,7 +57,7 @@ partial class Build
 
     private Target CiTypescriptWorkspaceReactiveTest => _ => _
         .DependsOn(TypescriptInstall)
-        .DependsOn(TypescriptWorkspaceTest);
+        .DependsOn(TypescriptWorkspaceReactiveTest);
     
     private Target CiDemosTest => _ => _
         .DependsOn(DemosDerivationTest)

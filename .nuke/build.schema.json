@@ -89,7 +89,9 @@
               "CiDotnetSystemAdaptersTestNpgsql",
               "CiDotnetSystemAdaptersTestSqlClient",
               "CiDotnetSystemWorkspaceTest",
-              "CiTypescriptTest",
+              "CiTypescriptWorkspaceAsyncTest",
+              "CiTypescriptWorkspaceReactiveTest",
+              "CiTypescriptWorkspaceTest",
               "Clean",
               "Default",
               "DemosDerivation",
@@ -160,11 +162,12 @@
               "Install",
               "PostgresDocker",
               "TypescriptInstall",
-              "TypescriptTest",
               "TypescriptWorkspaceAdaptersJsonSystemAsync",
               "TypescriptWorkspaceAdaptersJsonSystemReactive",
               "TypescriptWorkspaceAdaptersSystem",
+              "TypescriptWorkspaceAsyncTest",
               "TypescriptWorkspaceMetaJsonSystem",
+              "TypescriptWorkspaceReactiveTest",
               "TypescriptWorkspaceTest"
             ]
           }
@@ -189,7 +192,9 @@
               "CiDotnetSystemAdaptersTestNpgsql",
               "CiDotnetSystemAdaptersTestSqlClient",
               "CiDotnetSystemWorkspaceTest",
-              "CiTypescriptTest",
+              "CiTypescriptWorkspaceAsyncTest",
+              "CiTypescriptWorkspaceReactiveTest",
+              "CiTypescriptWorkspaceTest",
               "Clean",
               "Default",
               "DemosDerivation",
@@ -260,11 +265,12 @@
               "Install",
               "PostgresDocker",
               "TypescriptInstall",
-              "TypescriptTest",
               "TypescriptWorkspaceAdaptersJsonSystemAsync",
               "TypescriptWorkspaceAdaptersJsonSystemReactive",
               "TypescriptWorkspaceAdaptersSystem",
+              "TypescriptWorkspaceAsyncTest",
               "TypescriptWorkspaceMetaJsonSystem",
+              "TypescriptWorkspaceReactiveTest",
               "TypescriptWorkspaceTest"
             ]
           }

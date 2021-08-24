@@ -87,7 +87,7 @@ namespace Tests.Workspace.OriginWorkspace
 
             try
             {
-                objectSession1.AddWC1WC1Many2Many(objectSession2);
+                objectSession1.AddWorkspaceWC1Many2Many(objectSession2);
                 hasErrors = false;
             }
             catch (Exception)

@@ -74,15 +74,15 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
 
                             session2.PushToWorkspace();
 
-                            c1x_1.AddWC1DatabaseC1One2Many(c1y_1);
+                            c1x_1.AddWorkspaceC1One2Many(c1y_1);
 
-                            c1x_1.WC1DatabaseC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WC1WhereWC1DatabaseC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WorkspaceC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWorkspaceC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
                             push(session1);
 
-                            c1x_1.WC1DatabaseC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WC1WhereWC1DatabaseC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WorkspaceC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWorkspaceC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
                         }
                     }
                 }
@@ -116,18 +116,18 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
 
                             session2.PushToWorkspace();
 
-                            c1x_1.AddWC1DatabaseC1One2Many(null);
-                            Assert.Empty(c1x_1.WC1DatabaseC1One2Manies);
+                            c1x_1.AddWorkspaceC1One2Many(null);
+                            Assert.Empty(c1x_1.WorkspaceC1One2Manies);
 
-                            c1x_1.AddWC1DatabaseC1One2Many(c1y_1);
+                            c1x_1.AddWorkspaceC1One2Many(c1y_1);
 
-                            c1x_1.WC1DatabaseC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WC1WhereWC1DatabaseC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WorkspaceC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWorkspaceC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
                             push(session1);
 
-                            c1x_1.WC1DatabaseC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WC1WhereWC1DatabaseC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WorkspaceC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWorkspaceC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
                         }
                     }
                 }
@@ -163,18 +163,18 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
 
                             c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            c1x_1.AddWC1DatabaseC1One2Many(c1y_1);
-                            c1x_1.WC1DatabaseC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WC1WhereWC1DatabaseC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.AddWorkspaceC1One2Many(c1y_1);
+                            c1x_1.WorkspaceC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWorkspaceC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
-                            c1x_1.RemoveWC1DatabaseC1One2Many(c1y_1);
-                            c1x_1.WC1DatabaseC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WC1WhereWC1DatabaseC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.RemoveWorkspaceC1One2Many(c1y_1);
+                            c1x_1.WorkspaceC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWorkspaceC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
 
                             push(session1);
 
-                            c1x_1.WC1DatabaseC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WC1WhereWC1DatabaseC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WorkspaceC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWorkspaceC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
                         }
                     }
                 }
@@ -210,22 +210,22 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
 
                             c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            c1x_1.AddWC1DatabaseC1One2Many(c1y_1);
-                            c1x_1.WC1DatabaseC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WC1WhereWC1DatabaseC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.AddWorkspaceC1One2Many(c1y_1);
+                            c1x_1.WorkspaceC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWorkspaceC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
-                            c1x_1.RemoveWC1DatabaseC1One2Many(null);
-                            c1x_1.WC1DatabaseC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WC1WhereWC1DatabaseC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.RemoveWorkspaceC1One2Many(null);
+                            c1x_1.WorkspaceC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWorkspaceC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
-                            c1x_1.RemoveWC1DatabaseC1One2Many(c1y_1);
-                            c1x_1.WC1DatabaseC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WC1WhereWC1DatabaseC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.RemoveWorkspaceC1One2Many(c1y_1);
+                            c1x_1.WorkspaceC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWorkspaceC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
 
                             push(session1);
 
-                            c1x_1.WC1DatabaseC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WC1WhereWC1DatabaseC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WorkspaceC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWorkspaceC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
                         }
                     }
                 }

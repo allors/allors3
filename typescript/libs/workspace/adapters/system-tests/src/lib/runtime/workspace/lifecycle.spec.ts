@@ -61,7 +61,7 @@ export async function workspaceCrossSession() {
 
   let hasErrors = false;
   try {
-    objectSession1.addWC1WC1Many2Many(objectSession2);
+    objectSession1.addWorkspaceWC1Many2Many(objectSession2);
   } catch(error) {
     hasErrors = true;
     expect(error.message).toBe('Strategy is from a different session')
