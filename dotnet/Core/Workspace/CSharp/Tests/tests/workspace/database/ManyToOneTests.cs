@@ -61,7 +61,7 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
                             var ctx = contextFactory();
                             var (session1, session2) = ctx;
 
-                            var c1x_1 = await ctx.Create<WorkspaceC1>(session1, mode1);
+                            var c1x_1 = await ctx.Create<WC1>(session1, mode1);
                             var c1y_2 = await ctx.Create<C1>(session2, mode2);
 
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
@@ -76,15 +76,15 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
 
                             c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            c1x_1.WorkspaceC1DatabaseC1Many2One = c1y_1;
+                            c1x_1.WC1DatabaseC1Many2One = c1y_1;
 
-                            c1x_1.WorkspaceC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1sWhereWC1DatabaseC1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
 
                             push(session1);
 
-                            c1x_1.WorkspaceC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1sWhereWC1DatabaseC1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
                         }
                     }
                 }
@@ -105,7 +105,7 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
                             var ctx = contextFactory();
                             var (session1, session2) = ctx;
 
-                            var c1x_1 = await ctx.Create<WorkspaceC1>(session1, mode1);
+                            var c1x_1 = await ctx.Create<WC1>(session1, mode1);
                             var c1y_2 = await ctx.Create<C1>(session2, mode2);
 
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
@@ -120,20 +120,20 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceDatabase
 
                             c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            c1x_1.WorkspaceC1DatabaseC1Many2One = c1y_1;
+                            c1x_1.WC1DatabaseC1Many2One = c1y_1;
 
-                            c1x_1.WorkspaceC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1sWhereWC1DatabaseC1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
 
-                            c1x_1.RemoveWorkspaceC1DatabaseC1Many2One();
+                            c1x_1.RemoveWC1DatabaseC1Many2One();
 
-                            c1x_1.WorkspaceC1DatabaseC1Many2One.ShouldNotEqual(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2One.ShouldNotContain(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WC1DatabaseC1Many2One.ShouldNotEqual(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1sWhereWC1DatabaseC1Many2One.ShouldNotContain(c1x_1, ctx, mode1, mode2);
 
                             push(session1);
 
-                            c1x_1.WorkspaceC1DatabaseC1Many2One.ShouldNotEqual(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1sWhereWorkspaceC1DatabaseC1Many2One.ShouldNotContain(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WC1DatabaseC1Many2One.ShouldNotEqual(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1sWhereWC1DatabaseC1Many2One.ShouldNotContain(c1x_1, ctx, mode1, mode2);
                         }
                     }
                 }

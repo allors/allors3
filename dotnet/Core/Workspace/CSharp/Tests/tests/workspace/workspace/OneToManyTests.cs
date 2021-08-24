@@ -59,8 +59,8 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceWorkspace
                             var ctx = contextFactory();
                             var (session1, session2) = ctx;
 
-                            var c1x_1 = await ctx.Create<WorkspaceC1>(session1, mode1);
-                            var c1y_2 = await ctx.Create<WorkspaceC1>(session2, mode2);
+                            var c1x_1 = await ctx.Create<WC1>(session1, mode1);
+                            var c1y_2 = await ctx.Create<WC1>(session2, mode2);
 
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
@@ -72,15 +72,15 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceWorkspace
 
                             c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            c1x_1.AddWorkspaceC1WorkspaceC1One2Many(c1y_1);
+                            c1x_1.AddWC1WC1One2Many(c1y_1);
 
-                            c1x_1.WorkspaceC1WorkspaceC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1WhereWorkspaceC1WorkspaceC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WC1WC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWC1WC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
                             push(session1);
 
-                            c1x_1.WorkspaceC1WorkspaceC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1WhereWorkspaceC1WorkspaceC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WC1WC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWC1WC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
                         }
                     }
                 }
@@ -101,8 +101,8 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceWorkspace
                             var ctx = contextFactory();
                             var (session1, session2) = ctx;
 
-                            var c1x_1 = await ctx.Create<WorkspaceC1>(session1, mode1);
-                            var c1y_2 = await ctx.Create<WorkspaceC1>(session2, mode2);
+                            var c1x_1 = await ctx.Create<WC1>(session1, mode1);
+                            var c1y_2 = await ctx.Create<WC1>(session2, mode2);
 
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
@@ -114,18 +114,18 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceWorkspace
 
                             c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            c1x_1.AddWorkspaceC1WorkspaceC1One2Many(null);
-                            Assert.Empty(c1x_1.WorkspaceC1WorkspaceC1One2Manies);
+                            c1x_1.AddWC1WC1One2Many(null);
+                            Assert.Empty(c1x_1.WC1WC1One2Manies);
 
-                            c1x_1.AddWorkspaceC1WorkspaceC1One2Many(c1y_1);
+                            c1x_1.AddWC1WC1One2Many(c1y_1);
 
-                            c1x_1.WorkspaceC1WorkspaceC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1WhereWorkspaceC1WorkspaceC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WC1WC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWC1WC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
                             push(session1);
 
-                            c1x_1.WorkspaceC1WorkspaceC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1WhereWorkspaceC1WorkspaceC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WC1WC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWC1WC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
                         }
                     }
                 }
@@ -146,8 +146,8 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceWorkspace
                             var ctx = contextFactory();
                             var (session1, session2) = ctx;
 
-                            var c1x_1 = await ctx.Create<WorkspaceC1>(session1, mode1);
-                            var c1y_2 = await ctx.Create<WorkspaceC1>(session2, mode2);
+                            var c1x_1 = await ctx.Create<WC1>(session1, mode1);
+                            var c1y_2 = await ctx.Create<WC1>(session2, mode2);
 
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
@@ -159,19 +159,19 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceWorkspace
 
                             c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            c1x_1.AddWorkspaceC1WorkspaceC1One2Many(c1y_1);
+                            c1x_1.AddWC1WC1One2Many(c1y_1);
 
-                            c1x_1.WorkspaceC1WorkspaceC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1WhereWorkspaceC1WorkspaceC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WC1WC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWC1WC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
-                            c1x_1.RemoveWorkspaceC1WorkspaceC1One2Many(c1y_1);
-                            c1x_1.WorkspaceC1WorkspaceC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1WhereWorkspaceC1WorkspaceC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.RemoveWC1WC1One2Many(c1y_1);
+                            c1x_1.WC1WC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWC1WC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
 
                             push(session1);
 
-                            c1x_1.WorkspaceC1WorkspaceC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1WhereWorkspaceC1WorkspaceC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WC1WC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWC1WC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
                         }
                     }
                 }
@@ -192,8 +192,8 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceWorkspace
                             var ctx = contextFactory();
                             var (session1, session2) = ctx;
 
-                            var c1x_1 = await ctx.Create<WorkspaceC1>(session1, mode1);
-                            var c1y_2 = await ctx.Create<WorkspaceC1>(session2, mode2);
+                            var c1x_1 = await ctx.Create<WC1>(session1, mode1);
+                            var c1y_2 = await ctx.Create<WC1>(session2, mode2);
 
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
@@ -205,23 +205,23 @@ namespace Tests.Workspace.OriginWorkspace.WorkspaceWorkspace
 
                             c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            c1x_1.AddWorkspaceC1WorkspaceC1One2Many(c1y_1);
+                            c1x_1.AddWC1WC1One2Many(c1y_1);
 
-                            c1x_1.WorkspaceC1WorkspaceC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1WhereWorkspaceC1WorkspaceC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WC1WC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWC1WC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
-                            c1x_1.RemoveWorkspaceC1WorkspaceC1One2Many(null);
-                            c1x_1.WorkspaceC1WorkspaceC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1WhereWorkspaceC1WorkspaceC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.RemoveWC1WC1One2Many(null);
+                            c1x_1.WC1WC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWC1WC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
-                            c1x_1.RemoveWorkspaceC1WorkspaceC1One2Many(c1y_1);
-                            c1x_1.WorkspaceC1WorkspaceC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1WhereWorkspaceC1WorkspaceC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.RemoveWC1WC1One2Many(c1y_1);
+                            c1x_1.WC1WC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWC1WC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
 
                             push(session1);
 
-                            c1x_1.WorkspaceC1WorkspaceC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
-                            c1y_1.WorkspaceC1WhereWorkspaceC1WorkspaceC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
+                            c1x_1.WC1WC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.WC1WhereWC1WC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
                         }
                     }
                 }

@@ -47,10 +47,18 @@ partial class Build
         .DependsOn(DotnetAppsInstall)
         .DependsOn(DotnetAppsWorkspaceTest);
 
-    private Target CiTypescriptTest => _ => _
+    private Target CiTypescriptWorkspaceTest => _ => _
         .DependsOn(TypescriptInstall)
-        .DependsOn(TypescriptTest);
+        .DependsOn(TypescriptWorkspaceTest);
 
+    private Target CiTypescriptWorkspaceAsyncTest => _ => _
+        .DependsOn(TypescriptInstall)
+        .DependsOn(TypescriptWorkspaceAsyncTest);
+
+    private Target CiTypescriptWorkspaceReactiveTest => _ => _
+        .DependsOn(TypescriptInstall)
+        .DependsOn(TypescriptWorkspaceTest);
+    
     private Target CiDemosTest => _ => _
         .DependsOn(DemosDerivationTest)
         .DependsOn(DemosSecurityTest);

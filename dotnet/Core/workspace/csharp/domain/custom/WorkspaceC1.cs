@@ -4,7 +4,7 @@ namespace Allors.Workspace.Domain
 {
     using System.Linq;
 
-	public partial class WorkspaceC1 
+	public partial class WC1 
 	{
         public override string ToString() => $"{this.Strategy.Class.SingularName}:{this.Strategy.Id}";
     }

@@ -22,5 +22,5 @@ module.exports = {
     ],
   ],
   maxWorkers: 1,
-  testTimeout: 60000 * 5,
+  testTimeout: 60000 * 10,
 };

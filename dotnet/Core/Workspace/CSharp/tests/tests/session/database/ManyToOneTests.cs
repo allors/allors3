@@ -59,7 +59,7 @@ namespace Tests.Workspace.OriginSession.SessionDatabase
                         var ctx = contextFactory();
                         var (session1, session2) = ctx;
 
-                        var c1x_1 = ctx.Session1.Create<SessionC1>();
+                        var c1x_1 = ctx.Session1.Create<SC1>();
                         var c1y_2 = await ctx.Create<C1>(session2, mode);
 
                         c1x_1.ShouldNotBeNull(ctx, mode);
@@ -73,16 +73,16 @@ namespace Tests.Workspace.OriginSession.SessionDatabase
 
                         c1y_1.ShouldNotBeNull(ctx, mode);
 
-                        c1x_1.SessionC1DatabaseC1Many2One = c1y_1;
+                        c1x_1.SC1DatabaseC1Many2One = c1y_1;
 
                         // TODO: Relation is not working
-                        c1x_1.SessionC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode);
-                        c1y_1.SessionC1sWhereSessionC1DatabaseC1Many2One.ShouldContain(c1x_1, ctx, mode);
+                        c1x_1.SC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode);
+                        c1y_1.SC1sWhereSC1DatabaseC1Many2One.ShouldContain(c1x_1, ctx, mode);
 
                         await push(session1);
 
-                        c1x_1.SessionC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode);
-                        c1y_1.SessionC1sWhereSessionC1DatabaseC1Many2One.ShouldContain(c1x_1, ctx, mode);
+                        c1x_1.SC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode);
+                        c1y_1.SC1sWhereSC1DatabaseC1Many2One.ShouldContain(c1x_1, ctx, mode);
                     }
                 }
             }
@@ -100,7 +100,7 @@ namespace Tests.Workspace.OriginSession.SessionDatabase
                         var ctx = contextFactory();
                         var (session1, session2) = ctx;
 
-                        var c1x_1 = ctx.Session1.Create<SessionC1>();
+                        var c1x_1 = ctx.Session1.Create<SC1>();
                         var c1y_2 = await ctx.Create<C1>(session2, mode);
 
                         c1x_1.ShouldNotBeNull(ctx, mode);
@@ -114,15 +114,15 @@ namespace Tests.Workspace.OriginSession.SessionDatabase
 
                         c1y_1.ShouldNotBeNull(ctx, mode);
 
-                        c1x_1.SessionC1DatabaseC1Many2One = c1y_1;
-                        c1x_1.SessionC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode);
+                        c1x_1.SC1DatabaseC1Many2One = c1y_1;
+                        c1x_1.SC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode);
 
-                        c1x_1.RemoveSessionC1DatabaseC1Many2One();
-                        c1x_1.SessionC1DatabaseC1Many2One.ShouldNotEqual(c1y_1, ctx, mode);
+                        c1x_1.RemoveSC1DatabaseC1Many2One();
+                        c1x_1.SC1DatabaseC1Many2One.ShouldNotEqual(c1y_1, ctx, mode);
 
                         await push(session1);
 
-                        c1x_1.SessionC1DatabaseC1Many2One.ShouldNotEqual(c1y_1, ctx, mode);
+                        c1x_1.SC1DatabaseC1Many2One.ShouldNotEqual(c1y_1, ctx, mode);
                     }
                 }
             }

@@ -31,7 +31,7 @@ namespace Tests.Workspace.OriginWorkspace
 
             var session1 = this.Workspace.CreateSession();
 
-            var objectSession1 = session1.Create<WorkspaceC1>();
+            var objectSession1 = session1.Create<WC1>();
 
             var session2 = this.Workspace.CreateSession();
 
@@ -53,7 +53,7 @@ namespace Tests.Workspace.OriginWorkspace
         {
             var session1 = this.Workspace.CreateSession();
 
-            var c1 = session1.Create<WorkspaceC1>();
+            var c1 = session1.Create<WC1>();
             Assert.NotNull(c1);
 
             await this.AsyncDatabaseClient.PushAsync(session1);
@@ -80,14 +80,14 @@ namespace Tests.Workspace.OriginWorkspace
             var session1 = this.Workspace.CreateSession();
             var session2 = this.Workspace.CreateSession();
 
-            var objectSession1 = session1.Create<WorkspaceC1>();
-            var objectSession2 = session2.Create<WorkspaceC1>();
+            var objectSession1 = session1.Create<WC1>();
+            var objectSession2 = session2.Create<WC1>();
 
             bool hasErrors;
 
             try
             {
-                objectSession1.AddWorkspaceC1WorkspaceC1Many2Many(objectSession2);
+                objectSession1.AddWC1WC1Many2Many(objectSession2);
                 hasErrors = false;
             }
             catch (Exception)

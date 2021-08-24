@@ -1,5 +1,5 @@
 import { Pull, IAsyncDatabaseClient, IWorkspace, IReactiveDatabaseClient } from '@allors/workspace/domain/system';
-import { C1, WorkspaceC1 } from '@allors/workspace/domain/core';
+import { C1, WC1 } from '@allors/workspace/domain/core';
 
 import { Fixture } from '../../Fixture';
 import '../../Matchers';
@@ -20,7 +20,7 @@ export async function workspaceInstantiateOtherSession() {
   const session1 = workspace.createSession();
   const session2 = workspace.createSession();
 
-  const objectSession1 = session1.create<WorkspaceC1>(m.WorkspaceC1);
+  const objectSession1 = session1.create<WC1>(m.WC1);
 
   let objectSession2 = session2.instantiate(objectSession1);
 
@@ -39,7 +39,7 @@ export async function workspacePullOtherSessionShouldThrowError() {
   const session1 = workspace.createSession();
   const session2 = workspace.createSession();
 
-  const objectSession1 = session1.create<WorkspaceC1>(m.WorkspaceC1);
+  const objectSession1 = session1.create<WC1>(m.WC1);
 
   let hasErrors = false;
   try {
@@ -56,12 +56,12 @@ export async function workspaceCrossSession() {
   const session1 = workspace.createSession();
   const session2 = workspace.createSession();
 
-  const objectSession1 = session1.create<WorkspaceC1>(m.WorkspaceC1);
-  const objectSession2 = session2.create<WorkspaceC1>(m.WorkspaceC1);
+  const objectSession1 = session1.create<WC1>(m.WC1);
+  const objectSession2 = session2.create<WC1>(m.WC1);
 
   let hasErrors = false;
   try {
-    objectSession1.addWorkspaceC1WorkspaceC1Many2Many(objectSession2);
+    objectSession1.addWC1WC1Many2Many(objectSession2);
   } catch(error) {
     hasErrors = true;
     expect(error.message).toBe('Strategy is from a different session')

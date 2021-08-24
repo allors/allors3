@@ -70,10 +70,14 @@ partial class Build
     private Target TypescriptWorkspaceTest => _ => _
          .After(TypescriptInstall)
          .DependsOn(TypescriptWorkspaceMetaJsonSystem)
-         .DependsOn(TypescriptWorkspaceAdaptersSystem)
-         .DependsOn(TypescriptWorkspaceAdaptersJsonSystemAsync)
-         .DependsOn(TypescriptWorkspaceAdaptersJsonSystemReactive);
+         .DependsOn(TypescriptWorkspaceAdaptersSystem);
 
-    private Target TypescriptTest => _ => _
-        .DependsOn(TypescriptWorkspaceTest);
+    private Target TypescriptWorkspaceAsyncTest => _ => _
+        .After(TypescriptInstall)
+        .DependsOn(TypescriptWorkspaceAdaptersJsonSystemAsync);
+
+    private Target TypescriptWorkspaceReactiveTest => _ => _
+        .After(TypescriptInstall)
+        .DependsOn(TypescriptWorkspaceAdaptersJsonSystemReactive);
+
 }

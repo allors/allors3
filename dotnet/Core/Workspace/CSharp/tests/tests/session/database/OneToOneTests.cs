@@ -59,7 +59,7 @@ namespace Tests.Workspace.OriginSession.SessionDatabase
                         var ctx = contextFactory();
                         var (session1, session2) = ctx;
 
-                        var c1x_1 = ctx.Session1.Create<SessionC1>();
+                        var c1x_1 = ctx.Session1.Create<SC1>();
                         var c1y_2 = await ctx.Create<C1>(session2, mode);
 
                         c1x_1.ShouldNotBeNull(ctx, mode);
@@ -73,15 +73,15 @@ namespace Tests.Workspace.OriginSession.SessionDatabase
 
                         c1y_1.ShouldNotBeNull(ctx, mode);
 
-                        c1x_1.SessionC1DatabaseC1One2One = c1y_1;
+                        c1x_1.SC1DatabaseC1One2One = c1y_1;
 
-                        c1x_1.SessionC1DatabaseC1One2One.ShouldEqual(c1y_1, ctx, mode);
-                        c1y_1.SessionC1WhereSessionC1DatabaseC1One2One.ShouldEqual(c1x_1, ctx, mode);
+                        c1x_1.SC1DatabaseC1One2One.ShouldEqual(c1y_1, ctx, mode);
+                        c1y_1.SC1WhereSC1DatabaseC1One2One.ShouldEqual(c1x_1, ctx, mode);
 
                         await push(session1);
 
-                        c1x_1.SessionC1DatabaseC1One2One.ShouldEqual(c1y_1, ctx, mode);
-                        c1y_1.SessionC1WhereSessionC1DatabaseC1One2One.ShouldEqual(c1x_1, ctx, mode);
+                        c1x_1.SC1DatabaseC1One2One.ShouldEqual(c1y_1, ctx, mode);
+                        c1y_1.SC1WhereSC1DatabaseC1One2One.ShouldEqual(c1x_1, ctx, mode);
                     }
                 }
             }
@@ -99,7 +99,7 @@ namespace Tests.Workspace.OriginSession.SessionDatabase
                         var ctx = contextFactory();
                         var (session1, session2) = ctx;
 
-                        var c1x_1 = ctx.Session1.Create<SessionC1>();
+                        var c1x_1 = ctx.Session1.Create<SC1>();
                         var c1y_2 = await ctx.Create<C1>(session2, mode);
 
                         c1x_1.ShouldNotBeNull(ctx, mode);
@@ -113,15 +113,15 @@ namespace Tests.Workspace.OriginSession.SessionDatabase
 
                         c1y_1.ShouldNotBeNull(ctx, mode);
 
-                        c1x_1.SessionC1DatabaseC1One2One = c1y_1;
-                        c1x_1.SessionC1DatabaseC1One2One.ShouldEqual(c1y_1, ctx, mode);
+                        c1x_1.SC1DatabaseC1One2One = c1y_1;
+                        c1x_1.SC1DatabaseC1One2One.ShouldEqual(c1y_1, ctx, mode);
 
-                        c1x_1.RemoveSessionC1DatabaseC1One2One();
-                        c1x_1.SessionC1DatabaseC1One2One.ShouldNotEqual(c1y_1, ctx, mode);
+                        c1x_1.RemoveSC1DatabaseC1One2One();
+                        c1x_1.SC1DatabaseC1One2One.ShouldNotEqual(c1y_1, ctx, mode);
 
                         await push(session1);
 
-                        c1x_1.SessionC1DatabaseC1One2One.ShouldNotEqual(c1y_1, ctx, mode);
+                        c1x_1.SC1DatabaseC1One2One.ShouldNotEqual(c1y_1, ctx, mode);
                     }
                 }
             }

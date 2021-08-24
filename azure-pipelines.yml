@@ -34,8 +34,12 @@ stages:
           target: 'CiDotnetBaseDatabaseTest'
         apps_database:
           target: 'CiDotnetAppsDatabaseTest'
-        typescript:
-          target: 'CiTypescriptTest'
+        typescript_workspace:
+          target: 'CiTypescriptWorkspaceTest'
+        typescript_workspace_async:
+          target: 'CiTypescriptWorkspaceAsyncTest'
+        typescript_workspace_reactive:
+          target: 'CiTypescriptWorkspaceReactiveTest'
         demos:
           target: 'CiDemosTest'
 

@@ -1,6 +1,6 @@
 import { IAsyncDatabaseClient, IWorkspace, IReactiveDatabaseClient, Pull } from '@allors/workspace/domain/system';
 import '@allors/workspace/domain/core';
-import { C1, SessionC1 } from '@allors/workspace/domain/core';
+import { C1, SC1 } from '@allors/workspace/domain/core';
 
 import { Fixture } from '../Fixture';
 import '../Matchers';
@@ -599,9 +599,9 @@ export async function changeSetBeforeAndAfterResetWithSessionObject() {
   const { client, workspace, m } = fixture;
   const session = workspace.createSession();
 
-  const sessionC1a = session.create<SessionC1>(m.SessionC1);
+  const sc1a = session.create<SC1>(m.SC1);
 
-  sessionC1a.SessionC1AllorsString = 'X';
+  sc1a.SC1AllorsString = 'X';
 
   await client.pushAsync(session);
 
@@ -612,9 +612,9 @@ export async function changeSetBeforeAndAfterResetWithSessionObject() {
   expect(changeSet.associationsByRoleType.size).toBe(1);
   expect(changeSet.rolesByAssociationType.size).toBe(0);
 
-  expect(changeSet.associationsByRoleType.get(m.SessionC1.SessionC1AllorsString).values().next().value).toBe(sessionC1a.strategy);
+  expect(changeSet.associationsByRoleType.get(m.SC1.SC1AllorsString).values().next().value).toBe(sc1a.strategy);
 
-  sessionC1a.strategy.reset();
+  sc1a.strategy.reset();
 
   changeSet = session.checkpoint();
 
@@ -628,19 +628,19 @@ export async function changeSetBeforeAndAfterResetWithChangeSessionObject() {
   const { client, workspace, m } = fixture;
   const session = workspace.createSession();
 
-  const sessionC1a = session.create<SessionC1>(m.SessionC1);
+  const sc1a = session.create<SC1>(m.SC1);
 
-  sessionC1a.SessionC1AllorsString = 'X';
+  sc1a.SC1AllorsString = 'X';
 
   await client.pushAsync(session);
 
   let changeSet = session.checkpoint();
 
-  sessionC1a.SessionC1AllorsString = 'Y';
+  sc1a.SC1AllorsString = 'Y';
 
   changeSet = session.checkpoint();
 
-  sessionC1a.strategy.reset();
+  sc1a.strategy.reset();
 
   changeSet = session.checkpoint();
 
@@ -649,7 +649,7 @@ export async function changeSetBeforeAndAfterResetWithChangeSessionObject() {
   expect(changeSet.associationsByRoleType.size).toBe(0);
   expect(changeSet.rolesByAssociationType.size).toBe(0);
 
-  expect(sessionC1a.SessionC1AllorsString).toBe('Y');
+  expect(sc1a.SC1AllorsString).toBe('Y');
 }
 
 export async function changeSetAfterDoubleReset() {
