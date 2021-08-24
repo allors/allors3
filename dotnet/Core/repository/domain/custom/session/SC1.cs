@@ -379,192 +379,192 @@ namespace Allors.Repository
 
         #endregion
 
-        #region Session
-
+        #region Session Relation
+        #region Unit Role
         #region Allors
-        [Id("b945b9c8-7cbd-4d91-a215-c7f1ba8a2bf1")]
+        [Id("EC5A57B8-411E-46E2-9FC5-49AC13A6A6B0")]
         #endregion
         [Size(-1)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public byte[] SC1AllorsBinary { get; set; }
+        public byte[] SessionAllorsBinary { get; set; }
 
         #region Allors
-        [Id("b1ae5223-1ae4-47be-8091-056328545ac2")]
+        [Id("D6DF97A1-5AFF-4076-880D-662BC0E4B776")]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public bool SC1AllorsBoolean { get; set; }
+        public bool SessionAllorsBoolean { get; set; }
 
         #region Allors
-        [Id("9dc16a90-8eed-45ab-a1bf-4b3708a3178c")]
+        [Id("7F762815-ADA7-4824-BD6F-07097B4C9BC2")]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public DateTime SC1AllorsDateTime { get; set; }
+        public DateTime SessionAllorsDateTime { get; set; }
 
         #region Allors
-        [Id("a7f7e0af-3df5-4ae7-b7db-b7478040f435")]
+        [Id("D8F257B5-EAED-4FB7-9967-DFA0E8755F2B")]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public DateTime SC1DateTimeLessThan { get; set; }
+        public DateTime SessionDateTimeLessThan { get; set; }
 
         #region Allors
-        [Id("cc75ab5e-0e2b-41fc-94f9-0bb8582d693b")]
+        [Id("60045BED-1CEA-4C9B-9069-DE31394CD58F")]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public DateTime SC1DateTimeGreaterThan { get; set; }
+        public DateTime SessionDateTimeGreaterThan { get; set; }
 
         #region Allors
-        [Id("c4821209-8375-4549-b112-4a77d6ad3132")]
+        [Id("EEF3A4B0-0243-4453-9886-B398F5B3CBFA")]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public DateTime SC1DateTimeBetweenA { get; set; }
+        public DateTime SessionDateTimeBetweenA { get; set; }
 
         #region Allors
-        [Id("d0d289a1-dea4-4c3e-a882-39c3ca4fc52e")]
+        [Id("3E7CBF54-C719-4FEC-9825-A7B33A917C82")]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public DateTime SC1DateTimeBetweenB { get; set; }
+        public DateTime SessionDateTimeBetweenB { get; set; }
 
         #region Allors
-        [Id("34ac5259-21af-424a-aa02-d606c71b7be3")]
-        #endregion
-        [Precision(10)]
-        [Scale(2)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public decimal SC1AllorsDecimal { get; set; }
-
-        #region Allors
-        [Id("cde4a879-2c14-4edb-a9e2-1b5225baad9d")]
+        [Id("0FDAEDB4-A89D-4CFB-BAD6-964ED6432749")]
         #endregion
         [Precision(10)]
         [Scale(2)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public Decimal SC1DecimalLessThan { get; set; }
+        public decimal SessionAllorsDecimal { get; set; }
 
         #region Allors
-        [Id("debdf971-6bd1-434d-b578-820032ce67a0")]
+        [Id("AFA006C8-CDBC-4C48-B8F0-BC5185D42213")]
         #endregion
         [Precision(10)]
         [Scale(2)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public Decimal SC1DecimalGreaterThan { get; set; }
+        public Decimal SessionDecimalLessThan { get; set; }
 
         #region Allors
-        [Id("7777f591-338c-47da-97a3-6f171b072fac")]
+        [Id("5601D39D-8A3C-494B-ACCC-5DAD8E4C9C41")]
         #endregion
         [Precision(10)]
         [Scale(2)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public Decimal SC1DecimalBetweenA { get; set; }
+        public Decimal SessionDecimalGreaterThan { get; set; }
 
         #region Allors
-        [Id("3abc2c51-fbd7-4771-b8be-2c94697c3082")]
+        [Id("4916E256-2832-4EF8-9F29-2BB9F523D5A6")]
         #endregion
         [Precision(10)]
         [Scale(2)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public Decimal SC1DecimalBetweenB { get; set; }
+        public Decimal SessionDecimalBetweenA { get; set; }
 
         #region Allors
-        [Id("0cd84a51-5edf-4941-a244-ce0152216794")]
+        [Id("F7D443FD-A689-47B1-9CD3-71A539D0478E")]
+        #endregion
+        [Precision(10)]
+        [Scale(2)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public Decimal SessionDecimalBetweenB { get; set; }
+
+        #region Allors
+        [Id("416F3732-1747-43EE-96EF-C4178F6D0FBB")]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public double SC1AllorsDouble { get; set; }
+        public double SessionAllorsDouble { get; set; }
 
         #region Allors
-        [Id("f04da0a1-3a7b-4f15-b249-74ace38503c7")]
+        [Id("2A51C97B-F915-4411-8B8D-9ED55AA87961")]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public Double SC1DoubleLessThan { get; set; }
+        public Double SessionDoubleLessThan { get; set; }
 
         #region Allors
-        [Id("975c9622-c3d0-4d6d-b7b5-a49c128097ed")]
+        [Id("9258BF30-D51C-4232-AC66-66B077B8566C")]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public Double SC1DoubleGreaterThan { get; set; }
+        public Double SessionDoubleGreaterThan { get; set; }
 
         #region Allors
-        [Id("6c6d5840-c449-4f5e-9a73-ecb7c334dc36")]
+        [Id("6C323869-186F-42C4-8875-66CFFE5914D1")]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public Double SC1DoubleBetweenA { get; set; }
+        public Double SessionDoubleBetweenA { get; set; }
 
         #region Allors
-        [Id("66bc84d8-e6ff-4f41-9fe7-ae3788985619")]
+        [Id("58B76AF4-E469-4111-8489-E6C0CB836126")]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public Double SC1DoubleBetweenB { get; set; }
+        public Double SessionDoubleBetweenB { get; set; }
 
         #region Allors
-        [Id("417f172f-a0ec-46f4-8d01-b116892b1346")]
+        [Id("35BC4214-4DD0-4C42-A157-6FA9324104FD")]
         #endregion
         [Indexed]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public int SC1AllorsInteger { get; set; }
+        public int SessionAllorsInteger { get; set; }
 
         #region Allors
-        [Id("b6d84bad-7777-4450-ae49-7c783469ecbc")]
+        [Id("59468CA8-C933-461B-9034-89AE4008DA5C")]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public int SC1IntegerLessThan { get; set; }
+        public int SessionIntegerLessThan { get; set; }
 
         #region Allors
-        [Id("7b2ffca8-9f0b-4fd0-b771-3f7481739274")]
+        [Id("0A7F2011-2752-4527-A938-54C945AE1D65")]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public int SC1IntegerGreaterThan { get; set; }
+        public int SessionIntegerGreaterThan { get; set; }
 
         #region Allors
-        [Id("30a71d66-e02c-4310-8ca1-ff8d11feee88")]
+        [Id("7903BBB5-DD1E-4D0A-8324-DA42C60E4164")]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public int SC1IntegerBetweenA { get; set; }
+        public int SessionIntegerBetweenA { get; set; }
 
         #region Allors
-        [Id("ceb17d79-b3fb-48e3-ac53-7e20cf6b3369")]
+        [Id("C65323A0-AF08-48CB-9EB7-8782E99DC461")]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public int SC1IntegerBetweenB { get; set; }
+        public int SessionIntegerBetweenB { get; set; }
 
         #region Allors
-        [Id("6b3db56f-3de6-4b59-83e9-fc370d5544a6")]
-        #endregion
-        [Size(256)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public string SC1AllorsString { get; set; }
-
-        #region Allors
-        [Id("f1b82206-4165-4167-b0f2-5c99daa37e9b")]
+        [Id("80181D9C-87CA-46C3-A79A-B102BF8F6C5C")]
         #endregion
         [Size(256)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public string SC1AllorsStringEquals { get; set; }
+        public string SessionAllorsString { get; set; }
 
         #region Allors
-        [Id("93ddaa00-c1fc-49a1-87f2-9ccb7469c986")]
+        [Id("CD97EBE6-3141-4D7F-B993-51DC867649A0")]
+        #endregion
+        [Size(256)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public string SessionAllorsStringEquals { get; set; }
+
+        #region Allors
+        [Id("43D124A4-2E69-4ACE-B80D-F2675D2CCF4B")]
         #endregion
         [Size(-1)]
         [Workspace(Default)]
@@ -572,954 +572,558 @@ namespace Allors.Repository
         public string SessionAllorsStringMax { get; set; }
 
         #region Allors
-        [Id("3b6223e9-d742-4239-9ee5-efc4b98fc679")]
+        [Id("6A689D92-C119-42FF-AE00-BCA02ACC6B34")]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public Guid SC1AllorsUnique { get; set; }
-
-        #region Allors
-        [Id("fc2b012e-b66b-4af6-9fca-443215b2900d")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Indexed]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SC1[] SC1SC1Many2Manies { get; set; }
-
-        #region Allors
-        [Id("62cf9aad-a931-4ff8-92b1-00d41eeacbcc")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SC1 SC1SC1Many2One { get; set; }
-
-        #region Allors
-        [Id("0b7e78bc-6186-45ae-9efb-bd39b74f32c4")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SC1[] SC1SC1One2Manies { get; set; }
-
-        #region Allors
-        [Id("a72e29fe-823c-4339-84b8-6acbf089d975")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SC1 SC1SC1One2One { get; set; }
-
-        #region Allors
-        [Id("9970f4d7-1ce7-45ae-addd-041888da3648")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SC2[] SC1SC2Many2Manies { get; set; }
-
-        #region Allors
-        [Id("12eb72ea-f446-4c00-afd4-1511e7a8c5d3")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SC2 SC1SC2Many2One { get; set; }
-
-        #region Allors
-        [Id("6704414f-71a9-4024-9ce1-1939309fe0e2")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SC2[] SC1SC2One2Manies { get; set; }
-
-        #region Allors
-        [Id("e74c7ce7-d3f8-49de-8e72-af6e093841ea")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SC2 SC1SC2One2One { get; set; }
-
-        #region Allors
-        [Id("b7895ab7-ee91-458a-b138-b9f4dd54f883")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SI12[] SC1SI12Many2Manies { get; set; }
-
-        #region Allors
-        [Id("5def23c2-18fe-419a-8197-342f8fcd39b3")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SI12 SC1SI12Many2One { get; set; }
-
-        #region Allors
-        [Id("e173bde4-1935-4764-89df-8d5ef7e1c1a5")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SI12[] SC1SI12One2Manies { get; set; }
-
-        #region Allors
-        [Id("bb84f565-f37c-4e51-9aad-965da88b6874")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SI12 SC1SI12One2One { get; set; }
-
-        #region Allors
-        [Id("7a069ba3-a077-43dc-a844-3b06e7d424d1")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SI1[] SC1SI1Many2Manies { get; set; }
-
-        #region Allors
-        [Id("195b47f6-2d75-477e-97f7-b2ef495b552b")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SI1 SC1SI1Many2One { get; set; }
-
-        #region Allors
-        [Id("b671c5cd-8b46-49a1-bfec-324a5bb733d7")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SI1[] SC1SI1One2Manies { get; set; }
-
-        #region Allors
-        [Id("846be756-aa06-45b8-ac2a-4a6d82fc7526")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SI1 SC1SI1One2One { get; set; }
-
-        #region Allors
-        [Id("96201daa-cbf4-4a30-8235-45f28f9d4b5a")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SI2[] SC1SI2Many2Manies { get; set; }
-
-        #region Allors
-        [Id("565695d2-b67a-48e7-9103-4a64fe6b89fe")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SI2 SC1SI2Many2One { get; set; }
-
-        #region Allors
-        [Id("ccb8ecda-351d-4204-8863-0029971788c6")]
-        [Indexed]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        [Multiplicity(Multiplicity.OneToMany)]
-        public SI2[] SC1SI2One2Manies { get; set; }
-
-        #region Allors
-        [Id("42fe3e7f-2ac9-4455-bb42-7affcbf71534")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public SI2 SC1SI2One2One { get; set; }
-
+        public Guid SessionAllorsUnique { get; set; }
         #endregion
 
-        #region Workspace
-
+        #region Session Role
         #region Allors
-        [Id("622d4335-e1d2-432e-b0f5-56f295ef08e9")]
-        #endregion
-        [Size(-1)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public byte[] WC1AllorsBinary { get; set; }
-
-        #region Allors
-        [Id("c61d3875-e08b-404c-a8f0-43fdd6af1e56")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public bool WC1AllorsBoolean { get; set; }
-
-        #region Allors
-        [Id("0b27a26d-c8c2-43c7-9d63-37c76fc4d0e0")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public DateTime WC1AllorsDateTime { get; set; }
-
-        #region Allors
-        [Id("c26e56e3-75d9-4695-aa57-e612016adda2")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public DateTime WC1DateTimeLessThan { get; set; }
-
-        #region Allors
-        [Id("1a6bc159-49e5-4927-a615-8b1f3013bfef")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public DateTime WC1DateTimeGreaterThan { get; set; }
-
-        #region Allors
-        [Id("bf981eba-2169-489e-b47c-a6bd0db76e78")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public DateTime WC1DateTimeBetweenA { get; set; }
-
-        #region Allors
-        [Id("746ce2a3-8021-406a-9d5d-946f7e285062")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public DateTime WC1DateTimeBetweenB { get; set; }
-
-        #region Allors
-        [Id("f01c0f24-cc75-4bf5-a141-6575d40ab20f")]
-        #endregion
-        [Precision(10)]
-        [Scale(2)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public decimal WC1AllorsDecimal { get; set; }
-
-        #region Allors
-        [Id("fbb3c47e-1129-4a43-8783-c5d1868cf98f")]
-        #endregion
-        [Precision(10)]
-        [Scale(2)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Decimal WC1DecimalLessThan { get; set; }
-
-        #region Allors
-        [Id("3ec83d0d-0717-4479-b812-75084df9b3a0")]
-        #endregion
-        [Precision(10)]
-        [Scale(2)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Decimal WC1DecimalGreaterThan { get; set; }
-
-        #region Allors
-        [Id("473feb14-6183-4e4c-8fbf-cfbd96c7b3f3")]
-        #endregion
-        [Precision(10)]
-        [Scale(2)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Decimal WC1DecimalBetweenA { get; set; }
-
-        #region Allors
-        [Id("bc997657-6530-4dbe-b34e-ee73e525e787")]
-        #endregion
-        [Precision(10)]
-        [Scale(2)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Decimal WC1DecimalBetweenB { get; set; }
-
-        #region Allors
-        [Id("8495ec00-c0f0-4ee1-91d9-1cef49601fd6")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public double WC1AllorsDouble { get; set; }
-
-        #region Allors
-        [Id("278e2b5f-68e3-45a4-a801-f8ad513c8ffc")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Double WC1DoubleLessThan { get; set; }
-
-        #region Allors
-        [Id("92b7cae9-2c31-4082-bd76-b9fc9046fb66")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Double WC1DoubleGreaterThan { get; set; }
-
-        #region Allors
-        [Id("5855d8dd-f4e5-4f4f-8583-b9f420f09ee9")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Double WC1DoubleBetweenA { get; set; }
-
-        #region Allors
-        [Id("878c8b48-06f2-4d28-b00a-8e263a9db6ca")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Double WC1DoubleBetweenB { get; set; }
-
-        #region Allors
-        [Id("9e88951e-c083-4d47-8fd5-4f730b33a6c5")]
-        #endregion
-        [Indexed]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public int WC1AllorsInteger { get; set; }
-
-        #region Allors
-        [Id("3cb13cf3-8711-4ed0-91d6-e20cb9eb1621")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public int WC1IntegerLessThan { get; set; }
-
-        #region Allors
-        [Id("f3309bbb-28e5-4f50-bde0-5c81a52c8c36")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public int WC1IntegerGreaterThan { get; set; }
-
-        #region Allors
-        [Id("b5cbb410-1b4d-4ac3-9b74-1f600379bce4")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public int WC1IntegerBetweenA { get; set; }
-
-        #region Allors
-        [Id("3032f740-bbde-4c3d-9c7c-d52b751f90cb")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public int WC1IntegerBetweenB { get; set; }
-
-        #region Allors
-        [Id("cffd7630-e220-4595-b4a5-13e062e22d75")]
-        #endregion
-        [Size(256)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public string WC1AllorsString { get; set; }
-
-        #region Allors
-        [Id("91b0aace-2a39-49c2-a6c0-dfc531ef8452")]
-        #endregion
-        [Size(256)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public string WC1AllorsStringEquals { get; set; }
-
-        #region Allors
-        [Id("d3e64743-4296-4ebe-b908-71ae97d5c5ca")]
-        #endregion
-        [Size(-1)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public string WorkspaceAllorsStringMax { get; set; }
-
-        #region Allors
-        [Id("59ae4633-f11b-4f37-859a-a0d1eff82791")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Guid WC1AllorsUnique { get; set; }
-
-        #region Allors
-        [Id("7cd243af-b334-4456-81f7-b2fe8777bec1")]
+        [Id("82EE012B-9A63-40FB-89BB-22BE7CC5FCB1")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WC1[] SC1WC1Many2Manies { get; set; }
+        public SC1[] SessionSC1Many2Manies { get; set; }
 
         #region Allors
-        [Id("e6348fc3-4972-4c44-83c6-be50dbb086f0")]
+        [Id("FF4358A5-72F4-4807-87FB-C057535FD026")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WC1 SC1WC1Many2One { get; set; }
+        public SC1 SessionSC1Many2One { get; set; }
 
         #region Allors
-        [Id("59283310-b978-4f64-8f9b-ec2835ee6e45")]
+        [Id("E7EE1AD8-78D9-446E-B105-7726D0E400C4")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WC1[] SC1WC1One2Manies { get; set; }
+        public SC1[] SessionSC1One2Manies { get; set; }
 
         #region Allors
-        [Id("e2cbb55a-10e0-4918-b2c0-0bb1faacc12d")]
+        [Id("E0D2EDF6-730C-4DF3-888E-B3BD966E6C3A")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WC1 SC1WC1One2One { get; set; }
+        public SC1 SessionSC1One2One { get; set; }
 
         #region Allors
-        [Id("1407787f-e3a3-493e-bfc2-2bd7eb0fc686")]
+        [Id("EC7C8050-5C21-41DD-91C7-D24F33427301")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WC2[] SC1WC2Many2Manies { get; set; }
+        public SC2[] SessionSC2Many2Manies { get; set; }
 
         #region Allors
-        [Id("e5db203d-1245-47eb-aeac-ccf8985fba54")]
+        [Id("25E3E786-3692-4F21-8FF5-AB3DA3805D7C")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WC2 SC1WC2Many2One { get; set; }
+        public SC2 SessionSC2Many2One { get; set; }
 
         #region Allors
-        [Id("5e4b79ea-be2c-4177-81f3-6d788488c10d")]
+        [Id("A4F1F557-8BDE-4FC4-BEB8-56096BC1CA4B")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WC2[] SC1WC2One2Manies { get; set; }
+        public SC2[] SessionSC2One2Manies { get; set; }
 
         #region Allors
-        [Id("c78438e2-c085-4959-a5b0-bfec811f46fb")]
+        [Id("14F05AA8-B307-453E-8BCF-A6FCECCF4B81")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WC2 SC1WC2One2One { get; set; }
+        public SC2 SessionSC2One2One { get; set; }
 
         #region Allors
-        [Id("b7b62dad-8021-4427-ad83-848d5f16916a")]
+        [Id("397BBCA7-4CC6-41F8-B243-9F3FB12A3DC7")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WI12[] SC1WI12Many2Manies { get; set; }
+        public SI12[] SessionSI12Many2Manies { get; set; }
 
         #region Allors
-        [Id("b4cac28d-ed6f-4c6f-934c-c27ae8831031")]
+        [Id("D8DDEEB4-74DC-47F0-A493-91411A17B68D")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WI12 SC1WI12Many2One { get; set; }
+        public SI12 SessionSI12Many2One { get; set; }
 
         #region Allors
-        [Id("c71a53a2-fbfa-4c12-8ee7-565b1ecafb94")]
+        [Id("64D5F54A-0DBB-4984-BFAB-B5772AFAA81E")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WI12[] SC1WI12One2Manies { get; set; }
+        public SI12[] SessionSI12One2Manies { get; set; }
 
         #region Allors
-        [Id("e2732451-760f-41f1-87aa-a483ec12584a")]
+        [Id("34E68C58-7030-49CE-8C72-6B7BB62743EE")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WI12 SC1WI12One2One { get; set; }
+        public SI12 SessionSI12One2One { get; set; }
 
         #region Allors
-        [Id("35b4c471-8814-4294-9c36-30e0072edd48")]
+        [Id("33BC7407-1A68-4CDA-8CED-302F54807322")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WI1[] SC1WI1Many2Manies { get; set; }
+        public SI1[] SessionSI1Many2Manies { get; set; }
 
         #region Allors
-        [Id("7c87fa96-f621-4fc1-aa71-be351c4ce683")]
+        [Id("F5DA2CD8-75F5-4826-A62D-E7865B8A6FE5")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WI1 SC1WI1Many2One { get; set; }
+        public SI1 SessionSI1Many2One { get; set; }
 
         #region Allors
-        [Id("aa3a1fad-8591-4968-98fb-ad2c15de8571")]
+        [Id("814DD65D-A4ED-49B7-83AE-1FB6564B42FE")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WI1[] SC1WI1One2Manies { get; set; }
+        public SI1[] SessionSI1One2Manies { get; set; }
 
         #region Allors
-        [Id("7d4c62b4-e214-4d23-956a-2238992bb37f")]
+        [Id("9AD37328-91B4-4CE0-BE00-63603C78B78B")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WI1 SC1WI1One2One { get; set; }
+        public SI1 SessionSI1One2One { get; set; }
 
         #region Allors
-        [Id("d569148b-6f7e-417e-b02e-af63401efc29")]
+        [Id("C8B6376F-168F-4845-9672-9C60EDD904DD")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WI2[] SC1WI2Many2Manies { get; set; }
+        public SI2[] SessionSI2Many2Manies { get; set; }
 
         #region Allors
-        [Id("5846cbf8-7e49-47f4-b11a-7d07e3927003")]
+        [Id("46B853B6-68B0-49F8-80D9-BEC6DD7283D5")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WI2 SC1WI2Many2One { get; set; }
+        public SI2 SessionSI2Many2One { get; set; }
 
         #region Allors
-        [Id("f3e4db8c-ba7d-40cc-9d0d-62a1e86bf738")]
+        [Id("C4749F52-5C97-401C-BF43-70093F2D27ED")]
         [Indexed]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
         [Multiplicity(Multiplicity.OneToMany)]
-        public WI2[] SC1WI2One2Manies { get; set; }
+        public SI2[] SessionSI2One2Manies { get; set; }
 
         #region Allors
-        [Id("cc9bf91e-8c8a-4328-b82e-b36f5aac4e50")]
+        [Id("6F864539-EF06-4CDE-B40B-4D86243A41F6")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public WI2 SC1WI2One2One { get; set; }
-
+        public SI2 SessionSI2One2One { get; set; }
         #endregion
 
-        #region Database
-
+        #region Workspace Role
         #region Allors
-        [Id("2e0eb835-e164-4bf4-8be4-d034d297e851")]
-        #endregion
-        [Size(-1)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public byte[] DatabaseC1AllorsBinary { get; set; }
-
-        #region Allors
-        [Id("d9a1abf5-58ea-4cdb-ab30-bb9f7f13a844")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public bool DatabaseC1AllorsBoolean { get; set; }
-
-        #region Allors
-        [Id("8c189ecf-2c73-46b9-9d56-431b36caf21f")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public DateTime DatabaseC1AllorsDateTime { get; set; }
-
-        #region Allors
-        [Id("1257f492-9101-438a-aff3-8efcabf8e656")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public DateTime DatabaseC1DateTimeLessThan { get; set; }
-
-        #region Allors
-        [Id("c5ebad3c-44b2-4a44-8450-f4445bd40479")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public DateTime DatabaseC1DateTimeGreaterThan { get; set; }
-
-        #region Allors
-        [Id("2ccb82e1-a87d-4551-8610-25ebc5aac3cf")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public DateTime DatabaseC1DateTimeBetweenA { get; set; }
-
-        #region Allors
-        [Id("bc0a2c4a-67a9-4562-94bb-ad99deaebb07")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public DateTime DatabaseC1DateTimeBetweenB { get; set; }
-
-        #region Allors
-        [Id("714310ba-2f84-4e0f-bcee-dc755a2e3713")]
-        #endregion
-        [Precision(10)]
-        [Scale(2)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public decimal DatabaseC1AllorsDecimal { get; set; }
-
-        #region Allors
-        [Id("d4e00752-ec8a-4af9-a3e8-da428287e1d3")]
-        #endregion
-        [Precision(10)]
-        [Scale(2)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Decimal DatabaseC1DecimalLessThan { get; set; }
-
-        #region Allors
-        [Id("3c5b2a7e-9c77-4054-a09e-f42501cc007a")]
-        #endregion
-        [Precision(10)]
-        [Scale(2)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Decimal DatabaseC1DecimalGreaterThan { get; set; }
-
-        #region Allors
-        [Id("f79a2a5c-eb94-498a-9fa0-836ec3ad18fe")]
-        #endregion
-        [Precision(10)]
-        [Scale(2)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Decimal DatabaseC1DecimalBetweenA { get; set; }
-
-        #region Allors
-        [Id("0b8b368b-7658-4c8b-94d8-db73d9feb408")]
-        #endregion
-        [Precision(10)]
-        [Scale(2)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Decimal DatabaseC1DecimalBetweenB { get; set; }
-
-        #region Allors
-        [Id("884b40d8-556d-421c-ae5a-6908c3c17d24")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public double DatabaseC1AllorsDouble { get; set; }
-
-        #region Allors
-        [Id("24ee1eb5-ba19-4adf-9d43-f3eee9287020")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Double DatabaseC1DoubleLessThan { get; set; }
-
-        #region Allors
-        [Id("c8040647-9528-4602-b61d-a2816f82450b")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Double DatabaseC1DoubleGreaterThan { get; set; }
-
-        #region Allors
-        [Id("52826f68-f8f8-418f-8184-eb9a4d476bbd")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Double DatabaseC1DoubleBetweenA { get; set; }
-
-        #region Allors
-        [Id("cc59bb23-844e-44bd-8a8d-98c5c4c5ab3b")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Double DatabaseC1DoubleBetweenB { get; set; }
-
-        #region Allors
-        [Id("736a63cd-3267-4fb9-b3d9-52e33ba76200")]
-        #endregion
-        [Indexed]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public int DatabaseC1AllorsInteger { get; set; }
-
-        #region Allors
-        [Id("c0a86b07-4bfd-4191-a2b0-867be32d8db0")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public int DatabaseC1IntegerLessThan { get; set; }
-
-        #region Allors
-        [Id("d493ea1d-a801-4240-a00b-864265fe0aa4")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public int DatabaseC1IntegerGreaterThan { get; set; }
-
-        #region Allors
-        [Id("a9af270f-cd0e-4ec3-a729-74726bcdde4f")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public int DatabaseC1IntegerBetweenA { get; set; }
-
-        #region Allors
-        [Id("97500e2f-756d-425e-9fdd-d9e633cb2f1d")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public int DatabaseC1IntegerBetweenB { get; set; }
-
-        #region Allors
-        [Id("d96d7fa4-11c5-49a7-b90a-6a8b8f58f81c")]
-        #endregion
-        [Size(256)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public string DatabaseC1AllorsString { get; set; }
-
-        #region Allors
-        [Id("0e96c964-9faf-4a1c-ac34-5539ee665376")]
-        #endregion
-        [Size(256)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public string DatabaseC1AllorsStringEquals { get; set; }
-
-        #region Allors
-        [Id("8045d4db-d4cd-4457-bf53-6139844b556b")]
-        #endregion
-        [Size(-1)]
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public string DatabaseAllorsStringMax { get; set; }
-
-        #region Allors
-        [Id("49948892-cbe8-4d64-8d25-dd4fc119aaab")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        public Guid DatabaseC1AllorsUnique { get; set; }
-
-        #region Allors
-        [Id("70a6b4fe-7bdf-4c88-b1e5-f20e0d207654")]
+        [Id("D17B0544-D814-43CF-AD04-663200B65ECF")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public C1[] SC1DatabaseC1Many2Manies { get; set; }
+        public WC1[] SessionWC1Many2Manies { get; set; }
 
         #region Allors
-        [Id("759bb1f4-79cf-417a-8ed6-86dcb706fafe")]
+        [Id("2C4529EA-B202-468A-8413-3B00F53AC16D")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public C1 SC1DatabaseC1Many2One { get; set; }
+        public WC1 SessionWC1Many2One { get; set; }
 
         #region Allors
-        [Id("16153092-2f39-480f-867c-87771a6dc011")]
+        [Id("A699FE92-1AA8-466C-9349-6F1F9F68AF31")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public C1[] SC1DatabaseC1One2Manies { get; set; }
+        public WC1[] SessionWC1One2Manies { get; set; }
 
         #region Allors
-        [Id("86f71e85-9fb5-4c40-9c09-e986ce482cf2")]
+        [Id("06F5F96F-0EC4-4D8F-9ABA-9DAEF1C7E93B")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public C1 SC1DatabaseC1One2One { get; set; }
+        public WC1 SessionWC1One2One { get; set; }
 
         #region Allors
-        [Id("c9e31f48-8cbc-4c3c-84e1-6e12ca41ff4d")]
+        [Id("B72B2F4D-9D20-4D01-A950-7A2E0E04284E")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public C2[] SC1DatabaseC2Many2Manies { get; set; }
+        public WC2[] SessionWC2Many2Manies { get; set; }
 
         #region Allors
-        [Id("8b1e5550-038d-4d51-91d5-48fc8a69e877")]
+        [Id("CA28B353-2D47-4ED3-B0AF-FF52D7D7321F")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public C2 SC1DatabaseC2Many2One { get; set; }
+        public WC2 SessionWC2Many2One { get; set; }
 
         #region Allors
-        [Id("7fc804f2-ce66-4390-bb12-08d055222306")]
+        [Id("8392F1DB-07B5-4B38-9FDB-A789F0EDBB0C")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public C2[] SC1DatabaseC2One2Manies { get; set; }
+        public WC2[] SessionWC2One2Manies { get; set; }
 
         #region Allors
-        [Id("96aa7434-f1a8-478b-a225-0e99e2e94031")]
+        [Id("44FF7A26-0C8B-47EC-8EC0-26CED237ECC1")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public C2 SC1DatabaseC2One2One { get; set; }
+        public WC2 SessionWC2One2One { get; set; }
 
         #region Allors
-        [Id("a2ccdc0c-2f97-4046-9077-7b02c404f8e0")]
+        [Id("E5BB01FE-6B5E-4628-8798-EFCB97B03530")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public I12[] SC1DatabaseI12Many2Manies { get; set; }
+        public WI12[] SessionWI12Many2Manies { get; set; }
 
         #region Allors
-        [Id("f85b7f30-7df1-4af6-9c9c-78f582534a0b")]
+        [Id("7F835DF7-9C59-4B1C-8CB4-BF0F4DFE687D")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public I12 SC1DatabaseI12Many2One { get; set; }
+        public WI12 SessionWI12Many2One { get; set; }
 
         #region Allors
-        [Id("5604c455-5e32-49cb-bf59-c3e0089e5af0")]
+        [Id("0932C417-27B9-4E68-B694-03E776F263D9")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public I12[] SC1DatabaseI12One2Manies { get; set; }
+        public WI12[] SessionWI12One2Manies { get; set; }
 
         #region Allors
-        [Id("98bcb1f7-9e7b-4530-ad7c-42142a05030d")]
+        [Id("B4F56479-A006-4879-8BB3-C7514847B721")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public I12 SC1DatabaseI12One2One { get; set; }
+        public WI12 SessionWI12One2One { get; set; }
 
         #region Allors
-        [Id("9d1244dd-54e0-4494-b981-06715c1f31e1")]
+        [Id("D079EDE1-477F-457A-A315-962F845EFB01")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public I1[] SC1DatabaseI1Many2Manies { get; set; }
+        public WI1[] SessionWI1Many2Manies { get; set; }
 
         #region Allors
-        [Id("14c1f8bd-6a29-4f29-9b4b-023f024d8518")]
+        [Id("46D74AA7-FE9F-4C78-958F-29DAD810A55B")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public I1 SC1DatabaseI1Many2One { get; set; }
+        public WI1 SessionWI1Many2One { get; set; }
 
         #region Allors
-        [Id("5b852463-2550-42b1-a0ca-e26023238171")]
+        [Id("28E33F38-B4F3-46B7-BFF6-7480ED51A7E8")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public I1[] SC1DatabaseI1One2Manies { get; set; }
+        public WI1[] SessionWI1One2Manies { get; set; }
 
         #region Allors
-        [Id("a1e0c34e-4838-4682-b4bb-4876e01c5e8f")]
+        [Id("E2819ED0-54C1-41BF-AC56-111E6B1ADAB0")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public I1 SC1DatabaseI1One2One { get; set; }
+        public WI1 SessionWI1One2One { get; set; }
 
         #region Allors
-        [Id("c1e73af0-8a4a-4360-8e56-55c891f4da48")]
+        [Id("E49AE44D-C278-4746-88B5-5C60A527CE81")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public I2[] SC1DatabaseI2Many2Manies { get; set; }
+        public WI2[] SessionWI2Many2Manies { get; set; }
 
         #region Allors
-        [Id("d5cc1f26-10c2-4019-9b2f-c8b77542d899")]
+        [Id("233BB1D7-BAF1-46A0-B8C7-2AA518EAD502")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public I2 SC1DatabaseI2Many2One { get; set; }
+        public WI2 SessionWI2Many2One { get; set; }
 
         #region Allors
-        [Id("14e7f383-d6e5-45f6-813b-15e2833a45f9")]
+        [Id("CC1A2A6F-D006-405D-A228-936AAE53A59B")]
         [Indexed]
         #endregion
         [Workspace(Default)]
         [Origin(Origin.Session)]
         [Multiplicity(Multiplicity.OneToMany)]
-        public I2[] SC1DatabaseI2One2Manies { get; set; }
+        public WI2[] SessionWI2One2Manies { get; set; }
 
         #region Allors
-        [Id("d54ceba6-1eaf-47c5-8f5c-0a30877ca8d5")]
+        [Id("3AF52AFC-5199-4C9A-B5E9-00C3EE473BB0")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public I2 SC1DatabaseI2One2One { get; set; }
+        public WI2 SessionWI2One2One { get; set; }
+        #endregion
 
+        #region Database Role
+        #region Allors
+        [Id("E31ED89F-A6AA-487E-ABF0-921516C43B5E")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Indexed]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public C1[] SessionC1Many2Manies { get; set; }
+
+        #region Allors
+        [Id("D1017F9C-C845-400E-AFB3-AFE92ED8849F")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public C1 SessionC1Many2One { get; set; }
+
+        #region Allors
+        [Id("95B15476-7FD7-49B9-AC8A-A799D3D53C67")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public C1[] SessionC1One2Manies { get; set; }
+
+        #region Allors
+        [Id("D4323AC0-2991-4A12-8FA6-2E2FB36A14A0")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public C1 SessionC1One2One { get; set; }
+
+        #region Allors
+        [Id("D7E96FB2-CCF6-4245-9647-BB0C8AA8AB6B")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public C2[] SessionC2Many2Manies { get; set; }
+
+        #region Allors
+        [Id("7008BAAF-D38E-49F8-8D47-2F45FDF9E565")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public C2 WSessionC2Many2One { get; set; }
+
+        #region Allors
+        [Id("DB9F6E00-DF0C-4C94-AA0C-583AF75D8F48")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public C2[] SessionC2One2Manies { get; set; }
+
+        #region Allors
+        [Id("BDABB246-E8B8-482C-88DD-6A301BF15F90")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public C2 SessionC2One2One { get; set; }
+
+        #region Allors
+        [Id("769426B4-5533-4C15-9A1B-2B7319D9E66F")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public I12[] SessionI12Many2Manies { get; set; }
+
+        #region Allors
+        [Id("E97E9D5F-2F35-4F3C-9908-0B09D6429B87")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public I12 SessionI12Many2One { get; set; }
+
+        #region Allors
+        [Id("48310C99-B122-4BCE-ACC4-68F067EFBB58")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public I12[] SessionI12One2Manies { get; set; }
+
+        #region Allors
+        [Id("02755C84-E2E8-47C9-9B81-8E521C944BC0")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public I12 SessionI12One2One { get; set; }
+
+        #region Allors
+        [Id("9B0F19D8-0E4E-486D-8126-D3726E3BBDBA")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public I1[] SessionI1Many2Manies { get; set; }
+
+        #region Allors
+        [Id("FCCF9FDC-546E-4C90-AAB9-A2FE76F3BCDC")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public I1 SessionI1Many2One { get; set; }
+
+        #region Allors
+        [Id("C70F614A-D00C-4687-8E5D-5980FC18D5E7")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public I1[] SessionI1One2Manies { get; set; }
+
+        #region Allors
+        [Id("7C3411E3-697E-460B-A7F0-92485A737C6A")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public I1 SessionI1One2One { get; set; }
+
+        #region Allors
+        [Id("5101A20D-F920-4CB3-9E90-32C5C8960E83")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public I2[] SessionI2Many2Manies { get; set; }
+
+        #region Allors
+        [Id("63085391-A39B-4C10-A825-EB1C9CE4DD3E")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public I2 SessionI2Many2One { get; set; }
+
+        #region Allors
+        [Id("BAF68ED8-D58E-40B2-9A71-8170D0F2DC66")]
+        [Indexed]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Multiplicity(Multiplicity.OneToMany)]
+        public I2[] SessionI2One2Manies { get; set; }
+
+        #region Allors
+        [Id("865B2A8F-45F0-4913-866B-881F3896A1F5")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public I2 SessionI2One2One { get; set; }
+        #endregion
         #endregion
 
         #region inherited methods

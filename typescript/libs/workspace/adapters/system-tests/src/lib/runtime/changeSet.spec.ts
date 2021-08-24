@@ -601,7 +601,7 @@ export async function changeSetBeforeAndAfterResetWithSessionObject() {
 
   const sc1a = session.create<SC1>(m.SC1);
 
-  sc1a.SC1AllorsString = 'X';
+  sc1a.SessionAllorsString = 'X';
 
   await client.pushAsync(session);
 
@@ -612,7 +612,7 @@ export async function changeSetBeforeAndAfterResetWithSessionObject() {
   expect(changeSet.associationsByRoleType.size).toBe(1);
   expect(changeSet.rolesByAssociationType.size).toBe(0);
 
-  expect(changeSet.associationsByRoleType.get(m.SC1.SC1AllorsString).values().next().value).toBe(sc1a.strategy);
+  expect(changeSet.associationsByRoleType.get(m.SC1.SessionAllorsString).values().next().value).toBe(sc1a.strategy);
 
   sc1a.strategy.reset();
 
@@ -630,13 +630,13 @@ export async function changeSetBeforeAndAfterResetWithChangeSessionObject() {
 
   const sc1a = session.create<SC1>(m.SC1);
 
-  sc1a.SC1AllorsString = 'X';
+  sc1a.SessionAllorsString = 'X';
 
   await client.pushAsync(session);
 
   let changeSet = session.checkpoint();
 
-  sc1a.SC1AllorsString = 'Y';
+  sc1a.SessionAllorsString = 'Y';
 
   changeSet = session.checkpoint();
 
@@ -649,7 +649,7 @@ export async function changeSetBeforeAndAfterResetWithChangeSessionObject() {
   expect(changeSet.associationsByRoleType.size).toBe(0);
   expect(changeSet.rolesByAssociationType.size).toBe(0);
 
-  expect(sc1a.SC1AllorsString).toBe('Y');
+  expect(sc1a.SessionAllorsString).toBe('Y');
 }
 
 export async function changeSetAfterDoubleReset() {

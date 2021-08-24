@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.OriginSession.SessionDatabase
+namespace Tests.Workspace.OriginSession.Session
 {
     using System.Threading.Tasks;
     using Allors.Workspace.Domain;
@@ -73,16 +73,16 @@ namespace Tests.Workspace.OriginSession.SessionDatabase
 
                         c1y_1.ShouldNotBeNull(ctx, mode);
 
-                        c1x_1.SC1DatabaseC1Many2One = c1y_1;
+                        c1x_1.SessionC1Many2One = c1y_1;
 
                         // TODO: Relation is not working
-                        c1x_1.SC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode);
-                        c1y_1.SC1sWhereSC1DatabaseC1Many2One.ShouldContain(c1x_1, ctx, mode);
+                        c1x_1.SessionC1Many2One.ShouldEqual(c1y_1, ctx, mode);
+                        c1y_1.SC1sWhereSessionC1Many2One.ShouldContain(c1x_1, ctx, mode);
 
                         await push(session1);
 
-                        c1x_1.SC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode);
-                        c1y_1.SC1sWhereSC1DatabaseC1Many2One.ShouldContain(c1x_1, ctx, mode);
+                        c1x_1.SessionC1Many2One.ShouldEqual(c1y_1, ctx, mode);
+                        c1y_1.SC1sWhereSessionC1Many2One.ShouldContain(c1x_1, ctx, mode);
                     }
                 }
             }
@@ -114,15 +114,15 @@ namespace Tests.Workspace.OriginSession.SessionDatabase
 
                         c1y_1.ShouldNotBeNull(ctx, mode);
 
-                        c1x_1.SC1DatabaseC1Many2One = c1y_1;
-                        c1x_1.SC1DatabaseC1Many2One.ShouldEqual(c1y_1, ctx, mode);
+                        c1x_1.SessionC1Many2One = c1y_1;
+                        c1x_1.SessionC1Many2One.ShouldEqual(c1y_1, ctx, mode);
 
-                        c1x_1.RemoveSC1DatabaseC1Many2One();
-                        c1x_1.SC1DatabaseC1Many2One.ShouldNotEqual(c1y_1, ctx, mode);
+                        c1x_1.RemoveSessionC1Many2One();
+                        c1x_1.SessionC1Many2One.ShouldNotEqual(c1y_1, ctx, mode);
 
                         await push(session1);
 
-                        c1x_1.SC1DatabaseC1Many2One.ShouldNotEqual(c1y_1, ctx, mode);
+                        c1x_1.SessionC1Many2One.ShouldNotEqual(c1y_1, ctx, mode);
                     }
                 }
             }

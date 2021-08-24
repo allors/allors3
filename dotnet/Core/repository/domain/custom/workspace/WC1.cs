@@ -1032,6 +1032,188 @@ namespace Allors.Repository
 
         #region Session Role
         #region Allors
+        [Id("3F599D1C-B6BE-4D78-B1D1-A589E217899E")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Indexed]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SC1[] SessionSC1Many2Manies { get; set; }
+
+        #region Allors
+        [Id("3E14E862-8E02-44FF-A141-2B98E6FFFA1A")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SC1 SessionSC1Many2One { get; set; }
+
+        #region Allors
+        [Id("7D29953D-67D0-403C-B932-6336C4F76D19")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SC1[] SessionSC1One2Manies { get; set; }
+
+        #region Allors
+        [Id("099A143A-B5D1-491A-866E-C266D9F5D5D2")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SC1 SessionSC1One2One { get; set; }
+
+        #region Allors
+        [Id("4B64EDF9-C70D-44E7-BAF3-ABE7A3BED7FB")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SC2[] SessionSC2Many2Manies { get; set; }
+
+        #region Allors
+        [Id("22CE4144-2F78-4A0C-8577-583DE32ED29C")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SC2 SessionSC2Many2One { get; set; }
+
+        #region Allors
+        [Id("46CC02FC-2E70-426F-838B-A6157ADFE105")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SC2[] SessionSC2One2Manies { get; set; }
+
+        #region Allors
+        [Id("C4F8FE73-2173-46E5-96F7-9D10F563B174")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SC2 SessionSC2One2One { get; set; }
+
+        #region Allors
+        [Id("B9C1673E-26D8-44EF-AE51-C2D10F65D6B2")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SI12[] SessionSI12Many2Manies { get; set; }
+
+        #region Allors
+        [Id("FE4B6597-54D0-4168-AF68-CFADBEDD1E3F")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SI12 SessionSI12Many2One { get; set; }
+
+        #region Allors
+        [Id("A8D817D3-4C44-4822-98B0-9CDD996FF82D")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SI12[] SessionSI12One2Manies { get; set; }
+
+        #region Allors
+        [Id("63BE4C3F-C1E7-4E21-9F9E-F50B4919AF74")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SI12 SessionSI12One2One { get; set; }
+
+        #region Allors
+        [Id("3F4DA12B-F9FB-47BF-B2B9-FC7CE90CFA44")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SI1[] SessionSI1Many2Manies { get; set; }
+
+        #region Allors
+        [Id("FD047128-A780-4697-9B33-F407EDA1B7D3")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SI1 SessionSI1Many2One { get; set; }
+
+        #region Allors
+        [Id("73B0BAFB-116A-4A37-8FCD-E5CCE621892D")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SI1[] SessionSI1One2Manies { get; set; }
+
+        #region Allors
+        [Id("046F211E-6791-4F15-ADA0-BC671DEA46E7")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SI1 SessionSI1One2One { get; set; }
+
+        #region Allors
+        [Id("FCB22EB5-9FA5-4040-9BE7-B994C18EE3FC")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SI2[] SessionSI2Many2Manies { get; set; }
+
+        #region Allors
+        [Id("885A9B5E-6F52-4DF6-AF46-0572E70B219A")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SI2 SessionSI2Many2One { get; set; }
+
+        #region Allors
+        [Id("1E5081F4-A651-4DD1-B580-2D6FEA15085C")]
+        [Indexed]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Multiplicity(Multiplicity.OneToMany)]
+        public SI2[] SessionSI2One2Manies { get; set; }
+
+        #region Allors
+        [Id("280E08D1-85B2-4AEB-9D3E-519AAF2C0FF6")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        public SI2 SessionSI2One2One { get; set; }
+        #endregion
+
+        #region Workspace Role
+        #region Allors
         [Id("90B01B2C-5A12-4D20-B36B-106C951E64BE")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
@@ -1391,7 +1573,7 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         [Origin(Origin.Session)]
-        public I2 WSessionI2One2One { get; set; }
+        public I2 SessionI2One2One { get; set; }
         #endregion
         #endregion
 

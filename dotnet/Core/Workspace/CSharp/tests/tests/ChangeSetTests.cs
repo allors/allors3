@@ -481,7 +481,7 @@ namespace Tests.Workspace
 
             var sessionC1a = session.Create<SC1>();
 
-            sessionC1a.SC1AllorsString = "X";
+            sessionC1a.SessionAllorsString = "X";
 
             await this.AsyncDatabaseClient.PushAsync(session);
 
@@ -504,7 +504,7 @@ namespace Tests.Workspace
 
             var sessionC1a = session.Create<SC1>();
 
-            sessionC1a.SC1AllorsString = "X";
+            sessionC1a.SessionAllorsString = "X";
 
             await this.AsyncDatabaseClient.PushAsync(session);
 
@@ -512,18 +512,18 @@ namespace Tests.Workspace
 
             Assert.Single(changeSet.AssociationsByRoleType);
 
-            sessionC1a.SC1AllorsString = "Y";
+            sessionC1a.SessionAllorsString = "Y";
 
             changeSet = session.Checkpoint();
 
             Assert.Single(changeSet.AssociationsByRoleType);
-            Assert.Equal("Y", sessionC1a.SC1AllorsString);
+            Assert.Equal("Y", sessionC1a.SessionAllorsString);
 
             sessionC1a.Strategy.Reset();
             changeSet = session.Checkpoint();
 
             Assert.Empty(changeSet.AssociationsByRoleType);
-            Assert.Equal("Y", sessionC1a.SC1AllorsString);
+            Assert.Equal("Y", sessionC1a.SessionAllorsString);
         }
 
         [Fact]

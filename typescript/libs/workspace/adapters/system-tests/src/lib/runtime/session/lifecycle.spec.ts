@@ -55,7 +55,7 @@ export async function sessionCrossSessionShouldThrowError() {
 
   let hasErrors = false;
   try {
-    objectSession1.addSC1SC1Many2Many(objectSession2);
+    objectSession1.addSessionSC1Many2Many(objectSession2);
   } catch(error) {
     hasErrors = true;
     expect(error.message).toBe('Strategy is from a different session')

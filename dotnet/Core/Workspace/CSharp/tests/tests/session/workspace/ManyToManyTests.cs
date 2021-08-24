@@ -72,17 +72,17 @@ namespace Tests.Workspace.OriginSession.SessionWorkspace
 
                         c1y_1.ShouldNotBeNull(ctx, mode);
 
-                        c1x_1.AddSC1WC1Many2Many(c1y_1);
+                        c1x_1.AddSessionWC1Many2Many(c1y_1);
 
-                        c1x_1.SC1WC1Many2Manies.ShouldContain(c1y_1, ctx, mode);
-                        c1y_1.SC1sWhereSC1WC1Many2Many.ShouldContain(c1x_1, ctx, mode);
-                        Assert.Single(c1y_1.SC1sWhereSC1WC1Many2Many.Where(v => v.Equals(c1x_1)));
+                        c1x_1.SessionWC1Many2Manies.ShouldContain(c1y_1, ctx, mode);
+                        c1y_1.SC1sWhereSessionWC1Many2Many.ShouldContain(c1x_1, ctx, mode);
+                        Assert.Single(c1y_1.SC1sWhereSessionWC1Many2Many.Where(v => v.Equals(c1x_1)));
 
                         push(session1);
 
-                        c1x_1.SC1WC1Many2Manies.ShouldContain(c1y_1, ctx, mode);
-                        c1y_1.SC1sWhereSC1WC1Many2Many.ShouldContain(c1x_1, ctx, mode);
-                        Assert.Single(c1y_1.SC1sWhereSC1WC1Many2Many.Where(v => v.Equals(c1x_1)));
+                        c1x_1.SessionWC1Many2Manies.ShouldContain(c1y_1, ctx, mode);
+                        c1y_1.SC1sWhereSessionWC1Many2Many.ShouldContain(c1x_1, ctx, mode);
+                        Assert.Single(c1y_1.SC1sWhereSessionWC1Many2Many.Where(v => v.Equals(c1x_1)));
                     }
                 }
             }
@@ -113,20 +113,20 @@ namespace Tests.Workspace.OriginSession.SessionWorkspace
 
                         c1y_1.ShouldNotBeNull(ctx, mode);
 
-                        c1x_1.AddSC1WC1Many2Many(null);
-                        Assert.Empty(c1x_1.SC1WC1Many2Manies);
+                        c1x_1.AddSessionWC1Many2Many(null);
+                        Assert.Empty(c1x_1.SessionWC1Many2Manies);
 
-                        c1x_1.AddSC1WC1Many2Many(c1y_1);
+                        c1x_1.AddSessionWC1Many2Many(c1y_1);
 
-                        c1x_1.SC1WC1Many2Manies.ShouldContain(c1y_1, ctx, mode);
-                        c1y_1.SC1sWhereSC1WC1Many2Many.ShouldContain(c1x_1, ctx, mode);
-                        Assert.Single(c1y_1.SC1sWhereSC1WC1Many2Many.Where(v => v.Equals(c1x_1)));
+                        c1x_1.SessionWC1Many2Manies.ShouldContain(c1y_1, ctx, mode);
+                        c1y_1.SC1sWhereSessionWC1Many2Many.ShouldContain(c1x_1, ctx, mode);
+                        Assert.Single(c1y_1.SC1sWhereSessionWC1Many2Many.Where(v => v.Equals(c1x_1)));
 
                         push(session1);
 
-                        c1x_1.SC1WC1Many2Manies.ShouldContain(c1y_1, ctx, mode);
-                        c1y_1.SC1sWhereSC1WC1Many2Many.ShouldContain(c1x_1, ctx, mode);
-                        Assert.Single(c1y_1.SC1sWhereSC1WC1Many2Many.Where(v => v.Equals(c1x_1)));
+                        c1x_1.SessionWC1Many2Manies.ShouldContain(c1y_1, ctx, mode);
+                        c1y_1.SC1sWhereSessionWC1Many2Many.ShouldContain(c1x_1, ctx, mode);
+                        Assert.Single(c1y_1.SC1sWhereSessionWC1Many2Many.Where(v => v.Equals(c1x_1)));
                     }
                 }
             }
@@ -157,19 +157,19 @@ namespace Tests.Workspace.OriginSession.SessionWorkspace
 
                         c1y_1.ShouldNotBeNull(ctx, mode);
 
-                        c1x_1.AddSC1WC1Many2Many(c1y_1);
-                        c1x_1.SC1WC1Many2Manies.ShouldContain(c1y_1, ctx, mode);
-                        c1y_1.SC1sWhereSC1WC1Many2Many.ShouldContain(c1x_1, ctx, mode);
-                        Assert.Single(c1y_1.SC1sWhereSC1WC1Many2Many.Where(v => v.Equals(c1x_1)));
+                        c1x_1.AddSessionWC1Many2Many(c1y_1);
+                        c1x_1.SessionWC1Many2Manies.ShouldContain(c1y_1, ctx, mode);
+                        c1y_1.SC1sWhereSessionWC1Many2Many.ShouldContain(c1x_1, ctx, mode);
+                        Assert.Single(c1y_1.SC1sWhereSessionWC1Many2Many.Where(v => v.Equals(c1x_1)));
 
-                        c1x_1.RemoveSC1WC1Many2Many(c1y_1);
-                        c1x_1.SC1WC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode);
-                        c1y_1.SC1sWhereSC1WC1Many2Many.ShouldNotContain(c1x_1, ctx, mode);
+                        c1x_1.RemoveSessionWC1Many2Many(c1y_1);
+                        c1x_1.SessionWC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode);
+                        c1y_1.SC1sWhereSessionWC1Many2Many.ShouldNotContain(c1x_1, ctx, mode);
 
                         push(session1);
 
-                        c1x_1.SC1WC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode);
-                        c1y_1.SC1sWhereSC1WC1Many2Many.ShouldNotContain(c1x_1, ctx, mode);
+                        c1x_1.SessionWC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode);
+                        c1y_1.SC1sWhereSessionWC1Many2Many.ShouldNotContain(c1x_1, ctx, mode);
                     }
                 }
             }
@@ -200,25 +200,25 @@ namespace Tests.Workspace.OriginSession.SessionWorkspace
 
                         c1y_1.ShouldNotBeNull(ctx, mode);
 
-                        c1x_1.AddSC1WC1Many2Many(c1y_1);
-                        c1x_1.SC1WC1Many2Manies.ShouldContain(c1y_1, ctx, mode);
-                        c1y_1.SC1sWhereSC1WC1Many2Many.ShouldContain(c1x_1, ctx, mode);
-                        Assert.Single(c1y_1.SC1sWhereSC1WC1Many2Many.Where(v => v.Equals(c1x_1)));
+                        c1x_1.AddSessionWC1Many2Many(c1y_1);
+                        c1x_1.SessionWC1Many2Manies.ShouldContain(c1y_1, ctx, mode);
+                        c1y_1.SC1sWhereSessionWC1Many2Many.ShouldContain(c1x_1, ctx, mode);
+                        Assert.Single(c1y_1.SC1sWhereSessionWC1Many2Many.Where(v => v.Equals(c1x_1)));
 
-                        c1x_1.RemoveSC1WC1Many2Many(null);
-                        c1x_1.SC1WC1Many2Manies.ShouldContain(c1y_1, ctx, mode);
-                        c1y_1.SC1sWhereSC1WC1Many2Many.ShouldContain(c1x_1, ctx, mode);
-                        Assert.Single(c1y_1.SC1sWhereSC1WC1Many2Many.Where(v => v.Equals(c1x_1)));
+                        c1x_1.RemoveSessionWC1Many2Many(null);
+                        c1x_1.SessionWC1Many2Manies.ShouldContain(c1y_1, ctx, mode);
+                        c1y_1.SC1sWhereSessionWC1Many2Many.ShouldContain(c1x_1, ctx, mode);
+                        Assert.Single(c1y_1.SC1sWhereSessionWC1Many2Many.Where(v => v.Equals(c1x_1)));
 
 
-                        c1x_1.RemoveSC1WC1Many2Many(c1y_1);
-                        c1x_1.SC1WC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode);
-                        c1y_1.SC1sWhereSC1WC1Many2Many.ShouldNotContain(c1x_1, ctx, mode);
+                        c1x_1.RemoveSessionWC1Many2Many(c1y_1);
+                        c1x_1.SessionWC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode);
+                        c1y_1.SC1sWhereSessionWC1Many2Many.ShouldNotContain(c1x_1, ctx, mode);
 
                         push(session1);
 
-                        c1x_1.SC1WC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode);
-                        c1y_1.SC1sWhereSC1WC1Many2Many.ShouldNotContain(c1x_1, ctx, mode);
+                        c1x_1.SessionWC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode);
+                        c1y_1.SC1sWhereSessionWC1Many2Many.ShouldNotContain(c1x_1, ctx, mode);
                     }
                 }
             }

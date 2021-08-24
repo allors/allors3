@@ -60,15 +60,15 @@ namespace Tests.Workspace.OriginSession.SessionSession
 
                     await this.AsyncDatabaseClient.PushAsync(session1);
 
-                    c1x_1.SC1SC1Many2One = c1y_2;
+                    c1x_1.SessionSC1Many2One = c1y_2;
 
-                    c1x_1.SC1SC1Many2One.ShouldEqual(c1y_2, ctx);
-                    c1y_2.SC1sWhereSC1SC1Many2One.ShouldContain(c1x_1, ctx);
+                    c1x_1.SessionSC1Many2One.ShouldEqual(c1y_2, ctx);
+                    c1y_2.SC1sWhereSessionSC1Many2One.ShouldContain(c1x_1, ctx);
 
                     await push(session1);
 
-                    c1x_1.SC1SC1Many2One.ShouldEqual(c1y_2, ctx);
-                    c1y_2.SC1sWhereSC1SC1Many2One.ShouldContain(c1x_1, ctx);
+                    c1x_1.SessionSC1Many2One.ShouldEqual(c1y_2, ctx);
+                    c1y_2.SC1sWhereSessionSC1Many2One.ShouldContain(c1x_1, ctx);
                 }
             }
         }
@@ -91,18 +91,18 @@ namespace Tests.Workspace.OriginSession.SessionSession
 
                     await this.AsyncDatabaseClient.PushAsync(session1);
 
-                    c1x_1.SC1SC1Many2One = c1y_2;
-                    c1x_1.SC1SC1Many2One.ShouldEqual(c1y_2, ctx);
-                    c1y_2.SC1sWhereSC1SC1Many2One.ShouldContain(c1x_1, ctx);
+                    c1x_1.SessionSC1Many2One = c1y_2;
+                    c1x_1.SessionSC1Many2One.ShouldEqual(c1y_2, ctx);
+                    c1y_2.SC1sWhereSessionSC1Many2One.ShouldContain(c1x_1, ctx);
 
-                    c1x_1.RemoveSC1SC1Many2One();
-                    c1x_1.SC1SC1Many2One.ShouldNotEqual(c1y_2, ctx);
-                    c1y_2.SC1sWhereSC1SC1Many2One.ShouldNotContain(c1x_1, ctx);
+                    c1x_1.RemoveSessionSC1Many2One();
+                    c1x_1.SessionSC1Many2One.ShouldNotEqual(c1y_2, ctx);
+                    c1y_2.SC1sWhereSessionSC1Many2One.ShouldNotContain(c1x_1, ctx);
 
                     await push1(session1);
 
-                    c1x_1.SC1SC1Many2One.ShouldNotEqual(c1y_2, ctx);
-                    c1y_2.SC1sWhereSC1SC1Many2One.ShouldNotContain(c1x_1, ctx);
+                    c1x_1.SessionSC1Many2One.ShouldNotEqual(c1y_2, ctx);
+                    c1y_2.SC1sWhereSessionSC1Many2One.ShouldNotContain(c1x_1, ctx);
                 }
             }
         }

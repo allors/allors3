@@ -151,12 +151,12 @@ namespace Tests.Workspace
             var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
 
-            c1a.WC1AllorsString = "X";
+            c1a.WorkspaceAllorsString = "X";
 
             session.PushToWorkspace();
             session.PullFromWorkspace();
 
-            c1a.WC1AllorsString = "Y";
+            c1a.WorkspaceAllorsString = "Y";
 
             var diffs = c1a.Strategy.Diff();
             Assert.Single(diffs);
@@ -164,7 +164,7 @@ namespace Tests.Workspace
             var diff = (IUnitDiff)diffs[0];
             Assert.Equal("X", diff.OriginalRole);
             Assert.Equal("Y", diff.ChangedRole);
-            Assert.Equal(this.M.C1.WC1AllorsString.RelationType, diff.RelationType);
+            Assert.Equal(this.M.C1.WorkspaceAllorsString.RelationType, diff.RelationType);
         }
 
         [Fact]
@@ -178,12 +178,12 @@ namespace Tests.Workspace
             var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
 
-            c1a.WC1AllorsString = "X";
+            c1a.WorkspaceAllorsString = "X";
 
             session.PushToWorkspace();
             session.PullFromWorkspace();
 
-            c1a.WC1AllorsString = "Y";
+            c1a.WorkspaceAllorsString = "Y";
 
             c1a.Strategy.Reset();
 

@@ -189,12 +189,12 @@ export async function workspaceUnitDiff() {
   const result = await client.pullAsync(session, [pull]);
   const c1a = result.collection<C1>('C1s')[0];
 
-  c1a.WC1AllorsString = 'X';
+  c1a.WorkspaceAllorsString = 'X';
 
   session.pushToWorkspace();
   session.pullFromWorkspace();
 
-  c1a.WC1AllorsString = 'Y';
+  c1a.WorkspaceAllorsString = 'Y';
 
   const diffs = c1a.strategy.diff();
 
@@ -204,7 +204,7 @@ export async function workspaceUnitDiff() {
 
   expect(diff.originalRole).toBe('X');
   expect(diff.changedRole).toBe('Y');
-  expect(diff.relationType.roleType).toBe(m.C1.WC1AllorsString);
+  expect(diff.relationType.roleType).toBe(m.C1.WorkspaceAllorsString);
 }
 
 export async function workspaceUnitDiffAfterReset() {
@@ -226,12 +226,12 @@ export async function workspaceUnitDiffAfterReset() {
   const result = await client.pullAsync(session, [pull]);
   const c1a = result.collection<C1>('C1s')[0];
 
-  c1a.WC1AllorsString = 'X';
+  c1a.WorkspaceAllorsString = 'X';
 
   session.pushToWorkspace();
   session.pullFromWorkspace();
 
-  c1a.WC1AllorsString = 'Y';
+  c1a.WorkspaceAllorsString = 'Y';
 
   c1a.strategy.reset();
 

@@ -60,15 +60,15 @@ namespace Tests.Workspace.OriginSession.SessionSession
 
                     await this.AsyncDatabaseClient.PushAsync(session1);
 
-                    c1x_1.AddSC1SC1One2Many(c1y_2);
+                    c1x_1.AddSessionSC1One2Many(c1y_2);
 
-                    c1x_1.SC1SC1One2Manies.ShouldContain(c1y_2, ctx);
-                    c1y_2.SC1WhereSC1SC1One2Many.ShouldEqual(c1x_1, ctx);
+                    c1x_1.SessionSC1One2Manies.ShouldContain(c1y_2, ctx);
+                    c1y_2.SC1WhereSessionSC1One2Many.ShouldEqual(c1x_1, ctx);
 
                     await push(session1);
 
-                    c1x_1.SC1SC1One2Manies.ShouldContain(c1y_2, ctx);
-                    c1y_2.SC1WhereSC1SC1One2Many.ShouldEqual(c1x_1, ctx);
+                    c1x_1.SessionSC1One2Manies.ShouldContain(c1y_2, ctx);
+                    c1y_2.SC1WhereSessionSC1One2Many.ShouldEqual(c1x_1, ctx);
                 }
 
             }
@@ -92,18 +92,18 @@ namespace Tests.Workspace.OriginSession.SessionSession
 
                     await this.AsyncDatabaseClient.PushAsync(session1);
 
-                    c1x_1.AddSC1SC1One2Many(null);
-                    Assert.Empty(c1x_1.SC1SC1One2Manies);
+                    c1x_1.AddSessionSC1One2Many(null);
+                    Assert.Empty(c1x_1.SessionSC1One2Manies);
 
-                    c1x_1.AddSC1SC1One2Many(c1y_2);
+                    c1x_1.AddSessionSC1One2Many(c1y_2);
 
-                    c1x_1.SC1SC1One2Manies.ShouldContain(c1y_2, ctx);
-                    c1y_2.SC1WhereSC1SC1One2Many.ShouldEqual(c1x_1, ctx);
+                    c1x_1.SessionSC1One2Manies.ShouldContain(c1y_2, ctx);
+                    c1y_2.SC1WhereSessionSC1One2Many.ShouldEqual(c1x_1, ctx);
 
                     await push(session1);
 
-                    c1x_1.SC1SC1One2Manies.ShouldContain(c1y_2, ctx);
-                    c1y_2.SC1WhereSC1SC1One2Many.ShouldEqual(c1x_1, ctx);
+                    c1x_1.SessionSC1One2Manies.ShouldContain(c1y_2, ctx);
+                    c1y_2.SC1WhereSessionSC1One2Many.ShouldEqual(c1x_1, ctx);
                 }
 
             }
@@ -129,18 +129,18 @@ namespace Tests.Workspace.OriginSession.SessionSession
 
                         await this.AsyncDatabaseClient.PushAsync(session1);
 
-                        c1x_1.AddSC1SC1One2Many(c1y_2);
-                        c1x_1.SC1SC1One2Manies.ShouldContain(c1y_2, ctx, mode);
-                        c1y_2.SC1WhereSC1SC1One2Many.ShouldEqual(c1x_1, ctx);
+                        c1x_1.AddSessionSC1One2Many(c1y_2);
+                        c1x_1.SessionSC1One2Manies.ShouldContain(c1y_2, ctx, mode);
+                        c1y_2.SC1WhereSessionSC1One2Many.ShouldEqual(c1x_1, ctx);
 
-                        c1x_1.RemoveSC1SC1One2Many(c1y_2);
-                        c1x_1.SC1SC1One2Manies.ShouldNotContain(c1y_2, ctx, mode);
-                        c1y_2.SC1WhereSC1SC1One2Many.ShouldNotEqual(c1x_1, ctx);
+                        c1x_1.RemoveSessionSC1One2Many(c1y_2);
+                        c1x_1.SessionSC1One2Manies.ShouldNotContain(c1y_2, ctx, mode);
+                        c1y_2.SC1WhereSessionSC1One2Many.ShouldNotEqual(c1x_1, ctx);
 
                         await push1(session1);
 
-                        c1x_1.SC1SC1One2Manies.ShouldNotContain(c1y_2, ctx, mode);
-                        c1y_2.SC1WhereSC1SC1One2Many.ShouldNotEqual(c1x_1, ctx);
+                        c1x_1.SessionSC1One2Manies.ShouldNotContain(c1y_2, ctx, mode);
+                        c1y_2.SC1WhereSessionSC1One2Many.ShouldNotEqual(c1x_1, ctx);
                     }
                 }
             }
@@ -166,25 +166,25 @@ namespace Tests.Workspace.OriginSession.SessionSession
 
                         await this.AsyncDatabaseClient.PushAsync(session1);
 
-                        c1x_1.AddSC1SC1One2Many(null);
-                        Assert.Empty(c1x_1.SC1SC1One2Manies);
+                        c1x_1.AddSessionSC1One2Many(null);
+                        Assert.Empty(c1x_1.SessionSC1One2Manies);
 
-                        c1x_1.AddSC1SC1One2Many(c1y_2);
-                        c1x_1.SC1SC1One2Manies.ShouldContain(c1y_2, ctx, mode);
-                        c1y_2.SC1WhereSC1SC1One2Many.ShouldEqual(c1x_1, ctx);
+                        c1x_1.AddSessionSC1One2Many(c1y_2);
+                        c1x_1.SessionSC1One2Manies.ShouldContain(c1y_2, ctx, mode);
+                        c1y_2.SC1WhereSessionSC1One2Many.ShouldEqual(c1x_1, ctx);
 
-                        c1x_1.RemoveSC1SC1One2Many(null);
-                        c1x_1.SC1SC1One2Manies.ShouldContain(c1y_2, ctx, mode);
-                        c1y_2.SC1WhereSC1SC1One2Many.ShouldEqual(c1x_1, ctx);
+                        c1x_1.RemoveSessionSC1One2Many(null);
+                        c1x_1.SessionSC1One2Manies.ShouldContain(c1y_2, ctx, mode);
+                        c1y_2.SC1WhereSessionSC1One2Many.ShouldEqual(c1x_1, ctx);
 
-                        c1x_1.RemoveSC1SC1One2Many(c1y_2);
-                        c1x_1.SC1SC1One2Manies.ShouldNotContain(c1y_2, ctx, mode);
-                        c1y_2.SC1WhereSC1SC1One2Many.ShouldNotEqual(c1x_1, ctx);
+                        c1x_1.RemoveSessionSC1One2Many(c1y_2);
+                        c1x_1.SessionSC1One2Manies.ShouldNotContain(c1y_2, ctx, mode);
+                        c1y_2.SC1WhereSessionSC1One2Many.ShouldNotEqual(c1x_1, ctx);
 
                         await push1(session1);
 
-                        c1x_1.SC1SC1One2Manies.ShouldNotContain(c1y_2, ctx, mode);
-                        c1y_2.SC1WhereSC1SC1One2Many.ShouldNotEqual(c1x_1, ctx);
+                        c1x_1.SessionSC1One2Manies.ShouldNotContain(c1y_2, ctx, mode);
+                        c1y_2.SC1WhereSessionSC1One2Many.ShouldNotEqual(c1x_1, ctx);
                     }
                 }
             }

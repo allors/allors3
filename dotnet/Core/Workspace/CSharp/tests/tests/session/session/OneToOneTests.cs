@@ -60,17 +60,17 @@ namespace Tests.Workspace.OriginSession.SessionSession
 
                     await this.AsyncDatabaseClient.PushAsync(session1);
 
-                    c1x_1.SC1SC1One2One = c1y_2;
+                    c1x_1.SessionSC1One2One = c1y_2;
 
-                    c1x_1.SC1SC1One2One.ShouldEqual(c1y_2, ctx);
-                    //c1y_2.SC1SC1One2One.ShouldEqual(c1x_1, ctx);
-                    c1y_2.SC1WhereSC1SC1One2One.ShouldEqual(c1x_1, ctx);
+                    c1x_1.SessionSC1One2One.ShouldEqual(c1y_2, ctx);
+                    //c1y_2.SessionSC1One2One.ShouldEqual(c1x_1, ctx);
+                    c1y_2.SC1WhereSessionSC1One2One.ShouldEqual(c1x_1, ctx);
 
                     await push(session1);
 
-                    c1x_1.SC1SC1One2One.ShouldEqual(c1y_2, ctx);
-                    //c1y_2.SC1SC1One2One.ShouldEqual(c1x_1, ctx);
-                    c1y_2.SC1WhereSC1SC1One2One.ShouldEqual(c1x_1, ctx);
+                    c1x_1.SessionSC1One2One.ShouldEqual(c1y_2, ctx);
+                    //c1y_2.SessionSC1One2One.ShouldEqual(c1x_1, ctx);
+                    c1y_2.SC1WhereSessionSC1One2One.ShouldEqual(c1x_1, ctx);
                 }
             }
         }
@@ -93,23 +93,23 @@ namespace Tests.Workspace.OriginSession.SessionSession
 
                     await this.AsyncDatabaseClient.PushAsync(session1);
 
-                    c1x_1.SC1SC1One2One = c1y_2;
+                    c1x_1.SessionSC1One2One = c1y_2;
 
-                    c1x_1.SC1SC1One2One.ShouldEqual(c1y_2, ctx);
-                    //c1y_2.SC1SC1One2One.ShouldEqual(c1x_1, ctx);
-                    c1y_2.SC1WhereSC1SC1One2One.ShouldEqual(c1x_1, ctx);
+                    c1x_1.SessionSC1One2One.ShouldEqual(c1y_2, ctx);
+                    //c1y_2.SessionSC1One2One.ShouldEqual(c1x_1, ctx);
+                    c1y_2.SC1WhereSessionSC1One2One.ShouldEqual(c1x_1, ctx);
 
-                    c1x_1.RemoveSC1SC1One2One();
+                    c1x_1.RemoveSessionSC1One2One();
 
-                    c1x_1.SC1SC1One2One.ShouldNotEqual(c1y_2, ctx);
-                    //c1y_2.SC1SC1One2One.ShouldNotEqual(c1x_1, ctx);
-                    c1y_2.SC1WhereSC1SC1One2One.ShouldNotEqual(c1x_1, ctx);
+                    c1x_1.SessionSC1One2One.ShouldNotEqual(c1y_2, ctx);
+                    //c1y_2.SessionSC1One2One.ShouldNotEqual(c1x_1, ctx);
+                    c1y_2.SC1WhereSessionSC1One2One.ShouldNotEqual(c1x_1, ctx);
 
                     await push1(session1);
 
-                    c1x_1.SC1SC1One2One.ShouldNotEqual(c1y_2, ctx);
-                    //c1y_2.SC1SC1One2One.ShouldNotEqual(c1x_1, ctx);
-                    c1y_2.SC1WhereSC1SC1One2One.ShouldNotEqual(c1x_1, ctx);
+                    c1x_1.SessionSC1One2One.ShouldNotEqual(c1y_2, ctx);
+                    //c1y_2.SessionSC1One2One.ShouldNotEqual(c1x_1, ctx);
+                    c1y_2.SC1WhereSessionSC1One2One.ShouldNotEqual(c1x_1, ctx);
                 }
 
             }

@@ -3,11 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Workspace.OriginSession.SessionDatabase.Remote
+namespace Tests.Workspace.OriginSession.Session.Remote
 {
     using Xunit;
 
-    public class ManyToOneTests : SessionDatabase.ManyToOneTests, IClassFixture<Fixture>
+    public class ManyToOneTests : Session.ManyToOneTests, IClassFixture<Fixture>
     {
         public ManyToOneTests(Fixture fixture) : base(fixture) => this.Profile = new Workspace.Remote.Profile();
 

@@ -220,7 +220,7 @@ $class.CompositeDatabaseRoleTypes:{roleType|$classCompsiteRoleTypes_Class_OnBuil
 		}
 
 
-$class.RoleTypes:{roleType|
+$class.DatabaseRoleTypes:{roleType|
 	$if(roleType._.objectType._.IsUnit)$
 		$classUnitRoleType_Builder()$
 	$else$
