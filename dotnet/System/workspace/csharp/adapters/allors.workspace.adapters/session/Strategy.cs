@@ -406,6 +406,11 @@ namespace Allors.Workspace.Adapters
 
         private static void AssertUnit(IRoleType roleType, object value)
         {
+            if (value == null)
+            {
+                return;
+            }
+
             switch (roleType.ObjectType.Tag)
             {
                 case UnitTags.Binary:
@@ -433,7 +438,7 @@ namespace Allors.Workspace.Adapters
                     }
                     break;
                 case UnitTags.Float:
-                    if (!(value is float))
+                    if (!(value is double))
                     {
                         throw new ArgumentException($"{nameof(value)} is not an Float");
                     }

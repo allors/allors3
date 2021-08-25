@@ -5,14 +5,19 @@
 
 namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
 {
+    using System;
     using System.Threading.Tasks;
     using Allors.Workspace.Domain;
     using Xunit;
     using Allors.Workspace.Data;
     using System.Linq;
+    using Allors.Workspace;
 
     public abstract class UnitTests : Test
     {
+        private Func<Context>[] contextFactories;
+        private Func<ISession, Task>[] pushes;
+
         protected UnitTests(Fixture fixture) : base(fixture)
         {
 
@@ -22,32 +27,217 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
         {
             await base.InitializeAsync();
             await this.Login("administrator");
+
+            var singleSessionContext = new SingleSessionContext(this, "Single shared");
+            var multipleSessionContext = new MultipleSessionContext(this, "Multiple shared");
+
+            this.pushes = new Func<ISession, Task>[]
+            {
+                (session) => Task.CompletedTask,
+                async (session) => await this.AsyncDatabaseClient.PushAsync(session)
+            };
+
+            this.contextFactories = new Func<Context>[]
+            {
+                () => singleSessionContext,
+                () => new SingleSessionContext(this, "Single"),
+                () => multipleSessionContext,
+                () => new MultipleSessionContext(this, "Multiple"),
+            };
         }
 
         [Fact]
-        public async void Unit()
+        public async void SetRole()
         {
-            await this.Login("administrator");
-
-            var pull = new[]
+            foreach (var push in this.pushes)
             {
-                new Pull
+                foreach (DatabaseMode mode in Enum.GetValues(typeof(DatabaseMode)))
                 {
-                    Extent = new Filter(this.M.C1)
+                    foreach (var contextFactory in this.contextFactories)
+                    {
+                        var ctx = contextFactory();
+                        var (session1, _) = ctx;
+
+                        var c1 = await ctx.Create<C1>(session1, mode);
+
+                        Assert.NotNull(c1);
+
+                        await push(session1);
+
+                        if (!c1.CanWriteC1C1One2One)
+                        {
+                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                        }
+
+                        c1.C1AllorsBinary = new byte[] { 1, 2 };
+                        c1.C1AllorsBoolean = true;
+                        c1.C1AllorsDateTime = new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc);
+                        c1.C1AllorsDecimal = 10.10m;
+                        c1.C1AllorsDouble = 11.11d;
+                        c1.C1AllorsInteger = 12;
+                        c1.C1AllorsString = "a string";
+                        c1.C1AllorsUnique = new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66");
+
+                        Assert.Equal(new byte[] { 1, 2 }, c1.C1AllorsBinary);
+                        Assert.True(c1.C1AllorsBoolean);
+                        Assert.Equal(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc), c1.C1AllorsDateTime);
+                        Assert.Equal(10.10m, c1.C1AllorsDecimal);
+                        Assert.Equal(11.11d, c1.C1AllorsDouble);
+                        Assert.Equal(12, c1.C1AllorsInteger);
+                        Assert.Equal("a string", c1.C1AllorsString);
+                        Assert.Equal(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"), c1.C1AllorsUnique);
+
+                        await push(session1);
+
+                        Assert.Equal(new byte[] { 1, 2 }, c1.C1AllorsBinary);
+                        Assert.True(c1.C1AllorsBoolean);
+                        Assert.Equal(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc), c1.C1AllorsDateTime);
+                        Assert.Equal(10.10m, c1.C1AllorsDecimal);
+                        Assert.Equal(11.11d, c1.C1AllorsDouble);
+                        Assert.Equal(12, c1.C1AllorsInteger);
+                        Assert.Equal("a string", c1.C1AllorsString);
+                        Assert.Equal(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"), c1.C1AllorsUnique);
+
+                        if (c1.Strategy.Id > 0)
+                        {
+                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                        }
+
+                        Assert.Equal(new byte[] { 1, 2 }, c1.C1AllorsBinary);
+                        Assert.True(c1.C1AllorsBoolean);
+                        Assert.Equal(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc), c1.C1AllorsDateTime);
+                        Assert.Equal(10.10m, c1.C1AllorsDecimal);
+                        Assert.Equal(11.11d, c1.C1AllorsDouble);
+                        Assert.Equal(12, c1.C1AllorsInteger);
+                        Assert.Equal("a string", c1.C1AllorsString);
+                        Assert.Equal(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"), c1.C1AllorsUnique);
+
+                        await push(session1);
+
+                        Assert.Equal(new byte[] { 1, 2 }, c1.C1AllorsBinary);
+                        Assert.True(c1.C1AllorsBoolean);
+                        Assert.Equal(new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc), c1.C1AllorsDateTime);
+                        Assert.Equal(10.10m, c1.C1AllorsDecimal);
+                        Assert.Equal(11.11d, c1.C1AllorsDouble);
+                        Assert.Equal(12, c1.C1AllorsInteger);
+                        Assert.Equal("a string", c1.C1AllorsString);
+                        Assert.Equal(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"), c1.C1AllorsUnique);
+                    }
                 }
-            };
+            }
+        }
 
-            var session = this.Workspace.CreateSession();
-            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+        [Fact]
+        public async void RemoveRole()
+        {
+            foreach (var push in this.pushes)
+            {
+                foreach (DatabaseMode mode in Enum.GetValues(typeof(DatabaseMode)))
+                {
+                    foreach (var contextFactory in this.contextFactories)
+                    {
+                        var ctx = contextFactory();
+                        var (session1, _) = ctx;
 
-            var c1s = result.GetCollection<C1>();
+                        var c1 = await ctx.Create<C1>(session1, mode);
 
-            var c1A = c1s.First(v => v.Name.Equals("c1A"));
-            var c1B = c1s.First(v => v.Name.Equals("c1B"));
-            var c1C = c1s.First(v => v.Name.Equals("c1C"));
-            var c1D = c1s.First(v => v.Name.Equals("c1D"));
+                        Assert.NotNull(c1);
 
-            Assert.Equal("ᴀbra", c1B.C1AllorsString);
+                        await push(session1);
+
+                        if (!c1.CanWriteC1C1One2One)
+                        {
+                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                        }
+
+                        c1.C1AllorsBinary = new byte[] { 1, 2 };
+                        c1.C1AllorsBoolean = true;
+                        c1.C1AllorsDateTime = new DateTime(1973, 3, 27, 12, 1, 2, 3, DateTimeKind.Utc);
+                        c1.C1AllorsDecimal = 10.10m;
+                        c1.C1AllorsDouble = 11.11d;
+                        c1.C1AllorsInteger = 12;
+                        c1.C1AllorsString = "a string";
+                        c1.C1AllorsUnique = new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66");
+
+                        await push(session1);
+
+                        if (!c1.CanWriteC1C1One2One)
+                        {
+                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                        }
+
+                        c1.RemoveC1AllorsBinary();
+                        c1.RemoveC1AllorsBoolean();
+                        c1.RemoveC1AllorsDateTime();
+                        c1.RemoveC1AllorsDecimal();
+                        c1.RemoveC1AllorsDouble();
+                        c1.RemoveC1AllorsInteger();
+                        c1.RemoveC1AllorsString();
+                        c1.RemoveC1AllorsUnique();
+
+                        Assert.False(c1.ExistC1AllorsBinary);
+                        Assert.False(c1.ExistC1AllorsBoolean);
+                        Assert.False(c1.ExistC1AllorsDateTime);
+                        Assert.False(c1.ExistC1AllorsDecimal);
+                        Assert.False(c1.ExistC1AllorsDouble);
+                        Assert.False(c1.ExistC1AllorsInteger);
+                        Assert.False(c1.ExistC1AllorsString);
+                        Assert.False(c1.ExistC1AllorsUnique);
+
+                        Assert.Null(c1.C1AllorsBinary);
+                        Assert.Null(c1.C1AllorsBoolean);
+                        Assert.Null(c1.C1AllorsDateTime);
+                        Assert.Null(c1.C1AllorsDecimal);
+                        Assert.Null(c1.C1AllorsDouble);
+                        Assert.Null(c1.C1AllorsInteger);
+                        Assert.Null(c1.C1AllorsString);
+                        Assert.Null(c1.C1AllorsUnique);
+
+                        if (c1.Strategy.Id > 0)
+                        {
+                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                        }
+
+                        Assert.False(c1.ExistC1AllorsBinary);
+                        Assert.False(c1.ExistC1AllorsBoolean);
+                        Assert.False(c1.ExistC1AllorsDateTime);
+                        Assert.False(c1.ExistC1AllorsDecimal);
+                        Assert.False(c1.ExistC1AllorsDouble);
+                        Assert.False(c1.ExistC1AllorsInteger);
+                        Assert.False(c1.ExistC1AllorsString);
+                        Assert.False(c1.ExistC1AllorsUnique);
+
+                        Assert.Null(c1.C1AllorsBinary);
+                        Assert.Null(c1.C1AllorsBoolean);
+                        Assert.Null(c1.C1AllorsDateTime);
+                        Assert.Null(c1.C1AllorsDecimal);
+                        Assert.Null(c1.C1AllorsDouble);
+                        Assert.Null(c1.C1AllorsInteger);
+                        Assert.Null(c1.C1AllorsString);
+                        Assert.Null(c1.C1AllorsUnique);
+
+                        await push(session1);
+
+                        Assert.False(c1.ExistC1AllorsBinary);
+                        Assert.False(c1.ExistC1AllorsBoolean);
+                        Assert.False(c1.ExistC1AllorsDateTime);
+                        Assert.False(c1.ExistC1AllorsDecimal);
+                        Assert.False(c1.ExistC1AllorsDouble);
+                        Assert.False(c1.ExistC1AllorsInteger);
+                        Assert.False(c1.ExistC1AllorsString);
+                        Assert.False(c1.ExistC1AllorsUnique);
+
+                        Assert.Null(c1.C1AllorsBinary);
+                        Assert.Null(c1.C1AllorsBoolean);
+                        Assert.Null(c1.C1AllorsDateTime);
+                        Assert.Null(c1.C1AllorsDecimal);
+                        Assert.Null(c1.C1AllorsDouble);
+                        Assert.Null(c1.C1AllorsInteger);
+                        Assert.Null(c1.C1AllorsString);
+                        Assert.Null(c1.C1AllorsUnique);
+                    }
+                }
+            }
         }
     }
 }

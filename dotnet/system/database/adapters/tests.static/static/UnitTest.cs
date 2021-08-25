@@ -2145,7 +2145,7 @@ namespace Allors.Database.Adapters
                 }
             }
         }
-        
+
         protected DateTime StripNanoSeconds(DateTime dateTime) => new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond, dateTime.Kind);
     }
 }
