@@ -29,8 +29,24 @@ namespace Tests.Workspace.SessionAssociation.SessionRelation.SessionRole
 
             this.pushes = new Func<ISession, Task>[]
             {
-                (session) => Task.CompletedTask,
-                async (session) => await this.AsyncDatabaseClient.PushAsync(session)
+                (_) => Task.CompletedTask,
+                (session) =>
+                {
+                    session.PushToWorkspace();
+                    return Task.CompletedTask;
+                },
+                (session) =>
+                {
+                    session.PullFromWorkspace();
+                    return Task.CompletedTask;
+                },
+                (session) =>
+                {
+                    session.PushToWorkspace();
+                    session.PullFromWorkspace();
+                    return Task.CompletedTask;
+                },
+                async (session) => await this.AsyncDatabaseClient.PushAsync(session),
             };
 
             var multipleSessionContext = new MultipleSessionContext(this, "Multiple shared");

@@ -48,6 +48,11 @@ namespace Allors.Workspace.Adapters
         {
             var newRecord = this.Workspace.GetRecord(this.Id);
 
+            if (newRecord == null || newRecord.Version == this.Version)
+            {
+                return;
+            }
+
             if (!this.CanMerge(newRecord))
             {
                 result.AddMergeError(this.Strategy.Object);

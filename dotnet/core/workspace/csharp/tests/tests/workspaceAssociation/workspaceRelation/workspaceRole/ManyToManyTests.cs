@@ -15,7 +15,7 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation.WorkspaceRole
     public abstract class ManyToManyTests : Test
     {
         private Func<Context>[] contextFactories;
-        private Action<ISession>[] pushes;
+        private Func<ISession, Task>[] pushes;
 
         protected ManyToManyTests(Fixture fixture) : base(fixture)
         {
@@ -30,11 +30,26 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation.WorkspaceRole
             var singleSessionContext = new SingleSessionContext(this, "Single shared");
             var multipleSessionContext = new MultipleSessionContext(this, "Multiple shared");
 
-            this.pushes = new Action<ISession>[]
+            this.pushes = new Func<ISession, Task>[]
             {
-                (session) => { },
-                (session) => session.PushToWorkspace(),
-                (session) => {session.PushToWorkspace(); session.PullFromWorkspace(); }
+                (_) => Task.CompletedTask,
+                (session) =>
+                {
+                    session.PushToWorkspace();
+                    return Task.CompletedTask;
+                },
+                (session) =>
+                {
+                    session.PullFromWorkspace();
+                    return Task.CompletedTask;
+                },
+                (session) =>
+                {
+                    session.PushToWorkspace();
+                    session.PullFromWorkspace();
+                    return Task.CompletedTask;
+                },
+                async (session) => await this.AsyncDatabaseClient.PushAsync(session),
             };
 
             this.contextFactories = new Func<Context>[]
@@ -60,8 +75,8 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation.WorkspaceRole
                             var ctx = contextFactory();
                             var (session1, session2) = ctx;
 
-                            var c1x_1 = await ctx.Create<WC1>(session1, mode1);
-                            var c1y_2 = await ctx.Create<WC1>(session2, mode2);
+                            var c1x_1 = ctx.Create<WC1>(session1, mode1);
+                            var c1y_2 = ctx.Create<WC1>(session2, mode2);
 
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
@@ -80,7 +95,7 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation.WorkspaceRole
                             Assert.Single(c1y_1.WC1sWhereWorkspaceWC1Many2Many.Where(v => v.Equals(c1x_1)));
 
 
-                            push(session1);
+                            await push(session1);
 
                             c1x_1.WorkspaceWC1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
                             c1y_1.WC1sWhereWorkspaceWC1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
@@ -105,8 +120,8 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation.WorkspaceRole
                             var ctx = contextFactory();
                             var (session1, session2) = ctx;
 
-                            var c1x_1 = await ctx.Create<WC1>(session1, mode1);
-                            var c1y_2 = await ctx.Create<WC1>(session2, mode2);
+                            var c1x_1 = ctx.Create<WC1>(session1, mode1);
+                            var c1y_2 = ctx.Create<WC1>(session2, mode2);
 
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
@@ -129,7 +144,7 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation.WorkspaceRole
                             Assert.Single(c1y_1.WC1sWhereWorkspaceWC1Many2Many.Where(v => v.Equals(c1x_1)));
 
 
-                            push(session1);
+                            await push(session1);
 
                             c1x_1.WorkspaceWC1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
                             c1y_1.WC1sWhereWorkspaceWC1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
@@ -154,8 +169,8 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation.WorkspaceRole
                             var ctx = contextFactory();
                             var (session1, session2) = ctx;
 
-                            var c1x_1 = await ctx.Create<WC1>(session1, mode1);
-                            var c1y_2 = await ctx.Create<WC1>(session2, mode2);
+                            var c1x_1 = ctx.Create<WC1>(session1, mode1);
+                            var c1y_2 = ctx.Create<WC1>(session2, mode2);
 
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
@@ -177,7 +192,7 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation.WorkspaceRole
                             c1x_1.WorkspaceWC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
                             c1y_1.WC1sWhereWorkspaceWC1Many2Many.ShouldNotContain(c1x_1, ctx, mode1, mode2);
 
-                            push(session1);
+                            await push(session1);
 
                             c1x_1.WorkspaceWC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
                             c1y_1.WC1sWhereWorkspaceWC1Many2Many.ShouldNotContain(c1x_1, ctx, mode1, mode2);
@@ -201,8 +216,8 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation.WorkspaceRole
                             var ctx = contextFactory();
                             var (session1, session2) = ctx;
 
-                            var c1x_1 = await ctx.Create<WC1>(session1, mode1);
-                            var c1y_2 = await ctx.Create<WC1>(session2, mode2);
+                            var c1x_1 = ctx.Create<WC1>(session1, mode1);
+                            var c1y_2 = ctx.Create<WC1>(session2, mode2);
 
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
@@ -228,7 +243,7 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation.WorkspaceRole
                             c1x_1.WorkspaceWC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
                             c1y_1.WC1sWhereWorkspaceWC1Many2Many.ShouldNotContain(c1x_1, ctx, mode1, mode2);
 
-                            push(session1);
+                            await push(session1);
 
                             c1x_1.WorkspaceWC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
                             c1y_1.WC1sWhereWorkspaceWC1Many2Many.ShouldNotContain(c1x_1, ctx, mode1, mode2);

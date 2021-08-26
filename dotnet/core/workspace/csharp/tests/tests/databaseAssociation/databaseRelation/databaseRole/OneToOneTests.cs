@@ -15,13 +15,11 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
     public abstract class OneToOneTests : Test
     {
-
         private Func<Context>[] contextFactories;
         private Func<ISession, Task>[] pushes;
 
         protected OneToOneTests(Fixture fixture) : base(fixture)
         {
-
         }
 
         public override async Task InitializeAsync()
@@ -34,8 +32,24 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
             this.pushes = new Func<ISession, Task>[]
             {
-                (session) => Task.CompletedTask,
-                async (session) => await this.AsyncDatabaseClient.PushAsync(session)
+                (_) => Task.CompletedTask,
+                (session) =>
+                {
+                    session.PushToWorkspace();
+                    return Task.CompletedTask;
+                },
+                (session) =>
+                {
+                    session.PullFromWorkspace();
+                    return Task.CompletedTask;
+                },
+                (session) =>
+                {
+                    session.PushToWorkspace();
+                    session.PullFromWorkspace();
+                    return Task.CompletedTask;
+                },
+                async (session) => await this.AsyncDatabaseClient.PushAsync(session),
             };
 
             this.contextFactories = new Func<Context>[]
@@ -63,9 +77,6 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                             var c1x_1 = await ctx.Create<C1>(session1, mode1);
                             var c1y_2 = await ctx.Create<C1>(session2, mode2);
-
-                            c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
-                            c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
                             await this.AsyncDatabaseClient.PushAsync(session2);
                             var result = await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1y_2 });
@@ -110,9 +121,6 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                             var c1x_1 = await ctx.Create<C1>(session1, mode1);
                             var c1y_2 = await ctx.Create<C1>(session2, mode2);
-
-                            c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
-                            c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
                             await this.AsyncDatabaseClient.PushAsync(session2);
                             var result = await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1y_2 });

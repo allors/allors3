@@ -30,12 +30,24 @@ namespace Tests.Workspace
 
             this.pushes = new Func<ISession, Task>[]
             {
-                //(session) => Task.CompletedTask,
-                async (session) =>
+                (_) => Task.CompletedTask,
+                (session) =>
                 {
-                    var result = await this.AsyncDatabaseClient.PushAsync(session);
-                    Assert.False(result.HasErrors);
-                }
+                    session.PushToWorkspace();
+                    return Task.CompletedTask;
+                },
+                (session) =>
+                {
+                    session.PullFromWorkspace();
+                    return Task.CompletedTask;
+                },
+                (session) =>
+                {
+                    session.PushToWorkspace();
+                    session.PullFromWorkspace();
+                    return Task.CompletedTask;
+                },
+                async (session) => await this.AsyncDatabaseClient.PushAsync(session),
             };
 
             var singleSessionContext = new SingleSessionContext(this, "Single shared");

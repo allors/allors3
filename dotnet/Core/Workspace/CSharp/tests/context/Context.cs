@@ -53,36 +53,44 @@ namespace Tests.Workspace
                 throw new ArgumentException($@"Origin is not {Origin.Database}", nameof(mode));
             }
 
+            T result;
             switch (mode)
             {
                 case DatabaseMode.NoPush:
-                    return session.Create<T>();
+                    result = session.Create<T>();
+                    break;
                 case DatabaseMode.Push:
                     var pushObject = session.Create<T>();
                     await this.AsyncDatabaseClient.PushAsync(session);
-                    return pushObject;
+                    result = pushObject;
+                    break;
                 case DatabaseMode.PushAndPull:
-                    var pushAndPullObject = session.Create<T>();
-                    var result = await this.AsyncDatabaseClient.PushAsync(session);
-                    Assert.False(result.HasErrors);
-                    await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = pushAndPullObject });
-                    return pushAndPullObject;
+                    result = session.Create<T>();
+                    var pushResult = await this.AsyncDatabaseClient.PushAsync(session);
+                    Assert.False(pushResult.HasErrors);
+                    await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = result });
+                    break;
                 case DatabaseMode.SharedDatabase:
                     var sharedDatabaseObject = this.SharedDatabaseSession.Create<T>();
                     await this.AsyncDatabaseClient.PushAsync(this.SharedDatabaseSession);
                     var sharedResult = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = sharedDatabaseObject });
-                    return (T)sharedResult.Objects.Values.First();
+                    result = (T)sharedResult.Objects.Values.First();
+                    break;
                 case DatabaseMode.ExclusiveDatabase:
                     var exclusiveDatabaseObject = this.ExclusiveDatabaseSession.Create<T>();
                     await this.AsyncDatabaseClient.PushAsync(this.ExclusiveDatabaseSession);
                     var exclusiveResult = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = exclusiveDatabaseObject });
-                    return (T)exclusiveResult.Objects.Values.First();
+                    result = (T)exclusiveResult.Objects.Values.First();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(mode), mode, $@"Mode [{string.Join(", ", Enum.GetNames(typeof(DatabaseMode)))}]");
             }
+
+            Assert.NotNull(result);
+            return result;
         }
 
-        public async Task<T> Create<T>(ISession session, WorkspaceMode mode) where T : class, IObject
+        public T Create<T>(ISession session, WorkspaceMode mode) where T : class, IObject
         {
             var @class = (IClass)session.Workspace.Configuration.ObjectFactory.GetObjectType<T>();
             if (@class.Origin != Origin.Workspace)
@@ -90,22 +98,27 @@ namespace Tests.Workspace
                 throw new ArgumentException($@"Origin is not {Origin.Workspace}", nameof(mode));
             }
 
+            T result;
             switch (mode)
             {
                 case WorkspaceMode.NoPush:
-                    return session.Create<T>();
+                    result = session.Create<T>();
+                    break;
                 case WorkspaceMode.Push:
-                    var pushObject = session.Create<T>();
+                    result = session.Create<T>();
                     session.PushToWorkspace();
-                    return pushObject;
+                    break;
                 case WorkspaceMode.PushAndPull:
-                    var pushAndPullObject = session.Create<T>();
+                    result = session.Create<T>();
                     session.PushToWorkspace();
                     session.PullFromWorkspace();
-                    return pushAndPullObject;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(mode), mode, $@"Mode [{string.Join(", ", Enum.GetNames(typeof(DatabaseMode)))}]");
             }
+
+            Assert.NotNull(result);
+            return result;
         }
 
         public override string ToString() => this.Name;
