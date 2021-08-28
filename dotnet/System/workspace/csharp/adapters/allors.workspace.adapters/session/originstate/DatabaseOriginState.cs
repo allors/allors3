@@ -102,7 +102,7 @@ namespace Allors.Workspace.Adapters
             }
             else
             {
-                this.ChangedRoleByRelationType = null;
+                this.Reset();
                 this.IsPushed = false;
             }
 

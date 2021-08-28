@@ -2,8 +2,8 @@ namespace Allors.Workspace
 {
     public interface ICompositeDiff : IDiff
     {
-        long? OriginalRoleId { get; }
+        IStrategy OriginalRole { get; }
 
-        long? ChangedRoleId { get; }
+        IStrategy ChangedRole { get; }
     }
 }

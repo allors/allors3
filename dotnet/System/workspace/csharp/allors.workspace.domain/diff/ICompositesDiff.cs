@@ -4,8 +4,8 @@ namespace Allors.Workspace
 
     public interface ICompositesDiff : IDiff
     {
-        IReadOnlyList<long> OriginalRoleIds { get; }
+        IReadOnlyList<IStrategy> OriginalRoles { get; }
 
-        IReadOnlyList<long> ChangedRoleIds { get; }
+        IReadOnlyList<IStrategy> ChangedRoles { get; }
     }
 }

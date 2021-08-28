@@ -14,8 +14,8 @@ namespace Allors.Workspace.Adapters
         {
         }
 
-        public IReadOnlyList<long> OriginalRoleIds { get; set; }
+        public IReadOnlyList<IStrategy> OriginalRoles { get; set; }
 
-        public IReadOnlyList<long> ChangedRoleIds { get; set; }
+        public IReadOnlyList<IStrategy> ChangedRoles { get; set; }
     }
 }

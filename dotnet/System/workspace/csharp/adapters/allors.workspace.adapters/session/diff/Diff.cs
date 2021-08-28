@@ -12,11 +12,11 @@ namespace Allors.Workspace.Adapters
         protected Diff(IRelationType relationType, Strategy association)
         {
             this.RelationType = relationType;
-            this.Assocation = association;
+            this.Association = association;
         }
 
         public IRelationType RelationType { get; set; }
 
-        public IStrategy Assocation { get; set; }
+        public IStrategy Association { get; set; }
     }
 }

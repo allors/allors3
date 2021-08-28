@@ -41,7 +41,7 @@ namespace Allors.Workspace.Adapters
             }
 
             this.WorkspaceRecord = this.Workspace.GetRecord(this.Id);
-            this.ChangedRoleByRelationType = null;
+            this.Reset();
         }
 
         public void OnPulled(WorkspaceResult result)
@@ -60,7 +60,7 @@ namespace Allors.Workspace.Adapters
             }
 
             this.WorkspaceRecord = newRecord;
-            this.ChangedRoleByRelationType = null;
+            this.Reset();
         }
     }
 }

@@ -67,7 +67,6 @@ namespace Allors.Workspace.Adapters.Local
                         {
                             var newObject = this.Build(cls);
                             this.Objects.Add(newObject);
-                            //this.PushRequestRoles(local, newObject);
                             return newObject;
                         }
 
@@ -147,8 +146,6 @@ namespace Allors.Workspace.Adapters.Local
             }
 
             // TODO: Cache and filter for workspace
-            var composite = (IComposite)obj.Strategy.Class;
-            var roleTypes = composite.DatabaseRoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0);
             var acl = this.AccessControlLists[obj];
 
             var ranges = this.Workspace.Ranges;
@@ -172,32 +169,32 @@ namespace Allors.Workspace.Adapters.Local
                     }
                     else if (relationType.RoleType.IsOne)
                     {
-                        var roleId = (long)roleValue;
-                        IObject role = null;
+                        var workspaceRole = (Adapters.Strategy)roleValue;
+                        IObject role;
 
-                        if (roleId < 0)
+                        if (workspaceRole.Id < 0)
                         {
-                            this.ObjectByNewId.TryGetValue(roleId, out role);
+                            this.ObjectByNewId.TryGetValue(workspaceRole.Id, out role);
                         }
                         else
                         {
-                            role = this.Transaction.Instantiate(roleId);
+                            role = this.Transaction.Instantiate(workspaceRole.Id);
                         }
 
                         obj.Strategy.SetCompositeRole(roleType, role);
                     }
                     else
                     {
-                        var objectIds = ranges.Ensure(roleValue);
+                        var workspaceRole = (ISet<Adapters.Strategy>)roleValue;
 
-                        if (this.ObjectByNewId == null)
+                        if (this.ObjectByNewId != null)
                         {
-                            var roles = this.Transaction.Instantiate(objectIds);
-                            obj.Strategy.SetCompositesRole(roleType, roles);
+                            obj.Strategy.SetCompositesRole(roleType, this.GetRoles(workspaceRole));
                         }
                         else
                         {
-                            obj.Strategy.SetCompositesRole(roleType, this.GetRoles(objectIds));
+                            var role = this.Transaction.Instantiate(workspaceRole.Select(v => v.Id));
+                            obj.Strategy.SetCompositesRole(roleType, role);
                         }
                     }
                 }
@@ -208,15 +205,15 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        private IEnumerable<IObject> GetRoles(IRange ids)
+        private IEnumerable<IObject> GetRoles(ISet<Adapters.Strategy> strategies)
         {
-            foreach (var v in ids.Where(v => v < 0))
+            foreach (var v in strategies.Select(v => v.Id).Where(v => v < 0))
             {
                 this.ObjectByNewId.TryGetValue(v, out var role);
                 yield return role;
             }
 
-            var existingIds = ids.Where(v => v > 0);
+            var existingIds = strategies.Select(v => v.Id).Where(v => v > 0);
             foreach (var role in this.Transaction.Instantiate(existingIds))
             {
                 yield return role;

@@ -218,7 +218,7 @@ namespace Allors.Workspace.Adapters
             return IsNewId(id) ? this.InstantiateWorkspaceStrategy(id) : null;
         }
 
-        public Strategy GetCompositeAssociation(long role, IAssociationType associationType)
+        public Strategy GetCompositeAssociation(Strategy role, IAssociationType associationType)
         {
             var roleType = associationType.RoleType;
 
@@ -238,7 +238,7 @@ namespace Allors.Workspace.Adapters
             return null;
         }
 
-        public IEnumerable<Strategy> GetCompositesAssociation(long role, IAssociationType associationType)
+        public IEnumerable<Strategy> GetCompositesAssociation(Strategy role, IAssociationType associationType)
         {
             var roleType = associationType.RoleType;
 

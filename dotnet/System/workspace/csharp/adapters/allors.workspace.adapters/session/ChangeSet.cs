@@ -13,6 +13,7 @@ namespace Allors.Workspace.Adapters
     using System.Linq;
     using Collections;
     using Meta;
+    using Ranges;
 
     public sealed class ChangeSet : IChangeSet
     {
@@ -58,60 +59,107 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void Diff(Strategy association, IRelationType relationType, object current, object previous)
+        public void DiffUnit(Strategy association, IRelationType relationType, object current, object previous)
         {
-            var roleType = relationType.RoleType;
-
-            if (roleType.ObjectType.IsUnit)
+            if (!Equals(current, previous))
             {
-                if (!Equals(current, previous))
-                {
-                    this.AddAssociation(relationType, association);
-                }
-            }
-            else if (roleType.IsOne)
-            {
-                if (Equals(current, previous))
-                {
-                    return;
-                }
-
-                if (previous != null)
-                {
-                    this.AddRole(relationType, this.Session.GetStrategy((long)previous));
-                }
-
-                if (current != null)
-                {
-                    this.AddRole(relationType, this.Session.GetStrategy((long)current));
-                }
-
                 this.AddAssociation(relationType, association);
             }
-            else
+        }
+
+        public void DiffComposite(Strategy association, IRelationType relationType, Strategy current, long? previous)
+        {
+            if (Equals(current?.Id, previous))
             {
-                var ranges = this.Session.Workspace.Ranges;
-                var hasChange = false;
+                return;
+            }
 
-                var currentRange = ranges.Ensure(current);
-                var previousRange = ranges.Ensure(previous);
+            if (previous != null)
+            {
+                this.AddRole(relationType, this.Session.GetStrategy((long)previous));
+            }
 
-                foreach (var v in ranges.Except(currentRange, previousRange))
-                {
-                    this.AddRole(relationType, this.Session.GetStrategy(v));
-                    hasChange = true;
-                }
+            if (current != null)
+            {
+                this.AddRole(relationType, current);
+            }
 
-                foreach (var v in ranges.Except(previousRange, currentRange))
-                {
-                    this.AddRole(relationType, this.Session.GetStrategy(v));
-                    hasChange = true;
-                }
+            this.AddAssociation(relationType, association);
+        }
 
-                if (hasChange)
-                {
-                    this.AddAssociation(relationType, association);
-                }
+        public void DiffComposite(Strategy association, IRelationType relationType, long? current, Strategy previous)
+        {
+            if (Equals(current, previous?.Id))
+            {
+                return;
+            }
+
+            if (previous != null)
+            {
+                this.AddRole(relationType, previous);
+            }
+
+            if (current != null)
+            {
+                this.AddRole(relationType, this.Session.GetStrategy((long)current));
+            }
+
+            this.AddAssociation(relationType, association);
+        }
+
+        public void DiffComposite(Strategy association, IRelationType relationType, Strategy current, Strategy previous)
+        {
+            if (Equals(current, previous))
+            {
+                return;
+            }
+
+            if (previous != null)
+            {
+                this.AddRole(relationType, previous);
+            }
+
+            if (current != null)
+            {
+                this.AddRole(relationType, current);
+            }
+
+            this.AddAssociation(relationType, association);
+        }
+
+        public void DiffComposites(Strategy association, IRelationType relationType, ISet<Strategy> current, IRange previousRange)
+        {
+            var ranges = this.Session.Workspace.Ranges;
+            var previous = new HashSet<Strategy>(ranges.Ensure(previousRange).Select(v => this.Session.GetStrategy(v)));
+            this.DiffComposites(association, relationType, current, previous);
+        }
+
+        public void DiffComposites(Strategy association, IRelationType relationType, IRange currentRange, ISet<Strategy> previous)
+        {
+            var ranges = this.Session.Workspace.Ranges;
+            var current = new HashSet<Strategy>(ranges.Ensure(currentRange).Select(v => this.Session.GetStrategy(v)));
+            this.DiffComposites(association, relationType, current, previous);
+        }
+
+        public void DiffComposites(Strategy association, IRelationType relationType, ISet<Strategy> current, ISet<Strategy> previous)
+        {
+            var hasChange = false;
+
+            foreach (var v in current.Except(previous))
+            {
+                this.AddRole(relationType, v);
+                hasChange = true;
+            }
+
+            foreach (var v in previous.Except(current))
+            {
+                this.AddRole(relationType, v);
+                hasChange = true;
+            }
+
+            if (hasChange)
+            {
+                this.AddAssociation(relationType, association);
             }
         }
 
