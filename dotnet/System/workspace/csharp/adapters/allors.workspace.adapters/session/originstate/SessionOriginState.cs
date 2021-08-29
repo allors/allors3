@@ -5,66 +5,59 @@
 
 namespace Allors.Workspace.Adapters
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Meta;
     using Ranges;
 
     public class SessionOriginState
     {
-        private readonly IRanges ranges;
         private readonly PropertyByObjectByPropertyType propertyByObjectByPropertyType;
 
-        public SessionOriginState(IRanges ranges)
-        {
-            this.ranges = ranges;
-            this.propertyByObjectByPropertyType = new PropertyByObjectByPropertyType();
-        }
+        public SessionOriginState() => this.propertyByObjectByPropertyType = new PropertyByObjectByPropertyType();
 
         public void Checkpoint(ChangeSet changeSet) => changeSet.AddSessionStateChanges(this.propertyByObjectByPropertyType.Checkpoint());
 
-        public object GetUnitRole(long @object, IPropertyType propertyType) => this.propertyByObjectByPropertyType.Get(@object, propertyType);
+        public object GetUnitRole(Strategy association, IPropertyType propertyType) => this.propertyByObjectByPropertyType.Get(association, propertyType);
 
-        public void SetUnitRole(long association, IRoleType roleType, object role) => this.propertyByObjectByPropertyType.Set(association, roleType, role);
+        public void SetUnitRole(Strategy association, IRoleType roleType, object role) => this.propertyByObjectByPropertyType.Set(association, roleType, role);
 
-        public long? GetCompositeRole(long @object, IPropertyType propertyType) => (long?)this.propertyByObjectByPropertyType.Get(@object, propertyType);
+        public Strategy GetCompositeRole(Strategy association, IRoleType propertyType) => this.GetCompositeProperty(association, propertyType);
 
-        public void SetCompositeRole(long association, IRoleType roleType, long? newRole)
+        public void SetCompositeRole(Strategy association, IRoleType roleType, Strategy newRole)
         {
             if (newRole == null)
             {
+                var role = this.GetCompositeProperty(association, roleType);
+                if (role == null)
+                {
+                    return;
+                }
+
                 if (roleType.AssociationType.IsOne)
                 {
-                    var roleId = this.GetCompositeRole(association, roleType);
-                    if (roleId == null)
-                    {
-                        return;
-                    }
-
-                    this.RemoveCompositeRoleOne2One(association, roleType, roleId.Value);
+                    this.RemoveCompositeRoleOne2One(association, roleType, role);
                 }
                 else
                 {
-                    var roleId = this.GetCompositeRole(association, roleType);
-                    if (roleId == null)
-                    {
-                        return;
-                    }
 
-                    this.RemoveCompositeRoleMany2One(association, roleType, roleId.Value);
+                    this.RemoveCompositeRoleMany2One(association, roleType, role);
                 }
             }
             else if (roleType.AssociationType.IsOne)
             {
-                this.SetCompositeRoleOne2One(association, roleType, newRole.Value);
+                this.SetCompositeRoleOne2One(association, roleType, newRole);
             }
             else
             {
-                this.SetCompositeRoleMany2One(association, roleType, newRole.Value);
+                this.SetCompositeRoleMany2One(association, roleType, newRole);
             }
         }
 
-        public IRange GetCompositesRole(long @object, IPropertyType propertyType) => this.ranges.Ensure(this.propertyByObjectByPropertyType.Get(@object, propertyType));
+        public IEnumerable<Strategy> GetCompositesRole(Strategy association, IRoleType propertyType) => this.GetCompositesProperty(association, propertyType) ?? (IEnumerable<Strategy>)Array.Empty<Strategy>();
 
-        public void AddCompositesRole(long association, IRoleType roleType, long item)
+        public void AddCompositesRole(Strategy association, IRoleType roleType, Strategy item)
         {
             if (roleType.AssociationType.IsOne)
             {
@@ -76,7 +69,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void RemoveCompositesRole(long association, IRoleType roleType, long item)
+        public void RemoveCompositesRole(Strategy association, IRoleType roleType, Strategy item)
         {
             if (roleType.AssociationType.IsOne)
             {
@@ -88,25 +81,55 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void SetCompositesRole(long association, IRoleType roleType, IRange newRole)
+        public void SetCompositesRole(Strategy association, IRoleType roleType, IEnumerable<Strategy> newRole)
         {
-            var previousRole = this.GetCompositesRole(association, roleType);
+            var roles = newRole as ICollection<Strategy> ?? newRole?.ToArray();
+            var previousRole = this.GetCompositesProperty(association, roleType);
 
-            var addedRoles = this.ranges.Except(newRole, previousRole);
-            var removedRoles = this.ranges.Except(previousRole, newRole);
-
-            foreach (var addedRole in addedRoles)
+            if (previousRole == null)
             {
-                this.AddCompositesRole(association, roleType, addedRole);
+                if (!(roles?.Count > 0))
+                {
+                    return;
+                }
+
+                foreach (var role in roles)
+                {
+                    this.AddCompositesRole(association, roleType, role);
+                }
+
+                return;
             }
 
-            foreach (var removedRole in removedRoles)
+            if (!(roles?.Count > 0))
+            {
+                foreach (var roleToRemove in previousRole.ToArray())
+                {
+                    this.RemoveCompositesRole(association, roleType, roleToRemove);
+                }
+
+                return;
+            }
+
+            foreach (var role in roles)
+            {
+                if (!previousRole.Contains(role))
+                {
+                    this.AddCompositesRole(association, roleType, role);
+                }
+            }
+
+            foreach (var removedRole in previousRole.Except(roles))
             {
                 this.RemoveCompositesRole(association, roleType, removedRole);
             }
         }
 
-        private void SetCompositeRoleOne2One(long associationId, IRoleType roleType, long roleId)
+        public Strategy GetCompositeAssociation(Strategy association, IAssociationType propertyType) => this.GetCompositeProperty(association, propertyType);
+
+        public IEnumerable<Strategy> GetCompositesAssociation(Strategy role, IAssociationType propertyType) => this.GetCompositesProperty(role, propertyType) ?? (IEnumerable<Strategy>)Array.Empty<Strategy>();
+
+        private void SetCompositeRoleOne2One(Strategy associationId, IRoleType roleType, Strategy role)
         {
             /*  [if exist]        [then remove]        set
              *
@@ -115,36 +138,36 @@ namespace Allors.Workspace.Adapters
              *   A ----- PR         A --x-- PR       A --    PR       A --    PR
              */
             var associationType = roleType.AssociationType;
-            var previousRoleId = (long?)this.propertyByObjectByPropertyType.Get(associationId, roleType);
+            var previousRole = (Strategy)this.propertyByObjectByPropertyType.Get(associationId, roleType);
 
             // R = PR
-            if (Equals(roleId, previousRoleId))
+            if (Equals(role, previousRole))
             {
                 return;
             }
 
             // A --x-- PR
-            if (previousRoleId != null)
+            if (previousRole != null)
             {
-                this.RemoveCompositeRoleOne2One(associationId, roleType, previousRoleId.Value);
+                this.RemoveCompositeRoleOne2One(associationId, roleType, previousRole);
             }
 
-            var roleAssociation = this.GetCompositeRole(roleId, roleType.AssociationType);
+            var roleAssociation = this.GetCompositeProperty(role, roleType.AssociationType);
 
             // RA --x-- R
             if (roleAssociation != null)
             {
-                this.RemoveCompositeRoleOne2One(roleAssociation.Value, roleType, roleId);
+                this.RemoveCompositeRoleOne2One(roleAssociation, roleType, role);
             }
 
             // A <---- R
-            this.propertyByObjectByPropertyType.Set(roleId, associationType, associationId);
+            this.propertyByObjectByPropertyType.Set(role, associationType, associationId);
 
             // A ----> R
-            this.propertyByObjectByPropertyType.Set(associationId, roleType, roleId);
+            this.propertyByObjectByPropertyType.Set(associationId, roleType, role);
         }
 
-        private void SetCompositeRoleMany2One(long associationId, IRoleType roleType, long roleId)
+        private void SetCompositeRoleMany2One(Strategy association, IRoleType roleType, Strategy role)
         {
             /*  [if exist]        [then remove]        set
              *
@@ -153,30 +176,31 @@ namespace Allors.Workspace.Adapters
              *   A ----- PR         A --x-- PR       A --    PR       A --    PR
              */
             var associationType = roleType.AssociationType;
-            var previousRoleId = (long?)this.propertyByObjectByPropertyType.Get(associationId, roleType);
+            var previousRole = (Strategy)this.propertyByObjectByPropertyType.Get(association, roleType);
 
             // R = PR
-            if (Equals(roleId, previousRoleId))
+            if (Equals(role, previousRole))
             {
                 return;
             }
 
             // A --x-- PR
-            if (previousRoleId != null)
+            if (previousRole != null)
             {
-                this.RemoveCompositeRoleMany2One(associationId, roleType, roleId);
+                this.RemoveCompositeRoleMany2One(association, roleType, role);
             }
 
             // A <---- R
-            var associationIds = this.GetCompositesRole(roleId, associationType);
-            associationIds = this.ranges.Add(associationIds, associationId);
-            this.propertyByObjectByPropertyType.Set(roleId, associationType, associationIds);
+            var associations = this.EnsureCompositesProperty(role, associationType);
+            associations.Add(association);
 
             // A ----> R
-            this.propertyByObjectByPropertyType.Set(associationId, roleType, roleId);
+            this.propertyByObjectByPropertyType.Set(association, roleType, role);
+
+            association.Session.ChangeSetTracker.OnSessionChanged(this);
         }
 
-        private void RemoveCompositeRoleOne2One(long associationId, IRoleType roleType, long roleId)
+        private void RemoveCompositeRoleOne2One(Strategy associationId, IRoleType roleType, Strategy roleId)
         {
             /*                        delete
             *
@@ -190,7 +214,7 @@ namespace Allors.Workspace.Adapters
             this.propertyByObjectByPropertyType.Set(associationId, roleType, null);
         }
 
-        private void RemoveCompositeRoleMany2One(long associationId, IRoleType roleType, long roleId)
+        private void RemoveCompositeRoleMany2One(Strategy association, IRoleType roleType, Strategy roleId)
         {
             /*                        delete
               *  RA --                                RA --
@@ -200,15 +224,14 @@ namespace Allors.Workspace.Adapters
             var associationType = roleType.AssociationType;
 
             // A <---- R
-            var roleAssociations = this.GetCompositesRole(roleId, associationType);
-            roleAssociations = this.ranges.Remove(roleAssociations, associationId);
-            this.propertyByObjectByPropertyType.Set(roleId, associationType, roleAssociations);
+            var roleAssociations = this.EnsureCompositesProperty(roleId, associationType);
+            roleAssociations.Remove(association);
 
             // A ----> R
-            this.propertyByObjectByPropertyType.Set(associationId, roleType, null);
+            this.propertyByObjectByPropertyType.Set(association, roleType, null);
         }
 
-        private void AddCompositesRoleOne2Many(long associationId, IRoleType roleType, long roleId)
+        private void AddCompositesRoleOne2Many(Strategy association, IRoleType roleType, Strategy role)
         {
             /*  [if exist]        [then remove]        set
              *
@@ -218,31 +241,30 @@ namespace Allors.Workspace.Adapters
              */
 
             var associationType = roleType.AssociationType;
-            var previousRoleIds = this.GetCompositesRole(associationId, roleType);
+            var previousRoles = this.GetCompositesProperty(association, roleType);
 
             // R in PR 
-            if (previousRoleIds.Contains(roleId))
+            if (previousRoles?.Contains(role) == true)
             {
                 return;
             }
 
             // A --x-- PR
-            var previousAssociationId = this.GetCompositeRole(roleId, associationType);
-            if (previousAssociationId != null)
+            var previousAssociation = this.GetCompositeProperty(role, associationType);
+            if (previousAssociation != null)
             {
-                this.RemoveCompositesRoleOne2Many(previousAssociationId.Value, roleType, roleId);
+                this.RemoveCompositesRoleOne2Many(previousAssociation, roleType, role);
             }
 
             // A <---- R
-            this.propertyByObjectByPropertyType.Set(roleId, associationType, associationId);
+            this.propertyByObjectByPropertyType.Set(role, associationType, association);
 
             // A ----> R
-            var roleIds = this.GetCompositesRole(associationId, roleType);
-            roleIds = this.ranges.Add(roleIds, roleId);
-            this.propertyByObjectByPropertyType.Set(associationId, roleType, roleIds);
+            var roles = this.EnsureCompositesProperty(association, roleType);
+            roles.Add(role);
         }
 
-        private void AddCompositesRoleMany2Many(long associationId, IRoleType roleType, long roleId)
+        private void AddCompositesRoleMany2Many(Strategy association, IRoleType roleType, Strategy role)
         {
             /*  [if exist]        [no remove]         set
              *
@@ -251,65 +273,74 @@ namespace Allors.Workspace.Adapters
              *   A ----- PR         A       PR       A --    PR       A ----- PR
              */
             var associationType = roleType.AssociationType;
-            var previousRoleIds = this.GetCompositesRole(associationId, roleType);
+            var previousRoles = this.GetCompositesProperty(association, roleType);
 
             // R in PR 
-            if (previousRoleIds.Contains(roleId))
+            if (previousRoles?.Contains(role) == true)
             {
                 return;
             }
 
             // A <---- R
-            var associationIds = this.GetCompositesRole(roleId, associationType);
-            associationIds = this.ranges.Add(associationIds, associationId);
-            this.propertyByObjectByPropertyType.Set(roleId, associationType, associationIds);
+            var associations = this.EnsureCompositesProperty(role, associationType);
+            associations.Add(association);
 
             // A ----> R
-            var roleIds = this.GetCompositesRole(associationId, roleType);
-            roleIds = this.ranges.Add(roleIds, roleId);
-            this.propertyByObjectByPropertyType.Set(associationId, roleType, roleIds);
+            var roles = this.EnsureCompositesProperty(association, roleType);
+            roles.Add(role);
         }
 
-        private void RemoveCompositesRoleOne2Many(long associationId, IRoleType roleType, long roleId)
+        private void RemoveCompositesRoleOne2Many(Strategy association, IRoleType roleType, Strategy role)
         {
             var associationType = roleType.AssociationType;
-            var previousRoleIds = this.GetCompositesRole(associationId, roleType);
+            var roles = this.GetCompositesProperty(association, roleType);
 
             // R not in PR 
-            if (!previousRoleIds.Contains(roleId))
+            if (roles == null || !roles.Contains(role))
             {
                 return;
             }
 
             // A <---- R
-            this.propertyByObjectByPropertyType.Set(roleId, associationType, null);
+            this.propertyByObjectByPropertyType.Set(role, associationType, null);
 
             // A ----> R
-            var roleIds = this.GetCompositesRole(associationId, roleType);
-            roleIds = this.ranges.Remove(roleIds, roleId);
-            this.propertyByObjectByPropertyType.Set(associationId, roleType, roleIds);
+            roles.Remove(role);
         }
 
-        private void RemoveCompositesRoleMany2Many(long associationId, IRoleType roleType, long roleId)
+        private void RemoveCompositesRoleMany2Many(Strategy association, IRoleType roleType, Strategy role)
         {
             var associationType = roleType.AssociationType;
-            var previousRoleIds = this.GetCompositesRole(associationId, roleType);
+            var roles = this.GetCompositesProperty(association, roleType);
 
             // R not in PR 
-            if (!previousRoleIds.Contains(roleId))
+            if (roles == null || !roles.Contains(role))
             {
                 return;
             }
 
             // A <---- R
-            var associationIds = this.GetCompositesRole(roleId, associationType);
-            associationIds = this.ranges.Remove(associationIds, associationId);
-            this.propertyByObjectByPropertyType.Set(roleId, associationType, associationIds);
+            var associations = this.GetCompositesProperty(role, associationType);
+            associations.Remove(association);
 
             // A ----> R
-            var roleIds = this.GetCompositesRole(associationId, roleType);
-            roleIds = this.ranges.Remove(roleIds, roleId);
-            this.propertyByObjectByPropertyType.Set(associationId, roleType, roleIds);
+            roles.Remove(role);
+        }
+
+        private Strategy GetCompositeProperty(Strategy association, IPropertyType propertyType) => (Strategy)this.propertyByObjectByPropertyType.Get(association, propertyType);
+
+        private ISet<Strategy> GetCompositesProperty(Strategy @object, IPropertyType propertyType) => (ISet<Strategy>)this.propertyByObjectByPropertyType.Get(@object, propertyType);
+
+        private ISet<Strategy> EnsureCompositesProperty(Strategy @object, IPropertyType propertyType)
+        {
+            var properties = (ISet<Strategy>)this.propertyByObjectByPropertyType.Get(@object, propertyType);
+            if (properties == null)
+            {
+                properties = new HashSet<Strategy>();
+                this.propertyByObjectByPropertyType.Set(@object, propertyType, properties);
+            }
+
+            return properties;
         }
     }
 }

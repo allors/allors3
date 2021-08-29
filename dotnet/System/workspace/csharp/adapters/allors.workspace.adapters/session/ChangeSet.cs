@@ -38,12 +38,11 @@ namespace Allors.Workspace.Adapters
 
         public IDictionary<IAssociationType, ISet<IStrategy>> RolesByAssociationType { get; }
 
-        public void AddSessionStateChanges(IDictionary<IPropertyType, IDictionary<long, object>> sessionStateChangeSet)
+        public void AddSessionStateChanges(IDictionary<IPropertyType, IDictionary<Strategy, object>> sessionStateChangeSet)
         {
             foreach (var kvp in sessionStateChangeSet)
             {
-                var ids = kvp.Value.Keys;
-                var strategies = new HashSet<IStrategy>(ids.Select(v => this.Session.GetStrategy(v)));
+                var strategies = new HashSet<IStrategy>(kvp.Value.Keys);
 
                 switch (kvp.Key)
                 {
@@ -87,16 +86,16 @@ namespace Allors.Workspace.Adapters
             this.AddAssociation(relationType, association);
         }
 
-        public void DiffComposite(Strategy association, IRelationType relationType, long? current, Strategy previous)
+        public void DiffComposite(Strategy association, IRelationType relationType, long? current, long? previous)
         {
-            if (Equals(current, previous?.Id))
+            if (Equals(current, previous))
             {
                 return;
             }
 
             if (previous != null)
             {
-                this.AddRole(relationType, previous);
+                this.AddRole(relationType, this.Session.GetStrategy((long)previous));
             }
 
             if (current != null)
@@ -134,7 +133,7 @@ namespace Allors.Workspace.Adapters
             this.DiffComposites(association, relationType, current, previous);
         }
 
-        public void DiffComposites(Strategy association, IRelationType relationType, IRange currentRange, ISet<Strategy> previous)
+        public void DiffComposites(Strategy association, IRelationType relationType, IRange currentRange, IRange previous)
         {
             var ranges = this.Session.Workspace.Ranges;
             var current = new HashSet<Strategy>(ranges.Ensure(currentRange).Select(v => this.Session.GetStrategy(v)));

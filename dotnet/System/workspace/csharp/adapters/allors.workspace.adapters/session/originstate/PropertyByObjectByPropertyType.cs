@@ -11,16 +11,16 @@ namespace Allors.Workspace.Adapters
 
     public class PropertyByObjectByPropertyType
     {
-        private readonly IDictionary<IPropertyType, IDictionary<long, object>> propertyByObjectByPropertyType;
-        private IDictionary<IPropertyType, IDictionary<long, object>> changedPropertyByObjectByPropertyType;
+        private readonly IDictionary<IPropertyType, IDictionary<Strategy, object>> propertyByObjectByPropertyType;
+        private IDictionary<IPropertyType, IDictionary<Strategy, object>> changedPropertyByObjectByPropertyType;
 
         public PropertyByObjectByPropertyType()
         {
-            this.propertyByObjectByPropertyType = new Dictionary<IPropertyType, IDictionary<long, object>>();
-            this.changedPropertyByObjectByPropertyType = new Dictionary<IPropertyType, IDictionary<long, object>>();
+            this.propertyByObjectByPropertyType = new Dictionary<IPropertyType, IDictionary<Strategy, object>>();
+            this.changedPropertyByObjectByPropertyType = new Dictionary<IPropertyType, IDictionary<Strategy, object>>();
         }
 
-        public object Get(long @object, IPropertyType propertyType)
+        public object Get(Strategy @object, IPropertyType propertyType)
         {
             if (this.changedPropertyByObjectByPropertyType.TryGetValue(propertyType, out var changedPropertyByObject) && changedPropertyByObject.TryGetValue(@object, out var changedValue))
             {
@@ -35,7 +35,7 @@ namespace Allors.Workspace.Adapters
             return null;
         }
 
-        public void Set(long @object, IPropertyType propertyType, object newValue)
+        public void Set(Strategy @object, IPropertyType propertyType, object newValue)
         {
             if (!(this.propertyByObjectByPropertyType.TryGetValue(propertyType, out var valueByPropertyType) && valueByPropertyType.TryGetValue(@object, out var originalValue)))
             {
@@ -52,7 +52,7 @@ namespace Allors.Workspace.Adapters
             {
                 if (changedValueByPropertyType == null)
                 {
-                    changedValueByPropertyType = new Dictionary<long, object>();
+                    changedValueByPropertyType = new Dictionary<Strategy, object>();
                     this.changedPropertyByObjectByPropertyType.Add(propertyType, changedValueByPropertyType);
                 }
 
@@ -60,7 +60,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public IDictionary<IPropertyType, IDictionary<long, object>> Checkpoint()
+        public IDictionary<IPropertyType, IDictionary<Strategy, object>> Checkpoint()
         {
             try
             {
@@ -86,7 +86,7 @@ namespace Allors.Workspace.Adapters
                         {
                             if (propertyByObject == null)
                             {
-                                propertyByObject = new Dictionary<long, object>();
+                                propertyByObject = new Dictionary<Strategy, object>();
                                 this.propertyByObjectByPropertyType.Add(propertyType, propertyByObject);
                             }
 
@@ -104,7 +104,7 @@ namespace Allors.Workspace.Adapters
             }
             finally
             {
-                this.changedPropertyByObjectByPropertyType = new Dictionary<IPropertyType, IDictionary<long, object>>();
+                this.changedPropertyByObjectByPropertyType = new Dictionary<IPropertyType, IDictionary<Strategy, object>>();
             }
         }
     }

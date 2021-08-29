@@ -21,7 +21,7 @@ namespace Allors.Workspace.Adapters
 
             this.StrategyByWorkspaceId = new Dictionary<long, Strategy>();
             this.strategiesByClass = new Dictionary<IClass, ISet<Strategy>>();
-            this.SessionOriginState = new SessionOriginState(this.Workspace.Ranges);
+            this.SessionOriginState = new SessionOriginState();
 
             this.ChangeSetTracker = new ChangeSetTracker();
             this.PushToDatabaseTracker = new PushToDatabaseTracker();

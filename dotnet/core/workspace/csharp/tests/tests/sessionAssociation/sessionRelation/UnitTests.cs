@@ -126,14 +126,14 @@ namespace Tests.Workspace.SessionAssociation.SessionRelation
         {
             foreach (var push in this.workspacePushes)
             {
-                foreach (DatabaseMode mode in Enum.GetValues(typeof(DatabaseMode)))
+                foreach (WorkspaceMode mode in Enum.GetValues(typeof(WorkspaceMode)))
                 {
                     foreach (var contextFactory in this.contextFactories)
                     {
                         var ctx = contextFactory();
                         var (session1, _) = ctx;
 
-                        var c1 = await ctx.Create<SC1>(session1, mode);
+                        var c1 = ctx.Create<SC1>(session1, mode);
 
                         Assert.NotNull(c1);
 
@@ -296,14 +296,14 @@ namespace Tests.Workspace.SessionAssociation.SessionRelation
         {
             foreach (var push in this.workspacePushes)
             {
-                foreach (DatabaseMode mode in Enum.GetValues(typeof(DatabaseMode)))
+                foreach (WorkspaceMode mode in Enum.GetValues(typeof(WorkspaceMode)))
                 {
                     foreach (var contextFactory in this.contextFactories)
                     {
                         var ctx = contextFactory();
                         var (session1, _) = ctx;
 
-                        var c1 = await ctx.Create<SC1>(session1, mode);
+                        var c1 = ctx.Create<SC1>(session1, mode);
 
                         Assert.NotNull(c1);
 

@@ -85,15 +85,8 @@ namespace Allors.Workspace.Adapters
             }
 
             var role = this.Record?.GetRole(roleType);
-
-            if (role is ISet<Strategy>)
-            {
-                Debugger.Break();
-            }
-
             return role != null ? this.Ranges.Ensure(role).Select(v => this.Session.GetStrategy(v)) : Array.Empty<Strategy>();
         }
-
 
         public void AddCompositesRole(IRoleType roleType, Strategy roleToAdd)
         {
@@ -268,11 +261,11 @@ namespace Allors.Workspace.Adapters
                         {
                             if (relationType.RoleType.IsOne)
                             {
-                                changeSet.DiffComposite(this.Strategy, relationType, (long?)current, (Strategy)previous);
+                                changeSet.DiffComposite(this.Strategy, relationType, (long?)current, (long?)previous);
                             }
                             else
                             {
-                                changeSet.DiffComposites(this.Strategy, relationType, (IRange)current, (ISet<Strategy>)previous);
+                                changeSet.DiffComposites(this.Strategy, relationType, (IRange)current, (IRange)previous);
                             }
                         }
                     }

@@ -84,36 +84,33 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation.SessionRole
                     {
                         foreach (WorkspaceMode mode2 in Enum.GetValues(typeof(WorkspaceMode)))
                         {
-                            foreach (var contextFactory in this.contextFactories)
-                            {
-                                var ctx = contextFactory();
-                                var (session1, session2) = ctx;
+                            var ctx = new SingleSessionContext(this, "Single shared");
+                            var (session1, session2) = ctx;
 
-                                var c1x_1 = await ctx.Create<C1>(session1, mode1);
-                                var c1y_2 = ctx.Create<SC1>(session2, mode2);
+                            var c1x_1 = await ctx.Create<C1>(session1, mode1);
+                            var c1y_2 = ctx.Create<SC1>(session2, mode2);
 
-                                session2.PushToWorkspace();
+                            session2.PushToWorkspace();
 
-                                var c1y_1 = session1.Instantiate(c1y_2);
+                            var c1y_1 = session1.Instantiate(c1y_2);
 
-                                workspacePush(session2);
+                            workspacePush(session2);
 
-                                session2.PushToWorkspace();
-                                c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
+                            session2.PushToWorkspace();
+                            c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                                c1x_1.AddSessionSC1Many2Many(c1y_1);
+                            c1x_1.AddSessionSC1Many2Many(c1y_1);
 
-                                c1x_1.SessionSC1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                                c1y_1.C1sWhereSessionSC1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
-                                Assert.Single(c1y_1.C1sWhereSessionSC1Many2Many.Where(v => v.Equals(c1x_1)));
+                            c1x_1.SessionSC1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.C1sWhereSessionSC1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
+                            Assert.Single(c1y_1.C1sWhereSessionSC1Many2Many.Where(v => v.Equals(c1x_1)));
 
-                                await databasePush(session1);
-                                workspacePush(session2);
+                            await databasePush(session1);
+                            workspacePush(session2);
 
-                                c1x_1.SessionSC1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                                c1y_1.C1sWhereSessionSC1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
-                                Assert.Single(c1y_1.C1sWhereSessionSC1Many2Many.Where(v => v.Equals(c1x_1)));
-                            }
+                            c1x_1.SessionSC1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.C1sWhereSessionSC1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
+                            Assert.Single(c1y_1.C1sWhereSessionSC1Many2Many.Where(v => v.Equals(c1x_1)));
                         }
                     }
                 }
@@ -123,47 +120,44 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation.SessionRole
         [Fact]
         public async void SetRoleToNull()
         {
-            foreach (var contextFactory in this.contextFactories)
+            foreach (var databasePush in this.databasePushes)
             {
-                foreach (var databasePush in this.databasePushes)
+                foreach (var workspacePush in this.workspacePushes)
                 {
-                    foreach (var workspacePush in this.workspacePushes)
+                    foreach (DatabaseMode mode1 in Enum.GetValues(typeof(DatabaseMode)))
                     {
-                        foreach (DatabaseMode mode1 in Enum.GetValues(typeof(DatabaseMode)))
+                        foreach (WorkspaceMode mode2 in Enum.GetValues(typeof(WorkspaceMode)))
                         {
-                            foreach (WorkspaceMode mode2 in Enum.GetValues(typeof(WorkspaceMode)))
-                            {
-                                var ctx = contextFactory();
-                                var (session1, session2) = ctx;
+                            var ctx = new SingleSessionContext(this, "Single shared");
+                            var (session1, session2) = ctx;
 
-                                var c1x_1 = await ctx.Create<C1>(session1, mode1);
-                                var c1y_2 = ctx.Create<SC1>(session2, mode2);
+                            var c1x_1 = await ctx.Create<C1>(session1, mode1);
+                            var c1y_2 = ctx.Create<SC1>(session2, mode2);
 
-                                session2.PushToWorkspace();
+                            session2.PushToWorkspace();
 
-                                var c1y_1 = session1.Instantiate(c1y_2);
+                            var c1y_1 = session1.Instantiate(c1y_2);
 
-                                workspacePush(session2);
+                            workspacePush(session2);
 
-                                session2.PushToWorkspace();
-                                c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
+                            session2.PushToWorkspace();
+                            c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                                c1x_1.AddSessionSC1Many2Many(null);
-                                Assert.Empty(c1x_1.SessionSC1Many2Manies);
+                            c1x_1.AddSessionSC1Many2Many(null);
+                            Assert.Empty(c1x_1.SessionSC1Many2Manies);
 
-                                c1x_1.AddSessionSC1Many2Many(c1y_1);
+                            c1x_1.AddSessionSC1Many2Many(c1y_1);
 
-                                c1x_1.SessionSC1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                                c1y_1.C1sWhereSessionSC1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
-                                Assert.Single(c1y_1.C1sWhereSessionSC1Many2Many.Where(v => v.Equals(c1x_1)));
+                            c1x_1.SessionSC1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.C1sWhereSessionSC1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
+                            Assert.Single(c1y_1.C1sWhereSessionSC1Many2Many.Where(v => v.Equals(c1x_1)));
 
-                                await databasePush(session1);
-                                workspacePush(session2);
+                            await databasePush(session1);
+                            workspacePush(session2);
 
-                                c1x_1.SessionSC1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                                c1y_1.C1sWhereSessionSC1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
-                                Assert.Single(c1y_1.C1sWhereSessionSC1Many2Many.Where(v => v.Equals(c1x_1)));
-                            }
+                            c1x_1.SessionSC1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.C1sWhereSessionSC1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
+                            Assert.Single(c1y_1.C1sWhereSessionSC1Many2Many.Where(v => v.Equals(c1x_1)));
                         }
                     }
                 }
@@ -177,42 +171,38 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation.SessionRole
             {
                 foreach (var workspacePush in this.workspacePushes)
                 {
-
                     foreach (DatabaseMode mode1 in Enum.GetValues(typeof(DatabaseMode)))
                     {
                         foreach (WorkspaceMode mode2 in Enum.GetValues(typeof(WorkspaceMode)))
                         {
-                            foreach (var contextFactory in this.contextFactories)
-                            {
-                                var ctx = contextFactory();
-                                var (session1, session2) = ctx;
+                            var ctx = new SingleSessionContext(this, "Single shared");
+                            var (session1, session2) = ctx;
 
-                                var c1x_1 = await ctx.Create<C1>(session1, mode1);
-                                var c1y_2 = ctx.Create<SC1>(session2, mode2);
+                            var c1x_1 = await ctx.Create<C1>(session1, mode1);
+                            var c1y_2 = ctx.Create<SC1>(session2, mode2);
 
-                                session2.PushToWorkspace();
+                            session2.PushToWorkspace();
 
-                                var c1y_1 = session1.Instantiate(c1y_2);
+                            var c1y_1 = session1.Instantiate(c1y_2);
 
-                                workspacePush(session2);
+                            workspacePush(session2);
 
-                                c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
+                            c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                                c1x_1.AddSessionSC1Many2Many(c1y_1);
-                                c1x_1.SessionSC1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                                c1y_1.C1sWhereSessionSC1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
-                                Assert.Single(c1y_1.C1sWhereSessionSC1Many2Many.Where(v => v.Equals(c1x_1)));
+                            c1x_1.AddSessionSC1Many2Many(c1y_1);
+                            c1x_1.SessionSC1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.C1sWhereSessionSC1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
+                            Assert.Single(c1y_1.C1sWhereSessionSC1Many2Many.Where(v => v.Equals(c1x_1)));
 
-                                c1x_1.RemoveSessionSC1Many2Many(c1y_1);
-                                c1x_1.SessionSC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
-                                c1y_1.C1sWhereSessionSC1Many2Many.ShouldNotContain(c1x_1, ctx, mode1, mode2);
+                            c1x_1.RemoveSessionSC1Many2Many(c1y_1);
+                            c1x_1.SessionSC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.C1sWhereSessionSC1Many2Many.ShouldNotContain(c1x_1, ctx, mode1, mode2);
 
-                                await databasePush(session1);
-                                workspacePush(session2);
+                            await databasePush(session1);
+                            workspacePush(session2);
 
-                                c1x_1.SessionSC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
-                                c1y_1.C1sWhereSessionSC1Many2Many.ShouldNotContain(c1x_1, ctx, mode1, mode2);
-                            }
+                            c1x_1.SessionSC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.C1sWhereSessionSC1Many2Many.ShouldNotContain(c1x_1, ctx, mode1, mode2);
                         }
                     }
                 }
@@ -230,44 +220,42 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation.SessionRole
                     {
                         foreach (WorkspaceMode mode2 in Enum.GetValues(typeof(WorkspaceMode)))
                         {
-                            foreach (var contextFactory in this.contextFactories)
-                            {
-                                var ctx = contextFactory();
-                                var (session1, session2) = ctx;
+                            var ctx = new SingleSessionContext(this, "Single shared");
+                            var (session1, session2) = ctx;
 
-                                var c1x_1 = await ctx.Create<C1>(session1, mode1);
-                                var c1y_2 = ctx.Create<SC1>(session2, mode2);
+                            var c1x_1 = await ctx.Create<C1>(session1, mode1);
+                            var c1y_2 = ctx.Create<SC1>(session2, mode2);
 
-                                session2.PushToWorkspace();
+                            session2.PushToWorkspace();
 
-                                var c1y_1 = session1.Instantiate(c1y_2);
+                            var c1y_1 = session1.Instantiate(c1y_2);
 
-                                workspacePush(session2);
+                            workspacePush(session2);
 
-                                c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
+                            c1y_1.ShouldNotBeNull(ctx, mode1, mode2);
 
-                                c1x_1.AddSessionSC1Many2Many(c1y_1);
+                            c1x_1.AddSessionSC1Many2Many(c1y_1);
 
-                                c1x_1.SessionSC1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                                c1y_1.C1sWhereSessionSC1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
-                                Assert.Single(c1y_1.C1sWhereSessionSC1Many2Many.Where(v => v.Equals(c1x_1)));
+                            c1x_1.SessionSC1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.C1sWhereSessionSC1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
+                            Assert.Single(c1y_1.C1sWhereSessionSC1Many2Many.Where(v => v.Equals(c1x_1)));
 
-                                c1x_1.RemoveSessionSC1Many2Many(null);
+                            c1x_1.RemoveSessionSC1Many2Many(null);
 
-                                c1x_1.SessionSC1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                                c1y_1.C1sWhereSessionSC1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
-                                Assert.Single(c1y_1.C1sWhereSessionSC1Many2Many.Where(v => v.Equals(c1x_1)));
+                            c1x_1.SessionSC1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.C1sWhereSessionSC1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
+                            Assert.Single(c1y_1.C1sWhereSessionSC1Many2Many.Where(v => v.Equals(c1x_1)));
 
-                                c1x_1.RemoveSessionSC1Many2Many(c1y_1);
-                                c1x_1.SessionSC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
-                                c1y_1.C1sWhereSessionSC1Many2Many.ShouldNotContain(c1x_1, ctx, mode1, mode2);
+                            c1x_1.RemoveSessionSC1Many2Many(c1y_1);
+                            c1x_1.SessionSC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.C1sWhereSessionSC1Many2Many.ShouldNotContain(c1x_1, ctx, mode1, mode2);
 
-                                await databasePush(session1);
-                                workspacePush(session2);
+                            await databasePush(session1);
+                            workspacePush(session2);
 
-                                c1x_1.SessionSC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
-                                c1y_1.C1sWhereSessionSC1Many2Many.ShouldNotContain(c1x_1, ctx, mode1, mode2);
-                            }
+                            c1x_1.SessionSC1Many2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
+                            c1y_1.C1sWhereSessionSC1Many2Many.ShouldNotContain(c1x_1, ctx, mode1, mode2);
+
                         }
                     }
                 }

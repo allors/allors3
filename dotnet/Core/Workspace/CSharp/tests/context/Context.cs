@@ -93,9 +93,9 @@ namespace Tests.Workspace
         public T Create<T>(ISession session, WorkspaceMode mode) where T : class, IObject
         {
             var @class = (IClass)session.Workspace.Configuration.ObjectFactory.GetObjectType<T>();
-            if (@class.Origin != Origin.Workspace)
+            if (@class.Origin == Origin.Database)
             {
-                throw new ArgumentException($@"Origin is not {Origin.Workspace}", nameof(mode));
+                throw new ArgumentException($@"Origin is {Origin.Database}", nameof(mode));
             }
 
             T result;
