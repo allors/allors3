@@ -6,12 +6,14 @@
 namespace Allors.Workspace.Adapters
 {
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Runtime.InteropServices.ComTypes;
     using Meta;
     using Ranges;
 
     public abstract class Workspace : IWorkspace
     {
-       private readonly Dictionary<long, WorkspaceRecord> recordById;
+        private readonly Dictionary<long, WorkspaceRecord> recordById;
 
         protected Workspace(DatabaseConnection database, IWorkspaceServices services, IRanges ranges)
         {
@@ -56,13 +58,21 @@ namespace Allors.Workspace.Adapters
 
             ids.Add(id);
 
+            var roleByRelationType = changedRoleByRoleType?.ToDictionary(v => v.Key,
+                v => v.Value switch
+                {
+                    Strategy strategy => strategy.Id,
+                    ISet<Strategy> strategies => this.Ranges.Load(strategies.Select(v => v.Id)),
+                    _ => v.Value,
+                });
+
             if (!this.recordById.TryGetValue(id, out var originalWorkspaceRecord))
             {
-                this.recordById[id] = new WorkspaceRecord(@class, id, ++version, changedRoleByRoleType);
+                this.recordById[id] = new WorkspaceRecord(@class, id, ++version, roleByRelationType);
             }
             else
             {
-                this.recordById[id] = new WorkspaceRecord(originalWorkspaceRecord, changedRoleByRoleType);
+                this.recordById[id] = new WorkspaceRecord(originalWorkspaceRecord, roleByRelationType);
             }
         }
     }

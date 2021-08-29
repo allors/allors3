@@ -116,8 +116,8 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation.WorkspaceRole
                                     await databasePush(session1);
                                 }
 
-                                await databasePush(session1);
-                                workspacePush(session2);
+                                /*await databasePush(session1);
+                                workspacePush(session2);*/
 
                                 c1x_1.SessionWC1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
                                 c1y_1.C1sWhereSessionWC1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);

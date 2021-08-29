@@ -7,6 +7,7 @@ namespace Allors.Workspace.Adapters
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using Meta;
     using Ranges;
@@ -84,6 +85,12 @@ namespace Allors.Workspace.Adapters
             }
 
             var role = this.Record?.GetRole(roleType);
+
+            if (role is ISet<Strategy>)
+            {
+                Debugger.Break();
+            }
+
             return role != null ? this.Ranges.Ensure(role).Select(v => this.Session.GetStrategy(v)) : Array.Empty<Strategy>();
         }
 

@@ -25,7 +25,7 @@ namespace Allors.Workspace.Adapters
 
         private WorkspaceRecord WorkspaceRecord { get; set; }
 
-        public long Version => this.WorkspaceRecord.Version;
+        public long Version => this.WorkspaceRecord?.Version ?? Allors.Version.WorkspaceInitial.Value;
 
         protected override void OnChange()
         {
