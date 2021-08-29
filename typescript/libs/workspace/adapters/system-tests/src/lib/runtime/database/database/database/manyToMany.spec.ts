@@ -43,58 +43,11 @@ function* contextFactories() {
   yield () => new MultipleSessionContext(fixture, 'Multiple');
 }
 
-export async function databaseManyToManySetRole() {
-  for (const push of pushes) {
-    for (const mode1 of databaseModes) {
-      for (const mode2 of databaseModes) {
-        for (const contextFactory of contextFactories()) {
-
-          const ctx = contextFactory();
-          const { session1, session2 } = ctx;
-          const { m, client } = fixture;
-
-          const c1x_1 = await ctx.create<C1>(session1, m.C1, mode1);
-          const c1y_2 = await ctx.create<C1>(session2, m.C1, mode2);
-
-          expect(c1x_1).toBeDefined();
-          expect(c1y_2).toBeDefined();
-
-          await client.pushAsync(session2);
-          const result = await client.pullAsync(session1, { object: c1y_2 });
-
-          const c1y_1 = result.objects.values().next().value as C1;
-
-          expect(c1y_1).toBeDefined();
-
-          if (!c1x_1.canWriteC1C1Many2Manies) {
-            await client.pullAsync(session1, { object: c1x_1 });
-          }
-
-          c1x_1.addC1C1Many2Many(c1y_1);
-
-          expect(c1x_1.C1C1Many2Manies.length).toBe(1);
-          expect(c1y_1.C1sWhereC1C1Many2Many.length).toBe(1);
-          expect(c1x_1.C1C1Many2Manies).toContain(c1y_1);
-          expect(c1y_1.C1sWhereC1C1Many2Many).toContain(c1x_1);
-
-          await push(session1);
-
-          expect(c1x_1.C1C1Many2Manies.length).toBe(1);
-          expect(c1y_1.C1sWhereC1C1Many2Many.length).toBe(1);
-          expect(c1x_1.C1C1Many2Manies).toContain(c1y_1);
-          expect(c1y_1.C1sWhereC1C1Many2Many).toContain(c1x_1);
-        }
-      }
-    }
-  }
-}
-
 export async function databaseManyToManySetRoleToNull() {
   for (const push of pushes) {
     for (const mode1 of databaseModes) {
       for (const mode2 of databaseModes) {
         for (const contextFactory of contextFactories()) {
-
           const ctx = contextFactory();
           const { session1, session2 } = ctx;
           const { m, client } = fixture;
@@ -158,7 +111,7 @@ export async function databaseManyToManyRemoveRole() {
           }
 
           c1x_1.addC1C1Many2Many(c1y_1);
-         
+
           await push(session1);
 
           if (!c1x_1.canWriteC1C1Many2Manies) {
@@ -207,7 +160,7 @@ export async function databaseManyToManyRemoveNullRole() {
           }
 
           c1x_1.addC1C1Many2Many(c1y_1);
-         
+
           await push(session1);
 
           if (!c1x_1.canWriteC1C1Many2Manies) {

@@ -25,7 +25,7 @@ namespace Tests.Workspace.Database
         [Fact]
         public async void SetRole()
         {
-            #region Single session
+            // Single session
             #region No push before add
             {
                 var session = this.Workspace.CreateSession();
@@ -36,6 +36,7 @@ namespace Tests.Workspace.Database
                 c1a.AddC1C1Many2Many(c1b);
 
                 Assert.Single(c1a.C1C1Many2Manies);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
                 Assert.Single(c1b.C1sWhereC1C1Many2Many);
                 Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
 
@@ -220,9 +221,9 @@ namespace Tests.Workspace.Database
                 Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
             }
             #endregion
-            #endregion
-
-            #region Multiple Sessions
+            
+            // Multiple Sessions
+            #region X
             {
                 var session1 = this.Workspace.CreateSession();
                 var session2 = this.Workspace.CreateSession();

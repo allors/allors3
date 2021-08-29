@@ -1,9 +1,11 @@
-export * from './lib/runtime/database/database/database/manyToMany.spec';
+//export * from './lib/runtime/database/database/database/manyToMany.spec';
 export * from './lib/runtime/database/database/database/manyToOne.spec';
 export * from './lib/runtime/database/database/database/oneToMany.spec';
 export * from './lib/runtime/database/database/database/oneToOne.spec';
+
 export * from './lib/runtime/database/database/unit.spec';
 export * from './lib/runtime/database/lifecycle.spec';
+export * from './lib/runtime/database/manyToMany.spec';
 
 export * from './lib/runtime/session/session/unit.spec';
 export * from './lib/runtime/session/lifecycle.spec';
