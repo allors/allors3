@@ -33,7 +33,7 @@ export class DatabaseOriginState extends SystemDatabaseOriginState {
         if (relationType.roleType.objectType.isUnit) {
           pushRequestRole.u = unitToJson(roleValue);
         } else if (relationType.roleType.isOne) {
-          pushRequestRole.c = (roleValue as Strategy).id;
+          pushRequestRole.c = (roleValue as Strategy)?.id;
         } else {
           const roleIds = importFrom([...(roleValue as Set<Strategy>)].map((v) => v.id));
           if (!this.existRecord) {
