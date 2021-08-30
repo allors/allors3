@@ -7,7 +7,6 @@ namespace Allors.Workspace.Adapters
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
     using Meta;
     using Ranges;
@@ -169,16 +168,13 @@ namespace Allors.Workspace.Adapters
                             {
                                 changeSet.DiffUnit(this.Strategy, relationType, current, previous);
                             }
+                            else if (relationType.RoleType.IsOne)
+                            {
+                                changeSet.DiffComposite(this.Strategy, relationType, (Strategy)current, (long?)previous);
+                            }
                             else
                             {
-                                if (relationType.RoleType.IsOne)
-                                {
-                                    changeSet.DiffComposite(this.Strategy, relationType, (Strategy)current, (long?)previous);
-                                }
-                                else
-                                {
-                                    changeSet.DiffComposites(this.Strategy, relationType, (ISet<Strategy>)current, (IRange)previous);
-                                }
+                                changeSet.DiffComposites(this.Strategy, relationType, (ISet<Strategy>)current, (IRange)previous);
                             }
                         }
                     }
@@ -197,16 +193,13 @@ namespace Allors.Workspace.Adapters
                         {
                             changeSet.DiffUnit(this.Strategy, relationType, current, previous);
                         }
+                        else if (relationType.RoleType.IsOne)
+                        {
+                            changeSet.DiffComposite(this.Strategy, relationType, (Strategy)current, (long?)previous);
+                        }
                         else
                         {
-                            if (relationType.RoleType.IsOne)
-                            {
-                                changeSet.DiffComposite(this.Strategy, relationType, (Strategy)current, (long?)previous);
-                            }
-                            else
-                            {
-                                changeSet.DiffComposites(this.Strategy, relationType, (ISet<Strategy>)current, (IRange)previous);
-                            }
+                            changeSet.DiffComposites(this.Strategy, relationType, (ISet<Strategy>)current, (IRange)previous);
                         }
                     }
                 }
@@ -232,18 +225,14 @@ namespace Allors.Workspace.Adapters
                         {
                             changeSet.DiffUnit(this.Strategy, relationType, current, previous);
                         }
+                        else if (relationType.RoleType.IsOne)
+                        {
+                            changeSet.DiffComposite(this.Strategy, relationType, (Strategy)current, (Strategy)previous);
+                        }
                         else
                         {
-                            if (relationType.RoleType.IsOne)
-                            {
-                                changeSet.DiffComposite(this.Strategy, relationType, (Strategy)current, (Strategy)previous);
-                            }
-                            else
-                            {
-                                changeSet.DiffComposites(this.Strategy, relationType, (ISet<Strategy>)current, (ISet<Strategy>)previous);
-                            }
+                            changeSet.DiffComposites(this.Strategy, relationType, (ISet<Strategy>)current, (ISet<Strategy>)previous);
                         }
-
                     }
                     else
                     {
@@ -257,16 +246,13 @@ namespace Allors.Workspace.Adapters
                         {
                             changeSet.DiffUnit(this.Strategy, relationType, current, previous);
                         }
+                        else if (relationType.RoleType.IsOne)
+                        {
+                            changeSet.DiffComposite(this.Strategy, relationType, (long?)current, (long?)previous);
+                        }
                         else
                         {
-                            if (relationType.RoleType.IsOne)
-                            {
-                                changeSet.DiffComposite(this.Strategy, relationType, (long?)current, (long?)previous);
-                            }
-                            else
-                            {
-                                changeSet.DiffComposites(this.Strategy, relationType, (IRange)current, (IRange)previous);
-                            }
+                            changeSet.DiffComposites(this.Strategy, relationType, (IRange)current, (IRange)previous);
                         }
                     }
                 }

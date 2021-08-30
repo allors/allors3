@@ -51,11 +51,11 @@ namespace Allors.Workspace.Adapters.Remote
                     }
                     else if (relationType.RoleType.IsOne)
                     {
-                        pushRequestRole.c = ((Adapters.Strategy)roleValue).Id;
+                        pushRequestRole.c = ((Adapters.Strategy)roleValue)?.Id;
                     }
                     else
                     {
-                        var roleIds = ranges.Load(((ISet<Adapters.Strategy>)roleValue).Select(v => v.Id));
+                        var roleIds = ranges.Load(((ISet<Adapters.Strategy>)roleValue)?.Select(v => v.Id));
 
                         if (!this.ExistRecord)
                         {

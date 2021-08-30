@@ -171,7 +171,7 @@ export abstract class Session implements ISession {
     return isNewId(id) ? this.instantiateWorkspaceStrategy(id) : null;
   }
 
-  public getCompositeAssociation(role: number, associationType: AssociationType): Strategy {
+  public getCompositeAssociation(role: Strategy, associationType: AssociationType): Strategy {
     const roleType = associationType.roleType;
     for (const association of this.strategiesForClass(associationType.objectType as Composite)) {
       if (!association.canRead(roleType)) {
@@ -184,7 +184,7 @@ export abstract class Session implements ISession {
     }
   }
 
-  public getCompositesAssociation(role: number, associationType: AssociationType): Strategy[] {
+  public getCompositesAssociation(role: Strategy, associationType: AssociationType): Strategy[] {
     const roleType = associationType.roleType;
 
     const associations: Strategy[] = [];

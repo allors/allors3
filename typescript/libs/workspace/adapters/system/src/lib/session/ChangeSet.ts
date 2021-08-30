@@ -37,45 +37,90 @@ export class ChangeSet implements IChangeSet {
     }
   }
 
-  public diff(association: Strategy, relationType: RelationType, current: unknown, previous: unknown) {
-    const roleType = relationType.roleType;
-
-    if (roleType.objectType.isUnit) {
-      if (current !== previous) {
-        this.addAssociation(relationType, association);
-      }
-    } else if (roleType.isOne) {
-      if (current === previous) {
-        return;
-      }
-
-      if (previous != null) {
-        this.addRole(relationType, (this.session as Session).getStrategy(<number>previous));
-      }
-
-      if (current != null) {
-        this.addRole(relationType, (this.session as Session).getStrategy(<number>current));
-      }
-
+  public diffUnit(association: Strategy, relationType: RelationType, current: unknown, previous: unknown) {
+    if (current !== previous) {
       this.addAssociation(relationType, association);
-    } else {
-      let hasChange = false;
+    }
+  }
 
-      const addedRoles = difference(current as IRange, previous as IRange);
-      for (const v of enumerate(addedRoles)) {
-        this.addRole(relationType, (this.session as Session).getStrategy(v));
+  public diffCompositeStrategyNumber(association: Strategy, relationType: RelationType, current: Strategy, previous: number) {
+    if (current?.id === previous) {
+      return;
+    }
+
+    if (previous != null) {
+      this.addRole(relationType, (this.session as Session).getStrategy(previous));
+    }
+
+    if (current != null) {
+      this.addRole(relationType, current);
+    }
+
+    this.addAssociation(relationType, association);
+  }
+
+  public diffCompositeNumberNumber(association: Strategy, relationType: RelationType, current: number, previous: number) {
+    if (current === previous) {
+      return;
+    }
+
+    if (previous != null) {
+      this.addRole(relationType, (this.session as Session).getStrategy(previous));
+    }
+
+    if (current != null) {
+      this.addRole(relationType, (this.session as Session).getStrategy(current));
+    }
+
+    this.addAssociation(relationType, association);
+  }
+
+  public diffCompositeStrategyStrategy(association: Strategy, relationType: RelationType, current: Strategy, previous: Strategy) {
+    if (current === previous) {
+      return;
+    }
+
+    if (previous != null) {
+      this.addRole(relationType, previous);
+    }
+
+    if (current != null) {
+      this.addRole(relationType, current);
+    }
+
+    this.addAssociation(relationType, association);
+  }
+
+  public diffCompositesSetRange(association: Strategy, relationType: RelationType, current: Set<Strategy>, previousRange: IRange) {
+    const previous: Set<Strategy> = new Set(previousRange?.map((v) => (this.session as Session).getStrategy(v)));
+    this.diffCompositesSetSet(association, relationType, current, previous);
+  }
+
+  public diffCompositesRangeRange(association: Strategy, relationType: RelationType, currentRange: IRange, previousRange: IRange) {
+    const current: Set<Strategy> = new Set(currentRange?.map((v) => (this.session as Session).getStrategy(v)));
+    const previous: Set<Strategy> = new Set(previousRange?.map((v) => (this.session as Session).getStrategy(v)));
+    this.diffCompositesSetSet(association, relationType, current, previous);
+  }
+
+  public diffCompositesSetSet(association: Strategy, relationType: RelationType, current: Set<Strategy>, previous: Set<Strategy>) {
+    let hasChange = false;
+
+    for (const v of previous) {
+      if (!current.has(v)) {
+        this.addRole(relationType, v);
         hasChange = true;
       }
+    }
 
-      const removedRoles = difference(previous as IRange, current as IRange);
-      for (const v of enumerate(removedRoles)) {
-        this.addRole(relationType, (this.session as Session).getStrategy(v));
+    for (const v of current) {
+      if (!previous.has(v)) {
+        this.addRole(relationType, v);
         hasChange = true;
       }
+    }
 
-      if (hasChange) {
-        this.addAssociation(relationType, association);
-      }
+    if (hasChange) {
+      this.addAssociation(relationType, association);
     }
   }
 

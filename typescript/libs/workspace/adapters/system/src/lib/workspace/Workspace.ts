@@ -1,10 +1,11 @@
 import { IConfiguration, ISession, IWorkspace, IWorkspaceServices } from '@allors/workspace/domain/system';
 import { Class, RelationType } from '@allors/workspace/meta/system';
+import { importFrom } from '../collections/Range';
 import { DatabaseConnection } from '../Database/DatabaseConnection';
+import { Strategy } from '../session/Strategy';
 import { WorkspaceRecord } from './WorkspaceRecord';
 
 export abstract class Workspace implements IWorkspace {
-
   configuration: IConfiguration;
 
   workspaceClassByWorkspaceId: Map<number, Class>;
@@ -37,11 +38,22 @@ export abstract class Workspace implements IWorkspace {
 
     ids.add(id);
 
+    const roleByRelationType = new Map();
+    for (const [key, value] of changedRoleByRoleType) {
+      if (value instanceof Strategy) {
+        roleByRelationType.set(key, value.id);
+      } else if (value instanceof Set) {
+        roleByRelationType.set(key, importFrom([...(value as Set<Strategy>)].map((v) => v.id)));
+      } else {
+        roleByRelationType.set(key, value);
+      }
+    }
+
     const originalWorkspaceRecord = this.recordById.get(id);
     if (originalWorkspaceRecord == null) {
-      this.recordById.set(id, new WorkspaceRecord(cls, id, ++version, changedRoleByRoleType));
+      this.recordById.set(id, new WorkspaceRecord(cls, id, ++version, roleByRelationType));
     } else {
-      this.recordById.set(id, WorkspaceRecord.fromOriginal(originalWorkspaceRecord, changedRoleByRoleType));
+      this.recordById.set(id, WorkspaceRecord.fromOriginal(originalWorkspaceRecord, roleByRelationType));
     }
   }
 }
