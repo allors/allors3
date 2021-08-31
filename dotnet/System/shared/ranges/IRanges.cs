@@ -8,7 +8,7 @@ namespace Allors.Ranges
     using System;
     using System.Collections.Generic;
 
-    public interface IRanges<T> where T : IComparable
+    public interface IRanges<T> where T : IComparable<T>
     {
         IRange<T> Import(IEnumerable<T>? unsortedItems);
 

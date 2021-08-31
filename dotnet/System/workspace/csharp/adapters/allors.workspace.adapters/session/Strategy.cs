@@ -10,7 +10,7 @@ namespace Allors.Workspace.Adapters
     using System.Linq;
     using Meta;
 
-    public abstract class Strategy : IStrategy
+    public abstract class Strategy : IStrategy, IComparable<Strategy>
     {
         private IObject @object;
 
@@ -485,6 +485,16 @@ namespace Allors.Workspace.Adapters
             {
                 this.AssertComposite(input);
             }
+        }
+
+        public int CompareTo(Strategy other)
+        {
+            if (ReferenceEquals(this, other))
+            {
+                return 0;
+            }
+
+            return other is null ? 1 : this.Id.CompareTo(other.Id);
         }
     }
 }

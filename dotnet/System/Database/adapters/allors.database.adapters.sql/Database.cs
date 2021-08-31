@@ -113,7 +113,7 @@ namespace Allors.Database.Adapters.Sql
             get;
         }
 
-        internal IRanges<long> Ranges = new DefaultRanges<long>();
+        internal IRanges<long> Ranges = new DefaultStructRanges<long>();
 
         public ITransaction CreateTransaction()
         {

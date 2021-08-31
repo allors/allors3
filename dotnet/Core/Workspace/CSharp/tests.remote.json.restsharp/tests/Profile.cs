@@ -48,7 +48,7 @@ namespace Tests.Workspace.Remote
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
             this.configuration = new Configuration("Default", metaPopulation, objectFactory);
             this.idGenerator = new IdGenerator();
-            this.defaultRanges = new DefaultRanges<long>();
+            this.defaultRanges = new DefaultStructRanges<long>();
         }
 
         public async Task InitializeAsync()

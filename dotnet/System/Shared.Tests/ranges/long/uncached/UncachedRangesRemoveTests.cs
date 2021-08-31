@@ -9,6 +9,6 @@ namespace Allors.Ranges.Long
     {
         public override IRanges<long> Ranges { get; }
 
-        public UncachedRangesRemoveTests() => this.Ranges = new DefaultRanges<long>();
+        public UncachedRangesRemoveTests() => this.Ranges = new DefaultStructRanges<long>();
     }
 }

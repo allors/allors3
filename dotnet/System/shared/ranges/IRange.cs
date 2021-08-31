@@ -8,7 +8,7 @@ namespace Allors.Ranges
     using System;
     using System.Collections.Generic;
 
-    public interface IRange<T> : IEquatable<IRange<T>>, IEnumerable<T> where T : IComparable
+    public interface IRange<T> : IEquatable<IRange<T>>, IEnumerable<T> where T : IComparable<T>
     {
         bool IsEmpty { get; }
 

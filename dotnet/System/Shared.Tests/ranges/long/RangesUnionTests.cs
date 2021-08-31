@@ -29,11 +29,11 @@ namespace Allors.Ranges.Long
         {
             var num = this.Ranges;
 
-            var x = num.Load(0);
+            var x = num.Load(1);
             var y = num.Load();
             var z = num.Union(x, y);
 
-            Assert.Equal(new long[] { 0 }, z);
+            Assert.Equal(new long[] { 1 }, z);
         }
 
         [Fact]
@@ -41,11 +41,11 @@ namespace Allors.Ranges.Long
         {
             var num = this.Ranges;
 
-            var x = num.Load(0, 1);
+            var x = num.Load(1, 2);
             var y = num.Load();
             var z = num.Union(x, y);
 
-            Assert.Equal(new long[] { 0, 1 }, z);
+            Assert.Equal(new long[] { 1, 2 }, z);
         }
 
         [Fact]
@@ -53,11 +53,11 @@ namespace Allors.Ranges.Long
         {
             var num = this.Ranges;
 
-            var x = num.Load(0);
-            var y = num.Load(0);
+            var x = num.Load(1);
+            var y = num.Load(1);
             var z = num.Union(x, y);
 
-            Assert.Equal(new long[] { 0 }, z);
+            Assert.Equal(new long[] { 1 }, z);
         }
 
         [Fact]
@@ -65,11 +65,11 @@ namespace Allors.Ranges.Long
         {
             var num = this.Ranges;
 
-            var x = num.Load(0, 1);
-            var y = num.Load(0, 1);
+            var x = num.Load(1, 2);
+            var y = num.Load(1, 2);
             var z = num.Union(x, y);
 
-            Assert.Equal(new ArrayRange<long>(new long[] { 0, 1 }), z);
+            Assert.Equal(new ArrayRange<long>(new long[] { 1, 2 }), z);
         }
 
 
@@ -78,11 +78,11 @@ namespace Allors.Ranges.Long
         {
             var num = this.Ranges;
 
-            var x = num.Load(0, 1);
-            var y = num.Load(2, 3);
+            var x = num.Load(1, 2);
+            var y = num.Load(3, 4);
             var z = num.Union(x, y);
 
-            Assert.Equal(new long[] { 0, 1, 2, 3 }, z);
+            Assert.Equal(new long[] { 1, 2, 3, 4 }, z);
         }
 
         [Fact]
@@ -90,11 +90,11 @@ namespace Allors.Ranges.Long
         {
             var num = this.Ranges;
 
-            var x = num.Load(4, 5);
-            var y = num.Load(2, 3);
+            var x = num.Load(5, 6);
+            var y = num.Load(3, 4);
             var z = num.Union(x, y);
 
-            Assert.Equal(new long[] { 2, 3, 4, 5 }, z);
+            Assert.Equal(new long[] { 3, 4, 5, 6 }, z);
         }
 
 
@@ -103,11 +103,11 @@ namespace Allors.Ranges.Long
         {
             var num = this.Ranges;
 
-            var x = num.Load(1, 4);
-            var y = num.Load(2, 3);
+            var x = num.Load(2, 5);
+            var y = num.Load(3, 4);
             var z = num.Union(x, y);
 
-            Assert.Equal(new long[] { 1, 2, 3, 4 }, z);
+            Assert.Equal(new long[] { 2, 3, 4, 5 }, z);
         }
 
         [Fact]
@@ -115,11 +115,11 @@ namespace Allors.Ranges.Long
         {
             var num = this.Ranges;
 
-            var x = num.Load(1, 3);
-            var y = num.Load(2, 4);
+            var x = num.Load(2, 4);
+            var y = num.Load(3, 5);
             var z = num.Union(x, y);
 
-            Assert.Equal(new long[] { 1, 2, 3, 4 }, z);
+            Assert.Equal(new long[] { 2, 3, 4, 5 }, z);
         }
 
         [Fact]
@@ -127,11 +127,11 @@ namespace Allors.Ranges.Long
         {
             var num = this.Ranges;
 
-            var x = num.Load(2, 4);
-            var y = num.Load(1, 3);
+            var x = num.Load(3, 5);
+            var y = num.Load(2, 4);
             var z = num.Union(x, y);
 
-            Assert.Equal(new long[] { 1, 2, 3, 4 }, z);
+            Assert.Equal(new long[] { 2, 3, 4, 5 }, z);
         }
     }
 }

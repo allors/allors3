@@ -38,7 +38,7 @@ namespace Tests.Workspace.Remote
         {
             this.servicesBuilder = () => new WorkspaceServices();
             this.idGenerator = new IdGenerator();
-            this.defaultRanges = new DefaultRanges<long>();
+            this.defaultRanges = new DefaultStructRanges<long>();
 
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));

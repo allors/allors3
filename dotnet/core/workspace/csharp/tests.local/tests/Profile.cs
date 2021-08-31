@@ -45,7 +45,7 @@ namespace Tests.Workspace.Local
 
         public Profile(Fixture fixture)
         {
-            this.rangesFactory = () => new DefaultRanges<long>();
+            this.rangesFactory = () => new DefaultStructRanges<long>();
             this.servicesBuilder = () => new WorkspaceServices();
 
             this.AsyncDatabaseClient = new AsyncDatabaseClient();

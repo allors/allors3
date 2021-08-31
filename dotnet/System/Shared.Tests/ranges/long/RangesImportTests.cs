@@ -28,9 +28,9 @@ namespace Allors.Ranges.Long
         {
             var num = this.Ranges;
 
-            var x = num.Import(new[] { 0L });
+            var x = num.Import(new[] { 1L });
 
-            Assert.Equal(new[] { 0L }, x);
+            Assert.Equal(new[] { 1L }, x);
         }
 
         [Fact]
@@ -38,9 +38,9 @@ namespace Allors.Ranges.Long
         {
             var num = this.Ranges;
 
-            var x = num.Import(new[] { 0L, 1L });
+            var x = num.Import(new[] { 1L, 2L });
 
-            Assert.Equal(new[] { 0L, 1L }, x);
+            Assert.Equal(new[] { 1L, 2L }, x);
         }
 
         [Fact]
@@ -48,9 +48,9 @@ namespace Allors.Ranges.Long
         {
             var num = this.Ranges;
 
-            var x = num.Import(new[] { 1L, 0L });
+            var x = num.Import(new[] { 2L, 1L });
 
-            Assert.Equal(new[] { 0L, 1L }, x);
+            Assert.Equal(new[] { 1L, 2L }, x);
         }
 
         [Fact]

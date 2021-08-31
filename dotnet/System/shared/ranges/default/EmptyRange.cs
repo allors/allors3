@@ -10,7 +10,7 @@ namespace Allors.Ranges
     using System.Collections;
     using System.Collections.Generic;
 
-    public class EmptyRange<T> : IRange<T> where T : IComparable
+    public class EmptyRange<T> : IRange<T> where T : IComparable<T>
     {
         private static readonly T[] EmptyArray = Array.Empty<T>();
         private static readonly EmptyEnumerator<T> Enumerator = new EmptyEnumerator<T>();
@@ -33,7 +33,7 @@ namespace Allors.Ranges
 
         public override string ToString() => "[]";
 
-        private class EmptyEnumerator<T> : IEnumerator<T> where T : IComparable
+        private class EmptyEnumerator<T> : IEnumerator<T> where T : IComparable<T>
         {
             public bool MoveNext() => false;
 

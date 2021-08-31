@@ -9,7 +9,7 @@ namespace Allors.Ranges
     using System.Collections;
     using System.Collections.Generic;
 
-    public class ArrayRange<T> : IRange<T> where T : IComparable
+    public class ArrayRange<T> : IRange<T> where T : IComparable<T>
     {
         public ArrayRange(T[] items) => this.Items = items;
 

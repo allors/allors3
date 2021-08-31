@@ -70,7 +70,7 @@ namespace Blazors.Bootstrap.Server
                     .First(v => identity.ToUpperInvariant().Equals(v.NormalizedUserName));
 
                 var databaseConnection = new Allors.Workspace.Adapters.Local.DatabaseConnection(workspaceConfiguration,
-                    database, () => new WorkspaceServices(), () => new DefaultRanges<long>())
+                    database, () => new WorkspaceServices(), () => new DefaultStructRanges<long>())
                 {
                     UserId = user.Strategy.ObjectId
                 };
