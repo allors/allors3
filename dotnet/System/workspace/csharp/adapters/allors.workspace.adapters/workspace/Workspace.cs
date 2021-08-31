@@ -14,11 +14,11 @@ namespace Allors.Workspace.Adapters
     {
         private readonly Dictionary<long, WorkspaceRecord> recordById;
 
-        protected Workspace(DatabaseConnection database, IWorkspaceServices services, IRanges<long> ranges)
+        protected Workspace(DatabaseConnection database, IWorkspaceServices services, IRanges<long> recordRanges)
         {
             this.DatabaseConnection = database;
             this.Services = services;
-            this.Ranges = ranges;
+            this.RecordRanges = recordRanges;
             this.StrategyRanges = new DefaultClassRanges<Strategy>();
 
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
@@ -33,7 +33,7 @@ namespace Allors.Workspace.Adapters
 
         public IWorkspaceServices Services { get; }
 
-        public IRanges<long> Ranges { get; }
+        public IRanges<long> RecordRanges { get; }
 
         public IRanges<Strategy> StrategyRanges { get; }
 
@@ -64,7 +64,7 @@ namespace Allors.Workspace.Adapters
                 v => v.Value switch
                 {
                     Strategy strategy => strategy.Id,
-                    ISet<Strategy> strategies => this.Ranges.Load(strategies.Select(v => v.Id)),
+                    IRange<Strategy> strategies => this.RecordRanges.Load(strategies.Select(v => v.Id)),
                     _ => v.Value,
                 });
 

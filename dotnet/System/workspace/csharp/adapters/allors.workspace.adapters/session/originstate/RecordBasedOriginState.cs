@@ -15,7 +15,7 @@ namespace Allors.Workspace.Adapters
     {
         public abstract Strategy Strategy { get; }
 
-        protected bool HasChanges => this.Record == null || this.ChangedRoleByRelationType?.Count > 0;
+        protected bool HasChanges => this.Record == null || this.XChangedRoleByRelationType?.Count > 0;
 
         protected abstract IEnumerable<IRoleType> RoleTypes { get; }
 
@@ -23,13 +23,13 @@ namespace Allors.Workspace.Adapters
 
         protected IRecord PreviousRecord { get; set; }
 
-        public Dictionary<IRelationType, object> ChangedRoleByRelationType { get; protected set; }
+        public Dictionary<IRelationType, object> XChangedRoleByRelationType { get; protected set; }
 
-        private Dictionary<IRelationType, object> PreviousChangedRoleByRelationType { get; set; }
+        private Dictionary<IRelationType, object> XPreviousChangedRoleByRelationType { get; set; }
 
         public object GetUnitRole(IRoleType roleType)
         {
-            if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var role))
+            if (this.XChangedRoleByRelationType != null && this.XChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var role))
             {
                 return role;
             }
@@ -41,7 +41,7 @@ namespace Allors.Workspace.Adapters
 
         public Strategy GetCompositeRole(IRoleType roleType)
         {
-            if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var changedRole))
+            if (this.XChangedRoleByRelationType != null && this.XChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var changedRole))
             {
                 return (Strategy)changedRole;
             }
@@ -76,15 +76,15 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public IEnumerable<Strategy> GetCompositesRole(IRoleType roleType)
+        public IRange<Strategy> GetCompositesRole(IRoleType roleType)
         {
-            if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var changedRole))
+            if (this.XChangedRoleByRelationType != null && this.XChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var changedRole))
             {
-                return ((ISet<Strategy>)changedRole).ToArray();
+                return (IRange<Strategy>)changedRole;
             }
 
-            var role = this.Record?.GetRole(roleType);
-            return role != null ? this.Ranges.Ensure(role).Select(v => this.Session.GetStrategy(v)) : Array.Empty<Strategy>();
+            var role = (IRange<long>)this.Record?.GetRole(roleType);
+            return role != null ? this.Ranges.Load(role.Select(v => this.Session.GetStrategy(v))) : EmptyRange<Strategy>.Instance;
         }
 
         public void AddCompositesRole(IRoleType roleType, Strategy roleToAdd)
@@ -92,15 +92,14 @@ namespace Allors.Workspace.Adapters
             var associationType = roleType.AssociationType;
             var previousAssociation = this.Session.GetCompositeAssociation(roleToAdd, associationType);
 
-            var previousRole = this.GetCompositesRole(roleType);
-            var role = previousRole is ISet<Strategy> set ? set : new HashSet<Strategy>(previousRole);
+            var role = this.GetCompositesRole(roleType);
 
             if (role.Contains(roleToAdd))
             {
                 return;
             }
 
-            role.Add(roleToAdd);
+            role = this.Ranges.Add(role, roleToAdd);
             this.SetChangedRole(roleType, role);
 
             if (associationType.IsMany)
@@ -114,23 +113,20 @@ namespace Allors.Workspace.Adapters
 
         public void RemoveCompositesRole(IRoleType roleType, Strategy roleToRemove)
         {
-            var previousRole = this.GetCompositesRole(roleType);
-            var role = previousRole is ISet<Strategy> set ? set : new HashSet<Strategy>(previousRole);
+            var role = this.GetCompositesRole(roleType);
 
             if (!role.Contains(roleToRemove))
             {
                 return;
             }
 
-            role.Remove(roleToRemove);
+            role = this.Ranges.Remove(role, roleToRemove);
             this.SetChangedRole(roleType, role);
         }
 
-        public void SetCompositesRole(IRoleType roleType, IEnumerable<Strategy> rolesToSet)
+        public void SetCompositesRole(IRoleType roleType, IRange<Strategy> role)
         {
             var previousRole = this.GetCompositesRole(roleType);
-
-            var role = rolesToSet != null ? new HashSet<Strategy>(rolesToSet) : new HashSet<Strategy>();
 
             this.SetChangedRole(roleType, role);
 
@@ -154,16 +150,17 @@ namespace Allors.Workspace.Adapters
             if (this.PreviousRecord == null || this.Record == null || this.Record.Version == this.PreviousRecord.Version)
             {
                 // No previous changed roles
-                if (this.PreviousChangedRoleByRelationType == null)
+                if (this.XPreviousChangedRoleByRelationType == null)
                 {
-                    if (this.ChangedRoleByRelationType != null)
+                    if (this.XChangedRoleByRelationType != null)
                     {
                         // Changed roles
-                        foreach (var kvp in this.ChangedRoleByRelationType)
+                        foreach (var kvp in this.XChangedRoleByRelationType)
                         {
                             var relationType = kvp.Key;
                             var current = kvp.Value;
                             var previous = this.Record?.GetRole(relationType.RoleType);
+
                             if (relationType.RoleType.ObjectType.IsUnit)
                             {
                                 changeSet.DiffUnit(this.Strategy, relationType, current, previous);
@@ -174,7 +171,7 @@ namespace Allors.Workspace.Adapters
                             }
                             else
                             {
-                                changeSet.DiffComposites(this.Strategy, relationType, (ISet<Strategy>)current, (IRange<long>)previous);
+                                changeSet.DiffComposites(this.Strategy, relationType, (IRange<Strategy>)current, (IRange<long>)previous);
                             }
                         }
                     }
@@ -182,12 +179,11 @@ namespace Allors.Workspace.Adapters
                 // Previous changed roles
                 else
                 {
-                    foreach (var kvp in this.ChangedRoleByRelationType)
+                    foreach (var kvp in this.XChangedRoleByRelationType)
                     {
                         var relationType = kvp.Key;
                         var current = kvp.Value;
-
-                        this.PreviousChangedRoleByRelationType.TryGetValue(relationType, out var previous);
+                        this.XPreviousChangedRoleByRelationType.TryGetValue(relationType, out var previous);
 
                         if (relationType.RoleType.ObjectType.IsUnit)
                         {
@@ -199,7 +195,7 @@ namespace Allors.Workspace.Adapters
                         }
                         else
                         {
-                            changeSet.DiffComposites(this.Strategy, relationType, (ISet<Strategy>)current, (IRange<long>)previous);
+                            changeSet.DiffComposites(this.Strategy, relationType, (IRange<Strategy>)current, (IRange<long>)previous);
                         }
                     }
                 }
@@ -214,9 +210,9 @@ namespace Allors.Workspace.Adapters
                     object previous = null;
                     object current = null;
 
-                    if (this.PreviousChangedRoleByRelationType?.TryGetValue(relationType, out previous) == true)
+                    if (this.XPreviousChangedRoleByRelationType?.TryGetValue(relationType, out previous) == true)
                     {
-                        if (this.ChangedRoleByRelationType?.TryGetValue(relationType, out current) != true)
+                        if (this.XChangedRoleByRelationType?.TryGetValue(relationType, out current) != true)
                         {
                             current = this.Record.GetRole(roleType);
                         }
@@ -231,13 +227,13 @@ namespace Allors.Workspace.Adapters
                         }
                         else
                         {
-                            changeSet.DiffComposites(this.Strategy, relationType, (ISet<Strategy>)current, (ISet<Strategy>)previous);
+                            changeSet.DiffComposites(this.Strategy, relationType, (IRange<Strategy>)current, (IRange<Strategy>)previous);
                         }
                     }
                     else
                     {
                         previous = this.PreviousRecord?.GetRole(roleType);
-                        if (this.ChangedRoleByRelationType?.TryGetValue(relationType, out current) != true)
+                        if (this.XChangedRoleByRelationType?.TryGetValue(relationType, out current) != true)
                         {
                             current = this.Record.GetRole(roleType);
                         }
@@ -259,24 +255,19 @@ namespace Allors.Workspace.Adapters
             }
 
             this.PreviousRecord = this.Record;
-            this.PreviousChangedRoleByRelationType = this.ChangedRoleByRelationType?.ToDictionary(v => v.Key,
-                v => v.Value switch
-                    {
-                        ISet<Strategy> set => new HashSet<Strategy>(set),
-                        _ => v.Value
-                    });
+            this.XPreviousChangedRoleByRelationType = this.XChangedRoleByRelationType != null ? new Dictionary<IRelationType, object>(this.XChangedRoleByRelationType) : null;
         }
 
         public void Diff(IList<IDiff> diffs)
         {
-            if (this.ChangedRoleByRelationType == null)
+            if (this.XChangedRoleByRelationType == null)
             {
                 return;
             }
 
-            var ranges = this.Session.Workspace.Ranges;
+            var ranges = this.Session.Workspace.RecordRanges;
 
-            foreach (var kvp in this.ChangedRoleByRelationType)
+            foreach (var kvp in this.XChangedRoleByRelationType)
             {
                 var relationType = kvp.Key;
                 var roleType = relationType.RoleType;
@@ -305,7 +296,7 @@ namespace Allors.Workspace.Adapters
                     diffs.Add(new CompositesDiff(relationType, this.Strategy)
                     {
                         OriginalRoles = original != null ? ranges.Ensure(original).Select(v => this.Session.GetStrategy(v)).ToArray() : Array.Empty<Strategy>(),
-                        ChangedRoles = ((ISet<Strategy>)changed).ToArray(),
+                        ChangedRoles = ((IRange<Strategy>)changed).Save() ?? Array.Empty<Strategy>(),
                     });
                 }
             }
@@ -313,14 +304,14 @@ namespace Allors.Workspace.Adapters
 
         public bool CanMerge(IRecord newRecord)
         {
-            if (this.ChangedRoleByRelationType == null)
+            if (this.XChangedRoleByRelationType == null)
             {
                 return true;
             }
 
-            var ranges = this.Session.Workspace.Ranges;
+            var ranges = this.Session.Workspace.RecordRanges;
 
-            foreach (var kvp in this.ChangedRoleByRelationType)
+            foreach (var kvp in this.XChangedRoleByRelationType)
             {
                 var relationType = kvp.Key;
                 var roleType = relationType.RoleType;
@@ -351,7 +342,7 @@ namespace Allors.Workspace.Adapters
             return true;
         }
 
-        public void Reset() => this.ChangedRoleByRelationType = null;
+        public void Reset() => this.XChangedRoleByRelationType = null;
 
         public bool IsAssociationForRole(IRoleType roleType, Strategy forRole)
         {
@@ -369,8 +360,8 @@ namespace Allors.Workspace.Adapters
 
         private void SetChangedRole(IRoleType roleType, object role)
         {
-            this.ChangedRoleByRelationType ??= new Dictionary<IRelationType, object>();
-            this.ChangedRoleByRelationType[roleType.RelationType] = role;
+            this.XChangedRoleByRelationType ??= new Dictionary<IRelationType, object>();
+            this.XChangedRoleByRelationType[roleType.RelationType] = role;
             this.OnChange();
         }
 
@@ -384,7 +375,7 @@ namespace Allors.Workspace.Adapters
 
         protected Workspace Workspace => this.Session.Workspace;
 
-        private IRanges<long> Ranges => this.Strategy.Session.Workspace.Ranges;
+        private IRanges<Strategy> Ranges => this.Strategy.Session.Workspace.StrategyRanges;
 
         #endregion
     }

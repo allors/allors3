@@ -24,13 +24,13 @@ namespace Allors.Workspace.Adapters.Local
         private readonly ConcurrentDictionary<long, DatabaseRecord> recordsById;
 
         private readonly Func<IWorkspaceServices> servicesBuilder;
-        private readonly IRanges<long> ranges;
+        private readonly IRanges<long> recordRanges;
 
         public DatabaseConnection(Configuration configuration, IDatabase database, Func<IWorkspaceServices> servicesBuilder, Func<IRanges<long>> rangesFactory) : base(configuration, new IdGenerator())
         {
             this.Database = database;
             this.servicesBuilder = servicesBuilder;
-            this.ranges = rangesFactory();
+            this.recordRanges = rangesFactory();
 
             this.recordsById = new ConcurrentDictionary<long, DatabaseRecord>();
             this.permissionCache = this.Database.Services.Get<IPermissionsCache>();
@@ -58,11 +58,11 @@ namespace Allors.Workspace.Adapters.Local
                     ?.Select(this.GetAccessControl)
                     .ToArray() ?? Array.Empty<AccessControl>();
 
-                this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, this.ranges.Load(acl.DeniedPermissionIds), accessControls);
+                this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, this.recordRanges.Load(acl.DeniedPermissionIds), accessControls);
             }
         }
 
-        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.ranges);
+        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.recordRanges);
 
         public override Adapters.DatabaseRecord GetRecord(long id)
         {
@@ -123,7 +123,7 @@ namespace Allors.Workspace.Adapters.Local
             }
 
             acessControl.Version = accessControl.Strategy.ObjectVersion;
-            acessControl.PermissionIds = this.ranges.Import(accessControl.Permissions.Select(v => v.Id));
+            acessControl.PermissionIds = this.recordRanges.Import(accessControl.Permissions.Select(v => v.Id));
 
             return acessControl;
         }
@@ -140,7 +140,7 @@ namespace Allors.Workspace.Adapters.Local
                 return @object.Strategy.GetCompositeRole(roleType)?.Id;
             }
 
-            return this.ranges.Load(@object.Strategy.GetCompositesRole<IObject>(roleType).Select(v => v.Id));
+            return this.recordRanges.Load(@object.Strategy.GetCompositesRole<IObject>(roleType).Select(v => v.Id));
         }
     }
 }

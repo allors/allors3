@@ -8,6 +8,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json.Api.Push;
+    using Ranges;
 
     internal sealed class DatabaseOriginState : Adapters.DatabaseOriginState
     {
@@ -32,13 +33,13 @@ namespace Allors.Workspace.Adapters.Remote
 
         private PushRequestRole[] PushRoles()
         {
-            if (this.ChangedRoleByRelationType?.Count > 0)
+            if (this.XChangedRoleByRelationType?.Count > 0)
             {
                 var database = this.RemoteStrategy.Session.Workspace.DatabaseConnection;
                 var ranges = database.Ranges;
                 var roles = new List<PushRequestRole>();
 
-                foreach (var keyValuePair in this.ChangedRoleByRelationType)
+                foreach (var keyValuePair in this.XChangedRoleByRelationType)
                 {
                     var relationType = keyValuePair.Key;
                     var roleValue = keyValuePair.Value;
@@ -55,7 +56,7 @@ namespace Allors.Workspace.Adapters.Remote
                     }
                     else
                     {
-                        var roleIds = ranges.Load(((ISet<Adapters.Strategy>)roleValue)?.Select(v => v.Id));
+                        var roleIds = ranges.Load(((IRange<Adapters.Strategy>)roleValue)?.Select(v => v.Id));
 
                         if (!this.ExistRecord)
                         {

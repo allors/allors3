@@ -140,7 +140,7 @@ namespace Allors.Workspace.Adapters.Local
 
         private void PushRequestRoles(Strategy local, IObject obj)
         {
-            if (local.DatabaseOriginState.ChangedRoleByRelationType == null)
+            if (local.DatabaseOriginState.XChangedRoleByRelationType == null)
             {
                 return;
             }
@@ -148,9 +148,9 @@ namespace Allors.Workspace.Adapters.Local
             // TODO: Cache and filter for workspace
             var acl = this.AccessControlLists[obj];
 
-            var ranges = this.Workspace.Ranges;
+            var ranges = this.Workspace.RecordRanges;
 
-            foreach (var keyValuePair in local.DatabaseOriginState.ChangedRoleByRelationType)
+            foreach (var keyValuePair in local.DatabaseOriginState.XChangedRoleByRelationType)
             {
                 var relationType = keyValuePair.Key;
                 var roleType = ((IRelationType)this.M.FindByTag(keyValuePair.Key.Tag)).RoleType;
@@ -185,7 +185,7 @@ namespace Allors.Workspace.Adapters.Local
                     }
                     else
                     {
-                        var workspaceRole = (ISet<Adapters.Strategy>)roleValue;
+                        var workspaceRole = (IRange<Adapters.Strategy>)roleValue;
 
                         if (this.ObjectByNewId != null)
                         {
@@ -205,7 +205,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        private IEnumerable<IObject> GetRoles(ISet<Adapters.Strategy> strategies)
+        private IEnumerable<IObject> GetRoles(IRange<Adapters.Strategy> strategies)
         {
             foreach (var v in strategies.Select(v => v.Id).Where(v => v < 0))
             {

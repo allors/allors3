@@ -9,6 +9,7 @@ namespace Allors.Workspace.Adapters
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
+    using Ranges;
 
     public abstract class Strategy : IStrategy, IComparable<Strategy>
     {
@@ -22,6 +23,7 @@ namespace Allors.Workspace.Adapters
             this.Id = id;
             this.rangeId = this.Id;
             this.Class = @class;
+            this.Ranges = this.Session.Workspace.StrategyRanges;
 
             if (this.Class.Origin != Origin.Session)
             {
@@ -35,6 +37,7 @@ namespace Allors.Workspace.Adapters
             this.Id = databaseRecord.Id;
             this.rangeId = this.Id;
             this.Class = databaseRecord.Class;
+            this.Ranges = this.Session.Workspace.StrategyRanges;
 
             this.WorkspaceOriginState = new WorkspaceOriginState(this, this.Session.Workspace.GetRecord(this.Id));
         }
@@ -53,6 +56,8 @@ namespace Allors.Workspace.Adapters
         public DatabaseOriginState DatabaseOriginState { get; protected set; }
 
         public WorkspaceOriginState WorkspaceOriginState { get; }
+
+        public IRanges<Strategy> Ranges { get; }
 
         ISession IStrategy.Session => this.Session;
 
@@ -226,7 +231,7 @@ namespace Allors.Workspace.Adapters
         {
             this.AssertComposites(role);
 
-            var roleStrategies = role?.Select(v => (Strategy)v.Strategy);
+            var roleStrategies = this.Ranges.Load(role?.Select(v => (Strategy)v.Strategy));
 
             switch (roleType.Origin)
             {

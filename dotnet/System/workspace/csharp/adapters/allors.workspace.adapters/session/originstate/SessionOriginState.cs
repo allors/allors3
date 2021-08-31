@@ -86,9 +86,8 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void SetCompositesRole(Strategy association, IRoleType roleType, IEnumerable<Strategy> roleToSet)
+        public void SetCompositesRole(Strategy association, IRoleType roleType, IRange<Strategy> role)
         {
-            var role = this.ranges.Ensure(roleToSet);
             var previousRole = this.store.GetComposites(association, roleType);
 
             if (previousRole.Equals(role))
