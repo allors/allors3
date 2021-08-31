@@ -8,12 +8,12 @@ namespace Allors.Ranges
     using System;
     using System.Collections.Generic;
 
-    public interface IRange : IEquatable<IRange>, IEnumerable<long>
+    public interface IRange<T> : IEquatable<IRange<T>>, IEnumerable<T> where T : IComparable
     {
         bool IsEmpty { get; }
 
-        bool Contains(long item);
+        bool Contains(T item);
 
-        long[]? Save();
+        T[]? Save();
     }
 }

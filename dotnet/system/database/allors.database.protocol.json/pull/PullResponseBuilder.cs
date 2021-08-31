@@ -19,7 +19,7 @@ namespace Allors.Database.Protocol.Json
     public class PullResponseBuilder : IProcedureContext, IProcedureOutput
     {
         private readonly IUnitConvert unitConvert;
-        private readonly IRanges ranges;
+        private readonly IRanges<long> ranges;
 
         private readonly Dictionary<string, ISet<IObject>> collectionsByName = new Dictionary<string, ISet<IObject>>();
         private readonly Dictionary<string, IObject> objectByName = new Dictionary<string, IObject>();
@@ -32,7 +32,7 @@ namespace Allors.Database.Protocol.Json
 
         private List<IValidation> errors;
 
-        public PullResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IUnitConvert unitConvert, IRanges ranges)
+        public PullResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IUnitConvert unitConvert, IRanges<long> ranges)
         {
             this.unitConvert = unitConvert;
             this.ranges = ranges;

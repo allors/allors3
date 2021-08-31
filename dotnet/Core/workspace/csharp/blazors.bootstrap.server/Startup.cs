@@ -58,7 +58,7 @@ namespace Blazors.Bootstrap.Server
                 workspaceMetaPopulation,
                 reflectionObjectFactory);
 
-            services.AddScoped<IWorkspace>((serviceProvider) =>
+            services.AddScoped((serviceProvider) =>
             {
                 var databaseService = serviceProvider.GetRequiredService<IDatabaseService>();
                 var database = databaseService.Database;
@@ -70,7 +70,7 @@ namespace Blazors.Bootstrap.Server
                     .First(v => identity.ToUpperInvariant().Equals(v.NormalizedUserName));
 
                 var databaseConnection = new Allors.Workspace.Adapters.Local.DatabaseConnection(workspaceConfiguration,
-                    database, () => new WorkspaceServices(), () => new DefaultRanges())
+                    database, () => new WorkspaceServices(), () => new DefaultRanges<long>())
                 {
                     UserId = user.Strategy.ObjectId
                 };

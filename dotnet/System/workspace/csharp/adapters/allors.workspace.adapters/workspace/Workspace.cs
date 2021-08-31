@@ -15,7 +15,7 @@ namespace Allors.Workspace.Adapters
     {
         private readonly Dictionary<long, WorkspaceRecord> recordById;
 
-        protected Workspace(DatabaseConnection database, IWorkspaceServices services, IRanges ranges)
+        protected Workspace(DatabaseConnection database, IWorkspaceServices services, IRanges<long> ranges)
         {
             this.DatabaseConnection = database;
             this.Services = services;
@@ -33,7 +33,7 @@ namespace Allors.Workspace.Adapters
 
         public IWorkspaceServices Services { get; }
 
-        public IRanges Ranges { get; }
+        public IRanges<long> Ranges { get; }
 
         public Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
 

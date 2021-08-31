@@ -24,9 +24,9 @@ namespace Allors.Workspace.Adapters.Local
         private readonly ConcurrentDictionary<long, DatabaseRecord> recordsById;
 
         private readonly Func<IWorkspaceServices> servicesBuilder;
-        private readonly IRanges ranges;
+        private readonly IRanges<long> ranges;
 
-        public DatabaseConnection(Configuration configuration, IDatabase database, Func<IWorkspaceServices> servicesBuilder, Func<IRanges> rangesFactory) : base(configuration, new IdGenerator())
+        public DatabaseConnection(Configuration configuration, IDatabase database, Func<IWorkspaceServices> servicesBuilder, Func<IRanges<long>> rangesFactory) : base(configuration, new IdGenerator())
         {
             this.Database = database;
             this.servicesBuilder = servicesBuilder;

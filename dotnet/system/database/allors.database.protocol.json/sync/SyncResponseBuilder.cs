@@ -17,7 +17,7 @@ namespace Allors.Database.Protocol.Json
     public class SyncResponseBuilder
     {
         private readonly IUnitConvert unitConvert;
-        private readonly IRanges ranges;
+        private readonly IRanges<long> ranges;
 
         private readonly AccessControlsWriter accessControlsWriter;
         private readonly PermissionsWriter permissionsWriter;
@@ -26,7 +26,7 @@ namespace Allors.Database.Protocol.Json
         private readonly ISet<IClass> allowedClasses;
         private readonly Action<IEnumerable<IObject>> prefetch;
 
-        public SyncResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, Action<IEnumerable<IObject>> prefetch, IUnitConvert unitConvert, IRanges ranges)
+        public SyncResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, Action<IEnumerable<IObject>> prefetch, IUnitConvert unitConvert, IRanges<long> ranges)
         {
             this.transaction = transaction;
             this.allowedClasses = allowedClasses;

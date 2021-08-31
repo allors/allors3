@@ -28,9 +28,9 @@ namespace Allors.Workspace.Adapters.Remote
                 DeniedPermissions = database.Ranges.Load(ctx.CheckForMissingPermissions(syncResponseObject.d))
             };
 
-        internal IRange AccessControlIds { get; private set; }
+        internal IRange<long> AccessControlIds { get; private set; }
 
-        internal IRange DeniedPermissions { get; private set; }
+        internal IRange<long> DeniedPermissions { get; private set; }
 
         private Dictionary<IRelationType, object> RoleByRelationType
         {

@@ -17,9 +17,9 @@ namespace Allors.Database.Protocol.Json
     {
         private readonly ITransaction transaction;
         private readonly ISet<IClass> allowedClasses;
-        private readonly IRanges ranges;
+        private readonly IRanges<long> ranges;
 
-        public SecurityResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, IRanges ranges)
+        public SecurityResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, IRanges<long> ranges)
         {
             this.transaction = transaction;
             this.allowedClasses = allowedClasses;

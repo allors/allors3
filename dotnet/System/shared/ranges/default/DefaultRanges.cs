@@ -9,91 +9,91 @@ namespace Allors.Ranges
     using System.Collections.Generic;
     using System.Linq;
 
-    public class DefaultRanges : IRanges
+    public class DefaultRanges<T> : IRanges<T> where T : IComparable
     {
-        public IRange Load(IEnumerable<long>? sortedItems)
+        public IRange<T> Load(IEnumerable<T>? sortedItems)
         {
             switch (sortedItems)
             {
                 case null:
-                case long[] { Length: 0 }:
-                    return EmptyRange.Instance;
-                case long[] array:
-                    return new ArrayRange(array);
-                case ICollection<long> collection:
-                    var newArray = new long[collection.Count];
+                case T[] { Length: 0 }:
+                    return EmptyRange<T>.Instance;
+                case T[] array:
+                    return new ArrayRange<T>(array);
+                case ICollection<T> collection:
+                    var newArray = new T[collection.Count];
                     collection.CopyTo(newArray, 0);
-                    return new ArrayRange(newArray);
+                    return new ArrayRange<T>(newArray);
                 default:
                     var materialized = sortedItems.ToArray();
                     if (materialized.Length == 0)
                     {
-                        return EmptyRange.Instance;
+                        return EmptyRange<T>.Instance;
                     }
 
-                    return new ArrayRange(materialized);
+                    return new ArrayRange<T>(materialized);
             }
         }
 
-        public IRange Load(long item) => new ArrayRange(new[] { item });
+        public IRange<T> Load(T item) => new ArrayRange<T>(new[] { item });
 
-        public IRange Load(params long[] sortedItems) =>
+        public IRange<T> Load(params T[] sortedItems) =>
             sortedItems switch
             {
-                null => EmptyRange.Instance,
-                { Length: 0 } => EmptyRange.Instance,
-                _ => new ArrayRange(sortedItems)
+                null => EmptyRange<T>.Instance,
+                { Length: 0 } => EmptyRange<T>.Instance,
+                _ => new ArrayRange<T>(sortedItems)
             };
 
-        public IRange Ensure(object? nullable) => nullable switch
+        public IRange<T> Ensure(object? nullable) => nullable switch
         {
-            null => EmptyRange.Instance,
-            IRange range => range,
+            null => EmptyRange<T>.Instance,
+            IRange<T> range => range,
             _ => throw new NotSupportedException($"Ensure is not supported from {nullable.GetType()}")
         };
 
-        public IRange Import(IEnumerable<long>? unsortedItems)
+        public IRange<T> Import(IEnumerable<T>? unsortedItems)
         {
             switch (unsortedItems)
             {
                 case null:
-                case long[] { Length: 0 }:
-                    return EmptyRange.Instance;
-                case long[] array:
-                    var sortedArray = (long[])array.Clone();
+                case T[] { Length: 0 }:
+                    return EmptyRange<T>.Instance;
+                case T[] array:
+                    var sortedArray = (T[])array.Clone();
                     Array.Sort(sortedArray);
-                    return new ArrayRange(sortedArray);
-                case ICollection<long> collection:
-                    var newSortedArray = new long[collection.Count];
+                    return new ArrayRange<T>(sortedArray);
+                case ICollection<T> collection:
+                    var newSortedArray = new T[collection.Count];
                     collection.CopyTo(newSortedArray, 0);
                     Array.Sort(newSortedArray);
-                    return new ArrayRange(newSortedArray);
+                    return new ArrayRange<T>(newSortedArray);
                 default:
                     var materialized = unsortedItems.ToArray();
                     if (materialized.Length == 0)
                     {
-                        return EmptyRange.Instance;
+                        return EmptyRange<T>.Instance;
                     }
 
                     Array.Sort(materialized);
-                    return new ArrayRange(materialized);
+                    return new ArrayRange<T>(materialized);
             }
         }
 
-        public IRange Add(IRange? range, long item)
+        public IRange<T> Add(IRange<T>? range, T item)
         {
             switch (range)
             {
                 case null:
-                case EmptyRange _:
+                case EmptyRange<T> _:
                     return this.Load(item);
-                case ArrayRange arrayRange:
+                case ArrayRange<T> arrayRange:
                     switch (arrayRange.Items)
                     {
-                        case var items when items.Length == 1 && items[0] == item:
+                        case var items when items.Length == 1 && items[0].CompareTo(item) == 0:
                             return range;
                         case var items when items.Length == 1:
-                            return items[0] < item ? new ArrayRange(new[] { items[0], item }) : new ArrayRange(new[] { item, items[0] });
+                            return items[0].CompareTo(item) < 0 ? new ArrayRange<T>(new[] { items[0], item }) : new ArrayRange<T>(new[] { item, items[0] });
                         default:
                             var array = arrayRange.Items;
                             var index = Array.BinarySearch(array, item);
@@ -105,7 +105,7 @@ namespace Allors.Ranges
 
                             index = ~index;
 
-                            var result = new long[array.Length + 1];
+                            var result = new T[array.Length + 1];
                             result[index] = item;
 
                             if (index == 0)
@@ -122,7 +122,7 @@ namespace Allors.Ranges
                                 Array.Copy(array, index, result, index + 1, array.Length - index);
                             }
 
-                            return new ArrayRange(result);
+                            return new ArrayRange<T>(result);
                     }
 
                 default:
@@ -130,20 +130,20 @@ namespace Allors.Ranges
             }
         }
 
-        public IRange Remove(IRange? range, long item)
+        public IRange<T> Remove(IRange<T>? range, T item)
         {
             switch (range)
             {
                 case null:
-                    return EmptyRange.Instance;
-                case EmptyRange _:
+                    return EmptyRange<T>.Instance;
+                case EmptyRange<T> _:
                     return range;
-                case ArrayRange arrayRange:
+                case ArrayRange<T> arrayRange:
                     switch (arrayRange.Items)
                     {
                         case null:
-                        case var items when items.Length == 1 && items[0] == item:
-                            return EmptyRange.Instance;
+                        case var items when items.Length == 1 && items[0].CompareTo(item) == 0:
+                            return EmptyRange<T>.Instance;
                         case var items when items.Length == 1:
                             return range;
                         default:
@@ -155,7 +155,7 @@ namespace Allors.Ranges
                                 return range;
                             }
 
-                            var result = new long[array.Length - 1];
+                            var result = new T[array.Length - 1];
 
                             if (index == 0)
                             {
@@ -171,7 +171,7 @@ namespace Allors.Ranges
                                 Array.Copy(array, index + 1, result, index, array.Length - index - 1);
                             }
 
-                            return new ArrayRange(result);
+                            return new ArrayRange<T>(result);
                     }
 
                 default:
@@ -179,25 +179,25 @@ namespace Allors.Ranges
             }
         }
 
-        public IRange Union(IRange? range, IRange? other)
+        public IRange<T> Union(IRange<T>? range, IRange<T>? other)
         {
             switch (range)
             {
                 case null:
-                case EmptyRange _:
-                    return other ?? EmptyRange.Instance;
-                case ArrayRange _ when other == null:
+                case EmptyRange<T> _:
+                    return other ?? EmptyRange<T>.Instance;
+                case ArrayRange<T> _ when other == null:
                     return range;
-                case ArrayRange _ when other is EmptyRange:
+                case ArrayRange<T> _ when other is EmptyRange<T>:
                     return range;
-                case ArrayRange arrayRange when other is ArrayRange otherArrayRange:
+                case ArrayRange<T> arrayRange when other is ArrayRange<T> otherArrayRange:
                     switch (arrayRange.Items)
                     {
                         case var items when items.Length == 1:
                             return otherArrayRange.Items switch
                             {
-                                var otherItems when otherItems.Length == 1 && items[0] == otherItems[0] => range,
-                                var otherItems when otherItems.Length == 1 => items[0] < otherItems[0] ? new ArrayRange(new[] { items[0], otherItems[0] }) : new ArrayRange(new[] { otherItems[0], items[0] }),
+                                var otherItems when otherItems.Length == 1 && items[0].CompareTo(otherItems[0]) == 0 => range,
+                                var otherItems when otherItems.Length == 1 => items[0].CompareTo(otherItems[0]) < 0 ? new ArrayRange<T>(new[] { items[0], otherItems[0] }) : new ArrayRange<T>(new[] { otherItems[0], items[0] }),
                                 _ => this.Add(other, items[0])
                             };
 
@@ -214,21 +214,21 @@ namespace Allors.Ranges
                                     var arrayLength = items.Length;
                                     var otherArrayLength = otherArray.Length;
 
-                                    var result = new long[arrayLength + otherArrayLength];
+                                    var result = new T[arrayLength + otherArrayLength];
 
                                     var i = 0;
                                     var j = 0;
                                     var k = 0;
 
-                                    long? previous = null;
+                                    IComparable? previous = null;
                                     while (i < arrayLength && j < otherArrayLength)
                                     {
                                         var value = items[i];
                                         var otherValue = otherArray[j];
 
-                                        if (value < otherValue)
+                                        if (value.CompareTo(otherValue) < 0)
                                         {
-                                            if (value != previous)
+                                            if (value.CompareTo(previous) != 0)
                                             {
                                                 result[k++] = value;
                                             }
@@ -238,12 +238,12 @@ namespace Allors.Ranges
                                         }
                                         else
                                         {
-                                            if (otherValue != previous)
+                                            if (otherValue.CompareTo(previous) != 0)
                                             {
                                                 result[k++] = otherValue;
                                             }
 
-                                            if (otherValue == value)
+                                            if (otherValue.CompareTo(value) == 0)
                                             {
                                                 i++;
                                             }
@@ -271,7 +271,7 @@ namespace Allors.Ranges
                                         Array.Resize(ref result, k);
                                     }
 
-                                    return new ArrayRange(result);
+                                    return new ArrayRange<T>(result);
                             }
                         }
                     }
@@ -281,31 +281,31 @@ namespace Allors.Ranges
             }
         }
 
-        public IRange Except(IRange? range, IRange? other)
+        public IRange<T> Except(IRange<T>? range, IRange<T>? other)
         {
-            if (other == null || other is EmptyRange)
+            if (other == null || other is EmptyRange<T>)
             {
-                return range ?? EmptyRange.Instance;
+                return range ?? EmptyRange<T>.Instance;
             }
 
             switch (range)
             {
                 case null:
-                    return EmptyRange.Instance;
-                case EmptyRange _:
+                    return EmptyRange<T>.Instance;
+                case EmptyRange<T> _:
                     return range;
-                case ArrayRange arrayRange:
+                case ArrayRange<T> arrayRange:
                 {
-                    var otherArrayRange = (ArrayRange)other;
+                    var otherArrayRange = (ArrayRange<T>)other;
 
                     switch (arrayRange.Items)
                     {
                         case var items when items.Length == 1:
                             return otherArrayRange.Items switch
                             {
-                                var otherItems when otherItems.Length == 1 && items[0] == otherItems[0] => EmptyRange.Instance,
+                                var otherItems when otherItems.Length == 1 && items[0].CompareTo(otherItems[0]) == 0 => EmptyRange<T>.Instance,
                                 var otherItems when otherItems.Length == 1 => range,
-                                _ => other.Contains(items[0]) ? EmptyRange.Instance : range,
+                                _ => other.Contains(items[0]) ? EmptyRange<T>.Instance : range,
                             };
 
                         default:
@@ -323,7 +323,7 @@ namespace Allors.Ranges
                                     var itemsLength = items.Length;
                                     var otherArrayLength = otherItems.Length;
 
-                                    var result = new long[itemsLength];
+                                    var result = new T[itemsLength];
                                     var i = 0;
                                     var j = 0;
                                     var k = 0;
@@ -333,12 +333,12 @@ namespace Allors.Ranges
                                         var value = items[i];
                                         var otherValue = otherItems[j];
 
-                                        if (value < otherValue)
+                                        if (value.CompareTo(otherValue) < 0)
                                         {
                                             result[k++] = value;
                                             i++;
                                         }
-                                        else if (value > otherValue)
+                                        else if (value.CompareTo(otherValue) > 0)
                                         {
                                             j++;
                                         }
@@ -360,7 +360,7 @@ namespace Allors.Ranges
                                         Array.Resize(ref result, k);
                                     }
 
-                                    return result.Length != 0 ? (IRange)new ArrayRange(result) : EmptyRange.Instance;
+                                    return result.Length != 0 ? (IRange<T>)new ArrayRange<T>(result) : EmptyRange<T>.Instance;
                                 }
                             }
                         }

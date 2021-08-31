@@ -9,15 +9,15 @@ namespace Allors.Ranges
     using System.Collections;
     using System.Collections.Generic;
 
-    public class ArrayRange : IRange
+    public class ArrayRange<T> : IRange<T> where T : IComparable
     {
-        public ArrayRange(long[] items) => this.Items = items;
+        public ArrayRange(T[] items) => this.Items = items;
 
-        internal long[] Items { get; }
+        internal T[] Items { get; }
 
-        public bool Equals(IRange other)
+        public bool Equals(IRange<T> other)
         {
-            if (!(other is ArrayRange otherArrayRange))
+            if (!(other is ArrayRange<T> otherArrayRange))
             {
                 return false;
             }
@@ -38,7 +38,7 @@ namespace Allors.Ranges
 
             for (var i = 0; i < itemsLength; i++)
             {
-                if (this.Items[i] != otherItems[i])
+                if (this.Items[i].CompareTo(otherItems[i]) != 0)
                 {
                     return false;
                 }
@@ -51,26 +51,26 @@ namespace Allors.Ranges
             obj switch
             {
                 null => false,
-                IRange range => this.Equals(range),
+                IRange<T> range => this.Equals(range),
                 _ => throw new NotSupportedException($"Can not compare a Range with an object of type {obj.GetType()}")
             };
 
         public override int GetHashCode() => this.Items.GetHashCode();
 
-        public IEnumerator<long> GetEnumerator() => ((IEnumerable<long>)this.Items).GetEnumerator();
+        public IEnumerator<T> GetEnumerator() => ((IEnumerable<T>)this.Items).GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         public bool IsEmpty => false;
 
-        public bool Contains(long item) =>
+        public bool Contains(T item) =>
             this.Items switch
             {
-                var singleItems when singleItems.Length == 1 => singleItems[0] == item,
+                var singleItems when singleItems.Length == 1 => singleItems[0].CompareTo(item) == 0,
                 _ => Array.BinarySearch(this.Items, item) >= 0,
             };
 
-        public long[]? Save() => this.Items;
+        public T[]? Save() => this.Items;
 
         public override string ToString() => "[" + string.Join(", ", this.Items) + "]";
     }

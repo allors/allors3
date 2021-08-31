@@ -3,64 +3,54 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Ranges
+namespace Allors.Ranges.Long
 {
     using System;
     using System.Linq;
     using Xunit;
 
-    public abstract class RangesImportTests
+    public abstract class RangesLoadTests
     {
-        public abstract IRanges Ranges { get; }
+        public abstract IRanges<long> Ranges { get; }
 
         [Fact]
-        public void ImportEmpty()
+        public void LoadDefault()
         {
             var num = this.Ranges;
 
-            var x = num.Import(Array.Empty<long>());
+            var x = num.Load();
 
             Assert.Equal(Array.Empty<long>(), x);
         }
 
         [Fact]
-        public void ImportSingle()
+        public void LoadValue()
         {
             var num = this.Ranges;
 
-            var x = num.Import(new[] { 0L });
+            var x = num.Load(0L);
 
             Assert.Equal(new[] { 0L }, x);
         }
 
         [Fact]
-        public void ImportOrderedPair()
+        public void LoadPair()
         {
             var num = this.Ranges;
 
-            var x = num.Import(new[] { 0L, 1L });
+            var x = num.Load(0L, 1L);
 
             Assert.Equal(new[] { 0L, 1L }, x);
         }
 
         [Fact]
-        public void ImportUnorderedPair()
-        {
-            var num = this.Ranges;
-
-            var x = num.Import(new[] { 1L, 0L });
-
-            Assert.Equal(new[] { 0L, 1L }, x);
-        }
-
-        [Fact]
-        public void ImportDistinctIterator()
+        public void LoadDistinctIterator()
         {
             var num = this.Ranges;
 
             var distinctIterator = Array.Empty<long>().Distinct();
 
-            var x = num.Import(distinctIterator);
+            var x = num.Load(distinctIterator);
 
             Assert.True(x.IsEmpty);
             Assert.Null(x.Save());

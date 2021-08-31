@@ -28,7 +28,7 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly Dictionary<IClass, Dictionary<IOperandType, long>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, long>> executePermissionByOperandTypeByClass;
 
-        protected DatabaseConnection(Adapters.Configuration configuration, IdGenerator idGenerator, Func<IWorkspaceServices> servicesBuilder, IRanges ranges) : base(configuration, idGenerator)
+        protected DatabaseConnection(Adapters.Configuration configuration, IdGenerator idGenerator, Func<IWorkspaceServices> servicesBuilder, IRanges<long> ranges) : base(configuration, idGenerator)
         {
             this.Ranges = ranges;
             this.servicesBuilder = servicesBuilder;
@@ -49,7 +49,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public abstract IUnitConvert UnitConvert { get; }
 
-        internal IRanges Ranges { get; }
+        internal IRanges<long> Ranges { get; }
 
         protected abstract string UserId { get; }
 

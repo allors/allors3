@@ -30,7 +30,7 @@ namespace Tests.Workspace.Remote
 
         private readonly Configuration configuration;
         private readonly IdGenerator idGenerator;
-        private readonly DefaultRanges defaultRanges;
+        private readonly DefaultRanges<long> defaultRanges;
 
         private Client client;
 
@@ -48,7 +48,7 @@ namespace Tests.Workspace.Remote
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
             this.configuration = new Configuration("Default", metaPopulation, objectFactory);
             this.idGenerator = new IdGenerator();
-            this.defaultRanges = new DefaultRanges();
+            this.defaultRanges = new DefaultRanges<long>();
         }
 
         public async Task InitializeAsync()

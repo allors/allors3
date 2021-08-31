@@ -13,7 +13,7 @@ namespace Allors.Workspace.Adapters.Local
     public class DatabaseRecord : Adapters.DatabaseRecord
     {
         private readonly AccessControl[] accessControls;
-        private readonly IRange deniedPermissionIds;
+        private readonly IRange<long> deniedPermissionIds;
 
         private readonly Dictionary<IRoleType, object> roleByRoleType;
 
@@ -22,7 +22,7 @@ namespace Allors.Workspace.Adapters.Local
         {
         }
 
-        internal DatabaseRecord(IClass @class, long id, long version, Dictionary<IRoleType, object> roleByRoleType, IRange deniedPermissionIds, AccessControl[] accessControls)
+        internal DatabaseRecord(IClass @class, long id, long version, Dictionary<IRoleType, object> roleByRoleType, IRange<long> deniedPermissionIds, AccessControl[] accessControls)
             : base(@class, id, version)
         {
             this.roleByRoleType = roleByRoleType;

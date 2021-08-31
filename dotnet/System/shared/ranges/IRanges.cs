@@ -5,26 +5,27 @@
 
 namespace Allors.Ranges
 {
+    using System;
     using System.Collections.Generic;
 
-    public interface IRanges
+    public interface IRanges<T> where T : IComparable
     {
-        IRange Import(IEnumerable<long>? unsortedItems);
+        IRange<T> Import(IEnumerable<T>? unsortedItems);
 
-        IRange Load(IEnumerable<long>? sortedItems);
+        IRange<T> Load(IEnumerable<T>? sortedItems);
 
-        IRange Load(params long[] sortedItems);
+        IRange<T> Load(params T[] sortedItems);
 
-        IRange Load(long item);
+        IRange<T> Load(T item);
 
-        IRange Ensure(object? nullable);
+        IRange<T> Ensure(object? nullable);
 
-        IRange Add(IRange? range, long item);
+        IRange<T> Add(IRange<T>? range, T item);
 
-        IRange Remove(IRange? range, long item);
+        IRange<T> Remove(IRange<T>? range, T item);
 
-        IRange Union(IRange? range, IRange? other);
+        IRange<T> Union(IRange<T>? range, IRange<T>? other);
 
-        IRange Except(IRange? range, IRange? other);
+        IRange<T> Except(IRange<T>? range, IRange<T>? other);
     }
 }

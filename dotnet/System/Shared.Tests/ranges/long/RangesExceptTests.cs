@@ -3,14 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Ranges
+namespace Allors.Ranges.Long
 {
-    using System;
     using Xunit;
 
     public abstract class RangesExceptTests
     {
-        public abstract IRanges Ranges { get; }
+        public abstract IRanges<long> Ranges { get; }
 
         [Fact]
         public void NullWithNull()

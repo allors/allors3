@@ -22,7 +22,7 @@ namespace Allors.Database.Configuration
 
         private IDatabase database;
 
-        private IRanges ranges;
+        private IRanges<long> ranges;
 
         private IMetaCache metaCache;
 
@@ -79,7 +79,7 @@ namespace Allors.Database.Configuration
             {
                 // Core
                 { } type when type == typeof(MetaPopulation) => (T)(object)this.M,
-                { } type when type == typeof(IRanges) => (T)(this.ranges ??= new DefaultRanges()),
+                { } type when type == typeof(IRanges<long>) => (T)(this.ranges ??= new DefaultRanges<long>()),
                 { } type when type == typeof(IMetaCache) => (T)(this.metaCache ??= new MetaCache(this.database)),
                 { } type when type == typeof(IClassById) => (T)(this.classById ??= new ClassById()),
                 { } type when type == typeof(IVersionedIdByStrategy) => (T)(this.versionedIdByStrategy ??= new VersionedIdByStrategy()),

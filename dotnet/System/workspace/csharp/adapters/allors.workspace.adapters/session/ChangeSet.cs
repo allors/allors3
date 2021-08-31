@@ -126,14 +126,14 @@ namespace Allors.Workspace.Adapters
             this.AddAssociation(relationType, association);
         }
 
-        public void DiffComposites(Strategy association, IRelationType relationType, ISet<Strategy> current, IRange previousRange)
+        public void DiffComposites(Strategy association, IRelationType relationType, ISet<Strategy> current, IRange<long> previousRange)
         {
             var ranges = this.Session.Workspace.Ranges;
             var previous = new HashSet<Strategy>(ranges.Ensure(previousRange).Select(v => this.Session.GetStrategy(v)));
             this.DiffComposites(association, relationType, current, previous);
         }
 
-        public void DiffComposites(Strategy association, IRelationType relationType, IRange currentRange, IRange previous)
+        public void DiffComposites(Strategy association, IRelationType relationType, IRange<long> currentRange, IRange<long> previous)
         {
             var ranges = this.Session.Workspace.Ranges;
             var current = new HashSet<Strategy>(ranges.Ensure(currentRange).Select(v => this.Session.GetStrategy(v)));

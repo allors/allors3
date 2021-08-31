@@ -27,7 +27,7 @@ namespace Tests.Workspace.Local
 
     public class Profile : IProfile
     {
-        private readonly Func<IRanges> rangesFactory;
+        private readonly Func<IRanges<long>> rangesFactory;
         private readonly Func<IWorkspaceServices> servicesBuilder;
         private readonly Configuration configuration;
 
@@ -45,7 +45,7 @@ namespace Tests.Workspace.Local
 
         public Profile(Fixture fixture)
         {
-            this.rangesFactory = () => new DefaultRanges();
+            this.rangesFactory = () => new DefaultRanges<long>();
             this.servicesBuilder = () => new WorkspaceServices();
 
             this.AsyncDatabaseClient = new AsyncDatabaseClient();

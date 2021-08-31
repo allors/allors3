@@ -174,7 +174,7 @@ namespace Allors.Workspace.Adapters
                             }
                             else
                             {
-                                changeSet.DiffComposites(this.Strategy, relationType, (ISet<Strategy>)current, (IRange)previous);
+                                changeSet.DiffComposites(this.Strategy, relationType, (ISet<Strategy>)current, (IRange<long>)previous);
                             }
                         }
                     }
@@ -199,7 +199,7 @@ namespace Allors.Workspace.Adapters
                         }
                         else
                         {
-                            changeSet.DiffComposites(this.Strategy, relationType, (ISet<Strategy>)current, (IRange)previous);
+                            changeSet.DiffComposites(this.Strategy, relationType, (ISet<Strategy>)current, (IRange<long>)previous);
                         }
                     }
                 }
@@ -252,7 +252,7 @@ namespace Allors.Workspace.Adapters
                         }
                         else
                         {
-                            changeSet.DiffComposites(this.Strategy, relationType, (IRange)current, (IRange)previous);
+                            changeSet.DiffComposites(this.Strategy, relationType, (IRange<long>)current, (IRange<long>)previous);
                         }
                     }
                 }
@@ -384,7 +384,7 @@ namespace Allors.Workspace.Adapters
 
         protected Workspace Workspace => this.Session.Workspace;
 
-        private IRanges Ranges => this.Strategy.Session.Workspace.Ranges;
+        private IRanges<long> Ranges => this.Strategy.Session.Workspace.Ranges;
 
         #endregion
     }

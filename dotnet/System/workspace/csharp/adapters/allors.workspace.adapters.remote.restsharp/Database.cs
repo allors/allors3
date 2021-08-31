@@ -6,7 +6,6 @@
 namespace Allors.Workspace.Adapters.Remote.ResthSharp
 {
     using System;
-    using System.Text;
     using System.Threading.Tasks;
     using Allors.Protocol.Json;
     using Allors.Protocol.Json.Api.Invoke;
@@ -14,17 +13,15 @@ namespace Allors.Workspace.Adapters.Remote.ResthSharp
     using Allors.Protocol.Json.Api.Push;
     using Allors.Protocol.Json.Api.Security;
     using Allors.Protocol.Json.Api.Sync;
-    using Allors.Protocol.Json.Auth;
     using Allors.Protocol.Json.RestSharp;
     using Ranges;
-    using RestSharp;
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Add call to 'ConfigureAwait' (or vice versa).", Justification = "<Pending>")]
     public class DatabaseConnection : Remote.DatabaseConnection
     {
         private readonly Client client;
 
-        public DatabaseConnection(Configuration configuration, Func<IWorkspaceServices> servicesBuilder, Client client, IdGenerator idGenerator, IRanges ranges) : base(configuration, idGenerator, servicesBuilder, ranges)
+        public DatabaseConnection(Configuration configuration, Func<IWorkspaceServices> servicesBuilder, Client client, IdGenerator idGenerator, IRanges<long> ranges) : base(configuration, idGenerator, servicesBuilder, ranges)
         {
             this.client = client;
             this.UnitConvert = new UnitConvert();

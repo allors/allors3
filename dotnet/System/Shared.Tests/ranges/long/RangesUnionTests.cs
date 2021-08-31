@@ -3,14 +3,14 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Ranges
+namespace Allors.Ranges.Long
 {
     using System;
     using Xunit;
 
     public abstract class RangesUnionTests
     {
-        public abstract IRanges Ranges { get; }
+        public abstract IRanges<long> Ranges { get; }
 
         [Fact]
         public void NullWithNull()
@@ -69,7 +69,7 @@ namespace Allors.Ranges
             var y = num.Load(0, 1);
             var z = num.Union(x, y);
 
-            Assert.Equal(new ArrayRange(new long[] { 0, 1 }), z);
+            Assert.Equal(new ArrayRange<long>(new long[] { 0, 1 }), z);
         }
 
 

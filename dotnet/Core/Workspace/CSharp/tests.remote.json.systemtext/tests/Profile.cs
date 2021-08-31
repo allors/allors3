@@ -29,7 +29,7 @@ namespace Tests.Workspace.Remote
 
         private readonly Func<IWorkspaceServices> servicesBuilder;
         private readonly IdGenerator idGenerator;
-        private readonly DefaultRanges defaultRanges;
+        private readonly DefaultRanges<long> defaultRanges;
         private readonly Configuration configuration;
 
         private HttpClient httpClient;
@@ -38,7 +38,7 @@ namespace Tests.Workspace.Remote
         {
             this.servicesBuilder = () => new WorkspaceServices();
             this.idGenerator = new IdGenerator();
-            this.defaultRanges = new DefaultRanges();
+            this.defaultRanges = new DefaultRanges<long>();
 
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));

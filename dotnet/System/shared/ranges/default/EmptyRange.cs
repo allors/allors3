@@ -10,36 +10,36 @@ namespace Allors.Ranges
     using System.Collections;
     using System.Collections.Generic;
 
-    public class EmptyRange : IRange
+    public class EmptyRange<T> : IRange<T> where T : IComparable
     {
-        private static readonly long[] EmptyArray = Array.Empty<long>();
-        private static readonly EmptyEnumerator Enumerator = new EmptyEnumerator();
+        private static readonly T[] EmptyArray = Array.Empty<T>();
+        private static readonly EmptyEnumerator<T> Enumerator = new EmptyEnumerator<T>();
 
-        public static readonly EmptyRange Instance = new EmptyRange();
+        public static readonly EmptyRange<T> Instance = new EmptyRange<T>();
 
         private EmptyRange() { }
 
-        public bool Equals(IRange other) => ReferenceEquals(this, other);
+        public bool Equals(IRange<T> other) => ReferenceEquals(this, other);
 
-        public IEnumerator<long> GetEnumerator() => Enumerator;
+        public IEnumerator<T> GetEnumerator() => Enumerator;
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         public bool IsEmpty => true;
 
-        public bool Contains(long item) => false;
+        public bool Contains(T item) => false;
 
-        public long[]? Save() => null;
+        public T[]? Save() => null;
 
         public override string ToString() => "[]";
 
-        private class EmptyEnumerator : IEnumerator<long>
+        private class EmptyEnumerator<T> : IEnumerator<T> where T : IComparable
         {
             public bool MoveNext() => false;
 
             public void Reset() { }
 
-            long IEnumerator<long>.Current => throw new NotSupportedException("Range is empty.");
+            T IEnumerator<T>.Current => throw new NotSupportedException("Range is empty.");
             public object Current => throw new NotSupportedException("Range is empty.");
 
             public void Dispose() { }

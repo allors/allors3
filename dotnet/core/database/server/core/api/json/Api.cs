@@ -32,7 +32,7 @@ namespace Allors.Database.Protocol.Json
             var databaseServices = transaction.Database.Services;
             var metaCache = databaseServices.Get<IMetaCache>();
 
-            this.Ranges = databaseServices.Get<IRanges>();
+            this.Ranges = databaseServices.Get<IRanges<long>>();
             this.User = transactionServices.Get<IUserService>().User;
             this.AccessControlLists = new WorkspaceAccessControlLists(workspaceName, this.User);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(workspaceName);
@@ -49,7 +49,7 @@ namespace Allors.Database.Protocol.Json
 
         public ITransaction Transaction { get; }
 
-        public IRanges Ranges { get; }
+        public IRanges<long> Ranges { get; }
 
         public User User { get; }
 

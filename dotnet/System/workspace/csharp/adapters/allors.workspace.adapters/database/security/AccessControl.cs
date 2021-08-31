@@ -11,6 +11,6 @@ namespace Allors.Workspace.Adapters
     {
         public long Version { get; set; }
 
-        public IRange PermissionIds { get; set; }
+        public IRange<long> PermissionIds { get; set; }
     }
 }
