@@ -9,6 +9,7 @@ export * from './lib/runtime/database/manyToMany.spec';
 
 export * from './lib/runtime/session/session/unit.spec';
 export * from './lib/runtime/session/lifecycle.spec';
+export * from './lib/runtime/session/manyToMany.spec';
 
 export * from './lib/runtime/workspace/workspace/unit.spec';
 export * from './lib/runtime/workspace/lifecycle.spec';
