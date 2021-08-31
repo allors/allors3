@@ -12,12 +12,15 @@ namespace Allors.Workspace.Adapters
 
     public abstract class Strategy : IStrategy, IComparable<Strategy>
     {
+        private readonly long rangeId;
+
         private IObject @object;
 
         protected Strategy(Session session, IClass @class, long id)
         {
             this.Session = session;
             this.Id = id;
+            this.rangeId = this.Id;
             this.Class = @class;
 
             if (this.Class.Origin != Origin.Session)
@@ -30,6 +33,7 @@ namespace Allors.Workspace.Adapters
         {
             this.Session = session;
             this.Id = databaseRecord.Id;
+            this.rangeId = this.Id;
             this.Class = databaseRecord.Class;
 
             this.WorkspaceOriginState = new WorkspaceOriginState(this, this.Session.Workspace.GetRecord(this.Id));
@@ -487,14 +491,14 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public int CompareTo(Strategy other)
+        int IComparable<Strategy>.CompareTo(Strategy other)
         {
             if (ReferenceEquals(this, other))
             {
                 return 0;
             }
 
-            return other is null ? 1 : this.Id.CompareTo(other.Id);
+            return other is null ? 1 : this.rangeId.CompareTo(other.rangeId);
         }
     }
 }

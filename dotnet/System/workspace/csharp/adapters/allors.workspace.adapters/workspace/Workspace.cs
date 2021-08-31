@@ -7,7 +7,6 @@ namespace Allors.Workspace.Adapters
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.InteropServices.ComTypes;
     using Meta;
     using Ranges;
 
@@ -20,6 +19,7 @@ namespace Allors.Workspace.Adapters
             this.DatabaseConnection = database;
             this.Services = services;
             this.Ranges = ranges;
+            this.StrategyRanges = new DefaultClassRanges<Strategy>();
 
             this.WorkspaceClassByWorkspaceId = new Dictionary<long, IClass>();
             this.WorkspaceIdsByWorkspaceClass = new Dictionary<IClass, ISet<long>>();
@@ -34,6 +34,8 @@ namespace Allors.Workspace.Adapters
         public IWorkspaceServices Services { get; }
 
         public IRanges<long> Ranges { get; }
+
+        public IRanges<Strategy> StrategyRanges { get; }
 
         public Dictionary<long, IClass> WorkspaceClassByWorkspaceId { get; }
 

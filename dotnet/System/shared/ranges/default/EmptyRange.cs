@@ -12,7 +12,6 @@ namespace Allors.Ranges
 
     public class EmptyRange<T> : IRange<T> where T : IComparable<T>
     {
-        private static readonly T[] EmptyArray = Array.Empty<T>();
         private static readonly EmptyEnumerator<T> Enumerator = new EmptyEnumerator<T>();
 
         public static readonly EmptyRange<T> Instance = new EmptyRange<T>();
