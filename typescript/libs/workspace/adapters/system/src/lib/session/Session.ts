@@ -9,6 +9,8 @@ import { ChangeSet } from './ChangeSet';
 import { AssociationType, Class, Composite, Origin } from '@allors/workspace/meta/system';
 import { WorkspaceResult } from '../workspace/WorkspaceResult';
 import { ObjectBase } from '../ObjectBase';
+import { Ranges } from '../collections/ranges/Ranges';
+import { DefaultStrategyRanges } from '../collections/ranges/DefaultStrategyRanges';
 
 export function isNewId(id: number): boolean {
   return id < 0;
@@ -25,12 +27,16 @@ export abstract class Session implements ISession {
 
   strategyByWorkspaceId: Map<number, Strategy>;
 
+  readonly ranges: Ranges<Strategy>;
+
   private strategiesByClass: Map<Class, Set<Strategy>>;
 
   constructor(public workspace: Workspace, public services: ISessionServices) {
+    this.ranges = new DefaultStrategyRanges();
+
     this.strategyByWorkspaceId = new Map();
     this.strategiesByClass = new Map();
-    this.sessionOriginState = new SessionOriginState();
+    this.sessionOriginState = new SessionOriginState(this.ranges);
 
     this.changeSetTracker = new ChangeSetTracker();
     this.pushToDatabaseTracker = new PushToDatabaseTracker();

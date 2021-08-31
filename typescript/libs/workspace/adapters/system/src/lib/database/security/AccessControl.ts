@@ -1,5 +1,5 @@
-import { IRange } from "../../collections/Range";
+import { IRange } from "../../collections/ranges/Ranges";
 
 export class AccessControl {
-  constructor(public version: number, public permissionIds: IRange) {}
+  constructor(public version: number, public permissionIds: IRange<number>) {}
 }

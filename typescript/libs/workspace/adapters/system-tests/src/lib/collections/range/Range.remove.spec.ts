@@ -1,11 +1,12 @@
-import { IRange, importFrom, remove } from '@allors/workspace/adapters/system';
+import { DefaultNumberRanges, IRange } from '@allors/workspace/adapters/system';
 
 describe('IRange', () => {
   describe('as undefined set', () => {
-    const set: IRange = undefined;
+    const ranges = new DefaultNumberRanges();
+    const set: IRange<number> = undefined;
 
     describe('removing a non existing element', () => {
-      const removed = remove(set, 0);
+      const removed = ranges.remove(set, 0);
 
       it('should return undefined', () => {
         expect(removed).toBeUndefined();
@@ -14,10 +15,11 @@ describe('IRange', () => {
   });
 
   describe('as single element set', () => {
-    const set: IRange = importFrom([1]);
+    const ranges = new DefaultNumberRanges();
+    const set: IRange<number> = ranges.importFrom([1]);
 
     describe('removing the element', () => {
-      const removed = remove(set, 1);
+      const removed = ranges.remove(set, 1);
 
       it('should return undefined', () => {
         expect(removed).toBeUndefined();
@@ -25,7 +27,7 @@ describe('IRange', () => {
     });
 
     describe('removing a non existing element', () => {
-      const removed = remove(set, 0);
+      const removed = ranges.remove(set, 0);
 
       it('should return an array', () => {
         expect(Array.isArray(removed)).toBeTruthy();

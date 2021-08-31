@@ -1,8 +1,10 @@
+export * from './lib/collections/ranges/DefaultNumberRanges'
+export * from './lib/collections/ranges/DefaultStrategyRanges'
+export * from './lib/collections/ranges/Ranges'
 export * from './lib/collections/frozenEmptyArray'
 export * from './lib/collections/frozenEmptyMap'
 export * from './lib/collections/frozenEmptySet'
 export * from './lib/collections/MapMap'
-export * from './lib/collections/Range'
 
 export * from './lib/database/DatabaseConnection'
 export * from './lib/database/DatabaseRecord'

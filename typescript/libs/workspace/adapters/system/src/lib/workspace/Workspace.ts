@@ -1,6 +1,7 @@
 import { IConfiguration, ISession, IWorkspace, IWorkspaceServices } from '@allors/workspace/domain/system';
 import { Class, RelationType } from '@allors/workspace/meta/system';
-import { importFrom } from '../collections/Range';
+import { DefaultNumberRanges } from '../collections/ranges/DefaultNumberRanges';
+import { Ranges } from '../collections/ranges/Ranges';
 import { DatabaseConnection } from '../Database/DatabaseConnection';
 import { Strategy } from '../session/Strategy';
 import { WorkspaceRecord } from './WorkspaceRecord';
@@ -12,9 +13,13 @@ export abstract class Workspace implements IWorkspace {
 
   workspaceIdsByWorkspaceClass: Map<Class, Set<number>>;
 
+  readonly ranges: Ranges<number>;
+  
   private readonly recordById: Map<number, WorkspaceRecord>;
 
   constructor(public database: DatabaseConnection, public services: IWorkspaceServices) {
+    this.ranges = new DefaultNumberRanges()
+    
     this.configuration = database.configuration;
     this.workspaceClassByWorkspaceId = new Map();
     this.workspaceIdsByWorkspaceClass = new Map();
@@ -43,7 +48,7 @@ export abstract class Workspace implements IWorkspace {
       if (value instanceof Strategy) {
         roleByRelationType.set(key, value.id);
       } else if (value instanceof Set) {
-        roleByRelationType.set(key, importFrom([...(value as Set<Strategy>)].map((v) => v.id)));
+        roleByRelationType.set(key, this.ranges.importFrom([...(value as Set<Strategy>)].map((v) => v.id)));
       } else {
         roleByRelationType.set(key, value);
       }

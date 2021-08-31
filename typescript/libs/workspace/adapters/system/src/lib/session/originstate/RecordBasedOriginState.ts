@@ -3,10 +3,10 @@ import { ChangeSet } from '../ChangeSet';
 import { Strategy } from '../Strategy';
 import { Workspace } from '../../workspace/Workspace';
 import { Session } from '../Session';
-import { enumerate, IRange, equals } from '../../collections/Range';
 import { Class, RelationType, RoleType } from '@allors/workspace/meta/system';
 import { ICompositeDiff, ICompositesDiff, IDiff, IUnit, IUnitDiff } from '@allors/workspace/domain/system';
 import { frozenEmptyArray } from '../../collections/frozenEmptyArray';
+import { IRange, Ranges } from '../../collections/ranges/Ranges';
 
 export abstract class RecordBasedOriginState {
   abstract strategy: Strategy;
@@ -77,7 +77,7 @@ export abstract class RecordBasedOriginState {
       return;
     }
 
-    for (const role of enumerate(this.record?.getRole(roleType) as IRange)) {
+    for (const role of this.recordRanges.enumerate(this.record?.getRole(roleType) as IRange<number>)) {
       yield this.session.getStrategy(role);
     }
   }
@@ -148,9 +148,9 @@ export abstract class RecordBasedOriginState {
             if (relationType.roleType.objectType.isUnit) {
               changeSet.diffUnit(this.strategy, relationType, current, previous);
             } else if (relationType.roleType.isOne) {
-              changeSet.diffCompositeStrategyNumber(this.strategy, relationType, current as Strategy, previous as number);
+              changeSet.diffCompositeStrategyRecord(this.strategy, relationType, current as Strategy, previous as number);
             } else {
-              changeSet.diffCompositesSetRange(this.strategy, relationType, current as Set<Strategy>, previous as IRange);
+              changeSet.diffCompositesStrategyRecord(this.strategy, relationType, current as IRange<Strategy>, previous as IRange<number>);
             }
           });
         }
@@ -161,9 +161,9 @@ export abstract class RecordBasedOriginState {
           if (relationType.roleType.objectType.isUnit) {
             changeSet.diffUnit(this.strategy, relationType, current, previous);
           } else if (relationType.roleType.isOne) {
-            changeSet.diffCompositeStrategyNumber(this.strategy, relationType, current as Strategy, previous as number);
+            changeSet.diffCompositeStrategyRecord(this.strategy, relationType, current as Strategy, previous as number);
           } else {
-            changeSet.diffCompositesSetRange(this.strategy, relationType, current as Set<Strategy>, previous as IRange);
+            changeSet.diffCompositesStrategyRecord(this.strategy, relationType, current as IRange<Strategy>, previous as IRange<number>);
           }
         });
       }
@@ -183,7 +183,7 @@ export abstract class RecordBasedOriginState {
           } else if (relationType.roleType.isOne) {
             changeSet.diffCompositeStrategyStrategy(this.strategy, relationType, current as Strategy, previous as Strategy);
           } else {
-            changeSet.diffCompositesSetSet(this.strategy, relationType, current as Set<Strategy>, previous as Set<Strategy>);
+            changeSet.diffCompositesStrategyStrategy(this.strategy, relationType, current as IRange<Strategy>, previous as IRange<Strategy>);
           }
         } else {
           const previous = this.previousRecord?.getRole(roleType);
@@ -192,9 +192,9 @@ export abstract class RecordBasedOriginState {
           if (relationType.roleType.objectType.isUnit) {
             changeSet.diffUnit(this.strategy, relationType, current, previous);
           } else if (relationType.roleType.isOne) {
-            changeSet.diffCompositeNumberNumber(this.strategy, relationType, current as number, previous as number);
+            changeSet.diffCompositeRecordRecord(this.strategy, relationType, current as number, previous as number);
           } else {
-            changeSet.diffCompositesRangeRange(this.strategy, relationType, current as IRange, previous as IRange);
+            changeSet.diffCompositesRecordRecord(this.strategy, relationType, current as IRange<number>, previous as IRange<number>);
           }
         }
       });
@@ -235,7 +235,7 @@ export abstract class RecordBasedOriginState {
         const diff: ICompositesDiff = {
           relationType,
           assocation: this.strategy,
-          originalRoles: original != null ? (original as IRange)?.map((v) => this.strategy.session.getStrategy(v)) ?? frozenEmptyArray : frozenEmptyArray,
+          originalRoles: original != null ? (original as IRange<number>)?.map((v) => this.strategy.session.getStrategy(v)) ?? frozenEmptyArray : frozenEmptyArray,
           changedRoles: [...(changed as Set<Strategy>)],
         };
 
@@ -262,7 +262,7 @@ export abstract class RecordBasedOriginState {
         if (original !== newOriginal) {
           return false;
         }
-      } else if (!equals(original as number[], newOriginal as number[])) {
+      } else if (!this.recordRanges.equals(original as number[], newOriginal as number[])) {
         return false;
       }
     }
@@ -312,6 +312,14 @@ export abstract class RecordBasedOriginState {
 
   protected get workspace(): Workspace {
     return this.strategy.session.workspace;
+  }
+
+  protected get strategyRanges(): Ranges<Strategy> {
+    return this.strategy.session.ranges;
+  }
+
+  protected get recordRanges(): Ranges<number> {
+    return this.strategy.session.workspace.ranges;
   }
   //#endregion
 }

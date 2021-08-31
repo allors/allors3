@@ -1,11 +1,12 @@
-import { IRange, importFrom, add } from '@allors/workspace/adapters/system';
+import { IRange, DefaultNumberRanges } from '@allors/workspace/adapters/system';
 
 describe('IRange', () => {
   describe('as undefined set', () => {
-    const set: IRange = undefined;
+    const ranges = new DefaultNumberRanges();
+    const set: IRange<number> = undefined;
 
     describe('adding an element', () => {
-      const added = add(set, 0);
+      const added = ranges.add(set, 0);
 
       it('should return an array', () => {
         expect(Array.isArray(added)).toBeTruthy();
@@ -22,10 +23,11 @@ describe('IRange', () => {
   });
 
   describe('as single element set', () => {
-    const set: IRange = importFrom([1]);
+    const ranges = new DefaultNumberRanges();
+    const set = ranges.importFrom([1]);
 
     describe('adding another smaller element', () => {
-      const added = add(set, 0);
+      const added = ranges.add(set, 0);
 
       it('should return an array', () => {
         expect(Array.isArray(added)).toBeTruthy();
