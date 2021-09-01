@@ -99,11 +99,11 @@ export abstract class Strategy implements IStrategy {
   getCompositeRole<T extends IObject>(roleType: RoleType): T {
     switch (roleType.origin) {
       case Origin.Session:
-        return this.session.sessionOriginState.getCompositeRole(this, roleType)?.object as T;
+        return (this.session.sessionOriginState.getCompositeRole(this, roleType)?.object as T) ?? null;
       case Origin.Workspace:
-        return this.WorkspaceOriginState?.getCompositeRole(roleType)?.object as T;
+        return (this.WorkspaceOriginState?.getCompositeRole(roleType)?.object as T) ?? null;
       case Origin.Database:
-        return this.canRead(roleType) ? (this.DatabaseOriginState?.getCompositeRole(roleType).object as T) : null;
+        return this.canRead(roleType) ? (this.DatabaseOriginState?.getCompositeRole(roleType)?.object as T) ?? null : null;
       default:
         throw new Error('Unknown origin');
     }

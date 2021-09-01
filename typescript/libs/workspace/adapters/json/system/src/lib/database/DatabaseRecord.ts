@@ -1,13 +1,13 @@
 import { Class, RelationType, RoleType } from '@allors/workspace/meta/system';
-import { DatabaseRecord as SystemDatabaseRecord, has, IRange } from '@allors/workspace/adapters/system';
+import { DatabaseRecord as SystemDatabaseRecord, IRange } from '@allors/workspace/adapters/system';
 import { SyncResponseObject, SyncResponseRole } from '@allors/protocol/json/system';
 import { DatabaseConnection } from './DatabaseConnection';
 import { ResponseContext } from './Security/ResponseContext';
 import { unitFromJson } from '../json/fromJson';
 
 export class DatabaseRecord extends SystemDatabaseRecord {
-  accessControlIds: IRange;
-  deniedPermissionIds: IRange;
+  accessControlIds: IRange<number>;
+  deniedPermissionIds: IRange<number>;
 
   private _roleByRelationType?: Map<RelationType, unknown>;
   private syncResponseRoles?: SyncResponseRole[];
@@ -64,7 +64,7 @@ export class DatabaseRecord extends SystemDatabaseRecord {
       return false;
     }
 
-    if (has(this.deniedPermissionIds, permission)) {
+    if (this.database.ranges.has(this.deniedPermissionIds, permission)) {
       return false;
     }
 
@@ -72,6 +72,6 @@ export class DatabaseRecord extends SystemDatabaseRecord {
       return false;
     }
 
-    return this.accessControlIds.some((v) => has(this.database.accessControlById.get(v).permissionIds, permission));
+    return this.accessControlIds.some((v) => this.database.ranges.has(this.database.accessControlById.get(v).permissionIds, permission));
   }
 }

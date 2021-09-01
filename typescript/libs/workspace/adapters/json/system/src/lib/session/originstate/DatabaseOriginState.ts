@@ -1,5 +1,5 @@
 import { PushRequestNewObject, PushRequestObject, PushRequestRole } from '@allors/protocol/json/system';
-import { DatabaseOriginState as SystemDatabaseOriginState, DatabaseRecord, difference, Strategy, save, IRange, importFrom } from '@allors/workspace/adapters/system';
+import { DatabaseOriginState as SystemDatabaseOriginState, DatabaseRecord, Strategy, IRange } from '@allors/workspace/adapters/system';
 import { unitToJson } from '../../json/toJson';
 
 export class DatabaseOriginState extends SystemDatabaseOriginState {
@@ -24,6 +24,8 @@ export class DatabaseOriginState extends SystemDatabaseOriginState {
   }
 
   private pushRoles(): PushRequestRole[] {
+    const ranges = this.session.workspace.ranges;
+
     if (this.xchangedRoleByRelationType?.size > 0) {
       const roles: PushRequestRole[] = [];
 
@@ -35,16 +37,16 @@ export class DatabaseOriginState extends SystemDatabaseOriginState {
         } else if (relationType.roleType.isOne) {
           pushRequestRole.c = (roleValue as Strategy)?.id;
         } else {
-          const roleIds = importFrom([...(roleValue as Set<Strategy>)].map((v) => v.id));
+          const roleIds = ranges.importFrom([...(roleValue as Set<Strategy>)].map((v) => v.id));
           if (!this.existRecord) {
-            pushRequestRole.a = save(roleIds);
+            pushRequestRole.a = ranges.save(roleIds);
           } else {
-            const databaseRole = this.databaseRecord.getRole(relationType.roleType) as IRange;
+            const databaseRole = this.databaseRecord.getRole(relationType.roleType) as IRange<number>;
             if (databaseRole == null) {
-              pushRequestRole.a = save(roleIds);
+              pushRequestRole.a = ranges.save(roleIds);
             } else {
-              pushRequestRole.a = save(difference(roleIds, databaseRole));
-              pushRequestRole.r = save(difference(databaseRole, roleIds));
+              pushRequestRole.a = ranges.save(ranges.difference(roleIds, databaseRole));
+              pushRequestRole.r = ranges.save(ranges.difference(databaseRole, roleIds));
             }
           }
         }

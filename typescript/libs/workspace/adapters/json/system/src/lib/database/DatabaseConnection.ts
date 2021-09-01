@@ -1,5 +1,5 @@
 import { PullResponse, SecurityRequest, SecurityResponse, SyncRequest, SyncResponse } from '@allors/protocol/json/system';
-import { AccessControl, Configuration, DatabaseConnection as SystemDatabaseConnection, equals, IdGenerator, MapMap, ServicesBuilder } from '@allors/workspace/adapters/system';
+import { AccessControl, Configuration, DatabaseConnection as SystemDatabaseConnection, IdGenerator, MapMap, ServicesBuilder } from '@allors/workspace/adapters/system';
 import { IWorkspace, Operations } from '@allors/workspace/domain/system';
 import { Class, MethodType, OperandType, RelationType } from '@allors/workspace/meta/system';
 import { DatabaseRecord } from './DatabaseRecord';
@@ -11,7 +11,7 @@ export class DatabaseConnection extends SystemDatabaseConnection {
 
   accessControlById: Map<number, AccessControl>;
   permissions: Set<number>;
-
+  
   readPermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
   writePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
   executePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
@@ -47,11 +47,11 @@ export class DatabaseConnection extends SystemDatabaseConnection {
             return true;
           }
 
-          if (!equals(record.accessControlIds, v.a)) {
+          if (!this.ranges.equals(record.accessControlIds, v.a)) {
             return true;
           }
 
-          if (!equals(record.deniedPermissionIds, v.d)) {
+          if (!this.ranges.equals(record.deniedPermissionIds, v.d)) {
             return true;
           }
 
