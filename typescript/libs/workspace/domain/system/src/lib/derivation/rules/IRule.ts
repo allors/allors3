@@ -8,5 +8,5 @@ export interface IRule {
     
     patterns : IPattern[];
     
-    derive(cycle: ICycle, matches: IObject[]);
+    derive(cycle: ICycle, matches: IObject[]): void;
 }

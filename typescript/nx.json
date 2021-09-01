@@ -52,6 +52,18 @@
     "workspace-configuration-core": {
       "tags": []
     },
+    "workspace-derivations-base": {
+      "tags": []
+    },
+    "workspace-derivations-base-custom": {
+      "tags": []
+    },
+    "workspace-derivations-core": {
+      "tags": []
+    },
+    "workspace-derivations-core-custom": {
+      "tags": []
+    },
     "workspace-domain-base": {
       "tags": []
     },

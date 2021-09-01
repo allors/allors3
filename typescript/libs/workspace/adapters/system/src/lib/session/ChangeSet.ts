@@ -108,14 +108,14 @@ export class ChangeSet implements IChangeSet {
   public diffCompositesStrategyStrategy(association: Strategy, relationType: RelationType, current: IRange<Strategy>, previous: IRange<Strategy>) {
     let hasChange = false;
 
-    for (const v of previous) {
+    for (const v of this.ranges.enumerate(previous)) {
       if (!this.ranges.has(current, v)) {
         this.addRole(relationType, v);
         hasChange = true;
       }
     }
 
-    for (const v of current) {
+    for (const v of this.ranges.enumerate(current)) {
       if (!this.ranges.has(previous, v)) {
         this.addRole(relationType, v);
         hasChange = true;

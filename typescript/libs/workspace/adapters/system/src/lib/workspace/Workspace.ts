@@ -13,12 +13,12 @@ export abstract class Workspace implements IWorkspace {
   workspaceIdsByWorkspaceClass: Map<Class, Set<number>>;
 
   readonly ranges: Ranges<number>;
-  
+
   private readonly recordById: Map<number, WorkspaceRecord>;
 
   constructor(public database: DatabaseConnection, public services: IWorkspaceServices) {
     this.ranges = database.ranges;
-    
+
     this.configuration = database.configuration;
     this.workspaceClassByWorkspaceId = new Map();
     this.workspaceIdsByWorkspaceClass = new Map();
@@ -42,14 +42,17 @@ export abstract class Workspace implements IWorkspace {
 
     ids.add(id);
 
-    const roleByRelationType = new Map();
-    for (const [key, value] of changedRoleByRoleType) {
-      if (value instanceof Strategy) {
-        roleByRelationType.set(key, value.id);
-      } else if (value instanceof Set) {
-        roleByRelationType.set(key, this.ranges.importFrom([...(value as Set<Strategy>)].map((v) => v.id)));
-      } else {
-        roleByRelationType.set(key, value);
+    let roleByRelationType: Map<RelationType, any>;
+    if (changedRoleByRoleType?.size > 0) {
+      roleByRelationType = new Map();
+      for (const [key, value] of changedRoleByRoleType) {
+        if (value instanceof Strategy) {
+          roleByRelationType.set(key, value.id);
+        } else if (value instanceof Set) {
+          roleByRelationType.set(key, this.ranges.importFrom([...(value as Set<Strategy>)].map((v) => v.id)));
+        } else {
+          roleByRelationType.set(key, value);
+        }
       }
     }
 

@@ -1,5 +1,6 @@
 import { PushRequestNewObject, PushRequestObject, PushRequestRole } from '@allors/protocol/json/system';
 import { DatabaseOriginState as SystemDatabaseOriginState, DatabaseRecord, Strategy, IRange } from '@allors/workspace/adapters/system';
+import { range } from 'rxjs';
 import { unitToJson } from '../../json/toJson';
 
 export class DatabaseOriginState extends SystemDatabaseOriginState {
@@ -26,10 +27,10 @@ export class DatabaseOriginState extends SystemDatabaseOriginState {
   private pushRoles(): PushRequestRole[] {
     const ranges = this.session.workspace.ranges;
 
-    if (this.xchangedRoleByRelationType?.size > 0) {
+    if (this.changedRoleByRelationType?.size > 0) {
       const roles: PushRequestRole[] = [];
 
-      for (const [relationType, roleValue] of this.xchangedRoleByRelationType) {
+      for (const [relationType, roleValue] of this.changedRoleByRelationType) {
         const pushRequestRole: PushRequestRole = { t: relationType.tag };
 
         if (relationType.roleType.objectType.isUnit) {
@@ -37,7 +38,8 @@ export class DatabaseOriginState extends SystemDatabaseOriginState {
         } else if (relationType.roleType.isOne) {
           pushRequestRole.c = (roleValue as Strategy)?.id;
         } else {
-          const roleIds = ranges.importFrom([...(roleValue as Set<Strategy>)].map((v) => v.id));
+          const roleStrategies = roleValue as IRange<Strategy>;
+          const roleIds = ranges.importFrom(roleStrategies?.map((v) => v.id));
           if (!this.existRecord) {
             pushRequestRole.a = ranges.save(roleIds);
           } else {

@@ -1,5 +1,5 @@
 import { Pull, IAsyncDatabaseClient, IWorkspace, IReactiveDatabaseClient } from '@allors/workspace/domain/system';
-import { C1, WC1 } from '@allors/workspace/domain/core';
+import { C1, WC1 } from '@allors/workspace/domain/default';
 
 import { Fixture } from '../../Fixture';
 import '../../Matchers';

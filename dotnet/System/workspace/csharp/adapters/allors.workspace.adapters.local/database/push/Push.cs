@@ -140,7 +140,7 @@ namespace Allors.Workspace.Adapters.Local
 
         private void PushRequestRoles(Strategy local, IObject obj)
         {
-            if (local.DatabaseOriginState.XChangedRoleByRelationType == null)
+            if (local.DatabaseOriginState.ChangedRoleByRelationType == null)
             {
                 return;
             }
@@ -150,7 +150,7 @@ namespace Allors.Workspace.Adapters.Local
 
             var ranges = this.Workspace.RecordRanges;
 
-            foreach (var keyValuePair in local.DatabaseOriginState.XChangedRoleByRelationType)
+            foreach (var keyValuePair in local.DatabaseOriginState.ChangedRoleByRelationType)
             {
                 var relationType = keyValuePair.Key;
                 var roleType = ((IRelationType)this.M.FindByTag(keyValuePair.Key.Tag)).RoleType;

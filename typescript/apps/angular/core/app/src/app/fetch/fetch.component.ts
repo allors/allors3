@@ -3,9 +3,10 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { SessionService } from '@allors/workspace/angular/core';
-import { assert } from '@allors/workspace/meta/system';
-import { Organisation } from '@allors/workspace/domain/core';
+import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
+import { IPullResult, Pull } from '@allors/workspace/domain/system';
+import { Organisation } from '@allors/workspace/domain/default';
+import { M } from '@allors/workspace/meta/default';
 
 @Component({
   templateUrl: './fetch.component.html',
@@ -17,11 +18,7 @@ export class FetchComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(
-    @Self() private sessionService: SessionService,
-    private title: Title,
-    private route: ActivatedRoute
-  ) {}
+  constructor(@Self() private sessionService: SessionService, private workspaceService: WorkspaceService, private title: Title, private route: ActivatedRoute) {}
 
   public ngOnInit() {
     this.title.setTitle('Fetch');
@@ -33,44 +30,51 @@ export class FetchComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe();
     }
 
-    // const { pull, x } = this.metaService;
+    const { client, workspace } = this.workspaceService;
+    const { session } = this.sessionService;
+    const m = workspace.configuration.metaPopulation as M;
 
-    // const id = this.route.snapshot.paramMap.get('id');
-    // assert(id);
+    const id = this.route.snapshot.paramMap.get('id');
 
-    // const pulls = [
-    //   pull.Organisation({ object: id, include: { Owner: x } }),
-    //   pull.Organisation({
-    //     object: id,
-    //     fetch: {
-    //       Owner: {
-    //         OrganisationsWhereOwner: {
-    //           include: {
-    //             Owner: x,
-    //           },
-    //         },
-    //       },
-    //     },
-    //   }),
-    // ];
+    const pulls: Pull[] = [
+      {
+        objectId: parseInt(id),
+        results: [
+          {
+            select: {
+              include: [
+                {
+                  kind: 'Node',
+                  propertyType: m.Organisation.Owner,
+                  nodes: [
+                    {
+                      kind: 'Node',
+                      propertyType: m.Person.OrganisationsWhereOwner,
+                      nodes: [
+                        {
+                          kind: 'Node',
+                          propertyType: m.Organisation.Owner,
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+      },
+    ];
 
-    // this.allors.context.reset();
-
-    // this.subscription = this.allors.context
-    //   .load(
-    //     new PullRequest({
-    //       pulls,
-    //     })
-    //   )
-    //   .subscribe(
-    //     (loaded: Loaded) => {
-    //       this.organisation = loaded.objects.Organisation as Organisation;
-    //       this.organisations = loaded.collections.Organisations as Organisation[];
-    //     },
-    //     (error) => {
-    //       alert(error);
-    //     }
-    //   );
+    this.subscription = client.pullReactive(session, pulls).subscribe(
+      (result: IPullResult) => {
+        this.organisation = result.object<Organisation>(m.Organisation);
+        this.organisations = result.collection<Organisation>(m.Organisation);
+      },
+      (error) => {
+        alert(error);
+      }
+    );
   }
 
   public ngOnDestroy(): void {

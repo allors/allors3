@@ -1,7 +1,7 @@
 import { IAsyncDatabaseClient, IReactiveDatabaseClient, IWorkspace } from '@allors/workspace/domain/system';
 import { Fixture, name_c1A, name_c1B } from '../Fixture';
 import '../Matchers';
-import '@allors/workspace/domain/core';
+import '@allors/workspace/domain/default';
 
 let fixture: Fixture;
 
@@ -207,8 +207,6 @@ export async function resetOne2ManyRemoveAfterPush() {
   await client.pullAsync(session, { object: c1a });
 
   c1a.removeC1C1One2Many(c1b);
-
-  await client.pushAsync(session);
 
   c1a.strategy.reset();
 

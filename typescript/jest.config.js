@@ -21,5 +21,9 @@ module.exports = {
     '<rootDir>/libs/workspace/meta/system-tests',
     '<rootDir>/libs/workspace/adapters/json/system-tests-reactive',
     '<rootDir>/libs/workspace/configuration/core',
+    '<rootDir>/libs/workspace/derivations/core',
+    '<rootDir>/libs/workspace/derivations/core-custom',
+    '<rootDir>/libs/workspace/derivations/base',
+    '<rootDir>/libs/workspace/derivations/base-custom',
   ],
 };

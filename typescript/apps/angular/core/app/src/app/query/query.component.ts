@@ -2,10 +2,10 @@ import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 
-import { M } from '@allors/workspace/meta/core';
-import { Organisation } from '@allors/workspace/domain/core';
 import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
 import { IPullResult, Pull } from '@allors/workspace/domain/system';
+import { M } from '@allors/workspace/meta/default';
+import { Organisation } from '@allors/workspace/domain/default';
 
 @Component({
   templateUrl: './query.component.html',

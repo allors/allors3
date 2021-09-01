@@ -33,13 +33,13 @@ namespace Allors.Workspace.Adapters.Remote
 
         private PushRequestRole[] PushRoles()
         {
-            if (this.XChangedRoleByRelationType?.Count > 0)
+            if (this.ChangedRoleByRelationType?.Count > 0)
             {
                 var database = this.RemoteStrategy.Session.Workspace.DatabaseConnection;
                 var ranges = database.Ranges;
                 var roles = new List<PushRequestRole>();
 
-                foreach (var keyValuePair in this.XChangedRoleByRelationType)
+                foreach (var keyValuePair in this.ChangedRoleByRelationType)
                 {
                     var relationType = keyValuePair.Key;
                     var roleValue = keyValuePair.Value;

@@ -112,7 +112,7 @@ export abstract class Strategy implements IStrategy {
   getCompositesRole<T extends IObject>(roleType: RoleType): T[] {
     switch (roleType.origin) {
       case Origin.Session:
-        return this.session.sessionOriginState.getCompositesRole(this, roleType).map((v) => v.object as T) ?? (frozenEmptyArray as T[]);
+        return this.session.sessionOriginState.getCompositesRole(this, roleType)?.map((v) => v.object as T) ?? (frozenEmptyArray as T[]);
       case Origin.Workspace:
         return [...this.WorkspaceOriginState?.getCompositesRole(roleType)].map((v) => v.object) as T[];
       case Origin.Database:
@@ -280,7 +280,7 @@ export abstract class Strategy implements IStrategy {
       return (this.session.getCompositeAssociation(this, associationType)?.object as T) ?? null;
     }
 
-    return this.session.sessionOriginState.getCompositeRole(this, associationType)?.object as T;
+    return this.session.sessionOriginState.getCompositeRole(this, associationType)?.object as T ?? null;
   }
 
   getCompositesAssociation<T extends IObject>(associationType: AssociationType): T[] {

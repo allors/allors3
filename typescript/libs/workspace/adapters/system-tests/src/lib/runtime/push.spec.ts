@@ -1,8 +1,8 @@
 import { IAsyncDatabaseClient, IObject, IReactiveDatabaseClient, IWorkspace, Pull } from '@allors/workspace/domain/system';
 import { Fixture, name_c1A, name_c1B, name_c1C, name_c1D, name_c2A, name_c2B, name_c2C, name_c2D } from '../Fixture';
 import '../Matchers';
-import '@allors/workspace/domain/core';
-import { C1, C2, Person } from '@allors/workspace/domain/core';
+import '@allors/workspace/domain/default';
+import { C1, C2, Person } from '@allors/workspace/domain/default';
 import { Origin } from '@allors/workspace/meta/system';
 import { WorkspaceInitialVersion } from '@allors/workspace/adapters/system';
 

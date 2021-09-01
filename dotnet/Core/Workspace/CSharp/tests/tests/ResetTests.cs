@@ -288,24 +288,22 @@ namespace Tests.Workspace
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
             var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
-            var c1x = session.Create<C1>();
+            var c1b = session.Create<C1>();
 
             await this.AsyncDatabaseClient.PushAsync(session);
             result = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Extent = new Filter(M.C1) });
 
-            c1a.AddC1C1One2Many(c1x);
+            c1a.AddC1C1One2Many(c1b);
 
             await this.AsyncDatabaseClient.PushAsync(session);
             await this.AsyncDatabaseClient.PullAsync(session, pull);
 
-            c1a = result.GetCollection<C1>()[0];
-
-            c1a.RemoveC1C1One2Many(c1x);
+            c1a.RemoveC1C1One2Many(c1b);
 
             c1a.Strategy.Reset();
 
-            Assert.Contains(c1x, c1a.C1C1One2Manies);
-            Assert.Equal(c1a, c1x.C1WhereC1C1One2Many);
+            Assert.Contains(c1b, c1a.C1C1One2Manies);
+            Assert.Equal(c1a, c1b.C1WhereC1C1One2Many);
         }
 
         [Fact]

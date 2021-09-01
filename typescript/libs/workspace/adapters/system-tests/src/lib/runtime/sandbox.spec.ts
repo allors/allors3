@@ -1,4 +1,4 @@
-import { C1 } from '@allors/workspace/domain/core';
+import { C1 } from '@allors/workspace/domain/default';
 import { IAsyncDatabaseClient, IReactiveDatabaseClient, IWorkspace } from '@allors/workspace/domain/system';
 
 import { Fixture } from '../Fixture';

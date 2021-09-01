@@ -32,11 +32,11 @@ export class WorkspaceOriginState extends RecordBasedOriginState {
 
   push() {
     if (this.hasChanges) {
-      this.workspace.push(this.id, this.class, this.record?.version ?? UnknownVersion, this.xchangedRoleByRelationType);
+      this.workspace.push(this.id, this.class, this.record?.version ?? UnknownVersion, this.changedRoleByRelationType);
     }
 
     this.workspaceRecord = this.workspace.getRecord(this.id);
-    this.xchangedRoleByRelationType = null;
+    this.changedRoleByRelationType = null;
   }
 
   onPulled(result: WorkspaceResult) {
@@ -47,6 +47,6 @@ export class WorkspaceOriginState extends RecordBasedOriginState {
     }
 
     this.workspaceRecord = newRecord;
-    this.xchangedRoleByRelationType = null;
+    this.changedRoleByRelationType = null;
   }
 }

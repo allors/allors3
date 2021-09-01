@@ -7,7 +7,7 @@ import { WorkspaceService } from '@allors/workspace/angular/core';
 import { Configuration, IdGenerator, PrototypeObjectFactory, ServicesBuilder } from '@allors/workspace/adapters/system';
 import { DatabaseConnection, ReactiveDatabaseClient } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
-import { data } from '@allors/workspace/meta/json/core';
+import { data } from '@allors/workspace/meta/json/default';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
@@ -17,8 +17,8 @@ import { environment } from '../environments/environment';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { AngularClient } from '../allors/AngularClient';
 import { WorkspaceServices } from '../allors/WorkspaceServices';
-import { ruleBuilder } from '@allors/workspace/domain/core';
-import { M } from '@allors/workspace/meta/core';
+import { M } from '@allors/workspace/meta/default';
+import { ruleBuilder } from '@allors/workspace/derivations/core-custom';
 
 export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
   return async () => {

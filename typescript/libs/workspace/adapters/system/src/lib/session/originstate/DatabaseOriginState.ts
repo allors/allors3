@@ -91,7 +91,7 @@ export abstract class DatabaseOriginState extends RecordBasedOriginState {
         return;
       }
     } else {
-      this.xchangedRoleByRelationType = null;
+      this.changedRoleByRelationType = null;
       this.isPushed = false;
     }
 
