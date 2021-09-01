@@ -188,6 +188,8 @@ export abstract class Session implements ISession {
         return association;
       }
     }
+
+    return null;
   }
 
   public getCompositesAssociation(role: Strategy, associationType: AssociationType): Strategy[] {

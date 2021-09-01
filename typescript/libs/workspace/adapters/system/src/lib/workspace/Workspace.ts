@@ -1,8 +1,7 @@
 import { IConfiguration, ISession, IWorkspace, IWorkspaceServices } from '@allors/workspace/domain/system';
 import { Class, RelationType } from '@allors/workspace/meta/system';
-import { DefaultNumberRanges } from '../collections/ranges/DefaultNumberRanges';
 import { Ranges } from '../collections/ranges/Ranges';
-import { DatabaseConnection } from '../Database/DatabaseConnection';
+import { DatabaseConnection } from '../database/DatabaseConnection';
 import { Strategy } from '../session/Strategy';
 import { WorkspaceRecord } from './WorkspaceRecord';
 

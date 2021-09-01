@@ -4,34 +4,36 @@ import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { Configuration, PrototypeObjectFactory } from '@allors/workspace/adapters/system';
+import { Configuration, IdGenerator, PrototypeObjectFactory, ServicesBuilder } from '@allors/workspace/adapters/system';
+import { DatabaseConnection, ReactiveDatabaseClient } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/core';
-
-import { FetchClient } from '../allors/FetchClient';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { QueryComponent } from './query/query.component';
 import { FetchComponent } from './fetch/fetch.component';
 import { environment } from '../environments/environment';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { AngularClient } from '../allors/AngularClient';
+import { WorkspaceServices } from '../allors/WorkspaceServices';
+import { ruleBuilder } from '@allors/workspace/domain/core';
+import { M } from '@allors/workspace/meta/core';
 
-export function appInitFactory(workspaceService: WorkspaceService) {
+export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
   return async () => {
-    const client = new FetchClient(environment.baseUrl, environment.authUrl);
-    await client.login('administrator', '');
+    const client = new AngularClient(httpClient, environment.baseUrl, environment.authUrl);
+    await client.login('jane@example.com', '');
+    workspaceService.client = new ReactiveDatabaseClient(client);
 
     const metaPopulation = new LazyMetaPopulation(data);
+    const configuration = new Configuration('Default', metaPopulation, new PrototypeObjectFactory(metaPopulation));
     let nextId = -1;
-    const database = new Database(
-      new Configuration('Default', metaPopulation, new PrototypeObjectFactory(metaPopulation)),
-      () => nextId--,
-      () => {
-        return new WorkspaceServices([]);
-      },
-      client
-    );
-
+    const idGenerator: IdGenerator = () => nextId--;
+    const serviceBuilder: ServicesBuilder = () => {
+      return new WorkspaceServices(ruleBuilder(metaPopulation as any as M));
+    };
+    const database = new DatabaseConnection(configuration, idGenerator, serviceBuilder);
     workspaceService.workspace = database.createWorkspace();
   };
 }
@@ -58,12 +60,12 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [AppComponent, HomeComponent, QueryComponent, FetchComponent],
-  imports: [BrowserModule, FormsModule, RouterModule.forRoot(routes, { initialNavigation: 'enabledBlocking' })],
+  imports: [BrowserModule, FormsModule, HttpClientModule, RouterModule.forRoot(routes, { initialNavigation: 'enabledBlocking' })],
   providers: [
     {
       provide: APP_INITIALIZER,
       useFactory: appInitFactory,
-      deps: [WorkspaceService],
+      deps: [WorkspaceService, HttpClient],
       multi: true,
     },
   ],

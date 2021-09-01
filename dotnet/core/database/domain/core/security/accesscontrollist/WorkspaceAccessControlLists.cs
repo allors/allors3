@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Domain
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Database.Security;
@@ -14,8 +15,8 @@ namespace Allors.Database.Domain
     {
         public WorkspaceAccessControlLists(string workspaceName, User user)
         {
-            this.WorkspaceName = workspaceName;
-            this.User = user;
+            this.WorkspaceName = workspaceName ?? throw new ArgumentNullException(nameof(workspaceName));
+            this.User = user ?? throw new ArgumentNullException(nameof(user));
             this.AclByObject = new Dictionary<IObject, IAccessControlList>();
             this.EffectivePermissionIdsByAccessControl = this.EffectivePermissionsByAccessControl();
         }

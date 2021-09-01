@@ -17,7 +17,7 @@ namespace Allors.Protocol.Json.Data
         /// Include
         /// </summary>
         public Node[] i { get; set; }
-        
+
         public void Accept(IVisitor visitor) => visitor.VisitSelect(this);
     }
 }

@@ -1,9 +1,9 @@
+import { IStrategy } from "../IStrategy";
 import { IDiff } from "./IDiff";
-import { Strategy } from '@allors/workspace/adapters/system';
 
 export interface ICompositeDiff extends IDiff {
     
-  originalRole : Strategy;
+  originalRole : IStrategy;
   
-  changedRole : Strategy;
+  changedRole : IStrategy;
 }

@@ -2,8 +2,10 @@ import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 
+import { M } from '@allors/workspace/meta/core';
 import { Organisation } from '@allors/workspace/domain/core';
-import { SessionService } from '@allors/workspace/angular/core';
+import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
+import { IPullResult, Pull } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './query.component.html',
@@ -18,7 +20,7 @@ export class QueryComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(@Self() private sessionService: SessionService, private title: Title) {}
+  constructor(@Self() private sessionService: SessionService, private workspaceService: WorkspaceService, private title: Title) {}
 
   public ngOnInit() {
     this.title.setTitle('Query');
@@ -30,32 +32,43 @@ export class QueryComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe();
     }
 
-    // const { m, pull, x } = this.metaService;
+    const { client, workspace } = this.workspaceService;
+    const { session } = this.sessionService;
+    const m = workspace.configuration.metaPopulation as M;
 
-    // const pulls = [
-    //   pull.Organisation({
-    //     predicate: new Like({
-    //       roleType: m.Organisation.Name,
-    //       value: 'Org%',
-    //     }),
-    //     include: { Owner: x },
-    //     sort: new Sort(m.Organisation.Name),
-    //     skip: this.skip || 0,
-    //     take: this.take || 10,
-    //   }),
-    // ];
+    const pulls: Pull[] = [
+      {
+        extent: {
+          kind: 'Filter',
+          objectType: m.Organisation,
+          predicate: {
+            kind: 'Like',
+            roleType: m.Organisation.Name,
+            value: 'Org%',
+          },
+          sorting: [{ roleType: m.Organisation.Name }],
+        },
+        results: [
+          {
+            select: {
+              include: [{ kind: 'Node', propertyType: m.Organisation.Owner }],
+            },
+            skip: this.skip || 0,
+            take: this.take || 10,
+          },
+        ],
+      },
+    ];
 
-    // this.allors.context.reset();
-
-    // this.subscription = this.allors.context.load(new PullRequest({ pulls })).subscribe(
-    //   (loaded: Loaded) => {
-    //     this.organisations = loaded.collections.Organisations as Organisation[];
-    //     this.organisationCount = loaded.values.Organisations_count;
-    //   },
-    //   (error) => {
-    //     alert(error);
-    //   }
-    // );
+    this.subscription = client.pullReactive(session, pulls).subscribe(
+      (result: IPullResult) => {
+        this.organisations = result.collection<Organisation>(m.Organisation);
+        this.organisationCount = result.value('Organisations_total') as number;
+      },
+      (error) => {
+        alert(error);
+      }
+    );
   }
 
   public ngOnDestroy(): void {

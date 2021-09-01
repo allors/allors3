@@ -14,13 +14,13 @@ namespace Allors.Database.Configuration
 
     public class TransactionServices : ITransactionServices
     {
-        private readonly HttpUserService userService;
+        private readonly HttpUserWithGuestFallbackService userService;
 
         private IDatabaseAclsService databaseAclsService;
         private IWorkspaceAclsService workspaceAclsService;
         private IObjectBuilderService objectBuilderService;
 
-        public TransactionServices(IHttpContextAccessor httpContextAccessor) => this.userService = new HttpUserService(httpContextAccessor);
+        public TransactionServices(IHttpContextAccessor httpContextAccessor) => this.userService = new HttpUserWithGuestFallbackService(httpContextAccessor);
 
         public virtual void OnInit(ITransaction transaction)
         {
