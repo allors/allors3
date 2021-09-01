@@ -3,14 +3,13 @@ import { IObject } from '../IObject';
 import { IStrategy } from '../IStrategy';
 
 export interface Node {
-  kind: 'Node';
   propertyType: PropertyType;
   ofType?: Composite;
   nodes?: Node[];
 }
 
 function getComposite(strategy: IStrategy, propertyType: PropertyType, ofType: Composite): IObject {
-  let composite = propertyType.isRoleType ? strategy.getCompositeRole(propertyType as RoleType) : strategy.getCompositeAssociation(propertyType as AssociationType);
+  const composite = propertyType.isRoleType ? strategy.getCompositeRole(propertyType as RoleType) : strategy.getCompositeAssociation(propertyType as AssociationType);
 
   if (composite == null || ofType == null) {
     return composite;
@@ -20,7 +19,7 @@ function getComposite(strategy: IStrategy, propertyType: PropertyType, ofType: C
 }
 
 function getComposites(strategy: IStrategy, propertyType: PropertyType, ofType: Composite): Readonly<IObject[]> {
-  let composites = propertyType.isRoleType ? strategy.getCompositesRole(propertyType as RoleType) : strategy.getCompositesAssociation(propertyType as AssociationType);
+  const composites = propertyType.isRoleType ? strategy.getCompositesRole(propertyType as RoleType) : strategy.getCompositesAssociation(propertyType as AssociationType);
 
   if (composites == null || ofType == null) {
     return composites;
@@ -31,7 +30,7 @@ function getComposites(strategy: IStrategy, propertyType: PropertyType, ofType: 
 
 function resolveRecursive(obj: IObject, node: Node, results: Set<IObject>): void {
   if (node.propertyType.isOne) {
-    var resolved = getComposite(obj.strategy, node.propertyType, node.ofType);
+    const resolved = getComposite(obj.strategy, node.propertyType, node.ofType);
     if (resolved != null) {
       if (node.nodes.length > 0) {
         for (const subNode of node.nodes) {

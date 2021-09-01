@@ -26,15 +26,14 @@ export async function databaseGetOne2Many() {
       predicate: {
         kind: 'Equals',
         propertyType: m.C2.Name,
-        value: 'c2C'
-      } 
+        value: 'c2C',
+      },
     },
     results: [
       {
         select: {
           include: [
             {
-              kind: 'Node',
               propertyType: m.C2.C1WhereC1C2One2Many,
             },
           ],
@@ -66,15 +65,14 @@ export async function databaseGetOne2One() {
       predicate: {
         kind: 'Equals',
         propertyType: m.C2.Name,
-        value: 'c2C'
-      } 
+        value: 'c2C',
+      },
     },
     results: [
       {
         select: {
           include: [
             {
-              kind: 'Node',
               propertyType: m.C2.C1WhereC1C2One2One,
             },
           ],

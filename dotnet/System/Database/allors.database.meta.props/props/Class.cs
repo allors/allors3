@@ -63,7 +63,7 @@ namespace Allors.Database.Meta
 
         public override Type ClrType => this.clrType;
 
-        public override IEnumerable<ICompositeBase> Subtypes => new[] { this };
+        public override IEnumerable<ICompositeBase> Subtypes => Array.Empty<ICompositeBase>();
 
         public override IEnumerable<ICompositeBase> DatabaseSubtypes => this.Origin == Origin.Database ? this.Subtypes : Array.Empty<Composite>();
 

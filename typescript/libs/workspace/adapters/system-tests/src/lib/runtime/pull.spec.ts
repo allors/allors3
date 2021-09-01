@@ -2117,7 +2117,6 @@ export async function pullWithInclude() {
         select: {
           include: [
             {
-              kind: 'Node',
               propertyType: m.C1.C1C2One2One,
             },
           ],

@@ -51,7 +51,7 @@ export class QueryComponent implements OnInit, OnDestroy {
         results: [
           {
             select: {
-              include: [{ kind: 'Node', propertyType: m.Organisation.Owner }],
+              include: [{ propertyType: m.Organisation.Owner }],
             },
             skip: this.skip || 0,
             take: this.take || 10,

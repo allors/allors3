@@ -26,15 +26,14 @@ export async function databaseUnit() {
       predicate: {
         kind: 'Equals',
         propertyType: m.C2.Name,
-        value: 'c2C'
-      } 
+        value: 'c2C',
+      },
     },
     results: [
       {
         select: {
           include: [
             {
-              kind: 'Node',
               propertyType: m.C2.C1WhereC1C2One2Many,
             },
           ],

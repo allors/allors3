@@ -44,15 +44,12 @@ export class FetchComponent implements OnInit, OnDestroy {
             select: {
               include: [
                 {
-                  kind: 'Node',
                   propertyType: m.Organisation.Owner,
                   nodes: [
                     {
-                      kind: 'Node',
                       propertyType: m.Person.OrganisationsWhereOwner,
                       nodes: [
                         {
-                          kind: 'Node',
                           propertyType: m.Organisation.Owner,
                         },
                       ],
