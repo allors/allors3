@@ -7,6 +7,10 @@ export class DefaultStrategyRanges extends Ranges<Strategy> {
   }
 
   compare(x: Strategy, y: Strategy): number {
-    return x.rangeId - y.rangeId;
+    if (x === y || (x == null && y == null)) {
+      return 0;
+    }
+
+    return y == null ? 1 : x == null ? -1 : x.rangeId - y.rangeId;
   }
 }

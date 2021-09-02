@@ -269,10 +269,12 @@ export abstract class RecordBasedOriginState {
       const compositeRole = this.getCompositeRole(roleType);
       return compositeRole == forRole;
     }
-
-    for (const role of this.getCompositesRole(roleType)) {
-      if (role === forRole) {
-        return true;
+    const composites = this.getCompositesRole(roleType);
+    if (composites != null) {
+      for (const role of composites) {
+        if (role === forRole) {
+          return true;
+        }
       }
     }
 
