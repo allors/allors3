@@ -4,6 +4,7 @@ export * from './lib/api/derivation/IDatabaseDerivationException';
 export * from './lib/api/derivation/IDatabaseValidation';
 export * from './lib/api/IResult';
 
+export * from './lib/api/pull/FlatPull';
 export * from './lib/api/pull/Procedure';
 export * from './lib/api/pull/Pull';
 export * from './lib/api/pull/IPullResult';

@@ -9,7 +9,7 @@ describe('Selections', () => {
   const { selections } = m;
 
   describe('with metadata', () => {
-    it('should return nodes', () => {
+    it('should return selections', () => {
       const selection = selections.Organisation({
         Owner: {
           OrganisationsWhereOwner: {
