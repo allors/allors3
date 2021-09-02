@@ -57,24 +57,24 @@ namespace Allors.Workspace.Adapters.Local
 
                         if (select != null)
                         {
-                            var include = select.Include ?? select.Step?.End.Include;
+                            var include = select.Include ?? select.End.Include;
 
-                            if (select.Step != null)
+                            if (select.PropertyType != null)
                             {
-                                var propertyType = select.Step.End.PropertyType;
+                                var propertyType = select.End.PropertyType;
 
-                                if (select.Step.IsOne)
+                                if (select.IsOne)
                                 {
                                     name ??= propertyType.SingularFullName;
 
-                                    @object = (IObject)select.Step.Get(@object, this.acls);
+                                    @object = (IObject)select.Get(@object, this.acls);
                                     response.AddObject(name, @object, include);
                                 }
                                 else
                                 {
                                     name ??= propertyType.PluralFullName;
 
-                                    var stepResult = select.Step.Get(@object, this.acls);
+                                    var stepResult = select.Get(@object, this.acls);
                                     var objects = stepResult is HashSet<object> set
                                         ? set.Cast<IObject>().ToArray()
                                         : ((Extent)stepResult)?.ToArray() ?? Array.Empty<IObject>();

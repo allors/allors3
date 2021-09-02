@@ -175,25 +175,11 @@ namespace Allors.Workspace.Protocol.Direct
                 Take = v.Take,
             }).ToArray();
 
-        private Select Visit(Data.Select ws) => ws != null ? new Select { Include = this.Visit(ws.Include), Step = this.Visit(ws.Step), } : null;
+        private Select Visit(Data.Select ws) => ws != null ? new Select { Include = this.Visit(ws.Include), PropertyType = this.Visit(ws.PropertyType), Next = this.Visit(ws.Next) } : null;
 
         private Node[] Visit(IEnumerable<Data.Node> ws) => ws?.Select(this.Visit).ToArray();
 
         private Node Visit(Data.Node ws) => ws != null ? new Node(this.Visit(ws.PropertyType), ws.Nodes?.Select(this.Visit).ToArray()) : null;
-
-        private Step Visit(Data.Step ws)
-        {
-            if (ws != null)
-            {
-                return new Step
-                {
-                    PropertyType = this.Visit(ws.PropertyType),
-                    Include = this.Visit(ws.Include),
-                };
-            }
-
-            return null;
-        }
 
         private Database.Data.Sort[] Visit(Data.Sort[] ws) => ws?.Select(v => new Database.Data.Sort { RoleType = this.Visit(v.RoleType), SortDirection = (SortDirection)(int)v.SortDirection }).ToArray();
 

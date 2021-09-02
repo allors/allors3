@@ -12,6 +12,8 @@ import { LazyUnit } from './LazyUnit';
 import { LazyInterface } from './LazyInterface';
 import { LazyClass } from './LazyClass';
 import { Lookup } from './utils/Lookup';
+import { LazyTrees } from './LazyTrees';
+import { LazySelections } from './LazySelections';
 
 export class LazyMetaPopulation implements InternalMetaPopulation {
   readonly metaObjectByTag: Map<number, InternalMetaObject> = new Map();
@@ -36,6 +38,11 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
     this.interfaces.forEach((v) => v.deriveSub());
     this.composites.forEach((v) => v.deriveOperand());
     this.composites.forEach((v) => v.deriveOriginRoleType());
+    this.composites.forEach((v) => v.derivePropertyTypeByPropertyName());
+
+    this["trees"] = new LazyTrees(this); 
+
+    this["selections"] = new LazySelections(this); 
   }
 
   onNew(metaObject: InternalMetaObject) {

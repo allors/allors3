@@ -19,7 +19,6 @@ namespace Allors.Workspace.Protocol.Json
     using Result = Allors.Protocol.Json.Data.Result;
     using Select = Allors.Protocol.Json.Data.Select;
     using Sort = Allors.Protocol.Json.Data.Sort;
-    using Step = Allors.Protocol.Json.Data.Step;
 
     public class ToJsonVisitor : IVisitor
     {
@@ -29,7 +28,6 @@ namespace Allors.Workspace.Protocol.Json
         private readonly Stack<Predicate> predicates;
         private readonly Stack<Result> results;
         private readonly Stack<Select> selects;
-        private readonly Stack<Step> steps;
         private readonly Stack<Node> nodes;
         private readonly Stack<Sort> sorts;
 
@@ -40,7 +38,6 @@ namespace Allors.Workspace.Protocol.Json
             this.predicates = new Stack<Predicate>();
             this.results = new Stack<Result>();
             this.selects = new Stack<Select>();
-            this.steps = new Stack<Step>();
             this.nodes = new Stack<Node>();
             this.sorts = new Stack<Sort>();
         }
@@ -216,14 +213,18 @@ namespace Allors.Workspace.Protocol.Json
 
         public void VisitSelect(Data.Select visited)
         {
-            var @select = new Select();
+            var @select = new Select
+            {
+                a = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
+                r = (visited.PropertyType as IRoleType)?.RelationType.Tag,
+            };
 
             this.selects.Push(@select);
 
-            if (visited.Step != null)
+            if (visited.Next != null)
             {
-                visited.Step.Accept(this);
-                @select.s = this.steps.Pop();
+                visited.Next.Accept(this);
+                select.n = this.selects.Pop();
             }
 
             if (visited.Include?.Count() > 0)
@@ -453,35 +454,6 @@ namespace Allors.Workspace.Protocol.Json
             };
 
             this.sorts.Push(sort);
-        }
-
-        public void VisitStep(Data.Step visited)
-        {
-            var step = new Step
-            {
-                a = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
-                r = (visited.PropertyType as IRoleType)?.RelationType.Tag,
-            };
-
-            this.steps.Push(step);
-
-            if (visited.Include?.Length > 0)
-            {
-                var length = visited.Include.Length;
-                step.i = new Node[length];
-                for (var i = 0; i < length; i++)
-                {
-                    var node = visited.Include[i];
-                    node.Accept(this);
-                    step.i[i] = this.nodes.Pop();
-                }
-            }
-
-            if (visited.Next != null)
-            {
-                visited.Next.Accept(this);
-                step.n = this.steps.Pop();
-            }
         }
 
         public void VisitUnion(Union visited)

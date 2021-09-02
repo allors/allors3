@@ -17,7 +17,6 @@ namespace Allors.Database.Protocol.Json
     using Result = Data.Result;
     using Select = Data.Select;
     using Sort = Data.Sort;
-    using Step = Data.Step;
     using Procedure = Data.Procedure;
 
     public class FromJsonVisitor : Allors.Protocol.Json.Data.IVisitor
@@ -30,7 +29,6 @@ namespace Allors.Database.Protocol.Json
         private readonly Stack<Data.IPredicate> predicates;
         private readonly Stack<Result> results;
         private readonly Stack<Select> selects;
-        private readonly Stack<Step> steps;
         private readonly Stack<Node> nodes;
         private readonly Stack<Sort> sorts;
 
@@ -44,7 +42,6 @@ namespace Allors.Database.Protocol.Json
             this.predicates = new Stack<Data.IPredicate>();
             this.results = new Stack<Result>();
             this.selects = new Stack<Select>();
-            this.steps = new Stack<Step>();
             this.nodes = new Stack<Node>();
             this.sorts = new Stack<Sort>();
         }
@@ -136,14 +133,17 @@ namespace Allors.Database.Protocol.Json
 
         public void VisitSelect(Allors.Protocol.Json.Data.Select visited)
         {
-            var @select = new Select(this.transaction.Database.MetaPopulation);
+            var @select = new Select
+            {
+                PropertyType = (IPropertyType)this.metaPopulation.FindAssociationType(visited.a) ?? this.metaPopulation.FindRoleType(visited.r)
+            };
 
             this.selects.Push(@select);
 
-            if (visited.s != null)
+            if (visited.n != null)
             {
-                visited.s.Accept(this);
-                @select.Step = this.steps.Pop();
+                visited.n.Accept(this);
+                @select.Next = this.selects.Pop();
             }
 
             if (visited.i?.Length > 0)
@@ -450,34 +450,6 @@ namespace Allors.Database.Protocol.Json
             };
 
             this.sorts.Push(sort);
-        }
-
-        public void VisitStep(Allors.Protocol.Json.Data.Step visited)
-        {
-            var propertyType = (IPropertyType)this.metaPopulation.FindAssociationType(visited.a) ?? this.metaPopulation.FindRoleType(visited.r);
-
-            var step = new Step
-            {
-                PropertyType = propertyType,
-            };
-
-            this.steps.Push(step);
-
-            if (visited.n != null)
-            {
-                visited.n.Accept(this);
-                step.Next = this.steps.Pop();
-            }
-
-            if (visited.i?.Length > 0)
-            {
-                step.Include = new Node[visited.i.Length];
-                for (var i = 0; i < visited.i.Length; i++)
-                {
-                    visited.i[i].Accept(this);
-                    step.Include[i] = this.nodes.Pop();
-                }
-            }
         }
 
         public void VisitProcedure(Allors.Protocol.Json.Data.Procedure procedure) =>

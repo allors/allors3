@@ -1,9 +1,13 @@
 import { Node } from "./Node";
-import { Step } from "./Step";
 
 export interface Select {
-  /** Step */
-  s: Step;
+  a?: number;
+
+  /** RoleType */
+  r?: number;
+
+  /** Next */
+  n?: Select;
 
   /** Include */
   i: Node[];

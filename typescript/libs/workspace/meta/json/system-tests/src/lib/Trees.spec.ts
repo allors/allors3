@@ -1,13 +1,12 @@
 import { MetaPopulation } from '@allors/workspace/meta/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
-import { PrototypeTrees } from '@allors/workspace/adapters/system';
-import { M, Trees } from '@allors/workspace/meta/core';
+import { M } from '@allors/workspace/meta/core';
 import { data } from '@allors/workspace/meta/json/core';
 
 describe('Trees', () => {
   const metaPopulation = new LazyMetaPopulation(data) as MetaPopulation;
   const m = metaPopulation as M;
-  const trees = new PrototypeTrees(metaPopulation) as Trees;
+  const { trees } = m;
 
   describe('with metadata', () => {
     it('should return nodes', () => {
@@ -27,7 +26,7 @@ describe('Trees', () => {
 
       const subnode = node.nodes[0];
       expect(subnode.propertyType).toBe(m.Person.OrganisationsWhereOwner);
-      expect(subnode.nodes.length).toBe(0);
+      expect(subnode.nodes).toBeUndefined();
     });
   });
 });

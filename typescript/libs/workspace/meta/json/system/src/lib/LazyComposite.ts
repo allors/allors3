@@ -9,7 +9,7 @@ import { InternalMetaPopulation } from './internal/InternalMetaPopulation';
 import { LazyRelationType } from './LazyRelationType';
 import { LazyMethodType } from './LazyMethodType';
 import { Lookup } from './utils/Lookup';
-import { Origin, pluralize, RoleType } from '@allors/workspace/meta/system';
+import { Origin, pluralize, PropertyType, RoleType } from '@allors/workspace/meta/system';
 import { ObjectTypeData } from '@allors/protocol/json/system';
 
 export abstract class LazyComposite implements InternalComposite {
@@ -22,6 +22,7 @@ export abstract class LazyComposite implements InternalComposite {
   associationTypes!: Set<InternalAssociationType>;
   roleTypes!: Set<InternalRoleType>;
   methodTypes!: Set<InternalMethodType>;
+  propertyTypeByPropertyName!: Map<string, PropertyType>;
 
   directSupertypes!: Set<InternalInterface>;
   supertypes!: Set<InternalInterface>;
@@ -103,6 +104,8 @@ export abstract class LazyComposite implements InternalComposite {
     this.databaseOriginRoleTypes = new Set(this.databaseOriginRoleTypesGenerator());
     this.workspaceOriginRoleTypes = new Set(this.workspaceOriginRoleTypesGenerator());
   }
+
+  abstract derivePropertyTypeByPropertyName();
 
   *supertypeGenerator(): IterableIterator<InternalInterface> {
     if (this.supertypes) {

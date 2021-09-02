@@ -3,6 +3,7 @@ import { Class } from './Class';
 import { Interface } from './Interface';
 import { MethodType } from './MethodType';
 import { ObjectType } from './ObjectType';
+import { PropertyType } from './PropertyType';
 import { RoleType } from './RoleType';
 
 export interface Composite extends ObjectType {
@@ -10,6 +11,7 @@ export interface Composite extends ObjectType {
   directAssociationTypes: Set<AssociationType>;
   directRoleTypes: Set<RoleType>;
   directMethodTypes: Set<MethodType>;
+  propertyTypeByPropertyName: Map<string, PropertyType>
 
   supertypes: Set<Interface>;
   classes: Set<Class>;
@@ -19,6 +21,6 @@ export interface Composite extends ObjectType {
 
   databaseOriginRoleTypes: Set<RoleType>;
   workspaceOriginRoleTypes: Set<RoleType>;
-
+  
   isAssignableFrom(objectType: Composite): boolean;
 }

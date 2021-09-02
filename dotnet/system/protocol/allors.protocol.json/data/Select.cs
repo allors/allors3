@@ -9,9 +9,19 @@ namespace Allors.Protocol.Json.Data
     public class Select : IVisitable
     {
         /// <summary>
-        /// Step
+        /// Association Type
         /// </summary>
-        public Step s { get; set; }
+        public int? a { get; set; }
+
+        /// <summary>
+        /// RoleType
+        /// </summary>
+        public int? r { get; set; }
+
+        /// <summary>
+        /// Next
+        /// </summary>
+        public Select n { get; set; }
 
         /// <summary>
         /// Include

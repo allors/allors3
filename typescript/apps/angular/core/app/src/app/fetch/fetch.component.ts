@@ -33,6 +33,7 @@ export class FetchComponent implements OnInit, OnDestroy {
     const { client, workspace } = this.workspaceService;
     const { session } = this.sessionService;
     const m = workspace.configuration.metaPopulation as M;
+    const { selections } = m;
 
     const id = this.route.snapshot.paramMap.get('id');
 
@@ -41,23 +42,13 @@ export class FetchComponent implements OnInit, OnDestroy {
         objectId: parseInt(id),
         results: [
           {
-            select: {
-              include: [
-                {
-                  propertyType: m.Organisation.Owner,
-                  nodes: [
-                    {
-                      propertyType: m.Person.OrganisationsWhereOwner,
-                      nodes: [
-                        {
-                          propertyType: m.Organisation.Owner,
-                        },
-                      ],
-                    },
-                  ],
+            select: selections.Organisation({
+              Owner: {
+                OrganisationsWhereOwner: {
+                  Owner: {},
                 },
-              ],
-            },
+              },
+            }),
           },
         ],
       },

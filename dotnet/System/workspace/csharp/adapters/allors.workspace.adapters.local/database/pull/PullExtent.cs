@@ -61,12 +61,12 @@ namespace Allors.Workspace.Adapters.Local
 
                         if (select != null)
                         {
-                            var include = select.Include ?? select.Step?.End.Include;
+                            var include = select.Include ?? select.End.Include;
 
-                            if (select.Step != null)
+                            if (select.PropertyType != null)
                             {
-                                objects = select.Step.IsOne
-                                    ? objects.Select(v => select.Step.Get(v, this.acls))
+                                objects = select.IsOne
+                                    ? objects.Select(v => select.Get(v, this.acls))
                                         .Where(v => v != null)
                                         .Cast<IObject>()
                                         .Distinct()
@@ -74,7 +74,7 @@ namespace Allors.Workspace.Adapters.Local
                                     : objects
                                         .SelectMany(v =>
                                         {
-                                            var stepResult = select.Step.Get(v, this.acls);
+                                            var stepResult = select.Get(v, this.acls);
                                             return stepResult is HashSet<object> set
                                                 ? set.Cast<IObject>().ToArray()
                                                 : ((Extent)stepResult)?.ToArray() ?? Array.Empty<IObject>();
@@ -82,7 +82,7 @@ namespace Allors.Workspace.Adapters.Local
                                         .Distinct()
                                         .ToArray();
 
-                                var propertyType = select.Step.End.PropertyType;
+                                var propertyType = select.End.PropertyType;
                                 name ??= propertyType.PluralFullName;
                             }
 

@@ -47,8 +47,6 @@ namespace Allors.Workspace.Data
 
         void VisitSort(Sort visited);
 
-        void VisitStep(Step visited);
-
         void VisitUnion(Union visited);
 
         void VisitProcedure(Procedure procedure);

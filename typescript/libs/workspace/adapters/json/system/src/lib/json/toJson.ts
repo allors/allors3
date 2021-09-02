@@ -9,11 +9,10 @@ import {
   Sort as DataSort,
   Result as DataResult,
   Select as DataSelect,
-  Step as DataStep,
   Node as DataNode,
   IObject,
 } from '@allors/workspace/domain/system';
-import { Extent, ExtentKind, Predicate, Procedure, Pull, Result, Select, Sort, Step, Node, PredicateKind } from '@allors/protocol/json/system';
+import { Extent, ExtentKind, Predicate, Procedure, Pull, Result, Select, Sort, Node, PredicateKind } from '@allors/protocol/json/system';
 
 export function unitToJson(from: unknown): IUnit {
   if (from == null) {
@@ -239,20 +238,9 @@ function selectToJson(from: DataSelect): Select {
   }
 
   return {
-    s: stepToJson(from.step),
-    i: nodesToJson(from.include),
-  };
-}
-
-function stepToJson(from: DataStep): Step {
-  if (from == null) {
-    return null;
-  }
-
-  return {
     a: asAssociationTypeToJson(from.propertyType),
     r: asRoleTypeToJson(from.propertyType),
-    n: stepToJson(from.next),
+    n: selectToJson(from.next),
     i: nodesToJson(from.include),
   };
 }

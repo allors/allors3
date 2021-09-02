@@ -18,4 +18,16 @@ export class LazyClass extends LazyComposite implements InternalClass {
   isAssignableFrom(objectType: InternalComposite): boolean {
     return this === objectType;
   }
+
+  derivePropertyTypeByPropertyName() {
+    this.propertyTypeByPropertyName = new Map();
+
+    for (const roleType of this.roleTypes) {
+      this.propertyTypeByPropertyName.set(roleType.name, roleType);
+    }
+
+    for (const associationType of this.associationTypes) {
+      this.propertyTypeByPropertyName.set(associationType.name, associationType);
+    }
+  }
 }

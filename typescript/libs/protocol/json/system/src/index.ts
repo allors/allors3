@@ -40,7 +40,6 @@ export * from './lib/data/Pull';
 export * from './lib/data/Result';
 export * from './lib/data/Select';
 export * from './lib/data/Sort';
-export * from './lib/data/Step';
 
 // meta
 export * from './lib/meta/MetaData';

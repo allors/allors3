@@ -46,9 +46,7 @@ namespace Allors.Database.Data
         void VisitResult(Result visited);
 
         void VisitSort(Sort visited);
-
-        void VisitStep(Step visited);
-
+        
         void VisitUnion(Union visited);
 
         void VisitProcedure(Procedure procedure);

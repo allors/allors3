@@ -41,7 +41,6 @@ export * from './lib/data/Except';
 export * from './lib/data/Filter';
 export * from './lib/data/Result';
 export * from './lib/data/Operator';
-export * from './lib/data/Step';
 
 // derivation
 export * from './lib/derivation/rules/IAssociationPattern';

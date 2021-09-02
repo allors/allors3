@@ -10,38 +10,38 @@ namespace Allors.Workspace.Domain
 
     using Allors.Workspace.Data;
 
-    public static class StepExtensions
+    public static class SelectExtensions
     {
-        public static IEnumerable<IObject> Get(this Step step, IObject @object)
+        public static IEnumerable<IObject> Get(this Select @this, IObject @object)
         {
-            if (step.PropertyType.IsOne)
+            if (@this.PropertyType.IsOne)
             {
-                var resolved = step.PropertyType.Get(@object.Strategy);
+                var resolved = @this.PropertyType.Get(@object.Strategy);
                 if (resolved != null)
                 {
-                    if (step.ExistNext)
+                    if (@this.ExistNext)
                     {
-                        foreach (var next in step.Next.Get((IObject)resolved))
+                        foreach (var next in @this.Next.Get((IObject)resolved))
                         {
                             yield return next;
                         }
                     }
                     else
                     {
-                        yield return (IObject)step.PropertyType.Get(@object.Strategy);
+                        yield return (IObject)@this.PropertyType.Get(@object.Strategy);
                     }
                 }
             }
             else
             {
-                var resolved = (IEnumerable)step.PropertyType.Get(@object.Strategy);
+                var resolved = (IEnumerable)@this.PropertyType.Get(@object.Strategy);
                 if (resolved != null)
                 {
-                    if (step.ExistNext)
+                    if (@this.ExistNext)
                     {
                         foreach (var resolvedItem in resolved)
                         {
-                            foreach (var next in step.Next.Get((IObject)resolvedItem))
+                            foreach (var next in @this.Next.Get((IObject)resolvedItem))
                             {
                                 yield return next;
                             }
@@ -49,7 +49,7 @@ namespace Allors.Workspace.Domain
                     }
                     else
                     {
-                        foreach (var child in (IEnumerable<IObject>)step.PropertyType.Get(@object.Strategy))
+                        foreach (var child in (IEnumerable<IObject>)@this.PropertyType.Get(@object.Strategy))
                         {
                             yield return child;
                         }

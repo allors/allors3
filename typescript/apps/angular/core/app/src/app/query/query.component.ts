@@ -35,6 +35,7 @@ export class QueryComponent implements OnInit, OnDestroy {
     const { client, workspace } = this.workspaceService;
     const { session } = this.sessionService;
     const m = workspace.configuration.metaPopulation as M;
+    const { trees } = m;
 
     const pulls: Pull[] = [
       {
@@ -51,7 +52,9 @@ export class QueryComponent implements OnInit, OnDestroy {
         results: [
           {
             select: {
-              include: [{ propertyType: m.Organisation.Owner }],
+              include: trees.Organisation({
+                Owner: {},
+              }),
             },
             skip: this.skip || 0,
             take: this.take || 10,
