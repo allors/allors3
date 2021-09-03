@@ -3,6 +3,7 @@ import { InternalUnit } from './internal/InternalUnit';
 import { InternalMetaPopulation } from './internal/InternalMetaPopulation';
 
 export class LazyUnit implements InternalUnit {
+  public readonly kind = 'Unit';
   isUnit = true;
   isComposite = false;
   isInterface = false;

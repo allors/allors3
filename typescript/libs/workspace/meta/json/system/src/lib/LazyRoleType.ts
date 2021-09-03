@@ -10,6 +10,7 @@ import { InternalComposite } from './internal/InternalComposite';
 import { Lookup } from './utils/Lookup';
 
 export class LazyRoleType implements InternalRoleType {
+  readonly kind = 'RoleType';
   readonly isRoleType = true;
   readonly isAssociationType = false;
   readonly isMethodType = false;

@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
-import { IPullResult, Pull } from '@allors/workspace/domain/system';
+import { IPullResult, Pull, Or } from '@allors/workspace/domain/system';
 import { Organisation } from '@allors/workspace/domain/default';
 import { M } from '@allors/workspace/meta/default';
 
@@ -33,31 +33,34 @@ export class FetchComponent implements OnInit, OnDestroy {
     const { client, workspace } = this.workspaceService;
     const { session } = this.sessionService;
     const m = workspace.configuration.metaPopulation as M;
-    const { selections } = m;
+    const { pullBuilder: p } = m;
 
     const id = this.route.snapshot.paramMap.get('id');
 
     const pulls: Pull[] = [
-      {
-        objectId: parseInt(id),
+      p.Organisation({
+        objectId: id,
         results: [
+          {},
           {
-            select: selections.Organisation({
+            select: {
               Owner: {
                 OrganisationsWhereOwner: {
-                  Owner: {},
+                  include: {
+                    Owner: {},
+                  },
                 },
               },
-            }),
+            },
           },
         ],
-      },
+      }),
     ];
 
     this.subscription = client.pullReactive(session, pulls).subscribe(
       (result: IPullResult) => {
         this.organisation = result.object<Organisation>(m.Organisation);
-        this.organisations = result.collection<Organisation>(m.Organisation);
+        this.organisations = result.collection<Organisation>(m.Person.OrganisationsWhereOwner);
       },
       (error) => {
         alert(error);

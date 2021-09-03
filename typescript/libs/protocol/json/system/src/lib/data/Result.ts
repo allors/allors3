@@ -1,4 +1,5 @@
 import { Select } from "./Select";
+import { Node } from './Node';
 
 export interface Result {
   /** SelectRef */
@@ -6,6 +7,9 @@ export interface Result {
 
   /** Select */
   s?: Select;
+
+  /** Include */
+  i: Node[];
 
   /** Name */
   n?: string;

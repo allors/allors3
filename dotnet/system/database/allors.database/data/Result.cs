@@ -13,6 +13,8 @@ namespace Allors.Database.Data
 
         public Select Select { get; set; }
 
+        public Node[] Include { get; set; }
+
         public string Name { get; set; }
 
         public int? Skip { get; set; }

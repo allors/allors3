@@ -64,7 +64,7 @@ namespace Allors.Database.Protocol.Json
                 case ExtentKind.Filter:
                     if (!visited.t.HasValue)
                     {
-                        throw new Exception("Unknown extent kind " + visited.k);
+                        throw new Exception("Unknown object type for " + visited.k);
                     }
 
                     var objectType = (IComposite)this.metaPopulation.FindByTag(visited.t.Value);
@@ -438,6 +438,15 @@ namespace Allors.Database.Protocol.Json
                 result.Select = this.selects.Pop();
             }
 
+            if (visited.i?.Length > 0)
+            {
+                result.Include = new Node[visited.i.Length];
+                for (var i = 0; i < visited.i.Length; i++)
+                {
+                    visited.i[i].Accept(this);
+                    result.Include[i] = this.nodes.Pop();
+                }
+            }
             this.results.Push(result);
         }
 

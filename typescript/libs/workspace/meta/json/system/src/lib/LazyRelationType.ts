@@ -10,6 +10,7 @@ import { LazyRoleType } from './LazyRoleType';
 import { Lookup } from './utils/Lookup';
 
 export class LazyRelationType implements InternalRelationType {
+  readonly kind = 'RelationType';
   readonly metaPopulation: InternalMetaPopulation;
 
   readonly tag: number;

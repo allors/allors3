@@ -443,6 +443,19 @@ namespace Allors.Workspace.Protocol.Json
                 visited.Select.Accept(this);
                 result.s = this.selects.Pop();
             }
+
+            if (visited.Include?.Count() > 0)
+            {
+                var includes = visited.Include.ToArray();
+                var length = includes.Length;
+                result.i = new Node[length];
+                for (var i = 0; i < length; i++)
+                {
+                    var node = includes[i];
+                    node.Accept(this);
+                    result.i[i] = this.nodes.Pop();
+                }
+            }
         }
 
         public void VisitSort(Data.Sort visited)

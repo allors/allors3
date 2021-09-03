@@ -226,6 +226,7 @@ function resultToJson(from: DataResult): Result {
   return {
     r: from.selectRef,
     s: selectToJson(from.select),
+    i: nodesToJson(from.include),
     n: from.name,
     k: from.skip,
     t: from.take,

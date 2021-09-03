@@ -5,6 +5,7 @@ import { InternalRelationType } from './internal/InternalRelationType';
 import { InternalRoleType } from './internal/InternalRoleType';
 
 export class LazyAssociationType implements InternalAssociationType {
+  readonly kind = 'AssociationType';
   readonly isRoleType = false;
   readonly isAssociationType = true;
   readonly isMethodType = false;

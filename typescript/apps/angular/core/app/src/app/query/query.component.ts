@@ -35,32 +35,24 @@ export class QueryComponent implements OnInit, OnDestroy {
     const { client, workspace } = this.workspaceService;
     const { session } = this.sessionService;
     const m = workspace.configuration.metaPopulation as M;
-    const { trees } = m;
+    const { pullBuilder: p } = m;
 
     const pulls: Pull[] = [
-      {
-        extent: {
-          kind: 'Filter',
-          objectType: m.Organisation,
-          predicate: {
-            kind: 'Like',
-            roleType: m.Organisation.Name,
-            value: 'Org%',
-          },
-          sorting: [{ roleType: m.Organisation.Name }],
+      p.Organisation({
+        predicate: {
+          kind: 'Like',
+          roleType: m.Organisation.Name,
+          value: 'Org%',
         },
-        results: [
-          {
-            select: {
-              include: trees.Organisation({
-                Owner: {},
-              }),
-            },
-            skip: this.skip || 0,
-            take: this.take || 10,
+        sorting: [{ roleType: m.Organisation.Name }],
+        select: {
+          include: {
+            Owner: {},
           },
-        ],
-      },
+        },
+        skip: this.skip || 0,
+        take: this.take || 10,
+      }),
     ];
 
     this.subscription = client.pullReactive(session, pulls).subscribe(

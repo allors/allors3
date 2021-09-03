@@ -7,6 +7,7 @@ import { RelationType } from './RelationType';
 import { Composite } from './Composite';
 
 export interface MetaPopulation {
+  readonly kind: 'MetaPopulation';
   metaObjectByTag: Map<number, MetaObject>;
   units: Set<Unit>;
   interfaces: Set<Interface>;

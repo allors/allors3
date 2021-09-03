@@ -4,6 +4,8 @@ import { MetaObject } from './MetaObject';
 import { RoleType } from './RoleType';
 
 export interface RelationType extends MetaObject {
+  readonly kind: 'RelationType';
+  
   associationType: AssociationType;
 
   roleType: RoleType;

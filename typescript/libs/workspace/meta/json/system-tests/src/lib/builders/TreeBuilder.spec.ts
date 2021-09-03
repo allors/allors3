@@ -3,14 +3,14 @@ import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { M } from '@allors/workspace/meta/core';
 import { data } from '@allors/workspace/meta/json/core';
 
-describe('Trees', () => {
+describe('TreeBuilder', () => {
   const metaPopulation = new LazyMetaPopulation(data) as MetaPopulation;
   const m = metaPopulation as M;
-  const { trees } = m;
+  const { treeBuilder: t } = m;
 
   describe('with metadata', () => {
     it('should return nodes', () => {
-      const tree = trees.Organisation({
+      const tree = t.Organisation({
         Owner: {
           OrganisationsWhereOwner: {},
         },

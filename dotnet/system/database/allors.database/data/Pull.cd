@@ -3,8 +3,8 @@
   <Class Name="Allors.Database.Data.Pull">
     <Position X="1" Y="2.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>EIAAAAAAAAAAAAAgAAAAAAAACAAAAAAAAIAACAAAAAA=</HashCode>
-      <FileName>Data\Pull.cs</FileName>
+      <HashCode>EIAAAAAAAAAAAAAgAAAAAAAACAAAAAAAIIAACAAAAAA=</HashCode>
+      <FileName>data\Pull.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Extent" />
@@ -16,43 +16,34 @@
   <Class Name="Allors.Database.Data.Result">
     <Position X="4" Y="4" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAAAAAAAAAEAgAAAAQAAAAAAAAAAAEAQAAAEAA=</HashCode>
-      <FileName>Data\Result.cs</FileName>
+      <HashCode>AIAAAAAAAAAAAAAEAgAACAQAAAAAAAAAAAEAQAAAEAA=</HashCode>
+      <FileName>data\Result.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Select" />
+      <Property Name="Include" />
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Allors.Database.Data.Select">
     <Position X="7.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAAAACABABEAAAACAAAAAAAAAQAIAAAAAAAAAA=</HashCode>
-      <FileName>Data\Select.cs</FileName>
+      <HashCode>AoICgAAAAACABABEAAAgCAAAAAAAAAQAAAACAAAAAAA=</HashCode>
+      <FileName>data\Select.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Include" />
-      <Property Name="Step" />
-    </ShowAsAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="Allors.Database.Data.Step">
-    <Position X="10" Y="3.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AoICgAAAAAAABABEAAAgCAAAAAAAAAQAAAACAAAAAAA=</HashCode>
-      <FileName>Data\Step.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
       <Property Name="PropertyType" />
       <Property Name="Next" />
+      <Property Name="End" />
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Allors.Database.Data.Node">
-    <Position X="10" Y="7.5" Width="1.5" />
+    <Position X="10.5" Y="5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AIIoAAAAAACAAAAAABAAAAAAAACAAAAAAAACAAAAAAA=</HashCode>
-      <FileName>Data\Node.cs</FileName>
+      <HashCode>AIIoAAAAAACAAAAAABAAAAAAAACAAAAAAAACAABAAAA=</HashCode>
+      <FileName>data\Node.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Nodes" />
@@ -63,7 +54,7 @@
     <Position X="4" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IAAAAAAAAAAAAAAAAAAAAAAQAAAAgAAAAIAAAAAAAAA=</HashCode>
-      <FileName>Data\IExtent.cs</FileName>
+      <FileName>data\IExtent.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Database.IObject" Collapsed="true">
@@ -74,10 +65,10 @@
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Database.Meta.IPropertyType" Collapsed="true">
-    <Position X="13" Y="3.25" Width="1.5" />
+    <Position X="10.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAiAAAAAAAAAJAAAAAAAQAAAAAAAACAIAAAAAAAAA=</HashCode>
-      <FileName>Meta\IPropertyType.cs</FileName>
+      <HashCode>AAAEiAAAAAAAAAJAAAAAAAQAAAAAAAACAJAAAAAAAAA=</HashCode>
+      <FileName>meta\IPropertyType.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Font Name="Segoe UI" Size="9" />

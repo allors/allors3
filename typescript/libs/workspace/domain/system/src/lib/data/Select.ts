@@ -1,8 +1,8 @@
-import { Node } from './Node';
 import { PropertyType } from '@allors/workspace/meta/system';
+import { Node } from './Node';
 
 export interface Select {
-  propertyType?: PropertyType;
+  propertyType: PropertyType;
 
   next?: Select;
 

@@ -3,14 +3,14 @@ import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { M } from '@allors/workspace/meta/core';
 import { data } from '@allors/workspace/meta/json/core';
 
-describe('Selections', () => {
+describe('SelectBuilder', () => {
   const metaPopulation = new LazyMetaPopulation(data) as MetaPopulation;
   const m = metaPopulation as M;
-  const { selections } = m;
+  const { selectBuilder: s } = m;
 
   describe('with metadata', () => {
-    it('should return selections', () => {
-      const selection = selections.Organisation({
+    it('should return selectBuilder', () => {
+      const selection = s.Organisation({
         Owner: {
           OrganisationsWhereOwner: {
             include: {
@@ -27,15 +27,11 @@ describe('Selections', () => {
       const next = selection.next;
 
       expect(next).toBeDefined();
+      expect(next.next).toBeUndefined();
       expect(next.propertyType).toBe(m.Person.OrganisationsWhereOwner);
-      expect(next.include).toBeUndefined();
+      expect(next.include).toBeDefined();
 
-      const nextnext = next.next;
-      expect(nextnext).toBeDefined();
-      expect(nextnext.propertyType).toBeUndefined();
-      expect(nextnext.include).toBeDefined();
-
-      const include = nextnext.include;
+      const include = next.include;
 
       expect(include.length).toBe(1);
       expect(include[0].propertyType).toBe(m.Organisation.Shareholders);

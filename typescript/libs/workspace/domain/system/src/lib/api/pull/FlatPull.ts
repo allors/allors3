@@ -16,8 +16,8 @@ export interface FlatPull {
   sorting?: Sort[];
 
   object?: IObject;
-
-  results?: Result[];
+ 
+  objectId?: number | string;
 
   selectRef?: string;
 
@@ -25,11 +25,13 @@ export interface FlatPull {
 
   include?: Node[] | any;
 
-  arguments?: { [name: string]: TypeForParameter };
-
   name?: string;
 
   skip?: number;
 
   take?: number;
+
+  results?: Result[] | any;
+
+  arguments?: { [name: string]: TypeForParameter };
 }

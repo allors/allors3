@@ -438,6 +438,18 @@ namespace Allors.Database.Protocol.Json
                 visited.Select.Accept(this);
                 result.s = this.selects.Pop();
             }
+
+            if (visited.Include?.Length > 0)
+            {
+                var length = visited.Include.Length;
+                result.i = new Node[length];
+                for (var i = 0; i < length; i++)
+                {
+                    var node = visited.Include[i];
+                    node.Accept(this);
+                    result.i[i] = this.nodes.Pop();
+                }
+            }
         }
 
         public void VisitSort(Data.Sort visited)

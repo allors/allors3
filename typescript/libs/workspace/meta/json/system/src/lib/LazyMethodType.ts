@@ -5,6 +5,7 @@ import { InternalMetaPopulation } from './internal/InternalMetaPopulation';
 import { InternalMethodType } from './internal/InternalMethodType';
 
 export class LazyMethodType implements InternalMethodType {
+  readonly kind = 'MethodType';
   readonly isRoleType = false;
   readonly isAssociationType = false;
   readonly isMethodType = true;

@@ -3,6 +3,7 @@ import { PropertyType } from './PropertyType';
 import { RelationType } from './RelationType';
 
 export interface RoleType extends PropertyType {
+  readonly kind: 'RoleType';
 
   singularName: string;
   

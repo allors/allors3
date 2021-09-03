@@ -1,6 +1,6 @@
 import { MetaPopulation } from '@allors/workspace/meta/system';
 
-export class LazyTrees {
+export class LazyTreeBuilder {
   constructor(metaPopulation: MetaPopulation) {
     for (const composite of metaPopulation.composites) {
       this[composite.singularName] = (obj) => {

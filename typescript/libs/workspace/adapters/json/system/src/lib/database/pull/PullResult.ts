@@ -1,7 +1,7 @@
 import { IObject, IPullResult, ISession, IWorkspace, IUnit } from '@allors/workspace/domain/system';
 import { PullResponse } from '@allors/protocol/json/system';
 import { Result } from '../Result';
-import { Class } from '@allors/workspace/meta/system';
+import { AssociationType, Class, RoleType } from '@allors/workspace/meta/system';
 import { frozenEmptyMap } from '@allors/workspace/adapters/system';
 
 export class PullResult extends Result implements IPullResult {
@@ -37,9 +37,18 @@ export class PullResult extends Result implements IPullResult {
     return this._values ?? this.pullResponse.v ? new Map(Object.keys(this.pullResponse.v).map((v) => [v.toUpperCase(), this.pullResponse.v[v]])) : (frozenEmptyMap as Map<string, IUnit>);
   }
 
-  collection<T extends IObject>(nameOrClass: string | Class): T[] {
-    const name = typeof nameOrClass === 'string' ? nameOrClass : nameOrClass.pluralName;
-    return this.collections.get(name.toUpperCase()) as T[];
+  collection<T extends IObject>(nameOrClass: string | Class | AssociationType | RoleType): T[] {
+    if (typeof nameOrClass === 'string') {
+      return this.collections.get(nameOrClass.toUpperCase()) as T[];
+    }
+
+    switch (nameOrClass.kind) {
+      case 'AssociationType':
+      case 'RoleType':
+        return this.collections.get((nameOrClass.isMany ? nameOrClass.pluralName : nameOrClass.singularName).toUpperCase()) as T[];
+      default:
+        return this.collections.get(nameOrClass.pluralName.toUpperCase()) as T[];
+    }
   }
 
   object<T extends IObject>(nameOrClass: string | Class): T {

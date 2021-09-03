@@ -20,6 +20,11 @@ namespace Allors.Protocol.Json.Data
         public Select s { get; set; }
 
         /// <summary>
+        /// Include
+        /// </summary>
+        public Node[] i { get; set; }
+
+        /// <summary>
         /// Name
         /// </summary>
         public string n { get; set; }

@@ -1,3 +1,5 @@
 import { Composite } from './Composite';
 
-export type Class = Composite;
+export interface Class extends Composite {
+  readonly kind: 'Class';
+}
