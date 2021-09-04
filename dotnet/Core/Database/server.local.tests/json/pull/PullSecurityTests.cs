@@ -21,11 +21,143 @@ namespace Tests
     using Pull = Allors.Database.Data.Pull;
     using Result = Allors.Database.Data.Result;
 
-    public class PullTests : ApiTest, IClassFixture<Fixture>
+    public class PullSecurityTests : ApiTest, IClassFixture<Fixture>
     {
-        public PullTests(Fixture fixture) : base(fixture) => this.UnitConvert = new UnitConvert();
+        public PullSecurityTests(Fixture fixture) : base(fixture) => this.UnitConvert = new UnitConvert();
 
         public IUnitConvert UnitConvert { get; }
+
+        [Fact]
+        public void SameWorkspace()
+        {
+            var m = this.M;
+            this.SetUser("jane@example.com");
+
+            var x1 = new WorkspaceXObject1Builder(this.Transaction).Build();
+
+            this.Transaction.Commit();
+
+            // Extent
+            {
+                var pull = new Pull { Extent = new Extent(m.WorkspaceXObject1) };
+                var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) }, };
+
+                var api = new Api(this.Transaction, "X");
+                var pullResponse = api.Pull(pullRequest);
+                var wx1s = pullResponse.c["WorkspaceXObject1s"];
+
+                Assert.Single(wx1s);
+
+                var wx1 = wx1s.First();
+
+                Assert.Equal(x1.Id, wx1);
+            }
+
+            // Instantiate
+            {
+                var pullRequest = new PullRequest
+                {
+                    l = new[]
+                                {
+                    new Allors.Protocol.Json.Data.Pull
+                    {
+                        o = x1.Id,
+                    },
+                },
+                };
+
+                var api = new Api(this.Transaction, "X");
+                var pullResponse = api.Pull(pullRequest);
+                var wx1 = pullResponse.o["WorkspaceXObject1"];
+
+                Assert.Equal(x1.Id, wx1);
+            }
+        }
+
+        [Fact]
+        public void DifferentWorkspace()
+        {
+            var m = this.M;
+            this.SetUser("jane@example.com");
+
+            var x1 = new WorkspaceXObject1Builder(this.Transaction).Build();
+
+            this.Transaction.Commit();
+
+            // Extent
+            {
+                var pull = new Pull { Extent = new Extent(m.WorkspaceXObject1) };
+
+                var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) } };
+
+                var api = new Api(this.Transaction, "Y");
+                var pullResponse = api.Pull(pullRequest);
+                var wx1s = pullResponse.c["WorkspaceXObject1s"];
+
+                Assert.Empty(wx1s);
+            }
+
+            // Instantiate
+            {
+                var pullRequest = new PullRequest
+                {
+                    l = new[]
+                    {
+                        new Allors.Protocol.Json.Data.Pull
+                        {
+                            o = x1.Id,
+                        },
+                    },
+                };
+
+                var api = new Api(this.Transaction, "Y");
+                var pullResponse = api.Pull(pullRequest);
+                Assert.Empty(pullResponse.o);
+            }
+        }
+
+        [Fact]
+        public void NoneWorkspace()
+        {
+            var m = this.M;
+            this.SetUser("jane@example.com");
+
+            var x1 = new WorkspaceXObject1Builder(this.Transaction).Build();
+
+            this.Transaction.Commit();
+
+            // Extent
+            {
+                var pull = new Pull { Extent = new Extent(m.WorkspaceXObject1) };
+                var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) }, };
+
+                var api = new Api(this.Transaction, "None");
+                var pullResponse = api.Pull(pullRequest);
+
+                var wx1s = pullResponse.c["WorkspaceXObject1s"];
+
+                Assert.Empty(wx1s);
+            }
+
+            // Instantiate
+            {
+                var pullRequest = new PullRequest
+                {
+                    l = new[]
+                    {
+                        new Allors.Protocol.Json.Data.Pull
+                        {
+                            o = x1.Id,
+                        },
+                    },
+                };
+
+                var api = new Api(this.Transaction, "None");
+                var pullResponse = api.Pull(pullRequest);
+
+                Assert.Empty(pullResponse.o);
+            }
+        }
 
         [Fact]
         public void WithDeniedPermissions()
@@ -110,56 +242,6 @@ namespace Tests
         }
 
         [Fact]
-        public async void WithExtentRef()
-        {
-            this.SetUser("jane@example.com");
-
-            var pullRequest = new PullRequest
-            {
-                l = new[]
-                  {
-                      new Allors.Protocol.Json.Data.Pull
-                          {
-                              er = PreparedExtents.OrganisationByName,
-                              a = new Dictionary<string, object> { ["name"] = "Acme" },
-                          },
-                  },
-            };
-
-            var api = new Api(this.Transaction, "Default");
-            var pullResponse = api.Pull(pullRequest);
-
-            var organisations = pullResponse.c["Organisations"];
-
-            Assert.Single(organisations);
-        }
-
-        [Fact]
-        public async void WithSelectRef()
-        {
-            this.SetUser("jane@example.com");
-
-            var pullRequest = new PullRequest
-            {
-                l = new[]
-                  {
-                      new Allors.Protocol.Json.Data.Pull
-                          {
-                              er = PreparedExtents.OrganisationByName,
-                              a = new Dictionary<string, object> { ["name"] = "Acme" },
-                          },
-                  },
-            };
-
-            var api = new Api(this.Transaction, "Default");
-            var pullResponse = api.Pull(pullRequest);
-
-            var organisations = pullResponse.c["Organisations"];
-
-            Assert.Single(organisations);
-        }
-
-        [Fact]
         public async void WithoutDeniedPermissions()
         {
             var user = this.SetUser("jane@example.com");
@@ -179,60 +261,6 @@ namespace Tests
                       {
                           pull.ToJson(this.UnitConvert)
                       },
-            };
-
-            var api = new Api(this.Transaction, "Default");
-            var pullResponse = api.Pull(pullRequest);
-
-            var namedCollection = pullResponse.c["Datas"];
-
-            Assert.Single(namedCollection);
-
-            var namedObject = namedCollection.First();
-
-            Assert.Equal(data.Id, namedObject);
-
-            var objects = pullResponse.p;
-
-            Assert.Single(objects);
-
-            var @object = objects[0];
-
-            var acls = new DatabaseAccessControlLists(user);
-            var acl = acls[data];
-
-            Assert.NotNull(@object);
-
-            Assert.Equal(data.Strategy.ObjectId, @object.i);
-            Assert.Equal(data.Strategy.ObjectVersion, @object.v);
-            Assert.Equal(acl.AccessControls.Select(v => v.Strategy.ObjectId), @object.a);
-        }
-
-        [Fact]
-        public async void WithResult()
-        {
-            var user = this.SetUser("jane@example.com");
-
-            var data = new DataBuilder(this.Transaction).WithString("First").Build();
-
-            this.Transaction.Derive();
-            this.Transaction.Commit();
-
-            var pull = new Pull
-            {
-                Extent = new Extent(this.M.Data),
-                Results = new[]
-                {
-                    new  Result { Name = "Datas" },
-                }
-            };
-
-            var pullRequest = new PullRequest
-            {
-                l = new[]
-                {
-                    pull.ToJson(this.UnitConvert)
-                },
             };
 
             var api = new Api(this.Transaction, "Default");

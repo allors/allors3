@@ -6,7 +6,7 @@
 
 namespace Tests
 {
-    
+
     using Allors.Database.Domain;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Protocol.Json.Data;
@@ -18,88 +18,6 @@ namespace Tests
     {
         public PullInstantiateTests(Fixture fixture) : base(fixture) { }
 
-        [Fact]
-        public void SameWorkspace()
-        {
-            var m = this.M;
-            this.SetUser("jane@example.com");
-
-            var x1 = new WorkspaceXObject1Builder(this.Transaction).Build();
-
-            this.Transaction.Commit();
-
-            var extent = new Extent(m.WorkspaceXObject1);
-            var pullRequest = new PullRequest
-            {
-                l = new[]
-                {
-                    new Pull
-                    {
-                        o = x1.Id,
-                    },
-                },
-            };
-
-            var api = new Api(this.Transaction, "X");
-            var pullResponse = api.Pull(pullRequest);
-            var wx1 = pullResponse.o["WorkspaceXObject1"];
-
-            Assert.Equal(x1.Id, wx1);
-        }
-
-        [Fact]
-        public void DifferentWorkspace()
-        {
-            var m = this.M;
-            this.SetUser("jane@example.com");
-
-            var x1 = new WorkspaceXObject1Builder(this.Transaction).Build();
-
-            this.Transaction.Commit();
-
-            var extent = new Extent(m.WorkspaceXObject1);
-            var pullRequest = new PullRequest
-            {
-                l = new[]
-                {
-                    new Pull
-                    {
-                        o = x1.Id,
-                    },
-                },
-            };
-
-            var api = new Api(this.Transaction, "Y");
-            var pullResponse = api.Pull(pullRequest);
-            Assert.Empty(pullResponse.o);
-        }
-
-        [Fact]
-        public void NoneWorkspace()
-        {
-            var m = this.M;
-            this.SetUser("jane@example.com");
-
-            var x1 = new WorkspaceXObject1Builder(this.Transaction).Build();
-
-            this.Transaction.Commit();
-
-            var extent = new Extent(m.WorkspaceXObject1);
-            var pullRequest = new PullRequest
-            {
-                l = new[]
-                {
-                    new Pull
-                    {
-                        o = x1.Id,
-                    },
-                },
-            };
-
-            var api = new Api(this.Transaction, "None");
-            var pullResponse = api.Pull(pullRequest);
-
-            Assert.Empty(pullResponse.o);
-        }
+        // TODO: Koen
     }
 }
