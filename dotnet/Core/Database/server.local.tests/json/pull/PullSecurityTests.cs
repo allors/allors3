@@ -7,19 +7,15 @@
 namespace Tests
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using Allors;
-    using Allors.Database.Configuration;
+    using Allors.Database.Data;
     using Allors.Database.Domain;
-    using Allors.Protocol.Json.Api.Pull;
     using Allors.Database.Protocol.Json;
     using Allors.Protocol.Json;
+    using Allors.Protocol.Json.Api.Pull;
     using Allors.Protocol.Json.SystemTextJson;
     using Xunit;
-    using Extent = Allors.Database.Data.Extent;
-    using Pull = Allors.Database.Data.Pull;
-    using Result = Allors.Database.Data.Result;
 
     public class PullSecurityTests : ApiTest, IClassFixture<Fixture>
     {

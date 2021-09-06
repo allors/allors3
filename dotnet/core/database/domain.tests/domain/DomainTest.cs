@@ -79,7 +79,7 @@ namespace Allors.Database.Domain.Tests
                 new Setup(this.Transaction, this.Config).Apply();
                 this.Transaction.Commit();
 
-                new TestPopulation(this.Transaction, "full").Apply();
+                new TestPopulation(this.Transaction).Apply();
                 this.Transaction.Commit();
             }
         }

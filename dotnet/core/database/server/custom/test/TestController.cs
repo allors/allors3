@@ -68,7 +68,7 @@ namespace Allors.Server.Controllers
                     new UserGroups(transaction).Administrators.AddMember(administrator);
                     transaction.Services.Get<IUserService>().User = administrator;
 
-                    new TestPopulation(transaction, population).Apply();
+                    new TestPopulation(transaction).Apply();
                     transaction.Derive();
                     transaction.Commit();
                 }

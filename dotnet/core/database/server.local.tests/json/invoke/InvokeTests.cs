@@ -6,8 +6,8 @@
 namespace Tests
 {
     using Allors.Database.Domain;
-    using Allors.Protocol.Json.Api.Invoke;
     using Allors.Database.Protocol.Json;
+    using Allors.Protocol.Json.Api.Invoke;
     using Xunit;
 
     public class InvokeTests : ApiTest, IClassFixture<Fixture>
@@ -41,7 +41,7 @@ namespace Tests
 
             var invokeRequest = new InvokeRequest
             {
-                l = new Invocation[]
+                l = new[]
                 {
                     new Invocation
                     {
@@ -65,7 +65,7 @@ namespace Tests
 
             var invokeRequest = new InvokeRequest
             {
-                l = new Invocation[]
+                l = new[]
                 {
                     new Invocation
                     {
@@ -95,7 +95,7 @@ namespace Tests
 
             var invokeRequest = new InvokeRequest
             {
-                l = new Invocation[]
+                l = new[]
                 {
                     new Invocation
                     {

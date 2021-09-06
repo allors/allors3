@@ -6,11 +6,10 @@
 namespace Tests
 {
     using System.Linq;
-    using Allors.Database;
     using Allors.Database.Domain;
-    using Allors.Protocol.Json.Api.Security;
     using Allors.Database.Protocol.Json;
     using Allors.Database.Services;
+    using Allors.Protocol.Json.Api.Security;
     using Xunit;
 
     public class SecurityAccessControlTests : ApiTest, IClassFixture<Fixture>

@@ -126,7 +126,7 @@ namespace Allors.Database.Domain
 
             this.transaction.Derive();
         }
-        
+
         public void Grant(Guid roleId, ObjectType objectType, params Operations[] operations)
         {
             if (this.roleById.TryGetValue(roleId, out var role))

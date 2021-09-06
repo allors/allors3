@@ -6,10 +6,9 @@
 
 namespace Tests
 {
-    
     using Allors.Database.Domain;
-    using Allors.Protocol.Json.Api.Sync;
     using Allors.Database.Protocol.Json;
+    using Allors.Protocol.Json.Api.Sync;
     using Xunit;
 
     public class SyncRolesTests : ApiTest, IClassFixture<Fixture>

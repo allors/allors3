@@ -55,7 +55,7 @@ namespace Allors.Database.Protocol.Json
 
                         if (@select != null)
                         {
-                            var include = @select.Include ?? @select.End.Include;
+                            var include = @select.End.Include;
 
                             if (@select.PropertyType != null)
                             {
@@ -102,8 +102,9 @@ namespace Allors.Database.Protocol.Json
                         }
                         else
                         {
+                            var include = result.Include;
                             name ??= this.pull.ObjectType?.Name ?? @object.Strategy.Class.SingularName;
-                            response.AddObject(name, @object);
+                            response.AddObject(name, @object, include);
                         }
                     }
                     catch (Exception e)

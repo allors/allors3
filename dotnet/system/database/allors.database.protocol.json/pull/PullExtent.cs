@@ -31,7 +31,6 @@ namespace Allors.Database.Protocol.Json
             this.preparedSelects = preparedSelects;
         }
 
-
         public void Execute(PullResponseBuilder response)
         {
             if (this.pull.Extent == null && !this.pull.ExtentRef.HasValue)
@@ -58,7 +57,7 @@ namespace Allors.Database.Protocol.Json
 
                         if (@select != null)
                         {
-                            var include = @select.Include ?? @select.End.Include;
+                            var include = @select.End.Include;
 
                             if (@select.PropertyType != null)
                             {
@@ -97,6 +96,7 @@ namespace Allors.Database.Protocol.Json
                         else
                         {
                             name ??= extent.ObjectType.PluralName;
+                            var include = result.Include;
 
                             if (result.Skip.HasValue || result.Take.HasValue)
                             {
@@ -109,11 +109,11 @@ namespace Allors.Database.Protocol.Json
                                 paged = paged.ToArray();
 
                                 response.AddValue(name + "_total", extent.Build(this.transaction, this.pull.Arguments).Count.ToString());
-                                response.AddCollection(name, paged);
+                                response.AddCollection(name, paged, include);
                             }
                             else
                             {
-                                response.AddCollection(name, objects);
+                                response.AddCollection(name, objects, include);
                             }
                         }
                     }

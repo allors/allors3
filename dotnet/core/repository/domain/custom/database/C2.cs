@@ -161,15 +161,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         #endregion
         public C1 C2C1One2One { get; set; }
-
-        #region Allors
-        [Id("12896fc2-c9e9-4a89-b875-0aeb92e298e5")]
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        #endregion
-        public C2 C2C2Many2One { get; set; }
-
+        
         #region Allors
         [Id("1444d919-6ca1-4642-8d18-9d955c817581")]
         [Workspace(Default)]
@@ -245,14 +237,6 @@ namespace Allors.Repository
         public I12[] C2I12Many2Manies { get; set; }
 
         #region Allors
-        [Id("60680366-4790-4443-a941-b30cd4bd3848")]
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Indexed]
-        [Workspace(Default)]
-        #endregion
-        public C2[] C2C2One2Manies { get; set; }
-
-        #region Allors
         [Id("61daaaae-dd22-405e-aa98-6321d2f8af04")]
         [Workspace(Default)]
         #endregion
@@ -307,6 +291,30 @@ namespace Allors.Repository
         public C2 C2C2One2One { get; set; }
 
         #region Allors
+        [Id("60680366-4790-4443-a941-b30cd4bd3848")]
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Indexed]
+        [Workspace(Default)]
+        #endregion
+        public C2[] C2C2One2Manies { get; set; }
+
+        #region Allors
+        [Id("12896fc2-c9e9-4a89-b875-0aeb92e298e5")]
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        #endregion
+        public C2 C2C2Many2One { get; set; }
+
+        #region Allors
+        [Id("bc6c7fe0-6501-428c-a929-da87a9f4b885")]
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Indexed]
+        [Workspace(Default)]
+        #endregion
+        public C2[] C2C2Many2Manies { get; set; }
+
+        #region Allors
         [Id("9c7cde3f-9b61-4c79-a5d7-afe1067262ce")]
         [Size(256)]
         [Workspace(Default)]
@@ -320,14 +328,6 @@ namespace Allors.Repository
         [Workspace(Default)]
         #endregion
         public C1 C2C1Many2One { get; set; }
-
-        #region Allors
-        [Id("bc6c7fe0-6501-428c-a929-da87a9f4b885")]
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Indexed]
-        [Workspace(Default)]
-        #endregion
-        public C2[] C2C2Many2Manies { get; set; }
 
         #region Allors
         [Id("ce23482d-3a22-4202-98e7-5934fd9abd2d")]

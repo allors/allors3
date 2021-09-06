@@ -29,7 +29,7 @@ namespace Tests
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(C1)),
                 });
 
-            this.M = ((IDatabase)database).Services.Get<Allors.Database.Meta.MetaPopulation>();
+            this.M = database.Services.Get<MetaPopulation>();
 
             this.Setup(database, populate);
         }
@@ -66,6 +66,9 @@ namespace Tests
             if (populate)
             {
                 new Setup(this.Transaction, this.Config).Apply();
+                this.Transaction.Commit();
+
+                new TestPopulation(this.Transaction).Apply();
                 this.Transaction.Commit();
             }
         }

@@ -5,9 +5,10 @@
 
 namespace Tests
 {
+    using System.Linq;
     using Allors.Database.Domain;
-    using Allors.Protocol.Json.Api.Sync;
     using Allors.Database.Protocol.Json;
+    using Allors.Protocol.Json.Api.Sync;
     using Xunit;
 
     public class SyncObjectTests : ApiTest, IClassFixture<Fixture>
@@ -66,7 +67,8 @@ namespace Tests
         [Fact]
         public void WithoutAccessControl()
         {
-            new PersonBuilder(this.Transaction).WithUserName("noacl").WithFirstName("No").WithLastName("acl").Build();
+            new People(this.Transaction).Extent().First(v => "noacl".Equals(v.UserName));
+
             this.Transaction.Derive();
             this.Transaction.Commit();
 
