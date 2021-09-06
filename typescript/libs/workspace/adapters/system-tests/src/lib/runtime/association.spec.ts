@@ -31,13 +31,11 @@ export async function databaseGetOne2Many() {
     },
     results: [
       {
-        select: {
-          include: [
-            {
-              propertyType: m.C2.C1WhereC1C2One2Many,
-            },
-          ],
-        },
+        include: [
+          {
+            propertyType: m.C2.C1WhereC1C2One2Many,
+          },
+        ],
       },
     ],
   };
@@ -70,13 +68,11 @@ export async function databaseGetOne2One() {
     },
     results: [
       {
-        select: {
-          include: [
-            {
-              propertyType: m.C2.C1WhereC1C2One2One,
-            },
-          ],
-        },
+        include: [
+          {
+            propertyType: m.C2.C1WhereC1C2One2One,
+          },
+        ],
       },
     ],
   };

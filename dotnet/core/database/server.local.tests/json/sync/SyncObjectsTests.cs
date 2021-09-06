@@ -63,7 +63,6 @@ namespace Tests
             Assert.Equal(person.Strategy.ObjectVersion, syncObject.v);
         }
 
-
         [Fact]
         public void WithoutAccessControl()
         {

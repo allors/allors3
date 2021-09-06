@@ -2,7 +2,7 @@ import { IAsyncDatabaseClient, IReactiveDatabaseClient, IWorkspace, Pull } from 
 import { Fixture, name_c1A, name_c1B, name_c1C, name_c1D, name_c2A, name_c2B, name_c2C, name_c2D } from '../Fixture';
 import '../Matchers';
 import '@allors/workspace/domain/default';
-import { C1, C2 } from '@allors/workspace/domain/default';
+import { C1, I12 } from '@allors/workspace/domain/default';
 
 let fixture: Fixture;
 
@@ -81,7 +81,7 @@ export async function andGreaterThanLessThan() {
   expect(result.objects.size).toBe(0);
   expect(result.values.size).toBe(0);
 
-  const i12s = result.collection(m.I12);
+  const i12s = result.collection<I12>(m.I12);
   expect(i12s).toEqualObjects([name_c1B, name_c2B]);
 }
 
@@ -2114,13 +2114,11 @@ export async function pullWithInclude() {
     },
     results: [
       {
-        select: {
-          include: [
-            {
-              propertyType: m.C1.C1C2One2One,
-            },
-          ],
-        },
+        include: [
+          {
+            propertyType: m.C1.C1C2One2One,
+          },
+        ],
       },
     ],
   };

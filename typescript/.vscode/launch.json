@@ -16,6 +16,6 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceFolder}/dist/out-tsc/tools/scaffold/src/main.js"
-    },
+    }   
   ]
 }

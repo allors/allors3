@@ -31,13 +31,11 @@ export async function databaseUnit() {
     },
     results: [
       {
-        select: {
-          include: [
-            {
-              propertyType: m.C2.C1WhereC1C2One2Many,
-            },
-          ],
-        },
+        include: [
+          {
+            propertyType: m.C2.C1WhereC1C2One2Many,
+          },
+        ],
       },
     ],
   };
