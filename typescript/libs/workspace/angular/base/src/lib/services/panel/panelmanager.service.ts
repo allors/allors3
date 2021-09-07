@@ -45,7 +45,7 @@ export class PanelManagerService {
     this.panels.forEach((v) => v.onPull && v.onPull(pulls));
   }
 
-  onPulled(loaded: Loaded): any {
+  onPulled(loaded: IPullResult): any {
     this.panels.forEach((v) => v.onPulled && v.onPulled(loaded));
   }
 

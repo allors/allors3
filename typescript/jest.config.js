@@ -25,5 +25,6 @@ module.exports = {
     '<rootDir>/libs/workspace/derivations/core-custom',
     '<rootDir>/libs/workspace/derivations/base',
     '<rootDir>/libs/workspace/derivations/base-custom',
+    '<rootDir>/libs/workspace/configuration/base',
   ],
 };

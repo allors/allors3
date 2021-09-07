@@ -17,7 +17,24 @@
     "forceConsistentCasingInFileNames": true,
     // "strict": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@allors/protocol/json/system": ["libs/protocol/json/system/src/index.ts"],
+      "@allors/workspace/adapters/json/system": ["libs/workspace/adapters/json/system/src/index.ts"],
+      "@allors/workspace/adapters/system": ["libs/workspace/adapters/system/src/index.ts"],
+      "@allors/workspace/angular/core": ["libs/workspace/angular/core/src/index.ts"],
+      "@allors/workspace/angular/base": ["libs/workspace/angular/base/src/index.ts"],
+      "@allors/workspace/configuration/base": ["libs/workspace/configuration/base/src/index.ts"],
+      "@allors/workspace/derivations/core": ["libs/workspace/derivations/core/src/index.ts"],
+      "@allors/workspace/derivations/base": ["libs/workspace/derivations/base/src/index.ts"],
+      "@allors/workspace/derivations/base-custom": ["libs/workspace/derivations/base-custom/src/index.ts"],
+      "@allors/workspace/domain/default": ["libs/workspace/domain/base/src/index.ts"],
+      "@allors/workspace/domain/system": ["libs/workspace/domain/system/src/index.ts"],
+      "@allors/workspace/meta/default": ["libs/workspace/meta/base/src/index.ts"],
+      "@allors/workspace/meta/json/default": ["libs/workspace/meta/json/base/src/index.ts"],
+      "@allors/workspace/meta/json/system": ["libs/workspace/meta/json/system/src/index.ts"],
+      "@allors/workspace/meta/system": ["libs/workspace/meta/system/src/index.ts"]
+    }
   },
   "angularCompilerOptions": {
     "strictInjectionParameters": true,

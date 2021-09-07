@@ -8,14 +8,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan, filter } from 'rxjs/operators';
-
-import { TableRow } from '@allors/angular/material/core';
-import { Person } from '@allors/domain/generated';
-import { TestScope, Filter} from '@allors/angular/core';
-import { PullRequest } from '@allors/protocol/system';
-import { SessionObject } from '@allors/domain/system';
-import { ContextService, MetaService, NavigationService, MediaService } from '@allors/angular/services/core';
-import { AllorsMaterialDialogService } from '@allors/angular/material/services/core';
+import { AllorsMaterialDialogService, Filter, MediaService, NavigationService, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Person } from '@allors/workspace/domain/default';
+import { SessionService } from '@allors/workspace/angular/core';
+import { M } from '@allors/workspace/meta/default';
 
 interface Row extends TableRow {
   person: Person;
@@ -26,7 +22,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './people.component.html',
-  providers: [ContextService],
+  providers: [SessionService],
 })
 export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
   public title = 'People';
@@ -46,14 +42,13 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: ContextService,
-    public metaService: MetaService,
+    @Self() public allors: SessionService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     private snackBar: MatSnackBar,
     private dialogService: AllorsMaterialDialogService,
     private location: Location,
-    titleService: Title,
+    titleService: Title
   ) {
     super();
 
@@ -65,40 +60,36 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    const { x, m, pull } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: p } = m;
     this.filter = m.Person.filter = m.Person.filter ?? new Filter(m.Person.filterDefinition);
 
     this.subscription = combineLatest([this.refresh$, this.filter.fields$, this.sort$, this.pager$])
       .pipe(
         scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-          return [
-            refresh,
-            filterFields,
-            sort,
-            previousRefresh !== refresh || filterFields !== previousFilterFields ? Object.assign({ pageIndex: 0 }, pageEvent) : pageEvent,
-          ];
+          return [refresh, filterFields, sort, previousRefresh !== refresh || filterFields !== previousFilterFields ? Object.assign({ pageIndex: 0 }, pageEvent) : pageEvent];
         }),
         switchMap(([, filterFields, sort, pageEvent]) => {
           const pulls = [
-            pull.Person({
+            p.Person({
               predicate: this.filter.definition.predicate,
-              sort: sort ? m.Person.sorter.create(sort) : null,
+              sorting: sort ? m.Person.sorter.create(sort) : null,
               include: {
-                Pictures: x,
+                Pictures: {},
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
-        }),
+          return this.allors.client.pullReactive(this.allors.session, pulls);
+        })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
-        this.total = loaded.values.People_total;
-        const people = loaded.collections.People as Person[];
+        this.allors.session.reset();
+        this.total = loaded.value('People_Total') as number;
+        const people = loaded.collection<Person>(m.Person);
 
         this.dataSource.data = people.map((v) => {
           return {
@@ -160,20 +151,14 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
     const methods = people.filter((v) => v.CanExecuteDelete).map((v) => v.Delete);
 
     if (methods.length > 0) {
-      this.dialogService
-        .confirm(
-          methods.length === 1
-            ? { message: 'Are you sure you want to delete this person?' }
-            : { message: 'Are you sure you want to delete these people?' },
-        )
-        .subscribe((confirm: boolean) => {
-          if (confirm) {
-            this.allors.context.invoke(methods).subscribe(() => {
-              this.snackBar.open('Successfully deleted.', 'close', { duration: 5000 });
-              this.refresh();
-            });
-          }
-        });
+      this.dialogService.confirm(methods.length === 1 ? { message: 'Are you sure you want to delete this person?' } : { message: 'Are you sure you want to delete these people?' }).subscribe((confirm: boolean) => {
+        if (confirm) {
+          this.allors.context.invoke(methods).subscribe(() => {
+            this.snackBar.open('Successfully deleted.', 'close', { duration: 5000 });
+            this.refresh();
+          });
+        }
+      });
     }
   }
 }

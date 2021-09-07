@@ -1,7 +1,7 @@
-import { ids } from '@allors/meta/generated';
+import { tags } from '@allors/workspace/meta/default';
 
 export interface MenuItem {
-  id?: string;
+  tag?: number;
   link?: string;
   title?: string;
   icon?: string;
@@ -14,8 +14,8 @@ export const menu: MenuItem[] = [
     title: 'Contacts',
     icon: 'business',
     children: [
-      { id: ids.Person },
-      { id: ids.Organisation },
+      { tag: tags.Person },
+      { tag: tags.Organisation },
     ]
   },
   {

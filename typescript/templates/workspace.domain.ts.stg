@@ -108,9 +108,9 @@ $objectType._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|$m
 >>
 
 roleTypeWithDatabaseOrigin() ::= <<
-    canRead$roleType._.Name$: boolean;
+    CanRead$roleType._.Name$: boolean;
 $if(!roleType._.RelationType.IsDerived)$
-    canWrite$roleType._.Name$: boolean;
+    CanWrite$roleType._.Name$: boolean;
 $endif$
 $if(roleType._.ObjectType.IsUnit)$
     $roleType._.Name$: $objectType_Name(roleType._.ObjectType)$ | null;
@@ -149,7 +149,7 @@ $endif$
 >>
 
 methodType() ::= <<
-    canExecute$methodType.Name$: boolean;
+    CanExecute$methodType.Name$: boolean;
     $methodType.Name$: Method;
 
 >>

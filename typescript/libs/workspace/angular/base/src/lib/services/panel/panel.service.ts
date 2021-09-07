@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 
 import { Pull } from '@allors/workspace/domain/system';
-import { Loaded } from '../framework/responses/Loaded';
 import { PanelManagerService } from './panelmanager.service';
 
 
@@ -14,7 +13,7 @@ export class PanelService {
     expandable: boolean;
 
     onPull: (pulls: Pull[]) => void;
-    onPulled: (loaded: Loaded) => void;
+    onPulled: (loaded: IPullResult) => void;
 
     constructor(public manager: PanelManagerService) {
         manager.panels.push(this);

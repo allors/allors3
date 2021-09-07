@@ -23,4 +23,6 @@ export interface ISession {
   instantiate<T extends IObject>(ids: number[]): T[];
   instantiate<T extends IObject>(obj: T): T;
   instantiate<T extends IObject>(objectType: Composite): T[];
+
+  reset(): void;
 }

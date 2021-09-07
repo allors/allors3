@@ -18,7 +18,7 @@ export class FetchComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(@Self() private sessionService: SessionService, private workspaceService: WorkspaceService, private title: Title, private route: ActivatedRoute) {}
+  constructor(@Self() private allors: SessionService, private workspaceService: WorkspaceService, private title: Title, private route: ActivatedRoute) {}
 
   public ngOnInit() {
     this.title.setTitle('Fetch');
@@ -31,7 +31,7 @@ export class FetchComponent implements OnInit, OnDestroy {
     }
 
     const { client, workspace } = this.workspaceService;
-    const { session } = this.sessionService;
+    const { session } = this.allors;
     const m = workspace.configuration.metaPopulation as M;
     const { pullBuilder: p } = m;
 

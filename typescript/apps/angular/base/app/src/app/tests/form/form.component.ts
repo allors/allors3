@@ -1,26 +1,23 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
-
+import { DateAdapter } from '@angular/material/core';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { DateAdapter } from '@angular/material/core';
-import { ContextService, MetaService, WorkspaceService, Loaded } from '@allors/angular/services/core';
-import { Organisation, Person, Data, Locale } from '@allors/domain/generated';
-import { RadioGroupOption } from '@allors/angular/material/core';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { TestScope, SearchFactory } from '@allors/angular/core';
-import { SaveService } from '@allors/angular/material/services/core';
+import { SessionService } from '@allors/workspace/angular/core';
+import { RadioGroupOption, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { M } from '@allors/workspace/meta/default';
+import { Data, Organisation, Person, Locale } from '@allors/workspace/domain/default';
+import { IPullResult } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './form.component.html',
-  providers: [ContextService],
+  providers: [SessionService],
 })
-export class FormComponent extends TestScope implements OnInit, AfterViewInit, OnDestroy {
+export class FormComponent extends TestScope implements OnInit, OnDestroy {
   title: string;
-  m: Meta;
+  m: M;
 
   organisations: Organisation[];
   people: Person[];
@@ -50,21 +47,13 @@ export class FormComponent extends TestScope implements OnInit, AfterViewInit, O
   private refresh$: BehaviorSubject<Date>;
   private subscription: Subscription;
 
-  constructor(
-    @Self() public allors: ContextService,
-    public metaService: MetaService,
-    private workspaceService: WorkspaceService,
-    private titleService: Title,
-    private route: ActivatedRoute,
-    private saveService: SaveService,
-    private dateAdapter: DateAdapter<string>
-  ) {
+  constructor(@Self() public allors: SessionService, private titleService: Title, private route: ActivatedRoute, private saveService: SaveService, private dateAdapter: DateAdapter<string>) {
     super();
 
     this.title = 'Form';
     this.titleService.setTitle(this.title);
 
-    this.m = this.metaService.m;
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.organisationFilter = new SearchFactory({
       objectType: this.m.Organisation,
@@ -82,60 +71,58 @@ export class FormComponent extends TestScope implements OnInit, AfterViewInit, O
     const route$: Observable<UrlSegment[]> = this.route.url;
     const combined$: Observable<[UrlSegment[], Date]> = combineLatest(route$, this.refresh$);
 
-    const { m, pull, x } = this.metaService;
+    const { pullBuilder: p } = this.m;
 
     this.subscription = combined$
       .pipe(
-        switchMap(([]: [UrlSegment[], Date]) => {
+        switchMap(([,]: [UrlSegment[], Date]) => {
           const pulls = [
-            pull.Data({
+            p.Data({
               include: {
-                AutocompleteFilter: x,
-                AutocompleteOptions: x,
-                Chips: x,
-                File: x,
-                MultipleFiles: x,
+                AutocompleteFilter: {},
+                AutocompleteOptions: {},
+                Chips: {},
+                File: {},
+                MultipleFiles: {},
               },
             }),
-            pull.Organisation({
+            p.Organisation({
               include: {
-                OneData: x,
-                ManyDatas: x,
-                Owner: x,
-                Employees: x,
+                OneData: {},
+                ManyDatas: {},
+                Owner: {},
+                Employees: {},
               },
             }),
-            pull.Person(),
-            pull.Locale({
+            p.Person({}),
+            p.Locale({
               include: {
-                Language: x,
-                Country: x,
+                Language: {},
+                Country: {},
               },
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
-      .subscribe((loaded: Loaded) => {
-        this.allors.context.reset();
+      .subscribe((loaded: IPullResult) => {
+        this.allors.session.reset();
 
-        this.organisations = loaded.collections.Organisations as Organisation[];
-        this.people = loaded.collections.People as Person[];
-        const datas = loaded.collections.Datas as Data[];
+        this.organisations = loaded.collection<Organisation>(this.m.Organisation);
+        this.people = loaded.collection<Person>(this.m.Person);
+        const datas = loaded.collection<Data>(this.m.Data);
 
-        this.locale = (loaded.collections.Locales as Locale[]).find((v) => v.Name === 'nl-BE');
+        this.locale = (loaded.collection<Locale>(this.m.Locale).find((v) => v.Name === 'nl-BE');
         this.jane = this.people.find((v) => v.FirstName === 'Jane');
 
         if (datas && datas.length > 0) {
           this.data = datas[0];
         } else {
-          this.data = this.allors.context.create(this.m.Data) as Data;
+          this.data = this.allors.session.create(this.m.Data);
         }
       });
   }
-
-  ngAfterViewInit(): void {}
 
   ngOnDestroy(): void {
     if (this.subscription) {
@@ -144,27 +131,27 @@ export class FormComponent extends TestScope implements OnInit, AfterViewInit, O
   }
 
   reset() {
-    this.allors.context.reset();
-    this.data = this.allors.context.create(this.m.Data) as Data;
+    this.allors.session.reset();
+    this.data = this.allors.session.create(this.m.Data);
   }
 
   newDate() {
     if (this.data) {
-      var today = this.dateAdapter.today();
+      const today = this.dateAdapter.today();
       this.data.Date = today;
     }
   }
 
   newDateTime() {
     if (this.data) {
-      var today = this.dateAdapter.today();
+      const today = this.dateAdapter.today();
       this.data.DateTime = today;
     }
   }
 
   newDateTime2() {
     if (this.data) {
-      var today = this.dateAdapter.today();
+      const today = this.dateAdapter.today();
       this.data.DateTime2 = today;
     }
   }
@@ -176,7 +163,7 @@ export class FormComponent extends TestScope implements OnInit, AfterViewInit, O
   save(): void {
     console.log('save');
 
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.data = null;
       this.refresh();
     }, this.saveService.errorHandler);

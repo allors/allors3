@@ -1,10 +1,9 @@
+import { AuthenticationService, TestScope } from '@allors/workspace/angular/base';
 import { Component, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { TestScope } from '@allors/angular/core';
-import { AuthenticationService } from '@allors/angular/services/core';
 
 @Component({
   templateUrl: './login.component.html',

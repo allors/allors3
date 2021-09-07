@@ -1,15 +1,26 @@
-import { NgModule, APP_INITIALIZER } from '@angular/core';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
-import { enGB } from 'date-fns/locale';
 import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete';
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { enGB } from 'date-fns/locale';
 
-import { environment } from '../environments/environment';
+import { WorkspaceService } from '@allors/workspace/angular/core';
+import { Configuration, IdGenerator, PrototypeObjectFactory, ServicesBuilder } from '@allors/workspace/adapters/system';
+import { DatabaseConnection, ReactiveDatabaseClient } from '@allors/workspace/adapters/json/system';
+import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
+import { data } from '@allors/workspace/meta/json/default';
+import { WorkspaceServices } from '../allors/WorkspaceServices';
+import { M } from '@allors/workspace/meta/default';
+import { ruleBuilder } from '@allors/workspace/derivations/base-custom';
+
+import { AuthorizationService } from './auth/authorization.service';
+import { AngularClient } from '../allors/AngularClient';
 import { AppComponent } from './app.component';
+import { environment } from '../environments/environment';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -50,10 +61,6 @@ import {
   AllorsFocusServiceCore,
   NavigationServiceCore,
   RefreshServiceCore,
-  WorkspaceService,
-  DatabaseService,
-  DatabaseConfig,
-  ContextService,
   AuthenticationService,
   DateService,
   AllorsFocusService,
@@ -118,9 +125,24 @@ import { PersonComponent } from './relations/people/person/person.component';
 import { PeopleComponent } from './relations/people/people.component';
 import { FormComponent } from './tests/form/form.component';
 
-import { AuthorizationService } from './auth/authorization.service';
+export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
+  return async () => {
+    const client = new AngularClient(httpClient, environment.baseUrl, environment.authUrl);
+    await client.login('jane@example.com', '');
+    workspaceService.client = new ReactiveDatabaseClient(client);
 
-import { configure as configureMaterial } from './configure';
+    const metaPopulation = new LazyMetaPopulation(data);
+    const configuration = new Configuration('Default', metaPopulation, new PrototypeObjectFactory(metaPopulation));
+    let nextId = -1;
+    const idGenerator: IdGenerator = () => nextId--;
+    const serviceBuilder: ServicesBuilder = () => {
+      return new WorkspaceServices(ruleBuilder(metaPopulation as any as M));
+    };
+    const database = new DatabaseConnection(configuration, idGenerator, serviceBuilder);
+    workspaceService.workspace = database.createWorkspace();
+  };
+}
+
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -159,22 +181,6 @@ export const routes: Routes = [
     ],
   },
 ];
-
-export function appInitFactory(workspaceService: WorkspaceService) {
-  return () => {
-    const metaPopulation = new MetaPopulation(data);
-    const workspace = new Workspace(metaPopulation);
-
-    // Domain extensions
-    extendDomain(workspace);
-    extendAngular(workspace);
-
-    // Configuration
-    configureMaterial(metaPopulation);
-
-    workspaceService.workspace = workspace;
-  };
-}
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -239,7 +245,6 @@ export function appInitFactory(workspaceService: WorkspaceService) {
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
-
     MatAutocompleteModule,
     MatButtonModule,
     MatCardModule,
@@ -272,10 +277,7 @@ export function appInitFactory(workspaceService: WorkspaceService) {
       deps: [WorkspaceService],
       multi: true,
     },
-    DatabaseService,
-    { provide: DatabaseConfig, useValue: { url: environment.url } },
     WorkspaceService,
-    ContextService,
     { provide: AuthenticationService, useClass: AuthenticationServiceCore },
     {
       provide: AuthenticationConfig,

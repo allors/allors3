@@ -8,7 +8,6 @@ import { Media } from '@allors/workspace/domain/base';
 import { RoleField } from '../../../../components/forms/RoleField';
 import { MediaService } from '../../../../services/media/media.service';
 
-
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'a-mat-file',

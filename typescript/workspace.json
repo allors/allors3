@@ -347,6 +347,27 @@
         }
       }
     },
+    "workspace-configuration-base": {
+      "root": "libs/workspace/configuration/base",
+      "sourceRoot": "libs/workspace/configuration/base/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/configuration/base/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/configuration/base"],
+          "options": {
+            "jestConfig": "libs/workspace/configuration/base/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "workspace-configuration-core": {
       "root": "libs/workspace/configuration/core",
       "sourceRoot": "libs/workspace/configuration/core/src",

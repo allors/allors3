@@ -4,21 +4,20 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 
-import { ObjectType } from '@allors/meta/system';
-import { SideMenuItem } from '@allors/angular/material/core';
-import { Organisation } from '@allors/domain/generated';
+import { SessionService } from '@allors/workspace/angular/core';
 
 import { menu } from './main.menu';
-import { ContextService, MetaService } from '@allors/angular/services/core';
-import { AllorsMaterialSideNavService } from '@allors/angular/material/services/core';
+import { Organisation } from '@allors/workspace/domain/default';
+import { AllorsMaterialSideNavService, SideMenuItem } from '@allors/workspace/angular/base';
+import { ObjectType } from '@allors/workspace/meta/system';
+import { M } from '@allors/workspace/meta/default';
 
 @Component({
   styleUrls: ['main.component.scss'],
   templateUrl: './main.component.html',
-  providers: [ContextService]
+  providers: [SessionService],
 })
 export class MainComponent implements OnInit, OnDestroy {
-
   selectedInternalOrganisation: Organisation;
   internalOriganisations: Organisation[];
 
@@ -30,45 +29,39 @@ export class MainComponent implements OnInit, OnDestroy {
 
   @ViewChild('drawer', { static: true }) private sidenav: MatSidenav;
 
-  constructor(
-    @Self() private allors: ContextService,
-    public metaService: MetaService,
-    private router: Router,
-    private sideNavService: AllorsMaterialSideNavService
-  ) { }
+  constructor(@Self() private allors: SessionService, private router: Router, private sideNavService: AllorsMaterialSideNavService) {}
 
   public ngOnInit(): void {
-
+    const { workspace } = this.allors;
+    const m = workspace.configuration.metaPopulation as M;
     menu.forEach((menuItem) => {
-      const objectType = menuItem.id ? this.metaService.m.metaObjectById.get(menuItem.id) as ObjectType : null;
+      const objectType = menuItem.tag ? (m.metaObjectByTag.get(menuItem.tag) as ObjectType) : null;
 
       const sideMenuItem: SideMenuItem = {
         icon: menuItem.icon ?? objectType?.icon,
         title: menuItem.title ?? objectType?.displayName,
         link: menuItem.link ?? objectType?.list,
-        children: menuItem.children && menuItem.children.map((childMenuItem) => {
-
-          const childObjectType = childMenuItem.id ? this.metaService.m.metaObjectById.get(childMenuItem.id) as ObjectType : null;
-          return {
-            icon: childMenuItem.icon ?? childObjectType?.icon,
-            title: childMenuItem.title ?? childObjectType?.displayName,
-            link: childMenuItem.link ?? childObjectType?.list,
-          };
-        }),
+        children:
+          menuItem.children &&
+          menuItem.children.map((childMenuItem) => {
+            const childObjectType = childMenuItem.tag ? (m.metaObjectByTag.get(childMenuItem.tag) as ObjectType) : null;
+            return {
+              icon: childMenuItem.icon ?? childObjectType?.icon,
+              title: childMenuItem.title ?? childObjectType?.displayName,
+              link: childMenuItem.link ?? childObjectType?.list,
+            };
+          }),
       };
 
       this.sideMenuItems.push(sideMenuItem);
     });
 
     this.router.onSameUrlNavigation = 'reload';
-    this.router.events
-      .pipe(
-        filter((v) => v instanceof NavigationEnd)
-      ).subscribe(() => {
-        if (this.sidenav) {
-          this.sidenav.close();
-        }
-      });
+    this.router.events.pipe(filter((v) => v instanceof NavigationEnd)).subscribe(() => {
+      if (this.sidenav) {
+        this.sidenav.close();
+      }
+    });
 
     this.toggleSubscription = this.sideNavService.toggle$.subscribe(() => {
       this.sidenav.toggle();

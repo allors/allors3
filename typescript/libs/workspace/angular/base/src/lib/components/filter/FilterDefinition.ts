@@ -4,34 +4,38 @@ import { FilterOptions } from './FilterOptions';
 import { FilterFieldDefinition } from './FilterFieldDefinition';
 
 function parametrize(predicate: Predicate | Extent, results: ParameterizablePredicate[] = []): ParameterizablePredicate[] {
-  if (predicate instanceof Extent) {
-    if (predicate.predicate) {
-      parametrize(predicate.predicate, results);
-    }
+  switch (predicate.kind) {
+    case 'Filter':
+      // case 'Union':
+      // case 'Intersect':
+      // case 'Except':
+      if (predicate.predicate) {
+        parametrize(predicate.predicate, results);
+      }
+      break;
+
+    case 'And':
+    case 'Or':
+      if (predicate.operands) {
+        predicate.operands.forEach((v) => parametrize(v, results));
+      }
+      break;
+
+    case 'Not':
+      if (predicate.operand) {
+        parametrize(predicate.operand, results);
+      }
+      break;
+
+    case 'ContainedIn':
+      if (predicate.extent) {
+        parametrize(predicate.extent, results);
+      }
+      break;
   }
 
-  if (predicate instanceof And || predicate instanceof Or) {
-    if (predicate.operands) {
-      predicate.operands.forEach((v) => parametrize(v, results));
-    }
-  }
-
-  if (predicate instanceof Not) {
-    if (predicate.operand) {
-      parametrize(predicate.operand, results);
-    }
-  }
-
-  if (predicate instanceof ContainedIn) {
-    if (predicate.extent) {
-      parametrize(predicate.extent, results);
-    }
-  }
-
-  if (predicate instanceof ParameterizablePredicate) {
-    if ((predicate as ParameterizablePredicate).parameter) {
-      results.push(predicate);
-    }
+  if ((predicate as ParameterizablePredicate).parameter) {
+    results.push(predicate as ParameterizablePredicate);
   }
 
   return results;
@@ -47,7 +51,7 @@ export class FilterDefinition {
         new FilterFieldDefinition({
           predicate: v,
           options: options && v.parameter ? new FilterOptions(options[v.parameter]) : undefined,
-        }),
+        })
     );
   }
 }

@@ -1,27 +1,24 @@
+import { SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { Organisation, Person } from '@allors/workspace/domain/default';
+import { IObject, IPullResult } from '@allors/workspace/domain/system';
+import { M } from '@allors/workspace/meta/default';
 import { AfterViewInit, Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { TestScope, SearchFactory } from '@allors/angular/core';
-import { ISessionObject } from '@allors/domain/system';
-import { Person, Organisation } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { ContextService, MetaService, Loaded } from '@allors/angular/services/core';
-
 @Component({
   templateUrl: './organisation.component.html',
-  providers: [ContextService]
+  providers: [SessionService],
 })
 export class OrganisationComponent extends TestScope implements OnInit, AfterViewInit, OnDestroy {
-
   title: string;
-  m: Meta;
+  m: M;
   peopleFilter: SearchFactory;
 
-  selected: ISessionObject;
+  selected: IObject;
   people: Person[];
   organisation: Organisation;
 
@@ -29,18 +26,13 @@ export class OrganisationComponent extends TestScope implements OnInit, AfterVie
 
   private refresh$: BehaviorSubject<Date>;
 
-  constructor(
-    @Self() public allors: ContextService,
-    private metaService: MetaService,
-    private titleService: Title,
-    private route: ActivatedRoute,
-  ) {
+  constructor(@Self() public allors: SessionService, private titleService: Title, private route: ActivatedRoute) {
     super();
 
     this.title = 'Organisation';
     this.titleService.setTitle(this.title);
 
-    this.m = this.metaService.m;
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.peopleFilter = new SearchFactory({ objectType: this.m.Person, roleTypes: [this.m.Person.UserName] });
 
@@ -51,36 +43,32 @@ export class OrganisationComponent extends TestScope implements OnInit, AfterVie
     const route$: Observable<UrlSegment[]> = this.route.url;
     const combined$: Observable<[UrlSegment[], Date]> = combineLatest([route$, this.refresh$]);
 
-    const { pull } = this.metaService;
+    const { pullBuilder: p } = this.m;
 
     this.subscription = combined$
       .pipe(
         switchMap(([]: [UrlSegment[], Date]) => {
-
           const id = this.route.snapshot.paramMap.get('id');
 
           const pulls = [
-            pull.Organisation({
-              object: id ?? ''
+            p.Organisation({
+              objectId: id ?? '',
             }),
-            pull.Person()
+            p.Person({}),
           ];
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
-      .subscribe((loaded: Loaded) => {
+      .subscribe((loaded: IPullResult) => {
+        this.allors.session.reset();
 
-        this.allors.context.reset();
-
-        this.organisation = loaded.objects.Organisation as Organisation || this.allors.context.create('Organisation') as Organisation;
-        this.people = loaded.collections.People as Person[];
+        this.organisation = (loaded.object<Organisation>(this.m.Organisation) ?? (this.allors.session.create(this.m.Organisation));
+        this.people = loaded.collection<Person>(this.m.Person);
       });
   }
 
-  public ngAfterViewInit(): void {
-  }
+  public ngAfterViewInit(): void {}
 
   public ngOnDestroy(): void {
     if (this.subscription) {
@@ -93,27 +81,22 @@ export class OrganisationComponent extends TestScope implements OnInit, AfterVie
   }
 
   public toggleCanWrite() {
-    this.allors.context
-      .invoke(this.organisation.ToggleCanWrite)
-      .subscribe(() => {
-        this.refresh();
-      });
+    this.allors.client.invokeReactive(this.allors.session, this.organisation.ToggleCanWrite).subscribe(() => {
+      this.refresh();
+    });
   }
 
   public save(): void {
-
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        this.goBack();
-      });
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.goBack();
+    });
   }
 
   public goBack(): void {
     window.history.back();
   }
 
-  public ownerSelected(selected: ISessionObject): void {
+  public ownerSelected(selected: IObject): void {
     this.selected = selected;
   }
 }

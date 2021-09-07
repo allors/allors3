@@ -1,16 +1,5 @@
 // Services
-export { Invoked } from './lib/services/framework/responses/Invoked';
-export { Loaded } from './lib/services/framework/responses/Loaded';
-export { Saved } from './lib/services/framework/responses/Saved';
-export { Context } from './lib/services/framework/Context';
-export { ContextService } from './lib/services/framework/ContextService';
-export { Database } from './lib/services/framework/Database';
-export { DatabaseConfig } from './lib/services/framework/DatabaseConfig';
-export { DatabaseService } from './lib/services/framework/DatabaseService';
-export { MetaService } from './lib/services/framework/MetaService';
-export { WorkspaceService } from './lib/services/framework/WorkspaceService';
-
-export { AuthenticationTokenResponse} from './lib/services/authentication/AuthenticationTokenResponse';
+export { AuthenticationTokenResponse } from './lib/services/authentication/AuthenticationTokenResponse';
 export { AuthenticationService } from './lib/services/authentication/authentication.service';
 export { AllorsBarcodeService } from './lib/services/barcode/barcode.service';
 export { DateService } from './lib/services/date/date.service';
@@ -148,3 +137,37 @@ export { AllorsMaterialErrorDialogComponent } from './lib/material/services/save
 export { AllorsMaterialSideNavServiceCore } from './lib/material/services/sidenav/sidenav.service.core';
 
 export { Sorter } from './lib/material/sorting/Sorter';
+
+// Augmentations
+import { FilterDefinition } from './lib/components/filter/FilterDefinition';
+import { Filter } from './lib/components/filter/Filter';
+import { Sorter } from './lib/material/sorting/Sorter';
+
+// Menu
+declare module '@allors/workspace/meta/system' {
+  interface ObjectType {
+    icon: string;
+    displayName: string;
+    list: string;
+    overview: string;
+  }
+
+  interface RoleType {
+    displayName: string;
+  }
+}
+
+// Filter
+declare module '@allors/workspace/meta/system' {
+  interface ObjectType {
+    filterDefinition?: FilterDefinition;
+    filter?: Filter;
+  }
+}
+
+// Sort
+declare module '@allors/workspace/meta/system' {
+  interface ObjectType {
+    sorter: Sorter;
+  }
+}

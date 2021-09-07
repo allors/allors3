@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  // authenticationUrl: 'Authentication/Token',
-  authenticationUrl: 'TestAuthentication/Token',
-  url: 'allors/',
+  baseUrl: 'http://localhost:5000/allors/',
+  authUrl: 'TestAuthentication/Token',
+  // authUrl: 'Authentication/Token',
 };

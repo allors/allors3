@@ -1,43 +1,37 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { Person } from '@allors/workspace/domain/default';
+import { IPullResult } from '@allors/workspace/domain/system';
+import { M } from '@allors/workspace/meta/default';
+import { assert } from '@allors/workspace/meta/system';
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { TestScope } from '@allors/angular/core';
-import { Person } from '@allors/domain/generated';
-import { assert } from '@allors/meta/system';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { ContextService, MetaService, Loaded } from '@allors/angular/services/core';
-
 @Component({
   templateUrl: './person-overview.component.html',
-  providers: [ContextService],
+  providers: [SessionService],
 })
-export class PersonOverviewComponent extends TestScope implements OnInit, AfterViewInit, OnDestroy {
+export class PersonOverviewComponent extends TestScope implements OnInit, OnDestroy {
   public title: string;
-  public m: Meta;
+  public m: M;
 
   public person: Person;
   public locales: Locale[];
   private subscription: Subscription;
 
-  constructor(
-    @Self() private allors: ContextService,
-    private metaService: MetaService,
-    private titleService: Title,
-    private route: ActivatedRoute
-  ) {
+  constructor(@Self() private allors: SessionService, private titleService: Title, private route: ActivatedRoute) {
     super();
 
     this.title = 'Person Overview';
     this.titleService.setTitle(this.title);
-    this.m = this.metaService.m;
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-    const { x, pull } = this.metaService;
+    const { pullBuilder: p } = this.m;
 
     this.subscription = this.route.url
       .pipe(
@@ -46,26 +40,23 @@ export class PersonOverviewComponent extends TestScope implements OnInit, AfterV
           assert(id);
 
           const pulls = [
-            pull.Person({
-              object: id,
+            p.Person({
+              objectId: id,
               include: {
-                Photo: x,
+                Photo: {},
               },
             }),
           ];
 
-          this.allors.context.reset();
+          this.allors.session.reset();
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
-      .subscribe((loaded: Loaded) => {
-        this.person = loaded.objects.Person as Person;
+      .subscribe((loaded: IPullResult) => {
+        this.person = loaded.object<Person>(this.m.Person);
       });
   }
-
-  public ngAfterViewInit(): void {}
-
   public ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

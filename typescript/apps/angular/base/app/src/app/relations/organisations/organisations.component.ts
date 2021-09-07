@@ -1,14 +1,11 @@
+import { Action, DeleteService, Filter, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Organisation } from '@allors/workspace/domain/default';
 import { Component, OnDestroy, Self, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { scan, switchMap } from 'rxjs/operators';
-
-import { TableRow, Table } from '@allors/angular/material/core';
-import { Organisation } from '@allors/domain/generated';
-import {  TestScope, Filter, Action } from '@allors/angular/core';
-import { DeleteService, OverviewService } from '@allors/angular/material/core';
-import { PullRequest } from '@allors/protocol/system';
-import { ContextService, MetaService, RefreshService } from '@allors/angular/services/core';
+import { SessionService } from '@allors/workspace/angular/core';
+import { M } from '@allors/workspace/meta/default';
 
 interface Row extends TableRow {
   object: Organisation;
@@ -18,7 +15,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './organisations.component.html',
-  providers: [ContextService],
+  providers: [SessionService],
 })
 export class OrganisationsComponent extends TestScope implements OnInit, OnDestroy {
   title = 'Organisations';
@@ -32,20 +29,13 @@ export class OrganisationsComponent extends TestScope implements OnInit, OnDestr
 
   private subscription: Subscription;
 
-  constructor(
-    @Self() public allors: ContextService,
-    public metaService: MetaService,
-    public refreshService: RefreshService,
-    public deleteService: DeleteService,
-    public overviewService: OverviewService,
-    private titleService: Title,
-  ) {
+  constructor(@Self() public allors: SessionService, public refreshService: RefreshService, public deleteService: DeleteService, public overviewService: OverviewService, private titleService: Title) {
     super();
 
     this.titleService.setTitle(this.title);
 
     this.overview = overviewService.overview();
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors.session);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -59,7 +49,8 @@ export class OrganisationsComponent extends TestScope implements OnInit, OnDestr
   }
 
   public ngOnInit(): void {
-    const { x, m, pull } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: p } = m;
 
     this.filter = m.Organisation.filter = m.Organisation.filter ?? new Filter(m.Organisation.filterDefinition);
 
@@ -73,26 +64,26 @@ export class OrganisationsComponent extends TestScope implements OnInit, OnDestr
         ]),
         switchMap(([, filterFields, sort, pageEvent]) => {
           const pulls = [
-            pull.Organisation({
+            p.Organisation({
               predicate: this.filter.definition.predicate,
-              sort: sort ? m.Organisation.sorter.create(sort) : null,
+              sorting: sort ? m.Organisation.sorter.create(sort) : null,
               include: {
-                Owner: x,
-                Employees: x,
+                Owner: {},
+                Employees: {},
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
-        }),
+          return this.allors.client.pullReactive(this.allors.session, pulls);
+        })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
-        const organisations = loaded.collections.Organisations as Organisation[];
-        this.table.total = loaded.values.Organisations_total;
+        this.allors.session.reset();
+        const organisations = loaded.collection<Organisation>(m.Organisation);
+        this.table.total = loaded.value('Organisations_total') as number;
         this.table.data = organisations.map((v) => {
           return {
             object: v,

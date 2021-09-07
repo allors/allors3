@@ -1,3 +1,5 @@
+import type { Observable } from 'rxjs';
+
 import { ISession } from '../ISession';
 import { Method } from '../Method';
 
@@ -7,8 +9,6 @@ import { IPullResult } from './pull/IPullResult';
 import { Procedure } from './pull/Procedure';
 import { Pull } from './pull/Pull';
 import { IPushResult } from './push/IPushResult';
-
-import type { Observable } from 'rxjs';
 
 export interface IReactiveDatabaseClient {
   invokeReactive(session: ISession, method: Method | Method[], options?: InvokeOptions): Observable<IInvokeResult>;

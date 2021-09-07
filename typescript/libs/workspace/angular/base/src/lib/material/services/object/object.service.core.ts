@@ -2,10 +2,8 @@ import { Injectable, Inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, throwError } from 'rxjs';
 
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject, ISession } from '@allors/workspace/domain/system';
 import { ObjectType } from '@allors/workspace/meta/system';
-
-import { Context } from '../../../services/framework/Context';
 
 import { ObjectService } from './object.service';
 import { OBJECT_CREATE_TOKEN, OBJECT_EDIT_TOKEN } from './object.tokens';
@@ -16,8 +14,8 @@ export class ObjectServiceCore extends ObjectService {
 
   constructor(
     public dialog: MatDialog,
-    @Inject(OBJECT_CREATE_TOKEN) private createControlByObjectTypeId: { [id: string]: any },
-    @Inject(OBJECT_EDIT_TOKEN) private editControlByObjectTypeId: { [id: string]: any }
+    @Inject(OBJECT_CREATE_TOKEN) private createControlByObjectTypeTag: { [id: string]: any },
+    @Inject(OBJECT_EDIT_TOKEN) private editControlByObjectTypeTag: { [id: string]: any }
   ) {
     super();
   }
@@ -26,7 +24,7 @@ export class ObjectServiceCore extends ObjectService {
 
     const data: ObjectData = Object.assign({ objectType }, createData);
 
-    const component = this.createControlByObjectTypeId[objectType.id];
+    const component = this.createControlByObjectTypeTag[objectType.tag];
     if (component) {
       const dialogRef = this.dialog.open(component, { data, minWidth: '80vw', maxHeight: '90vh' });
 
@@ -37,11 +35,11 @@ export class ObjectServiceCore extends ObjectService {
     return throwError('Missing component');
   }
 
-  hasCreateControl(objectType: ObjectType, createData: ObjectData, context: Context) {
-    const createControl = this.createControlByObjectTypeId[objectType.id];
+  hasCreateControl(objectType: ObjectType, createData: ObjectData, session: ISession) {
+    const createControl = this.createControlByObjectTypeTag[objectType.tag];
     if (createControl) {
       if (createControl.canCreate) {
-        return createControl.canCreate(createData, context);
+        return createControl.canCreate(createData, session);
       }
 
       return true;
@@ -54,10 +52,10 @@ export class ObjectServiceCore extends ObjectService {
 
     const data: ObjectData = Object.assign({
       id: object.id,
-      objectType: object.objectType,
+      objectType: object.strategy.cls.tag,
     }, createData);
 
-    const component = this.editControlByObjectTypeId[object.objectType.id];
+    const component = this.editControlByObjectTypeTag[object.strategy.cls.tag];
     if (component) {
       const dialogRef = this.dialog.open(component, { data, minWidth: '80vw', maxHeight: '90vh' });
       return dialogRef.afterClosed();
@@ -67,7 +65,7 @@ export class ObjectServiceCore extends ObjectService {
   }
 
   hasEditControl(object: IObject) {
-    return !!this.editControlByObjectTypeId[object.objectType.id];
+    return !!this.editControlByObjectTypeTag[object.strategy.cls.tag];
   }
 
 }

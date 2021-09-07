@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ISession } from '@allors/workspace/domain/system';
+import { IReactiveDatabaseClient, ISession, IWorkspace } from '@allors/workspace/domain/system';
 import { WorkspaceService } from '../workspace/WorkspaceService';
 
 @Injectable({
@@ -10,5 +10,13 @@ export class SessionService {
 
   constructor(public workspaceService: WorkspaceService) {
     this.session ??= this.workspaceService.workspace.createSession();
+  }
+
+  get workspace(): IWorkspace {
+    return this.workspaceService.workspace;
+  }
+
+  get client(): IReactiveDatabaseClient {
+    return this.workspaceService.client;
   }
 }

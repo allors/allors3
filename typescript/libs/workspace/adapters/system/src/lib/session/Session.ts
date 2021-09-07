@@ -11,6 +11,7 @@ import { WorkspaceResult } from '../workspace/WorkspaceResult';
 import { ObjectBase } from '../ObjectBase';
 import { Ranges } from '../collections/ranges/Ranges';
 import { DefaultStrategyRanges } from '../collections/ranges/DefaultStrategyRanges';
+import { IStrategy } from '../../../../../domain/system/src/lib/IStrategy';
 
 export function isNewId(id: number): boolean {
   return id < 0;
@@ -41,6 +42,28 @@ export abstract class Session implements ISession {
     this.changeSetTracker = new ChangeSetTracker();
     this.pushToDatabaseTracker = new PushToDatabaseTracker();
     this.pushToWorkspaceTracker = new PushToWorkspaceTracker();
+  }
+
+  reset(): void {
+    const changeSet = this.checkpoint();
+
+    const strategies: Set<IStrategy> = new Set(changeSet.created);
+
+    for(const roles of changeSet.rolesByAssociationType.values()){
+      for(const role of roles){
+        strategies.add(role);
+      }
+    }
+
+    for(const associations of changeSet.associationsByRoleType.values()){
+      for(const association of associations){
+        strategies.add(association);
+      }
+    }
+
+    for(const strategy of strategies){
+      strategy.reset();
+    }
   }
 
   abstract create<T extends IObject>(cls: Composite): T;
