@@ -52,7 +52,10 @@ export class ChangeSet implements IChangeSet {
     }
 
     if (previous != null) {
-      this.addRole(relationType, (this.session as Session).getStrategy(previous));
+      const previousStrategy = (this.session as Session).getStrategy(previous);
+      if (previousStrategy) {
+        this.addRole(relationType, previousStrategy);
+      }
     }
 
     if (current != null) {
