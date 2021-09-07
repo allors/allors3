@@ -15,6 +15,7 @@ import { Lookup } from './utils/Lookup';
 import { LazyTreeBuilder } from './builders/LazyTreeBuilder';
 import { LazySelectBuilder } from './builders/LazySelectBuilder';
 import { LazyPullBuilder } from './builders/LazyPullBuilder';
+import { LazyResultBuilder } from './builders/LazyResultBuilder';
 
 export class LazyMetaPopulation implements InternalMetaPopulation {
   readonly kind = 'MetaPopulation';
@@ -47,6 +48,8 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
     this['selectBuilder'] = new LazySelectBuilder(this);
 
     this['pullBuilder'] = new LazyPullBuilder(this);
+
+    this['resultBuilder'] = new LazyResultBuilder(this);
   }
 
   onNew(metaObject: InternalMetaObject) {

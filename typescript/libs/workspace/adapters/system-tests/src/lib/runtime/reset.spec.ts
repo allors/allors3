@@ -83,13 +83,17 @@ export async function resetOne2OneAfterPush() {
   const c1a = await fixture.pullC1(session, name_c1A);
   const c1b = await fixture.pullC1(session, name_c1B);
 
-  c1a.C1C1One2One = c1b;
+  const previous = c1a.C1C1One2One;
+
+  expect(previous).toBe(c1b);
+
+  c1a.C1C1One2One = null;
 
   await client.pushAsync(session);
 
   c1a.strategy.reset();
 
-  expect(c1a.C1C1One2One).toBeNull();
+  expect(c1a.C1C1One2One).toBe(previous);
 }
 
 export async function resetOne2OneRemoveAfterPush() {

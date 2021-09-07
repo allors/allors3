@@ -287,9 +287,69 @@ export async function changeSetAfterPushOne2One() {
   expect(changeSet.associationsByRoleType.size).toBe(1);
   expect(changeSet.rolesByAssociationType.size).toBe(1);
 
+  expect(changeSet.created.size).toBe(1);
+  expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).size).toBe(1);
+  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).size).toBe(1);
+
   expect(changeSet.created.values().next().value).toBe(c1b.strategy);
   expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).values().next().value).toBe(c1a.strategy);
   expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).values().next().value).toBe(c1b.strategy);
+
+  await client.pushAsync(session);
+  changeSet = session.checkpoint();
+
+  expect(changeSet.created.size).toBe(0);
+  expect(changeSet.associationsByRoleType.size).toBe(0);
+  expect(changeSet.rolesByAssociationType.size).toBe(0);
+}
+
+export async function changeSetAfterPushOne2OneWithPreviousIncluded() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Equals',
+        propertyType: m.C1.Name,
+        value: 'c1A',
+      },
+    },
+    results: [
+      {
+        include: [
+          {
+            propertyType: m.C1.C1C1One2One,
+          },
+        ],
+      },
+    ],
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+  const c1a = result.collection<C1>('C1s')[0];
+  const c1b = session.create<C1>(m.C1);
+  const previous = c1a.C1C1One2One;
+
+  c1a.C1C1One2One = c1b;
+
+  await client.pushAsync(session);
+
+  let changeSet = session.checkpoint();
+
+  expect(changeSet.created.size).toBe(1);
+  expect(changeSet.associationsByRoleType.size).toBe(1);
+  expect(changeSet.rolesByAssociationType.size).toBe(1);
+
+  const created = [...changeSet.created.values()];
+  const associationsC1C1One2One = [...changeSet.associationsByRoleType.get(m.C1.C1C1One2One).values()];
+  const rolesC1C1One2One = [...changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).values()];
+
+  expect(created).toEqual([c1b.strategy]);
+  expect(associationsC1C1One2One).toEqual([c1a.strategy]);
+  expect(rolesC1C1One2One).toEqual([previous.strategy, c1b.strategy]);
 
   await client.pushAsync(session);
   changeSet = session.checkpoint();

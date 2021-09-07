@@ -73,7 +73,7 @@ namespace Allors.Database.Protocol.Json
                                     name ??= propertyType.PluralName;
 
                                     var stepResult = @select.Get(@object, this.acls);
-                                    var objects = stepResult is HashSet<object> set ? set.Cast<IObject>().ToArray() : ((Extent)stepResult)?.ToArray() ?? Array.Empty<IObject>();
+                                    var objects = stepResult is HashSet<object> set ? set.Cast<IObject>().ToArray() : ((IEnumerable<IObject>)stepResult)?.ToArray() ?? Array.Empty<IObject>();
 
                                     if (result.Skip.HasValue || result.Take.HasValue)
                                     {
