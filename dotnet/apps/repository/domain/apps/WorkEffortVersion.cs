@@ -40,7 +40,7 @@ namespace Allors.Repository
         [Id("33ECA579-D79A-488F-A9E5-B760C6DD2E29")]
         #endregion
         [Size(-1)]
-        [Workspace]
+        [Workspace(Default)]
         string Description { get; set; }
 
         #region Allors

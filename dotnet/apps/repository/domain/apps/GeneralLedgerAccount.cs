@@ -28,14 +28,14 @@ namespace Allors.Repository
         [Id("0f57c2f7-eee2-4bf1-a72d-056990634f05")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public string ReferenceCode { get; set; }
 
         #region Allors
         [Id("c0d736c2-f9a4-4647-bb5a-3a088f56a56a")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public string SortCode { get; set; }
 
         #region Allors
@@ -43,7 +43,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string ReferenceNumber { get; set; }
 
         #region Allors
@@ -65,7 +65,7 @@ namespace Allors.Repository
         [Id("f558432e-f572-4a89-ad18-c71d3436c52a")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string SearchCode { get; set; }
 
         #region Allors
@@ -121,7 +121,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public BalanceType BalanceType { get; set; }
 
         #region Allors
@@ -213,7 +213,7 @@ namespace Allors.Repository
         [Id("639f1b51-f5ea-464f-b394-8d70c92f3e17")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public bool Compressed { get; set; }
 
         #region inherited methods

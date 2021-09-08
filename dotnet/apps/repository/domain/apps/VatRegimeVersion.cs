@@ -6,7 +6,7 @@
 namespace Allors.Repository
 {
     using System;
-
+    using static Workspaces;
     using Allors.Repository.Attributes;
 
     #region Allors
@@ -14,6 +14,7 @@ namespace Allors.Repository
     #endregion
     public partial class VatRegimeVersion : Version
     {
+
         #region inherited properties
 
         public Guid DerivationId { get; set; }
@@ -30,7 +31,7 @@ namespace Allors.Repository
         #region Allors
         [Id("b4b5fdc5-7533-4d7e-b91a-80a630ca2ca2")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         public Country Country { get; set; }

@@ -44,7 +44,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public VatRegimeVersion CurrentVersion { get; set; }
 
         #region Allors
@@ -52,14 +52,14 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace]
+        [Workspace(Default)]
         public VatRegimeVersion[] AllVersions { get; set; }
         #endregion
 
         #region Allors
         [Id("71cb2a90-e65e-4a98-a2dd-cb806d7ed0e7")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         public Country Country { get; set; }
@@ -75,7 +75,7 @@ namespace Allors.Repository
         #region Allors
         [Id("8c66f441-be9a-468f-86f7-19fb2cebb51b")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
         public VatRate[] VatRates { get; set; }
@@ -85,7 +85,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public VatSystem VatSystem { get; set; }
 
         #region Allors
@@ -93,7 +93,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public VatBox[] VatBoxes { get; set; }
 
         #region Allors

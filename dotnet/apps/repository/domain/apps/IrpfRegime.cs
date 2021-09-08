@@ -47,7 +47,7 @@ namespace Allors.Repository
         #region Allors
         [Id("bd263133-c785-474e-bdc3-a38226cad2ba")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
         public IrpfRate[] IrpfRates { get; set; }

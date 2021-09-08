@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("0519ac3d-898d-4880-9019-7d47eb650a88")]
@@ -27,7 +28,7 @@ namespace Allors.Repository
         [Id("26e27fd4-b5ce-45ac-9643-52e0537b6601")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string PurchaseInvoiceNumberPrefix { get; set; }
 
         #region Allors
@@ -35,14 +36,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Counter PurchaseInvoiceNumberCounter { get; set; }
 
         #region Allors
         [Id("4a3909c6-3443-425b-89f9-18e3df46d7dd")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string PurchaseOrderNumberPrefix { get; set; }
 
         #region Allors
@@ -50,14 +51,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Counter PurchaseOrderNumberCounter { get; set; }
 
         #region Allors
         [Id("2afe1843-a604-427d-aaf0-486153fe7a96")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string RequestNumberPrefix { get; set; }
 
         #region Allors
@@ -65,13 +66,13 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Counter RequestNumberCounter { get; set; }
 
         #region Allors
         [Id("91c177da-eb89-4d6f-8d51-d8e98e855faa")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Size(256)]
         public string PurchaseShipmentNumberPrefix { get; set; }
 
@@ -80,13 +81,13 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Counter PurchaseShipmentNumberCounter { get; set; }
 
         #region Allors
         [Id("9762a55f-08f0-45a5-93af-9998921994e7")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Size(256)]
         public string CustomerReturnNumberPrefix { get; set; }
 
@@ -95,13 +96,13 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Counter CustomerReturnNumberCounter { get; set; }
 
         #region Allors
         [Id("1486b1ff-ffa4-4bdc-914b-c7b4d86ca020")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Size(256)]
         public string IncomingTransferNumberPrefix { get; set; }
 
@@ -110,14 +111,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Counter IncomingTransferNumberCounter { get; set; }
 
         #region Allors
         [Id("c54b04d9-e38d-410b-9572-a039446fccd0")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string QuoteNumberPrefix { get; set; }
 
         #region Allors
@@ -125,14 +126,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Counter QuoteNumberCounter { get; set; }
 
         #region Allors
         [Id("9de2d2aa-c787-4a3c-9e77-49cd60fb2e27")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string WorkEffortNumberPrefix { get; set; }
 
         #region Allors
@@ -140,7 +141,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Counter WorkEffortNumberCounter { get; set; }
 
         #region inherited methods
