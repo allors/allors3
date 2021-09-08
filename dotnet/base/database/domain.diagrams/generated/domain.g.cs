@@ -768,10 +768,6 @@ namespace Allors.Domain
 		}
 		public interface Data  : Object 
 		{
-						Person AutocompleteFilter {set;}
-
-						Person AutocompleteOptions {set;}
-
 						global::System.Boolean? Checkbox {set;}
 
 						Person[] Chips {set;}
@@ -801,6 +797,28 @@ namespace Allors.Domain
 						global::System.String Markdown {set;}
 
 						global::System.String Html {set;}
+
+						Person AutocompleteFilter {set;}
+
+						Person AutocompleteOptions {set;}
+
+						Person AutocompleteAssignedFilter {set;}
+
+						Person AutocompleteDerivedFilter {set;}
+
+						Person AutocompleteAssignedOptions {set;}
+
+						Person AutocompleteDerivedOptions {set;}
+
+						Person Select {set;}
+
+						Person SelectAssigned {set;}
+
+						Person SelectDerived {set;}
+
+						LocalisedText[] LocalisedTexts {set;}
+
+						LocalisedText[] LocalisedMarkdowns {set;}
 
 		}
 		public interface Dependee  : DerivationCounted 

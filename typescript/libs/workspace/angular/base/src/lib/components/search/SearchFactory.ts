@@ -2,31 +2,23 @@
 import { map } from 'rxjs/operators';
 
 import { RoleType } from '@allors/workspace/meta/system';
-import { IObject, ParameterTypes } from '@allors/workspace/domain/system';
-import { And, Like, Or, Pull, Sort } from '@allors/workspace/domain/system';
-
-import { PullRequest } from '@allors/protocol/json/system';
-
-import { Context } from '../../services/framework/Context';
-import { ContextService } from '../../services/framework/ContextService';
-import { Loaded } from '../../services/framework/responses/Loaded';
+import { IObject, And, Like, Or, Pull, Sort, ISession, TypeForParameter } from '@allors/workspace/domain/system';
 
 import { SearchOptions } from './SearchOptions';
+import { SessionService } from '@allors/workspace/angular/core';
 
 export class SearchFactory {
   constructor(private options: SearchOptions) {}
 
-  public create(
-    contextOrService: Context | ContextService
-  ): (search: string, parameters?: { [id: string]: ParameterTypes }) => Observable<IObject[]> {
-    return (search: string, parameters?: { [id: string]: ParameterTypes }) => {
+  public create(sessionOrSessionService: ISession | SessionService): (search: string, parameters?: { [id: string]: TypeForParameter }) => Observable<IObject[]> {
+    return (search: string, parameters?: { [id: string]: TypeForParameter }) => {
       if (search === undefined || search === null || !search.trim) {
         return EMPTY;
       }
 
       const terms: string[] = search.trim().split(' ');
 
-      const and: And = new And();
+      const and: Partial<And> = {};
 
       if (this.options.post) {
         this.options.post(and);

@@ -39,21 +39,21 @@ partial class Build
         .DependsOn(DotnetCoreGenerate)
         .Executes(() => DotNetTest(s => s
             .SetProjectFile(Paths.DotnetCoreDatabaseMetaTests)
-            .SetLogger("trx;LogFileName=CoreDatabaseMeta.trx")
+            .AddLoggers("trx;LogFileName=CoreDatabaseMeta.trx")
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
     private Target DotnetCoreDatabaseTestDomain => _ => _
         .DependsOn(DotnetCoreGenerate)
         .Executes(() => DotNetTest(s => s
             .SetProjectFile(Paths.DotnetCoreDatabaseDomainTests)
-            .SetLogger("trx;LogFileName=CoreDatabaseDomain.trx")
+            .AddLoggers("trx;LogFileName=CoreDatabaseDomain.trx")
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
     private Target DotnetCoreDatabaseTestServerLocal => _ => _
         .DependsOn(DotnetCoreGenerate)
         .Executes(() => DotNetTest(s => s
             .SetProjectFile(Paths.DotnetCoreDatabaseServerLocalTests)
-            .SetLogger("trx;LogFileName=CoreDatabaseApi.trx")
+            .AddLoggers("trx;LogFileName=CoreDatabaseApi.trx")
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
     private Target DotnetCorePublishCommands => _ => _
@@ -88,7 +88,7 @@ partial class Build
             await server.Ready();
             DotNetTest(s => s
                 .SetProjectFile(Paths.DotnetCoreDatabaseServerRemoteTests)
-                .SetLogger("trx;LogFileName=CoreDatabaseServer.trx")
+                .AddLoggers("trx;LogFileName=CoreDatabaseServer.trx")
                 .SetResultsDirectory(Paths.ArtifactsTests));
         });
 
@@ -108,7 +108,7 @@ partial class Build
             {
                 DotNetTest(s => s
                     .SetProjectFile(Paths.DotnetCoreWorkspaceCSharpTestsLocal)
-                    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTestsLocal.trx")
+                    .AddLoggers("trx;LogFileName=CoreWorkspaceCSharpTestsLocal.trx")
                     .SetResultsDirectory(Paths.ArtifactsTests));
             }
         });
@@ -128,7 +128,7 @@ partial class Build
 
                 DotNetTest(s => s
                     .SetProjectFile(Paths.DotnetCoreWorkspaceCSharpTestsRemoteJsonSystemText)
-                    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTestsRemoteJsonSystemText.trx")
+                    .AddLoggers("trx;LogFileName=CoreWorkspaceCSharpTestsRemoteJsonSystemText.trx")
                     .SetResultsDirectory(Paths.ArtifactsTests));
             }
 
@@ -147,7 +147,7 @@ partial class Build
 
                 DotNetTest(s => s
                     .SetProjectFile(Paths.DotnetCoreWorkspaceCSharpTestsRemoteJsonRestSharp)
-                    .SetLogger("trx;LogFileName=CoreWorkspaceCSharpTestsRemoteJsonRestSharp.trx")
+                    .AddLoggers("trx;LogFileName=CoreWorkspaceCSharpTestsRemoteJsonRestSharp.trx")
                     .SetResultsDirectory(Paths.ArtifactsTests));
             }
         });

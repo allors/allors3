@@ -25,6 +25,7 @@
       "@allors/workspace/angular/core": ["libs/workspace/angular/core/src/index.ts"],
       "@allors/workspace/angular/base": ["libs/workspace/angular/base/src/index.ts"],
       "@allors/workspace/configuration/base": ["libs/workspace/configuration/base/src/index.ts"],
+      "@allors/workspace/configuration/core": ["libs/workspace/configuration/core/src/index.ts"],
       "@allors/workspace/derivations/core": ["libs/workspace/derivations/core/src/index.ts"],
       "@allors/workspace/derivations/base": ["libs/workspace/derivations/base/src/index.ts"],
       "@allors/workspace/derivations/base-custom": ["libs/workspace/derivations/base-custom/src/index.ts"],

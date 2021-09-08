@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, ViewEncapsulation, Optional, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { LocalisedRoleField } from '../../../../components/forms/LocalisedRoleField';
 
 import * as EasyMDE from 'easymde';
 

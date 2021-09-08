@@ -162,7 +162,6 @@ export const routes: Routes = [
           { path: 'organisation/:id', component: OrganisationOverviewComponent },
           { path: 'addorganisation', component: OrganisationComponent },
           { path: 'editorganisation/:id', component: OrganisationComponent },
-
           { path: 'people', component: PeopleComponent },
           { path: 'person/:id', component: PersonOverviewComponent },
           { path: 'addperson', component: PersonComponent },
@@ -282,7 +281,7 @@ export const routes: Routes = [
     {
       provide: AuthenticationConfig,
       useValue: {
-        url: environment.url + environment.authenticationUrl,
+        url: environment.baseUrl + environment.authUrl,
       },
     },
     {
@@ -300,7 +299,7 @@ export const routes: Routes = [
     },
     { provide: AllorsFocusService, useClass: AllorsFocusServiceCore },
     { provide: MediaService, useClass: MediaServiceCore },
-    { provide: MediaConfig, useValue: { url: environment.url } },
+    { provide: MediaConfig, useValue: { url: environment.baseUrl } },
     { provide: NavigationService, useClass: NavigationServiceCore },
     { provide: RefreshService, useClass: RefreshServiceCore },
 

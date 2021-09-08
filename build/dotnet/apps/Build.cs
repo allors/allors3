@@ -29,7 +29,7 @@ partial class Build
         .DependsOn(DotnetAppsGenerate)
         .Executes(() => DotNetTest(s => s
             .SetProjectFile(Paths.DotnetAppsDatabaseDomainTests)
-            .SetLogger("trx;LogFileName=AppsDatabaseDomain.trx")
+            .AddLoggers("trx;LogFileName=AppsDatabaseDomain.trx")
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
     private Target DotnetAppsGenerate => _ => _

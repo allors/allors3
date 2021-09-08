@@ -22,7 +22,7 @@ partial class Build
         .DependsOn(DemosDerivationGenerate)
         .Executes(() => DotNetTest(s => s
             .SetProjectFile(Paths.DemosDerivationDatabaseDomainTests)
-            .SetLogger("trx;LogFileName=next.trx")
+            .AddLoggers("trx;LogFileName=next.trx")
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
     private Target DemosDerivation => _ => _

@@ -10,7 +10,6 @@ namespace Allors.Repository
     using Attributes;
     using static Workspaces;
 
-
     #region Allors
     [Id("0E82B155-208C-41FD-B7D0-731EADBB5338")]
     #endregion
@@ -22,22 +21,6 @@ namespace Allors.Repository
 
         public SecurityToken[] SecurityTokens { get; set; }
         #endregion
-
-        #region Allors
-        [Id("36FA4EB8-5EA9-4F56-B5AA-9908EF2B417F")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace(Default)]
-        public Person AutocompleteFilter { get; set; }
-
-        #region Allors
-        [Id("C1C4D5D9-EEC0-44B5-9317-713E9AB2277E")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace(Default)]
-        public Person AutocompleteOptions { get; set; }
 
         #region Allors
         [Id("46964F62-AF12-4450-83DA-C695C4A0ECE8")]
@@ -65,7 +48,6 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         public Decimal Decimal { get; set; }
-
 
         #region Allors
         [Id("31D0A290-2637-452D-8462-4BBB744E3065")]
@@ -142,6 +124,94 @@ namespace Allors.Repository
         [Size(-1)]
         [MediaType("text/html")]
         public string Html { get; set; }
+
+        #region Allors
+        [Id("36FA4EB8-5EA9-4F56-B5AA-9908EF2B417F")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        public Person AutocompleteFilter { get; set; }
+
+        #region Allors
+        [Id("C1C4D5D9-EEC0-44B5-9317-713E9AB2277E")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        public Person AutocompleteOptions { get; set; }
+
+        #region Allors
+        [Id("7C2CC44F-1BE9-4C1C-9A99-8BC742DA7DEC")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        public Person AutocompleteAssignedFilter { get; set; }
+
+        #region Allors
+        [Id("7624D2D5-E2C7-40E9-A805-AC89A02EAC63")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        public Person AutocompleteDerivedFilter { get; set; }
+
+        #region Allors
+        [Id("EB3F28B4-471E-45C2-B6EF-5F2C3612638A")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        public Person AutocompleteAssignedOptions { get; set; }
+
+        #region Allors
+        [Id("7E1531B0-9328-49CA-96CC-763E4F9877AE")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        public Person AutocompleteDerivedOptions { get; set; }
+
+        #region Allors
+        [Id("5FA4E339-5955-42E7-ABF2-0C3C17F38351")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        public Person Select { get; set; }
+
+        #region Allors
+        [Id("62E43E2D-892B-4A1E-A326-AE508DD10A79")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        public Person SelectAssigned { get; set; }
+
+        #region Allors
+        [Id("D0976E4A-B93F-426C-94B3-BB175900523A")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        public Person SelectDerived { get; set; }
+
+        #region Allors
+        [Id("90BA01A8-5831-484A-818E-2B660F7C3A9A")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        public LocalisedText[] LocalisedTexts { get; set; }
+
+        #region Allors
+        [Id("7AB21625-164A-4686-A59E-5D64013EE9CC")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Workspace(Default)]
+        public LocalisedText[] LocalisedMarkdowns { get; set; }
 
         #region inherited methods
 

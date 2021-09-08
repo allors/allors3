@@ -22,7 +22,7 @@ partial class Build
         .DependsOn(DemosSecurityGenerate)
         .Executes(() => DotNetTest(s => s
             .SetProjectFile(Paths.DemosSecurityDatabaseDomainTests)
-            .SetLogger("trx;LogFileName=security.trx")
+            .AddLoggers("trx;LogFileName=security.trx")
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
     private Target DemosSecurity => _ => _

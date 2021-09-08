@@ -29,7 +29,7 @@ partial class Build
         .DependsOn(DotnetLegacyGenerate)
         .Executes(() => DotNetTest(s => s
             .SetProjectFile(Paths.DotnetLegacyDatabaseDomainTests)
-            .SetLogger("trx;LogFileName=LegacyDatabaseDomain.trx")
+            .AddLoggers("trx;LogFileName=LegacyDatabaseDomain.trx")
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
     private Target DotnetLegacyDatabaseTest => _ => _

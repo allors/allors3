@@ -13,6 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("020f5d4d-4a59-4d7b-865a-d72fc70e4d97")]
     #endregion
+    [Workspace(Default)]
     public partial class LocalisedText : Localised, Deletable, Object
     {
         #region inherited properties
