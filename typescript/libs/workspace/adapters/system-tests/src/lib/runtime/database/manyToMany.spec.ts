@@ -108,7 +108,7 @@ export async function databaseManyToManySetRole() {
 
     const c1b = session.create<C1>(m.C1);
 
-    expect(c1a.canWriteC1C1Many2Manies).toBeFalsy();
+    expect(c1a.CanWriteC1C1Many2Manies).toBeFalsy();
     c1a.addC1C1Many2Many(c1b);
 
     expect(c1a.C1C1Many2Manies).toEqual([]);
@@ -178,7 +178,7 @@ export async function databaseManyToManySetRole() {
 
     await client.pushAsync(session);
 
-    expect(c1a.canWriteC1C1Many2Manies).toBeFalsy();
+    expect(c1a.CanWriteC1C1Many2Manies).toBeFalsy();
     c1a.addC1C1Many2Many(c1b);
 
     expect(c1a.C1C1Many2Manies).toEqual([]);

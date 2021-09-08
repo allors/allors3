@@ -90,7 +90,7 @@ export abstract class Strategy implements IStrategy {
       case Origin.Workspace:
         return this.WorkspaceOriginState?.getUnitRole(roleType) ?? null;
       case Origin.Database:
-        return (this.canRead(roleType) ? this.DatabaseOriginState?.getUnitRole(roleType) : null) ?? null;
+        return (this.CanRead(roleType) ? this.DatabaseOriginState?.getUnitRole(roleType) : null) ?? null;
       default:
         throw new Error('Unknown origin');
     }
@@ -103,7 +103,7 @@ export abstract class Strategy implements IStrategy {
       case Origin.Workspace:
         return (this.WorkspaceOriginState?.getCompositeRole(roleType)?.object as T) ?? null;
       case Origin.Database:
-        return this.canRead(roleType) ? (this.DatabaseOriginState?.getCompositeRole(roleType)?.object as T) ?? null : null;
+        return this.CanRead(roleType) ? (this.DatabaseOriginState?.getCompositeRole(roleType)?.object as T) ?? null : null;
       default:
         throw new Error('Unknown origin');
     }
@@ -116,7 +116,7 @@ export abstract class Strategy implements IStrategy {
       case Origin.Workspace:
         return (this.WorkspaceOriginState?.getCompositesRole(roleType)?.map((v) => v.object) as T[]) ?? (frozenEmptyArray as T[]);
       case Origin.Database:
-        return this.canRead(roleType) ? (this.DatabaseOriginState?.getCompositesRole(roleType)?.map((v) => v.object) as T[]) ?? (frozenEmptyArray as T[]) : (frozenEmptyArray as T[]);
+        return this.CanRead(roleType) ? (this.DatabaseOriginState?.getCompositesRole(roleType)?.map((v) => v.object) as T[]) ?? (frozenEmptyArray as T[]) : (frozenEmptyArray as T[]);
       default:
         throw new Error('Unknown origin');
     }
@@ -143,7 +143,7 @@ export abstract class Strategy implements IStrategy {
         this.WorkspaceOriginState?.setUnitRole(roleType, value);
         break;
       case Origin.Database:
-        if (this.canWrite(roleType)) {
+        if (this.CanWrite(roleType)) {
           this.DatabaseOriginState?.setUnitRole(roleType, value);
         }
 
@@ -173,7 +173,7 @@ export abstract class Strategy implements IStrategy {
         this.WorkspaceOriginState?.setCompositeRole(roleType, value?.strategy as Strategy);
         break;
       case Origin.Database:
-        if (this.canWrite(roleType)) {
+        if (this.CanWrite(roleType)) {
           this.DatabaseOriginState?.setCompositeRole(roleType, value?.strategy as Strategy);
         }
 
@@ -199,7 +199,7 @@ export abstract class Strategy implements IStrategy {
         break;
 
       case Origin.Database:
-        if (this.canWrite(roleType)) {
+        if (this.CanWrite(roleType)) {
           this.DatabaseOriginState?.setCompositesRole(roleType, roleStrategies);
         }
 
@@ -230,7 +230,7 @@ export abstract class Strategy implements IStrategy {
         this.WorkspaceOriginState.addCompositesRole(roleType, value.strategy as Strategy);
         break;
       case Origin.Database:
-        if (this.canWrite(roleType)) {
+        if (this.CanWrite(roleType)) {
           this.DatabaseOriginState.addCompositesRole(roleType, value.strategy as Strategy);
         }
 
@@ -255,7 +255,7 @@ export abstract class Strategy implements IStrategy {
         this.WorkspaceOriginState.removeCompositesRole(roleType, value.strategy as Strategy);
         break;
       case Origin.Database:
-        if (this.canWrite(roleType)) {
+        if (this.CanWrite(roleType)) {
           this.DatabaseOriginState.removeCompositesRole(roleType, value.strategy as Strategy);
         }
 
@@ -292,15 +292,15 @@ export abstract class Strategy implements IStrategy {
   }
 
   canRead(roleType: RoleType): boolean {
-    return roleType.origin === Origin.Database ? this.DatabaseOriginState?.canRead(roleType) ?? true : true;
+    return roleType.origin === Origin.Database ? this.DatabaseOriginState?.CanRead(roleType) ?? true : true;
   }
 
   canWrite(roleType: RoleType): boolean {
-    return roleType.origin === Origin.Database ? this.DatabaseOriginState?.canWrite(roleType) ?? true : true;
+    return roleType.origin === Origin.Database ? this.DatabaseOriginState?.CanWrite(roleType) ?? true : true;
   }
 
   canExecute(methodType: MethodType): boolean {
-    return methodType.origin === Origin.Database ? this.DatabaseOriginState?.canExecute(methodType) ?? false : false;
+    return methodType.origin === Origin.Database ? this.DatabaseOriginState?.CanExecute(methodType) ?? false : false;
   }
 
   isCompositeAssociationForRole(roleType: RoleType, forRole: Strategy): boolean {

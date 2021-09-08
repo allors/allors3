@@ -65,7 +65,7 @@ export async function databaseOneToManySetRole() {
 
           expect(c1y_1).toBeDefined();
 
-          if (!c1x_1.canWriteC1C1Many2Manies) {
+          if (!c1x_1.CanWriteC1C1Many2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
@@ -108,7 +108,7 @@ export async function databaseOneToManySetRoleToNull() {
 
           expect(c1y_1).toBeDefined();
 
-          if (!c1x_1.canWriteC1C1Many2Manies) {
+          if (!c1x_1.CanWriteC1C1Many2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
@@ -119,7 +119,7 @@ export async function databaseOneToManySetRoleToNull() {
 
           await push(session1);
 
-          if (!c1x_1.canWriteC1C1Many2Manies) {
+          if (!c1x_1.CanWriteC1C1Many2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
@@ -162,7 +162,7 @@ export async function databaseOneToManyRemoveRole() {
 
           expect(c1y_1).toBeDefined();
 
-          if (!c1x_1.canWriteC1C1Many2Manies) {
+          if (!c1x_1.CanWriteC1C1Many2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
@@ -170,7 +170,7 @@ export async function databaseOneToManyRemoveRole() {
 
           await push(session1);
 
-          if (!c1x_1.canWriteC1C1Many2Manies) {
+          if (!c1x_1.CanWriteC1C1Many2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
@@ -211,7 +211,7 @@ export async function databaseOneToManyRemoveNullRole() {
 
           expect(c1y_1).toBeDefined();
 
-          if (!c1x_1.canWriteC1C1Many2Manies) {
+          if (!c1x_1.CanWriteC1C1Many2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
@@ -219,7 +219,7 @@ export async function databaseOneToManyRemoveNullRole() {
 
           await push(session1);
 
-          if (!c1x_1.canWriteC1C1Many2Manies) {
+          if (!c1x_1.CanWriteC1C1Many2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
@@ -235,7 +235,7 @@ export async function databaseOneToManyRemoveNullRole() {
           expect(c1x_1.C1C1One2Manies).toContain(c1y_1);
           expect(c1y_1.C1WhereC1C1One2Many).toBe(c1x_1);
 
-          if (!c1x_1.canWriteC1C1Many2Manies) {
+          if (!c1x_1.CanWriteC1C1Many2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 

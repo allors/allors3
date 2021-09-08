@@ -34,13 +34,13 @@ export class PrototypeObjectFactory implements IObjectFactory {
       objectType.roleTypes.forEach((roleType) => {
         Object.defineProperty(prototype, 'canRead' + roleType.name, {
           get(this: ObjectBase) {
-            return this.strategy.canRead(roleType);
+            return this.strategy.CanRead(roleType);
           },
         });
 
         Object.defineProperty(prototype, 'canWrite' + roleType.name, {
           get(this: ObjectBase) {
-            return this.strategy.canWrite(roleType);
+            return this.strategy.CanWrite(roleType);
           },
         });
 
@@ -96,7 +96,7 @@ export class PrototypeObjectFactory implements IObjectFactory {
       objectType.methodTypes.forEach((methodType) => {
         Object.defineProperty(prototype, 'canExecute' + methodType.name, {
           get(this: ObjectBase) {
-            return this.strategy.canExecute(methodType);
+            return this.strategy.CanExecute(methodType);
           },
         });
 
