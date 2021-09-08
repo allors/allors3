@@ -64,7 +64,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffortPartStandard[] CurrentWorkEffortPartStandards { get; set; }
 
         #region Allors
@@ -74,7 +74,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public WorkEffortPartStandard[] InactiveWorkEffortPartStandards { get; set; }
 
         #region Allors
@@ -115,7 +115,7 @@ namespace Allors.Repository
         [Precision(19)]
         [Scale(2)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public decimal StandardWorkHours { get; set; }
 
         #region Allors
@@ -141,7 +141,7 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public int MonthlyTimeInterval { get; set; }
 
         #region Allors
@@ -151,7 +151,7 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public int OperatingHoursInterval { get; set; }
 
         #region inherited methods

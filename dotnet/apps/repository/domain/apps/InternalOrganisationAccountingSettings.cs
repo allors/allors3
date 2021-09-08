@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("9a26bc0a-87ba-4567-8558-43afea82076b")]
@@ -24,13 +25,13 @@ namespace Allors.Repository
         #region Allors
         [Id("9877ddf0-ddd7-40d0-a81e-b3102f2252af")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public int FiscalYearStartMonth { get; set; }
 
         #region Allors
         [Id("61dfb7f8-2c22-4808-8b38-17303e57c3d6")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         public int FiscalYearStartDay { get; set; }
 
         #region Allors
@@ -38,7 +39,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Counter SubAccountCounter { get; set; }
 
         #region Allors
@@ -47,7 +48,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public AccountingPeriod ActualAccountingPeriod { get; set; }
 
         #region Allors
@@ -55,7 +56,7 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
-        [Workspace]
+        [Workspace(Default)]
         public decimal MaximumAllowedPaymentDifference { get; set; }
 
         #region Allors
@@ -63,7 +64,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public CostCenterSplitMethod CostCenterSplitMethod { get; set; }
 
         #region Allors
@@ -71,7 +72,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public GeneralLedgerAccount SalesPaymentDifferencesAccount { get; set; }
 
         #region Allors
@@ -79,7 +80,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public GeneralLedgerAccount SalesPaymentDiscountDifferencesAccount { get; set; }
 
         #region Allors
@@ -87,7 +88,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public GeneralLedgerAccount PurchasePaymentDifferencesAccount { get; set; }
 
         #region Allors
@@ -95,7 +96,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public GeneralLedgerAccount PurchasePaymentDiscountDifferencesAccount { get; set; }
 
         #region Allors
@@ -103,7 +104,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public GeneralLedgerAccount RetainedEarningsAccount { get; set; }
 
         #region Allors
@@ -111,7 +112,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public GeneralLedgerAccount SuspenceAccount { get; set; }
 
         #region Allors
@@ -119,7 +120,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public GeneralLedgerAccount NetIncomeAccount { get; set; }
 
         #region Allors
@@ -127,7 +128,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public GeneralLedgerAccount CalculationDifferencesAccount { get; set; }
 
         #region Allors
@@ -135,7 +136,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public RgsFilter[] RgsFilters { get; set; }
 
         #region inherited methods

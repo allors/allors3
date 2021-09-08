@@ -67,7 +67,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
         [Derived]
-        [Workspace]
+        [Workspace(Default)]
         public VatRegime[] DerivedVatRegimes { get; set; }
 
         #region Allors

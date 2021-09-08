@@ -7,6 +7,7 @@ namespace Allors.Repository
 {
     using System;
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     [Id("51d4dbfb-98ef-4f38-836a-5948701c4cce")]
     public partial class ExchangeRate : Object, Deletable
@@ -23,7 +24,7 @@ namespace Allors.Repository
         [Id("d7beea67-7239-4ad8-a31d-c0850ed00b00")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public DateTime ValidFrom { get; set; }
 
         #region Allors
@@ -32,7 +33,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Currency FromCurrency { get; set; }
 
         #region Allors
@@ -41,14 +42,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         public Currency ToCurrency { get; set; }
 
         #region Allors
         [Id("dad55248-a724-4be0-891a-51aec803f2d8")]
         #endregion
         [Required]
-        [Workspace]
+        [Workspace(Default)]
         [Precision(28)]
         [Scale(10)]
         public decimal Rate { get; set; }

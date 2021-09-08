@@ -408,7 +408,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace]
+        [Workspace(Default)]
         public SalesInvoice CreditedFromInvoice { get; set; }
 
         #region Allors

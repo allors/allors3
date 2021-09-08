@@ -6,6 +6,7 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("341fa885-0161-406b-89e6-08b1c92cd3b3")]
@@ -27,7 +28,7 @@ namespace Allors.Repository
         [Id("e5c02d81-e0de-412b-91ad-5da3342a749c")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string SalesInvoiceNumberPrefix { get; set; }
 
         #region Allors
@@ -49,7 +50,7 @@ namespace Allors.Repository
         [Id("fe09d5c7-c750-47e1-8430-ee57bc30ae40")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string CreditNoteNumberPrefix { get; set; }
 
         #region Allors
@@ -71,7 +72,7 @@ namespace Allors.Repository
         [Id("74fd1e41-11c6-4d40-9108-554314b53d12")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string CustomerShipmentNumberPrefix { get; set; }
 
         #region Allors
@@ -86,7 +87,7 @@ namespace Allors.Repository
         [Id("158d714e-17db-4368-a405-b52f86b1cbf8")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string PurchaseReturnNumberPrefix { get; set; }
 
         #region Allors
@@ -100,7 +101,7 @@ namespace Allors.Repository
         [Id("269acd27-f842-4dfc-a77a-c21233612c2d")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string DropShipmentNumberPrefix { get; set; }
 
         #region Allors
@@ -114,7 +115,7 @@ namespace Allors.Repository
         [Id("84b0407b-70cc-42f5-a1e7-448360d6e1be")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string OutgoingTransferNumberPrefix { get; set; }
 
         #region Allors
@@ -128,7 +129,7 @@ namespace Allors.Repository
         [Id("4657bfc5-c276-44fa-a8ac-dbff2d046701")]
         #endregion
         [Size(256)]
-        [Workspace]
+        [Workspace(Default)]
         public string SalesOrderNumberPrefix { get; set; }
 
         #region Allors

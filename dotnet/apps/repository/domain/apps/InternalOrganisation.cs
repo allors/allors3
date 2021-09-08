@@ -68,7 +68,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         RequestSequence RequestSequence { get; set; }
 
         #region Allors
@@ -76,7 +76,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         QuoteSequence QuoteSequence { get; set; }
 
         #region Allors
@@ -84,7 +84,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         CustomerShipmentSequence CustomerShipmentSequence { get; set; }
 
         #region Allors
@@ -92,7 +92,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         CustomerReturnSequence CustomerReturnSequence { get; set; }
 
         #region Allors
@@ -100,7 +100,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         PurchaseShipmentSequence PurchaseShipmentSequence { get; set; }
 
         #region Allors
@@ -108,7 +108,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         PurchaseReturnSequence PurchaseReturnSequence { get; set; }
 
         #region Allors
@@ -116,7 +116,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         DropShipmentSequence DropShipmentSequence { get; set; }
 
         #region Allors
@@ -124,7 +124,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         IncomingTransferSequence IncomingTransferSequence { get; set; }
 
         #region Allors
@@ -132,7 +132,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         OutgoingTransferSequence OutgoingTransferSequence { get; set; }
 
         #region Allors
@@ -140,7 +140,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         WorkEffortSequence WorkEffortSequence { get; set; }
 
         #region Allors
@@ -192,7 +192,7 @@ namespace Allors.Repository
         #region Allors
         [Id("280df890-7f5d-4ba9-9225-f22526e5883c")]
         #endregion
-        [Workspace]
+        [Workspace(Default)]
         [Size(256)]
         public string IncomingTransferNumberPrefix { get; set; }
 
@@ -201,7 +201,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         public Counter IncomingTransferNumberCounter { get; set; }
 
         #region Allors
@@ -224,7 +224,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         InternalOrganisationAccountingSettings SettingsForAccounting { get; set; }
 
         #region Allors
@@ -485,7 +485,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Workspace]
+        [Workspace(Default)]
         Country Country { get; set; }
 
         #region inherited methods
