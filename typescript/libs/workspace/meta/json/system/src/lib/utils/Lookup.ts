@@ -8,6 +8,8 @@ export class Lookup {
   r: Set<number>;
   u: Set<number>;
   t: Map<number, string>;
+  or: Map<number, number[]>;
+  ou: Map<number, number[]>;
 
   constructor(data: MetaData) {
     this.m = new Map();
@@ -30,6 +32,20 @@ export class Lookup {
     if (data.t) {
       for (const mediaType in data.t) {
         data.t[mediaType].forEach((v) => this.t.set(v, mediaType));
+      }
+    }
+
+    this.or = new Map();
+    if (data.or) {
+      for (const [classTag, roleTypeTags] of data.or) {
+        this.or.set(classTag, roleTypeTags);
+      }
+    }
+
+    this.ou = new Map();
+    if (data.ou) {
+      for (const [classTag, roleTypeTags] of data.or) {
+        this.or.set(classTag, roleTypeTags);
       }
     }
   }

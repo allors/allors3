@@ -15,6 +15,8 @@ export interface IStrategy {
 
   version: number;
 
+  isNew: IObject;
+
   reset(): void;
 
   diff(): IDiff[];
@@ -26,6 +28,8 @@ export interface IStrategy {
   canExecute(methodType: MethodType): boolean;
 
   existRole(roleType: RoleType): boolean;
+
+  hasChangedRole(roleType: RoleType);
 
   getRole(roleType: RoleType): unknown;
 

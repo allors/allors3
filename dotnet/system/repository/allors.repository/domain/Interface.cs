@@ -9,10 +9,11 @@ namespace Allors.Repository.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Inflector;
 
     public class Interface : Composite
     {
-        public Interface(Inflector.Inflector inflector, Guid id, string name)
+        public Interface(Inflector inflector, Guid id, string name)
             : base(inflector, id, name)
         {
             this.PartialByDomainName = new Dictionary<string, PartialInterface>();

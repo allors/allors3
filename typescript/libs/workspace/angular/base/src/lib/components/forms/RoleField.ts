@@ -1,9 +1,9 @@
 // tslint:disable: directive-selector
 // tslint:disable: directive-class-suffix
-import { AfterViewInit, Component, Input, OnDestroy, QueryList, ViewChildren, Directive } from '@angular/core';
+import { AfterViewInit, Input, OnDestroy, QueryList, ViewChildren, Directive } from '@angular/core';
 import { NgForm, NgModel } from '@angular/forms';
 
-import { RoleType, assert, humanize } from '@allors/workspace/meta/system';
+import { RoleType, humanize, UnitTags } from '@allors/workspace/meta/system';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { Field } from './Field';
@@ -67,16 +67,16 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
   get model(): any {
     if (this.ExistObject) {
       if (this.assignedRoleType) {
-        if (this.object.hasChangedRole(this.assignedRoleType)) {
-          return this.object.get(this.assignedRoleType);
+        if (this.object.strategy.hasChangedRole(this.assignedRoleType)) {
+          return this.object.strategy.getRole(this.assignedRoleType);
         }
 
-        if (this.object.isNew && this.derivedInitialRole) {
+        if (this.object.strategy.isNew && this.derivedInitialRole) {
           return this.derivedInitialRole;
         }
       }
 
-      return this.object.get(this.roleType);
+      return this.object.strategy.getRole(this.roleType);
     }
 
     return undefined;
@@ -94,32 +94,32 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
         }
       }
 
-      if (this.roleType.objectType.isDecimal) {
+      if (this.roleType.objectType.tag == UnitTags.Decimal) {
         value = (value as string)?.replace(',', '.');
       }
 
       if (this.assignedRoleType) {
-        if (this.object.isNew && this.derivedInitialRole && this.derivedInitialRole === value) {
-          this.object.set(this.assignedRoleType, null);
+        if (this.object.strategy.isNew && this.derivedInitialRole && this.derivedInitialRole === value) {
+          this.object.strategy.setRole(this.assignedRoleType, null);
         } else {
-          this.object.set(this.assignedRoleType, value);
+          this.object.strategy.setRole(this.assignedRoleType, value);
         }
       } else {
-        this.object.set(this.roleType, value);
+        this.object.strategy.setRole(this.roleType, value);
       }
     }
   }
 
   get canRead(): boolean | undefined {
-    return this.object?.canRead(this.roleType);
+    return this.object?.strategy.canRead(this.roleType);
   }
 
   get canWrite(): boolean | undefined {
-    return this.object?.canWrite(this.assignedRoleType ?? this.roleType);
+    return this.object?.strategy.canWrite(this.assignedRoleType ?? this.roleType);
   }
 
   get textType(): string {
-    if (this.roleType.objectType.name === 'Integer' || this.roleType.objectType.name === 'Float') {
+    if (this.roleType.objectType.tag == UnitTags.Integer || this.roleType.objectType.tag == UnitTags.Float) {
       return 'number';
     }
 
@@ -151,27 +151,27 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
   }
 
   get canRestore(): boolean {
-    return this.ExistObject && this.assignedRoleType && this.object.hasChangedRole(this.assignedRoleType);
+    return this.ExistObject && this.assignedRoleType && this.object.strategy.hasChangedRole(this.assignedRoleType);
   }
 
   restore(): void {
-    this.ExistObject && this.object?.restoreRole(this.assignedRoleType);
+    this.ExistObject && this.object?.strategy.restoreRole(this.assignedRoleType);
   }
 
   public add(value: IObject) {
     if (this.ExistObject) {
-      this.object.add(this.roleType, value);
+      this.object.strategy.addCompositesRole(this.roleType, value);
     }
   }
 
   public remove(value: IObject) {
     if (this.ExistObject) {
-      this.object.remove(this.roleType, value);
+      this.object.strategy.removeCompositesRole(this.roleType, value);
     }
   }
 
   public ngAfterViewInit(): void {
-    if (!!this.parentForm) {
+    if (this.parentForm) {
       this.controls.forEach((control: NgModel) => {
         this.parentForm.addControl(control);
       });
@@ -179,18 +179,18 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
   }
 
   public ngOnDestroy(): void {
-    if (!!this.parentForm) {
+    if (this.parentForm) {
       this.controls.forEach((control: NgModel) => {
         this.parentForm.removeControl(control);
       });
     }
   }
 
-  get dataAllorsId(): string {
+  get dataAllorsId(): number {
     return this.object?.id;
   }
 
-  get dataAllorsRoleType(): string {
-    return this.roleType.id;
+  get dataAllorsRoleType(): number {
+    return this.roleType.relationType.tag;
   }
 }

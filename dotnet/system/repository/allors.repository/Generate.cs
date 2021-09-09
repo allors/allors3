@@ -9,13 +9,10 @@ namespace Allors.Repository.Roslyn
 {
     using System.IO;
     using System.Linq;
-
-    using Repository;
-    using Domain;
-    using Generation;
-
     using Buildalyzer;
     using Buildalyzer.Workspaces;
+    using Domain;
+    using Generation;
 
     public class Generate
     {

@@ -9,6 +9,10 @@ namespace Allors.Database.Meta
 
     public partial interface IClassBase : ICompositeBase, IClass
     {
+        void DeriveRequiredRoleTypes();
+
+        void DeriveUniqueRoleTypes();
+
         void DeriveWorkspaceNames(HashSet<string> workspaceNames);
     }
 }

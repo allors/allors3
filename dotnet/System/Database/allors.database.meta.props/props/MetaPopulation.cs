@@ -470,6 +470,13 @@ namespace Allors.Database.Meta
                         type.DeriveMethodTypes(sharedMethodTypeList, methodTypeByClass);
                     }
 
+                    // Required and Unique RoleTypes
+                    foreach (var @class in this.classes)
+                    {
+                        @class.DeriveRequiredRoleTypes();
+                        @class.DeriveUniqueRoleTypes();
+                    }
+
                     // WorkspaceNames
                     var workspaceNames = new HashSet<string>();
                     foreach (var @class in this.classes)

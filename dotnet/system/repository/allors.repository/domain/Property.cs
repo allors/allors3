@@ -8,13 +8,14 @@ namespace Allors.Repository.Domain
 {
     using System;
     using System.Collections.Generic;
+    using Inflector;
     using Text;
 
     public class Property
     {
-        private readonly Inflector.Inflector inflector;
+        private readonly Inflector inflector;
 
-        public Property(Inflector.Inflector inflector, Composite definingType, string name)
+        public Property(Inflector inflector, Composite definingType, string name)
         {
             this.AttributeByName = new Dictionary<string, Attribute>();
             this.AttributesByName = new Dictionary<string, Attribute[]>();
@@ -36,6 +37,10 @@ namespace Allors.Repository.Domain
         }
 
         public Origin Origin => (Origin)(int)(((dynamic)this.AttributeByName.Get(AttributeNames.Origin))?.Value ?? Origin.Database);
+
+        public bool Required => (bool)(((dynamic)this.AttributeByName.Get(AttributeNames.Required))?.Value ?? false);
+
+        public bool Unique => (bool)(((dynamic)this.AttributeByName.Get(AttributeNames.Unique))?.Value ?? false);
 
         public bool HasDatabaseOrigin => this.Origin == Origin.Database;
 
@@ -116,11 +121,9 @@ namespace Allors.Repository.Domain
                 {
                     return this.RoleName;
                 }
-                else
-                {
-                    dynamic attribute = this.AttributeByName.Get("Singular");
-                    return attribute != null ? attribute.Value : this.inflector.Singularize(this.RoleName);
-                }
+
+                dynamic attribute = this.AttributeByName.Get("Singular");
+                return attribute != null ? attribute.Value : this.inflector.Singularize(this.RoleName);
             }
         }
 
@@ -134,11 +137,9 @@ namespace Allors.Repository.Domain
                 {
                     return this.RoleName;
                 }
-                else
-                {
-                    dynamic attribute = this.AttributeByName.Get("Plural");
-                    return attribute != null ? attribute.Value : this.inflector.Pluralize(this.RoleName);
-                }
+
+                dynamic attribute = this.AttributeByName.Get("Plural");
+                return attribute != null ? attribute.Value : this.inflector.Pluralize(this.RoleName);
             }
         }
 
@@ -152,10 +153,8 @@ namespace Allors.Repository.Domain
                 {
                     return this.DefiningType.PluralName + "Where" + this.RoleSingularName;
                 }
-                else
-                {
-                    return this.DefiningType.SingularName + "Where" + this.RoleSingularName;
-                }
+
+                return this.DefiningType.SingularName + "Where" + this.RoleSingularName;
             }
         }
 

@@ -1,4 +1,4 @@
-﻿// <copyright file="Program.cs" company="Allors bvba">
+// <copyright file="Program.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -7,11 +7,9 @@ namespace Allors.Tools.Cmd
 {
     using System;
     using System.IO;
-
-    using Repository;
-    using Allors.Repository.Roslyn;
-
     using NLog;
+    using Repository;
+    using Repository.Roslyn;
 
     public class Program
     {

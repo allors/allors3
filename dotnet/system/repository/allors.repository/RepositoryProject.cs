@@ -11,12 +11,9 @@ namespace Allors.Repository.Roslyn
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-
+    using System.Reflection;
     using Domain;
-
     using Microsoft.CodeAnalysis;
-
-    using Document = Microsoft.CodeAnalysis.Document;
 
     internal class RepositoryProject
     {
@@ -24,7 +21,7 @@ namespace Allors.Repository.Roslyn
         {
             this.Project = project;
             this.Solution = project.Solution;
-            
+
             // compilation = compilation.AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location));
             this.Compilation = project.GetCompilationAsync().Result;
 
@@ -47,11 +44,9 @@ namespace Allors.Repository.Roslyn
                     var text = string.Join("\n", failures.Select(x => x.Id + ": " + x.GetMessage()));
                     throw new Exception(text);
                 }
-                else
-                {
-                    ms.Seek(0, SeekOrigin.Begin);
-                    this.Assembly = System.Reflection.Assembly.Load(ms.ToArray());
-                }
+
+                ms.Seek(0, SeekOrigin.Begin);
+                this.Assembly = Assembly.Load(ms.ToArray());
             }
         }
 
@@ -69,6 +64,6 @@ namespace Allors.Repository.Roslyn
 
         public INamedTypeSymbol ExtendAttributeType { get; }
 
-        public System.Reflection.Assembly Assembly { get; set; }
+        public Assembly Assembly { get; set; }
     }
 }

@@ -11,11 +11,9 @@ namespace Allors.Repository.Generation
     using System;
     using System.IO;
     using System.Xml;
-    using Domain;
-
     using Antlr4.StringTemplate;
     using Antlr4.StringTemplate.Misc;
-
+    using Domain;
     using NLog;
 
     public class StringTemplate

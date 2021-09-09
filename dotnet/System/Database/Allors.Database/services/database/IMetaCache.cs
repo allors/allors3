@@ -11,10 +11,6 @@ namespace Allors.Database.Services
 
     public interface IMetaCache
     {
-        IRoleType[] GetRequiredRoleTypes(IClass @class);
-
-        IRoleType[] GetUniqueRoleTypes(IClass @class);
-
         Type GetBuilderType(IClass @class);
 
         ISet<IClass> GetWorkspaceClasses(string workspaceName);

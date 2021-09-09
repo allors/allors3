@@ -54,12 +54,12 @@ namespace Allors.Database.Domain
             var @class = (Class)@this.Strategy.Class;
             var metaService = @this.Strategy.Transaction.Database.Services.Get<IMetaCache>();
 
-            foreach (var roleType in metaService.GetRequiredRoleTypes(@class))
+            foreach (var roleType in @class.RequiredRoleTypes)
             {
                 derivation.Validation.AssertExists(@this, roleType);
             }
 
-            foreach (var roleType in metaService.GetUniqueRoleTypes(@class))
+            foreach (var roleType in @class.UniqueRoleTypes)
             {
                 derivation.Validation.AssertIsUnique(derivation.ChangeSet, @this, roleType);
             }

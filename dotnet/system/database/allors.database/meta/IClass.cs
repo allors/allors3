@@ -11,5 +11,13 @@ namespace Allors.Database.Meta
     public interface IClass : IComposite
     {
         Action<object, object>[] Actions(IMethodType methodType);
+
+        IRoleType[] OverriddenRequiredRoleTypes { get; set; }
+
+        IRoleType[] OverriddenUniqueRoleTypes { get; set; }
+
+        IRoleType[] RequiredRoleTypes { get; }
+
+        IRoleType[] UniqueRoleTypes { get; }
     }
 }

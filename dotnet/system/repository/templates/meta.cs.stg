@@ -312,10 +312,13 @@ $repository.Composites:{composite|$define_methods(composite)$}; separator="\n"$
             this.BuildRelationTypes(meta, domains, relationTypes);
             this.BuildMethodTypes(meta, domains, methodTypes);
 
-$repository.Domains:{assembly|             this.Build$assembly.Name$(meta, domains, relationTypes, methodTypes);}; separator="\n"$
+            this.OverrideRequired(meta, relationTypes);
+            this.OverrideUnique(meta, relationTypes);
 
             this.AssignPropertyTypes(meta, relationTypes);
             this.AssignMethodTypes(meta, methodTypes);
+
+$repository.Domains:{assembly|             this.Build$assembly.Name$(meta, domains, relationTypes, methodTypes);}; separator="\n"$
 
             return meta;
         }
@@ -361,6 +364,16 @@ $repository.Composites:{composite|$relations(composite)$}; separator="\n"$
 		{
 $repository.Composites:{composite|$build_methods(composite)$}; separator="\n"$
 		}
+
+        private void OverrideRequired(MetaPopulation meta, RelationTypes relationTypes)
+        {
+$repository.Classes:{class|$override_required(class)$}; separator="\n"$
+        }
+
+        private void OverrideUnique(MetaPopulation meta, RelationTypes relationTypes)
+        {
+$repository.Classes:{class|$override_unique(class)$}; separator="\n"$
+        }
 
         private void AssignPropertyTypes(MetaPopulation meta, RelationTypes relationTypes)
         {
@@ -467,6 +480,14 @@ $if(property.AttributeByName.MediaType)$		        MediaType = "$property.Attribu
             };
         }
 >>
+
+override_required(class) ::= <<$if(class.InheritedRequiredProperties)$
+            meta.$class.SingularName$.OverriddenRequiredRoleTypes = new []{$class.InheritedRequiredProperties:{property|relationTypes.$property.DefiningProperty.DefiningType.SingularName$$property.RoleName$.RoleType}; separator=", "$}; 
+$endif$>>
+
+override_unique(class) ::= <<$if(class.InheritedUniqueProperties)$
+            meta.$class.SingularName$.OverriddenUniqueRoleTypes = new []{$class.InheritedUniqueProperties:{property|relationTypes.$property.DefiningProperty.DefiningType.SingularName$$property.RoleName$.RoleType}; separator=", "$}; 
+$endif$>>
 
 assign_properties(composite) ::= <<
 $composite.DefinedProperties:{property|$assign_propertyType(property)$}; separator="\n"$

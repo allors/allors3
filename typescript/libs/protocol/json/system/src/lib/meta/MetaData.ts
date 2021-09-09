@@ -47,4 +47,14 @@ export interface MetaData {
    * MediaType
    */
   t?: { [name: string]: number[] };
+
+  /**
+   * Overriden Required
+   */
+  or?: [number, number[]][];
+
+  /**
+   * Overriden Unique
+   */
+  ou?: [number, number[]][];
 }

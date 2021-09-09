@@ -9,13 +9,14 @@ namespace Allors.Repository.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Inflector;
     using Text;
 
     public abstract class Composite : Type
     {
-        private readonly Inflector.Inflector inflector;
+        private readonly Inflector inflector;
 
-        protected Composite(Inflector.Inflector inflector, Guid id, string name)
+        protected Composite(Inflector inflector, Guid id, string name)
             : base(id, name)
         {
             this.inflector = inflector;

@@ -65,7 +65,9 @@ $meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{objectType|$data_object
   t:
   {
     $meta._.WorkspaceMediaTagsByMediaTypeNameByWorkspaceName.(workspaceName):{mediaTypeName|"$mediaTypeName$": [$data_mediaType(mediaTypeName)$]}; separator=",\n"$
-  }
+  },
+  or: [$meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{objectType|$data_overridden_required(objectType)$}; separator=""$],
+  ou: [$meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{objectType|$data_overridden_unique(objectType)$}; separator=""$],
 }
 
 >>
@@ -91,3 +93,11 @@ data_methodType(methodType) ::= <<[$methodType._.Tag$, "$methodType._.Name$"]>>
 data_origin(metaObject) ::= <<$if(!metaObject.IsDefaultOrigin)$$metaObject.Tag$$endif$>>
 
 data_mediaType(mediaTypeName) ::= <<$meta._.WorkspaceMediaTagsByMediaTypeNameByWorkspaceName.(workspaceName).(mediaTypeName):{tag|$tag$}; separator=","$>>
+
+data_overridden_required(objectType) ::= <<$if(objectType._.WorkspaceOverriddenRequiredByWorkspaceName.(workspaceName))$
+    [$objectType._.Tag$, [$objectType._.WorkspaceOverriddenRequiredByWorkspaceName.(workspaceName):{roleType|$roleType._.RelationType._.tag$}; separator=","$]],
+$endif$>>
+
+data_overridden_unique(objectType) ::= <<$if(objectType._.WorkspaceOverriddenUniqueByWorkspaceName.(workspaceName))$
+    [$objectType._.Tag$, [$objectType._.WorkspaceOverriddenUniqueByWorkspaceName.(workspaceName):{roleType|$roleType._.RelationType._.tag$}; separator=","$]],
+$endif$>>

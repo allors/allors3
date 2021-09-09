@@ -9,10 +9,11 @@ namespace Allors.Repository.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Inflector;
 
     public class Class : Composite
     {
-        public Class(Inflector.Inflector inflector, Guid id, string name)
+        public Class(Inflector inflector, Guid id, string name)
             : base(inflector, id, name) =>
             this.PartialByDomainName = new Dictionary<string, PartialClass>();
 
@@ -72,5 +73,9 @@ namespace Allors.Repository.Domain
 
             return null;
         }
+
+        public Property[] InheritedRequiredProperties => this.InheritedProperties.Where(v => v.Required).ToArray();
+
+        public Property[] InheritedUniqueProperties => this.InheritedProperties.Where(v => v.Unique).ToArray();
     }
 }

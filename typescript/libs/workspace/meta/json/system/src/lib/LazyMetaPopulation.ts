@@ -42,6 +42,8 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
     this.composites.forEach((v) => v.deriveOperand());
     this.composites.forEach((v) => v.deriveOriginRoleType());
     this.composites.forEach((v) => v.derivePropertyTypeByPropertyName());
+    this.classes.forEach((v) => v.deriveOverridden(lookup));
+
 
     this['treeBuilder'] = new LazyTreeBuilder(this);
 

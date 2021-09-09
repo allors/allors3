@@ -12,14 +12,11 @@ namespace Allors.Repository.Domain
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using Roslyn;
-
     using Inflector;
-
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-
     using NLog;
+    using Roslyn;
 
     public class Repository
     {
