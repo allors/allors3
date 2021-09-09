@@ -2,7 +2,7 @@
 import { map } from 'rxjs/operators';
 
 import { RoleType } from '@allors/workspace/meta/system';
-import { IObject, And, Like, Or, Pull, Sort, ISession, TypeForParameter } from '@allors/workspace/domain/system';
+import { IObject, And, Or, TypeForParameter, IPullResult, Like, Pull, Sort } from '@allors/workspace/domain/system';
 
 import { SearchOptions } from './SearchOptions';
 import { SessionService } from '@allors/workspace/angular/core';
@@ -10,7 +10,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 export class SearchFactory {
   constructor(private options: SearchOptions) {}
 
-  public create(sessionOrSessionService: ISession | SessionService): (search: string, parameters?: { [id: string]: TypeForParameter }) => Observable<IObject[]> {
+  public create(sessionService: SessionService): (search: string, parameters?: { [id: string]: TypeForParameter }) => Observable<IObject[]> {
     return (search: string, parameters?: { [id: string]: TypeForParameter }) => {
       if (search === undefined || search === null || !search.trim) {
         return EMPTY;
@@ -18,7 +18,7 @@ export class SearchFactory {
 
       const terms: string[] = search.trim().split(' ');
 
-      const and: Partial<And> = {};
+      const and: And = { kind: 'And', operands: [] };
 
       if (this.options.post) {
         this.options.post(and);
@@ -31,30 +31,46 @@ export class SearchFactory {
       }
 
       terms.forEach((term: string) => {
-        const or: Or = new Or();
+        const or: Or = { kind: 'Or', operands: [] };
         and.operands.push(or);
         this.options.roleTypes.forEach((roleType: RoleType) => {
-          or.operands.push(new Like({ roleType, value: '%' + term + '%' }));
+          const like: Like = { kind: 'Like', roleType, value: '%' + term + '%' };
+          or.operands.push(like);
         });
       });
 
-      const pulls = [
-        new Pull(this.options.objectType, {
-          name: 'results',
-          predicate: and,
-          sort: this.options.roleTypes.map((roleType: RoleType) => new Sort({ roleType })),
-          parameters,
-          include: this.options.include,
-        }),
+      const pulls: Pull[] = [
+        {
+          extent: {
+            kind: 'Filter',
+            objectType: this.options.objectType,
+            predicate: and,
+            sorting: this.options.roleTypes.map((roleType: RoleType) => {
+              return {
+                roleType,
+              };
+            }),
+          },
+          results: [
+            {
+              name: 'results',
+              include: this.options.include,
+            },
+          ],
+          arguments: parameters,
+        },
       ];
 
-      const context = contextOrService instanceof Context ? contextOrService : contextOrService.context;
+      const { session, client } = sessionService;
 
-      return context.load(new PullRequest({ pulls })).pipe(
+      return client.pullReactive(session, pulls).pipe(
         map((loaded: IPullResult) => {
-          return loaded.collections.results;
+          return loaded.collection<IObject>('results');
         })
       );
     };
   }
+}
+function Sort(arg0: (roleType: RoleType) => void, as: any, Sort: any): import('@allors/workspace/domain/system').Sort[] {
+  throw new Error('Function not implemented.');
 }

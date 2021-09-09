@@ -3,7 +3,7 @@ import { NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 
 import { IObject } from '@allors/workspace/domain/system';
-import { Media } from '@allors/workspace/domain/base';
+import { Media } from '@allors/workspace/domain/default';
 
 import { MediaService } from '../../../services/media/media.service';
 

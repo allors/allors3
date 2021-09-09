@@ -1,4 +1,4 @@
-import { Predicate, And, Or, Not, ContainedIn, Extent, ParameterizablePredicate } from '@allors/workspace/domain/system';
+import { Predicate, And, Or, Not, Extent, ParameterizablePredicate } from '@allors/workspace/domain/system';
 
 import { FilterOptions } from './FilterOptions';
 import { FilterFieldDefinition } from './FilterFieldDefinition';

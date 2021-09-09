@@ -1,22 +1,39 @@
-import { humanize } from '@allors/workspace/meta/system';
-import { ParameterizablePredicate, Like, Equals, Exists, Between } from '@allors/workspace/domain/system';
+import { humanize, ObjectType } from '@allors/workspace/meta/system';
+import { ParameterizablePredicate, parameterizablePredicateObjectType } from '@allors/workspace/domain/system';
 
 import { FilterOptions } from './FilterOptions';
+import { UnitTags } from '../../../../../../meta/system/src/lib/UnitTags';
 
 export class FilterFieldDefinition {
   predicate: ParameterizablePredicate;
   options?: FilterOptions;
 
   get isLike() {
-    return this.predicate instanceof Like;
+    return this.predicate.kind === 'Like';
   }
 
   get isExists() {
-    return this.predicate instanceof Exists;
+    return this.predicate.kind === 'Exists';
   }
 
   get isBetween() {
-    return this.predicate instanceof Between;
+    return this.predicate.kind === 'Between';
+  }
+
+  get isBoolean(): boolean {
+    return this.objectType?.tag === UnitTags.Boolean;
+  }
+
+  get isDateTime(): boolean{
+    return this.objectType?.tag === UnitTags.DateTime;
+  }
+
+  get isBinary(): boolean{
+    return this.objectType?.tag === UnitTags.Binary;
+  }
+
+  get objectType(): ObjectType {
+    return parameterizablePredicateObjectType(this.predicate);
   }
 
   get name(): string | undefined {

@@ -111,11 +111,11 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
   }
 
   get canRead(): boolean | undefined {
-    return this.object?.CanRead(this.roleType);
+    return this.object?.canRead(this.roleType);
   }
 
   get canWrite(): boolean | undefined {
-    return this.object?.CanWrite(this.assignedRoleType ?? this.roleType);
+    return this.object?.canWrite(this.assignedRoleType ?? this.roleType);
   }
 
   get textType(): string {
@@ -147,7 +147,7 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
   }
 
   get disabled(): boolean {
-    return !this.CanWrite || !!this.assignedDisabled;
+    return !this.canWrite || !!this.assignedDisabled;
   }
 
   get canRestore(): boolean {

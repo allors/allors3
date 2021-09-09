@@ -17,7 +17,7 @@
           </div>
 
           <div class="row">
-            <a-mat-autocomplete class="col-md" [object]="organisation" [roleType]="m.Organisation.Owner" [filter]="peopleFilter.create(allors.session)" display="UserName" (changed)="ownerSelected($event)" hint="With filter"></a-mat-autocomplete>
+            <a-mat-autocomplete class="col-md" [object]="organisation" [roleType]="m.Organisation.Owner" [filter]="peopleFilter.create(allors)" display="UserName" (changed)="ownerSelected($event)" hint="With filter"></a-mat-autocomplete>
             <a-mat-autocomplete class="col-md" [object]="organisation" [roleType]="m.Organisation.Owner" [options]="people" display="UserName" (changed)="ownerSelected($event)" hint="With options"></a-mat-autocomplete>
           </div>
 
@@ -34,9 +34,9 @@
           <div class="row">
             <h3 class="col-md">Security</h3>
             <div class="col-md">
-              CanWrite Name: {{organisation.CanWriteName}}
-              <br> CanWrite Owner: {{organisation.CanWriteOwner}}
-              <br> CanWrite Employees: {{organisation.CanWriteEmployees}}
+              canWrite Name: {{organisation.canWriteName}}
+              <br> canWrite Owner: {{organisation.canWriteOwner}}
+              <br> canWrite Employees: {{organisation.canWriteEmployees}}
             </div>
 
           </div>
@@ -55,7 +55,7 @@
   <mat-toolbar class="a-footer">
     <mat-toolbar-row class="row">
       <span class="col"></span>
-      <button mat-button (click)="toggleCanWrite()" type="button">TOGGLE CANWRITE</button>
+      <button mat-button (click)="togglecanWrite()" type="button">TOGGLE CANWRITE</button>
       <button mat-button color="primary" type="submit">SAVE</button>
       <button mat-button (click)="goBack()" type="button">CANCEL</button>
     </mat-toolbar-row>

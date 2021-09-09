@@ -1,6 +1,6 @@
 import { Predicate, PredicateBase } from './Predicate';
 
 export interface And extends PredicateBase {
-  kind: 'And';
+  readonly kind: 'And';
   operands: Predicate[];
 }

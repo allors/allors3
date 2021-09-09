@@ -113,7 +113,7 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
   }
 
   public get hasDeleteSelection() {
-    return this.selectedPeople.filter((v) => v.CanExecuteDelete).length > 0;
+    return this.selectedPeople.filter((v) => v.canExecuteDelete).length > 0;
   }
 
   public get selectedPeople() {
@@ -148,7 +148,7 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
 
   public delete(person: Person | Person[]): void {
     const people = person instanceof SessionObject ? [person as Person] : person instanceof Array ? person : [];
-    const methods = people.filter((v) => v.CanExecuteDelete).map((v) => v.Delete);
+    const methods = people.filter((v) => v.canExecuteDelete).map((v) => v.Delete);
 
     if (methods.length > 0) {
       this.dialogService.confirm(methods.length === 1 ? { message: 'Are you sure you want to delete this person?' } : { message: 'Are you sure you want to delete these people?' }).subscribe((confirm: boolean) => {

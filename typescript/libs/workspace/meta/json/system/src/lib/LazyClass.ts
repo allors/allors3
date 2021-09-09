@@ -17,7 +17,7 @@ export class LazyClass extends LazyComposite implements InternalClass {
   }
 
   isAssignableFrom(objectType: InternalComposite): boolean {
-    return this === objectType;
+    return this.tag === objectType?.tag;
   }
 
   derivePropertyTypeByPropertyName() {

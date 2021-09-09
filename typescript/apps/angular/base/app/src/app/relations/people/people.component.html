@@ -70,7 +70,7 @@
               </button>
               <mat-menu #menu="matMenu">
                 <a (click)="navigation.overview(row.person)" mat-menu-item>Details</a>
-                <button mat-menu-item (click)="delete(row.person)" [disabled]="!row.person.CanExecuteDelete">Delete</button>
+                <button mat-menu-item (click)="delete(row.person)" [disabled]="!row.person.canExecuteDelete">Delete</button>
               </mat-menu>
             </td>
           </ng-container>

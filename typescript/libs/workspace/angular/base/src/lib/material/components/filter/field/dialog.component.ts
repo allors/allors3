@@ -10,6 +10,7 @@ import { assert } from '@allors/workspace/meta/system';
 import { Filter } from '../../../../components/filter/Filter';
 import { FilterFieldDefinition } from '../../../../components/filter/FilterFieldDefinition';
 import { FilterField } from '../../../../components/filter/FilterField';
+import { parameterizablePredicateObjectType } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: 'dialog.component.html',
@@ -25,11 +26,7 @@ export class AllorsMaterialFilterFieldDialogComponent implements OnInit {
   filter: Filter;
   fieldDefinition: FilterFieldDefinition | null;
 
-  constructor(
-    public dialogRef: MatDialogRef<AllorsMaterialFilterFieldDialogComponent>,
-    private formBuilder: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) data: any,
-  ) {
+  constructor(public dialogRef: MatDialogRef<AllorsMaterialFilterFieldDialogComponent>, private formBuilder: FormBuilder, @Inject(MAT_DIALOG_DATA) data: any) {
     this.filter = data.filterBuilder;
   }
 
@@ -46,19 +43,16 @@ export class AllorsMaterialFilterFieldDialogComponent implements OnInit {
   }
 
   get useToggle(): boolean {
-    return !this.fieldDefinition?.options?.search && (this.fieldDefinition?.predicate.objectType.isBoolean ?? false);
+    parameterizablePredicateObjectType(this.fieldDefinition?.predicate);
+    return !this.fieldDefinition?.options?.search && (this.fieldDefinition?.isBoolean ?? false);
   }
 
   get useDatepicker(): boolean {
-    return !this.fieldDefinition?.options?.search && (this.fieldDefinition?.predicate.objectType.isDateTime ?? false);
+    return !this.fieldDefinition?.options?.search && (this.fieldDefinition?.isDateTime ?? false);
   }
 
   get useInput(): boolean {
-    return (
-      !this.fieldDefinition?.options?.search &&
-      (!this.fieldDefinition?.predicate.objectType.isBoolean ?? false) &&
-      (!this.fieldDefinition?.predicate.objectType.isDateTime ?? false)
-    );
+    return !this.fieldDefinition?.options?.search && (!this.fieldDefinition?.isBinary ?? false) && (!this.fieldDefinition?.isDateTime ?? false);
   }
 
   ngOnInit() {
@@ -87,7 +81,7 @@ export class AllorsMaterialFilterFieldDialogComponent implements OnInit {
   selected(filterFieldDefinition: FilterFieldDefinition) {
     this.fieldDefinition = filterFieldDefinition;
     let initialValue = null;
-    
+
     const initial = filterFieldDefinition.options?.initialValue;
     if (initial != null) {
       initialValue = initial instanceof Function ? initial() : initial;
@@ -127,7 +121,7 @@ export class AllorsMaterialFilterFieldDialogComponent implements OnInit {
             definition: this.fieldDefinition,
             value: value.id ? value.id : value,
             display: options?.display(value) ?? value,
-          }),
+          })
         );
       } else {
         this.filter.addField(
@@ -136,7 +130,7 @@ export class AllorsMaterialFilterFieldDialogComponent implements OnInit {
             value,
             value2,
             display: options?.display ? `${options.display(value)} <-> ${options.display(value2)}` : `${value} <-> ${value2}`,
-          }),
+          })
         );
       }
     }

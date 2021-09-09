@@ -203,7 +203,7 @@ export abstract class Session implements ISession {
   public getCompositeAssociation(role: Strategy, associationType: AssociationType): Strategy {
     const roleType = associationType.roleType;
     for (const association of this.strategiesForClass(associationType.objectType as Composite)) {
-      if (!association.CanRead(roleType)) {
+      if (!association.canRead(roleType)) {
         continue;
       }
 
@@ -221,7 +221,7 @@ export abstract class Session implements ISession {
     const associations: Strategy[] = [];
 
     for (const association of this.strategiesForClass(associationType.objectType as Composite)) {
-      if (!association.CanRead(roleType)) {
+      if (!association.canRead(roleType)) {
         continue;
       }
 

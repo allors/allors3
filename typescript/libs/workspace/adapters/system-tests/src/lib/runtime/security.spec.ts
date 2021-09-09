@@ -27,8 +27,8 @@ export async function withAccessControl() {
 
   for (const c1 of c1s) {
     for (const roleType of c1.strategy.cls.roleTypes) {
-      expect(c1.strategy.CanRead(roleType)).toBeTruthy();
-      expect(c1.strategy.CanWrite(roleType)).toBeTruthy();
+      expect(c1.strategy.canRead(roleType)).toBeTruthy();
+      expect(c1.strategy.canWrite(roleType)).toBeTruthy();
     }
   }
 }
@@ -46,11 +46,11 @@ export async function withoutAccessControl() {
   for (const c1 of c1s) {
     for (const roleType of c1.strategy.cls.roleTypes) {
       if (roleType.relationType.origin === Origin.Database) {
-        expect(c1.strategy.CanRead(roleType)).toBeFalsy();
-        expect(c1.strategy.CanWrite(roleType)).toBeFalsy();
+        expect(c1.strategy.canRead(roleType)).toBeFalsy();
+        expect(c1.strategy.canWrite(roleType)).toBeFalsy();
       } else {
-        expect(c1.strategy.CanRead(roleType)).toBeTruthy();
-        expect(c1.strategy.CanWrite(roleType)).toBeTruthy();
+        expect(c1.strategy.canRead(roleType)).toBeTruthy();
+        expect(c1.strategy.canWrite(roleType)).toBeTruthy();
       }
     }
   }
@@ -69,11 +69,11 @@ export async function withoutPermissions() {
   for (const c1 of c1s) {
     for (const roleType of c1.strategy.cls.roleTypes) {
       if (roleType.relationType.origin === Origin.Database) {
-        expect(c1.strategy.CanRead(roleType)).toBeFalsy();
-        expect(c1.strategy.CanWrite(roleType)).toBeFalsy();
+        expect(c1.strategy.canRead(roleType)).toBeFalsy();
+        expect(c1.strategy.canWrite(roleType)).toBeFalsy();
       } else {
-        expect(c1.strategy.CanRead(roleType)).toBeTruthy();
-        expect(c1.strategy.CanWrite(roleType)).toBeTruthy();
+        expect(c1.strategy.canRead(roleType)).toBeTruthy();
+        expect(c1.strategy.canWrite(roleType)).toBeTruthy();
       }
     }
   }
@@ -90,11 +90,11 @@ export async function deniedPermissions() {
   for (const denied of denieds) {
     for (const roleType of denied.strategy.cls.roleTypes) {
       if (roleType.relationType.origin === Origin.Database) {
-        expect(denied.strategy.CanRead(roleType)).toBeTruthy();
-        expect(denied.strategy.CanWrite(roleType)).toBeFalsy();
+        expect(denied.strategy.canRead(roleType)).toBeTruthy();
+        expect(denied.strategy.canWrite(roleType)).toBeFalsy();
       } else {
-        expect(denied.strategy.CanRead(roleType)).toBeTruthy();
-        expect(denied.strategy.CanRead(roleType)).toBeTruthy();
+        expect(denied.strategy.canRead(roleType)).toBeTruthy();
+        expect(denied.strategy.canRead(roleType)).toBeTruthy();
       }
     }
   }

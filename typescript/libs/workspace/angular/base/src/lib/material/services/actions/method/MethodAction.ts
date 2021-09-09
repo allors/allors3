@@ -25,7 +25,7 @@ export class MethodAction implements Action {
   ) {
     this.execute = (target: ActionTarget) => {
       const objects = this.resolve(target);
-      const methods = objects.filter((v) => v.CanExecute(methodType)).map((v) => (v as any)[methodType.name]);
+      const methods = objects.filter((v) => v.canExecute(methodType)).map((v) => (v as any)[methodType.name]);
 
       if (methods.length > 0) {
         context.invoke(methods).subscribe(() => {
@@ -45,7 +45,7 @@ export class MethodAction implements Action {
   description = () => (this.config && this.config.description) || this.methodType.name;
   disabled = (target: ActionTarget) => {
     const objects = this.resolve(target);
-    return objects?.find((v) => v.CanExecute(this.methodType)) == null;
+    return objects?.find((v) => v.canExecute(this.methodType)) == null;
   };
 
   private resolve(target: ActionTarget): IObject[] {

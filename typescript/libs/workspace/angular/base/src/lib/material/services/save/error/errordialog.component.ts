@@ -1,7 +1,6 @@
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Inject } from '@angular/core';
-
-import { Response } from '@allors/protocol/json/system';
+import { IResult } from '@allors/workspace/domain/system';
 
 
 @Component({
@@ -9,8 +8,7 @@ import { Response } from '@allors/protocol/json/system';
 })
 export class AllorsMaterialErrorDialogComponent {
 
-  error: ResponseError;
-  response: Response;
+  response: IResult;
 
   isAccessError: boolean;
   isVersionError: boolean;

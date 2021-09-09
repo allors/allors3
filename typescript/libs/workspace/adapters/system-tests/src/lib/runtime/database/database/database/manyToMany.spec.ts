@@ -65,7 +65,7 @@ export async function databaseManyToManySetRoleToNull() {
 
           expect(c1y_1).toBeDefined();
 
-          if (!c1x_1.CanWriteC1C1Many2Manies) {
+          if (!c1x_1.canWriteC1C1Many2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
@@ -106,7 +106,7 @@ export async function databaseManyToManyRemoveRole() {
 
           expect(c1y_1).toBeDefined();
 
-          if (!c1x_1.CanWriteC1C1Many2Manies) {
+          if (!c1x_1.canWriteC1C1Many2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
@@ -114,7 +114,7 @@ export async function databaseManyToManyRemoveRole() {
 
           await push(session1);
 
-          if (!c1x_1.CanWriteC1C1Many2Manies) {
+          if (!c1x_1.canWriteC1C1Many2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
@@ -155,7 +155,7 @@ export async function databaseManyToManyRemoveNullRole() {
 
           expect(c1y_1).toBeDefined();
 
-          if (!c1x_1.CanWriteC1C1Many2Manies) {
+          if (!c1x_1.canWriteC1C1Many2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
@@ -163,7 +163,7 @@ export async function databaseManyToManyRemoveNullRole() {
 
           await push(session1);
 
-          if (!c1x_1.CanWriteC1C1Many2Manies) {
+          if (!c1x_1.canWriteC1C1Many2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
@@ -181,7 +181,7 @@ export async function databaseManyToManyRemoveNullRole() {
           expect(c1x_1.C1C1Many2Manies).toContain(c1y_1);
           expect(c1y_1.C1sWhereC1C1Many2Many).toContain(c1x_1);
 
-          if (!c1x_1.CanWriteC1C1Many2Manies) {
+          if (!c1x_1.canWriteC1C1Many2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 

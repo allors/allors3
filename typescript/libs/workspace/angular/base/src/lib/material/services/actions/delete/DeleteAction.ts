@@ -21,7 +21,7 @@ export class DeleteAction implements Action {
     this.execute = (target: ActionTarget) => {
 
       const deletables = Array.isArray(target) ? target as Deletable[] : [target as Deletable];
-      const methods = deletables.filter((v) => v.CanExecuteDelete).map((v) => v.Delete);
+      const methods = deletables.filter((v) => v.canExecuteDelete).map((v) => v.Delete);
 
       if (methods.length > 0) {
         dialogService
@@ -52,10 +52,10 @@ export class DeleteAction implements Action {
   description = () => 'Delete';
   disabled = (target: ActionTarget) => {
     if (Array.isArray(target)) {
-      const anyDisabled = (target as Deletable[]).filter(v => !v.CanExecuteDelete);
+      const anyDisabled = (target as Deletable[]).filter(v => !v.canExecuteDelete);
       return target.length > 0 ? anyDisabled.length > 0 : true;
     } else {
-      return !(target as Deletable).CanExecuteDelete;
+      return !(target as Deletable).canExecuteDelete;
     }
   }
 }

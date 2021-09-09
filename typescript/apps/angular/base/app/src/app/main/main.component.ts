@@ -9,7 +9,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 import { menu } from './main.menu';
 import { Organisation } from '@allors/workspace/domain/default';
 import { AllorsMaterialSideNavService, SideMenuItem } from '@allors/workspace/angular/base';
-import { ObjectType } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/workspace/meta/system';
 import { M } from '@allors/workspace/meta/default';
 
 @Component({
@@ -34,21 +34,23 @@ export class MainComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     const { workspace } = this.allors;
     const m = workspace.configuration.metaPopulation as M;
+    const angularMeta = workspace.services.angularMetaService;
+
     menu.forEach((menuItem) => {
-      const objectType = menuItem.tag ? (m.metaObjectByTag.get(menuItem.tag) as ObjectType) : null;
+      const objectType = menuItem.tag ? (m.metaObjectByTag.get(menuItem.tag) as Composite) : null;
 
       const sideMenuItem: SideMenuItem = {
-        icon: menuItem.icon ?? objectType?.icon,
-        title: menuItem.title ?? objectType?.displayName,
-        link: menuItem.link ?? objectType?.list,
+        icon: menuItem.icon ?? angularMeta.for(objectType)?.icon,
+        title: menuItem.title ?? angularMeta.for(objectType)?.displayName,
+        link: menuItem.link ?? angularMeta.for(objectType)?.list,
         children:
           menuItem.children &&
           menuItem.children.map((childMenuItem) => {
-            const childObjectType = childMenuItem.tag ? (m.metaObjectByTag.get(childMenuItem.tag) as ObjectType) : null;
+            const childObjectType = childMenuItem.tag ? (m.metaObjectByTag.get(childMenuItem.tag) as Composite) : null;
             return {
-              icon: childMenuItem.icon ?? childObjectType?.icon,
-              title: childMenuItem.title ?? childObjectType?.displayName,
-              link: childMenuItem.link ?? childObjectType?.list,
+              icon: childMenuItem.icon ?? angularMeta.for(childObjectType)?.icon,
+              title: childMenuItem.title ?? angularMeta.for(childObjectType)?.displayName,
+              link: childMenuItem.link ?? angularMeta.for(childObjectType)?.list,
             };
           }),
       };

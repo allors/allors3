@@ -26,7 +26,7 @@ export async function sandbox() {
   const result = await client.pullAsync(session, { object: c1y_2 });
   const c1y_1 = result.objects.values().next().value;
 
-  if (!c1x.CanWriteC1C1Many2Manies) {
+  if (!c1x.canWriteC1C1Many2Manies) {
     await client.pullAsync(session, { object: c1x });
   }
 

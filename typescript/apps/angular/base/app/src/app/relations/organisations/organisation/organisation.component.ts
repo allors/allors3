@@ -80,8 +80,8 @@ export class OrganisationComponent extends TestScope implements OnInit, AfterVie
     this.refresh$.next(new Date());
   }
 
-  public toggleCanWrite() {
-    this.allors.client.invokeReactive(this.allors.session, this.organisation.ToggleCanWrite).subscribe(() => {
+  public togglecanWrite() {
+    this.allors.client.invokeReactive(this.allors.session, this.organisation.TogglecanWrite).subscribe(() => {
       this.refresh();
     });
   }

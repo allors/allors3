@@ -65,7 +65,7 @@ export async function databaseOneToOneSetRole() {
 
           expect(c1y_1).toBeDefined();
 
-          if (!c1x_1.CanWriteC1C1One2One) {
+          if (!c1x_1.canWriteC1C1One2One) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
@@ -106,7 +106,7 @@ export async function databaseOneToOneRemoveRole() {
 
           expect(c1y_1).toBeDefined();
 
-          if (!c1x_1.CanWriteC1C1One2Manies) {
+          if (!c1x_1.canWriteC1C1One2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 
@@ -114,7 +114,7 @@ export async function databaseOneToOneRemoveRole() {
 
           await push(session1);
 
-          if (!c1x_1.CanWriteC1C1One2Manies) {
+          if (!c1x_1.canWriteC1C1One2Manies) {
             await client.pullAsync(session1, { object: c1x_1 });
           }
 

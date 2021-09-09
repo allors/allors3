@@ -28,7 +28,7 @@ export async function pushNewObject() {
   expect(pushResult.hasErrors).toBeFalsy();
 
   for (const roleType of m.C1.roleTypes) {
-    expect(newObject.strategy.CanRead(roleType)).toBeTruthy();
+    expect(newObject.strategy.canRead(roleType)).toBeTruthy();
     expect(newObject.strategy.existRole(roleType)).toBeFalsy();
   }
 
@@ -56,12 +56,12 @@ export async function pushAndPullNewObject() {
   await client.pullAsync(session, [{ object: newObject }]);
 
   for (const roleType of m.C1.roleTypes) {
-    const x = newObject.strategy.CanRead(roleType);
+    const x = newObject.strategy.canRead(roleType);
     if (!x) {
       console.debug();
     }
 
-    expect(newObject.strategy.CanRead(roleType)).toBeTruthy();
+    expect(newObject.strategy.canRead(roleType)).toBeTruthy();
     expect(newObject.strategy.existRole(roleType)).toBeFalsy();
   }
 

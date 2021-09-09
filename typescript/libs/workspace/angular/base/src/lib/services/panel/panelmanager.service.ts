@@ -3,18 +3,16 @@ import { Params, Router, ActivatedRoute } from '@angular/router';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 import { ObjectType } from '@allors/workspace/meta/system';
-import { Pull } from '@allors/workspace/domain/system';
+import { IPullResult, IReactiveDatabaseClient, ISession, Pull } from '@allors/workspace/domain/system';
 
-import { DatabaseService } from '../framework/DatabaseService';
-import { WorkspaceService } from '../framework/WorkspaceService';
-import { Context } from '../framework/Context';
-import { Loaded } from '../framework/responses/Loaded';
 import { PanelService } from './panel.service';
-
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Injectable()
 export class PanelManagerService {
-  context: Context;
+  context: ISession;
+
+  client: IReactiveDatabaseClient;
 
   id: string;
   objectType: ObjectType;
@@ -29,10 +27,9 @@ export class PanelManagerService {
     return this.expanded ? 'expanded-panel-container' : 'collapsed-panel-container';
   }
 
-  constructor(databaseService: DatabaseService, workspaceService: WorkspaceService, public router: Router, public route: ActivatedRoute) {
-    const database = databaseService.database;
-    const workspace = workspaceService.workspace;
-    this.context = new Context(database, workspace);
+  constructor(workspaceService: WorkspaceService, public router: Router, public route: ActivatedRoute) {
+    this.context = workspaceService.workspace.createSession();
+    this.client = workspaceService.client;
 
     this.on$ = this.onSubject$ = new BehaviorSubject(new Date());
   }

@@ -1,3 +1,5 @@
+import { IWorkspaceServices } from '../../../domain/system/src/lib/services/IWorkspaceServices';
+import { IAngularMetaService } from './lib/meta/IAngularMetaService';
 // Services
 export { AuthenticationTokenResponse } from './lib/services/authentication/AuthenticationTokenResponse';
 export { AuthenticationService } from './lib/services/authentication/authentication.service';
@@ -138,36 +140,12 @@ export { AllorsMaterialSideNavServiceCore } from './lib/material/services/sidena
 
 export { Sorter } from './lib/material/sorting/Sorter';
 
-// Augmentations
-import { FilterDefinition } from './lib/components/filter/FilterDefinition';
-import { Filter } from './lib/components/filter/Filter';
-import { Sorter } from './lib/material/sorting/Sorter';
+export { IAngularComposite } from './lib/meta/IAngularComposite';
+export { IAngularMetaService, IAngularMetaObject } from './lib/meta/IAngularMetaService';
+export { IAngularRoleType } from './lib/meta/IAngularRoleType';
 
-// Menu
-declare module '@allors/workspace/meta/system' {
-  interface ObjectType {
-    icon: string;
-    displayName: string;
-    list: string;
-    overview: string;
-  }
-
-  interface RoleType {
-    displayName: string;
-  }
-}
-
-// Filter
-declare module '@allors/workspace/meta/system' {
-  interface ObjectType {
-    filterDefinition?: FilterDefinition;
-    filter?: Filter;
-  }
-}
-
-// Sort
-declare module '@allors/workspace/meta/system' {
-  interface ObjectType {
-    sorter: Sorter;
+declare module '@allors/workspace/domain/system' {
+  interface IWorkspaceServices {
+    angularMetaService: IAngularMetaService;
   }
 }
