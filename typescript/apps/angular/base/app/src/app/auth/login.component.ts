@@ -40,7 +40,7 @@ export class LoginComponent extends TestScope implements OnDestroy {
 
     this.subscription = this.authService.login$(userName, password).subscribe(
       (result) => {
-        if (result.authenticated) {
+        if (result.a) {
           this.router.navigate(['/']);
         } else {
           alert('Could not log in');

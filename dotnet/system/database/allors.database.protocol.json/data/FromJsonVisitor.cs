@@ -397,7 +397,7 @@ namespace Allors.Database.Protocol.Json
                 ExtentRef = visited.er,
                 ObjectType = visited.t.HasValue ? (IObjectType)this.transaction.Database.MetaPopulation.FindByTag(visited.t.Value) : null,
                 Object = visited.o != null ? this.transaction.Instantiate(visited.o.Value) : null,
-                Arguments = new Arguments(visited.a, this.unitConvert),
+                Arguments = visited.a != null ? new Arguments(visited.a, this.unitConvert) : null,
             };
 
             if (visited.e != null)

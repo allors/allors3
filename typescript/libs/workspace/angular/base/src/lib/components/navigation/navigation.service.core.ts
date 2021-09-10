@@ -39,8 +39,8 @@ export class NavigationServiceCore extends NavigationService {
   }
 
   overview(obj: IObject) {
-    const angularComposite = this.angularMeta.for(obj?.strategy.cls);
-    const url = angularComposite?.overview;
+    const angularComposite = this.angularMeta.for(obj.strategy.cls);
+    const url = angularComposite?.overview.replace(`:id`, obj.strategy.id.toString());
     if (url != null) {
       this.router.navigate([url]);
     }

@@ -23,47 +23,10 @@ interface AuthenticationTokenResponse {
 }
 
 export class AngularClient implements IReactiveDatabaseJsonClient {
-  userId: number;
-  jwtToken: string;
-  httpHeaders: HttpHeaders;
-
   constructor(public httpClient: HttpClient, public baseUrl: string, public authUrl: string) {}
 
   async setup(population = 'full') {
     await this.httpClient.get(`${this.baseUrl}Test/Setup?population=${population}`).toPromise();
-  }
-
-  async login(login: string, password?: string): Promise<boolean> {
-    const tokenRequest: Partial<AuthenticationTokenRequest> = {
-      l: login,
-      p: password,
-    };
-
-    const response = await this.httpClient
-      .post(`${this.baseUrl}${this.authUrl}`, tokenRequest, {
-        headers: new HttpHeaders({
-          'Content-Type': 'application/json',
-        }),
-      })
-      .toPromise();
-
-    const tokenResponse = response as AuthenticationTokenResponse;
-
-    if (tokenResponse.a) {
-      this.userId = tokenResponse.u;
-      this.jwtToken = tokenResponse.t;
-      this.httpHeaders = new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.jwtToken}`,
-      });
-
-      return true;
-    }
-
-    this.userId = null;
-    this.jwtToken = null;
-    this.httpHeaders = null;
-    return false;
   }
 
   pull(pullRequest: PullRequest): Observable<PullResponse> {
@@ -87,8 +50,6 @@ export class AngularClient implements IReactiveDatabaseJsonClient {
   }
 
   post<T>(relativeUrl: string, data: any): Observable<T> {
-    return this.httpClient.post<T>(`${this.baseUrl}${relativeUrl}`, data, {
-      headers: this.httpHeaders,
-    });
+    return this.httpClient.post<T>(`${this.baseUrl}${relativeUrl}`, data);
   }
 }

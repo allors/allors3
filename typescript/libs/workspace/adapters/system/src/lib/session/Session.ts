@@ -46,11 +46,11 @@ export abstract class Session implements ISession {
 
   get hasChangedRoles(): boolean {
     // TODO: Optimize
-    for (const [, strategy] of this.strategyByWorkspaceId) {
-      if (strategy.hasChangedRoles) {
-        return true;
-      }
-    }
+    // for (const [, strategy] of this.strategyByWorkspaceId) {
+    //   if (strategy.hasChangedRoles) {
+    //     return true;
+    //   }
+    // }
 
     return false;
   }

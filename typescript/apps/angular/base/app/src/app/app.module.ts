@@ -54,7 +54,7 @@ import {
   AuthenticationInterceptor,
   AllorsFocusDirective,
   AllorsBarcodeDirective,
-  AuthenticationServiceCore,
+  AuthenticationServiceBase,
   DateServiceCore,
   MediaServiceCore,
   AllorsBarcodeServiceCore,
@@ -129,7 +129,6 @@ import { configure } from './configure';
 export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
   return async () => {
     const client = new AngularClient(httpClient, environment.baseUrl, environment.authUrl);
-    await client.login('jane@example.com', '');
     workspaceService.client = new ReactiveDatabaseClient(client);
 
     const metaPopulation = new LazyMetaPopulation(data);
@@ -279,11 +278,11 @@ export const routes: Routes = [
     {
       provide: APP_INITIALIZER,
       useFactory: appInitFactory,
-      deps: [WorkspaceService],
+      deps: [WorkspaceService, HttpClient],
       multi: true,
     },
     WorkspaceService,
-    { provide: AuthenticationService, useClass: AuthenticationServiceCore },
+    { provide: AuthenticationService, useClass: AuthenticationServiceBase },
     {
       provide: AuthenticationConfig,
       useValue: {

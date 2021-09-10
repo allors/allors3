@@ -4,9 +4,17 @@ import { Composite, RoleType } from '@allors/workspace/meta/system';
 export class AngularMetaService implements IAngularMetaService {
   angularMetaByMeta: Map<number, IAngularMetaObject>;
 
+  constructor() {
+    this.angularMetaByMeta = new Map();
+  }
+
   for(composite: Composite): IAngularComposite;
   for(roleType: RoleType): IAngularRoleType;
   for(compositeOrRoleType: unknown): unknown {
+    if (compositeOrRoleType == null) {
+      return null;
+    }
+
     if ((compositeOrRoleType as Composite).tag) {
       const tag = (compositeOrRoleType as Composite).tag;
       let angularComposite = this.angularMetaByMeta.get(tag);

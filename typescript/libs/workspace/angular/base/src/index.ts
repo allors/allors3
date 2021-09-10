@@ -1,4 +1,5 @@
 // Services
+export { AuthenticationTokenRequest } from './lib/services/authentication/AuthenticationTokenRequest';
 export { AuthenticationTokenResponse } from './lib/services/authentication/AuthenticationTokenResponse';
 export { AuthenticationService } from './lib/services/authentication/authentication.service';
 export { AllorsBarcodeService } from './lib/services/barcode/barcode.service';
@@ -20,7 +21,7 @@ export { ActionTarget } from './lib/components/actions/ActionTarget';
 
 export { AuthenticationConfig } from './lib/components/authentication/authentication.config';
 export { AuthenticationInterceptor } from './lib/components/authentication/authentication.interceptor';
-export { AuthenticationServiceCore } from './lib/components/authentication/authentication.service.core';
+export { AuthenticationServiceBase } from './lib/components/authentication/authentication.service.base';
 
 export { AllorsBarcodeDirective } from './lib/components/barcode/barcode.directive';
 export { AllorsBarcodeServiceCore } from './lib/components/barcode/barcode.service.core';

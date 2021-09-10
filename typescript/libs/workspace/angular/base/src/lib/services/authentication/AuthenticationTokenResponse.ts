@@ -1,5 +1,10 @@
 export interface AuthenticationTokenResponse {
-  authenticated: boolean;
-  userId: string;
-  token: string;
+  /** Authenticated */
+  a: boolean;
+
+  /** User id */
+  u: number;
+
+  /** Token */
+  t: string;
 }

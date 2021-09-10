@@ -23,5 +23,10 @@
       "@allors/workspace/meta/json/system": ["libs/workspace/meta/json/system/src/index.ts"],
       "@allors/workspace/meta/system": ["libs/workspace/meta/system/src/index.ts"]
     }
+  },
+  "angularCompilerOptions": {
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
   }
 }

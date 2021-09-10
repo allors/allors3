@@ -7,12 +7,11 @@ import { throwError, Observable } from 'rxjs';
 import { AuthenticationService } from '../../services/authentication/authentication.service';
 import { AuthenticationTokenResponse } from '../../services/authentication/AuthenticationTokenResponse';
 import { UserId } from '../../services/state/UserId';
-
 import { AuthenticationConfig } from './authentication.config';
-import { AuthenticationTokenRequest } from './AuthenticationTokenRequest';
+import { AuthenticationTokenRequest } from '../../services/authentication/AuthenticationTokenRequest';
 
 @Injectable()
-export class AuthenticationServiceCore extends AuthenticationService {
+export class AuthenticationServiceBase extends AuthenticationService {
   private tokenName = 'ALLORS_JWT';
 
   public get token(): string | null {
@@ -27,24 +26,19 @@ export class AuthenticationServiceCore extends AuthenticationService {
     }
   }
 
-  constructor(
-    private http: HttpClient,
-    private authenticationConfig: AuthenticationConfig,
-    private userIdState: UserId,
-    private router: Router
-  ) {
+  constructor(private http: HttpClient, private authenticationConfig: AuthenticationConfig, private userIdState: UserId, private router: Router) {
     super();
   }
 
   login$(userName: string, password: string): Observable<AuthenticationTokenResponse> {
     const url = this.authenticationConfig.url;
-    const request: AuthenticationTokenRequest = { userName, password };
+    const request: AuthenticationTokenRequest = { l: userName, p: password };
 
     return this.http.post<AuthenticationTokenResponse>(url, request).pipe(
-      map((result) => {
-        if (result.authenticated) {
-          this.token = result.token;
-          this.userIdState.value = result.userId;
+      map((result: AuthenticationTokenResponse) => {
+        if (result.a) {
+          this.token = result.t;
+          this.userIdState.value = result.u.toString();
         }
 
         return result;
