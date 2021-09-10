@@ -18,8 +18,14 @@
             "tsConfig": "apps/angular/base/app/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": ["apps/angular/base/app/src/favicon.ico", "apps/angular/base/app/src/assets"],
-            "styles": ["apps/angular/base/app/src/styles.scss"],
-            "scripts": []
+            "styles": [
+              "apps/angular/base/app/src/styles.scss",
+              "./node_modules/easymde/dist/easymde.min.css"
+            ],
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "easymde"
+            ]
           },
           "configurations": {
             "production": {

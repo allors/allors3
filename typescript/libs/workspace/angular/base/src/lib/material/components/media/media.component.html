@@ -1,7 +1,7 @@
 <mat-card class="flex-fill d-flex flex-column justify-content-between">
 
-  <img class="media" *ngIf="media.isImage" [src]="src" (click)="preview()" style="cursor: pointer;">
-  <div class="media" *ngIf="!media.isImage">
+  <img class="media" *ngIf="isImage" [src]="src" (click)="preview()" style="cursor: pointer;">
+  <div class="media" *ngIf="!isImage">
     <mat-icon>{{icon}}</mat-icon>
   </div>
 

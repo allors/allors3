@@ -3,10 +3,12 @@ import { NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 
 import { ISession } from '@allors/workspace/domain/system';
-import { Media } from '@allors/workspace/domain/base';
+import { Media } from '@allors/workspace/domain/default';
 
 import { RoleField } from '../../../../components/forms/RoleField';
 import { MediaService } from '../../../../services/media/media.service';
+import { WorkspaceService } from '@allors/workspace/angular/core';
+import { M } from '@allors/workspace/meta/default';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -20,7 +22,7 @@ export class AllorsMaterialFileComponent extends RoleField {
   @Input()
   accept = '*/*';
 
-  constructor(@Optional() parentForm: NgForm, private dialog: MatDialog, private mediaService: MediaService) {
+  constructor(@Optional() parentForm: NgForm, private dialog: MatDialog, private mediaService: MediaService, private workspaceService: WorkspaceService) {
     super(parentForm);
   }
 
@@ -57,8 +59,9 @@ export class AllorsMaterialFileComponent extends RoleField {
       const file = files.item(0);
 
       if (file != null) {
-        const session: ISession = this.object.session;
-        const media = session.create('Media') as Media;
+        const session: ISession = this.object.strategy.session;
+        const m = this.workspaceService.workspace.configuration.metaPopulation as M;
+        const media = session.create<Media>(m.Media);
         media.InType = file.type;
 
         const reader: FileReader = new FileReader();

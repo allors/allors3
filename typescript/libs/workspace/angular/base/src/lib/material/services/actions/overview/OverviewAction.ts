@@ -5,15 +5,13 @@ import { ActionTarget } from '../../../../components/actions/ActionTarget';
 import { NavigationService } from '../../../../services/navigation/navigation.service';
 
 function objectTypeName(target: ActionTarget) {
-  return Array.isArray(target) ? (target.length > 0) && target[0].objectType.name : target.objectType.name;
+  return Array.isArray(target) ? target.length > 0 && target[0].strategy.cls.singularName : target.strategy.cls.singularName;
 }
 
 export class OverviewAction implements Action {
-
   name = 'overview';
 
-  constructor(private navigationService: NavigationService) {
-  }
+  constructor(private navigationService: NavigationService) {}
 
   result = new Subject<boolean>();
 
@@ -33,5 +31,5 @@ export class OverviewAction implements Action {
     }
 
     this.result.next(true);
-  }
+  };
 }

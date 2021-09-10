@@ -1,3 +1,4 @@
+import { ResultError } from '@allors/workspace/domain/system';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -16,7 +17,7 @@ export class SaveServiceCore extends SaveService {
 
     this.errorHandler = (error) => {
 
-      if (error instanceof ResponseError) {
+      if (error instanceof ResultError) {
         this.dialog.open(AllorsMaterialErrorDialogComponent, {
           data: { error },
           maxHeight: '90vh'

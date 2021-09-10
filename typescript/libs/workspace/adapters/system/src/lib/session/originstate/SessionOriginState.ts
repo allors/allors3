@@ -1,4 +1,4 @@
-import { IUnit } from '@allors/workspace/domain/system';
+import { IStrategy, IUnit } from '@allors/workspace/domain/system';
 import { PropertyType, RoleType } from '@allors/workspace/meta/system';
 import { IRange, Ranges } from '../../collections/ranges/Ranges';
 import { ChangeSet } from '../ChangeSet';
@@ -14,6 +14,20 @@ export class SessionOriginState {
 
   public checkpoint(changeSet: ChangeSet) {
     changeSet.addSessionStateChanges(this.propertyByObjectByPropertyType.checkpoint());
+  }
+
+  hasChangedRoles(object: Strategy): boolean {
+    // TODO:
+    return false;
+  }
+
+  hasChangedRole(object: Strategy, roleType: RoleType) {
+    // TODO:
+    return false;
+  }
+
+  restoreRole(object: Strategy, roleType: RoleType) {
+    // TODO:
   }
 
   public getUnitRole(object: Strategy, propertyType: PropertyType): IUnit {

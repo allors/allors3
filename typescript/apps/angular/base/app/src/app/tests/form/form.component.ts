@@ -113,7 +113,7 @@ export class FormComponent extends TestScope implements OnInit, OnDestroy {
         this.people = loaded.collection<Person>(this.m.Person);
         const datas = loaded.collection<Data>(this.m.Data);
 
-        this.locale = (loaded.collection<Locale>(this.m.Locale).find((v) => v.Name === 'nl-BE');
+        this.locale = loaded.collection<Locale>(this.m.Locale).find((v) => v.Name === 'nl-BE');
         this.jane = this.people.find((v) => v.FirstName === 'Jane');
 
         if (datas && datas.length > 0) {

@@ -1,6 +1,6 @@
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Inject } from '@angular/core';
-import { IResult } from '@allors/workspace/domain/system';
+import { IResult, ResultError } from '@allors/workspace/domain/system';
 
 
 @Component({
@@ -8,6 +8,7 @@ import { IResult } from '@allors/workspace/domain/system';
 })
 export class AllorsMaterialErrorDialogComponent {
 
+  error: ResultError;
   response: IResult;
 
   isAccessError: boolean;
@@ -21,7 +22,7 @@ export class AllorsMaterialErrorDialogComponent {
   constructor(public dialogRef: MatDialogRef<AllorsMaterialErrorDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
 
     this.error = data.error;
-    this.response = this.error.response;
+    this.response = this.error.result;
 
     if (this.response.accessErrors && this.response.accessErrors.length > 0) {
       this.isAccessError = true;

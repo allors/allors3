@@ -2,33 +2,47 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { IObject } from '@allors/workspace/domain/system';
-import { ObjectType } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/workspace/meta/system';
 
 import { NavigationService } from '../../services/navigation/navigation.service';
+import { WorkspaceService } from '@allors/workspace/angular/core';
+import { IAngularMetaService } from '../../meta/IAngularMetaService';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NavigationServiceCore extends NavigationService {
-  constructor(private router: Router) {
+  readonly angularMeta: IAngularMetaService;
+
+  constructor(private router: Router, private workspaceService: WorkspaceService) {
     super();
+
+    this.angularMeta = this.workspaceService.workspace.services.angularMetaService;
   }
 
   hasList(obj: IObject): boolean {
-    return !!obj?.objectType?.list;
+    const angularClass = this.angularMeta.for(obj?.strategy.cls);
+    return angularClass?.list != null;
   }
 
-  list(objectType: ObjectType) {
-    const url = objectType.list;
-    this.router.navigate([url]);
+  list(objectType: Composite) {
+    const angularComposite = this.angularMeta.for(objectType);
+    const url = angularComposite?.list;
+    if (url != null) {
+      this.router.navigate([url]);
+    }
   }
 
   hasOverview(obj: IObject): boolean {
-    return !!obj?.objectType?.overview;
+    const angularClass = this.angularMeta.for(obj?.strategy.cls);
+    return angularClass?.overview != null;
   }
 
   overview(obj: IObject) {
-    const url = obj.objectType.overview.replace(`:id`, obj.id);
-    this.router.navigate([url]);
+    const angularComposite = this.angularMeta.for(obj?.strategy.cls);
+    const url = angularComposite?.overview;
+    if (url != null) {
+      this.router.navigate([url]);
+    }
   }
 }

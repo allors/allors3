@@ -36,7 +36,8 @@ export class FactoryFabComponent implements OnInit {
       this.classes = [this.objectType as Class];
     }
 
-    this.classes = this.classes.filter((v) => this.factoryService.hasCreateControl(v, this.createData, context));
+    const session = this.workspaceService.workspace.createSession();
+    this.classes = this.classes.filter((v) => this.factoryService.hasCreateControl(v, this.createData, session));
   }
 
   get dataAllorsActions(): string {
@@ -50,6 +51,4 @@ export class FactoryFabComponent implements OnInit {
       }
     });
   }
-
-  displayName(composite: Composite): string {}
 }

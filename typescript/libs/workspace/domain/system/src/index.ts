@@ -2,7 +2,6 @@
 export * from './lib/api/derivation/IDatabaseDerivationError';
 export * from './lib/api/derivation/IDatabaseDerivationException';
 export * from './lib/api/derivation/IDatabaseValidation';
-export * from './lib/api/IResult';
 
 export * from './lib/api/pull/FlatPull';
 export * from './lib/api/pull/FlatResult';
@@ -16,6 +15,8 @@ export * from './lib/api/push/IPushResult';
 
 export * from './lib/api/IAsyncDatabaseClient';
 export * from './lib/api/IReactiveDatabaseClient';
+export * from './lib/api/IResult';
+export * from './lib/api/ResultError';
 
 // data
 export * from './lib/data/Node';

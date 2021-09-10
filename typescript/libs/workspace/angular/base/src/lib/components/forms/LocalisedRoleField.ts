@@ -1,19 +1,19 @@
-import { Input,  Directive } from '@angular/core';
+import { Input, Directive } from '@angular/core';
 import { assert, humanize } from '@allors/workspace/meta/system';
+import { M } from '@allors/workspace/meta/default';
 import { Locale, LocalisedText } from '@allors/workspace/domain/default';
 import { RoleField } from './RoleField';
 
 @Directive()
 // tslint:disable-next-line: directive-class-suffix
 export abstract class LocalisedRoleField extends RoleField {
-
   @Input()
   public locale: Locale;
 
   get localisedObject(): LocalisedText | null {
     const all: LocalisedText[] = this.model;
     if (all) {
-      const filtered: LocalisedText[] = all.filter((v: LocalisedText) => (v.Locale === this.locale));
+      const filtered: LocalisedText[] = all.filter((v: LocalisedText) => v.Locale === this.locale);
       return filtered?.[0] ?? null;
     }
 
@@ -26,9 +26,10 @@ export abstract class LocalisedRoleField extends RoleField {
 
   set localisedText(value: string | null) {
     if (!this.localisedObject) {
-      const localisedText: LocalisedText = this.object.session.create('LocalisedText') as LocalisedText;
+      const m = this.roleType.relationType.metaPopulation as M;
+      const localisedText: LocalisedText = this.object.strategy.session.create<LocalisedText>(m.LocalisedText);
       localisedText.Locale = this.locale;
-      this.object.add(this.roleType, localisedText);
+      this.object.strategy.addCompositesRole(this.roleType, localisedText);
     }
 
     assert(this.localisedObject);

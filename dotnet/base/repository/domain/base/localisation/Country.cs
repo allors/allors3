@@ -14,6 +14,7 @@ namespace Allors.Repository
     [Id("c22bf60e-6428-4d10-8194-94f7be396f28")]
     #endregion
     [Plural("Countries")]
+    [Workspace(Default)]
     public partial class Country : Object
     {
         #region inherited properties

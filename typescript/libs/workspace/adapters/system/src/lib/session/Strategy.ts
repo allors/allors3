@@ -5,7 +5,6 @@ import { isNewId, Session } from './Session';
 import { AssociationType, Class, Composite, MethodType, Origin, RoleType, UnitTags } from '@allors/workspace/meta/system';
 import { WorkspaceInitialVersion } from '../Version';
 import { frozenEmptyArray } from '../collections/frozenEmptyArray';
-import { IRange } from '../collections/ranges/Ranges';
 
 export abstract class Strategy implements IStrategy {
   DatabaseOriginState: DatabaseOriginState;
@@ -21,7 +20,6 @@ export abstract class Strategy implements IStrategy {
 
     this.rangeId = id;
   }
-
   get version(): number {
     switch (this.cls.origin) {
       case Origin.Session:
@@ -53,6 +51,36 @@ export abstract class Strategy implements IStrategy {
     this.WorkspaceOriginState.diff(diffs);
     this.DatabaseOriginState.diff(diffs);
     return diffs;
+  }
+
+  get hasChangedRoles(): boolean {
+    return this.session.sessionOriginState.hasChangedRoles(this) || this.WorkspaceOriginState?.hasChangedRoles || this.DatabaseOriginState?.hasChangedRoles;
+  }
+
+  hasChangedRole(roleType: RoleType): boolean {
+    switch (roleType.origin) {
+      case Origin.Session:
+        return this.session.sessionOriginState.hasChangedRole(this, roleType);
+      case Origin.Workspace:
+        return this.WorkspaceOriginState?.hasChangedRole(roleType) ?? false;
+      case Origin.Database:
+        return this.canRead(roleType) ? this.DatabaseOriginState?.hasChangedRole(roleType) ?? false : false;
+      default:
+        throw new Error('Unknown origin');
+    }
+  }
+
+  restoreRole(roleType: RoleType) {
+    switch (roleType.origin) {
+      case Origin.Session:
+        return this.session.sessionOriginState.restoreRole(this, roleType);
+      case Origin.Workspace:
+        return this.WorkspaceOriginState?.restoreRole(roleType);
+      case Origin.Database:
+        return this.canRead(roleType) ? this.DatabaseOriginState?.restoreRole(roleType) : false;
+      default:
+        throw new Error('Unknown origin');
+    }
   }
 
   existRole(roleType: RoleType): boolean {

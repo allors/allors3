@@ -51,7 +51,7 @@ export abstract class AssociationField extends Field implements AfterViewInit, O
   }
 
   get model(): IObject | undefined {
-    const model = this.existObject && this.associationType ? this.object.getAssociation(this.associationType) : null;
+    const model = this.existObject && this.associationType ? this.object.strategy.getCompositeAssociation(this.associationType) : null;
 
     return model;
   }
@@ -62,17 +62,17 @@ export abstract class AssociationField extends Field implements AfterViewInit, O
 
       if (prevModel && prevModel !== association) {
         if (this.roleType.isOne) {
-          prevModel.set(this.roleType, null);
+          prevModel.strategy.setRole(this.roleType, null);
         } else {
-          prevModel.remove(this.roleType, this.object);
+          prevModel.strategy.removeCompositesRole(this.roleType, this.object);
         }
       }
 
       if (association) {
         if (this.roleType.isOne) {
-          association.set(this.roleType, this.object);
+          association.strategy.setRole(this.roleType, this.object);
         } else {
-          association.add(this.roleType, this.object);
+          association.strategy.addCompositesRole(this.roleType, this.object);
         }
       }
     }
@@ -87,7 +87,7 @@ export abstract class AssociationField extends Field implements AfterViewInit, O
   }
 
   public ngAfterViewInit(): void {
-    if (!!this.parentForm) {
+    if (this.parentForm) {
       this.controls.forEach((control: NgModel) => {
         this.parentForm.addControl(control);
       });
@@ -95,18 +95,18 @@ export abstract class AssociationField extends Field implements AfterViewInit, O
   }
 
   public ngOnDestroy(): void {
-    if (!!this.parentForm) {
+    if (this.parentForm) {
       this.controls.forEach((control: NgModel) => {
         this.parentForm.removeControl(control);
       });
     }
   }
 
-  get dataAllorsId(): string {
+  get dataAllorsId(): number {
     return this.object.id;
   }
 
-  get dataAllorsAssociationType(): string {
-    return this.associationType.id;
+  get dataAllorsAssociationType(): number {
+    return this.associationType.relationType.tag;
   }
 }

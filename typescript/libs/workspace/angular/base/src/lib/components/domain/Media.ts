@@ -2,7 +2,7 @@
 // import { assert } from '@allors/workspace/meta/system';
 
 // import { Meta } from '@allors/meta/generated';
-// import { Media } from '@allors/workspace/domain/base';
+// import { Media } from '@allors/workspace/domain/default';
 
 // export const Download = 'download';
 // export const IsImage = 'isImage';

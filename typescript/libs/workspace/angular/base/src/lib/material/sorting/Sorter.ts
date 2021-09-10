@@ -1,26 +1,36 @@
-import { Sort } from '@angular/material/sort';
-
-import { Sort as AllorsSort } from '@allors/workspace/domain/system';
+import { Sort as MaterialSort } from '@angular/material/sort';
+import { Sort as AllorsSort, SortDirection } from '@allors/workspace/domain/system';
 import { RoleType } from '@allors/workspace/meta/system';
 
 export class Sorter {
-    private config: { [index: string]: RoleType | RoleType[] };
+  private config: { [index: string]: RoleType | RoleType[] };
 
-    constructor(config: { [index: string]: RoleType | RoleType[] }) {
-        this.config = config;
+  constructor(config: { [index: string]: RoleType | RoleType[] }) {
+    this.config = config;
+  }
+
+  create(sort: MaterialSort): AllorsSort[] {
+    if (sort) {
+      const sortDirection = sort.direction === 'desc' ? SortDirection.Descending : SortDirection.Ascending;
+      const roleTypeOrRoleTypes = this.config[sort.active];
+
+      if (roleTypeOrRoleTypes instanceof Array) {
+        return (roleTypeOrRoleTypes as RoleType[]).map((v) => {
+          return {
+            roleType: v as RoleType,
+            sortDirection,
+          };
+        });
+      } else {
+        return [
+          {
+            roleType: roleTypeOrRoleTypes as RoleType,
+            sortDirection,
+          },
+        ];
+      }
     }
 
-    create(sort: Sort): any {
-
-        if (sort) {
-            const descending = sort.direction === 'desc';
-            const roleTypeOrRoleTypes = this.config[sort.active];
-
-            if (roleTypeOrRoleTypes instanceof Array) {
-                return (roleTypeOrRoleTypes as RoleType[]).map(v => new AllorsSort({ roleType: v as RoleType, descending }));
-            } else {
-                return new AllorsSort({ roleType: roleTypeOrRoleTypes as RoleType, descending });
-            }
-        }
-    }
+    return null;
+  }
 }

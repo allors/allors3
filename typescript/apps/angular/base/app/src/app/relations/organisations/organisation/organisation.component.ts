@@ -3,7 +3,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 import { Organisation, Person } from '@allors/workspace/domain/default';
 import { IObject, IPullResult } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
-import { AfterViewInit, Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
@@ -13,7 +13,7 @@ import { switchMap } from 'rxjs/operators';
   templateUrl: './organisation.component.html',
   providers: [SessionService],
 })
-export class OrganisationComponent extends TestScope implements OnInit, AfterViewInit, OnDestroy {
+export class OrganisationComponent extends TestScope implements OnInit, OnDestroy {
   title: string;
   m: M;
   peopleFilter: SearchFactory;
@@ -47,7 +47,7 @@ export class OrganisationComponent extends TestScope implements OnInit, AfterVie
 
     this.subscription = combined$
       .pipe(
-        switchMap(([]: [UrlSegment[], Date]) => {
+        switchMap(([,]: [UrlSegment[], Date]) => {
           const id = this.route.snapshot.paramMap.get('id');
 
           const pulls = [
@@ -63,12 +63,10 @@ export class OrganisationComponent extends TestScope implements OnInit, AfterVie
       .subscribe((loaded: IPullResult) => {
         this.allors.session.reset();
 
-        this.organisation = (loaded.object<Organisation>(this.m.Organisation) ?? (this.allors.session.create(this.m.Organisation));
+        this.organisation = loaded.object<Organisation>(this.m.Organisation) ?? this.allors.session.create(this.m.Organisation);
         this.people = loaded.collection<Person>(this.m.Person);
       });
   }
-
-  public ngAfterViewInit(): void {}
 
   public ngOnDestroy(): void {
     if (this.subscription) {
@@ -81,7 +79,7 @@ export class OrganisationComponent extends TestScope implements OnInit, AfterVie
   }
 
   public togglecanWrite() {
-    this.allors.client.invokeReactive(this.allors.session, this.organisation.TogglecanWrite).subscribe(() => {
+    this.allors.client.invokeReactive(this.allors.session, this.organisation.ToggleCanWrite).subscribe(() => {
       this.refresh();
     });
   }

@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Optional, Output, ViewChild, DoCheck } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Optional, Output, ViewChild, DoCheck } from '@angular/core';
 import { FormControl, NgForm } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, map, filter, tap, startWith } from 'rxjs/operators';
-import { MatAutocompleteTrigger, MatAutocompleteSelectedEvent, MatAutocomplete } from '@angular/material/autocomplete';
+import { debounceTime, distinctUntilChanged, switchMap, map, filter } from 'rxjs/operators';
+import { MatAutocompleteTrigger, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
-import { IObject, ParameterTypes } from '@allors/workspace/domain/system';
+import { IObject, TypeForParameter } from '@allors/workspace/domain/system';
 
 import { RoleField } from '../../../../components/forms/RoleField';
 
@@ -20,7 +20,7 @@ export class AllorsMaterialAutocompleteComponent extends RoleField implements On
 
   @Input() options: IObject[];
 
-  @Input() filter: (search: string, parameters?: { [id: string]: ParameterTypes }) => Observable<IObject[]>;
+  @Input() filter: (search: string, parameters?: { [id: string]: TypeForParameter }) => Observable<IObject[]>;
 
   @Input() filterParameters: { [id: string]: string };
 

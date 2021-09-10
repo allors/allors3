@@ -26,19 +26,19 @@ export class EditAction implements Action {
     let editObject = target as IObject;
 
     if (this.roleType) {
-      editObject = editObject.get(this.roleType);
+      editObject = editObject.strategy.getCompositeRole(this.roleType);
     }
 
     return editObject;
   }
 
   disabled(target: ActionTarget) {
-    let editObject = this.resolve(target);
+    const editObject = this.resolve(target);
     return !this.objectService.hasEditControl(editObject);
   }
 
   execute(target: ActionTarget) {
-    let editObject = this.resolve(target);
+    const editObject = this.resolve(target);
     this.objectService.edit(editObject)
       .subscribe(() => {
         this.refreshService.refresh();

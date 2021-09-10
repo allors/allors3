@@ -3,7 +3,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 import { Person, Locale } from '@allors/workspace/domain/default';
 import { IPullResult, Pull } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
-import { AfterViewInit, Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -13,7 +13,7 @@ import { switchMap } from 'rxjs/operators';
   templateUrl: './person.component.html',
   providers: [SessionService],
 })
-export class PersonComponent extends TestScope implements OnInit, AfterViewInit, OnDestroy {
+export class PersonComponent extends TestScope implements OnInit, OnDestroy {
   public title: string;
 
   public m: M;
@@ -54,12 +54,10 @@ export class PersonComponent extends TestScope implements OnInit, AfterViewInit,
         })
       )
       .subscribe((loaded: IPullResult) => {
-        this.person = (loaded.object<Person>(this.m.Person) ?? (this.allors.session.create<Person>(this.m.Person));
+        this.person = loaded.object<Person>(this.m.Person) ?? this.allors.session.create<Person>(this.m.Person);
         this.locales = loaded.collection<Locale>(this.m.Locale);
       });
   }
-
-  public ngAfterViewInit(): void {}
 
   public ngOnDestroy(): void {
     if (this.subscription) {

@@ -35,7 +35,7 @@ export class OrganisationsComponent extends TestScope implements OnInit, OnDestr
     this.titleService.setTitle(this.title);
 
     this.overview = overviewService.overview();
-    this.delete = deleteService.delete(allors.session);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -51,8 +51,10 @@ export class OrganisationsComponent extends TestScope implements OnInit, OnDestr
   public ngOnInit(): void {
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: p } = m;
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularOrganisation = angularMeta.for(m.Organisation);
 
-    this.filter = m.Organisation.filter = m.Organisation.filter ?? new Filter(m.Organisation.filterDefinition);
+    this.filter = angularOrganisation.filter ?? new Filter(angularOrganisation.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -66,7 +68,7 @@ export class OrganisationsComponent extends TestScope implements OnInit, OnDestr
           const pulls = [
             p.Organisation({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.Organisation.sorter.create(sort) : null,
+              sorting: sort ? angularOrganisation.sorter.create(sort) : null,
               include: {
                 Owner: {},
                 Employees: {},

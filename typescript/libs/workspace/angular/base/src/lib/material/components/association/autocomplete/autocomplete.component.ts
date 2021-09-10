@@ -4,7 +4,7 @@ import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/m
 import { Observable } from 'rxjs';
 import { filter, debounceTime, distinctUntilChanged, switchMap, map } from 'rxjs/operators';
 
-import { IObject, ParameterTypes } from '@allors/workspace/domain/system';
+import { IObject, TypeForParameter } from '@allors/workspace/domain/system';
 
 import { AssociationField } from '../../../../components/forms/AssociationField';
 
@@ -20,7 +20,7 @@ export class AllorsMaterialAssociationAutoCompleteComponent extends AssociationF
 
   @Input() options: IObject[];
 
-  @Input() filter: (search: string, parameters?: { [id: string]: ParameterTypes }) => Observable<IObject[]>;
+  @Input() filter: (search: string, parameters?: { [id: string]: TypeForParameter }) => Observable<IObject[]>;
 
   @Input() filterParameters: ({ [id: string]: string });
 

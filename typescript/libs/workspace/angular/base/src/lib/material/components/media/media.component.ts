@@ -8,6 +8,7 @@ import { Media } from '@allors/workspace/domain/default';
 import { MediaService } from '../../../services/media/media.service';
 
 import { AllorMediaPreviewComponent } from './preview/media-preview.component';
+import { isImage } from './media';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -76,5 +77,9 @@ export class AllorsMaterialMediaComponent {
       window.open(url);
 
     }
+  }
+
+  get isImage(): boolean{
+    return isImage(this.media);
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Media } from '@allors/workspace/domain/base';
+import { Media } from '@allors/workspace/domain/default';
 
 @Injectable()
 export abstract class MediaService {

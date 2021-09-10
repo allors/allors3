@@ -124,6 +124,7 @@ import { PersonOverviewComponent } from './relations/people/person/person-overvi
 import { PersonComponent } from './relations/people/person/person.component';
 import { PeopleComponent } from './relations/people/people.component';
 import { FormComponent } from './tests/form/form.component';
+import { configure } from './configure';
 
 export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
   return async () => {
@@ -132,14 +133,19 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
     workspaceService.client = new ReactiveDatabaseClient(client);
 
     const metaPopulation = new LazyMetaPopulation(data);
+    const m = metaPopulation as unknown as M;
     const configuration = new Configuration('Default', metaPopulation, new PrototypeObjectFactory(metaPopulation));
     let nextId = -1;
     const idGenerator: IdGenerator = () => nextId--;
     const serviceBuilder: ServicesBuilder = () => {
-      return new WorkspaceServices(ruleBuilder(metaPopulation as any as M));
+      return new WorkspaceServices(ruleBuilder(m));
     };
     const database = new DatabaseConnection(configuration, idGenerator, serviceBuilder);
-    workspaceService.workspace = database.createWorkspace();
+    const workspace = database.createWorkspace();
+    workspaceService.workspace = workspace;
+
+    const angularMeta = workspace.services.angularMetaService;
+    configure(m, angularMeta);
   };
 }
 

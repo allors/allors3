@@ -11,10 +11,6 @@ import { IRange, Ranges } from '../../collections/ranges/Ranges';
 export abstract class RecordBasedOriginState {
   abstract strategy: Strategy;
 
-  protected hasChanges(): boolean {
-    return this.record == null || this.changedRoleByRelationType?.size > 0;
-  }
-
   protected abstract roleTypes: Set<RoleType>;
 
   protected abstract record: IRecord;
@@ -232,6 +228,18 @@ export abstract class RecordBasedOriginState {
         diffs.push(diff);
       }
     }
+  }
+
+  get hasChangedRoles(): boolean {
+    return this.record == null || this.changedRoleByRelationType?.size > 0;
+  }
+
+  hasChangedRole(roleType: RoleType): boolean {
+    return this.changedRoleByRelationType?.has(roleType.relationType) ?? false;
+  }
+
+  restoreRole(roleType: RoleType): void {
+    this.changedRoleByRelationType?.delete(roleType.relationType);
   }
 
   canMerge(newRecord: IRecord): boolean {

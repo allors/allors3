@@ -5,7 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { timer } from 'rxjs';
 
-import { assert } from '@allors/workspace/meta/system';
+import { assert, UnitTags } from '@allors/workspace/meta/system';
 
 import { Filter } from '../../../../components/filter/Filter';
 import { FilterFieldDefinition } from '../../../../components/filter/FilterFieldDefinition';
@@ -85,7 +85,7 @@ export class AllorsMaterialFilterFieldDialogComponent implements OnInit {
     const initial = filterFieldDefinition.options?.initialValue;
     if (initial != null) {
       initialValue = initial instanceof Function ? initial() : initial;
-      if (filterFieldDefinition.predicate.objectType.isBoolean) {
+      if (filterFieldDefinition.isBoolean) {
         initialValue = true;
       }
     }
@@ -101,7 +101,7 @@ export class AllorsMaterialFilterFieldDialogComponent implements OnInit {
   apply() {
     assert(this.fieldDefinition);
 
-    const objectType = this.fieldDefinition.predicate.objectType;
+    const objectType = this.fieldDefinition.objectType;
     const options = this.fieldDefinition.options;
 
     let value = this.formGroup.get('value')?.value;
@@ -110,7 +110,7 @@ export class AllorsMaterialFilterFieldDialogComponent implements OnInit {
     const inValid = value == null || (objectType.isComposite && value.objectType == null);
 
     if (!inValid) {
-      if (objectType.isDateTime) {
+      if (objectType.tag === UnitTags.DateTime) {
         value = value ? value.toISOString() : null;
         value2 = value2 ? value2.toISOString() : null;
       }

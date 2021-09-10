@@ -1,10 +1,8 @@
 import { ActivatedRoute } from '@angular/router';
-import { ObjectType } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/workspace/meta/system';
 
 export class NavigationActivatedRoute {
-
-  constructor(private activatedRoute: ActivatedRoute) {
-  }
+  constructor(private activatedRoute: ActivatedRoute) {}
 
   id(): string | null {
     return this.activatedRoute.snapshot.paramMap.get('id');
@@ -15,9 +13,10 @@ export class NavigationActivatedRoute {
     return queryParamMap.get('panel');
   }
 
-  queryParam(objectType: ObjectType): string | null {
+  queryParam(objectType: Composite): string | null {
     const queryParamMap = this.activatedRoute.snapshot.queryParamMap;
-    const match = objectType.classes.find((v) => queryParamMap.has(v.name));
-    return match ? queryParamMap.get(match.name) : null;
+    // TODO: Optimize ...objectType.classes
+    const match = [...objectType.classes].find((v) => queryParamMap.has(v.singularName));
+    return match ? queryParamMap.get(match.singularName) : null;
   }
 }

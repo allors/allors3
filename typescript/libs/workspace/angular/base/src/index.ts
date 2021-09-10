@@ -1,5 +1,3 @@
-import { IWorkspaceServices } from '../../../domain/system/src/lib/services/IWorkspaceServices';
-import { IAngularMetaService } from './lib/meta/IAngularMetaService';
 // Services
 export { AuthenticationTokenResponse } from './lib/services/authentication/AuthenticationTokenResponse';
 export { AuthenticationService } from './lib/services/authentication/authentication.service';
@@ -143,6 +141,8 @@ export { Sorter } from './lib/material/sorting/Sorter';
 export { IAngularComposite } from './lib/meta/IAngularComposite';
 export { IAngularMetaService, IAngularMetaObject } from './lib/meta/IAngularMetaService';
 export { IAngularRoleType } from './lib/meta/IAngularRoleType';
+
+import { IAngularMetaService } from './lib/meta/IAngularMetaService';
 
 declare module '@allors/workspace/domain/system' {
   interface IWorkspaceServices {

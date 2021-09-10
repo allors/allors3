@@ -44,24 +44,35 @@ export abstract class Session implements ISession {
     this.pushToWorkspaceTracker = new PushToWorkspaceTracker();
   }
 
+  get hasChangedRoles(): boolean {
+    // TODO: Optimize
+    for (const [, strategy] of this.strategyByWorkspaceId) {
+      if (strategy.hasChangedRoles) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   reset(): void {
     const changeSet = this.checkpoint();
 
     const strategies: Set<IStrategy> = new Set(changeSet.created);
 
-    for(const roles of changeSet.rolesByAssociationType.values()){
-      for(const role of roles){
+    for (const roles of changeSet.rolesByAssociationType.values()) {
+      for (const role of roles) {
         strategies.add(role);
       }
     }
 
-    for(const associations of changeSet.associationsByRoleType.values()){
-      for(const association of associations){
+    for (const associations of changeSet.associationsByRoleType.values()) {
+      for (const association of associations) {
         strategies.add(association);
       }
     }
 
-    for(const strategy of strategies){
+    for (const strategy of strategies) {
       strategy.reset();
     }
   }

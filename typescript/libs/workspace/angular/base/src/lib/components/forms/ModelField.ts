@@ -2,12 +2,11 @@
 // tslint:disable: directive-class-suffix
 import { AfterViewInit, Input, OnDestroy, QueryList, ViewChildren, Directive } from '@angular/core';
 import { NgForm, NgModel } from '@angular/forms';
-import { IObject, } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/workspace/domain/system';
 import { Field } from './Field';
 
 @Directive()
 export abstract class ModelField extends Field implements AfterViewInit, OnDestroy {
-
   @Input()
   public model: IObject | null;
 
@@ -43,7 +42,7 @@ export abstract class ModelField extends Field implements AfterViewInit, OnDestr
   }
 
   public ngAfterViewInit(): void {
-    if (!!this.parentForm) {
+    if (this.parentForm) {
       this.controls.forEach((control: NgModel) => {
         this.parentForm.addControl(control);
       });
@@ -51,14 +50,14 @@ export abstract class ModelField extends Field implements AfterViewInit, OnDestr
   }
 
   public ngOnDestroy(): void {
-    if (!!this.parentForm) {
+    if (this.parentForm) {
       this.controls.forEach((control: NgModel) => {
         this.parentForm.removeControl(control);
       });
     }
   }
 
-  get dataAllorsId(): string | null {
+  get dataAllorsId() {
     return this.model?.id ?? null;
   }
 }

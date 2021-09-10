@@ -1,4 +1,3 @@
-import { IWorkspaceResult } from '@allors/workspace/domain/system';
 import { RoleType } from '@allors/workspace/meta/system';
 import { IRecord } from '../../IRecord';
 import { UnknownVersion } from '../../Version';
@@ -31,7 +30,7 @@ export class WorkspaceOriginState extends RecordBasedOriginState {
   }
 
   push() {
-    if (this.hasChanges) {
+    if (this.hasChangedRoles) {
       this.workspace.push(this.id, this.class, this.record?.version ?? UnknownVersion, this.changedRoleByRelationType);
     }
 

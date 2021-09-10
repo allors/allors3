@@ -140,7 +140,7 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
     }
 
     if (this.object) {
-      return this.roleType.isRequired(this.object.objectType);
+      return this.object.strategy.cls.requiredRoleTypes.has(this.roleType);
     }
 
     return false;

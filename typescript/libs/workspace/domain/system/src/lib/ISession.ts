@@ -15,6 +15,8 @@ export interface ISession {
 
   pushToWorkspace(): IWorkspaceResult;
 
+  hasChangedRoles: boolean;
+
   checkpoint(): IChangeSet;
 
   create<T extends IObject>(cls: Class): T;

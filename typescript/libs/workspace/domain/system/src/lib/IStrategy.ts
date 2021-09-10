@@ -15,7 +15,7 @@ export interface IStrategy {
 
   version: number;
 
-  isNew: IObject;
+  isNew: boolean;
 
   reset(): void;
 
@@ -29,7 +29,9 @@ export interface IStrategy {
 
   existRole(roleType: RoleType): boolean;
 
-  hasChangedRole(roleType: RoleType);
+  hasChangedRole(roleType: RoleType): boolean;
+
+  restoreRole(assignedRoleType: RoleType): void;
 
   getRole(roleType: RoleType): unknown;
 

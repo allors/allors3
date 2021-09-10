@@ -62,7 +62,10 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
   public ngOnInit(): void {
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: p } = m;
-    this.filter = m.Person.filter = m.Person.filter ?? new Filter(m.Person.filterDefinition);
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularPerson = angularMeta.for(m.Person);
+
+    this.filter = angularPerson.filter = angularPerson.filter ?? new Filter(angularPerson.filterDefinition);
 
     this.subscription = combineLatest([this.refresh$, this.filter.fields$, this.sort$, this.pager$])
       .pipe(
@@ -73,7 +76,7 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
           const pulls = [
             p.Person({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.Person.sorter.create(sort) : null,
+              sorting: sort ? angularPerson.sorter.create(sort) : null,
               include: {
                 Pictures: {},
               },
@@ -147,13 +150,13 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
   }
 
   public delete(person: Person | Person[]): void {
-    const people = person instanceof SessionObject ? [person as Person] : person instanceof Array ? person : [];
+    const people = person instanceof Array ? person : person != null ? [person] : [];
     const methods = people.filter((v) => v.canExecuteDelete).map((v) => v.Delete);
 
     if (methods.length > 0) {
       this.dialogService.confirm(methods.length === 1 ? { message: 'Are you sure you want to delete this person?' } : { message: 'Are you sure you want to delete these people?' }).subscribe((confirm: boolean) => {
         if (confirm) {
-          this.allors.context.invoke(methods).subscribe(() => {
+          this.allors.client.invokeReactive(this.allors.session, methods).subscribe(() => {
             this.snackBar.open('Successfully deleted.', 'close', { duration: 5000 });
             this.refresh();
           });

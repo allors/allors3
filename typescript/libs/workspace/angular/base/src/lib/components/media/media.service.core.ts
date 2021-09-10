@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Media } from '@allors/workspace/domain/base';
+import { Media } from '@allors/workspace/domain/default';
 import { MediaConfig } from './media.config';
 
 import { MediaService } from '../../services/media/media.service';

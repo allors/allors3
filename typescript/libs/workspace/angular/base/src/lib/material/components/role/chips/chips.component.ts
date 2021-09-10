@@ -4,7 +4,7 @@ import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, map, filter } from 'rxjs/operators';
 import { MatAutocompleteTrigger, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
-import { IObject, ParameterTypes } from '@allors/workspace/domain/system';
+import { IObject, TypeForParameter } from '@allors/workspace/domain/system';
 
 import { RoleField } from '../../../../components/forms/RoleField';
 
@@ -21,9 +21,9 @@ export class AllorsMaterialChipsComponent extends RoleField implements OnInit, D
 
   @Input() options: IObject[];
 
-  @Input() filter: (search: string, parameters?: { [id: string]: ParameterTypes }) => Observable<IObject[]>;
+  @Input() filter: (search: string, parameters?: { [id: string]: TypeForParameter }) => Observable<IObject[]>;
 
-  @Input() filterParameters: ({ [id: string]: ParameterTypes });
+  @Input() filterParameters: ({ [id: string]: TypeForParameter });
 
   @Output() changed: EventEmitter<IObject> = new EventEmitter();
 
