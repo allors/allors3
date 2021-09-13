@@ -119,8 +119,6 @@ export { TableConfig } from './lib/material/components/table/TableConfig';
 export { TableRow } from './lib/material/components/table/TableRow';
 export { AllorsMaterialTableComponent } from './lib/material/components/table/table.component';
 
-export { AllorsDateAdapter as AllorsDateAdapter } from './lib/material/dateadapter/allorsdateadapter';
-
 export { DeleteService } from './lib/material/services/actions/delete/delete.service';
 export { DeleteAction } from './lib/material/services/actions/delete/DeleteAction';
 export { EditService } from './lib/material/services/actions/edit/edit.service';

@@ -48,3 +48,42 @@ export async function databasPullOtherSessionNotPushedException() {
 
   expect(hasErrors).toBeTruthy();
 }
+
+export async function databaseStrategyHasChanges() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  // // New Object
+  // {
+  //   const c1 = session.create<C1>(m.C1);
+
+  //   expect(c1.strategy.hasChangedRole(m.C1.C1AllorsString)).toBeFalsy();
+
+  //   c1.C1AllorsString = 'I am changed!';
+
+  //   expect(c1.strategy.hasChangedRole(m.C1.C1AllorsString)).toBeTruthy();
+  // }
+
+  // // New Object with push
+  // {
+  //   const c1 = session.create<C1>(m.C1);
+
+  //   c1.C1AllorsString = 'I am changed!';
+
+  //   await client.pushAsync(session);
+
+  //   expect(c1.strategy.hasChangedRole(m.C1.C1AllorsString)).toBeTruthy();
+  // }
+
+  // New Object with push and pull
+  {
+    const c1 = session.create<C1>(m.C1);
+
+    c1.C1AllorsString = 'I am changed!';
+
+    const x = await client.pushAsync(session);
+    await client.pullAsync(session, { object: c1 });
+
+    expect(c1.strategy.hasChangedRole(m.C1.C1AllorsString)).toBeFalsy();
+  }
+}

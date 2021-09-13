@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
 import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { enGB } from 'date-fns/locale';
@@ -107,7 +107,6 @@ import {
   AllorsMaterialSideNavToggleComponent,
   AllorsMaterialTableComponent,
   FactoryFabComponent,
-  AllorsDateAdapter,
   AllorsMaterialDialogServiceCore,
   ObjectServiceCore,
   SaveServiceCore,
@@ -313,7 +312,8 @@ export const routes: Routes = [
       provide: MAT_AUTOCOMPLETE_DEFAULT_OPTIONS,
       useValue: { autoActiveFirstOption: true },
     },
-    { provide: DateAdapter, useClass: AllorsDateAdapter },
+    { provide: DateAdapter, useClass: NativeDateAdapter },
+    { provide: MAT_DATE_LOCALE, useValue: 'nl-BE' },
     {
       provide: MAT_DATE_FORMATS,
       useValue: {

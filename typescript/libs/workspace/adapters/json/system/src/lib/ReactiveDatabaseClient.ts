@@ -13,7 +13,7 @@ import { IReactiveDatabaseJsonClient } from './IReactiveDatabaseJsonClient';
 import { DatabaseConnection } from './database/DatabaseConnection';
 
 import { Observable, of } from 'rxjs';
-import { concatMap, map, switchMap, tap } from 'rxjs/operators';
+import { concatMap, map, switchMap } from 'rxjs/operators';
 
 export class ReactiveDatabaseClient implements IReactiveDatabaseClient {
   constructor(public client: IReactiveDatabaseJsonClient) {}

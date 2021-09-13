@@ -232,27 +232,5 @@ namespace Allors.Repository
         [Id("A360CF09-7B55-421B-A45D-D100BAF3D0D6")]
         #endregion
         void InterfaceMethod();
-
-        #region Allors
-        [Id("7167203C-1CD9-48BF-98A8-AAA80506E3B8")]
-        [Size(256)]
-        [Workspace(Default)]
-        #endregion
-        string OverrideRequiredAndUnique { get; set; }
-
-        #region Allors
-        [Id("6CB2E5CC-1EF8-47DA-A1C3-40423F2DAC68")]
-        [Size(256)]
-        [Workspace(Default)]
-        #endregion
-        public string OverrideRequired { get; set; }
-
-        #region Allors
-        [Id("D4D81CCE-EDC9-4D8F-BB81-9F79007F0F71")]
-        [Size(256)]
-        [Workspace(Default)]
-        #endregion
-        public string OverrideUnique { get; set; }
-
     }
 }

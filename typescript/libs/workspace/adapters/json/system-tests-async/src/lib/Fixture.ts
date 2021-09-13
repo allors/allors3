@@ -33,7 +33,7 @@ export class Fixture {
     this.asyncDatabaseClient = new AsyncDatabaseClient(this.client);
 
     await this.client.setup(population);
-    await this.client.login('administrator', '');
+    await this.client.login('jane@example.com', '');
 
     this.metaPopulation = new LazyMetaPopulation(data);
 

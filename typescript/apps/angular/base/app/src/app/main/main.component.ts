@@ -41,7 +41,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
       const sideMenuItem: SideMenuItem = {
         icon: menuItem.icon ?? angularMeta.for(objectType)?.icon,
-        title: menuItem.title ?? angularMeta.for(objectType)?.displayName,
+        title: menuItem.title ?? angularMeta.for(objectType)?.displayName ?? objectType.pluralName,
         link: menuItem.link ?? angularMeta.for(objectType)?.list,
         children:
           menuItem.children &&
@@ -49,7 +49,7 @@ export class MainComponent implements OnInit, OnDestroy {
             const childObjectType = childMenuItem.tag ? (m.metaObjectByTag.get(childMenuItem.tag) as Composite) : null;
             return {
               icon: childMenuItem.icon ?? angularMeta.for(childObjectType)?.icon,
-              title: childMenuItem.title ?? angularMeta.for(childObjectType)?.displayName,
+              title: childMenuItem.title ?? angularMeta.for(childObjectType)?.displayName ?? childObjectType.pluralName,
               link: childMenuItem.link ?? angularMeta.for(childObjectType)?.list,
             };
           }),

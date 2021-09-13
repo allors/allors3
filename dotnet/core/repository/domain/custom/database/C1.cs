@@ -145,17 +145,7 @@ namespace Allors.Repository
         public bool ChangedRolePongI1 { get; set; }
         public bool ChangedRolePingC1 { get; set; }
         public bool ChangedRolePongC1 { get; set; }
-
-        [Required]
-        [Unique]
-        public string OverrideRequiredAndUnique { get; set; }
-
-        [Required]
-        public string OverrideRequired { get; set; }
-
-        [Unique]
-        public string OverrideUnique { get; set; }
-
+        
         #endregion
 
         #region Database Relation

@@ -1,4 +1,4 @@
-import { Component, Optional, Output, EventEmitter, Self, Inject } from '@angular/core';
+import { Component, Optional, Output, EventEmitter } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { RoleField } from '../../../../components/forms/RoleField';
 

@@ -138,21 +138,21 @@ export class FormComponent extends TestScope implements OnInit, OnDestroy {
   newDate() {
     if (this.data) {
       const today = this.dateAdapter.today();
-      this.data.Date = today;
+      this.data.Date = new Date(today);
     }
   }
 
   newDateTime() {
     if (this.data) {
       const today = this.dateAdapter.today();
-      this.data.DateTime = today;
+      this.data.DateTime = new Date(today);
     }
   }
 
   newDateTime2() {
     if (this.data) {
       const today = this.dateAdapter.today();
-      this.data.DateTime2 = today;
+      this.data.DateTime2 = new Date(today);
     }
   }
 

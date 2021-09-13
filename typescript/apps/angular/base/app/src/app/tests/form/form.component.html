@@ -15,7 +15,7 @@
         <div class="row">
           <a-mat-input class="col-md" [object]="data" [roleType]="m.Data.String"></a-mat-input>
         </div>
-
+       
         <div class="row">
           <a-mat-input class="col-md" [object]="data" [roleType]="m.Data.Decimal"></a-mat-input>
         </div>
@@ -42,9 +42,10 @@
         </div>
 
         <div class="row">
-          <a-mat-autocomplete class="col-md" [object]="data" [roleType]="m.Data.AutocompleteFilter" [filter]="peopleFilter.create(allors)" display="UserName" hint="With filter"></a-mat-autocomplete>
+          <!-- <a-mat-autocomplete class="col-md" [object]="data" [roleType]="m.Data.AutocompleteFilter" [filter]="peopleFilter.create(allors)" display="UserName" hint="With filter"></a-mat-autocomplete> -->
           <a-mat-autocomplete class="col-md" [object]="data" [roleType]="m.Data.AutocompleteDerivedFilter" [assignedRoleType]="m.Data.AutocompleteAssignedFilter" [derivedInitialRole]="jane" [filter]="peopleFilter.create(allors)" display="UserName" hint="With filter"></a-mat-autocomplete>
         </div>
+ <!--
 
         <div class="row">
           <a-mat-autocomplete class="col-md" [object]="data" [roleType]="m.Data.AutocompleteOptions" [options]="people" display="UserName" hint="With options"></a-mat-autocomplete>
@@ -120,7 +121,7 @@
               <span *ngFor="let employee of organisation.Employees">{{ employee.FirstName }}, </span>
             </div>
           </div>
-        </div>
+        </div> -->
       </mat-card-content>
     </mat-card>
   </div>

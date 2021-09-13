@@ -49,12 +49,12 @@ export interface MetaData {
   t?: { [name: string]: number[] };
 
   /**
-   * Overriden Required
+   * Overridden Required
    */
   or?: [number, number[]][];
 
   /**
-   * Overriden Unique
+   * Overridden Unique
    */
   ou?: [number, number[]][];
 }
