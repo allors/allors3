@@ -39,8 +39,8 @@ export abstract class Ranges<T> {
 
   private *_remove(set: Array<T>, value: T) {
     for (const current of set) {
-      if (this.compare(value, current) != 0) {
-        yield value;
+      if (this.compare(current, value) != 0) {
+        yield current;
       }
     }
   }

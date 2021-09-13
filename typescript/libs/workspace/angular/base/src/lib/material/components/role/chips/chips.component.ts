@@ -14,7 +14,6 @@ import { RoleField } from '../../../../components/forms/RoleField';
   templateUrl: './chips.component.html',
 })
 export class AllorsMaterialChipsComponent extends RoleField implements OnInit, DoCheck {
-
   @Input() display = 'display';
 
   @Input() debounceTime = 400;
@@ -23,7 +22,7 @@ export class AllorsMaterialChipsComponent extends RoleField implements OnInit, D
 
   @Input() filter: (search: string, parameters?: { [id: string]: TypeForParameter }) => Observable<IObject[]>;
 
-  @Input() filterParameters: ({ [id: string]: TypeForParameter });
+  @Input() filterParameters: { [id: string]: TypeForParameter };
 
   @Output() changed: EventEmitter<IObject> = new EventEmitter();
 
@@ -39,8 +38,7 @@ export class AllorsMaterialChipsComponent extends RoleField implements OnInit, D
 
   focus$: BehaviorSubject<Date>;
 
-  constructor(
-    @Optional() parentForm: NgForm  ) {
+  constructor(@Optional() parentForm: NgForm) {
     super(parentForm);
 
     this.focus$ = new BehaviorSubject<Date>(new Date());
@@ -48,53 +46,59 @@ export class AllorsMaterialChipsComponent extends RoleField implements OnInit, D
 
   public ngOnInit(): void {
     if (this.filter) {
-      this.filteredOptions = combineLatest([this.searchControl.valueChanges, this.focus$])
-        .pipe(
-          filter(([search]) => search !== null && search !== undefined && search.trim),
-          debounceTime(this.debounceTime),
-          distinctUntilChanged(),
-          switchMap(([search]) => {
-            if (this.filterParameters) {
-              return this.filter(search, this.filterParameters);
-            } else {
-              return this.filter(search);
-            }
-          }))
-        ;
+      this.filteredOptions = combineLatest([this.searchControl.valueChanges, this.focus$]).pipe(
+        filter(([search]) => search !== null && search !== undefined && search.trim),
+        debounceTime(this.debounceTime),
+        distinctUntilChanged(),
+        switchMap(([search]) => {
+          if (this.filterParameters) {
+            return this.filter(search, this.filterParameters);
+          } else {
+            return this.filter(search);
+          }
+        })
+      );
     } else {
-      this.filteredOptions = this.searchControl.valueChanges
-        .pipe(
-          filter((v) => v !== null && v !== undefined && v.trim),
-          debounceTime(this.debounceTime),
-          distinctUntilChanged(),
-          map((search: string) => {
-            const lowerCaseSearch = search.trim().toLowerCase();
-            return this.options
-              .filter((v: IObject) => {
-                const optionDisplay: string = (v as any)[this.display]
-                  ? (v as any)[this.display].toString().toLowerCase()
-                  : undefined;
-                if (optionDisplay) {
-                  return optionDisplay.indexOf(lowerCaseSearch) !== -1;
-                }
+      this.filteredOptions = this.searchControl.valueChanges.pipe(
+        filter((v) => v !== null && v !== undefined && v.trim),
+        debounceTime(this.debounceTime),
+        distinctUntilChanged(),
+        map((search: string) => {
+          const lowerCaseSearch = search.trim().toLowerCase();
+          return this.options
+            .filter((v: IObject) => {
+              const optionDisplay: string = (v as any)[this.display] ? (v as any)[this.display].toString().toLowerCase() : undefined;
+              if (optionDisplay) {
+                return optionDisplay.indexOf(lowerCaseSearch) !== -1;
+              }
 
-                return false;
-              })
-              .sort(
-                (a: IObject, b: IObject) =>
-                  (a as any)[this.display] !== (b as any)[this.display]
-                    ? (a as any)[this.display] < (b as any)[this.display] ? -1 : 1
-                    : 0,
-              );
-          })
-        );
+              return false;
+            })
+            .sort((a: IObject, b: IObject) => ((a as any)[this.display] !== (b as any)[this.display] ? ((a as any)[this.display] < (b as any)[this.display] ? -1 : 1) : 0));
+        })
+      );
     }
   }
 
   ngDoCheck() {
     if (!this.focused && this.trigger && this.searchControl) {
-      if (!this.trigger.panelOpen && this.searchControl.value !== this.model) {
-        this.searchControl.setValue(this.model);
+      if (!this.trigger.panelOpen) {
+        const value = this.searchControl.value as IObject[];
+        const model = this.model as IObject[];
+
+        let differ = value == null || value.length !== model.length;
+        if (!differ) {
+          for(let i=0; i<value.length ; i++){
+            if(value[i] !== model[i]){
+              differ = true;
+              break;
+            }
+          }
+        }
+
+        if (differ) {
+          this.searchControl.setValue(this.model);
+        }
       }
     }
   }

@@ -12,23 +12,23 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    // TODO: Martien
-    public class OrderOrderStateRule : Rule
+    public class DataRule : Rule
     {
-        public OrderOrderStateRule(MetaPopulation m) : base(m, new Guid("C9895CF4-98B2-4023-A3EA-582107C7D80D")) =>
+        public DataRule(MetaPopulation m) : base(m, new Guid("B3CADA5C-B844-40BF-82B9-CF4EC41AF198")) =>
             this.Patterns = new Pattern[]
             {
-                m.Order.RolePattern(v=>v.OrderState)
+                m.Data.RolePattern(v=>v.AutocompleteAssignedFilter),
+                m.Data.RolePattern(v=>v.AutocompleteAssignedOptions),
+                m.Data.RolePattern(v=>v.SelectAssigned)
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var @this in matches.Cast<Order>())
+            foreach (var @this in matches.Cast<Data>())
             {
-                if (@this.ExistAmount && @this.Amount == -1)
-                {
-                    @this.OrderState = new OrderStates(@this.Strategy.Transaction).Cancelled;
-                }
+                @this.AutocompleteDerivedFilter = @this.AutocompleteAssignedFilter;
+                @this.AutocompleteDerivedOptions = @this.AutocompleteAssignedOptions;
+                @this.SelectDerived = @this.SelectAssigned;
             }
         }
     }

@@ -26,6 +26,8 @@ namespace Allors.Database.Domain
                 new NotificationListRule(m),
 
                 // Custom
+                new DataRule(m),
+                new PersonAddressRule(m),
                 new PersonFullNameRule(m),
                 new PersonGreetingRule(m),
             };

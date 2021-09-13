@@ -44,17 +44,11 @@ describe('Pulls', () => {
 
       const select = result.select;
 
-      expect(select.include).toBeUndefined();
-      expect(select.next).toBeDefined();
+      expect(select.include).toBeDefined();
+      expect(select.next).toBeUndefined();
       expect(select.propertyType).toBe(m.Organisation.Owner);
 
-      const next = select.next;
-
-      expect(next.include).toBeDefined();
-      expect(next.next).toBeUndefined();
-      expect(next.propertyType).toBeUndefined();
-
-      const include = next.include;
+      const include = select.include;
 
       expect(include.length).toBe(1);
 

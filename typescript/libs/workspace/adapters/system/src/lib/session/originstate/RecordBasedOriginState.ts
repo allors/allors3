@@ -39,7 +39,14 @@ export abstract class RecordBasedOriginState {
     }
 
     const role = this.record?.getRole(roleType) as number;
-    return role != null ? this.session.getStrategy(role) : null;
+
+    if(role == null){
+      return null;
+    }
+
+    const strategy = this.session.getStrategy(role);
+    this.assert(strategy);
+    return strategy;
   }
 
   setCompositeRole(roleType: RoleType, role?: Strategy) {
@@ -69,7 +76,23 @@ export abstract class RecordBasedOriginState {
     }
 
     const role = this.record?.getRole(roleType) as IRange<number>;
-    return role != null ? this.strategyRanges.importFrom(role.map((v) => this.session.getStrategy(v))) : (frozenEmptyArray as Strategy[]);
+
+    if (role == null) {
+      return frozenEmptyArray as Strategy[];
+    }
+
+    const strategies = role.map((v) => {
+      const strategy = this.session.getStrategy(v);
+      this.assert(strategy); 
+      return strategy;
+    });
+    
+    return this.strategyRanges.importFrom(strategies);
+  }
+  assert(strategy: Strategy) {
+    if(strategy == null){
+      throw new Error('Strategy is not present in session.');
+    }
   }
 
   addCompositesRole(roleType: RoleType, roleToAdd: Strategy) {

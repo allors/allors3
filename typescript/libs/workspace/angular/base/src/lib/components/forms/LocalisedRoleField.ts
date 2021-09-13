@@ -11,44 +11,60 @@ export abstract class LocalisedRoleField extends RoleField {
   public locale: Locale;
 
   get localisedObject(): LocalisedText | null {
-    const all: LocalisedText[] = this.model;
-    if (all) {
-      const filtered: LocalisedText[] = all.filter((v: LocalisedText) => v.Locale === this.locale);
-      return filtered?.[0] ?? null;
+    if (this.locale) {
+      const all: LocalisedText[] = this.model;
+      if (all) {
+        const filtered: LocalisedText[] = all.filter((v: LocalisedText) => v.Locale === this.locale);
+        return filtered?.[0] ?? null;
+      }
     }
 
     return null;
   }
 
   get localisedText(): string | null {
-    return this.localisedObject?.Text ?? null;
+    if (this.locale) {
+      return this.localisedObject?.Text ?? null;
+    }
+
+    return null;
   }
 
   set localisedText(value: string | null) {
-    if (!this.localisedObject) {
-      const m = this.roleType.relationType.metaPopulation as M;
-      const localisedText: LocalisedText = this.object.strategy.session.create<LocalisedText>(m.LocalisedText);
-      localisedText.Locale = this.locale;
-      this.object.strategy.addCompositesRole(this.roleType, localisedText);
-    }
+    if (this.locale) {
+      if (!this.localisedObject) {
+        const m = this.roleType.relationType.metaPopulation as M;
+        const localisedText: LocalisedText = this.object.strategy.session.create<LocalisedText>(m.LocalisedText);
+        localisedText.Locale = this.locale;
+        this.object.strategy.addCompositesRole(this.roleType, localisedText);
+      }
 
-    assert(this.localisedObject);
-    this.localisedObject.Text = value;
+      assert(this.localisedObject);
+      this.localisedObject.Text = value;
+    }
   }
 
   get localisedName(): string {
-    return this.name + '_' + this.locale.Name;
+    if (this.locale) {
+      return this.name + '_' + this.locale.Name;
+    }
+
+    return null;
   }
 
   get localisedLabel(): string {
-    let name = this.roleType.name;
-    const localised = 'Localised';
-    if (name.indexOf(localised) === 0) {
-      name = name.slice(localised.length);
-      name = name.slice(0, name.length - 1);
+    if (this.locale) {
+      let name = this.roleType.name;
+      const localised = 'Localised';
+      if (name.indexOf(localised) === 0) {
+        name = name.slice(localised.length);
+        name = name.slice(0, name.length - 1);
+      }
+
+      const label = this.assignedLabel ? this.assignedLabel : humanize(name);
+      return label + ' (' + this.locale.Language?.Name + ')';
     }
 
-    const label = this.assignedLabel ? this.assignedLabel : humanize(name);
-    return label + ' (' + this.locale.Language?.Name + ')';
+    return null;
   }
 }

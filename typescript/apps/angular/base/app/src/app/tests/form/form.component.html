@@ -42,10 +42,9 @@
         </div>
 
         <div class="row">
-          <!-- <a-mat-autocomplete class="col-md" [object]="data" [roleType]="m.Data.AutocompleteFilter" [filter]="peopleFilter.create(allors)" display="UserName" hint="With filter"></a-mat-autocomplete> -->
+          <a-mat-autocomplete class="col-md" [object]="data" [roleType]="m.Data.AutocompleteFilter" [filter]="peopleFilter.create(allors)" display="UserName" hint="With filter"></a-mat-autocomplete>
           <a-mat-autocomplete class="col-md" [object]="data" [roleType]="m.Data.AutocompleteDerivedFilter" [assignedRoleType]="m.Data.AutocompleteAssignedFilter" [derivedInitialRole]="jane" [filter]="peopleFilter.create(allors)" display="UserName" hint="With filter"></a-mat-autocomplete>
         </div>
- <!--
 
         <div class="row">
           <a-mat-autocomplete class="col-md" [object]="data" [roleType]="m.Data.AutocompleteOptions" [options]="people" display="UserName" hint="With options"></a-mat-autocomplete>
@@ -57,11 +56,12 @@
           <a-mat-select class="col-md" [object]="data" [roleType]="m.Data.SelectDerived" [assignedRoleType]="m.Data.SelectAssigned" [derivedInitialRole]="jane" [options]="people" display="UserName" hint="With options"></a-mat-select>
         </div>
 
+
         <div class="row">
           <a-mat-checkbox class="col-md" [object]="data" [roleType]="m.Data.Checkbox" hint="checkbox hint"></a-mat-checkbox>
           <a-mat-chips class="col-md" [object]="data" [roleType]="m.Data.Chips" [options]="people" display="UserName"></a-mat-chips>
         </div>
-
+        
         <div class="row">
           <a-mat-file class="col-md-12" [object]="data" [roleType]="m.Data.File" accept="image/*"></a-mat-file>
           <a-mat-files class="col-md-12" [object]="data" [roleType]="m.Data.MultipleFiles" accept="image/*"></a-mat-files>
@@ -71,21 +71,22 @@
           <a-mat-radiogroup class="col-md" [object]="data" [roleType]="m.Data.RadioGroup" [options]="radioGroupOptions"></a-mat-radiogroup>
           <a-mat-slider class="col-md" [object]="data" [roleType]="m.Data.Slider" [min]="1" [max]="20" [step]="1"></a-mat-slider>
         </div>
-
+       
         <div class="row">
           <a-mat-slidetoggle class="col-md" [object]="data" [roleType]="m.Data.SlideToggle"></a-mat-slidetoggle>
           <a-mat-textarea class="col-md" [object]="data" [roleType]="m.Data.PlainText"></a-mat-textarea>
         </div>
-
         <div class="row">
           <a-mat-markdown class="col-md" [object]="data" [roleType]="m.Data.Markdown"></a-mat-markdown>
           <textarea class="col-md">{{ data.Markdown }}</textarea>
         </div>
-
+      
         <div class="row">
           <a-mat-localised-text class="col-md" [object]="data" [roleType]="m.Data.LocalisedTexts" [locale]="locale"></a-mat-localised-text>
           <a-mat-localised-markdown class="col-md" [object]="data" [roleType]="m.Data.LocalisedMarkdowns" [locale]="locale"></a-mat-localised-markdown>
         </div>
+ 
+
 
         <div class="row">
           <div class="col-md">
@@ -105,6 +106,7 @@
           </div>
         </div>
 
+
         <div class="row">
           <div class="col-md">
             <h4>
@@ -121,7 +123,7 @@
               <span *ngFor="let employee of organisation.Employees">{{ employee.FirstName }}, </span>
             </div>
           </div>
-        </div> -->
+        </div> 
       </mat-card-content>
     </mat-card>
   </div>
@@ -129,15 +131,9 @@
   <mat-toolbar class="a-footer">
     <mat-toolbar-row class="row">
       <span class="col"></span>
-      <button mat-raised-button (click)="goBack()" type="button">
-        CANCEL
-      </button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="!form.form.valid">
-        SAVE
-      </button>
-      <button mat-raised-button color="warn" type="button" (click)="reset()">
-        RESET
-      </button>
+      <button mat-raised-button (click)="goBack()" type="button">CANCEL</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="!form.form.valid">SAVE</button>
+      <button mat-raised-button color="warn" type="button" (click)="reset()">RESET</button>
     </mat-toolbar-row>
   </mat-toolbar>
 </form>
