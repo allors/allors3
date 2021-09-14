@@ -109,7 +109,25 @@ namespace Allors.Workspace.Adapters.Local
                         else
                         {
                             name ??= extent.ObjectType.PluralName;
-                            response.AddCollection(name, objects);
+                            var include = result.Include;
+
+                            if (result.Skip.HasValue || result.Take.HasValue)
+                            {
+                                var paged = result.Skip.HasValue ? objects.Skip(result.Skip.Value) : objects;
+                                if (result.Take.HasValue)
+                                {
+                                    paged = paged.Take(result.Take.Value);
+                                }
+
+                                paged = paged.ToArray();
+
+                                response.AddValue(name + "_total", extent.Build(this.transaction, this.pull.Arguments).Count.ToString());
+                                response.AddCollection(name, paged, include);
+                            }
+                            else
+                            {
+                                response.AddCollection(name, objects, include);
+                            }
                         }
                     }
                     catch (Exception e)

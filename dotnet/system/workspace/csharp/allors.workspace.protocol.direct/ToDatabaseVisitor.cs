@@ -173,6 +173,7 @@ namespace Allors.Workspace.Protocol.Direct
                 SelectRef = v.SelectRef,
                 Skip = v.Skip,
                 Take = v.Take,
+                Include = this.Visit(v.Include)
             }).ToArray();
 
         private Select Visit(Data.Select ws) => ws != null ? new Select { Include = this.Visit(ws.Include), PropertyType = this.Visit(ws.PropertyType), Next = this.Visit(ws.Next) } : null;

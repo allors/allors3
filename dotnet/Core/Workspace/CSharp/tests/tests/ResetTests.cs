@@ -97,17 +97,63 @@ namespace Tests.Workspace
 
             var session = this.Workspace.CreateSession();
 
-            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var pull = new Pull
+            {
+                Extent = new Filter(this.M.C1)
+                {
+                    Predicate = new Equals(this.M.C1.Name) { Value = "c1A" }
+                }
+            };
+
             var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
             var c1a = result.GetCollection<C1>()[0];
-            var c1b = session.Create<C1>();
+            var c1x = session.Create<C1>();
 
-            c1a.C1C1One2One = c1b;
+            c1a.C1C1One2One = c1x;
 
             c1a.Strategy.Reset();
 
-            Assert.Null(c1a.C1C1One2One);
-            Assert.Null(c1b.C1WhereC1C1One2One);
+            Assert.NotNull(Record.Exception(() =>
+            {
+                var x = c1a.C1C1One2One;
+            }));
+
+            Assert.Null(c1x.C1WhereC1C1One2One);
+        }
+
+        [Fact]
+        public async void ResetOne2OneIncludeWithoutPush()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull
+            {
+                Extent = new Filter(this.M.C1)
+                {
+                    Predicate = new Equals(this.M.C1.Name) { Value = "c1A" }
+                },
+                Results = new[]
+                {
+                    new Result
+                    {
+                        Include = new[]{ new Node(this.M.C1.C1C1One2One)}
+                    }
+                }
+            };
+
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var c1a = result.GetCollection<C1>()[0];
+            var c1b = c1a.C1C1One2One;
+            var c1x = session.Create<C1>();
+
+            c1a.C1C1One2One = c1x;
+
+            c1a.Strategy.Reset();
+
+            Assert.Equal(c1b, c1a.C1C1One2One);
+            Assert.Null(c1x.C1WhereC1C1One2One);
         }
 
         [Fact]
@@ -128,8 +174,49 @@ namespace Tests.Workspace
 
             c1a.Strategy.Reset();
 
-            Assert.Null(c1a.C1C1One2One);
+            Assert.NotNull(Record.Exception(() =>
+            {
+                var x = c1a.C1C1One2One;
+            }));
+
             Assert.Null(c1b.C1WhereC1C1One2One);
+        }
+
+        [Fact]
+        public async void ResetOne2OneIncludeAfterPush()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull
+            {
+                Extent = new Filter(this.M.C1)
+                {
+                    Predicate = new Equals(this.M.C1.Name) { Value = "c1A" }
+                },
+                Results = new[]
+                {
+                    new Result
+                    {
+                        Include = new[]{ new Node(this.M.C1.C1C1One2One)}
+                    }
+                }
+            };
+
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var c1a = result.GetCollection<C1>()[0];
+            var c1b = c1a.C1C1One2One;
+            var c1x = session.Create<C1>();
+
+            c1a.C1C1One2One = c1x;
+
+            await this.AsyncDatabaseClient.PushAsync(session);
+
+            c1a.Strategy.Reset();
+
+            Assert.Equal(c1b, c1a.C1C1One2One);
+            Assert.Null(c1x.C1WhereC1C1One2One);
         }
 
         [Fact]

@@ -49,27 +49,27 @@ namespace Allors.Database.Protocol.Json
                     {
                         var name = result.Name;
 
-                        var @select = result.Select;
-                        if (@select == null && result.SelectRef.HasValue)
+                        var select = result.Select;
+                        if (select == null && result.SelectRef.HasValue)
                         {
-                            @select = this.preparedSelects.Get(result.SelectRef.Value);
+                            select = this.preparedSelects.Get(result.SelectRef.Value);
                         }
 
-                        if (@select != null)
+                        if (select != null)
                         {
-                            var include = @select.End.Include;
+                            var include = select.End.Include;
 
-                            if (@select.PropertyType != null)
+                            if (select.PropertyType != null)
                             {
-                                objects = @select.IsOne ?
-                                              objects.Select(v => @select.Get(v, this.acls)).Where(v => v != null).Cast<IObject>().Distinct().ToArray() :
+                                objects = select.IsOne ?
+                                              objects.Select(v => select.Get(v, this.acls)).Where(v => v != null).Cast<IObject>().Distinct().ToArray() :
                                               objects.SelectMany(v =>
                                               {
-                                                  var stepResult = @select.Get(v, this.acls);
+                                                  var stepResult = select.Get(v, this.acls);
                                                   return stepResult is HashSet<object> set ? set.Cast<IObject>().ToArray() : ((Extent)stepResult)?.ToArray() ?? Array.Empty<IObject>();
                                               }).Distinct().ToArray();
 
-                                var propertyType = @select.End.PropertyType;
+                                var propertyType = select.End.PropertyType;
                                 name ??= propertyType.PluralName;
                             }
 

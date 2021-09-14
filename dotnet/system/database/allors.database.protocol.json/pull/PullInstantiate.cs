@@ -11,7 +11,6 @@ namespace Allors.Database.Protocol.Json
     using Meta;
     using Data;
     using Security;
-    using Extent = Extent;
 
     public class PullInstantiate
     {
@@ -102,8 +101,8 @@ namespace Allors.Database.Protocol.Json
                         }
                         else
                         {
-                            var include = result.Include;
                             name ??= this.pull.ObjectType?.Name ?? @object.Strategy.Class.SingularName;
+                            var include = result.Include;
                             response.AddObject(name, @object, include);
                         }
                     }

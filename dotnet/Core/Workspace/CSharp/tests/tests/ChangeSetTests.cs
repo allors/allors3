@@ -296,7 +296,7 @@ namespace Tests.Workspace
             await this.AsyncDatabaseClient.PushAsync(session);
             result = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = c1b });
 
-            var c2b = result.GetObject<C1>();
+            c1b = result.GetObject<C1>();
 
             c1a.C1C1Many2One = c1b;
 

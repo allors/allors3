@@ -45,29 +45,12 @@ export abstract class RecordBasedOriginState {
     }
 
     const strategy = this.session.getStrategy(role);
-    this.assert(strategy);
-    return strategy;
-  }
-
-  getCompositeRoleForAssociation(roleType: RoleType): Strategy {
-    if (this.changedRoleByRelationType != null && this.changedRoleByRelationType.has(roleType.relationType)) {
-      return this.changedRoleByRelationType.get(roleType.relationType) as Strategy;
-    }
-
-    const role = this.record?.getRole(roleType) as number;
-
-    if (role == null) {
-      return null;
-    }
-
-    const strategy = this.session.getStrategy(role);
+    this.assertStrategy(strategy);
     return strategy;
   }
 
   setCompositeRole(roleType: RoleType, role?: Strategy) {
-    const previousRole = this.getCompositeRole(roleType);
-
-    if (previousRole == role) {
+    if (this.sameCompositeRole(roleType, role)) {
       return;
     }
 
@@ -98,30 +81,9 @@ export abstract class RecordBasedOriginState {
 
     const strategies = role.map((v) => {
       const strategy = this.session.getStrategy(v);
-      this.assert(strategy);
+      this.assertStrategy(strategy);
       return strategy;
     });
-
-    return strategies;
-  }
-
-  getCompositesRoleForAssociation(roleType: RoleType): IRange<Strategy> {
-    if (this.changedRoleByRelationType != null && this.changedRoleByRelationType.has(roleType.relationType)) {
-      return this.changedRoleByRelationType.get(roleType.relationType) as IRange<Strategy>;
-    }
-
-    const role = this.record?.getRole(roleType) as IRange<number>;
-
-    if (role == null) {
-      return frozenEmptyArray as Strategy[];
-    }
-
-    const strategies = role
-      .map((v) => {
-        const strategy = this.session.getStrategy(v);
-        return strategy;
-      })
-      .filter((v) => v != null);
 
     return strategies;
   }
@@ -159,6 +121,10 @@ export abstract class RecordBasedOriginState {
   }
 
   setCompositesRole(roleType: RoleType, role: IRange<Strategy>) {
+    if (this.sameCompositesRole(roleType, role)) {
+      return;
+    }
+
     const previousRole = this.getCompositesRole(roleType);
 
     this.setChangedRole(roleType, role);
@@ -328,10 +294,10 @@ export abstract class RecordBasedOriginState {
 
   isAssociationForRole(roleType: RoleType, forRole: Strategy): boolean {
     if (roleType.isOne) {
-      const compositeRole = this.getCompositeRoleForAssociation(roleType);
+      const compositeRole = this.getCompositeRoleIfInstantiated(roleType);
       return compositeRole == forRole;
     }
-    const composites = this.getCompositesRoleForAssociation(roleType);
+    const composites = this.getCompositesRoleIfInstantiated(roleType);
     if (composites != null) {
       for (const role of composites) {
         if (role === forRole) {
@@ -351,10 +317,92 @@ export abstract class RecordBasedOriginState {
     this.onChange();
   }
 
-  private assert(strategy: Strategy) {
+  private assertStrategy(strategy: Strategy) {
     if (strategy == null) {
       throw new Error('Strategy is not present in session.');
     }
+  }
+
+  private getCompositeRoleIfInstantiated(roleType: RoleType): Strategy {
+    if (this.changedRoleByRelationType != null && this.changedRoleByRelationType.has(roleType.relationType)) {
+      return this.changedRoleByRelationType.get(roleType.relationType) as Strategy;
+    }
+
+    const role = this.record?.getRole(roleType) as number;
+
+    if (role == null) {
+      return null;
+    }
+
+    const strategy = this.session.getStrategy(role);
+    return strategy;
+  }
+
+  private getCompositesRoleIfInstantiated(roleType: RoleType): IRange<Strategy> {
+    if (this.changedRoleByRelationType != null && this.changedRoleByRelationType.has(roleType.relationType)) {
+      return this.changedRoleByRelationType.get(roleType.relationType) as IRange<Strategy>;
+    }
+
+    const role = this.record?.getRole(roleType) as IRange<number>;
+
+    if (role == null) {
+      return frozenEmptyArray as Strategy[];
+    }
+
+    const strategies = role
+      .map((v) => {
+        const strategy = this.session.getStrategy(v);
+        return strategy;
+      })
+      .filter((v) => v != null);
+
+    return strategies;
+  }
+
+  private sameCompositeRole(roleType: RoleType, role: Strategy): boolean {
+    if (this.changedRoleByRelationType != null && this.changedRoleByRelationType.has(roleType.relationType)) {
+      return role === this.changedRoleByRelationType.get(roleType.relationType);
+    }
+
+    const changedRoleId = this.record?.getRole(roleType) as number;
+
+    if (role == null) {
+      return changedRoleId == null;
+    }
+
+    if (changedRoleId == null) {
+      return false;
+    }
+
+    return role.id == changedRoleId;
+  }
+
+  private sameCompositesRole(roleType: RoleType, role: IRange<Strategy>): boolean {
+    if (this.changedRoleByRelationType != null && this.changedRoleByRelationType.has(roleType.relationType)) {
+      return this.strategyRanges.equals(role, this.changedRoleByRelationType.get(roleType.relationType) as IRange<Strategy>);
+    }
+
+    const roleIds = this.record?.getRole(roleType) as IRange<number>;
+
+    if (role == null) {
+      return roleIds == null;
+    }
+
+    if (roleIds == null) {
+      return false;
+    }
+
+    if (role.length != roleIds.length) {
+      return false;
+    }
+
+    for (let i = 0; i < role.length; i++) {
+      if (role[i].id !== roleIds[i]) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   //#region Proxy

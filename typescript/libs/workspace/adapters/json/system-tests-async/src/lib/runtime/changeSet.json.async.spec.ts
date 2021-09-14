@@ -21,6 +21,7 @@ import {
   changeSetBeforeAndAfterResetWithChangeSessionObject,
   changeSetAfterDoubleReset,
   changeSetAfterPushOne2OneWithPreviousIncluded,
+  changeSetIncludeAfterPushOne2One,
 } from '@allors/workspace/adapters/system-tests';
 import { Fixture } from '../Fixture';
 
@@ -66,6 +67,10 @@ test('changeSetAfterPushWithPullWithNoChanges', async () => {
 
 test('changeSetAfterPushOne2One', async () => {
   await changeSetAfterPushOne2One();
+});
+
+test('changeSetIncludeAfterPushOne2One', async () => {
+  await changeSetIncludeAfterPushOne2One();
 });
 
 test('changeSetAfterPushOne2OneWithPreviousIncluded', async () => {

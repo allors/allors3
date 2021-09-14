@@ -54,26 +54,13 @@ namespace Allors.Workspace.Adapters
             }
 
             var strategy = this.Session.GetStrategy((long)role);
-            this.assert(strategy);
+            this.AssertStrategy(strategy);
             return strategy;
-        }
-
-        public Strategy GetCompositeRoleForAssociation(IRoleType roleType)
-        {
-            if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var changedRole))
-            {
-                return (Strategy)changedRole;
-            }
-
-            var role = this.Record?.GetRole(roleType);
-            return role == null ? null : this.Session.GetStrategy((long)role);
         }
 
         public void SetCompositeRole(IRoleType roleType, Strategy role)
         {
-            var previousRole = this.GetCompositeRole(roleType);
-
-            if (previousRole == role)
+            if (this.SameCompositeRole(roleType, role))
             {
                 return;
             }
@@ -112,21 +99,11 @@ namespace Allors.Workspace.Adapters
             return this.Ranges.Load(role.Select(v =>
             {
                 var strategy = this.Session.GetStrategy(v);
-                this.assert(strategy);
+                this.AssertStrategy(strategy);
                 return strategy;
             }));
         }
 
-        public IRange<Strategy> GetCompositesRoleForAssociation(IRoleType roleType)
-        {
-            if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var changedRole))
-            {
-                return (IRange<Strategy>)changedRole;
-            }
-
-            var role = (IRange<long>)this.Record?.GetRole(roleType);
-            return role == null ? EmptyRange<Strategy>.Instance : this.Ranges.Load(role.Select(v => this.Session.GetStrategy(v)));
-        }
         public void AddCompositesRole(IRoleType roleType, Strategy roleToAdd)
         {
             var associationType = roleType.AssociationType;
@@ -166,7 +143,12 @@ namespace Allors.Workspace.Adapters
 
         public void SetCompositesRole(IRoleType roleType, IRange<Strategy> role)
         {
-            var previousRole = this.GetCompositesRole(roleType);
+            if (this.SameCompositesRole(roleType, role))
+            {
+                return;
+            }
+
+            var previousRole = this.GetCompositesRoleIfInstantiated(roleType);
 
             this.SetChangedRole(roleType, role);
 
@@ -388,11 +370,11 @@ namespace Allors.Workspace.Adapters
         {
             if (roleType.IsOne)
             {
-                var compositeRole = this.GetCompositeRoleForAssociation(roleType);
+                var compositeRole = this.GetCompositeRoleIfInstantiated(roleType);
                 return compositeRole == forRole;
             }
 
-            var compositesRole = this.GetCompositesRoleForAssociation(roleType);
+            var compositesRole = this.GetCompositesRoleIfInstantiated(roleType);
             return compositesRole.Contains(forRole);
         }
 
@@ -405,7 +387,61 @@ namespace Allors.Workspace.Adapters
             this.OnChange();
         }
 
-        private void assert(Strategy strategy)
+        private Strategy GetCompositeRoleIfInstantiated(IRoleType roleType)
+        {
+            if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var changedRole))
+            {
+                return (Strategy)changedRole;
+            }
+
+            var role = this.Record?.GetRole(roleType);
+            return role == null ? null : this.Session.GetStrategy((long)role);
+        }
+
+        private IRange<Strategy> GetCompositesRoleIfInstantiated(IRoleType roleType)
+        {
+            if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var changedRole))
+            {
+                return (IRange<Strategy>)changedRole;
+            }
+
+            var role = (IRange<long>)this.Record?.GetRole(roleType);
+            return role == null ? EmptyRange<Strategy>.Instance : this.Ranges.Load(role.Select(v => this.Session.GetStrategy(v)));
+        }
+        private bool SameCompositeRole(IRoleType roleType, Strategy role)
+        {
+            if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var changedRole))
+            {
+                return role == changedRole;
+            }
+
+            var changedRoleId = this.Record?.GetRole(roleType);
+
+            if (role == null)
+            {
+                return changedRoleId == null;
+            }
+
+            if (changedRoleId == null)
+            {
+                return false;
+            }
+
+            return role.Id == (long)changedRoleId;
+        }
+
+        private bool SameCompositesRole(IRoleType roleType, IRange<Strategy> role)
+        {
+            if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var changedRole))
+            {
+                return role.Equals(changedRole);
+            }
+
+            var roleIds = this.Session.Workspace.RecordRanges.Ensure(this.Record?.GetRole(roleType));
+            return role.IsEmpty ? roleIds.IsEmpty : role.Select(v => v.Id).SequenceEqual(roleIds);
+        }
+
+        private void AssertStrategy(Strategy strategy)
         {
             if (strategy == null)
             {

@@ -275,9 +275,9 @@ export async function changeSetAfterPushOne2One() {
 
   const result = await client.pullAsync(session, [pull]);
   const c1a = result.collection<C1>('C1s')[0];
-  const c1b = session.create<C1>(m.C1);
+  const c1x = session.create<C1>(m.C1);
 
-  c1a.C1C1One2One = c1b;
+  c1a.C1C1One2One = c1x;
 
   await client.pushAsync(session);
 
@@ -291,9 +291,61 @@ export async function changeSetAfterPushOne2One() {
   expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).size).toBe(1);
   expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).size).toBe(1);
 
-  expect(changeSet.created.values().next().value).toBe(c1b.strategy);
+  expect(changeSet.created.values().next().value).toBe(c1x.strategy);
   expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).values().next().value).toBe(c1a.strategy);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).values().next().value).toBe(c1b.strategy);
+  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).values().next().value).toBe(c1x.strategy);
+
+  await client.pushAsync(session);
+  changeSet = session.checkpoint();
+
+  expect(changeSet.created.size).toBe(0);
+  expect(changeSet.associationsByRoleType.size).toBe(0);
+  expect(changeSet.rolesByAssociationType.size).toBe(0);
+}
+
+export async function changeSetIncludeAfterPushOne2One() {
+  const { client, workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Equals',
+        propertyType: m.C1.Name,
+        value: 'c1A',
+      },
+    },
+    results: [{ include: [{ propertyType: m.C1.C1C1One2One }] }],
+  };
+
+  const result = await client.pullAsync(session, [pull]);
+  const c1a = result.collection<C1>('C1s')[0];
+  const c1b = c1a.C1C1One2One;
+  const c1x = session.create<C1>(m.C1);
+
+  c1a.C1C1One2One = c1x;
+
+  await client.pushAsync(session);
+
+  let changeSet = session.checkpoint();
+
+  expect(changeSet.created.size).toBe(1);
+  expect(changeSet.associationsByRoleType.size).toBe(1);
+  expect(changeSet.rolesByAssociationType.size).toBe(1);
+
+  const created = [...changeSet.created];
+  const associations = [...changeSet.associationsByRoleType.get(m.C1.C1C1One2One)];
+  const roles = [...changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType)];
+
+  expect(associations.length).toBe(1);
+  expect(roles.length).toBe(2);
+
+  expect(created).toContain(c1x.strategy);
+  expect(associations).toContain(c1a.strategy);
+  expect(roles).toContain(c1b.strategy);
+  expect(roles).toContain(c1x.strategy);
 
   await client.pushAsync(session);
   changeSet = session.checkpoint();

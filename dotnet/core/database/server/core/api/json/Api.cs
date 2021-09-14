@@ -46,7 +46,6 @@ namespace Allors.Database.Protocol.Json
             this.UnitConvert = new UnitConvert();
         }
 
-
         public ITransaction Transaction { get; }
 
         public IRanges<long> Ranges { get; }

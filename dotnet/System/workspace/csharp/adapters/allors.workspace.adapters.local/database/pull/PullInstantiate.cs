@@ -107,7 +107,8 @@ namespace Allors.Workspace.Adapters.Local
                         else
                         {
                             name ??= this.pull.ObjectType?.Name ?? @object.Strategy.Class.SingularName;
-                            response.AddObject(name, @object);
+                            var include = result.Include;
+                            response.AddObject(name, @object, include);
                         }
                     }
                     catch (Exception e)
