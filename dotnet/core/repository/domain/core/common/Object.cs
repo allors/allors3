@@ -14,19 +14,19 @@ namespace Allors.Repository
     public partial interface Object
     {
         #region Allors
-        [Id("5c70ca14-4601-4c65-9b0d-cb189f90be27")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Derived]
-        [Indexed]
-        Permission[] DeniedPermissions { get; set; }
-
-        #region Allors
         [Id("b816fccd-08e0-46e0-a49c-7213c3604416")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
         SecurityToken[] SecurityTokens { get; set; }
+
+        #region Allors
+        [Id("E989F7D2-A4AC-43D8-AC7C-CBCDA2CFB6D3")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Indexed]
+        [Derived]
+        Restriction[] Restrictions { get; set; }
 
         #region Allors
         [Id("FDD32313-CF62-4166-9167-EF90BE3A3C75")]

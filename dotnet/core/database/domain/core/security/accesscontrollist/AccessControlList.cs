@@ -108,7 +108,7 @@ namespace Allors.Database.Domain
                 var strategy = this.Object.Strategy;
                 var transaction = strategy.Transaction;
 
-                Permission[] delegatedAccessDeniedPermissions = null;
+                Restriction[] delegatedAccessDeniedPermissions = null;
 
                 SecurityToken[] securityTokens;
                 if (this.Object is DelegatedAccessControlledObject controlledObject)
@@ -120,20 +120,20 @@ namespace Allors.Database.Domain
                         securityTokens = securityTokens.Where(v => v != null).ToArray();
                     }
 
-                    delegatedAccessDeniedPermissions = delegatedAccess.DeniedPermissions;
+                    delegatedAccessDeniedPermissions = delegatedAccess.Restrictions;
                 }
                 else
                 {
                     securityTokens = this.Object.SecurityTokens.ToArray();
                 }
 
-                var rawDeniedPermissions = delegatedAccessDeniedPermissions?.Length > 0
-                    ? this.Object.DeniedPermissions.Union(delegatedAccessDeniedPermissions)
-                    : this.Object.DeniedPermissions;
+                var unfilteredRestrictions = delegatedAccessDeniedPermissions?.Length > 0
+                    ? this.Object.Restrictions.Union(delegatedAccessDeniedPermissions)
+                    : this.Object.Restrictions;
 
                 var filteredDeniedPermissions = !string.IsNullOrWhiteSpace(this.workspaceName)
-                    ? rawDeniedPermissions.Where(v => v.InWorkspace(this.workspaceName))
-                    : rawDeniedPermissions;
+                    ? unfilteredRestrictions.Where(v => v.InWorkspace(this.workspaceName))
+                    : unfilteredRestrictions;
 
                 this.deniedPermissions = new HashSet<long>(filteredDeniedPermissions.Select(v => v.Id));
 

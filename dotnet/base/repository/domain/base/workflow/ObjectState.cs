@@ -16,11 +16,11 @@ namespace Allors.Repository
     public partial interface ObjectState : UniquelyIdentifiable
     {
         #region Allors
-        [Id("59338f0b-40e7-49e8-ba1a-3ecebf96aebe")]
+        [Id("913C994F-15B0-40D2-AC4F-81E362B9142C")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
+        [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        Permission[] ObjectDeniedPermissions { get; set; }
+        Restriction ObjectRestriction { get; set; }
 
         #region Allors
         [Id("b86f9e42-fe10-4302-ab7c-6c6c7d357c39")]

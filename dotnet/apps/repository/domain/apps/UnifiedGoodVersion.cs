@@ -23,7 +23,7 @@ namespace Allors.Repository
 
         public User LastModifiedBy { get; set; }
 
-        public Permission[] DeniedPermissions { get; set; }
+        public Restriction[] Restrictions { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
         #endregion

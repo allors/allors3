@@ -51,9 +51,9 @@ namespace Allors.Database.Domain
                 method.SecurityTokens = this.SyncedInvoice?.SecurityTokens.ToArray();
             }
 
-            if (method.DeniedPermissions == null)
+            if (method.Restrictions == null)
             {
-                method.DeniedPermissions = this.SyncedInvoice?.DeniedPermissions.ToArray();
+                method.Restrictions = this.SyncedInvoice?.DeniedPermissions.ToArray();
             }
         }
 

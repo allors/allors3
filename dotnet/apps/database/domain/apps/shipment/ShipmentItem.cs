@@ -32,9 +32,9 @@ namespace Allors.Database.Domain
                 method.SecurityTokens = this.SyncedShipment?.SecurityTokens.ToArray();
             }
 
-            if (method.DeniedPermissions == null)
+            if (method.Restrictions == null)
             {
-                method.DeniedPermissions = this.SyncedShipment?.DeniedPermissions.ToArray();
+                method.Restrictions = this.SyncedShipment?.DeniedPermissions.ToArray();
             }
         }
 

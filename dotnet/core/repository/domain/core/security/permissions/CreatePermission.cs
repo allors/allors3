@@ -16,7 +16,7 @@ namespace Allors.Repository
     public partial class CreatePermission : Permission
     {
         #region inherited properties
-        public Permission[] DeniedPermissions { get; set; }
+        public Restriction[] Restrictions { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

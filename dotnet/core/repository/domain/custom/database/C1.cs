@@ -131,7 +131,7 @@ namespace Allors.Repository
 
         public DateTime I12AllorsDateTime { get; set; }
 
-        public Permission[] DeniedPermissions { get; set; }
+        public Restriction[] Restrictions { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

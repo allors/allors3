@@ -16,9 +16,9 @@ namespace Allors.Repository
     public partial class Case : Transitional, UniquelyIdentifiable, Versioned
     {
         #region inherited properties
-        public Permission[] DeniedPermissions { get; set; }
+        public Restriction[] Restrictions { get; set; }
 
-        public Permission[] TransitionalDeniedPermissions { get; set; }
+        public Restriction[] TransitionalRestrictions { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

@@ -68,7 +68,7 @@ namespace Allors.Repository
 
         #endregion
 
-        public Permission[] DeniedPermissions { get; set; }
+        public Restriction[] Restrictions { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
     }

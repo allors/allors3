@@ -8,7 +8,7 @@ namespace Allors.Repository
     public partial class Scoreboard : Object
     {
         #region Inherited Properties
-        public Permission[] DeniedPermissions { get; set; }
+        public Restriction[] Restrictions { get; set; }
         public SecurityToken[] SecurityTokens { get; set; }
 
         #endregion

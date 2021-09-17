@@ -43,6 +43,6 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
         [Indexed]
-        Permission[] TransitionalDeniedPermissions { get; set; }
+        Restriction[] TransitionalRestrictions { get; set; }
     }
 }

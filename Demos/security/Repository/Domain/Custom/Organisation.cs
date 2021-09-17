@@ -9,7 +9,7 @@ namespace Allors.Repository
     public partial class Organisation : Object
     {
         #region Inherited Properties
-        public Permission[] DeniedPermissions { get; set; }
+        public Restriction[] Restrictions { get; set; }
         public SecurityToken[] SecurityTokens { get; set; }
 
         #endregion
@@ -47,7 +47,7 @@ namespace Allors.Repository
 
         }
 
-       
+
         public void OnInit()
         {
 

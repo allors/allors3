@@ -43,9 +43,9 @@ namespace Allors.Repository
 
         public Guid UniqueId { get; set; }
 
-        public Permission[] DeniedPermissions { get; set; }
+        public Restriction[] Restrictions { get; set; }
 
-        public Permission[] TransitionalDeniedPermissions { get; set; }
+        public Restriction[] TransitionalRestrictions { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

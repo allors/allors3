@@ -67,9 +67,9 @@ namespace Allors.Database.Domain
                 method.SecurityTokens = workEffortSecurityTokens.Append(this.Worker?.OwnerSecurityToken).ToArray();
             }
 
-            if (method.DeniedPermissions == null)
+            if (method.Restrictions == null)
             {
-                method.DeniedPermissions = this.WorkEffort?.DeniedPermissions.ToArray();
+                method.Restrictions = this.WorkEffort?.DeniedPermissions.ToArray();
             }
         }
     }

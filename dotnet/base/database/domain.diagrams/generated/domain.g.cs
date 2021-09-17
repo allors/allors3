@@ -56,7 +56,7 @@ namespace Allors.Domain
 		}
 		public interface ObjectState  : UniquelyIdentifiable 
 		{
-						Permission[] ObjectDeniedPermissions {set;}
+						Restriction ObjectRestriction {set;}
 
 						global::System.String Name {set;}
 
@@ -358,9 +358,9 @@ namespace Allors.Domain
 		}
 		public interface Object 
 		{
-						Permission[] _DeniedPermissions {set;}
-
 						SecurityToken[] SecurityTokens {set;}
+
+						Restriction[] _Restrictions {set;}
 
 		}
 		public interface UniquelyIdentifiable  : Object 
@@ -1396,6 +1396,11 @@ namespace Allors.Domain
 		public interface WritePermission  : Permission 
 		{
 						global::System.Guid RelationTypePointer {set;}
+
+		}
+		public interface Restriction  : UniquelyIdentifiable, Deletable 
+		{
+						Permission[] DeniedPermissions {set;}
 
 		}
 		public interface Role  : UniquelyIdentifiable 

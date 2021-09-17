@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Transitional, m.Transitional.ObjectStates) ,
-                m.ObjectState.RolePattern(v=>v.DeniedPermissions, v=> v.TransitionalsWhereObjectState),
+                m.ObjectState.RolePattern(v=>v.Restrictions, v=> v.TransitionalsWhereObjectState),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

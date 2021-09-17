@@ -35,7 +35,7 @@ namespace Allors.Database.Domain
             {
                 var builder = new PrefetchPolicyBuilder()
                     .WithRule(m.Object.SecurityTokens, SecurityTokenPrefetchPolicy)
-                    .WithRule(m.Object.DeniedPermissions)
+                    .WithRule(m.Object.Restrictions)
                     .Build();
 
                 foreach (var delegatedAccessRoleType in @class.DelegatedAccessRoleTypes)
@@ -45,7 +45,7 @@ namespace Allors.Database.Domain
             }
 
             @this.WithRule(m.Object.SecurityTokens, SecurityTokenPrefetchPolicy);
-            @this.WithRule(m.Object.DeniedPermissions);
+            @this.WithRule(m.Object.Restrictions);
         }
     }
 }

@@ -16,9 +16,9 @@ namespace Allors.Database.Domain
                 method.SecurityTokens = this.Assignment?.SecurityTokens.ToArray();
             }
 
-            if (method.DeniedPermissions == null)
+            if (method.Restrictions == null)
             {
-                method.DeniedPermissions = this.Assignment?.DeniedPermissions.ToArray();
+                method.Restrictions = this.Assignment?.DeniedPermissions.ToArray();
             }
         }
     }
