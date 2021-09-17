@@ -17,10 +17,10 @@ describe('Inheritance in MetaPopulation', () => {
   describe('with class, interface and superinterface metadata', () => {
     const metaPopulation = new LazyMetaPopulation({
       i: [
-        [11, 'I', [10]],
-        [10, 'S'],
+        ['11', 'I', ['10']],
+        ['10', 'S'],
       ],
-      c: [[12, 'C', [11]]],
+      c: [['12', 'C', ['11']]],
     }) as M;
 
     const { C, I, S } = metaPopulation;

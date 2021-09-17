@@ -8,7 +8,7 @@ export interface SyncResponseObject {
   v: number;
 
   /** ObjectType */
-  t: number;
+  t: string;
 
   /** AccessControls (Range) */
   a: number[];

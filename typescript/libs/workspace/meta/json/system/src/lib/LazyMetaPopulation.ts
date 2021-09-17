@@ -19,7 +19,7 @@ import { LazyResultBuilder } from './builders/LazyResultBuilder';
 
 export class LazyMetaPopulation implements InternalMetaPopulation {
   readonly kind = 'MetaPopulation';
-  readonly metaObjectByTag: Map<number, InternalMetaObject> = new Map();
+  readonly metaObjectByTag: Map<string, InternalMetaObject> = new Map();
   readonly units: Set<InternalUnit>;
   readonly interfaces: Set<InternalInterface>;
   readonly classes: Set<InternalClass>;
@@ -30,7 +30,7 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
   constructor(data: MetaData) {
     const lookup = new Lookup(data);
 
-    this.units = new Set(['Binary', 'Boolean', 'DateTime', 'Decimal', 'Float', 'Integer', 'String', 'Unique'].map((name, i) => new LazyUnit(this, i + 1, name)));
+    this.units = new Set(['Binary', 'Boolean', 'DateTime', 'Decimal', 'Float', 'Integer', 'String', 'Unique'].map((name, i) => new LazyUnit(this, (i + 1).toString(), name)));
     this.interfaces = new Set(data.i?.map((v) => new LazyInterface(this, v, lookup)) ?? []);
     this.classes = new Set(data.c?.map((v) => new LazyClass(this, v, lookup)) ?? []);
     this.relationTypes = new Set();
@@ -43,7 +43,6 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
     this.composites.forEach((v) => v.deriveOriginRoleType());
     this.composites.forEach((v) => v.derivePropertyTypeByPropertyName());
     this.classes.forEach((v) => v.deriveOverridden(lookup));
-
 
     this['treeBuilder'] = new LazyTreeBuilder(this);
 

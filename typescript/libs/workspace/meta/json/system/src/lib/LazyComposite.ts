@@ -15,7 +15,7 @@ import { ObjectTypeData } from '@allors/protocol/json/system';
 export abstract class LazyComposite implements InternalComposite {
   isUnit = false;
   isComposite = true;
-  readonly tag: number;
+  readonly tag: string;
   readonly singularName: string;
   readonly origin: Origin;
 

@@ -1,5 +1,5 @@
 export interface OperandType {
-  operandTag: number;
+  operandTag: string;
 
   name: string;
 }

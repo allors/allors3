@@ -4,8 +4,8 @@ export interface PushRequestNewObject {
   /** WorkspaceId */
   w: number;
 
-  /** ObjectType */
-  t: number;
+  /** ObjectType Tag*/
+  t: string;
 
   /** Roles */
   r?: PushRequestRole[];

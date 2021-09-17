@@ -1,9 +1,9 @@
+import { DerivationRole } from './DerivationRole';
+
 export interface ResponseDerivationError {
   /** Message */
   m: string;
 
-  /** Roles
-   * [][AssociationId, RelationTypeId]
-   */
-  r: number[][];
+  /** Roles */
+  r: DerivationRole[];
 }

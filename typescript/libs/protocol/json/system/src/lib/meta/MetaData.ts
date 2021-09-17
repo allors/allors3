@@ -1,11 +1,11 @@
 export type RelationTypeData =
-  | [tag: number, roleObjectType: number, sizeOrScale?: number, precision?: number]
-  | [tag: number, roleObjectType: number, singularName?: string, sizeOrScale?: number, precision?: number]
-  | [tag: number, roleObjectType: number, singularName?: string, pluralName?: string, sizeOrScale?: number, precision?: number];
+  | [tag: string, roleObjectType: string, sizeOrScale?: number, precision?: number]
+  | [tag: string, roleObjectType: string, singularName?: string, sizeOrScale?: number, precision?: number]
+  | [tag: string, roleObjectType: string, singularName?: string, pluralName?: string, sizeOrScale?: number, precision?: number];
 
-export type MethodTypeData = [tag: number, name: string];
+export type MethodTypeData = [tag: string, name: string];
 
-export type ObjectTypeData = [tag: number, singularName: string, directSupertypes?: number[], relationTypes?: RelationTypeData[], methodTypes?: MethodTypeData[], pluralName?: string];
+export type ObjectTypeData = [tag: string, singularName: string, directSupertypes?: string[], relationTypes?: RelationTypeData[], methodTypes?: MethodTypeData[], pluralName?: string];
 
 export interface MetaData {
   /**
@@ -21,40 +21,40 @@ export interface MetaData {
   /**
    * Origin
    */
-  o?: number[][];
+  o?: string[][];
 
   /**
    * Multiplicity
    */
-  m?: number[][];
+  m?: string[][];
 
   /**
    * IsDerived
    */
-  d?: number[];
+  d?: string[];
 
   /**
    * IsRequired
    */
-  r?: number[];
+  r?: string[];
 
   /**
    * IsUniqe
    */
-  u?: number[];
+  u?: string[];
 
   /**
    * MediaType
    */
-  t?: { [name: string]: number[] };
+  t?: { [name: string]: string[] };
 
   /**
    * Overridden Required
    */
-  or?: [number, number[]][];
+  or?: [string, string[]][];
 
   /**
    * Overridden Unique
    */
-  ou?: [number, number[]][];
+  ou?: [string, string[]][];
 }

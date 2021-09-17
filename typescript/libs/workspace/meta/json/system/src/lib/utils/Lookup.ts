@@ -2,14 +2,14 @@ import { MetaData } from '@allors/protocol/json/system';
 import { Multiplicity, Origin } from '@allors/workspace/meta/system';
 
 export class Lookup {
-  o: Map<number, Origin>;
-  m: Map<number, Multiplicity>;
-  d: Set<number>;
-  r: Set<number>;
-  u: Set<number>;
-  t: Map<number, string>;
-  or: Map<number, number[]>;
-  ou: Map<number, number[]>;
+  o: Map<string, Origin>;
+  m: Map<string, Multiplicity>;
+  d: Set<string>;
+  r: Set<string>;
+  u: Set<string>;
+  t: Map<string, string>;
+  or: Map<string, string[]>;
+  ou: Map<string, string[]>;
 
   constructor(data: MetaData) {
     this.m = new Map();

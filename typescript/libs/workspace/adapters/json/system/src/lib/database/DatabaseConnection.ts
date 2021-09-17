@@ -82,33 +82,34 @@ export class DatabaseConnection extends SystemDatabaseConnection {
   }
 
   securityResponse(securityResponse: SecurityResponse): SecurityRequest | undefined {
-    if (securityResponse.p != null) {
-      for (const syncResponsePermission of securityResponse.p) {
-        const id = syncResponsePermission[0];
-        const cls = this.configuration.metaPopulation.metaObjectByTag.get(syncResponsePermission[1]) as Class;
-        const metaObject = this.configuration.metaPopulation.metaObjectByTag.get(syncResponsePermission[2]);
-        const operandType: OperandType = (metaObject as RelationType)?.roleType ?? (metaObject as MethodType);
-        const operation = syncResponsePermission[3];
+    // TODO: Koen - Restrictions
+    // if (securityResponse.p != null) {
+    //   for (const syncResponsePermission of securityResponse.p) {
+    //     const id = syncResponsePermission[0];
+    //     const cls = this.configuration.metaPopulation.metaObjectByTag.get(syncResponsePermission[1]) as Class;
+    //     const metaObject = this.configuration.metaPopulation.metaObjectByTag.get(syncResponsePermission[2]);
+    //     const operandType: OperandType = (metaObject as RelationType)?.roleType ?? (metaObject as MethodType);
+    //     const operation = syncResponsePermission[3];
 
-        this.permissions.add(id);
+    //     this.permissions.add(id);
 
-        switch (operation) {
-          case Operations.Read:
-            this.readPermissionByOperandTypeByClass.set(cls, operandType, id);
-            break;
-          case Operations.Write:
-            this.writePermissionByOperandTypeByClass.set(cls, operandType, id);
-            break;
-          case Operations.Execute:
-            this.executePermissionByOperandTypeByClass.set(cls, operandType, id);
-            break;
-          case Operations.Create:
-            throw new Error('Create is not supported');
-          default:
-            throw new Error('Argument out of range');
-        }
-      }
-    }
+    //     switch (operation) {
+    //       case Operations.Read:
+    //         this.readPermissionByOperandTypeByClass.set(cls, operandType, id);
+    //         break;
+    //       case Operations.Write:
+    //         this.writePermissionByOperandTypeByClass.set(cls, operandType, id);
+    //         break;
+    //       case Operations.Execute:
+    //         this.executePermissionByOperandTypeByClass.set(cls, operandType, id);
+    //         break;
+    //       case Operations.Create:
+    //         throw new Error('Create is not supported');
+    //       default:
+    //         throw new Error('Argument out of range');
+    //     }
+    //   }
+    // }
 
     let missingPermissionIds: Set<number> | undefined = undefined;
     if (securityResponse.a != null) {

@@ -8,7 +8,7 @@ import { Composite } from './Composite';
 
 export interface MetaPopulation {
   readonly kind: 'MetaPopulation';
-  metaObjectByTag: Map<number, MetaObject>;
+  metaObjectByTag: Map<string, MetaObject>;
   units: Set<Unit>;
   interfaces: Set<Interface>;
   classes: Set<Class>;

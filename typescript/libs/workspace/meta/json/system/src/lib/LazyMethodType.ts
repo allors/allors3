@@ -11,10 +11,10 @@ export class LazyMethodType implements InternalMethodType {
   readonly isMethodType = true;
 
   readonly metaPopulation: InternalMetaPopulation;
-  readonly tag: number;
+  readonly tag: string;
   readonly name: string;
   readonly origin = Origin.Database;
-  readonly operandTag: number;
+  readonly operandTag: string;
 
   constructor(public objectType: InternalComposite, d: MethodTypeData) {
     this.metaPopulation = objectType.metaPopulation as InternalMetaPopulation;

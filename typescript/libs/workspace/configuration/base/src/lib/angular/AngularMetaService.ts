@@ -2,10 +2,10 @@ import { IAngularComposite, IAngularMetaObject, IAngularMetaService, IAngularRol
 import { Composite, RoleType } from '@allors/workspace/meta/system';
 
 export class AngularMetaService implements IAngularMetaService {
-  angularMetaByMeta: Map<number, IAngularMetaObject>;
+  angularMetaByTag: Map<string, IAngularMetaObject>;
 
   constructor() {
-    this.angularMetaByMeta = new Map();
+    this.angularMetaByTag = new Map();
   }
 
   for(composite: Composite): IAngularComposite;
@@ -17,19 +17,19 @@ export class AngularMetaService implements IAngularMetaService {
 
     if ((compositeOrRoleType as Composite).tag) {
       const tag = (compositeOrRoleType as Composite).tag;
-      let angularComposite = this.angularMetaByMeta.get(tag);
+      let angularComposite = this.angularMetaByTag.get(tag);
       if (angularComposite == null) {
         angularComposite = { kind: 'AngularComposite' };
-        this.angularMetaByMeta.set(tag, angularComposite);
+        this.angularMetaByTag.set(tag, angularComposite);
       }
 
       return angularComposite;
     } else {
       const tag = (compositeOrRoleType as RoleType).relationType.tag;
-      let angularComposite = this.angularMetaByMeta.get(tag);
+      let angularComposite = this.angularMetaByTag.get(tag);
       if (angularComposite == null) {
         angularComposite = { kind: 'AngularRoleType' };
-        this.angularMetaByMeta.set(tag, angularComposite);
+        this.angularMetaByTag.set(tag, angularComposite);
       }
 
       return angularComposite;

@@ -7,13 +7,13 @@ export interface Predicate {
   k: PredicateKind;
 
   /** AssociationType */
-  a?: number;
+  a?: string;
 
   /** RoleType */
-  r?: number;
+  r?: string;
 
   /** ObjectType */
-  o?: number;
+  o?: string;
 
   /** Parameter */
   p?: string;
@@ -39,11 +39,11 @@ export interface Predicate {
   /** Values */
   vs?: IUnit[];
 
-  /** Path */
-  pa?: number;
+  /** Path Role Type */
+  pa?: string;
 
-  /** Paths */
-  pas?: number[];
+  /** Path Role Type Tags */
+  pas?: string[];
 
   /** Extent */
   e?: Extent;

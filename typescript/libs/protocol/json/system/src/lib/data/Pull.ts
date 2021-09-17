@@ -9,7 +9,7 @@ export interface Pull {
   e?: Extent;
 
   /** ObjectType */
-  t?: number;
+  t?: string;
 
   /** Object */
   o?: number;

@@ -18,7 +18,7 @@ interface M extends LazyMetaPopulation {
 describe('MethodType in MetaPopulation', () => {
   describe('with minimal method metadata', () => {
     const metaPopulation = new LazyMetaPopulation({
-      c: [[10, 'Organisation', [], [], [[11, 'Do']]]],
+      c: [['10', 'Organisation', [], [], [['11', 'Do']]]],
     }) as M;
 
     const { Organisation } = metaPopulation;
@@ -34,8 +34,8 @@ describe('MethodType in MetaPopulation', () => {
 
   describe('with inherited method metadata', () => {
     const metaPopulation = new LazyMetaPopulation({
-      i: [[9, 'Action', [], [], [[11, 'Do']]]],
-      c: [[10, 'Organisation', [9]]],
+      i: [['9', 'Action', [], [], [['11', 'Do']]]],
+      c: [['10', 'Organisation', ['9']]],
     }) as M;
 
     const { Action, Organisation } = metaPopulation;

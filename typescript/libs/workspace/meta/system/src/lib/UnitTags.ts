@@ -1,17 +1,17 @@
 export enum UnitTags {
-  Binary = 1,
+  Binary = '1',
 
-  Boolean = 2,
+  Boolean = '2',
 
-  DateTime = 3,
+  DateTime = '3',
 
-  Decimal = 4,
+  Decimal = '4',
 
-  Float = 5,
+  Float = '5',
 
-  Integer = 6,
+  Integer = '6',
 
-  String = 7,
+  String = '7',
 
-  Unique = 8,
+  Unique = '8',
 }

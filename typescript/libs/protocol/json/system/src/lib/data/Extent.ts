@@ -10,7 +10,7 @@ export interface Extent {
   o?: Extent[];
 
   /** ObjectType */
-  t?: number;
+  t?: string;
 
   /** Predicate */
   p?: Predicate;

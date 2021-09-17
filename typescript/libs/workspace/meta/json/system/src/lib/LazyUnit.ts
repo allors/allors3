@@ -19,7 +19,7 @@ export class LazyUnit implements InternalUnit {
   isString = this.tag === UnitTags.String;
   isUnique = this.tag === UnitTags.Unique;
 
-  constructor(public metaPopulation: InternalMetaPopulation, public tag: number, public singularName: string) {
+  constructor(public metaPopulation: InternalMetaPopulation, public tag: string, public singularName: string) {
     this.pluralName = singularName === 'Binary' ? 'Binaries' : singularName + 's';
     metaPopulation.onNewObjectType(this);
   }

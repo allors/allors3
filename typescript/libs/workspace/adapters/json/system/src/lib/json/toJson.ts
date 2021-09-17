@@ -282,15 +282,15 @@ export function nodesToJson(from: DataNode[]): Node[] {
   return from?.map(nodeToJson);
 }
 
-export function objectTypeToJson(from: ObjectType): number {
+export function objectTypeToJson(from: ObjectType): string {
   return from?.tag;
 }
 
-export function roleTypeToJson(from: RoleType): number {
+export function roleTypeToJson(from: RoleType): string {
   return from?.relationType.tag;
 }
 
-export function asAssociationTypeToJson(from: PropertyType): number {
+export function asAssociationTypeToJson(from: PropertyType): string {
   if (from?.isAssociationType) {
     return (from as AssociationType).relationType.tag;
   }
@@ -298,7 +298,7 @@ export function asAssociationTypeToJson(from: PropertyType): number {
   return null;
 }
 
-export function asRoleTypeToJson(from: PropertyType): number {
+export function asRoleTypeToJson(from: PropertyType): string {
   if (from?.isRoleType) {
     return (from as RoleType).relationType.tag;
   }
@@ -334,7 +334,7 @@ export function poolToJson(from: Map<IObject, number>): number[][] {
   return Array.from(from, ([obj, version]) => [obj.id, version]);
 }
 
-export function pathsToJson(from: RoleType[]): number[] {
+export function pathsToJson(from: RoleType[]): string[] {
   return from?.map((v) => v.relationType.tag);
 }
 

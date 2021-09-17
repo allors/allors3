@@ -28,7 +28,7 @@ export class LazyRoleType implements InternalRoleType {
   readonly precision?: number;
   readonly scale?: number;
   readonly mediaType?: string;
-  readonly operandTag: number;
+  readonly operandTag: string;
 
   readonly associationType: InternalAssociationType;
 

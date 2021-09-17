@@ -2,7 +2,7 @@ import { IUnit } from "@allors/workspace/domain/system";
 
 export interface PushRequestRole {
   /** RelationType */
-  t: number;
+  t: string;
 
   /** SetUnitRole */
   u?: IUnit;

@@ -13,7 +13,7 @@ export class LazyRelationType implements InternalRelationType {
   readonly kind = 'RelationType';
   readonly metaPopulation: InternalMetaPopulation;
 
-  readonly tag: number;
+  readonly tag: string;
   readonly multiplicity: Multiplicity;
   readonly origin: Origin;
   readonly isDerived: boolean;

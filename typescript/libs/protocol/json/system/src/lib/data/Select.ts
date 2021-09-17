@@ -1,10 +1,11 @@
 import { Node } from "./Node";
 
 export interface Select {
-  a?: number;
+  /** AssociatoinType */
+  a?: string;
 
   /** RoleType */
-  r?: number;
+  r?: string;
 
   /** Next */
   n?: Select;

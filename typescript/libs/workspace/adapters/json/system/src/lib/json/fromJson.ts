@@ -1,7 +1,7 @@
 import { IUnit } from '@allors/workspace/domain/system';
 import { UnitTags } from '@allors/workspace/meta/system';
 
-export function unitFromJson(tag: number, value: unknown): IUnit {
+export function unitFromJson(tag: string, value: unknown): IUnit {
   if (value == null) {
     return null;
   }

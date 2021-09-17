@@ -4,7 +4,7 @@ import { MetaPopulation } from './MetaPopulation';
 export interface MetaObject {
   metaPopulation: MetaPopulation;
 
-  tag: number;
+  tag: string;
 
   origin: Origin;
 }

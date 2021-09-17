@@ -11,7 +11,7 @@ export class LazyAssociationType implements InternalAssociationType {
   readonly isMethodType = false;
 
   readonly relationType: InternalRelationType;
-  readonly operandTag: number;
+  readonly operandTag: string;
   readonly origin: Origin;
   readonly isOne: boolean;
   readonly isMany: boolean;
