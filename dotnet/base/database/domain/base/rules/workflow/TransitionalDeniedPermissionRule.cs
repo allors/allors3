@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<Transitional>())
             {
-                @this.TransitionalDeniedPermissions = @this.ObjectStates.SelectMany(v => v.DeniedPermissions).ToArray();
+                @this.TransitionalRestrictions = @this.ObjectStates.Select(v => v.ObjectRestriction).ToArray();
             }
         }
     }

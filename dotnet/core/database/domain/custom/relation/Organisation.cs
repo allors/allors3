@@ -6,27 +6,20 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Linq;
-
     public partial class Organisation
     {
         public void CustomOnPostDerive(ObjectOnPostDerive _) => this.PostDeriveTrigger = true;
 
         public void CustomToggleCanWrite(OrganisationToggleCanWrite method)
         {
-            if (this.DeniedPermissions.Any())
+            if (this.ExistRestrictions)
             {
-                this.RemoveDeniedPermissions();
+                this.RemoveRestrictions();
             }
             else
             {
-                var permissions = new Permissions(this.strategy.Transaction);
-                this.DeniedPermissions = new[]
-                {
-                    permissions.Get(this.Meta, this.Meta.Name, Operations.Write),
-                    permissions.Get(this.Meta, this.Meta.Owner, Operations.Write),
-                    permissions.Get(this.Meta, this.Meta.Employees, Operations.Write),
-                };
+                var toggleRestriction = new Restrictions(this.strategy.Transaction).ToggleRestriction;
+                this.AddRestriction(toggleRestriction);
             }
         }
 

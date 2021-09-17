@@ -97,7 +97,13 @@ namespace Allors.Database.Domain
                 var defaultWorkspaceWrite = new Permissions(this.transaction).Extent().First(v => v.OperandType.Equals(m.Denied.DefaultWorkspaceProperty) && v.Operation == Operations.Write);
                 var workspaceXWrite = new Permissions(this.transaction).Extent().First(v => v.OperandType.Equals(m.Denied.WorkspaceXProperty) && v.Operation == Operations.Write);
 
-                denied.DeniedPermissions = new[] { databaseWrite, defaultWorkspaceWrite, workspaceXWrite };
+                var restriction = new RestrictionBuilder(this.transaction)
+                    .WithDeniedPermission(databaseWrite)
+                    .WithDeniedPermission(defaultWorkspaceWrite)
+                    .WithDeniedPermission(workspaceXWrite)
+                    .Build();
+
+                denied.AddRestriction(restriction);
             }
         }
     }

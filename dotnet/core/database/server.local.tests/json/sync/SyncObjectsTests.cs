@@ -88,7 +88,7 @@ namespace Tests
             var syncObject = syncResponse.o[0];
 
             Assert.Null(syncObject.a);
-            Assert.Null(syncObject.d);
+            Assert.Null(syncObject.r);
         }
     }
 }

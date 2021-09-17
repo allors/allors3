@@ -47,7 +47,7 @@ namespace Allors.Database.Protocol.Json
                             v = v.Strategy.ObjectVersion,
                         };
 
-                        if (this.AccessControlLists.EffectivePermissionIdsByAccessControl.TryGetValue(v, out var x))
+                        if (this.AccessControlLists.PermissionIdsByAccessControl.TryGetValue(v, out var x))
                         {
                             response.p = this.ranges.Import(x).Save();
                         }
@@ -56,41 +56,63 @@ namespace Allors.Database.Protocol.Json
                     }).ToArray();
             }
 
-            // TODO: Koen - Restrictions
-            //if (securityRequest.p?.Length > 0)
-            //{
-            //    var permissionIds = securityRequest.p;
-            //    var permissions = this.transaction.Instantiate(permissionIds)
-            //        .Cast<IPermission>()
-            //        .Where(v => this.allowedClasses?.Contains(v.Class) == true);
+            if (securityRequest.r?.Length > 0)
+            {
+                var restrictionIds = securityRequest.r;
+                var restrictions = this.transaction.Instantiate(restrictionIds).Cast<IRestriction>().ToArray();
 
-            //    securityResponse.p = permissions.Select(v =>
-            //        v switch
-            //        {
-            //            IReadPermission permission => new long[]
-            //            {
-            //                permission.Strategy.ObjectId,
-            //                permission.Class.Tag,
-            //                permission.RelationType.Tag,
-            //                (long)Operations.Read,
-            //            },
-            //            IWritePermission permission => new long[]
-            //            {
-            //                permission.Strategy.ObjectId,
-            //                permission.Class.Tag,
-            //                permission.RelationType.Tag,
-            //                (long)Operations.Write,
-            //            },
-            //            IExecutePermission permission => new long[]
-            //            {
-            //                permission.Strategy.ObjectId,
-            //                permission.Class.Tag,
-            //                permission.MethodType.Tag,
-            //                (long)Operations.Execute,
-            //            },
-            //            _ => throw new Exception(),
-            //        }).ToArray();
-            //}
+                securityResponse.r = restrictions
+                    .Select(v =>
+                    {
+                        var response = new SecurityResponseRestriction
+                        {
+                            i = v.Strategy.ObjectId,
+                            v = v.Strategy.ObjectVersion,
+                        };
+
+                        if (this.AccessControlLists.DeniedPermissionIdsByRestriction.TryGetValue(v, out var x))
+                        {
+                            response.p = this.ranges.Import(x).Save();
+                        }
+
+                        return response;
+                    }).ToArray();
+            }
+
+
+            if (securityRequest.p?.Length > 0)
+            {
+                var permissionIds = securityRequest.p;
+                var permissions = this.transaction.Instantiate(permissionIds)
+                    .Cast<IPermission>()
+                    .Where(v => this.allowedClasses?.Contains(v.Class) == true);
+
+                securityResponse.p = permissions.Select(v => v switch
+                {
+                    IReadPermission permission => new SecurityResponsePermission
+                    {
+                        i = permission.Strategy.ObjectId,
+                        c = permission.Class.Tag,
+                        t = permission.RelationType.Tag,
+                        o = (long)Operations.Read
+                    },
+                    IWritePermission permission => new SecurityResponsePermission
+                    {
+                        i = permission.Strategy.ObjectId,
+                        c = permission.Class.Tag,
+                        t = permission.RelationType.Tag,
+                        o = (long)Operations.Write
+                    },
+                    IExecutePermission permission => new SecurityResponsePermission
+                    {
+                        i = permission.Strategy.ObjectId,
+                        c = permission.Class.Tag,
+                        t = permission.MethodType.Tag,
+                        o = (long)Operations.Execute
+                    },
+                    _ => throw new Exception(),
+                }).ToArray();
+            }
 
             return securityResponse;
         }

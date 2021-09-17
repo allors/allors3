@@ -19,9 +19,6 @@ namespace Allors.Database.Protocol.Json
         private readonly IUnitConvert unitConvert;
         private readonly IRanges<long> ranges;
 
-        private readonly AccessControlsWriter accessControlsWriter;
-        private readonly PermissionsWriter permissionsWriter;
-
         private readonly ITransaction transaction;
         private readonly ISet<IClass> allowedClasses;
         private readonly Action<IEnumerable<IObject>> prefetch;
@@ -35,9 +32,6 @@ namespace Allors.Database.Protocol.Json
             this.ranges = ranges;
 
             this.AccessControlLists = accessControlLists;
-
-            this.accessControlsWriter = new AccessControlsWriter(this.AccessControlLists);
-            this.permissionsWriter = new PermissionsWriter(this.AccessControlLists);
         }
 
         public IAccessControlLists AccessControlLists { get; }
@@ -63,17 +57,14 @@ namespace Allors.Database.Protocol.Json
                         v = v.Strategy.ObjectVersion,
                         t = v.Strategy.Class.Tag,
                         // TODO: Cache
-                        r = @class.DatabaseRoleTypes?.Where(v => v.RelationType.WorkspaceNames.Length > 0)
+                        ro = @class.DatabaseRoleTypes?.Where(v => v.RelationType.WorkspaceNames.Length > 0)
                             .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))
                             .Select(w => this.CreateSyncResponseRole(v, w, this.unitConvert))
                             .ToArray(),
-                        a = this.ranges.Import(this.accessControlsWriter.Write(v)).Save(),
-                        d = this.ranges.Import(this.permissionsWriter.Write(v)).Save(),
+                        a = this.ranges.Import(acl.AccessControls.Select(v => v.Strategy.ObjectId)).Save(),
+                        r = this.ranges.Import(acl.Restrictions.Select(v => v.Strategy.ObjectId)).Save(),
                     };
                 }).ToArray(),
-                a = this.AccessControlLists.EffectivePermissionIdsByAccessControl.Keys
-                    .Select(v => new[] { v.Strategy.ObjectId, v.Strategy.ObjectVersion })
-                    .ToArray(),
             };
         }
 

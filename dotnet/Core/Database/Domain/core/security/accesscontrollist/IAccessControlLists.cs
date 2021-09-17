@@ -3,19 +3,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Security
+namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
 
-    public interface IAccessControlLists
+    public interface IAccessControlLists : Database.Security.IAccessControlLists
     {
-        IAccessControlList this[IObject @object]
-        {
-            get;
-        }
-
-        ISet<long> PermissionIds(IAccessControl accessControl);
-
-        ISet<long> DeniedPermissionIds(IRestriction restriction);
+        Restriction[] Filter(IEnumerable<Restriction> unfilteredRestrictions);
     }
 }

@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System;
     using System.Linq;
     using Meta;
     using Xunit;
@@ -236,7 +237,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void DeniedPermissions()
+        public void Restrictions()
         {
             var readOrganisationName = this.FindPermission(this.M.Organisation.Name, Operations.Read);
             var databaseRole = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(readOrganisationName).Build();
@@ -265,7 +266,9 @@ namespace Allors.Database.Domain.Tests
 
                 Assert.True(acl.CanRead(this.M.Organisation.Name));
 
-                organisation.AddDeniedPermission(readOrganisationName);
+                var restriction = new RestrictionBuilder(this.Transaction).WithDeniedPermission(readOrganisationName).Build();
+
+                organisation.AddRestriction(restriction);
 
                 acl = new DatabaseAccessControlLists(person)[organisation];
 

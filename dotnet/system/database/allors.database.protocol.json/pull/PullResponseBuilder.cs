@@ -27,9 +27,6 @@ namespace Allors.Database.Protocol.Json
 
         private readonly HashSet<IObject> objects;
 
-        private readonly AccessControlsWriter accessControlsWriter;
-        private readonly PermissionsWriter permissionsWriter;
-
         private List<IValidation> errors;
 
         public PullResponseBuilder(ITransaction transaction, IAccessControlLists accessControlLists, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IUnitConvert unitConvert, IRanges<long> ranges)
@@ -44,8 +41,6 @@ namespace Allors.Database.Protocol.Json
             this.PreparedExtents = preparedExtents;
 
             this.objects = new HashSet<IObject>();
-            this.accessControlsWriter = new AccessControlsWriter(this.AccessControlLists);
-            this.permissionsWriter = new PermissionsWriter(this.AccessControlLists);
         }
 
         public ITransaction Transaction { get; }
@@ -249,13 +244,16 @@ namespace Allors.Database.Protocol.Json
                 {
                     i = v.Strategy.ObjectId,
                     v = v.Strategy.ObjectVersion,
-                    a = this.ranges.Import(this.accessControlsWriter.Write(v)).Save(),
-                    d = this.ranges.Import(this.permissionsWriter.Write(v)).Save()
+                    a = this.ranges.Import(this.AccessControlLists[v].AccessControls.Select(w => w.Strategy.ObjectId)).Save(),
+                    r = this.ranges.Import(this.AccessControlLists[v].Restrictions.Select(w => w.Strategy.ObjectId)).Save(),
                 }).ToArray(),
                 o = this.objectByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Id),
                 c = this.collectionsByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Select(obj => obj.Id).ToArray()),
                 v = this.valueByName,
-                a = this.AccessControlLists.EffectivePermissionIdsByAccessControl.Keys
+                a = this.AccessControlLists.AccessControls
+                    .Select(v => new[] { v.Strategy.ObjectId, v.Strategy.ObjectVersion })
+                    .ToArray(),
+                r = this.AccessControlLists.Rejections
                     .Select(v => new[] { v.Strategy.ObjectId, v.Strategy.ObjectVersion })
                     .ToArray(),
             };

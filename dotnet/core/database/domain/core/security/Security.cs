@@ -112,7 +112,7 @@ namespace Allors.Database.Domain
             foreach (Role role in this.transaction.Extent<Role>())
             {
                 role.RemovePermissions();
-                role.RemoveDeniedPermissions();
+                role.RemoveRestrictions();
             }
 
             this.OnPreSetup();

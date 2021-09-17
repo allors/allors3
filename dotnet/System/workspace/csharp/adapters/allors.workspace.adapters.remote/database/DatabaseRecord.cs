@@ -23,14 +23,14 @@ namespace Allors.Workspace.Adapters.Remote
         internal static DatabaseRecord FromResponse(DatabaseConnection database, ResponseContext ctx, SyncResponseObject syncResponseObject) =>
             new DatabaseRecord(database, (IClass)database.Configuration.MetaPopulation.FindByTag(syncResponseObject.t), syncResponseObject.i, syncResponseObject.v)
             {
-                syncResponseRoles = syncResponseObject.r,
+                syncResponseRoles = syncResponseObject.ro,
                 AccessControlIds = database.Ranges.Load(ctx.CheckForMissingAccessControls(syncResponseObject.a)),
-                DeniedPermissions = database.Ranges.Load(ctx.CheckForMissingPermissions(syncResponseObject.d))
+                RestrictionIds = database.Ranges.Load(ctx.CheckForMissingRestrictions(syncResponseObject.r))
             };
 
         internal IRange<long> AccessControlIds { get; private set; }
 
-        internal IRange<long> DeniedPermissions { get; private set; }
+        internal IRange<long> RestrictionIds { get; private set; }
 
         private Dictionary<IRelationType, object> RoleByRelationType
         {
@@ -81,7 +81,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return false;
             }
 
-            return !this.DeniedPermissions.Contains(permission) && this.AccessControlIds.Any(v => this.database.AccessControlById[v].PermissionIds.Contains(permission));
+            return !this.RestrictionIds.Any(v => this.database.RestrictionById[v].PermissionIds.Contains(permission)) && this.AccessControlIds.Any(v => this.database.AccessControlById[v].PermissionIds.Contains(permission));
         }
     }
 }

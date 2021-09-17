@@ -11,5 +11,6 @@ namespace Allors.Database.Meta
     /// </summary>
     public interface IOperandType : IMetaObject
     {
+        string[] WorkspaceNames { get; }
     }
 }

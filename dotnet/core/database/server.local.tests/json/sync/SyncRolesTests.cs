@@ -41,7 +41,7 @@ namespace Tests
 
             var wx1 = syncResponse.o[0];
 
-            Assert.Equal(2, wx1.r.Length);
+            Assert.Equal(2, wx1.ro.Length);
 
             var wx1WorkspaceXString = wx1.GetRole(m.WorkspaceXObject1.WorkspaceXString);
             var wx1WorkspaceXYString = wx1.GetRole(m.WorkspaceXObject1.WorkspaceXYString);

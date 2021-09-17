@@ -1,24 +1,24 @@
-// <copyright file="SyncRequest.cs" company="Allors bvba">
+// <copyright file="SyncResponseObject.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
 namespace Allors.Protocol.Json.Api.Security
 {
-    public class SecurityRequest
+    public class SecurityResponseRestriction
     {
         /// <summary>
-        /// AccessControls
+        /// Id
         /// </summary>
-        public long[] a { get; set; }
+        public long i { get; set; }
 
         /// <summary>
-        /// Restrictions
+        /// Version
         /// </summary>
-        public long[] r { get; set; }
+        public long v { get; set; }
 
         /// <summary>
-        /// Permissions
+        /// PermissionIds (Range)
         /// </summary>
         public long[] p { get; set; }
     }

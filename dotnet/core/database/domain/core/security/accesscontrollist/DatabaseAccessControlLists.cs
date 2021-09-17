@@ -7,6 +7,7 @@ namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Antlr.Runtime;
     using Database.Security;
     using Meta;
 
@@ -16,12 +17,15 @@ namespace Allors.Database.Domain
         {
             this.User = user;
             this.AclByObject = new Dictionary<IObject, IAccessControlList>();
-            this.EffectivePermissionIdsByAccessControl = this.EffectivePermissionsByAccessControl();
+            this.PermissionIdsByAccessControl = this.EffectivePermissionsByAccessControl();
+            this.DeniedPermissionIdsByRestriction = new Dictionary<IRestriction, ISet<long>>();
         }
 
         public IEnumerable<IAccessControl> AccessControls => this.AclByObject.SelectMany(v => v.Value.AccessControls).Distinct();
 
-        public IReadOnlyDictionary<IAccessControl, ISet<long>> EffectivePermissionIdsByAccessControl { get; }
+        public IReadOnlyDictionary<IAccessControl, ISet<long>> PermissionIdsByAccessControl { get; }
+
+        public IDictionary<IRestriction, ISet<long>> DeniedPermissionIdsByRestriction { get; }
 
         public User User { get; }
 
@@ -40,6 +44,8 @@ namespace Allors.Database.Domain
                 return acl;
             }
         }
+
+        public Restriction[] Filter(IEnumerable<Restriction> unfilteredRestrictions) => unfilteredRestrictions.ToArray();
 
         private Dictionary<IAccessControl, ISet<long>> EffectivePermissionsByAccessControl()
         {

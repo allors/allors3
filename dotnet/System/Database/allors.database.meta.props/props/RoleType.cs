@@ -70,6 +70,8 @@ namespace Allors.Database.Meta
 
         IObjectType IPropertyType.ObjectType => this.ObjectType;
 
+        string[] IOperandType.WorkspaceNames => this.RelationType.WorkspaceNames;
+
         /// <summary>
         /// Gets the name.
         /// </summary>

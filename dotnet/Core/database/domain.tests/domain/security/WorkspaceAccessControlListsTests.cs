@@ -61,20 +61,20 @@ namespace Allors.Database.Domain.Tests
             var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
 
-            this.Transaction.Derive();
-            this.Transaction.Commit();
-
             var databaseOnlyPermissions = new Permissions(this.Transaction).Extent().Where(v => v.OperandType.Equals(M.Person.DatabaseOnlyField));
             var databaseOnlyReadPermission = databaseOnlyPermissions.First(v => v.Operation == Operations.Read);
 
-            administrator.AddDeniedPermission(databaseOnlyReadPermission);
+            var restriction = new RestrictionBuilder(this.Transaction).WithDeniedPermission(databaseOnlyReadPermission).Build();
+
+            administrator.AddRestriction(restriction);
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             var workspaceAccessControlLists = new WorkspaceAccessControlLists(this.workspaceName, administrator);
             var acl = workspaceAccessControlLists[administrator];
 
-            var deniedWorkspacePermissions = acl.DeniedPermissionIds;
-
-            Assert.DoesNotContain(databaseOnlyReadPermission.Id, deniedWorkspacePermissions);
+            Assert.DoesNotContain(restriction, acl.Restrictions);
         }
 
         [Fact]
@@ -84,20 +84,19 @@ namespace Allors.Database.Domain.Tests
             var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
 
-            this.Transaction.Derive();
-            this.Transaction.Commit();
-
             var workspacePermissions = new Permissions(this.Transaction).Extent().Where(v => v.OperandType.Equals(M.Person.DefaultWorkspaceField));
             var workspaceReadPermission = workspacePermissions.First(v => v.Operation == Operations.Read);
+            var restriction = new RestrictionBuilder(this.Transaction).WithDeniedPermission(workspaceReadPermission).Build();
 
-            administrator.AddDeniedPermission(workspaceReadPermission);
+            administrator.AddRestriction(restriction);
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             var workspaceAccessControlLists = new WorkspaceAccessControlLists(this.workspaceName, administrator);
             var acl = workspaceAccessControlLists[administrator];
 
-            var deniedWorkspacePermissions = acl.DeniedPermissionIds;
-
-            Assert.Contains(workspaceReadPermission.Id, deniedWorkspacePermissions);
+            Assert.Contains(restriction, acl.Restrictions);
         }
 
         [Fact]
@@ -107,20 +106,19 @@ namespace Allors.Database.Domain.Tests
             var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
 
-            this.Transaction.Derive();
-            this.Transaction.Commit();
-
             var workspacePermissions = new Permissions(this.Transaction).Extent().Where(v => v.OperandType.Equals(M.Person.DefaultWorkspaceField));
             var workspaceReadPermission = workspacePermissions.First(v => v.Operation == Operations.Read);
+            var restriction = new RestrictionBuilder(this.Transaction).WithDeniedPermission(workspaceReadPermission).Build();
 
-            administrator.AddDeniedPermission(workspaceReadPermission);
+            administrator.AddRestriction(restriction);
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             var workspaceAccessControlLists = new WorkspaceAccessControlLists("Another", administrator);
             var acl = workspaceAccessControlLists[administrator];
 
-            var deniedWorkspacePermissions = acl.DeniedPermissionIds;
-
-            Assert.DoesNotContain(workspaceReadPermission.Id, deniedWorkspacePermissions);
+            Assert.DoesNotContain(restriction, acl.Restrictions);
         }
 
 

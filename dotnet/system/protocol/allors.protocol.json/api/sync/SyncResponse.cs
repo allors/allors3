@@ -11,10 +11,5 @@ namespace Allors.Protocol.Json.Api.Sync
         /// Objects
         /// </summary>
         public SyncResponseObject[] o { get; set; }
-
-        /// <summary>
-        /// AccessControls
-        /// </summary>
-        public long[][] a { get; set; }
     }
 }

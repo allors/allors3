@@ -18,10 +18,16 @@ namespace Allors.Database.Domain
             this.WorkspaceName = workspaceName ?? throw new ArgumentNullException(nameof(workspaceName));
             this.User = user ?? throw new ArgumentNullException(nameof(user));
             this.AclByObject = new Dictionary<IObject, IAccessControlList>();
-            this.EffectivePermissionIdsByAccessControl = this.EffectivePermissionsByAccessControl();
+            this.PermissionIdsByAccessControl = this.EffectivePermissionsByAccessControl();
+            this.DeniedPermissionIdsByRestriction = new Dictionary<IRestriction, ISet<long>>();
         }
 
-        public IReadOnlyDictionary<IAccessControl, ISet<long>> EffectivePermissionIdsByAccessControl { get; }
+        public IReadOnlyDictionary<IAccessControl, ISet<long>> PermissionIdsByAccessControl { get; }
+
+        public IDictionary<IRestriction, ISet<long>> DeniedPermissionIdsByRestriction { get; }
+
+        // TODO: Optimize
+        public Restriction[] Filter(IEnumerable<Restriction> unfilteredRestrictions) => unfilteredRestrictions.Where(v => v.DeniedPermissions.Any(w => w.InWorkspace(this.WorkspaceName))).ToArray();
 
         public string WorkspaceName { get; }
 

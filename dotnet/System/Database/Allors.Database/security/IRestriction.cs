@@ -5,22 +5,13 @@
 
 namespace Allors.Database.Security
 {
-    using System.Collections.Generic;
-    using Meta;
-
     /// <summary>
     /// List of permissions for an object/user combination.
     /// </summary>
-    public interface IAccessControlList
+    public interface IRestriction
     {
-        IEnumerable<IAccessControl> AccessControls { get; }
+        IStrategy Strategy { get; }
 
-        IEnumerable<IRestriction> Restrictions { get; }
-
-        bool CanRead(IRoleType roleType);
-
-        bool CanWrite(IRoleType roleType);
-
-        bool CanExecute(IMethodType methodType);
+        IPermission[] DeniedPermissions { get; }
     }
 }

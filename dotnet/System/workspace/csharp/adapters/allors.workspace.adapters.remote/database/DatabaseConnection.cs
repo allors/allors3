@@ -36,6 +36,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.recordsById = new Dictionary<long, DatabaseRecord>();
 
             this.AccessControlById = new Dictionary<long, AccessControl>();
+            this.RestrictionById = new Dictionary<long, Restriction>();
             this.Permissions = new HashSet<long>();
 
             this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, long>>();
@@ -44,6 +45,8 @@ namespace Allors.Workspace.Adapters.Remote
         }
 
         internal Dictionary<long, AccessControl> AccessControlById { get; }
+
+        internal Dictionary<long, Restriction> RestrictionById { get; }
 
         internal ISet<long> Permissions { get; }
 
@@ -76,12 +79,10 @@ namespace Allors.Workspace.Adapters.Remote
                             return true;
                         }
 
-                        if (!@record.DeniedPermissions.Equals(this.Ranges.Load(v.d)))
+                        if (!@record.RestrictionIds.Equals(this.Ranges.Load(v.r)))
                         {
                             return true;
                         }
-
-                        // TODO: Use smarter updates for DeniedPermissions
 
                         return false;
                     })
@@ -98,12 +99,12 @@ namespace Allors.Workspace.Adapters.Remote
                 this.recordsById[databaseObjects.Id] = databaseObjects;
             }
 
-            if (ctx.MissingAccessControlIds.Count > 0 || ctx.MissingPermissionIds.Count > 0)
+            if (ctx.MissingAccessControlIds.Count > 0 || ctx.MissingRestrictionIds.Count > 0)
             {
                 return new SecurityRequest
                 {
                     a = ctx.MissingAccessControlIds.Select(v => v).ToArray(),
-                    p = ctx.MissingPermissionIds.Select(v => v).ToArray()
+                    r = ctx.MissingRestrictionIds.Select(v => v).ToArray(),
                 };
             }
 
@@ -112,60 +113,59 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal SecurityRequest SecurityResponse(SecurityResponse securityResponse)
         {
-            // TODO: Koen - Restrictions
-            //if (securityResponse.p != null)
-            //{
-            //    foreach (var syncResponsePermission in securityResponse.p)
-            //    {
-            //        var id = syncResponsePermission[0];
-            //        var @class = (IClass)this.Configuration.MetaPopulation.FindByTag((int)syncResponsePermission[1]);
-            //        var metaObject = this.Configuration.MetaPopulation.FindByTag((int)syncResponsePermission[2]);
-            //        var operandType = (IOperandType)(metaObject as IRelationType)?.RoleType ?? (IMethodType)metaObject;
-            //        var operation = (Operations)syncResponsePermission[3];
+            if (securityResponse.p != null)
+            {
+                foreach (var syncResponsePermission in securityResponse.p)
+                {
+                    var id = syncResponsePermission.i;
+                    var @class = (IClass)this.Configuration.MetaPopulation.FindByTag(syncResponsePermission.c);
+                    var metaObject = this.Configuration.MetaPopulation.FindByTag(syncResponsePermission.t);
+                    var operandType = (IOperandType)(metaObject as IRelationType)?.RoleType ?? (IMethodType)metaObject;
+                    var operation = (Operations)syncResponsePermission.o;
 
-            //        this.Permissions.Add(id);
+                    this.Permissions.Add(id);
 
-            //        switch (operation)
-            //        {
-            //            case Operations.Read:
-            //                if (!this.readPermissionByOperandTypeByClass.TryGetValue(@class, out var readPermissionByOperandType))
-            //                {
-            //                    readPermissionByOperandType = new Dictionary<IOperandType, long>();
-            //                    this.readPermissionByOperandTypeByClass[@class] = readPermissionByOperandType;
-            //                }
+                    switch (operation)
+                    {
+                        case Operations.Read:
+                            if (!this.readPermissionByOperandTypeByClass.TryGetValue(@class, out var readPermissionByOperandType))
+                            {
+                                readPermissionByOperandType = new Dictionary<IOperandType, long>();
+                                this.readPermissionByOperandTypeByClass[@class] = readPermissionByOperandType;
+                            }
 
-            //                readPermissionByOperandType[operandType] = id;
+                            readPermissionByOperandType[operandType] = id;
 
-            //                break;
+                            break;
 
-            //            case Operations.Write:
-            //                if (!this.writePermissionByOperandTypeByClass.TryGetValue(@class, out var writePermissionByOperandType))
-            //                {
-            //                    writePermissionByOperandType = new Dictionary<IOperandType, long>();
-            //                    this.writePermissionByOperandTypeByClass[@class] = writePermissionByOperandType;
-            //                }
+                        case Operations.Write:
+                            if (!this.writePermissionByOperandTypeByClass.TryGetValue(@class, out var writePermissionByOperandType))
+                            {
+                                writePermissionByOperandType = new Dictionary<IOperandType, long>();
+                                this.writePermissionByOperandTypeByClass[@class] = writePermissionByOperandType;
+                            }
 
-            //                writePermissionByOperandType[operandType] = id;
+                            writePermissionByOperandType[operandType] = id;
 
-            //                break;
+                            break;
 
-            //            case Operations.Execute:
-            //                if (!this.executePermissionByOperandTypeByClass.TryGetValue(@class, out var executePermissionByOperandType))
-            //                {
-            //                    executePermissionByOperandType = new Dictionary<IOperandType, long>();
-            //                    this.executePermissionByOperandTypeByClass[@class] = executePermissionByOperandType;
-            //                }
+                        case Operations.Execute:
+                            if (!this.executePermissionByOperandTypeByClass.TryGetValue(@class, out var executePermissionByOperandType))
+                            {
+                                executePermissionByOperandType = new Dictionary<IOperandType, long>();
+                                this.executePermissionByOperandTypeByClass[@class] = executePermissionByOperandType;
+                            }
 
-            //                executePermissionByOperandType[operandType] = id;
+                            executePermissionByOperandType[operandType] = id;
 
-            //                break;
-            //            case Operations.Create:
-            //                throw new NotSupportedException("Create not supported");
-            //            default:
-            //                throw new ArgumentOutOfRangeException();
-            //        }
-            //    }
-            //}
+                            break;
+                        case Operations.Create:
+                            throw new NotSupportedException("Create not supported");
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+            }
 
             HashSet<long> missingPermissionIds = null;
             if (securityResponse.a != null)
@@ -175,6 +175,28 @@ namespace Allors.Workspace.Adapters.Remote
                     var id = syncResponseAccessControl.i;
                     var version = syncResponseAccessControl.v;
                     var permissionIds = this.Ranges.Load(syncResponseAccessControl.p);
+                    this.AccessControlById[id] = new AccessControl { Version = version, PermissionIds = this.Ranges.Load(permissionIds) };
+
+                    foreach (var permissionId in permissionIds)
+                    {
+                        if (this.Permissions.Contains(permissionId))
+                        {
+                            continue;
+                        }
+
+                        missingPermissionIds ??= new HashSet<long>();
+                        missingPermissionIds.Add(permissionId);
+                    }
+                }
+            }
+
+            if (securityResponse.r != null)
+            {
+                foreach (var syncResponseRestriction in securityResponse.r)
+                {
+                    var id = syncResponseRestriction.i;
+                    var version = syncResponseRestriction.v;
+                    var permissionIds = this.Ranges.Load(syncResponseRestriction.p);
                     this.AccessControlById[id] = new AccessControl { Version = version, PermissionIds = this.Ranges.Load(permissionIds) };
 
                     foreach (var permissionId in permissionIds)

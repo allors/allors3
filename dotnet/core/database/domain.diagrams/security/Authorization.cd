@@ -79,20 +79,20 @@
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.Object">
-    <Position X="0.5" Y="6" Width="1.5" />
+    <Position X="0.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAIAAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="DeniedPermissions" />
       <Property Name="SecurityTokens" />
+      <Property Name="_Restrictions" />
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.Person" Collapsed="true">
     <Position X="7.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>QAABAEICQEAAAAABEEAQAAQAACAAAAAAAAIACAQAEAg=</HashCode>
+      <HashCode>QAABAEACAEAAAAIAEEATAAQEBCAAAIAAAAgASAQAAAg=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
@@ -123,6 +123,16 @@
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.Restriction">
+    <Position X="0.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="DeniedPermissions" />
+    </ShowAsAssociation>
   </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

@@ -13,8 +13,13 @@ namespace Allors.Protocol.Json.Api.Security
         public SecurityResponseAccessControl[] a { get; set; }
 
         /// <summary>
+        /// AccessControls
+        /// </summary>
+        public SecurityResponseRestriction[] r { get; set; }
+
+        /// <summary>
         /// Permissions
         /// </summary>
-        public long[][] p { get; set; }
+        public SecurityResponsePermission[] p { get; set; }
     }
 }

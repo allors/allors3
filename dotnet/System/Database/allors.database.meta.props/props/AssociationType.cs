@@ -49,8 +49,11 @@ namespace Allors.Database.Meta
         string IMetaObjectBase.ValidationName => this.ValidationName;
         #endregion
 
-        #region IOperandTypeBase
+        #region IOperandType & IOperandTypeBase
         string IOperandTypeBase.DisplayName => this.DisplayName;
+
+        string[] IOperandType.WorkspaceNames => this.relationType.WorkspaceNames;
+
         #endregion
 
         #region IPropertyType & IPropertyTypeBase

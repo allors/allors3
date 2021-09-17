@@ -20,7 +20,8 @@ namespace Allors.Database.Domain
         private readonly string workspaceName;
 
         private AccessControl[] accessControls;
-        private HashSet<long> deniedPermissions;
+        private Restriction[] restrictions;
+
         private bool lazyLoaded;
 
         internal AccessControlList(IAccessControlLists accessControlLists, IObject @object, string workspaceName)
@@ -45,13 +46,13 @@ namespace Allors.Database.Domain
             }
         }
 
-        ISet<long> IAccessControlList.DeniedPermissionIds => this.DeniedPermissionIds;
-        public HashSet<long> DeniedPermissionIds
+        IEnumerable<IRestriction> IAccessControlList.Restrictions => this.Restrictions;
+        public Restriction[] Restrictions
         {
             get
             {
                 this.LazyLoad();
-                return this.deniedPermissions;
+                return this.restrictions;
             }
         }
 
@@ -93,12 +94,12 @@ namespace Allors.Database.Domain
         {
             this.LazyLoad();
 
-            if (this.deniedPermissions?.Contains(permissionId) == true)
+            if (this.restrictions?.Any(v => this.AccessControlLists.DeniedPermissionIdsByRestriction[v].Contains(permissionId)) == true)
             {
                 return false;
             }
 
-            return this.accessControls.Any(v => this.AccessControlLists.EffectivePermissionIdsByAccessControl[v].Contains(permissionId));
+            return this.accessControls.Any(v => this.AccessControlLists.PermissionIdsByAccessControl[v].Contains(permissionId));
         }
 
         private void LazyLoad()
@@ -131,11 +132,7 @@ namespace Allors.Database.Domain
                     ? this.Object.Restrictions.Union(delegatedAccessDeniedPermissions)
                     : this.Object.Restrictions;
 
-                var filteredDeniedPermissions = !string.IsNullOrWhiteSpace(this.workspaceName)
-                    ? unfilteredRestrictions.Where(v => v.InWorkspace(this.workspaceName))
-                    : unfilteredRestrictions;
-
-                this.deniedPermissions = new HashSet<long>(filteredDeniedPermissions.Select(v => v.Id));
+                this.restrictions = this.AccessControlLists.Filter(unfilteredRestrictions);
 
                 if (securityTokens == null || securityTokens.Length == 0)
                 {
@@ -147,7 +144,7 @@ namespace Allors.Database.Domain
 
                 this.accessControls = securityTokens.SelectMany(v => v.AccessControls)
                     .Distinct()
-                    .Where(this.AccessControlLists.EffectivePermissionIdsByAccessControl.ContainsKey)
+                    .Where(this.AccessControlLists.PermissionIdsByAccessControl.ContainsKey)
                     .ToArray();
 
                 this.lazyLoaded = true;

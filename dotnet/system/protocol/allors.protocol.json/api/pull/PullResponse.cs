@@ -33,5 +33,10 @@ namespace Allors.Protocol.Json.Api.Pull
         /// Access Controls
         /// </summary>
         public long[][] a { get; set; }
+
+        /// <summary>
+        /// Restrictions
+        /// </summary>
+        public long[][] r { get; set; }
     }
 }

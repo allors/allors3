@@ -6,10 +6,13 @@
 namespace Allors.Database.Domain
 {
     using System.Linq;
+    using Database.Security;
 
-    public partial class Restriction
+    public partial class Restriction : IRestriction
     {
+        IPermission[] IRestriction.DeniedPermissions => this.DeniedPermissions.ToArray();
+
         // TODO: Optimize
-        public bool InWorkspace(string workspaceName) => this.DeniedPermissions.Any(v => v.Class.WorkspaceNames.Contains(workspaceName));
+        public bool InWorkspace(string workspaceName) => this.DeniedPermissions.Any(v => v.OperandType.WorkspaceNames.Contains(workspaceName));
     }
 }
