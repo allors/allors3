@@ -16,7 +16,7 @@ namespace Allors.Database.Meta
 
         public Guid Id => this.relationType.Id;
 
-        public int Tag => this.relationType.Tag;
+        public string Tag => this.relationType.Tag;
 
         public IAssociationType AssociationType => this.relationType.AssociationType;
 

@@ -19,12 +19,12 @@ namespace Allors.Database.Meta
 
         private MethodTypeProps props;
 
-        public MethodType(ICompositeBase objectType, Guid id, int tag)
+        public MethodType(ICompositeBase objectType, Guid id, string tag = null)
         {
             this.metaPopulation = objectType.MetaPopulation;
             this.ObjectType = objectType;
             this.Id = id;
-            this.Tag = tag;
+            this.Tag = tag ?? id.Tag();
 
             this.metaPopulation.OnMethodTypeCreated(this);
         }
@@ -94,7 +94,7 @@ namespace Allors.Database.Meta
 
         public Guid Id { get; }
 
-        public int Tag { get; }
+        public string Tag { get; }
 
         public ICompositeBase ObjectType { get; }
 

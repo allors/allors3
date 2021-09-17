@@ -23,15 +23,14 @@ GNU General Public License for more details.
 For more information visit http://www.allors.com/legal
 !$
 <generations>
-    <generation template="ids" output="ids.g.cs"/>
-    <generation template="tags" output="tags.g.cs"/>
-	<generation template="m" output="m.g.cs"/>
-	<generation template="units" output="units.g.cs"/>
-	<generation template="interfaces" output="interfaces.g.cs"/>
-	<generation template="classes" output="classes.g.cs"/>
-	<generation template="associationTypes" output="associationTypes.g.cs"/>
-	<generation template="roleTypes" output="roleTypes.g.cs"/>
-	<generation template="builder" output="builder.g.cs"/>
+        <generation template="ids" output="ids.g.cs"/>
+        <generation template="m" output="m.g.cs"/>
+        <generation template="units" output="units.g.cs"/>
+        <generation template="interfaces" output="interfaces.g.cs"/>
+        <generation template="classes" output="classes.g.cs"/>
+        <generation template="associationTypes" output="associationTypes.g.cs"/>
+        <generation template="roleTypes" output="roleTypes.g.cs"/>
+        <generation template="builder" output="builder.g.cs"/>
 </generations>
 >>
 
@@ -73,52 +72,6 @@ ids_composite_methodType(method) ::= <<
         public static readonly Guid $composite.SingularName$$method.Name$ = new Guid("$method.AttributeByName.Id.Value$");
 >>
 
-tags(repository) ::= <<
-namespace Allors.Database.Meta
-{
-    public enum Tags {
-
-        None = 0,
-
-        Binary = UnitTags.Binary,
-        Boolean = UnitTags.Boolean,
-        DateTime = UnitTags.DateTime,
-        Decimal = UnitTags.Decimal,
-        Float = UnitTags.Float,
-        Integer = UnitTags.Integer,
-        String = UnitTags.String,
-        Unique = UnitTags.Unique,
-
-$repository.Domains:{assembly|$tags_domain(assembly)$}; separator="\n"$
-
-$repository.composites:{composite|$tags_composite(composite)$}; separator="\n"$
-    }
-}
->>
-
-tags_domain(composite) ::= <<
-        $assembly.Name$,
->>
-
-tags_unit(composite) ::= <<
-        $unit.SingularName$,
->>
-
-tags_composite(composite) ::= <<
-        $composite.SingularName$,
-$composite.DefinedProperties:{property|$tags_composite_property(property)$}; separator="\n"$
-$composite.DefinedMethods:{method|$tags_composite_methodType(method)$}; separator="\n"$
-
->>
-
-tags_composite_property(property) ::= <<
-        $composite.SingularName$$property.RoleName$,
->>
-
-tags_composite_methodType(method) ::= <<
-        $composite.SingularName$$method.Name$,
->>
-
 m(repository) ::= <<
 namespace Allors.Database.Meta
 {
@@ -139,7 +92,7 @@ $repository.Units:{unit|$define_unit(unit)$}; separator="\n"$
 
 define_unit(unit) ::= <<
     public class $unit.SingularName$ : Unit {
-        public $unit.SingularName$(MetaPopulation metaPopulation, System.Guid id, int tag) : base(metaPopulation, id, tag)
+        public $unit.SingularName$(MetaPopulation metaPopulation, System.Guid id) : base(metaPopulation, id, UnitTags.$unit.SingularName$)
         {
         }
     }
@@ -154,7 +107,7 @@ $repository.Interfaces:{interface|$define_interface(interface)$}; separator="\n"
 
 define_interface(interface) ::= <<
     public class $interface.SingularName$ : Interface {
-        public $interface.SingularName$(MetaPopulation metaPopulation, System.Guid id, int tag) : base(metaPopulation, id, tag)
+        public $interface.SingularName$(MetaPopulation metaPopulation, System.Guid id, string tag = null) : base(metaPopulation, id, tag)
         {
         }
 
@@ -183,7 +136,7 @@ $repository.Classes:{class|$define_class(class)$}; separator="\n"$
 
 define_class(class) ::= <<
     public class $class.SingularName$ : Class {
-        public $class.SingularName$(MetaPopulation metaPopulation, System.Guid id, int tag) : base(metaPopulation, id, tag)
+        public $class.SingularName$(MetaPopulation metaPopulation, System.Guid id, string tag = null) : base(metaPopulation, id, tag)
         {
         }
 
@@ -407,7 +360,7 @@ $composite.DefinedMethods:{method|          public IMethodType $method.DefiningT
 >>
 
 build_domain(assembly) ::= <<
-	        domains.$assembly.Name$ = new Domain(meta, Ids.$assembly.Name$, (int)Tags.$assembly.Name$)
+	        domains.$assembly.Name$ = new Domain(meta, Ids.$assembly.Name$)
 			{
 				Name = "$assembly.Name$"
 			};
@@ -420,14 +373,14 @@ $endif$
 >>
 
 build_unit(unit) ::= <<
-	        meta.$unit.SingularName$ = new $unit.SingularName$(meta, Ids.$unit.SingularName$, (int)Tags.$unit.SingularName$)
+	        meta.$unit.SingularName$ = new $unit.SingularName$(meta, Ids.$unit.SingularName$)
             {
                 SingularName = UnitNames.$unit.SingularName$
             };
 >>
 
 build_interface(interface) ::= <<
-	        meta.$interface.SingularName$ = new $interface.SingularName$(meta, Ids.$interface.SingularName$, (int)Tags.$interface.SingularName$)
+	        meta.$interface.SingularName$ = new $interface.SingularName$(meta, Ids.$interface.SingularName$)
             {
                 SingularName = "$interface.SingularName$",
                 $if(interface.AssignedPluralName)$PluralName = "$interface.AssignedPluralName$",$endif$
@@ -435,7 +388,7 @@ build_interface(interface) ::= <<
 >>
 
 build_class(class) ::= <<
-	        meta.$class.SingularName$ = new $class.SingularName$(meta, Ids.$class.SingularName$, (int)Tags.$class.SingularName$)
+	        meta.$class.SingularName$ = new $class.SingularName$(meta, Ids.$class.SingularName$)
             {
 $if(!class.HasDatabaseOrigin)$                AssignedOrigin = Allors.Origin.$class.Origin$,$endif$
                 SingularName = "$class.SingularName$",
@@ -458,7 +411,7 @@ $composite.DefinedProperties:{property|$relation(property)$}; separator="\n"$
 relation(property) ::= <<
         private void Build$property.DefiningType.SingularName$$property.RoleName$(MetaPopulation meta, Domains domains, RelationTypes relationTypes)
         {
-            relationTypes.$property.DefiningType.SingularName$$property.RoleName$ = new RelationType(meta.$property.DefiningType.SingularName$, Ids.$property.DefiningType.SingularName$$property.RoleName$, (int)Tags.$property.DefiningType.SingularName$$property.RoleName$, v => new $property.AssociationName$(v), v => new $property.DefiningType.SingularName$$property.RoleName$(v))
+            relationTypes.$property.DefiningType.SingularName$$property.RoleName$ = new RelationType(meta.$property.DefiningType.SingularName$, Ids.$property.DefiningType.SingularName$$property.RoleName$, v => new $property.AssociationName$(v), v => new $property.DefiningType.SingularName$$property.RoleName$(v))
             {
 $if(!property.HasDatabaseOrigin)$                AssignedOrigin = Origin.$property.Origin$,$endif$
 $if(property.WorkspaceNames)$		        AssignedWorkspaceNames = new[] {$property.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
@@ -538,7 +491,7 @@ methods(composite) ::= <<$composite.DefinedMethods:{method|$method(method)$}; se
 method(method) ::= <<
         private void Build$method.DefiningType.SingularName$$method.Name$(MetaPopulation meta, Domains domains, MethodTypes methodTypes)
         {
-            methodTypes.$method.DefiningType.SingularName$$method.Name$ = new MethodType(meta.$method.DefiningType.SingularName$, Ids.$method.DefiningType.SingularName$$method.Name$, (int)Tags.$method.DefiningType.SingularName$$method.Name$)
+            methodTypes.$method.DefiningType.SingularName$$method.Name$ = new MethodType(meta.$method.DefiningType.SingularName$, Ids.$method.DefiningType.SingularName$$method.Name$)
             {
                 Name = "$method.Name$",
 $if(method.WorkspaceNames)$		        AssignedWorkspaceNames = new[] {$method.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$

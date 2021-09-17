@@ -17,7 +17,7 @@ namespace Allors.Database.Meta
 
         public Guid Id => this.domain.Id;
 
-        public int Tag => this.domain.Tag;
+        public string Tag => this.domain.Tag;
 
         public string Name => this.domain.Name;
 

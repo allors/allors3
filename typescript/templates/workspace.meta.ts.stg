@@ -147,9 +147,9 @@ tags(meta, workspaceName) ::= <<
 // tslint:disable:object-literal-sort-keys
 
 export const tags = {
-$meta._.Units:{unit|  $unit._.Name$: $unit._.tag$,}; separator="\n"$
-$meta._.WorkspaceInterfacesByWorkspaceName.(workspaceName):{composite|  $composite._.Name$: $composite._.tag$,}; separator="\n"$
-$meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{composite|  $composite._.Name$: $composite._.tag$,}; separator="\n"$
+$meta._.Units:{unit|  $unit._.Name$: '$unit._.tag$',}; separator="\n"$
+$meta._.WorkspaceInterfacesByWorkspaceName.(workspaceName):{composite|  $composite._.Name$: '$composite._.tag$',}; separator="\n"$
+$meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{composite|  $composite._.Name$: '$composite._.tag$',}; separator="\n"$
 };
 >>
 

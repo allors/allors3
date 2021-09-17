@@ -90,7 +90,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public IReader ExecuteReader() => new Reader(this.command.ExecuteReader());
 
-        public object GetValue(IReader reader, int tag, int i) =>
+        public object GetValue(IReader reader, string tag, int i) =>
             tag switch
             {
                 UnitTags.Binary => reader.GetValue(i),

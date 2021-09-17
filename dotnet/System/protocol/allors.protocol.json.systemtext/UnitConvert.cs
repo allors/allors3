@@ -27,7 +27,7 @@ namespace Allors.Protocol.Json.SystemTextJson
                 _ => throw new ArgumentException()
             };
 
-        public object FromJson(int tag, object value)
+        public object FromJson(string tag, object value)
         {
             switch (value)
             {

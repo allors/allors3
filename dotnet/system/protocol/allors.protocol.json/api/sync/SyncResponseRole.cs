@@ -11,9 +11,9 @@ namespace Allors.Protocol.Json.Api.Sync
     public class SyncResponseRole
     {
         /// <summary>
-        /// RoleType
+        /// Role Type Tag
         /// </summary>
-        public int t { get; set; }
+        public string t { get; set; }
 
         /// <summary>
         /// Collection (Range)

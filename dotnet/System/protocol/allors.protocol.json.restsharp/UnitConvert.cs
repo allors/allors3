@@ -26,7 +26,7 @@ namespace Allors.Protocol.Json.RestSharp
                 _ => throw new ArgumentException()
             };
 
-        public object FromJson(int tag, object value) =>
+        public object FromJson(string tag, object value) =>
             value switch
             {
                 null => null,

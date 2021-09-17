@@ -15,7 +15,7 @@ namespace Allors.Database.Meta
 
         private UnitProps props;
 
-        internal Unit(MetaPopulation metaPopulation, Guid id, int tag) : base(metaPopulation, id, tag) => metaPopulation.OnUnitCreated(this);
+        internal Unit(MetaPopulation metaPopulation, Guid id, string tag) : base(metaPopulation, id, tag) => metaPopulation.OnUnitCreated(this);
 
         public UnitProps _ => this.props ??= new UnitProps(this);
 

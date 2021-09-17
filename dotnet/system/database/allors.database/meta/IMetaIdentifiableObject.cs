@@ -14,6 +14,6 @@ namespace Allors.Database.Meta
     {
         Guid Id { get; }
 
-        int Tag { get; }
+        string Tag { get; }
     }
 }

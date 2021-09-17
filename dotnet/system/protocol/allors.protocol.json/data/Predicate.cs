@@ -13,19 +13,19 @@ namespace Allors.Protocol.Json.Data
         public PredicateKind k { get; set; }
 
         /// <summary>
-        /// Association Type
+        /// Association Type Tag
         /// </summary>
-        public int? a { get; set; }
+        public string a { get; set; }
 
         /// <summary>
-        /// Role Type
+        /// Role Type Tag
         /// </summary>
-        public int? r { get; set; }
+        public string r { get; set; }
 
         /// <summary>
-        /// Object Type
+        /// Object Type Tag
         /// </summary>
-        public int? o { get; set; }
+        public string o { get; set; }
 
         /// <summary>
         /// Parameter
@@ -68,14 +68,14 @@ namespace Allors.Protocol.Json.Data
         public object[] vs { get; set; }
 
         /// <summary>
-        /// Path
+        /// Path Role Type Tag
         /// </summary>
-        public int? pa { get; set; }
+        public string pa { get; set; }
 
         /// <summary>
-        /// Paths
+        /// Path Role Type Tags
         /// </summary>
-        public int[] pas { get; set; }
+        public string[] pas { get; set; }
 
         /// <summary>
         /// Extent

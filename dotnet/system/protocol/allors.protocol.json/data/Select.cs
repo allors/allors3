@@ -9,14 +9,14 @@ namespace Allors.Protocol.Json.Data
     public class Select : IVisitable
     {
         /// <summary>
-        /// Association Type
+        /// Association Type Tag
         /// </summary>
-        public int? a { get; set; }
+        public string a { get; set; }
 
         /// <summary>
-        /// RoleType
+        /// Role Type Tag
         /// </summary>
-        public int? r { get; set; }
+        public string r { get; set; }
 
         /// <summary>
         /// Next

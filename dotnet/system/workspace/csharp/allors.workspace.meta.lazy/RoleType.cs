@@ -40,7 +40,7 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IOperandType
-        int IOperandType.OperandTag => this.RelationType.Tag;
+        string IOperandType.OperandTag => this.RelationType.Tag;
         #endregion
 
         #region IPropertyType

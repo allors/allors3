@@ -102,7 +102,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         public void ExecuteNonQuery() => this.command.ExecuteNonQuery();
 
-        public object GetValue(IReader reader, int tag, int i) =>
+        public object GetValue(IReader reader, string tag, int i) =>
             tag switch
             {
                 UnitTags.String => reader.GetString(i),

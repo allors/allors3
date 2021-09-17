@@ -62,12 +62,12 @@ namespace Allors.Database.Protocol.Json
             switch (visited.k)
             {
                 case ExtentKind.Filter:
-                    if (!visited.t.HasValue)
+                    if (string.IsNullOrWhiteSpace(visited.t))
                     {
                         throw new Exception("Unknown object type for " + visited.k);
                     }
 
-                    var objectType = (IComposite)this.metaPopulation.FindByTag(visited.t.Value);
+                    var objectType = (IComposite)this.metaPopulation.FindByTag(visited.t);
                     var extent = new Extent(objectType);
                     sortable = extent;
 
@@ -252,7 +252,7 @@ namespace Allors.Database.Protocol.Json
                             var instanceOf = new Data.Instanceof(propertyType)
                             {
                                 Dependencies = visited.d,
-                                ObjectType = visited.o != null ? (IComposite)this.transaction.Database.MetaPopulation.FindByTag(visited.o.Value) : null
+                                ObjectType = visited.o != null ? (IComposite)this.transaction.Database.MetaPopulation.FindByTag(visited.o) : null
                             };
 
                             this.predicates.Push(instanceOf);
@@ -395,7 +395,7 @@ namespace Allors.Database.Protocol.Json
             var pull = new Pull
             {
                 ExtentRef = visited.er,
-                ObjectType = visited.t.HasValue ? (IObjectType)this.transaction.Database.MetaPopulation.FindByTag(visited.t.Value) : null,
+                ObjectType = !string.IsNullOrWhiteSpace(visited.t) ? (IObjectType)this.transaction.Database.MetaPopulation.FindByTag(visited.t) : null,
                 Object = visited.o != null ? this.transaction.Instantiate(visited.o.Value) : null,
                 Arguments = visited.a != null ? new Arguments(visited.a, this.unitConvert) : null,
             };
@@ -455,7 +455,7 @@ namespace Allors.Database.Protocol.Json
             var sort = new Sort
             {
                 SortDirection = visited.d,
-                RoleType = visited.r != null ? (IRoleType)this.transaction.Database.ObjectFactory.MetaPopulation.FindByTag(visited.r.Value) : null,
+                RoleType = !string.IsNullOrWhiteSpace(visited.r) ? (IRoleType)this.transaction.Database.ObjectFactory.MetaPopulation.FindByTag(visited.r) : null,
             };
 
             this.sorts.Push(sort);

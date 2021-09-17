@@ -8,9 +8,9 @@ namespace Allors.Protocol.Json.Api.Push
     public class PushRequestRole
     {
         /// <summary>
-        /// Relation Type
+        /// Relation Type Tag
         /// </summary>
-        public int t { get; set; }
+        public string t { get; set; }
 
         /// <summary>
         /// Set Unit Role

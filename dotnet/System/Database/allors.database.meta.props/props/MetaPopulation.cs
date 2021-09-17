@@ -14,7 +14,7 @@ namespace Allors.Database.Meta
     public sealed partial class MetaPopulation : IMetaPopulationBase
     {
         private readonly Dictionary<Guid, IMetaIdentifiableObjectBase> metaObjectById;
-        private readonly Dictionary<int, IMetaIdentifiableObjectBase> metaObjectByTag;
+        private readonly Dictionary<string, IMetaIdentifiableObjectBase> metaObjectByTag;
 
         private string[] derivedWorkspaceNames;
 
@@ -58,7 +58,7 @@ namespace Allors.Database.Meta
             this.methodTypes = new List<IMethodTypeBase>();
 
             this.metaObjectById = new Dictionary<Guid, IMetaIdentifiableObjectBase>();
-            this.metaObjectByTag = new Dictionary<int, IMetaIdentifiableObjectBase>();
+            this.metaObjectByTag = new Dictionary<string, IMetaIdentifiableObjectBase>();
         }
 
         public MetaPopulationProps _ => this.props ??= new MetaPopulationProps(this);
@@ -174,10 +174,10 @@ namespace Allors.Database.Meta
 
         IMetaIdentifiableObject IMetaPopulation.FindById(Guid id) => this.FindById(id);
 
-        IMetaIdentifiableObject IMetaPopulation.FindByTag(int tag) => this.FindByTag(tag);
+        IMetaIdentifiableObject IMetaPopulation.FindByTag(string tag) => this.FindByTag(tag);
 
         /// <summary>
-        /// Find a meta object by meta object id.
+        /// Find a meta object by id.
         /// </summary>
         /// <param name="id">
         /// The meta object id.
@@ -193,15 +193,13 @@ namespace Allors.Database.Meta
         }
 
         /// <summary>
-        /// Find a meta object by meta object id.
+        /// Find a meta object by tag.
         /// </summary>
-        /// <param name="id">
-        /// The meta object id.
-        /// </param>
+        /// <param name="tag"></param>
         /// <returns>
         /// The <see cref="IMetaObject"/>.
         /// </returns>
-        public IMetaIdentifiableObjectBase FindByTag(int tag)
+        public IMetaIdentifiableObjectBase FindByTag(string tag)
         {
             this.metaObjectByTag.TryGetValue(tag, out var metaObject);
 

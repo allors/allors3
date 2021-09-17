@@ -12,7 +12,7 @@ namespace Allors.Workspace.Meta
     /// </summary>
     public sealed class RelationType : IRelationTypeInternals
     {
-        public RelationType(int tag, IAssociationTypeInternals associationType, ICompositeInternals associationObjectType, IRoleTypeInternals roleType, IObjectType roleObjectType, Multiplicity multiplicity = Multiplicity.ManyToOne)
+        public RelationType(string tag, IAssociationTypeInternals associationType, ICompositeInternals associationObjectType, IRoleTypeInternals roleType, IObjectType roleObjectType, Multiplicity multiplicity = Multiplicity.ManyToOne)
         {
             this.Tag = tag;
             this.AssociationType = associationType;
@@ -27,7 +27,7 @@ namespace Allors.Workspace.Meta
         private IAssociationTypeInternals AssociationType { get; }
         private IRoleTypeInternals RoleType { get; }
 
-        private int Tag { get; }
+        private string Tag { get; }
         private Multiplicity Multiplicity { get; }
         private Origin Origin { get; set; }
         private bool IsDerived { get; set; }
@@ -42,7 +42,7 @@ namespace Allors.Workspace.Meta
 
         #region IMetaIdentifiableObject
 
-        int IMetaObject.Tag => this.Tag;
+        string IMetaObject.Tag => this.Tag;
 
         #endregion
 

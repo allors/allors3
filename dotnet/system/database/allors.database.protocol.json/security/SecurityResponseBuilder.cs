@@ -56,40 +56,41 @@ namespace Allors.Database.Protocol.Json
                     }).ToArray();
             }
 
-            if (securityRequest.p?.Length > 0)
-            {
-                var permissionIds = securityRequest.p;
-                var permissions = this.transaction.Instantiate(permissionIds)
-                    .Cast<IPermission>()
-                    .Where(v => this.allowedClasses?.Contains(v.Class) == true);
+            // TODO: Koen - Restrictions
+            //if (securityRequest.p?.Length > 0)
+            //{
+            //    var permissionIds = securityRequest.p;
+            //    var permissions = this.transaction.Instantiate(permissionIds)
+            //        .Cast<IPermission>()
+            //        .Where(v => this.allowedClasses?.Contains(v.Class) == true);
 
-                securityResponse.p = permissions.Select(v =>
-                    v switch
-                    {
-                        IReadPermission permission => new long[]
-                        {
-                            permission.Strategy.ObjectId,
-                            permission.Class.Tag,
-                            permission.RelationType.Tag,
-                            (long)Operations.Read,
-                        },
-                        IWritePermission permission => new long[]
-                        {
-                            permission.Strategy.ObjectId,
-                            permission.Class.Tag,
-                            permission.RelationType.Tag,
-                            (long)Operations.Write,
-                        },
-                        IExecutePermission permission => new long[]
-                        {
-                            permission.Strategy.ObjectId,
-                            permission.Class.Tag,
-                            permission.MethodType.Tag,
-                            (long)Operations.Execute,
-                        },
-                        _ => throw new Exception(),
-                    }).ToArray();
-            }
+            //    securityResponse.p = permissions.Select(v =>
+            //        v switch
+            //        {
+            //            IReadPermission permission => new long[]
+            //            {
+            //                permission.Strategy.ObjectId,
+            //                permission.Class.Tag,
+            //                permission.RelationType.Tag,
+            //                (long)Operations.Read,
+            //            },
+            //            IWritePermission permission => new long[]
+            //            {
+            //                permission.Strategy.ObjectId,
+            //                permission.Class.Tag,
+            //                permission.RelationType.Tag,
+            //                (long)Operations.Write,
+            //            },
+            //            IExecutePermission permission => new long[]
+            //            {
+            //                permission.Strategy.ObjectId,
+            //                permission.Class.Tag,
+            //                permission.MethodType.Tag,
+            //                (long)Operations.Execute,
+            //            },
+            //            _ => throw new Exception(),
+            //        }).ToArray();
+            //}
 
             return securityResponse;
         }

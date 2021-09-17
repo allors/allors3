@@ -39,6 +39,6 @@ namespace Allors.Database.Adapters.Sql
 
         IReader ExecuteReader();
 
-        object GetValue(IReader reader, int tag, int i);
+        object GetValue(IReader reader, string tag, int i);
     }
 }

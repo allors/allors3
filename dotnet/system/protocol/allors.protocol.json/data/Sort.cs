@@ -5,13 +5,12 @@
 
 namespace Allors.Protocol.Json.Data
 {
-
     public class Sort : IVisitable
     {
         /// <summary>
-        /// Role Type
+        /// Role Type Tag
         /// </summary>
-        public int? r { get; set; }
+        public string r { get; set; }
 
         /// <summary>
         /// Sort Direction

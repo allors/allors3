@@ -12,7 +12,7 @@ namespace Allors.Workspace.Meta
     {
         IMetaPopulation MetaPopulation { get; }
 
-        int Tag { get; }
+        string Tag { get; }
 
         Origin Origin { get; }
     }

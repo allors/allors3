@@ -23,7 +23,7 @@ namespace Allors.Workspace.Meta
 
         IEnumerable<IComposite> Composites { get; }
 
-        IMetaObject FindByTag(int tag);
+        IMetaObject FindByTag(string tag);
 
         IComposite FindByName(string name);
 

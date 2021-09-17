@@ -112,59 +112,60 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal SecurityRequest SecurityResponse(SecurityResponse securityResponse)
         {
-            if (securityResponse.p != null)
-            {
-                foreach (var syncResponsePermission in securityResponse.p)
-                {
-                    var id = syncResponsePermission[0];
-                    var @class = (IClass)this.Configuration.MetaPopulation.FindByTag((int)syncResponsePermission[1]);
-                    var metaObject = this.Configuration.MetaPopulation.FindByTag((int)syncResponsePermission[2]);
-                    var operandType = (IOperandType)(metaObject as IRelationType)?.RoleType ?? (IMethodType)metaObject;
-                    var operation = (Operations)syncResponsePermission[3];
+            // TODO: Koen - Restrictions
+            //if (securityResponse.p != null)
+            //{
+            //    foreach (var syncResponsePermission in securityResponse.p)
+            //    {
+            //        var id = syncResponsePermission[0];
+            //        var @class = (IClass)this.Configuration.MetaPopulation.FindByTag((int)syncResponsePermission[1]);
+            //        var metaObject = this.Configuration.MetaPopulation.FindByTag((int)syncResponsePermission[2]);
+            //        var operandType = (IOperandType)(metaObject as IRelationType)?.RoleType ?? (IMethodType)metaObject;
+            //        var operation = (Operations)syncResponsePermission[3];
 
-                    this.Permissions.Add(id);
+            //        this.Permissions.Add(id);
 
-                    switch (operation)
-                    {
-                        case Operations.Read:
-                            if (!this.readPermissionByOperandTypeByClass.TryGetValue(@class, out var readPermissionByOperandType))
-                            {
-                                readPermissionByOperandType = new Dictionary<IOperandType, long>();
-                                this.readPermissionByOperandTypeByClass[@class] = readPermissionByOperandType;
-                            }
+            //        switch (operation)
+            //        {
+            //            case Operations.Read:
+            //                if (!this.readPermissionByOperandTypeByClass.TryGetValue(@class, out var readPermissionByOperandType))
+            //                {
+            //                    readPermissionByOperandType = new Dictionary<IOperandType, long>();
+            //                    this.readPermissionByOperandTypeByClass[@class] = readPermissionByOperandType;
+            //                }
 
-                            readPermissionByOperandType[operandType] = id;
+            //                readPermissionByOperandType[operandType] = id;
 
-                            break;
+            //                break;
 
-                        case Operations.Write:
-                            if (!this.writePermissionByOperandTypeByClass.TryGetValue(@class, out var writePermissionByOperandType))
-                            {
-                                writePermissionByOperandType = new Dictionary<IOperandType, long>();
-                                this.writePermissionByOperandTypeByClass[@class] = writePermissionByOperandType;
-                            }
+            //            case Operations.Write:
+            //                if (!this.writePermissionByOperandTypeByClass.TryGetValue(@class, out var writePermissionByOperandType))
+            //                {
+            //                    writePermissionByOperandType = new Dictionary<IOperandType, long>();
+            //                    this.writePermissionByOperandTypeByClass[@class] = writePermissionByOperandType;
+            //                }
 
-                            writePermissionByOperandType[operandType] = id;
+            //                writePermissionByOperandType[operandType] = id;
 
-                            break;
+            //                break;
 
-                        case Operations.Execute:
-                            if (!this.executePermissionByOperandTypeByClass.TryGetValue(@class, out var executePermissionByOperandType))
-                            {
-                                executePermissionByOperandType = new Dictionary<IOperandType, long>();
-                                this.executePermissionByOperandTypeByClass[@class] = executePermissionByOperandType;
-                            }
+            //            case Operations.Execute:
+            //                if (!this.executePermissionByOperandTypeByClass.TryGetValue(@class, out var executePermissionByOperandType))
+            //                {
+            //                    executePermissionByOperandType = new Dictionary<IOperandType, long>();
+            //                    this.executePermissionByOperandTypeByClass[@class] = executePermissionByOperandType;
+            //                }
 
-                            executePermissionByOperandType[operandType] = id;
+            //                executePermissionByOperandType[operandType] = id;
 
-                            break;
-                        case Operations.Create:
-                            throw new NotSupportedException("Create not supported");
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-            }
+            //                break;
+            //            case Operations.Create:
+            //                throw new NotSupportedException("Create not supported");
+            //            default:
+            //                throw new ArgumentOutOfRangeException();
+            //        }
+            //    }
+            //}
 
             HashSet<long> missingPermissionIds = null;
             if (securityResponse.a != null)

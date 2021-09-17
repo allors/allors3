@@ -42,7 +42,7 @@ namespace Allors.Database.Meta
 
         IMetaIdentifiableObject FindById(Guid metaObjectId);
 
-        IMetaIdentifiableObject FindByTag(int tag);
+        IMetaIdentifiableObject FindByTag(string tag);
 
         IObjectType FindDatabaseCompositeByName(string name);
 

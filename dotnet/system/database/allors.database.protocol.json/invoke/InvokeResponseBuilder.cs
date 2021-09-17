@@ -102,8 +102,7 @@ namespace Allors.Database.Protocol.Json
 
         private bool Invoke(Invocation invocation, InvokeResponse invokeResponse)
         {
-            // TODO: M should be a methodTypeId instead of the methodName
-            if (invocation.m == 0 || invocation.i == 0 || invocation.v == 0)
+            if (string.IsNullOrWhiteSpace(invocation.m) || invocation.i == 0 || invocation.v == 0)
             {
                 throw new ArgumentException();
             }
@@ -125,7 +124,7 @@ namespace Allors.Database.Protocol.Json
 
             // TODO: Cache and filter for workspace
             var methodTypes = composite.MethodTypes.Where(v => v.WorkspaceNames.Length > 0);
-            var methodType = methodTypes.FirstOrDefault(x => x.Tag.Equals(invocation.m));
+            var methodType = methodTypes.FirstOrDefault(v => v.Tag.Equals(invocation.m));
 
             if (methodType == null)
             {

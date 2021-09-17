@@ -12,9 +12,9 @@ namespace Allors.Database.Protocol.Json
 
     public static class Extensions
     {
-        public static IAssociationType FindAssociationType(this IMetaPopulation @this, int? tag) => tag != null ? ((IRelationType)@this.FindByTag(tag.Value)).AssociationType : null;
+        public static IAssociationType FindAssociationType(this IMetaPopulation @this, string tag) => tag != null ? ((IRelationType)@this.FindByTag(tag)).AssociationType : null;
 
-        public static IRoleType FindRoleType(this IMetaPopulation @this, int? tag) => tag != null ? ((IRelationType)@this.FindByTag(tag.Value)).RoleType : null;
+        public static IRoleType FindRoleType(this IMetaPopulation @this, string tag) => tag != null ? ((IRelationType)@this.FindByTag(tag)).RoleType : null;
 
         public static Data.Pull FromJson(this Pull pull, ITransaction transaction, IUnitConvert unitConvert)
         {

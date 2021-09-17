@@ -18,7 +18,7 @@ namespace Allors.Workspace.Meta
         private IRelationTypeInternals[] RelationTypes { get; set; }
         private IMethodTypeInternals[] MethodTypes { get; set; }
 
-        private Dictionary<int, IMetaObject> MetaObjectByTag { get; set; }
+        private Dictionary<string, IMetaObject> MetaObjectByTag { get; set; }
         private ICompositeInternals[] Composites { get; set; }
         private Dictionary<string, ICompositeInternals> CompositeByLowercaseName { get; set; }
 
@@ -29,7 +29,7 @@ namespace Allors.Workspace.Meta
         IEnumerable<IRelationType> IMetaPopulation.RelationTypes => this.RelationTypes;
         IEnumerable<IMethodType> IMetaPopulation.MethodTypes => this.MethodTypes;
         IEnumerable<IComposite> IMetaPopulation.Composites => this.Composites;
-        IMetaObject IMetaPopulation.FindByTag(int tag)
+        IMetaObject IMetaPopulation.FindByTag(string tag)
         {
             this.MetaObjectByTag.TryGetValue(tag, out var metaObject);
             return metaObject;

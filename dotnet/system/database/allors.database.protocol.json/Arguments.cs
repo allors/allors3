@@ -24,9 +24,9 @@ namespace Allors.Database.Protocol.Json
 
         public bool HasArgument(string name) => this.arguments.ContainsKey(name);
 
-        public object ResolveUnit(int tag, string name) => this.unitConvert.FromJson(tag, this.arguments[name]);
+        public object ResolveUnit(string tag, string name) => this.unitConvert.FromJson(tag, this.arguments[name]);
 
-        public object[] ResolveUnits(int tag, string name) => ((object[])this.arguments[name]).Select(v => this.unitConvert.FromJson(tag, v)).ToArray();
+        public object[] ResolveUnits(string tag, string name) => ((object[])this.arguments[name]).Select(v => this.unitConvert.FromJson(tag, v)).ToArray();
 
         public long ResolveObject(string name) => Convert.ToInt64(this.arguments[name]);
 

@@ -17,9 +17,9 @@ namespace Allors.Protocol.Json.Api.Push
         public long w { get; set; }
 
         /// <summary>
-        /// Object Type
+        /// Object Type Tag
         /// </summary>
-        public int t { get; set; }
+        public string t { get; set; }
 
         /// <summary>
         /// Roles

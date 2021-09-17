@@ -16,10 +16,9 @@ namespace Allors.Database.Data
             value switch
             {
                 IComposite metaObject => metaObject,
-                int tag => @this.Database.MetaPopulation.FindByTag(tag),
-                Guid idAsGuid => @this.Database.MetaPopulation.FindById(idAsGuid),
-                string tagAsString when int.TryParse(tagAsString, out var tagFromString) => @this.Database.MetaPopulation.FindByTag(tagFromString),
                 string idAsString when Guid.TryParse(idAsString, out var idFromString) => @this.Database.MetaPopulation.FindById(idFromString),
+                Guid idAsGuid => @this.Database.MetaPopulation.FindById(idAsGuid),
+                string tag => @this.Database.MetaPopulation.FindByTag(tag),
                 _ => throw new ArgumentException()
             };
 

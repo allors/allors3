@@ -9,6 +9,6 @@ namespace Allors.Protocol.Json
     {
         object ToJson(object value);
 
-        object FromJson(int tag, object value);
+        object FromJson(string tag, object value);
     }
 }

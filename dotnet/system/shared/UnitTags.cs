@@ -14,41 +14,41 @@ namespace Allors
         /// <summary>
         /// The tag for the binary <see cref="IObjectType"/>.
         /// </summary>
-        public const int Binary = 1;
+        public const string Binary = "1";
 
         /// <summary>
         /// The tag for the boolean <see cref="IObjectType"/>.
         /// </summary>
-        public const int Boolean = 2;
+        public const string Boolean = "2";
 
         /// <summary>
         /// The tag for the date time <see cref="IObjectType"/>.
         /// </summary>
-        public const int DateTime = 3;
+        public const string DateTime = "3";
 
         /// <summary>
         /// The tag for the decimal <see cref="IObjectType"/>.
         /// </summary>
-        public const int Decimal = 4;
+        public const string Decimal = "4";
 
         /// <summary>
         /// The tag for the float <see cref="IObjectType"/>.
         /// </summary>
-        public const int Float = 5;
+        public const string Float = "5";
 
         /// <summary>
         /// The tag for the integer <see cref="IObjectType"/>.
         /// </summary>
-        public const int Integer = 6;
+        public const string Integer = "6";
 
         /// <summary>
         /// The tag for the string <see cref="IObjectType"/>.
         /// </summary>
-        public const int String = 7;
+        public const string String = "7";
 
         /// <summary>
         /// The tag for the unique <see cref="IObjectType"/>.
         /// </summary>
-        public const int Unique = 8;
+        public const string Unique = "8";
     }
 }

@@ -156,7 +156,7 @@ namespace Allors.Database.Adapters
         /// <param name="value">The XML value.</param>
         /// <param name="tag">The unit type tag.</param>
         /// <returns>The converted value.</returns>
-        public static object ReadString(string value, int tag) =>
+        public static object ReadString(string value, string tag) =>
             tag switch
             {
                 UnitTags.String => value,
@@ -176,7 +176,7 @@ namespace Allors.Database.Adapters
         /// <param name="tag">The unit type tag.</param>
         /// <param name="unit">The unit .</param>
         /// <returns>The XML Value.</returns>
-        public static string WriteString(int tag, object unit) =>
+        public static string WriteString(string tag, object unit) =>
             tag switch
             {
                 UnitTags.String => (string)unit,

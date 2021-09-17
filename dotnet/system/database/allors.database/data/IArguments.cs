@@ -9,9 +9,9 @@ namespace Allors.Database.Data
     {
         bool HasArgument(string name);
 
-        object ResolveUnit(int tag, string name);
+        object ResolveUnit(string tag, string name);
 
-        object[] ResolveUnits(int tag, string name);
+        object[] ResolveUnits(string tag, string name);
 
         long ResolveObject(string name);
 

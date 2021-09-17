@@ -13,7 +13,7 @@ namespace Allors.Workspace.Meta
     {
         public MetaPopulation MetaPopulation { get; set; }
 
-        private int Tag { get; set; }
+        private string Tag { get; set; }
 
         private string SingularName { get; set; }
 
@@ -33,7 +33,7 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IMetaIdentifiableObject
-        int IMetaObject.Tag => this.Tag;
+        string IMetaObject.Tag => this.Tag;
 
         #endregion
 
@@ -72,7 +72,7 @@ namespace Allors.Workspace.Meta
         bool IUnit.IsUnique => this.Tag == UnitTags.Unique;
         #endregion
 
-        public Unit Init(int tag, string singularName)
+        public Unit Init(string tag, string singularName)
         {
             this.Tag = tag;
             this.SingularName = singularName;

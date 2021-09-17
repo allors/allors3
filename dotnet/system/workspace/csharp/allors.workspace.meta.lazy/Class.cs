@@ -28,7 +28,7 @@ namespace Allors.Workspace.Meta
         private HashSet<IMethodTypeInternals> LazyMethodTypes => this.lazyMethodTypes ??= new HashSet<IMethodTypeInternals>(this.ExclusiveMethodTypes.Union(this.Supertypes.SelectMany(v => v.ExclusiveMethodTypes)));
 
         private Origin Origin { get; set; }
-        private int Tag { get; set; }
+        private string Tag { get; set; }
         private string SingularName { get; set; }
         private string PluralName { get; set; }
         private Type ClrType { get; set; }
@@ -51,7 +51,7 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IMetaIdentifiableObject
-        int IMetaObject.Tag => this.Tag;
+        string IMetaObject.Tag => this.Tag;
         #endregion
 
         #region IObjectType
@@ -99,7 +99,7 @@ namespace Allors.Workspace.Meta
         IMethodTypeInternals[] ICompositeInternals.ExclusiveMethodTypes { get => this.ExclusiveMethodTypes; set => this.ExclusiveMethodTypes = value; }
         #endregion
 
-        public void Init(int tag, string singularName, string pluralName = null, Origin origin = Origin.Database)
+        public void Init(string tag, string singularName, string pluralName = null, Origin origin = Origin.Database)
         {
             this.Tag = tag;
             this.SingularName = singularName;

@@ -1,12 +1,11 @@
-// <copyright file="Invocation.cs" company="Allors bvba">
+// <copyright file="DerivationErrorResponse.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Protocol.Json.Api.Invoke
+namespace Allors.Protocol.Json.Api
 {
-
-    public class Invocation
+    public class DerivationRelation
     {
         /// <summary>
         /// Id
@@ -14,13 +13,8 @@ namespace Allors.Protocol.Json.Api.Invoke
         public long i { get; set; }
 
         /// <summary>
-        /// Version
+        /// Relation Type Tag
         /// </summary>
-        public long v { get; set; }
-
-        /// <summary>
-        /// Method Type Tag
-        /// </summary>
-        public string m { get; set; }
+        public string r { get; set; }
     }
 }

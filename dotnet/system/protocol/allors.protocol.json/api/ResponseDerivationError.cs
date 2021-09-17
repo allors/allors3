@@ -13,9 +13,8 @@ namespace Allors.Protocol.Json.Api
         public string m { get; set; }
 
         /// <summary>
-        /// Roles
-        /// [][AssociationId, RelationTypeId]
+        /// Relations
         /// </summary>
-        public long[][] r { get; set; }
+        public DerivationRelation[] r { get; set; }
     }
 }

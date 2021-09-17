@@ -18,9 +18,9 @@ namespace Allors.Protocol.Json.Api.Sync
         public long v { get; set; }
 
         /// <summary>
-        /// ObjectType
+        /// Object Type Tag
         /// </summary>
-        public int t { get; set; }
+        public string t { get; set; }
 
         /// <summary>
         /// AccessControls (Range)
