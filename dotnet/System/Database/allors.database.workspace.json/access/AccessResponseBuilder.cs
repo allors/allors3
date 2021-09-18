@@ -5,25 +5,17 @@
 
 namespace Allors.Database.Protocol.Json
 {
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json.Api.Security;
-    using Meta;
-    using Ranges;
     using Security;
 
     public class AccessResponseBuilder
     {
         private readonly ITransaction transaction;
-        private readonly ISet<IClass> allowedClasses;
-        private readonly IRanges<long> ranges;
 
-        public AccessResponseBuilder(ITransaction transaction, IAccessControl accessControl, ISet<IClass> allowedClasses, IRanges<long> ranges)
+        public AccessResponseBuilder(ITransaction transaction, IAccessControl accessControl)
         {
             this.transaction = transaction;
-            this.allowedClasses = allowedClasses;
-            this.ranges = ranges;
             this.AccessControl = accessControl;
         }
 
@@ -42,15 +34,12 @@ namespace Allors.Database.Protocol.Json
                     .Select(v =>
                     {
                         var response = new AccessResponseGrant
-                        { 
+                        {
                             i = v.Strategy.ObjectId,
                             v = v.Strategy.ObjectVersion,
                         };
 
-                        if (this.AccessControl.PermissionIdsByAccessControl.TryGetValue(v, out var x))
-                        {
-                            response.p = this.ranges.Import(x).Save();
-                        }
+                        response.p = this.AccessControl.GrantedPermissionIds(v).Save();
 
                         return response;
                     }).ToArray();
@@ -70,10 +59,7 @@ namespace Allors.Database.Protocol.Json
                             v = v.Strategy.ObjectVersion,
                         };
 
-                        if (this.AccessControl.DeniedPermissionIdsByRevocation.TryGetValue(v, out var x))
-                        {
-                            response.p = this.ranges.Import(x).Save();
-                        }
+                        response.p = this.AccessControl.RevokedPermissionIds(v).Save();
 
                         return response;
                     }).ToArray();

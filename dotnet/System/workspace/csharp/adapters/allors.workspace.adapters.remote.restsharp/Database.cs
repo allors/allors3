@@ -43,12 +43,6 @@ namespace Allors.Workspace.Adapters.Remote.ResthSharp
             return await this.client.Post<InvokeResponse>(uri, invokeRequest);
         }
 
-        public override async Task<AccessResponse> Security(AccessRequest accessRequest)
-        {
-            var uri = new Uri("security", UriKind.Relative);
-            return await this.client.Post<AccessResponse>(uri, accessRequest);
-        }
-
         public override async Task<PushResponse> Push(PushRequest pushRequest)
         {
             var uri = new Uri("push", UriKind.Relative);
@@ -60,6 +54,18 @@ namespace Allors.Workspace.Adapters.Remote.ResthSharp
         {
             var uri = new Uri("pull", UriKind.Relative);
             return await this.client.Post<PullResponse>(uri, pullRequest);
+        }
+
+        public override async Task<AccessResponse> Access(AccessRequest accessRequest)
+        {
+            var uri = new Uri("access", UriKind.Relative);
+            return await this.client.Post<AccessResponse>(uri, accessRequest);
+        }
+
+        public override async Task<PermissionResponse> Permission(PermissionRequest permissionRequest)
+        {
+            var uri = new Uri("permission", UriKind.Relative);
+            return await this.client.Post<PermissionResponse>(uri, permissionRequest);
         }
     }
 }

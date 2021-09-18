@@ -78,16 +78,16 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 var database = (DatabaseConnection)base.Workspace.DatabaseConnection;
                 var syncResponse = await database.Sync(syncRequest);
-                var securityRequest = database.OnSyncResponse(syncResponse);
+                var accessRequest = database.OnSyncResponse(syncResponse);
 
-                if (securityRequest != null)
+                if (accessRequest != null)
                 {
-                    var securityResponse = await database.Security(securityRequest);
-                    securityRequest = database.SecurityResponse(securityResponse);
-                    if (securityRequest != null)
+                    var accessResponse = await database.Access(accessRequest);
+                    var permissionRequest = database.AccessResponse(accessResponse);
+                    if (permissionRequest != null)
                     {
-                        securityResponse = await database.Security(securityRequest);
-                        database.SecurityResponse(securityResponse);
+                        var permissionResponse = await database.Permission(permissionRequest);
+                        database.PermissionResponse(permissionResponse);
                     }
                 }
             }

@@ -56,7 +56,8 @@ namespace Allors.Workspace.Adapters.Local
                 }
             }
 
-            var proc = this.Transaction.Database.Procedures.Get(this.procedure.Name);
+            var procedures = this.Transaction.Database.Services.Get<IProcedures>();
+            var proc = procedures.Get(this.procedure.Name);
             if (proc == null)
             {
                 pullResponse.ErrorMessage = $"Missing procedure {this.procedure.Name}";

@@ -25,13 +25,13 @@ namespace Tests
 
             this.SetUser("jane@example.com");
 
-            var securityRequest = new AccessRequest
+            var accessRequest = new AccessRequest
             {
                 g = new[] { accessControl.Id },
             };
 
             var api = new Api(this.Transaction, workspaceName);
-            var securityResponse = api.Security(securityRequest);
+            var securityResponse = api.Access(accessRequest);
 
             Assert.Single(securityResponse.g);
 
@@ -67,13 +67,13 @@ namespace Tests
 
             this.SetUser("jane@example.com");
 
-            var securityRequest = new AccessRequest
+            var accessRequest = new AccessRequest
             {
                 g = new[] { accessControl.Id },
             };
 
             var api = new Api(this.Transaction, workspaceName);
-            var securityResponse = api.Security(securityRequest);
+            var securityResponse = api.Access(accessRequest);
 
             Assert.Single(securityResponse.g);
 

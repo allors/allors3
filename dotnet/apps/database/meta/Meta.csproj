@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\System\Database\Allors.Database\Allors.Database.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Build.Framework" Version="16.6.0" />
     <PackageReference Include="StringTemplate4" Version="4.0.8" />
   </ItemGroup>
@@ -21,5 +17,9 @@
 
   <ItemGroup>
     <Folder Include="generated\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\System\Database\allors.database.workspace\Allors.Database.Workspace.csproj" />
   </ItemGroup>
 </Project>

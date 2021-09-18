@@ -13,10 +13,10 @@ namespace Allors.Database.Protocol.Json
     using Microsoft.Extensions.Logging;
 
     [ApiController]
-    [Route("allors/security")]
-    public class SecurityController : ControllerBase
+    [Route("allors/access")]
+    public class AccessController : ControllerBase
     {
-        public SecurityController(IDatabaseService databaseService, IWorkspaceService workspaceService, IPolicyService policyService, ILogger<SecurityController> logger)
+        public AccessController(IDatabaseService databaseService, IWorkspaceService workspaceService, IPolicyService policyService, ILogger<AccessController> logger)
         {
             this.DatabaseService = databaseService;
             this.WorkspaceService = workspaceService;
@@ -29,12 +29,12 @@ namespace Allors.Database.Protocol.Json
 
         private IPolicyService PolicyService { get; }
 
-        private ILogger<SecurityController> Logger { get; }
+        private ILogger<AccessController> Logger { get; }
 
         [HttpPost]
         [Authorize]
         [AllowAnonymous]
-        public ActionResult<AccessResponse> Post([FromBody]AccessRequest accessRequest) =>
+        public ActionResult<AccessResponse> Post([FromBody] AccessRequest accessRequest) =>
             this.PolicyService.SyncPolicy.Execute(
                 () =>
                 {
@@ -42,11 +42,11 @@ namespace Allors.Database.Protocol.Json
                     {
                         using var transaction = this.DatabaseService.Database.CreateTransaction();
                         var api = new Api(transaction, this.WorkspaceService.Name);
-                        return api.Security(accessRequest);
+                        return api.Access(accessRequest);
                     }
                     catch (Exception e)
                     {
-                        this.Logger.LogError(e, "SecurityRequest {request}", accessRequest);
+                        this.Logger.LogError(e, "AccessRequest {request}", accessRequest);
                         throw;
                     }
                 });

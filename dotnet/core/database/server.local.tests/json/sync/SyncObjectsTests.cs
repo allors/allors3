@@ -59,7 +59,7 @@ namespace Tests
             var syncObject = syncResponse.o[0];
 
             Assert.Equal(person.Id, syncObject.i);
-            Assert.Equal(this.M.Person.Tag, syncObject.t);
+            Assert.Equal(this.M.Person.Tag, syncObject.c);
             Assert.Equal(person.Strategy.ObjectVersion, syncObject.v);
         }
 
@@ -87,7 +87,7 @@ namespace Tests
             Assert.Single(syncResponse.o);
             var syncObject = syncResponse.o[0];
 
-            Assert.Null(syncObject.a);
+            Assert.Null(syncObject.g);
             Assert.Null(syncObject.r);
         }
     }

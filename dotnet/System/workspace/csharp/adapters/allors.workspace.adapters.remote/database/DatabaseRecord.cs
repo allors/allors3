@@ -21,14 +21,14 @@ namespace Allors.Workspace.Adapters.Remote
         internal DatabaseRecord(DatabaseConnection database, IClass @class, long id, long version) : base(@class, id, version) => this.database = database;
 
         internal static DatabaseRecord FromResponse(DatabaseConnection database, ResponseContext ctx, SyncResponseObject syncResponseObject) =>
-            new DatabaseRecord(database, (IClass)database.Configuration.MetaPopulation.FindByTag(syncResponseObject.t), syncResponseObject.i, syncResponseObject.v)
+            new DatabaseRecord(database, (IClass)database.Configuration.MetaPopulation.FindByTag(syncResponseObject.c), syncResponseObject.i, syncResponseObject.v)
             {
                 syncResponseRoles = syncResponseObject.ro,
-                AccessControlIds = database.Ranges.Load(ctx.CheckForMissingGrants(syncResponseObject.a)),
+                GrantIds = database.Ranges.Load(ctx.CheckForMissingGrants(syncResponseObject.g)),
                 RevocationIds = database.Ranges.Load(ctx.CheckForMissingRevocations(syncResponseObject.r))
             };
 
-        internal IRange<long> AccessControlIds { get; private set; }
+        internal IRange<long> GrantIds { get; private set; }
 
         internal IRange<long> RevocationIds { get; private set; }
 
@@ -76,12 +76,12 @@ namespace Allors.Workspace.Adapters.Remote
 
         public override bool IsPermitted(long permission)
         {
-            if (this.AccessControlIds == null)
+            if (this.GrantIds == null)
             {
                 return false;
             }
 
-            return !this.RevocationIds.Any(v => this.database.RevocationById[v].PermissionIds.Contains(permission)) && this.AccessControlIds.Any(v => this.database.AccessControlById[v].PermissionIds.Contains(permission));
+            return !this.RevocationIds.Any(v => this.database.RevocationById[v].PermissionIds.Contains(permission)) && this.GrantIds.Any(v => this.database.AccessControlById[v].PermissionIds.Contains(permission));
         }
     }
 }

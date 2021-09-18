@@ -30,9 +30,9 @@ namespace Allors.Protocol.Json.Api.Pull
         public PullResponseObject[] p { get; set; }
 
         /// <summary>
-        /// Access Controls [id, version]
+        /// Grants [id, version]
         /// </summary>
-        public long[][] a { get; set; }
+        public long[][] g { get; set; }
 
         /// <summary>
         /// Revocations [id, version]

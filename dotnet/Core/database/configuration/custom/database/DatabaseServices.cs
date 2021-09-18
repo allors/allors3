@@ -51,6 +51,8 @@ namespace Allors.Database.Configuration
 
         private IDerivationService derivationService;
 
+        private IProcedures procedures;
+
         protected DatabaseServices(Engine engine, IHttpContextAccessor httpContextAccessor = null)
         {
             this.Engine = engine;
@@ -70,10 +72,13 @@ namespace Allors.Database.Configuration
         public T Get<T>() =>
             typeof(T) switch
             {
-                { } type when type == typeof(MetaPopulation) => (T)(object)this.M,
-                { } type when type == typeof(IDerivationService) => (T)(this.derivationService ??= this.CreateDerivationFactory()),
-                { } type when type == typeof(IRanges<long>) => (T)(this.ranges ??= new DefaultStructRanges<long>()),
+                // System
                 { } type when type == typeof(IMetaCache) => (T)(this.metaCache ??= new MetaCache(this.database)),
+                { } type when type == typeof(IDerivationService) => (T)(this.derivationService ??= this.CreateDerivationFactory()),
+                { } type when type == typeof(IProcedures) => (T)(this.procedures ??= new Procedures(this.database.ObjectFactory.Assembly)),
+                // Core
+                { } type when type == typeof(MetaPopulation) => (T)(object)this.M,
+                { } type when type == typeof(IRanges<long>) => (T)(this.ranges ??= new DefaultStructRanges<long>()),
                 { } type when type == typeof(IClassById) => (T)(this.classById ??= new ClassById()),
                 { } type when type == typeof(IVersionedIdByStrategy) => (T)(this.versionedIdByStrategy ??= new VersionedIdByStrategy()),
                 { } type when type == typeof(IPrefetchPolicyCache) => (T)(this.prefetchPolicyCache ??= new PrefetchPolicyCache(this.database)),

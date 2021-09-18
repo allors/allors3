@@ -32,10 +32,12 @@ namespace Allors.Database.Configuration
         public T Get<T>() =>
             typeof(T) switch
             {
+                // System
+                { } type when type == typeof(IObjectBuilderService) => (T)(this.objectBuilderService ??= new ObjectBuilderService(this.Transaction)),
+                // Core
                 { } type when type == typeof(IUserService) => (T)(IUserService)this.userService,
                 { } type when type == typeof(IDatabaseAclsService) => (T)(this.databaseAclsService ??= new DatabaseAclsService(this.userService.User)),
                 { } type when type == typeof(IWorkspaceAclsService) => (T)(this.workspaceAclsService ??= new WorkspaceAclsService(this.userService.User)),
-                { } type when type == typeof(IObjectBuilderService) => (T)(this.objectBuilderService ??= new ObjectBuilderService(this.Transaction)),
                 _ => throw new NotSupportedException($"Service {typeof(T)} not supported")
             };
 

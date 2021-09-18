@@ -36,16 +36,12 @@ namespace Allors.Database.Adapters.Memory
 
             this.Id = string.IsNullOrWhiteSpace(configuration.Id) ? Guid.NewGuid().ToString("N").ToLowerInvariant() : configuration.Id;
 
-            this.Procedures = new DefaultProcedures(this.ObjectFactory.Assembly);
-
             this.Services.OnInit(this);
         }
 
         public event ObjectNotLoadedEventHandler ObjectNotLoaded;
 
         public event RelationNotLoadedEventHandler RelationNotLoaded;
-
-        public IProcedures Procedures { get; set; }
 
         public string Id { get; }
 

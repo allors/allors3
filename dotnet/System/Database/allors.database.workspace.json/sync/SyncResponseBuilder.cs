@@ -55,13 +55,13 @@ namespace Allors.Database.Protocol.Json
                     {
                         i = v.Id,
                         v = v.Strategy.ObjectVersion,
-                        t = v.Strategy.Class.Tag,
+                        c = v.Strategy.Class.Tag,
                         // TODO: Cache
                         ro = @class.DatabaseRoleTypes?.Where(v => v.RelationType.WorkspaceNames.Length > 0)
                             .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))
                             .Select(w => this.CreateSyncResponseRole(v, w, this.unitConvert))
                             .ToArray(),
-                        a = this.ranges.Import(acl.Grants.Select(v => v.Strategy.ObjectId)).Save(),
+                        g = this.ranges.Import(acl.Grants.Select(v => v.Strategy.ObjectId)).Save(),
                         r = this.ranges.Import(acl.Revocations.Select(v => v.Strategy.ObjectId)).Save(),
                     };
                 }).ToArray(),

@@ -197,7 +197,8 @@ namespace Allors.Database.Protocol.Json
                     }
                 }
 
-                var proc = this.Transaction.Database.Procedures.Get(procedure.Name);
+                var procedures = this.Transaction.Database.Services.Get<IProcedures>();
+                var proc = procedures.Get(procedure.Name);
                 if (proc == null)
                 {
                     pullResponse._e = $"Missing procedure {procedure.Name}";
@@ -238,25 +239,36 @@ namespace Allors.Database.Protocol.Json
                 }
             }
 
-            return new PullResponse
+            var grants = new HashSet<IGrant>();
+            var revocations = new HashSet<IRevocation>();
+
+            pullResponse = new PullResponse
             {
-                p = this.objects.Select(v => new PullResponseObject
+                p = this.objects.Select(v =>
                 {
-                    i = v.Strategy.ObjectId,
-                    v = v.Strategy.ObjectVersion,
-                    g = this.ranges.Import(this.AccessControl[v].Grants.Select(w => w.Strategy.ObjectId)).Save(),
-                    r = this.ranges.Import(this.AccessControl[v].Revocations.Select(w => w.Strategy.ObjectId)).Save(),
+                    var accessControlList = this.AccessControl[v];
+
+                    grants.UnionWith(accessControlList.Grants);
+                    revocations.UnionWith(accessControlList.Revocations);
+
+                    return new PullResponseObject
+                    {
+                        i = v.Strategy.ObjectId,
+                        v = v.Strategy.ObjectVersion,
+                        g = this.ranges.Import(accessControlList.Grants.Select(w => w.Strategy.ObjectId)).Save(),
+                        r = this.ranges.Import(accessControlList.Revocations.Select(w => w.Strategy.ObjectId))
+                            .Save(),
+                    };
                 }).ToArray(),
                 o = this.objectByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Id),
                 c = this.collectionsByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Select(obj => obj.Id).ToArray()),
                 v = this.valueByName,
-                a = this.AccessControl.Grants
-                    .Select(v => new[] { v.Strategy.ObjectId, v.Strategy.ObjectVersion })
-                    .ToArray(),
-                r = this.AccessControl.Revocations
-                    .Select(v => new[] { v.Strategy.ObjectId, v.Strategy.ObjectVersion })
-                    .ToArray(),
             };
+
+            pullResponse.g = grants.Count > 0 ? grants.Select(v => new[] { v.Strategy.ObjectId, v.Strategy.ObjectVersion }).ToArray() : null;
+            pullResponse.r = revocations.Count > 0 ? revocations.Select(v => new[] { v.Strategy.ObjectId, v.Strategy.ObjectVersion }).ToArray() : null;
+
+            return pullResponse;
         }
     }
 }

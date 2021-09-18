@@ -54,15 +54,11 @@ namespace Allors.Database.Adapters.Sql
             this.Cache = this.CacheFactory.CreateCache();
 
             this.SchemaName = (configuration.SchemaName ?? "allors").ToLowerInvariant();
-
-            this.Procedures = new DefaultProcedures(this.ObjectFactory.Assembly);
         }
 
         public abstract event ObjectNotLoadedEventHandler ObjectNotLoaded;
 
         public abstract event RelationNotLoadedEventHandler RelationNotLoaded;
-
-        public IProcedures Procedures { get; }
 
         public IDatabaseServices Services { get; }
 

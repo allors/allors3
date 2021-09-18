@@ -10,100 +10,47 @@ namespace Allors.Database.Protocol.Json
     using System.Linq;
     using Allors.Protocol.Json.Api.Security;
     using Meta;
-    using Ranges;
     using Security;
 
     public class PermissionResponseBuilder
     {
         private readonly ITransaction transaction;
         private readonly ISet<IClass> allowedClasses;
-        private readonly IRanges<long> ranges;
 
-        public PermissionResponseBuilder(ITransaction transaction, IAccessControl accessControl, ISet<IClass> allowedClasses, IRanges<long> ranges)
+        public PermissionResponseBuilder(ITransaction transaction, ISet<IClass> allowedClasses)
         {
             this.transaction = transaction;
             this.allowedClasses = allowedClasses;
-            this.ranges = ranges;
-            this.AccessControl = accessControl;
         }
 
-        public IAccessControl AccessControl { get; }
-
-        public AccessResponse Build(AccessRequest accessRequest)
+        public PermissionResponse Build(PermissionRequest permissionRequest)
         {
-            var securityResponse = new AccessResponse();
+            var securityResponse = new PermissionResponse();
 
-            if (accessRequest.g?.Length > 0)
+            if (permissionRequest.p?.Length > 0)
             {
-                var accessControlIds = accessRequest.g;
-                var accessControls = this.transaction.Instantiate(accessControlIds).Cast<IGrant>().ToArray();
-
-                securityResponse.g = accessControls
-                    .Select(v =>
-                    {
-                        var response = new AccessResponseGrant
-                        {
-                            i = v.Strategy.ObjectId,
-                            v = v.Strategy.ObjectVersion,
-                        };
-
-                        if (this.AccessControl.PermissionIdsByAccessControl.TryGetValue(v, out var x))
-                        {
-                            response.p = this.ranges.Import(x).Save();
-                        }
-
-                        return response;
-                    }).ToArray();
-            }
-
-            if (accessRequest.r?.Length > 0)
-            {
-                var revocationIds = accessRequest.r;
-                var revocations = this.transaction.Instantiate(revocationIds).Cast<IRevocation>().ToArray();
-
-                securityResponse.r = revocations
-                    .Select(v =>
-                    {
-                        var response = new AccessResponseRevocation
-                        {
-                            i = v.Strategy.ObjectId,
-                            v = v.Strategy.ObjectVersion,
-                        };
-
-                        if (this.AccessControl.DeniedPermissionIdsByRevocation.TryGetValue(v, out var x))
-                        {
-                            response.p = this.ranges.Import(x).Save();
-                        }
-
-                        return response;
-                    }).ToArray();
-            }
-
-
-            if (accessRequest.p?.Length > 0)
-            {
-                var permissionIds = accessRequest.p;
+                var permissionIds = permissionRequest.p;
                 var permissions = this.transaction.Instantiate(permissionIds)
                     .Cast<IPermission>()
                     .Where(v => this.allowedClasses?.Contains(v.Class) == true);
 
                 securityResponse.p = permissions.Select(v => v switch
                 {
-                    IReadPermission permission => new SecurityResponsePermission
+                    IReadPermission permission => new PermissionResponsePermission
                     {
                         i = permission.Strategy.ObjectId,
                         c = permission.Class.Tag,
                         t = permission.RelationType.Tag,
                         o = (long)Operations.Read
                     },
-                    IWritePermission permission => new SecurityResponsePermission
+                    IWritePermission permission => new PermissionResponsePermission
                     {
                         i = permission.Strategy.ObjectId,
                         c = permission.Class.Tag,
                         t = permission.RelationType.Tag,
                         o = (long)Operations.Write
                     },
-                    IExecutePermission permission => new SecurityResponsePermission
+                    IExecutePermission permission => new PermissionResponsePermission
                     {
                         i = permission.Strategy.ObjectId,
                         c = permission.Class.Tag,

@@ -6,15 +6,10 @@
 namespace Allors.Database.Adapters
 {
     using System;
-    using System.Collections.Generic;
     using Data;
-    using Meta;
-    using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Helpers;
     using Moq;
-    using Security;
     using Xunit;
     using C1 = Domain.C1;
-    using C2 = Domain.C2;
     using Extent = Data.Extent;
     using User = Domain.User;
 

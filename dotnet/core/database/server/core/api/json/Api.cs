@@ -112,10 +112,16 @@ namespace Allors.Database.Protocol.Json
             return responseBuilder.Build(syncRequest);
         }
 
-        public AccessResponse Security(AccessRequest accessRequest)
+        public AccessResponse Access(AccessRequest accessRequest)
         {
-            var responseBuilder = new AccessResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.Ranges);
+            var responseBuilder = new AccessResponseBuilder(this.Transaction, this.AccessControl);
             return responseBuilder.Build(accessRequest);
+        }
+
+        public PermissionResponse Permission(PermissionRequest permissionRequest)
+        {
+            var responseBuilder = new PermissionResponseBuilder(this.Transaction, this.AllowedClasses);
+            return responseBuilder.Build(permissionRequest);
         }
 
         // TODO: Delete
