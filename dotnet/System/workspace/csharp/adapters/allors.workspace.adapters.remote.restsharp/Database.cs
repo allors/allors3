@@ -43,10 +43,10 @@ namespace Allors.Workspace.Adapters.Remote.ResthSharp
             return await this.client.Post<InvokeResponse>(uri, invokeRequest);
         }
 
-        public override async Task<SecurityResponse> Security(SecurityRequest securityRequest)
+        public override async Task<AccessResponse> Security(AccessRequest accessRequest)
         {
             var uri = new Uri("security", UriKind.Relative);
-            return await this.client.Post<SecurityResponse>(uri, securityRequest);
+            return await this.client.Post<AccessResponse>(uri, accessRequest);
         }
 
         public override async Task<PushResponse> Push(PushRequest pushRequest)

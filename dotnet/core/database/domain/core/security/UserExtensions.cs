@@ -49,7 +49,7 @@ namespace Allors.Database.Domain
             if (!@this.ExistOwnerSecurityToken)
             {
                 @this.OwnerSecurityToken = new SecurityTokenBuilder(@this.Strategy.Transaction)
-                    .WithAccessControl(@this.OwnerGrant)
+                    .WithGrant(@this.OwnerGrant)
                     .Build();
             }
 

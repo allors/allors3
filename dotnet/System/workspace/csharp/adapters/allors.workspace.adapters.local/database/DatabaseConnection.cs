@@ -41,7 +41,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal IDatabase Database { get; }
 
-        internal void Sync(IEnumerable<IObject> objects, IAccessControlLists accessControlLists)
+        internal void Sync(IEnumerable<IObject> objects, IAccessControl accessControl)
         {
             foreach (var @object in objects)
             {
@@ -52,7 +52,7 @@ namespace Allors.Workspace.Adapters.Local
                 var workspaceClass = (IClass)this.Configuration.MetaPopulation.FindByTag(databaseClass.Tag);
                 var roleByRoleType = roleTypes.ToDictionary(w => ((IRelationType)this.Configuration.MetaPopulation.FindByTag(w.RelationType.Tag)).RoleType, w => this.GetRole(@object, w));
 
-                var acl = accessControlLists[@object];
+                var acl = accessControl[@object];
 
                 var accessControls = acl.Grants
                     ?.Select(this.GetAccessControl)

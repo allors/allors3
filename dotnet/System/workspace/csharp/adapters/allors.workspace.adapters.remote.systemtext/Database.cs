@@ -98,13 +98,13 @@ namespace Allors.Workspace.Adapters.Remote.SystemText
             return await this.ReadAsAsync<InvokeResponse>(response);
         }
 
-        public override async Task<SecurityResponse> Security(SecurityRequest securityRequest)
+        public override async Task<AccessResponse> Security(AccessRequest accessRequest)
         {
             var uri = new Uri("security", UriKind.Relative);
-            var response = await this.PostAsJsonAsync(uri, securityRequest);
+            var response = await this.PostAsJsonAsync(uri, accessRequest);
             response.EnsureSuccessStatusCode();
 
-            return await this.ReadAsAsync<SecurityResponse>(response);
+            return await this.ReadAsAsync<AccessResponse>(response);
         }
 
         private async Task<HttpResponseMessage> PostAsJsonAsync(Uri uri, object args) =>

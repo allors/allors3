@@ -13,7 +13,7 @@ namespace Allors.Repository
         public string Name { get; set; }
         public LocalisedText[] LocalisedNames { get; set; }
         public bool IsActive { get; set; }
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
         public SecurityToken[] SecurityTokens { get; set; }
         public Guid UniqueId { get; set; }
         #endregion

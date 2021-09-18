@@ -22,7 +22,7 @@ namespace Allors.Database.Domain.Tests
             var userGroup = new UserGroupBuilder(this.Transaction).WithName("UserGroup").Build();
             var securityToken = new SecurityTokenBuilder(this.Transaction).Build();
 
-            securityToken.AddAccessControl(new GrantBuilder(this.Transaction)
+            securityToken.AddGrant(new GrantBuilder(this.Transaction)
                 .WithSubjectGroup(userGroup)
                 .Build());
 
@@ -44,7 +44,7 @@ namespace Allors.Database.Domain.Tests
             var securityToken = new SecurityTokenBuilder(this.Transaction).Build();
             var role = new RoleBuilder(this.Transaction).WithName("Role").Build();
 
-            securityToken.AddAccessControl(
+            securityToken.AddGrant(
             new GrantBuilder(this.Transaction)
                 .WithRole(role)
                 .Build());

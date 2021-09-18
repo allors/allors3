@@ -25,17 +25,17 @@ namespace Tests
 
             this.SetUser("jane@example.com");
 
-            var securityRequest = new SecurityRequest
+            var securityRequest = new AccessRequest
             {
-                a = new[] { accessControl.Id },
+                g = new[] { accessControl.Id },
             };
 
             var api = new Api(this.Transaction, workspaceName);
             var securityResponse = api.Security(securityRequest);
 
-            Assert.Single(securityResponse.a);
+            Assert.Single(securityResponse.g);
 
-            var securityResponseAccessControl = securityResponse.a.First();
+            var securityResponseAccessControl = securityResponse.g.First();
 
             Assert.Equal(accessControl.Id, securityResponseAccessControl.i);
             Assert.Equal(accessControl.Strategy.ObjectVersion, securityResponseAccessControl.v);
@@ -67,17 +67,17 @@ namespace Tests
 
             this.SetUser("jane@example.com");
 
-            var securityRequest = new SecurityRequest
+            var securityRequest = new AccessRequest
             {
-                a = new[] { accessControl.Id },
+                g = new[] { accessControl.Id },
             };
 
             var api = new Api(this.Transaction, workspaceName);
             var securityResponse = api.Security(securityRequest);
 
-            Assert.Single(securityResponse.a);
+            Assert.Single(securityResponse.g);
 
-            var securityResponseAccessControl = securityResponse.a.First();
+            var securityResponseAccessControl = securityResponse.g.First();
 
             Assert.Equal(accessControl.Id, securityResponseAccessControl.i);
             Assert.Equal(accessControl.Strategy.ObjectVersion, securityResponseAccessControl.v);

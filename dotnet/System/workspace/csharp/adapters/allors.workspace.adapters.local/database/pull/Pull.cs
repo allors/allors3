@@ -30,12 +30,12 @@ namespace Allors.Workspace.Adapters.Local
             this.PreparedSelects = database.Services.Get<IPreparedSelects>();
             this.PreparedExtents = database.Services.Get<IPreparedExtents>();
 
-            this.AccessControlLists = this.Transaction.Services.Get<IWorkspaceAclsService>().Create(this.Workspace.DatabaseConnection.Configuration.Name);
+            this.AccessControl = this.Transaction.Services.Get<IWorkspaceAclsService>().Create(this.Workspace.DatabaseConnection.Configuration.Name);
 
             this.DatabaseObjects = new HashSet<Database.IObject>();
         }
 
-        public IAccessControlLists AccessControlLists { get; }
+        public IAccessControl AccessControl { get; }
 
         public HashSet<Database.IObject> DatabaseObjects { get; }
 
@@ -85,7 +85,7 @@ namespace Allors.Workspace.Adapters.Local
 
             this.DatabaseObjects.Add(@object);
             this.DatabaseObjectByName[name] = @object;
-            tree?.Resolve(@object, this.AccessControlLists, this.DatabaseObjects);
+            tree?.Resolve(@object, this.AccessControl, this.DatabaseObjects);
         }
 
         public void AddValue(string name, object value)
@@ -135,7 +135,7 @@ namespace Allors.Workspace.Adapters.Local
         {
             var visitor = new ToDatabaseVisitor(this.Transaction);
             var procedure = visitor.Visit(workspaceProcedure);
-            var localProcedure = new Procedure(this.Transaction, procedure, this.AccessControlLists);
+            var localProcedure = new Procedure(this.Transaction, procedure, this.AccessControl);
             localProcedure.Execute(this);
         }
 
@@ -146,12 +146,12 @@ namespace Allors.Workspace.Adapters.Local
             {
                 if (pull.Object != null)
                 {
-                    var pullInstantiate = new PullInstantiate(this.Transaction, pull, this.AccessControlLists, this.PreparedSelects);
+                    var pullInstantiate = new PullInstantiate(this.Transaction, pull, this.AccessControl, this.PreparedSelects);
                     pullInstantiate.Execute(this);
                 }
                 else
                 {
-                    var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControlLists, this.PreparedSelects, this.PreparedExtents);
+                    var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControl, this.PreparedSelects, this.PreparedExtents);
                     pullExtent.Execute(this);
                 }
             }
@@ -201,7 +201,7 @@ namespace Allors.Workspace.Adapters.Local
 
                     foreach (var newObject in newCollection)
                     {
-                        tree.Resolve(newObject, this.AccessControlLists, this.DatabaseObjects);
+                        tree.Resolve(newObject, this.AccessControl, this.DatabaseObjects);
                     }
                 }
                 else if (existingCollection != null)

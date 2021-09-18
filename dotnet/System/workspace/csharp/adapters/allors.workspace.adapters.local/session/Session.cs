@@ -62,7 +62,7 @@ namespace Allors.Workspace.Adapters.Local
         internal void OnPulled(Pull pull)
         {
             var syncObjects = this.Workspace.DatabaseConnection.ObjectsToSync(pull);
-            this.Workspace.DatabaseConnection.Sync(syncObjects, pull.AccessControlLists);
+            this.Workspace.DatabaseConnection.Sync(syncObjects, pull.AccessControl);
 
             foreach (var databaseObject in pull.DatabaseObjects)
             {

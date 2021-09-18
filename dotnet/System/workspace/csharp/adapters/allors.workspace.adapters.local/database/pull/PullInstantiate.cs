@@ -17,12 +17,12 @@ namespace Allors.Workspace.Adapters.Local
 
     public class PullInstantiate
     {
-        private readonly IAccessControlLists acls;
+        private readonly IAccessControl acls;
         private readonly IPreparedSelects preparedSelects;
         private readonly Database.Data.Pull pull;
         private readonly ITransaction transaction;
 
-        public PullInstantiate(ITransaction transaction, Database.Data.Pull pull, IAccessControlLists acls, IPreparedSelects preparedSelects)
+        public PullInstantiate(ITransaction transaction, Database.Data.Pull pull, IAccessControl acls, IPreparedSelects preparedSelects)
         {
             this.transaction = transaction;
             this.pull = pull;

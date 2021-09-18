@@ -6,21 +6,9 @@
 namespace Allors.Database.Data
 {
     using System.Collections.Generic;
-    using Security;
 
     public static class NodesExtensions
     {
-        public static void Resolve(this Node[] treeNodes, IObject @object, IAccessControlLists acls, ISet<IObject> objects)
-        {
-            if (@object != null)
-            {
-                foreach (var node in treeNodes)
-                {
-                    node.Resolve(@object, acls, objects);
-                }
-            }
-        }
-
         public static PrefetchPolicy BuildPrefetchPolicy(this Node[] treeNodes)
         {
             var prefetchPolicyBuilder = new PrefetchPolicyBuilder();

@@ -18,12 +18,12 @@ namespace Allors.Protocol.Json.Api.Pull
         public long v { get; set; }
 
         /// <summary>
-        /// Access Controls (Range)
+        /// Sorted Grants
         /// </summary>
-        public long[] a { get; set; }
+        public long[] g { get; set; }
 
         /// <summary>
-        /// Revocations (Range)
+        /// Sorted Revocations
         /// </summary>
         public long[] r { get; set; }
     }

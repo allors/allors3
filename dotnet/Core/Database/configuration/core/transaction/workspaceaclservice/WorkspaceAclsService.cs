@@ -15,6 +15,6 @@ namespace Allors.Database.Configuration
 
         public WorkspaceAclsService(User user) => this.User = user;
 
-        public IAccessControlLists Create(string workspace) => new WorkspaceAccessControlLists(workspace, this.User);
+        public IAccessControl Create(string workspace) => new WorkspaceAccessControl(workspace, this.User);
     }
 }

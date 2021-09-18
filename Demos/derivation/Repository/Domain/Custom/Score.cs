@@ -9,7 +9,7 @@ namespace Allors.Repository
     public class Score : Object, Deletable
     {
         #region Inherited Properties
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
         public SecurityToken[] SecurityTokens { get; set; }
 
         #endregion

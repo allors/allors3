@@ -24,7 +24,7 @@ namespace Allors.Workspace.Adapters.Local
 
             var metaCache = this.Transaction.Database.Services.Get<IMetaCache>();
 
-            this.AccessControlLists = this.Transaction.Services.Get<IWorkspaceAclsService>().Create(this.Workspace.DatabaseConnection.Configuration.Name);
+            this.AccessControl = this.Transaction.Services.Get<IWorkspaceAclsService>().Create(this.Workspace.DatabaseConnection.Configuration.Name);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.DatabaseConnection.Configuration.Name);
             this.M = this.Transaction.Database.MetaPopulation;
             this.Build = @class => this.Transaction.Services.Get<IObjectBuilderService>().Build(@class);
@@ -35,7 +35,7 @@ namespace Allors.Workspace.Adapters.Local
 
         internal Dictionary<long, IObject> ObjectByNewId { get; private set; }
 
-        internal IAccessControlLists AccessControlLists { get; }
+        internal IAccessControl AccessControl { get; }
 
         internal ISet<IObject> Objects { get; }
 
@@ -146,7 +146,7 @@ namespace Allors.Workspace.Adapters.Local
             }
 
             // TODO: Cache and filter for workspace
-            var acl = this.AccessControlLists[obj];
+            var acl = this.AccessControl[obj];
 
             var ranges = this.Workspace.RecordRanges;
 

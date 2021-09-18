@@ -18,16 +18,16 @@ namespace Allors.Workspace.Adapters.Local
 
         private List<IValidation> errors;
 
-        public Procedure(ITransaction transaction, Database.Data.Procedure procedure, IAccessControlLists acls)
+        public Procedure(ITransaction transaction, Database.Data.Procedure procedure, IAccessControl acls)
         {
             this.Transaction = transaction;
             this.procedure = procedure;
-            this.AccessControlLists = acls;
+            this.AccessControl = acls;
         }
 
         public ITransaction Transaction { get; }
 
-        public IAccessControlLists AccessControlLists { get; }
+        public IAccessControl AccessControl { get; }
 
         public void AddError(IValidation validation)
         {

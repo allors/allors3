@@ -34,7 +34,7 @@ namespace Allors.Database.Protocol.Json
 
             this.Ranges = databaseServices.Get<IRanges<long>>();
             this.User = transactionServices.Get<IUserService>().User;
-            this.AccessControlLists = new WorkspaceAccessControlLists(workspaceName, this.User);
+            this.AccessControl = new WorkspaceAccessControl(workspaceName, this.User);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(workspaceName);
             this.M = databaseServices.Get<MetaPopulation>();
             this.MetaPopulation = this.M;
@@ -52,7 +52,7 @@ namespace Allors.Database.Protocol.Json
 
         public User User { get; }
 
-        public WorkspaceAccessControlLists AccessControlLists { get; }
+        public WorkspaceAccessControl AccessControl { get; }
 
         public ISet<IClass> AllowedClasses { get; }
 
@@ -72,19 +72,19 @@ namespace Allors.Database.Protocol.Json
 
         public InvokeResponse Invoke(InvokeRequest invokeRequest)
         {
-            var invokeResponseBuilder = new InvokeResponseBuilder(this.Transaction, this.Derive, this.AccessControlLists, this.AllowedClasses);
+            var invokeResponseBuilder = new InvokeResponseBuilder(this.Transaction, this.Derive, this.AccessControl, this.AllowedClasses);
             return invokeResponseBuilder.Build(invokeRequest);
         }
 
         public PullResponse Pull(PullRequest pullRequest)
         {
-            var response = new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges);
+            var response = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges);
             return response.Build(pullRequest);
         }
 
         public PushResponse Push(PushRequest pushRequest)
         {
-            var responseBuilder = new PushResponseBuilder(this.Transaction, this.Derive, this.MetaPopulation, this.AccessControlLists, this.AllowedClasses, this.Build, this.UnitConvert);
+            var responseBuilder = new PushResponseBuilder(this.Transaction, this.Derive, this.MetaPopulation, this.AccessControl, this.AllowedClasses, this.Build, this.UnitConvert);
             return responseBuilder.Build(pushRequest);
         }
 
@@ -108,17 +108,17 @@ namespace Allors.Database.Protocol.Json
                 }
             }
 
-            var responseBuilder = new SyncResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, Prefetch, this.UnitConvert, this.Ranges);
+            var responseBuilder = new SyncResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, Prefetch, this.UnitConvert, this.Ranges);
             return responseBuilder.Build(syncRequest);
         }
 
-        public SecurityResponse Security(SecurityRequest securityRequest)
+        public AccessResponse Security(AccessRequest accessRequest)
         {
-            var responseBuilder = new SecurityResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.Ranges);
-            return responseBuilder.Build(securityRequest);
+            var responseBuilder = new AccessResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.Ranges);
+            return responseBuilder.Build(accessRequest);
         }
 
         // TODO: Delete
-        public PullResponseBuilder CreatePullResponseBuilder() => new PullResponseBuilder(this.Transaction, this.AccessControlLists, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges);
+        public PullResponseBuilder CreatePullResponseBuilder() => new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges);
     }
 }

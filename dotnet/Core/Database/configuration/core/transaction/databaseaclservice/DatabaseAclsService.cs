@@ -15,6 +15,6 @@ namespace Allors.Database.Configuration
 
         public DatabaseAclsService(User user) => this.User = user;
 
-        public IAccessControlLists Create() => new DatabaseAccessControlLists(this.User);
+        public IAccessControl Create() => new DatabaseAccessControl(this.User);
     }
 }

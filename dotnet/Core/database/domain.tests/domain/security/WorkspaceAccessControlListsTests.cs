@@ -28,7 +28,7 @@ namespace Allors.Database.Domain.Tests
 
             var organisation = new OrganisationBuilder(this.Transaction).WithName("Organisation").Build();
 
-            var acl = new WorkspaceAccessControlLists(this.workspaceName, person)[organisation];
+            var acl = new WorkspaceAccessControl(this.workspaceName, person)[organisation];
 
             Assert.False(acl.CanRead(this.M.Organisation.Name));
         }
@@ -42,14 +42,14 @@ namespace Allors.Database.Domain.Tests
             var accessControl = new GrantBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
 
             var intialSecurityToken = new SecurityTokens(this.Transaction).InitialSecurityToken;
-            intialSecurityToken.AddAccessControl(accessControl);
+            intialSecurityToken.AddGrant(accessControl);
 
             this.Transaction.Derive();
             this.Transaction.Commit();
 
             var organisation = new OrganisationBuilder(this.Transaction).WithName("Organisation").Build();
 
-            var acl = new WorkspaceAccessControlLists(this.workspaceName, person)[organisation];
+            var acl = new WorkspaceAccessControl(this.workspaceName, person)[organisation];
 
             Assert.True(acl.CanRead(this.M.Organisation.Name));
         }
@@ -71,7 +71,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var workspaceAccessControlLists = new WorkspaceAccessControlLists(this.workspaceName, administrator);
+            var workspaceAccessControlLists = new WorkspaceAccessControl(this.workspaceName, administrator);
             var acl = workspaceAccessControlLists[administrator];
 
             Assert.DoesNotContain(revocation, acl.Revocations);
@@ -93,7 +93,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var workspaceAccessControlLists = new WorkspaceAccessControlLists(this.workspaceName, administrator);
+            var workspaceAccessControlLists = new WorkspaceAccessControl(this.workspaceName, administrator);
             var acl = workspaceAccessControlLists[administrator];
 
             Assert.Contains(revocation, acl.Revocations);
@@ -115,7 +115,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var workspaceAccessControlLists = new WorkspaceAccessControlLists("Another", administrator);
+            var workspaceAccessControlLists = new WorkspaceAccessControl("Another", administrator);
             var acl = workspaceAccessControlLists[administrator];
 
             Assert.DoesNotContain(revocation, acl.Revocations);

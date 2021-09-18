@@ -1412,7 +1412,7 @@ namespace Allors.Domain
 		}
 		public interface SecurityToken  : Deletable, UniquelyIdentifiable 
 		{
-						Grant[] AccessControls {set;}
+						Grant[] Grants {set;}
 
 		}
 		public interface UserGroup  : UniquelyIdentifiable 

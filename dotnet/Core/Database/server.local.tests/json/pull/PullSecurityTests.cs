@@ -195,14 +195,14 @@ namespace Tests
 
             var @object = objects[0];
 
-            var acls = new DatabaseAccessControlLists(user);
+            var acls = new DatabaseAccessControl(user);
             var acl = acls[data];
 
             Assert.NotNull(@object);
 
             Assert.Equal(data.Strategy.ObjectId, @object.i);
             Assert.Equal(data.Strategy.ObjectVersion, @object.v);
-            Assert.Equal(acl.Grants.Select(v => v.Strategy.ObjectId), @object.a);
+            Assert.Equal(acl.Grants.Select(v => v.Strategy.ObjectId), @object.g);
             Assert.Equal(acl.DeniedPermissionIds, @object.d);
         }
 
@@ -277,14 +277,14 @@ namespace Tests
 
             var @object = objects[0];
 
-            var acls = new DatabaseAccessControlLists(user);
+            var acls = new DatabaseAccessControl(user);
             var acl = acls[data];
 
             Assert.NotNull(@object);
 
             Assert.Equal(data.Strategy.ObjectId, @object.i);
             Assert.Equal(data.Strategy.ObjectVersion, @object.v);
-            Assert.Equal(acl.Grants.Select(v => v.Strategy.ObjectId), @object.a);
+            Assert.Equal(acl.Grants.Select(v => v.Strategy.ObjectId), @object.g);
         }
     }
 }

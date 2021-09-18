@@ -35,9 +35,9 @@ namespace Allors.Database.Domain
               {
                   if (setup.Config.SetupSecurity)
                   {
-                      v.AddAccessControl(accessControls.Creators);
-                      v.AddAccessControl(accessControls.GuestCreator);
-                      v.AddAccessControl(accessControls.Administrator);
+                      v.AddGrant(accessControls.Creators);
+                      v.AddGrant(accessControls.GuestCreator);
+                      v.AddGrant(accessControls.Administrator);
                   }
               });
 
@@ -45,8 +45,8 @@ namespace Allors.Database.Domain
               {
                   if (setup.Config.SetupSecurity)
                   {
-                      v.AddAccessControl(accessControls.Administrator);
-                      v.AddAccessControl(accessControls.Guest);
+                      v.AddGrant(accessControls.Administrator);
+                      v.AddGrant(accessControls.Guest);
                   }
               });
 
@@ -54,7 +54,7 @@ namespace Allors.Database.Domain
               {
                   if (setup.Config.SetupSecurity)
                   {
-                      v.AddAccessControl(accessControls.Administrator);
+                      v.AddGrant(accessControls.Administrator);
                   }
               });
         }

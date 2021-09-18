@@ -24,7 +24,7 @@ namespace Allors.Workspace.Adapters.Local
 
             var metaCache = this.Transaction.Database.Services.Get<IMetaCache>();
 
-            this.AccessControlLists = this.Transaction.Services.Get<IWorkspaceAclsService>().Create(this.Workspace.DatabaseConnection.Configuration.Name);
+            this.AccessControl = this.Transaction.Services.Get<IWorkspaceAclsService>().Create(this.Workspace.DatabaseConnection.Configuration.Name);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(this.Workspace.DatabaseConnection.Configuration.Name);
             this.Derive = () => this.Transaction.Database.Services.Get<IDerivationService>().CreateDerivation(this.Transaction).Derive();
         }
@@ -35,7 +35,7 @@ namespace Allors.Workspace.Adapters.Local
 
         private ISet<IClass> AllowedClasses { get; }
 
-        private IAccessControlLists AccessControlLists { get; }
+        private IAccessControl AccessControl { get; }
 
         private Func<IValidation> Derive { get; }
 
@@ -127,7 +127,7 @@ namespace Allors.Workspace.Adapters.Local
                 return true;
             }
 
-            var acl = this.AccessControlLists[obj];
+            var acl = this.AccessControl[obj];
             if (!acl.CanExecute(methodType))
             {
                 this.AddAccessError(localStrategy);

@@ -31,7 +31,7 @@ namespace Allors.Database.Domain.Tests
                 session.Commit();
 
                 var guest = new AutomatedAgents(this.Session).Guest;
-                var acls = new DatabaseAccessControlLists(guest);
+                var acls = new DatabaseAccessControl(guest);
                 foreach (Object aco in (IObject[])session.Extent(this.M.Organisation))
                 {
                     // When

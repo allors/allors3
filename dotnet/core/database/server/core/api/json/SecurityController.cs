@@ -34,7 +34,7 @@ namespace Allors.Database.Protocol.Json
         [HttpPost]
         [Authorize]
         [AllowAnonymous]
-        public ActionResult<SecurityResponse> Post([FromBody]SecurityRequest securityRequest) =>
+        public ActionResult<AccessResponse> Post([FromBody]AccessRequest accessRequest) =>
             this.PolicyService.SyncPolicy.Execute(
                 () =>
                 {
@@ -42,11 +42,11 @@ namespace Allors.Database.Protocol.Json
                     {
                         using var transaction = this.DatabaseService.Database.CreateTransaction();
                         var api = new Api(transaction, this.WorkspaceService.Name);
-                        return api.Security(securityRequest);
+                        return api.Security(accessRequest);
                     }
                     catch (Exception e)
                     {
-                        this.Logger.LogError(e, "SecurityRequest {request}", securityRequest);
+                        this.Logger.LogError(e, "SecurityRequest {request}", accessRequest);
                         throw;
                     }
                 });

@@ -17,13 +17,13 @@ namespace Allors.Workspace.Adapters.Local
 
     public class PullExtent
     {
-        private readonly IAccessControlLists acls;
+        private readonly IAccessControl acls;
         private readonly IPreparedExtents preparedExtents;
         private readonly IPreparedSelects preparedSelects;
         private readonly Database.Data.Pull pull;
         private readonly ITransaction transaction;
 
-        public PullExtent(ITransaction transaction, Database.Data.Pull pull, IAccessControlLists acls,
+        public PullExtent(ITransaction transaction, Database.Data.Pull pull, IAccessControl acls,
             IPreparedSelects preparedSelects,
             IPreparedExtents preparedExtents)
         {

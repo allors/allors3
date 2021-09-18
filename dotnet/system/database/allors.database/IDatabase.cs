@@ -24,8 +24,6 @@ namespace Allors.Database
         /// </summary>
         event RelationNotLoadedEventHandler RelationNotLoaded;
 
-        IProcedures Procedures { get; }
-
         /// <summary>
         /// Gets a value indicating whether this database is shared with other databases with the same name.
         /// </summary>

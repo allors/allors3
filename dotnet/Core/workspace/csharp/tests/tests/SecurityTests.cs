@@ -24,7 +24,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void WithAccessControl()
+        public async void WithGrant()
         {
             await this.Login("administrator");
 

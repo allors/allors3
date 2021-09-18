@@ -5,20 +5,20 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Collections.Generic;
+    using Allors.Ranges;
 
     public interface IGrantCache
     {
         void Clear(long accessControlId);
 
         // Database
-        ISet<long> GetPermissions(long accessControlId);
+        IRange<long> GetPermissions(long accessControlId);
 
-        void SetPermissions(long accessControlId, ISet<long> permissionIds);
+        void SetPermissions(long accessControlId, IRange<long> permissionIds);
 
         // Workspace
-        ISet<long> GetPermissions(string workspace, long accessControlId);
+        IRange<long> GetPermissions(string workspace, long accessControlId);
 
-        void SetPermissions(string workspace, long accessControlId, ISet<long> permissionIds);
+        void SetPermissions(string workspace, long accessControlId, IRange<long> permissionIds);
     }
 }

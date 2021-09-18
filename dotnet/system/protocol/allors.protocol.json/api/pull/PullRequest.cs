@@ -10,7 +10,7 @@ namespace Allors.Protocol.Json.Api.Pull
     public class PullRequest
     {
         /// <summary>
-        /// List
+        /// List of Pulls
         /// </summary>
         public Pull[] l { get; set; }
 

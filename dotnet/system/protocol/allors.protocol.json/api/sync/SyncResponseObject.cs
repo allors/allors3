@@ -18,17 +18,17 @@ namespace Allors.Protocol.Json.Api.Sync
         public long v { get; set; }
 
         /// <summary>
-        /// Object Type Tag
+        /// Class Tag
         /// </summary>
-        public string t { get; set; }
+        public string c { get; set; }
 
         /// <summary>
-        /// Grants (Range)
+        /// Sorted Grants
         /// </summary>
-        public long[] a { get; set; }
+        public long[] g { get; set; }
 
         /// <summary>
-        /// Revocations (Range)
+        /// Sorted Revocations
         /// </summary>
         public long[] r { get; set; }
 
@@ -37,6 +37,6 @@ namespace Allors.Protocol.Json.Api.Sync
         /// </summary>
         public SyncResponseRole[] ro { get; set; }
 
-        public override string ToString() => $"{this.t} [{this.i}:{this.v}]";
+        public override string ToString() => $"{this.c} [{this.i}:{this.v}]";
     }
 }

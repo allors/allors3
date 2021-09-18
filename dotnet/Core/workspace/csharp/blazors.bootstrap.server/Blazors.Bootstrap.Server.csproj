@@ -13,7 +13,7 @@
     <ProjectReference Include="..\..\..\..\system\protocol\allors.protocol.json.systemtext\Allors.Protocol.Json.SystemText.csproj" />
     <ProjectReference Include="..\..\..\..\system\database\adapters\Allors.Database.Builder\Allors.Database.Builder.csproj" />
     <ProjectReference Include="..\..\..\..\system\database\adapters\allors.database.adapters.sql.sqlclient\Allors.Database.Adapters.Sql.SqlClient.csproj" />
-    <ProjectReference Include="..\..\..\..\system\database\allors.database.protocol.json\Allors.Database.Protocol.Json.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Database\allors.database.workspace.json\Allors.Database.Workspace.Json.csproj" />
     <ProjectReference Include="..\..\..\..\system\workspace\csharp\adapters\allors.workspace.adapters.local\Allors.Workspace.Adapters.Local.csproj" />
     <ProjectReference Include="..\..\..\Database\Configuration\Configuration.csproj" />
     <ProjectReference Include="..\..\..\Database\Domain\Domain.csproj" />

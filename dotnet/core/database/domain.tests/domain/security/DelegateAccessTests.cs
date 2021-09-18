@@ -32,7 +32,7 @@ namespace Allors.Database.Domain.Tests
             var acs = new Grants(this.Transaction).Extent().Where(v => v.EffectiveUsers.Contains(administrator));
             var acs2 = new Grants(this.Transaction).Extent().Where(v => v.SubjectGroups.Contains(administrators));
 
-            var acl = new DatabaseAccessControlLists(administrator)[accessClass];
+            var acl = new DatabaseAccessControl(administrator)[accessClass];
             Assert.True(acl.CanRead(this.M.AccessClass.Property));
             Assert.True(acl.CanWrite(this.M.AccessClass.Property));
 
@@ -53,7 +53,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Commit();
 
             // Use default security from Singleton
-            var acl = new DatabaseAccessControlLists(administrator)[accessClass];
+            var acl = new DatabaseAccessControl(administrator)[accessClass];
             Assert.True(acl.CanRead(this.M.AccessClass.Property));
             Assert.True(acl.CanWrite(this.M.AccessClass.Property));
 

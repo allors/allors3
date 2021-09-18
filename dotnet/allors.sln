@@ -141,7 +141,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Protocol", "Protocol", "{B1
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Protocol.Json", "System\Protocol\Allors.Protocol.Json\Allors.Protocol.Json.csproj", "{38817927-B042-4924-8368-97C0906CC2E7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Protocol.Json", "System\Database\Allors.Database.Protocol.Json\Allors.Database.Protocol.Json.csproj", "{3B8A6385-01FE-4E68-A81B-D1B70BDB13DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Workspace.Json", "System\Database\Allors.Database.Workspace.Json\Allors.Database.Workspace.Json.csproj", "{3B8A6385-01FE-4E68-A81B-D1B70BDB13DB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Domain", "Core\Workspace\CSharp\Domain\Workspace.Domain.csproj", "{FDD12819-0C38-4BC9-BFDB-99BA433C59B4}"
 EndProject
@@ -244,6 +244,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Builder", "System\Database\adapters\allors.database.builder\Allors.Database.Builder.csproj", "{BBC67A1E-15B4-44C5-8F9A-EF1FCA8E646B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Meta.Props", "System\Database\allors.database.meta.props\Allors.Database.Meta.Props.csproj", "{5E08595C-5937-46C1-B50C-F0827C7548ED}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Workspace", "System\Database\allors.database.workspace\Allors.Database.Workspace.csproj", "{FC7300E2-7C54-4602-A258-AA69AD6496E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -631,6 +633,10 @@ Global
 		{5E08595C-5937-46C1-B50C-F0827C7548ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E08595C-5937-46C1-B50C-F0827C7548ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E08595C-5937-46C1-B50C-F0827C7548ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC7300E2-7C54-4602-A258-AA69AD6496E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC7300E2-7C54-4602-A258-AA69AD6496E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC7300E2-7C54-4602-A258-AA69AD6496E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC7300E2-7C54-4602-A258-AA69AD6496E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -752,6 +758,7 @@ Global
 		{3FD43D90-578E-4E37-AB32-32854DB7B184} = {DD3FE7E0-FA32-442B-869E-2554424B3BAC}
 		{BBC67A1E-15B4-44C5-8F9A-EF1FCA8E646B} = {6F829382-0804-4D82-8679-C69B14230287}
 		{5E08595C-5937-46C1-B50C-F0827C7548ED} = {9C68988B-09AE-4C63-A5AB-4EE71649283D}
+		{FC7300E2-7C54-4602-A258-AA69AD6496E9} = {9C68988B-09AE-4C63-A5AB-4EE71649283D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00D78C3D-8536-4549-B1EE-C19BD0C50387}

@@ -6,18 +6,18 @@
 namespace Allors.Database.Configuration
 {
     using System.Collections.Concurrent;
-    using System.Collections.Generic;
     using Domain;
+    using Ranges;
 
     public class GrantCache : IGrantCache
     {
-        private readonly ConcurrentDictionary<long, ISet<long>> permissionIdsByAccessControlId;
-        private readonly ConcurrentDictionary<string, ConcurrentDictionary<long, ISet<long>>> permissionIdsByAccessControlIdByWorkspaceName;
+        private readonly ConcurrentDictionary<long, IRange<long>> permissionIdsByAccessControlId;
+        private readonly ConcurrentDictionary<string, ConcurrentDictionary<long, IRange<long>>> permissionIdsByAccessControlIdByWorkspaceName;
 
         public GrantCache()
         {
-            this.permissionIdsByAccessControlId = new ConcurrentDictionary<long, ISet<long>>();
-            this.permissionIdsByAccessControlIdByWorkspaceName = new ConcurrentDictionary<string, ConcurrentDictionary<long, ISet<long>>>();
+            this.permissionIdsByAccessControlId = new ConcurrentDictionary<long, IRange<long>>();
+            this.permissionIdsByAccessControlIdByWorkspaceName = new ConcurrentDictionary<string, ConcurrentDictionary<long, IRange<long>>>();
         }
 
         public void Clear(long accessControlId)
@@ -29,27 +29,27 @@ namespace Allors.Database.Configuration
             }
         }
 
-        public ISet<long> GetPermissions(long accessControlId)
+        public IRange<long> GetPermissions(long accessControlId)
         {
             this.permissionIdsByAccessControlId.TryGetValue(accessControlId, out var permissionIds);
             return permissionIds;
         }
 
-        public void SetPermissions(long accessControlId, ISet<long> permissionIds) => this.permissionIdsByAccessControlId[accessControlId] = permissionIds;
-        
-        public ISet<long> GetPermissions(string workspaceName, long accessControlId)
+        public void SetPermissions(long accessControlId, IRange<long> permissionIds) => this.permissionIdsByAccessControlId[accessControlId] = permissionIds;
+
+        public IRange<long> GetPermissions(string workspaceName, long accessControlId)
         {
             this.EffectivePermissionIdsByAccessControlId(workspaceName).TryGetValue(accessControlId, out var permissionIds);
             return permissionIds;
         }
 
-        public void SetPermissions(string workspaceName, long accessControlId, ISet<long> permissionIds) => this.EffectivePermissionIdsByAccessControlId(workspaceName)[accessControlId] = permissionIds;
+        public void SetPermissions(string workspaceName, long accessControlId, IRange<long> permissionIds) => this.EffectivePermissionIdsByAccessControlId(workspaceName)[accessControlId] = permissionIds;
 
-        private ConcurrentDictionary<long, ISet<long>> EffectivePermissionIdsByAccessControlId(string workspaceName)
+        private ConcurrentDictionary<long, IRange<long>> EffectivePermissionIdsByAccessControlId(string workspaceName)
         {
             if (!this.permissionIdsByAccessControlIdByWorkspaceName.TryGetValue(workspaceName, out var dictionary))
             {
-                dictionary = new ConcurrentDictionary<long, ISet<long>>();
+                dictionary = new ConcurrentDictionary<long, IRange<long>>();
                 this.permissionIdsByAccessControlIdByWorkspaceName[workspaceName] = dictionary;
             }
 

@@ -74,7 +74,7 @@ namespace Allors.Workspace.Adapters.Remote
                             return true;
                         }
 
-                        if (!@record.AccessControlIds.Equals(this.Ranges.Load(v.a)))
+                        if (!@record.AccessControlIds.Equals(this.Ranges.Load(v.g)))
                         {
                             return true;
                         }
@@ -89,7 +89,7 @@ namespace Allors.Workspace.Adapters.Remote
                     .Select(v => v.i).ToArray()
             };
 
-        internal SecurityRequest OnSyncResponse(SyncResponse syncResponse)
+        internal AccessRequest OnSyncResponse(SyncResponse syncResponse)
         {
             var ctx = new ResponseContext(this);
 
@@ -101,9 +101,9 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (ctx.MissingAccessControlIds.Count > 0 || ctx.MissingRevocationIds.Count > 0)
             {
-                return new SecurityRequest
+                return new AccessRequest
                 {
-                    a = ctx.MissingAccessControlIds.Select(v => v).ToArray(),
+                    g = ctx.MissingAccessControlIds.Select(v => v).ToArray(),
                     r = ctx.MissingRevocationIds.Select(v => v).ToArray(),
                 };
             }
@@ -111,11 +111,11 @@ namespace Allors.Workspace.Adapters.Remote
             return null;
         }
 
-        internal SecurityRequest SecurityResponse(SecurityResponse securityResponse)
+        internal AccessRequest SecurityResponse(AccessResponse accessResponse)
         {
-            if (securityResponse.p != null)
+            if (accessResponse.p != null)
             {
-                foreach (var syncResponsePermission in securityResponse.p)
+                foreach (var syncResponsePermission in accessResponse.p)
                 {
                     var id = syncResponsePermission.i;
                     var @class = (IClass)this.Configuration.MetaPopulation.FindByTag(syncResponsePermission.c);
@@ -168,9 +168,9 @@ namespace Allors.Workspace.Adapters.Remote
             }
 
             HashSet<long> missingPermissionIds = null;
-            if (securityResponse.a != null)
+            if (accessResponse.g != null)
             {
-                foreach (var syncResponseAccessControl in securityResponse.a)
+                foreach (var syncResponseAccessControl in accessResponse.g)
                 {
                     var id = syncResponseAccessControl.i;
                     var version = syncResponseAccessControl.v;
@@ -190,9 +190,9 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
-            if (securityResponse.r != null)
+            if (accessResponse.r != null)
             {
-                foreach (var syncResponseRevocation in securityResponse.r)
+                foreach (var syncResponseRevocation in accessResponse.r)
                 {
                     var id = syncResponseRevocation.i;
                     var version = syncResponseRevocation.v;
@@ -212,7 +212,7 @@ namespace Allors.Workspace.Adapters.Remote
                 }
             }
 
-            return missingPermissionIds != null ? new SecurityRequest { p = missingPermissionIds.ToArray() } : null;
+            return missingPermissionIds != null ? new AccessRequest { p = missingPermissionIds.ToArray() } : null;
         }
 
         public override long GetPermission(IClass @class, IOperandType operandType, Operations operation)
@@ -268,6 +268,6 @@ namespace Allors.Workspace.Adapters.Remote
 
         public abstract Task<InvokeResponse> Invoke(InvokeRequest invokeRequest);
 
-        public abstract Task<SecurityResponse> Security(SecurityRequest securityRequest);
+        public abstract Task<AccessResponse> Security(AccessRequest accessRequest);
     }
 }

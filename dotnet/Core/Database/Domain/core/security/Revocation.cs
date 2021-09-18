@@ -10,7 +10,7 @@ namespace Allors.Database.Domain
 
     public partial class Revocation : IRevocation
     {
-        IPermission[] IRevocation.DeniedPermissions => this.DeniedPermissions.ToArray();
+        IPermission[] IRevocation.Permissions => this.DeniedPermissions.ToArray();
 
         // TODO: Optimize
         public bool InWorkspace(string workspaceName) => this.DeniedPermissions.Any(v => v.OperandType.WorkspaceNames.Contains(workspaceName));
