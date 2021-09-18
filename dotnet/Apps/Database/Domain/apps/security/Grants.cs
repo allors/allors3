@@ -7,11 +7,11 @@ namespace Allors.Database.Domain
 {
     using System;
 
-    public partial class AccessControls
+    public partial class Grants
     {
         public static readonly Guid EmployeesId = new Guid("C1D5C7A3-673E-41FD-BF5D-94438307A7E3");
 
-        public AccessControl Employees => this.Cache[EmployeesId];
+        public Grant Employees => this.Cache[EmployeesId];
 
         protected override void AppsSetup(Setup setup)
         {

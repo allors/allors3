@@ -39,7 +39,7 @@ namespace Allors.Database.Domain.Tests
             var permission = this.FindPermission(this.M.Organisation.Name, Operations.Read);
             var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
             var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
-            var accessControl = new AccessControlBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
+            var accessControl = new GrantBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
 
             var intialSecurityToken = new SecurityTokens(this.Transaction).InitialSecurityToken;
             intialSecurityToken.AddAccessControl(accessControl);
@@ -64,9 +64,9 @@ namespace Allors.Database.Domain.Tests
             var databaseOnlyPermissions = new Permissions(this.Transaction).Extent().Where(v => v.OperandType.Equals(M.Person.DatabaseOnlyField));
             var databaseOnlyReadPermission = databaseOnlyPermissions.First(v => v.Operation == Operations.Read);
 
-            var restriction = new RestrictionBuilder(this.Transaction).WithDeniedPermission(databaseOnlyReadPermission).Build();
+            var revocation = new RevocationBuilder(this.Transaction).WithDeniedPermission(databaseOnlyReadPermission).Build();
 
-            administrator.AddRestriction(restriction);
+            administrator.AddRevocation(revocation);
 
             this.Transaction.Derive();
             this.Transaction.Commit();
@@ -74,7 +74,7 @@ namespace Allors.Database.Domain.Tests
             var workspaceAccessControlLists = new WorkspaceAccessControlLists(this.workspaceName, administrator);
             var acl = workspaceAccessControlLists[administrator];
 
-            Assert.DoesNotContain(restriction, acl.Restrictions);
+            Assert.DoesNotContain(revocation, acl.Revocations);
         }
 
         [Fact]
@@ -86,9 +86,9 @@ namespace Allors.Database.Domain.Tests
 
             var workspacePermissions = new Permissions(this.Transaction).Extent().Where(v => v.OperandType.Equals(M.Person.DefaultWorkspaceField));
             var workspaceReadPermission = workspacePermissions.First(v => v.Operation == Operations.Read);
-            var restriction = new RestrictionBuilder(this.Transaction).WithDeniedPermission(workspaceReadPermission).Build();
+            var revocation = new RevocationBuilder(this.Transaction).WithDeniedPermission(workspaceReadPermission).Build();
 
-            administrator.AddRestriction(restriction);
+            administrator.AddRevocation(revocation);
 
             this.Transaction.Derive();
             this.Transaction.Commit();
@@ -96,7 +96,7 @@ namespace Allors.Database.Domain.Tests
             var workspaceAccessControlLists = new WorkspaceAccessControlLists(this.workspaceName, administrator);
             var acl = workspaceAccessControlLists[administrator];
 
-            Assert.Contains(restriction, acl.Restrictions);
+            Assert.Contains(revocation, acl.Revocations);
         }
 
         [Fact]
@@ -108,9 +108,9 @@ namespace Allors.Database.Domain.Tests
 
             var workspacePermissions = new Permissions(this.Transaction).Extent().Where(v => v.OperandType.Equals(M.Person.DefaultWorkspaceField));
             var workspaceReadPermission = workspacePermissions.First(v => v.Operation == Operations.Read);
-            var restriction = new RestrictionBuilder(this.Transaction).WithDeniedPermission(workspaceReadPermission).Build();
+            var revocation = new RevocationBuilder(this.Transaction).WithDeniedPermission(workspaceReadPermission).Build();
 
-            administrator.AddRestriction(restriction);
+            administrator.AddRevocation(revocation);
 
             this.Transaction.Derive();
             this.Transaction.Commit();
@@ -118,7 +118,7 @@ namespace Allors.Database.Domain.Tests
             var workspaceAccessControlLists = new WorkspaceAccessControlLists("Another", administrator);
             var acl = workspaceAccessControlLists[administrator];
 
-            Assert.DoesNotContain(restriction, acl.Restrictions);
+            Assert.DoesNotContain(revocation, acl.Revocations);
         }
 
 

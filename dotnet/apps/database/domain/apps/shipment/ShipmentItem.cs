@@ -25,16 +25,16 @@ namespace Allors.Database.Domain
             this.DerivationTrigger = Guid.NewGuid();
         }
 
-        public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
+        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
         {
             if (method.SecurityTokens == null)
             {
                 method.SecurityTokens = this.SyncedShipment?.SecurityTokens.ToArray();
             }
 
-            if (method.Restrictions == null)
+            if (method.Revocations == null)
             {
-                method.Restrictions = this.SyncedShipment?.DeniedPermissions.ToArray();
+                method.Revocations = this.SyncedShipment?.DeniedPermissions.ToArray();
             }
         }
 

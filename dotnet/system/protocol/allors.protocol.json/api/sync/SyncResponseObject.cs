@@ -23,12 +23,12 @@ namespace Allors.Protocol.Json.Api.Sync
         public string t { get; set; }
 
         /// <summary>
-        /// AccessControls (Range)
+        /// Grants (Range)
         /// </summary>
         public long[] a { get; set; }
 
         /// <summary>
-        /// Restrictions (Range)
+        /// Revocations (Range)
         /// </summary>
         public long[] r { get; set; }
 

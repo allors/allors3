@@ -5,7 +5,7 @@
 
 namespace Allors.Repository
 {
-    public partial class AccessControl
+    public partial class Grant
     {
         #region inherited methods
         public void OnPreDerive() { }

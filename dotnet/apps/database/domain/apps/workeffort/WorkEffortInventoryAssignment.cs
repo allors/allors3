@@ -21,16 +21,16 @@ namespace Allors.Database.Domain
             this.SyncInventoryTransactions(derivation, this.InventoryItem, this.Quantity, new InventoryTransactionReasons(transaction).Consumption, true);
         }
 
-        public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
+        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
         {
             if (method.SecurityTokens == null)
             {
                 method.SecurityTokens = this.Assignment?.SecurityTokens.ToArray();
             }
 
-            if (method.Restrictions == null)
+            if (method.Revocations == null)
             {
-                method.Restrictions = this.Assignment?.DeniedPermissions.ToArray();
+                method.Revocations = this.Assignment?.DeniedPermissions.ToArray();
             }
         }
 

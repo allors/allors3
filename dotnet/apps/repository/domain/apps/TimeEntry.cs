@@ -14,7 +14,7 @@ namespace Allors.Repository
     [Id("6360b45d-3556-41c6-b183-f42a15b9424f")]
     #endregion
     [Plural("TimeEntries")]
-    public partial class TimeEntry : ServiceEntry, DelegatedAccessControlledObject
+    public partial class TimeEntry : ServiceEntry, DelegatedAccessObject
     {
         #region inherited properties
         public EngagementItem EngagementItem { get; set; }
@@ -35,7 +35,7 @@ namespace Allors.Repository
 
         public LocalisedText[] LocalisedComments { get; set; }
 
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

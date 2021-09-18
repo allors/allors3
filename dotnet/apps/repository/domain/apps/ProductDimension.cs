@@ -31,7 +31,7 @@ namespace Allors.Repository
 
         public VatRegime VatRegime { get; set; }
 
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

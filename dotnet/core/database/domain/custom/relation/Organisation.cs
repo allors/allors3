@@ -12,14 +12,14 @@ namespace Allors.Database.Domain
 
         public void CustomToggleCanWrite(OrganisationToggleCanWrite method)
         {
-            if (this.ExistRestrictions)
+            if (this.ExistRevocations)
             {
-                this.RemoveRestrictions();
+                this.RemoveRevocations();
             }
             else
             {
-                var toggleRestriction = new Restrictions(this.strategy.Transaction).ToggleRestriction;
-                this.AddRestriction(toggleRestriction);
+                var toggleRevocation = new Revocations(this.strategy.Transaction).ToggleRevocation;
+                this.AddRevocation(toggleRevocation);
             }
         }
 

@@ -5,7 +5,7 @@
 
 namespace Allors.Protocol.Json.Api.Security
 {
-    public class SecurityResponseRestriction
+    public class SecurityResponseRevocation
     {
         /// <summary>
         /// Id

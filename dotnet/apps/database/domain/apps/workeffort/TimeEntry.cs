@@ -59,7 +59,7 @@ namespace Allors.Database.Domain
             method.Derivation.Validation.AssertAtLeastOne(this, this.M.TimeEntry.WorkEffort, this.M.TimeEntry.EngagementItem);
         }
 
-        public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
+        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
         {
             if (method.SecurityTokens == null)
             {
@@ -67,9 +67,9 @@ namespace Allors.Database.Domain
                 method.SecurityTokens = workEffortSecurityTokens.Append(this.Worker?.OwnerSecurityToken).ToArray();
             }
 
-            if (method.Restrictions == null)
+            if (method.Revocations == null)
             {
-                method.Restrictions = this.WorkEffort?.DeniedPermissions.ToArray();
+                method.Revocations = this.WorkEffort?.DeniedPermissions.ToArray();
             }
         }
     }

@@ -17,16 +17,16 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
+        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
         {
             if (method.SecurityTokens == null)
             {
                 method.SecurityTokens = this.WorkEffort?.SecurityTokens.ToArray();
             }
 
-            if (method.Restrictions == null)
+            if (method.Revocations == null)
             {
-                method.Restrictions = this.WorkEffort?.DeniedPermissions.ToArray();
+                method.Revocations = this.WorkEffort?.DeniedPermissions.ToArray();
             }
         }
     }

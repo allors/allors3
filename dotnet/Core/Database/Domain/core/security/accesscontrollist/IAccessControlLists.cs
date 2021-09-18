@@ -6,9 +6,16 @@
 namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
+    using Database.Security;
 
-    public interface IAccessControlLists : Database.Security.IAccessControlLists
+    public interface IInternalAccessControlLists : IAccessControlLists
     {
-        Restriction[] Filter(IEnumerable<Restriction> unfilteredRestrictions);
+        Grant[] Filter(IEnumerable<Grant> unfilteredGrants);
+
+        Revocation[] Filter(IEnumerable<Revocation> unfilteredRevocations);
+
+        ISet<long> GrantedPermissionIds(IGrant grant);
+
+        ISet<long> RevokedPermissionIds(IRevocation revocation);
     }
 }

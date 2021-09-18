@@ -19,7 +19,7 @@ namespace Allors.Repository
 
         public Guid UniqueId { get; set; }
 
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

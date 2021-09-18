@@ -12,12 +12,12 @@ namespace Allors.Repository
     #region Allors
     [Id("753A230E-6C29-4C3C-9592-323BE0778ED6")]
     #endregion
-    public partial class Restriction : UniquelyIdentifiable, Deletable
+    public partial class Revocation : UniquelyIdentifiable, Deletable
     {
         #region inherited properties
         public Guid UniqueId { get; set; }
 
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
         #endregion

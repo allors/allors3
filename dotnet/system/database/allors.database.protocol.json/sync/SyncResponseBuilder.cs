@@ -61,8 +61,8 @@ namespace Allors.Database.Protocol.Json
                             .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))
                             .Select(w => this.CreateSyncResponseRole(v, w, this.unitConvert))
                             .ToArray(),
-                        a = this.ranges.Import(acl.AccessControls.Select(v => v.Strategy.ObjectId)).Save(),
-                        r = this.ranges.Import(acl.Restrictions.Select(v => v.Strategy.ObjectId)).Save(),
+                        a = this.ranges.Import(acl.Grants.Select(v => v.Strategy.ObjectId)).Save(),
+                        r = this.ranges.Import(acl.Revocations.Select(v => v.Strategy.ObjectId)).Save(),
                     };
                 }).ToArray(),
             };

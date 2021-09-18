@@ -38,7 +38,7 @@ namespace Allors.Database.Server.Controllers
             var emptyRole = new RoleBuilder(this.session).WithName("Empty").Build();
             var defaultSecurityToken = new SecurityTokens(this.session).DefaultSecurityToken;
 
-            var acl = new AccessControlBuilder(this.session).WithRole(emptyRole).WithSubject(noperm).WithSecurityToken(defaultSecurityToken).Build();
+            var acl = new GrantBuilder(this.session).WithRole(emptyRole).WithSubject(noperm).WithSecurityToken(defaultSecurityToken).Build();
 
             var c1A = new C1Builder(this.session).WithName("c1A").Build();
             var c1B = new C1Builder(this.session).WithName("c1B").Build();

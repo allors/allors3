@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
 
     public partial class TimeSheet
     {
-        public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
+        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
         {
             if (method.SecurityTokens == null)
             {

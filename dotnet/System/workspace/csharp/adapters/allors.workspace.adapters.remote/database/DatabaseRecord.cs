@@ -24,13 +24,13 @@ namespace Allors.Workspace.Adapters.Remote
             new DatabaseRecord(database, (IClass)database.Configuration.MetaPopulation.FindByTag(syncResponseObject.t), syncResponseObject.i, syncResponseObject.v)
             {
                 syncResponseRoles = syncResponseObject.ro,
-                AccessControlIds = database.Ranges.Load(ctx.CheckForMissingAccessControls(syncResponseObject.a)),
-                RestrictionIds = database.Ranges.Load(ctx.CheckForMissingRestrictions(syncResponseObject.r))
+                AccessControlIds = database.Ranges.Load(ctx.CheckForMissingGrants(syncResponseObject.a)),
+                RevocationIds = database.Ranges.Load(ctx.CheckForMissingRevocations(syncResponseObject.r))
             };
 
         internal IRange<long> AccessControlIds { get; private set; }
 
-        internal IRange<long> RestrictionIds { get; private set; }
+        internal IRange<long> RevocationIds { get; private set; }
 
         private Dictionary<IRelationType, object> RoleByRelationType
         {
@@ -81,7 +81,7 @@ namespace Allors.Workspace.Adapters.Remote
                 return false;
             }
 
-            return !this.RestrictionIds.Any(v => this.database.RestrictionById[v].PermissionIds.Contains(permission)) && this.AccessControlIds.Any(v => this.database.AccessControlById[v].PermissionIds.Contains(permission));
+            return !this.RevocationIds.Any(v => this.database.RevocationById[v].PermissionIds.Contains(permission)) && this.AccessControlIds.Any(v => this.database.AccessControlById[v].PermissionIds.Contains(permission));
         }
     }
 }

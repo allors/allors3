@@ -44,16 +44,16 @@ namespace Allors.Database.Domain
         internal bool IsDeletable =>
             this.SalesInvoiceItemState.Equals(new SalesInvoiceItemStates(this.Strategy.Transaction).ReadyForPosting);
 
-        public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
+        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
         {
             if (method.SecurityTokens == null)
             {
                 method.SecurityTokens = this.SyncedInvoice?.SecurityTokens.ToArray();
             }
 
-            if (method.Restrictions == null)
+            if (method.Revocations == null)
             {
-                method.Restrictions = this.SyncedInvoice?.DeniedPermissions.ToArray();
+                method.Revocations = this.SyncedInvoice?.DeniedPermissions.ToArray();
             }
         }
 

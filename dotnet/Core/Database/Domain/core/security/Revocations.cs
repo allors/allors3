@@ -6,10 +6,10 @@
 
 namespace Allors.Database.Domain
 {
-    public partial class Restrictions
+    public partial class Revocations
     {
-        private UniquelyIdentifiableCache<Restriction> cache;
+        private UniquelyIdentifiableCache<Revocation> cache;
 
-        private UniquelyIdentifiableCache<Restriction> Cache => this.cache ??= new UniquelyIdentifiableCache<Restriction>(this.Transaction);
+        private UniquelyIdentifiableCache<Revocation> Cache => this.cache ??= new UniquelyIdentifiableCache<Revocation>(this.Transaction);
     }
 }

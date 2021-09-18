@@ -23,16 +23,16 @@ namespace Allors.Database.Domain
                 || this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Transaction).Rejected)
                 || this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Transaction).Cancelled));
 
-        public void AppsDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
+        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
         {
             if (method.SecurityTokens == null)
             {
                 method.SecurityTokens = this.SyncedRequest?.SecurityTokens.ToArray();
             }
 
-            if (method.Restrictions == null)
+            if (method.Revocations == null)
             {
-                method.Restrictions = this.SyncedRequest?.DeniedPermissions.ToArray();
+                method.Revocations = this.SyncedRequest?.DeniedPermissions.ToArray();
             }
         }
 

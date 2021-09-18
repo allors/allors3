@@ -36,7 +36,7 @@ namespace Allors.Database.Protocol.Json
             if (securityRequest.a?.Length > 0)
             {
                 var accessControlIds = securityRequest.a;
-                var accessControls = this.transaction.Instantiate(accessControlIds).Cast<IAccessControl>().ToArray();
+                var accessControls = this.transaction.Instantiate(accessControlIds).Cast<IGrant>().ToArray();
 
                 securityResponse.a = accessControls
                     .Select(v =>
@@ -58,19 +58,19 @@ namespace Allors.Database.Protocol.Json
 
             if (securityRequest.r?.Length > 0)
             {
-                var restrictionIds = securityRequest.r;
-                var restrictions = this.transaction.Instantiate(restrictionIds).Cast<IRestriction>().ToArray();
+                var revocationIds = securityRequest.r;
+                var revocations = this.transaction.Instantiate(revocationIds).Cast<IRevocation>().ToArray();
 
-                securityResponse.r = restrictions
+                securityResponse.r = revocations
                     .Select(v =>
                     {
-                        var response = new SecurityResponseRestriction
+                        var response = new SecurityResponseRevocation
                         {
                             i = v.Strategy.ObjectId,
                             v = v.Strategy.ObjectVersion,
                         };
 
-                        if (this.AccessControlLists.DeniedPermissionIdsByRestriction.TryGetValue(v, out var x))
+                        if (this.AccessControlLists.DeniedPermissionIdsByRevocation.TryGetValue(v, out var x))
                         {
                             response.p = this.ranges.Import(x).Save();
                         }

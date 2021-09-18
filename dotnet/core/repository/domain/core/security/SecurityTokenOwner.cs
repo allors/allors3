@@ -28,6 +28,6 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Derived]
-        AccessControl OwnerAccessControl { get; set; }
+        Grant OwnerGrant { get; set; }
     }
 }

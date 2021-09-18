@@ -9,12 +9,12 @@ namespace Allors.Database.Configuration
     using System.Collections.Generic;
     using Domain;
 
-    public class AccessControlCache : IAccessControlCache
+    public class GrantCache : IGrantCache
     {
         private readonly ConcurrentDictionary<long, ISet<long>> permissionIdsByAccessControlId;
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<long, ISet<long>>> permissionIdsByAccessControlIdByWorkspaceName;
 
-        public AccessControlCache()
+        public GrantCache()
         {
             this.permissionIdsByAccessControlId = new ConcurrentDictionary<long, ISet<long>>();
             this.permissionIdsByAccessControlIdByWorkspaceName = new ConcurrentDictionary<string, ConcurrentDictionary<long, ISet<long>>>();

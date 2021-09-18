@@ -8,14 +8,14 @@ namespace Allors.Protocol.Json.Api.Security
     public class SecurityResponse
     {
         /// <summary>
-        /// AccessControls
+        /// Grants
         /// </summary>
         public SecurityResponseAccessControl[] a { get; set; }
 
         /// <summary>
-        /// AccessControls
+        /// Grants
         /// </summary>
-        public SecurityResponseRestriction[] r { get; set; }
+        public SecurityResponseRevocation[] r { get; set; }
 
         /// <summary>
         /// Permissions

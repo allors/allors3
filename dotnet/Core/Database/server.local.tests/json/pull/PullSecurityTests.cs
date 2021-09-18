@@ -164,8 +164,8 @@ namespace Tests
             var data = new DataBuilder(this.Transaction).WithString("First").Build();
             var permissions = new Permissions(this.Transaction).Extent();
             var permission = permissions.First(v => Equals(v.Class, this.M.Data) && v.InWorkspace("Default"));
-            var restriction = new RestrictionBuilder(this.Transaction).WithDeniedPermission(permission).Build();
-            data.AddRestriction(restriction);
+            var revocation = new RevocationBuilder(this.Transaction).WithDeniedPermission(permission).Build();
+            data.AddRevocation(revocation);
 
             this.Transaction.Commit();
 
@@ -202,7 +202,7 @@ namespace Tests
 
             Assert.Equal(data.Strategy.ObjectId, @object.i);
             Assert.Equal(data.Strategy.ObjectVersion, @object.v);
-            Assert.Equal(acl.AccessControls.Select(v => v.Strategy.ObjectId), @object.a);
+            Assert.Equal(acl.Grants.Select(v => v.Strategy.ObjectId), @object.a);
             Assert.Equal(acl.DeniedPermissionIds, @object.d);
         }
 
@@ -284,7 +284,7 @@ namespace Tests
 
             Assert.Equal(data.Strategy.ObjectId, @object.i);
             Assert.Equal(data.Strategy.ObjectVersion, @object.v);
-            Assert.Equal(acl.AccessControls.Select(v => v.Strategy.ObjectId), @object.a);
+            Assert.Equal(acl.Grants.Select(v => v.Strategy.ObjectId), @object.a);
         }
     }
 }

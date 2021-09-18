@@ -20,7 +20,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        Restriction ObjectRestriction { get; set; }
+        Revocation ObjectRevocation { get; set; }
 
         #region Allors
         [Id("b86f9e42-fe10-4302-ab7c-6c6c7d357c39")]

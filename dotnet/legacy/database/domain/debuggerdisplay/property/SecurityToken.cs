@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
                     return "Administrator";
                 }
 
-                var toString = string.Join(",", this.AccessControls.ToArray().Select(v => v.ToString()));
+                var toString = string.Join(",", this.Grants.ToArray().Select(v => v.ToString()));
                 return $"{toString} [{this.strategy.ObjectId}]";
             }
         }

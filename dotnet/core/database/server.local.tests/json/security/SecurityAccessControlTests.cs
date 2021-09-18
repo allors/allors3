@@ -21,7 +21,7 @@ namespace Tests
         {
             var workspaceName = "X";
             var metaCache = this.Transaction.Database.Services.Get<IMetaCache>();
-            var accessControl = new AccessControls(this.Transaction).Administrator;
+            var accessControl = new Grants(this.Transaction).Administrator;
 
             this.SetUser("jane@example.com");
 
@@ -63,7 +63,7 @@ namespace Tests
         {
             var workspaceName = "None";
             var metaCache = this.Transaction.Database.Services.Get<IMetaCache>();
-            var accessControl = new AccessControls(this.Transaction).Administrator;
+            var accessControl = new Grants(this.Transaction).Administrator;
 
             this.SetUser("jane@example.com");
 

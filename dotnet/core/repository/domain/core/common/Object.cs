@@ -26,7 +26,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
         [Derived]
-        Restriction[] Restrictions { get; set; }
+        Revocation[] Revocations { get; set; }
 
         #region Allors
         [Id("FDD32313-CF62-4166-9167-EF90BE3A3C75")]

@@ -24,11 +24,11 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        public AccessControl[] AccessControls { get; set; }
+        public Grant[] Grants { get; set; }
 
         #region inherited methods
 
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

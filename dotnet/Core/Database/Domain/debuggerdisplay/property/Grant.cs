@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     using System.Linq;
 
-    public partial class AccessControl
+    public partial class Grant
     {
         public string DebuggerDisplay
         {

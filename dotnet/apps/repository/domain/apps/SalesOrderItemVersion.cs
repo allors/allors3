@@ -47,7 +47,7 @@ namespace Allors.Repository
 
         public string Message { get; set; }
 
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

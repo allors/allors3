@@ -37,10 +37,10 @@ namespace Allors.Database.Domain
 
         public static void CoreOnPostBuild(this User @this, ObjectOnPostBuild method)
         {
-            if (!@this.ExistOwnerAccessControl)
+            if (!@this.ExistOwnerGrant)
             {
                 var ownerRole = new Roles(@this.Strategy.Transaction).Owner;
-                @this.OwnerAccessControl = new AccessControlBuilder(@this.Strategy.Transaction)
+                @this.OwnerGrant = new GrantBuilder(@this.Strategy.Transaction)
                     .WithRole(ownerRole)
                     .WithSubject(@this)
                     .Build();
@@ -49,7 +49,7 @@ namespace Allors.Database.Domain
             if (!@this.ExistOwnerSecurityToken)
             {
                 @this.OwnerSecurityToken = new SecurityTokenBuilder(@this.Strategy.Transaction)
-                    .WithAccessControl(@this.OwnerAccessControl)
+                    .WithAccessControl(@this.OwnerGrant)
                     .Build();
             }
 
@@ -61,7 +61,7 @@ namespace Allors.Database.Domain
 
         public static void CoreDelete(this User @this, DeletableDelete method)
         {
-            @this.OwnerAccessControl?.Delete();
+            @this.OwnerGrant?.Delete();
             @this.OwnerSecurityToken?.Delete();
 
             foreach (var login in @this.Logins)

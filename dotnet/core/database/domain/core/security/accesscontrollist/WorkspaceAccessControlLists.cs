@@ -11,59 +11,79 @@ namespace Allors.Database.Domain
     using Database.Security;
     using Meta;
 
-    public class WorkspaceAccessControlLists : IAccessControlLists
+    public class WorkspaceAccessControlLists : IInternalAccessControlLists
     {
+        private readonly string workspaceName;
+        private readonly IReadOnlyDictionary<IGrant, ISet<long>> permissionIdsByGrant;
+        private readonly IDictionary<IRevocation, ISet<long>> permissionIdsByRevocation;
+        private readonly Dictionary<IObject, IAccessControlList> aclByObject;
+
         public WorkspaceAccessControlLists(string workspaceName, User user)
         {
-            this.WorkspaceName = workspaceName ?? throw new ArgumentNullException(nameof(workspaceName));
+            this.workspaceName = workspaceName ?? throw new ArgumentNullException(nameof(workspaceName));
             this.User = user ?? throw new ArgumentNullException(nameof(user));
-            this.AclByObject = new Dictionary<IObject, IAccessControlList>();
-            this.PermissionIdsByAccessControl = this.EffectivePermissionsByAccessControl();
-            this.DeniedPermissionIdsByRestriction = new Dictionary<IRestriction, ISet<long>>();
+            this.aclByObject = new Dictionary<IObject, IAccessControlList>();
+            this.permissionIdsByGrant = this.BuildEffectivePermissionsByGrant();
+            this.permissionIdsByRevocation = new Dictionary<IRevocation, ISet<long>>();
         }
-
-        public IReadOnlyDictionary<IAccessControl, ISet<long>> PermissionIdsByAccessControl { get; }
-
-        public IDictionary<IRestriction, ISet<long>> DeniedPermissionIdsByRestriction { get; }
-
-        // TODO: Optimize
-        public Restriction[] Filter(IEnumerable<Restriction> unfilteredRestrictions) => unfilteredRestrictions.Where(v => v.DeniedPermissions.Any(w => w.InWorkspace(this.WorkspaceName))).ToArray();
-
-        public string WorkspaceName { get; }
 
         public User User { get; }
 
-        private Dictionary<IObject, IAccessControlList> AclByObject { get; }
+        // TODO: Optimize
+        public IEnumerable<IGrant> Grants => this.aclByObject.SelectMany(v => v.Value.Grants).Distinct();
+
+        // TODO: Optimize
+        public IEnumerable<IRevocation> Revocations => this.aclByObject.SelectMany(v => v.Value.Revocations).Distinct();
 
         public IAccessControlList this[IObject @object]
         {
             get
             {
-                if (!this.AclByObject.TryGetValue(@object, out var acl))
+                if (!this.aclByObject.TryGetValue(@object, out var acl))
                 {
-                    acl = new AccessControlList(this, @object, this.WorkspaceName);
-                    this.AclByObject.Add(@object, acl);
+                    acl = new AccessControlList(this, @object);
+                    this.aclByObject.Add(@object, acl);
                 }
 
                 return acl;
             }
         }
 
-        private Dictionary<IAccessControl, ISet<long>> EffectivePermissionsByAccessControl()
+        public ISet<long> GrantedPermissionIds(IGrant grant) => this.permissionIdsByGrant[grant];
+
+        // TODO: Optimize
+        public ISet<long> RevokedPermissionIds(IRevocation revocation)
         {
-            var permissionsByAccessControl = new Dictionary<IAccessControl, ISet<long>>();
+            if (!this.permissionIdsByRevocation.TryGetValue(revocation, out var permissionIds))
+            {
+                permissionIds = new HashSet<long>(revocation.DeniedPermissions.Where(v => v.InWorkspace(this.workspaceName)).Select(v => v.Id));
+                this.permissionIdsByRevocation.Add(revocation, permissionIds);
+            }
+
+            return permissionIds;
+        }
+
+        // TODO: Optimize
+        public Grant[] Filter(IEnumerable<Grant> unfilteredGrants) => unfilteredGrants.Where(v => this.permissionIdsByGrant.ContainsKey(v) && v.EffectivePermissions.Any(w => w.InWorkspace(this.workspaceName))).ToArray();
+
+        // TODO: Optimize
+        public Revocation[] Filter(IEnumerable<Revocation> unfilteredRevocations) => unfilteredRevocations.Where(v => v.DeniedPermissions.Any(w => w.InWorkspace(this.workspaceName))).ToArray();
+
+        private Dictionary<IGrant, ISet<long>> BuildEffectivePermissionsByGrant()
+        {
+            var permissionsByAccessControl = new Dictionary<IGrant, ISet<long>>();
 
             var transaction = this.User.Transaction();
             var database = transaction.Database;
-            var accessControlCache = database.Services.Get<IAccessControlCache>();
+            var accessControlCache = database.Services.Get<IGrantCache>();
 
-            List<AccessControl> misses = null;
-            foreach (var accessControl in this.User.AccessControlsWhereEffectiveUser)
+            List<Grant> misses = null;
+            foreach (var accessControl in this.User.GrantsWhereEffectiveUser)
             {
-                var effectivePermissions = accessControlCache.GetPermissions(this.WorkspaceName, accessControl.Id);
+                var effectivePermissions = accessControlCache.GetPermissions(this.workspaceName, accessControl.Id);
                 if (effectivePermissions == null)
                 {
-                    misses ??= new List<AccessControl>();
+                    misses ??= new List<Grant>();
                     misses.Add(accessControl);
                 }
                 else
@@ -86,7 +106,7 @@ namespace Allors.Database.Domain
                         .Build();
 
                     var prefetch = new PrefetchPolicyBuilder()
-                        .WithRule(m.AccessControl.EffectivePermissions, permissionPrefetch)
+                        .WithRule(m.Grant.EffectivePermissions, permissionPrefetch)
                         .Build();
 
                     transaction.Prefetch(prefetch, misses);
@@ -94,9 +114,9 @@ namespace Allors.Database.Domain
 
                 foreach (var accessControl in misses)
                 {
-                    var workspaceEffectivePermissions = accessControl.EffectivePermissions.Where(v => v.InWorkspace(this.WorkspaceName));
+                    var workspaceEffectivePermissions = accessControl.EffectivePermissions.Where(v => v.InWorkspace(this.workspaceName));
                     var effectivePermissionIds = new HashSet<long>(workspaceEffectivePermissions.Select(v => v.Id));
-                    accessControlCache.SetPermissions(this.WorkspaceName, accessControl.Id, effectivePermissionIds);
+                    accessControlCache.SetPermissions(this.workspaceName, accessControl.Id, effectivePermissionIds);
                     permissionsByAccessControl.Add(accessControl, effectivePermissionIds);
                 }
             }

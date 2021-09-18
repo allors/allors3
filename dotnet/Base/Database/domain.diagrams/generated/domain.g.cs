@@ -56,7 +56,7 @@ namespace Allors.Domain
 		}
 		public interface ObjectState  : UniquelyIdentifiable 
 		{
-						Restriction ObjectRestriction {set;}
+						Revocation ObjectRevocation {set;}
 
 						global::System.String Name {set;}
 
@@ -86,7 +86,7 @@ namespace Allors.Domain
 
 						ObjectState[] _ObjectStates {set;}
 
-						Restriction[] _TransitionalRestrictions {set;}
+						Revocation[] _TransitionalRevocations {set;}
 
 		}
 		public interface TransitionalVersion  : Object 
@@ -138,7 +138,7 @@ namespace Allors.Domain
 						global::System.String _WorkItemDescription {set;}
 
 		}
-		public interface AccessInterface  : DelegatedAccessControlledObject 
+		public interface AccessInterface  : DelegatedAccessObject 
 		{
 		}
 		public interface Address  : Object 
@@ -360,7 +360,7 @@ namespace Allors.Domain
 		{
 						SecurityToken[] SecurityTokens {set;}
 
-						Restriction[] _Restrictions {set;}
+						Revocation[] _Revocations {set;}
 
 		}
 		public interface UniquelyIdentifiable  : Object 
@@ -368,7 +368,7 @@ namespace Allors.Domain
 						global::System.Guid UniqueId {set;}
 
 		}
-		public interface DelegatedAccessControlledObject  : Object 
+		public interface DelegatedAccessObject  : Object 
 		{
 		}
 		public interface Permission  : Deletable 
@@ -380,7 +380,7 @@ namespace Allors.Domain
 		{
 						SecurityToken _OwnerSecurityToken {set;}
 
-						AccessControl _OwnerAccessControl {set;}
+						Grant _OwnerGrant {set;}
 
 		}
 		public interface Counter  : UniquelyIdentifiable 
@@ -1358,7 +1358,7 @@ namespace Allors.Domain
 						global::System.String _FullName {set;}
 
 		}
-		public interface AccessControl  : Deletable, UniquelyIdentifiable 
+		public interface Grant  : Deletable, UniquelyIdentifiable 
 		{
 						UserGroup[] SubjectGroups {set;}
 
@@ -1398,7 +1398,7 @@ namespace Allors.Domain
 						global::System.Guid RelationTypePointer {set;}
 
 		}
-		public interface Restriction  : UniquelyIdentifiable, Deletable 
+		public interface Revocation  : UniquelyIdentifiable, Deletable 
 		{
 						Permission[] DeniedPermissions {set;}
 
@@ -1412,7 +1412,7 @@ namespace Allors.Domain
 		}
 		public interface SecurityToken  : Deletable, UniquelyIdentifiable 
 		{
-						AccessControl[] AccessControls {set;}
+						Grant[] AccessControls {set;}
 
 		}
 		public interface UserGroup  : UniquelyIdentifiable 

@@ -35,7 +35,7 @@ namespace Allors.Protocol.Json.Api.Pull
         public long[][] a { get; set; }
 
         /// <summary>
-        /// Restrictions
+        /// Revocations
         /// </summary>
         public long[][] r { get; set; }
     }

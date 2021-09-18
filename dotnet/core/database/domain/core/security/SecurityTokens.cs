@@ -23,13 +23,13 @@ namespace Allors.Database.Domain
 
         private UniquelyIdentifiableCache<SecurityToken> Cache => this.cache ??= new UniquelyIdentifiableCache<SecurityToken>(this.Transaction);
 
-        protected override void CorePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.AccessControl);
+        protected override void CorePrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Grant);
 
         protected override void CoreSetup(Setup setup)
         {
             var merge = this.Cache.Merger().Action();
 
-            var accessControls = new AccessControls(this.Transaction);
+            var accessControls = new Grants(this.Transaction);
 
             merge(InitialSecurityTokenId, v =>
               {

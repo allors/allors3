@@ -18,7 +18,7 @@ namespace Allors.Repository
 
         public SecurityToken OwnerSecurityToken { get; set; }
 
-        public AccessControl OwnerAccessControl { get; set; }
+        public Grant OwnerGrant { get; set; }
 
         public NotificationList NotificationList { get; set; }
 
@@ -52,7 +52,7 @@ namespace Allors.Repository
 
         public Login[] Logins { get; set; }
 
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

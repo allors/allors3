@@ -11,11 +11,11 @@ namespace Allors.Repository
     #region Allors
     [Id("f3f761ef-1081-4376-98d9-20d4730e3d58")]
     #endregion
-    public partial class WorkEffortSalesInvoiceItemAssignment : Deletable, DelegatedAccessControlledObject
+    public partial class WorkEffortSalesInvoiceItemAssignment : Deletable, DelegatedAccessObject
     {
         #region inherited properties
 
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

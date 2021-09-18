@@ -13,7 +13,7 @@ namespace Allors.Repository
     public partial class AccountingTransactionNumber : Object
     {
         #region inherited properties
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

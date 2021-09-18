@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
 
-    public interface IAccessControlCache
+    public interface IGrantCache
     {
         void Clear(long accessControlId);
 

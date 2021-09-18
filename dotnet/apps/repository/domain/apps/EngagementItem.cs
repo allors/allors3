@@ -12,7 +12,7 @@ namespace Allors.Repository
     #region Allors
     [Id("aa3bf631-5aa5-48ab-a249-ef61f640fb72")]
     #endregion
-    public partial interface EngagementItem : DelegatedAccessControlledObject
+    public partial interface EngagementItem : DelegatedAccessObject
     {
         #region Allors
         [Id("141333b6-2cc9-487e-acc1-86d314f2b30a")]

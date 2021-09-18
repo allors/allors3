@@ -8,7 +8,7 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Database.Security;
 
-    public partial class AccessControl : IAccessControl
+    public partial class Grant : IGrant
     {
         public void CoreOnPostDerive(ObjectOnPostDerive method)
         {
@@ -17,6 +17,6 @@ namespace Allors.Database.Domain
             derivation.Validation.AssertAtLeastOne(this, this.Meta.Subjects, this.Meta.SubjectGroups);
         }
 
-        IPermission[] IAccessControl.Permissions => this.EffectivePermissions.ToArray();
+        IPermission[] IGrant.Permissions => this.EffectivePermissions.ToArray();
     }
 }

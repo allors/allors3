@@ -13,9 +13,9 @@ namespace Allors.Database.Security
     /// </summary>
     public interface IAccessControlList
     {
-        IEnumerable<IAccessControl> AccessControls { get; }
+        IEnumerable<IGrant> Grants { get; }
 
-        IEnumerable<IRestriction> Restrictions { get; }
+        IEnumerable<IRevocation> Revocations { get; }
 
         bool CanRead(IRoleType roleType);
 

@@ -18,14 +18,14 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Transitional, m.Transitional.ObjectStates) ,
-                m.ObjectState.RolePattern(v=>v.Restrictions, v=> v.TransitionalsWhereObjectState),
+                m.ObjectState.RolePattern(v=>v.Revocations, v=> v.TransitionalsWhereObjectState),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<Transitional>())
             {
-                @this.TransitionalRestrictions = @this.ObjectStates.Select(v => v.ObjectRestriction).ToArray();
+                @this.TransitionalRevocations = @this.ObjectStates.Select(v => v.ObjectRevocation).ToArray();
             }
         }
     }

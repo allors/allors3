@@ -10,5 +10,7 @@ namespace Allors.Database.Security
     public interface IPermission : IObject
     {
         IClass Class { get; }
+
+        bool InWorkspace(string workspaceName);
     }
 }

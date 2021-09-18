@@ -36,7 +36,7 @@ namespace Allors.Workspace.Adapters.Remote
             this.recordsById = new Dictionary<long, DatabaseRecord>();
 
             this.AccessControlById = new Dictionary<long, AccessControl>();
-            this.RestrictionById = new Dictionary<long, Restriction>();
+            this.RevocationById = new Dictionary<long, Revocation>();
             this.Permissions = new HashSet<long>();
 
             this.readPermissionByOperandTypeByClass = new Dictionary<IClass, Dictionary<IOperandType, long>>();
@@ -46,7 +46,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal Dictionary<long, AccessControl> AccessControlById { get; }
 
-        internal Dictionary<long, Restriction> RestrictionById { get; }
+        internal Dictionary<long, Revocation> RevocationById { get; }
 
         internal ISet<long> Permissions { get; }
 
@@ -79,7 +79,7 @@ namespace Allors.Workspace.Adapters.Remote
                             return true;
                         }
 
-                        if (!@record.RestrictionIds.Equals(this.Ranges.Load(v.r)))
+                        if (!@record.RevocationIds.Equals(this.Ranges.Load(v.r)))
                         {
                             return true;
                         }
@@ -99,12 +99,12 @@ namespace Allors.Workspace.Adapters.Remote
                 this.recordsById[databaseObjects.Id] = databaseObjects;
             }
 
-            if (ctx.MissingAccessControlIds.Count > 0 || ctx.MissingRestrictionIds.Count > 0)
+            if (ctx.MissingAccessControlIds.Count > 0 || ctx.MissingRevocationIds.Count > 0)
             {
                 return new SecurityRequest
                 {
                     a = ctx.MissingAccessControlIds.Select(v => v).ToArray(),
-                    r = ctx.MissingRestrictionIds.Select(v => v).ToArray(),
+                    r = ctx.MissingRevocationIds.Select(v => v).ToArray(),
                 };
             }
 
@@ -192,11 +192,11 @@ namespace Allors.Workspace.Adapters.Remote
 
             if (securityResponse.r != null)
             {
-                foreach (var syncResponseRestriction in securityResponse.r)
+                foreach (var syncResponseRevocation in securityResponse.r)
                 {
-                    var id = syncResponseRestriction.i;
-                    var version = syncResponseRestriction.v;
-                    var permissionIds = this.Ranges.Load(syncResponseRestriction.p);
+                    var id = syncResponseRevocation.i;
+                    var version = syncResponseRevocation.v;
+                    var permissionIds = this.Ranges.Load(syncResponseRevocation.p);
                     this.AccessControlById[id] = new AccessControl { Version = version, PermissionIds = this.Ranges.Load(permissionIds) };
 
                     foreach (var permissionId in permissionIds)

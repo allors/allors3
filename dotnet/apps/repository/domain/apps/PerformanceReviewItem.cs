@@ -10,14 +10,14 @@ namespace Allors.Repository
     #region Allors
     [Id("962e5149-546b-4b18-ab09-e4de59b709ff")]
     #endregion
-    public partial class PerformanceReviewItem : Commentable, DelegatedAccessControlledObject
+    public partial class PerformanceReviewItem : Commentable, DelegatedAccessObject
     {
         #region inherited properties
         public string Comment { get; set; }
 
         public LocalisedText[] LocalisedComments { get; set; }
 
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

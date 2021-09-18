@@ -16,7 +16,7 @@ namespace Allors.Repository
     {
         #region inherited properties
 
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 
@@ -111,7 +111,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Derived]
-        public AccessControl ContactsAccessControl { get; set; }
+        public Grant ContactsGrant { get; set; }
 
         #region Allors
         [Id("3A40A81A-049D-40E9-93AA-6DDA5CDCC450")]

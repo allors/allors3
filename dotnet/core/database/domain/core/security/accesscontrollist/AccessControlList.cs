@@ -16,18 +16,17 @@ namespace Allors.Database.Domain
     /// </summary>
     public class AccessControlList : IAccessControlList
     {
+        private readonly IInternalAccessControlLists accessControlLists;
         private readonly IPermissionsCacheEntry permissionsCacheEntry;
-        private readonly string workspaceName;
 
-        private AccessControl[] accessControls;
-        private Restriction[] restrictions;
+        private Grant[] accessControls;
+        private Revocation[] revocations;
 
         private bool lazyLoaded;
 
-        internal AccessControlList(IAccessControlLists accessControlLists, IObject @object, string workspaceName)
+        internal AccessControlList(IInternalAccessControlLists accessControlLists, IObject @object)
         {
-            this.workspaceName = workspaceName;
-            this.AccessControlLists = accessControlLists;
+            this.accessControlLists = accessControlLists;
             this.Object = (Object)@object;
 
             var permissionsCache = @object.Strategy.Transaction.Database.Services.Get<IPermissionsCache>();
@@ -36,8 +35,8 @@ namespace Allors.Database.Domain
             this.lazyLoaded = false;
         }
 
-        IEnumerable<IAccessControl> IAccessControlList.AccessControls => this.AccessControls;
-        public IEnumerable<AccessControl> AccessControls
+        IEnumerable<IGrant> IAccessControlList.Grants => this.Grants;
+        public IEnumerable<Grant> Grants
         {
             get
             {
@@ -46,19 +45,17 @@ namespace Allors.Database.Domain
             }
         }
 
-        IEnumerable<IRestriction> IAccessControlList.Restrictions => this.Restrictions;
-        public Restriction[] Restrictions
+        IEnumerable<IRevocation> IAccessControlList.Revocations => this.Revocations;
+        public Revocation[] Revocations
         {
             get
             {
                 this.LazyLoad();
-                return this.restrictions;
+                return this.revocations;
             }
         }
 
         public Object Object { get; }
-
-        private IAccessControlLists AccessControlLists { get; }
 
         public bool CanRead(IRoleType roleType)
         {
@@ -94,12 +91,12 @@ namespace Allors.Database.Domain
         {
             this.LazyLoad();
 
-            if (this.restrictions?.Any(v => this.AccessControlLists.DeniedPermissionIdsByRestriction[v].Contains(permissionId)) == true)
+            if (this.accessControls.Any(v => this.accessControlLists.GrantedPermissionIds(v).Contains(permissionId)))
             {
-                return false;
+                return this.revocations?.Any(v => this.accessControlLists.RevokedPermissionIds(v).Contains(permissionId)) != true;
             }
 
-            return this.accessControls.Any(v => this.AccessControlLists.PermissionIdsByAccessControl[v].Contains(permissionId));
+            return false;
         }
 
         private void LazyLoad()
@@ -109,10 +106,10 @@ namespace Allors.Database.Domain
                 var strategy = this.Object.Strategy;
                 var transaction = strategy.Transaction;
 
-                Restriction[] delegatedAccessDeniedPermissions = null;
+                Revocation[] delegatedAccessDeniedPermissions = null;
 
                 SecurityToken[] securityTokens;
-                if (this.Object is DelegatedAccessControlledObject controlledObject)
+                if (this.Object is DelegatedAccessObject controlledObject)
                 {
                     var delegatedAccess = controlledObject.DelegateAccess();
                     securityTokens = delegatedAccess.SecurityTokens;
@@ -121,18 +118,18 @@ namespace Allors.Database.Domain
                         securityTokens = securityTokens.Where(v => v != null).ToArray();
                     }
 
-                    delegatedAccessDeniedPermissions = delegatedAccess.Restrictions;
+                    delegatedAccessDeniedPermissions = delegatedAccess.Revocations;
                 }
                 else
                 {
                     securityTokens = this.Object.SecurityTokens.ToArray();
                 }
 
-                var unfilteredRestrictions = delegatedAccessDeniedPermissions?.Length > 0
-                    ? this.Object.Restrictions.Union(delegatedAccessDeniedPermissions)
-                    : this.Object.Restrictions;
+                var unfilteredRevocations = delegatedAccessDeniedPermissions?.Length > 0
+                    ? this.Object.Revocations.Union(delegatedAccessDeniedPermissions)
+                    : this.Object.Revocations;
 
-                this.restrictions = this.AccessControlLists.Filter(unfilteredRestrictions);
+                this.revocations = this.accessControlLists.Filter(unfilteredRevocations);
 
                 if (securityTokens == null || securityTokens.Length == 0)
                 {
@@ -142,10 +139,7 @@ namespace Allors.Database.Domain
                                           : new[] { tokens.DefaultSecurityToken };
                 }
 
-                this.accessControls = securityTokens.SelectMany(v => v.AccessControls)
-                    .Distinct()
-                    .Where(this.AccessControlLists.PermissionIdsByAccessControl.ContainsKey)
-                    .ToArray();
+                this.accessControls = this.accessControlLists.Filter(securityTokens.SelectMany(v => v.Grants).Distinct());
 
                 this.lazyLoaded = true;
             }

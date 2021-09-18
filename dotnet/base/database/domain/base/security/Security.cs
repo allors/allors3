@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
                 {
                     foreach (var dictionaryEntry in permissionByOperandType)
                     {
-                        objectState.ObjectRestriction.AddDeniedPermission(dictionaryEntry.Value);
+                        objectState.ObjectRevocation.AddDeniedPermission(dictionaryEntry.Value);
                     }
                 }
             }
@@ -55,7 +55,7 @@ namespace Allors.Database.Domain
                 {
                     if (deniablePermissionByOperandTypeId.TryGetValue(operandType, out var permission))
                     {
-                        objectState.ObjectRestriction.AddDeniedPermission(permission);
+                        objectState.ObjectRevocation.AddDeniedPermission(permission);
                     }
                 }
             }
@@ -88,7 +88,7 @@ namespace Allors.Database.Domain
                 {
                     foreach (var dictionaryEntry in permissionByOperandType.Where(v => !excepts.Contains(v.Key)))
                     {
-                        objectState.ObjectRestriction.AddDeniedPermission(dictionaryEntry.Value);
+                        objectState.ObjectRevocation.AddDeniedPermission(dictionaryEntry.Value);
                     }
                 }
             }

@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
             var emptyRole = new RoleBuilder(this.transaction).WithName("Empty").Build();
             var defaultSecurityToken = new SecurityTokens(this.transaction).DefaultSecurityToken;
 
-            var acl = new AccessControlBuilder(this.transaction).WithRole(emptyRole).WithSubject(noperm).WithSecurityToken(defaultSecurityToken).Build();
+            var acl = new GrantBuilder(this.transaction).WithRole(emptyRole).WithSubject(noperm).WithSecurityToken(defaultSecurityToken).Build();
 
             var c1A = new C1Builder(this.transaction).WithName("c1A").Build();
             var c1B = new C1Builder(this.transaction).WithName("c1B").Build();

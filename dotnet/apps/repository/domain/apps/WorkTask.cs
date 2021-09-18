@@ -107,9 +107,9 @@ namespace Allors.Repository
 
         public ObjectState[] ObjectStates { get; set; }
 
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
-        public Restriction[] TransitionalRestrictions { get; set; }
+        public Revocation[] TransitionalRevocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

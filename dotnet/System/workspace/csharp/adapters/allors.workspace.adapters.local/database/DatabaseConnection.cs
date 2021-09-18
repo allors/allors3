@@ -54,11 +54,11 @@ namespace Allors.Workspace.Adapters.Local
 
                 var acl = accessControlLists[@object];
 
-                var accessControls = acl.AccessControls
+                var accessControls = acl.Grants
                     ?.Select(this.GetAccessControl)
                     .ToArray() ?? Array.Empty<AccessControl>();
 
-                this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, this.recordRanges.Load(acl.Restrictions.Select(v => v.Strategy.ObjectId)), accessControls);
+                this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, this.recordRanges.Load(acl.Revocations.Select(v => v.Strategy.ObjectId)), accessControls);
             }
         }
 
@@ -109,21 +109,21 @@ namespace Allors.Workspace.Adapters.Local
                 return true;
             });
 
-        private AccessControl GetAccessControl(IAccessControl accessControl)
+        private AccessControl GetAccessControl(IGrant grant)
         {
-            if (!this.accessControlById.TryGetValue(accessControl.Strategy.ObjectId, out var acessControl))
+            if (!this.accessControlById.TryGetValue(grant.Strategy.ObjectId, out var acessControl))
             {
                 acessControl = new AccessControl();
-                this.accessControlById.Add(accessControl.Strategy.ObjectId, acessControl);
+                this.accessControlById.Add(grant.Strategy.ObjectId, acessControl);
             }
 
-            if (acessControl.Version == accessControl.Strategy.ObjectVersion)
+            if (acessControl.Version == grant.Strategy.ObjectVersion)
             {
                 return acessControl;
             }
 
-            acessControl.Version = accessControl.Strategy.ObjectVersion;
-            acessControl.PermissionIds = this.recordRanges.Import(accessControl.Permissions.Select(v => v.Id));
+            acessControl.Version = grant.Strategy.ObjectVersion;
+            acessControl.PermissionIds = this.recordRanges.Import(grant.Permissions.Select(v => v.Id));
 
             return acessControl;
         }

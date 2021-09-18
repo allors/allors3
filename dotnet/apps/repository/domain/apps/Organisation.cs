@@ -175,7 +175,7 @@ namespace Allors.Repository
 
         public Locale Locale { get; set; }
 
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 
@@ -279,7 +279,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Derived]
-        public AccessControl ContactsAccessControl { get; set; }
+        public Grant ContactsGrant { get; set; }
 
         #region Allors
         [Id("980631CB-CC72-4264-87E5-B65DC6ABBB4D")]

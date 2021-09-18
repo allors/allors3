@@ -22,7 +22,7 @@ namespace Allors.Database.Domain.Tests
             var userGroup = new UserGroupBuilder(this.Transaction).WithName("UserGroup").Build();
             var securityToken = new SecurityTokenBuilder(this.Transaction).Build();
 
-            securityToken.AddAccessControl(new AccessControlBuilder(this.Transaction)
+            securityToken.AddAccessControl(new GrantBuilder(this.Transaction)
                 .WithSubjectGroup(userGroup)
                 .Build());
 
@@ -35,7 +35,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Single(derivationError.Relations);
             Assert.Equal(typeof(DerivationErrorRequired), derivationError.GetType());
-            Assert.Equal(this.M.AccessControl.Role.RelationType, derivationError.Relations[0].RelationType);
+            Assert.Equal(this.M.Grant.Role.RelationType, derivationError.Relations[0].RelationType);
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace Allors.Database.Domain.Tests
             var role = new RoleBuilder(this.Transaction).WithName("Role").Build();
 
             securityToken.AddAccessControl(
-            new AccessControlBuilder(this.Transaction)
+            new GrantBuilder(this.Transaction)
                 .WithRole(role)
                 .Build());
 
@@ -58,8 +58,8 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(2, derivationError.Relations.Length);
             Assert.Equal(typeof(DerivationErrorAtLeastOne), derivationError.GetType());
-            Assert.True(new ArrayList(derivationError.RoleTypes).Contains(this.M.AccessControl.Subjects));
-            Assert.True(new ArrayList(derivationError.RoleTypes).Contains(this.M.AccessControl.SubjectGroups));
+            Assert.True(new ArrayList(derivationError.RoleTypes).Contains(this.M.Grant.Subjects));
+            Assert.True(new ArrayList(derivationError.RoleTypes).Contains(this.M.Grant.SubjectGroups));
         }
     }
 }

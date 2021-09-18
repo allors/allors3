@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     using System;
 
-    public partial class AccessControls
+    public partial class Grants
     {
         public static readonly Guid CreatorsId = new Guid("1ED18B97-44F1-4AE7-A8DD-C7DA0BAE21E4");
         public static readonly Guid GuestCreatorsId = new Guid("16AC80CE-FC54-408D-AD33-DDAD249B82E4");
@@ -15,17 +15,17 @@ namespace Allors.Database.Domain
         public static readonly Guid AdministratorId = new Guid("282C4874-10EC-437B-9B0D-FAADFDFEC63E");
         public static readonly Guid GuestId = new Guid("07AED92A-84E7-4DA6-96A3-C764093D2A58");
 
-        private UniquelyIdentifiableCache<AccessControl> cache;
+        private UniquelyIdentifiableCache<Grant> cache;
 
-        public UniquelyIdentifiableCache<AccessControl> Cache => this.cache ??= new UniquelyIdentifiableCache<AccessControl>(this.Transaction);
+        public UniquelyIdentifiableCache<Grant> Cache => this.cache ??= new UniquelyIdentifiableCache<Grant>(this.Transaction);
 
-        public AccessControl Creators => this.Cache[CreatorsId];
+        public Grant Creators => this.Cache[CreatorsId];
 
-        public AccessControl GuestCreator => this.Cache[GuestCreatorsId];
+        public Grant GuestCreator => this.Cache[GuestCreatorsId];
 
-        public AccessControl Administrator => this.Cache[AdministratorId];
+        public Grant Administrator => this.Cache[AdministratorId];
 
-        public AccessControl Guest => this.Cache[GuestId];
+        public Grant Guest => this.Cache[GuestId];
 
         protected override void CorePrepare(Setup setup)
         {

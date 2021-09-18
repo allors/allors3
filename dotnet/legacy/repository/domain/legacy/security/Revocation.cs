@@ -5,7 +5,7 @@
 
 namespace Allors.Repository
 {
-    public partial class Restriction
+    public partial class Revocation
     {
         #region inherited methods
         public void OnPreDerive() { }

@@ -244,16 +244,16 @@ namespace Allors.Database.Protocol.Json
                 {
                     i = v.Strategy.ObjectId,
                     v = v.Strategy.ObjectVersion,
-                    a = this.ranges.Import(this.AccessControlLists[v].AccessControls.Select(w => w.Strategy.ObjectId)).Save(),
-                    r = this.ranges.Import(this.AccessControlLists[v].Restrictions.Select(w => w.Strategy.ObjectId)).Save(),
+                    a = this.ranges.Import(this.AccessControlLists[v].Grants.Select(w => w.Strategy.ObjectId)).Save(),
+                    r = this.ranges.Import(this.AccessControlLists[v].Revocations.Select(w => w.Strategy.ObjectId)).Save(),
                 }).ToArray(),
                 o = this.objectByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Id),
                 c = this.collectionsByName.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Select(obj => obj.Id).ToArray()),
                 v = this.valueByName,
-                a = this.AccessControlLists.AccessControls
+                a = this.AccessControlLists.Grants
                     .Select(v => new[] { v.Strategy.ObjectId, v.Strategy.ObjectVersion })
                     .ToArray(),
-                r = this.AccessControlLists.Rejections
+                r = this.AccessControlLists.Revocations
                     .Select(v => new[] { v.Strategy.ObjectId, v.Strategy.ObjectVersion })
                     .ToArray(),
             };

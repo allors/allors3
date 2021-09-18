@@ -13,12 +13,12 @@ namespace Allors.Repository
     #region Allors
     [Id("daf83fcc-832e-4d5e-ba71-5a08f42355db")]
     #endregion
-    public partial class RequestItem : DelegatedAccessControlledObject, Commentable, Transitional, Versioned, Deletable
+    public partial class RequestItem : DelegatedAccessObject, Commentable, Transitional, Versioned, Deletable
     {
         #region inherited properties
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
-        public Restriction[] TransitionalRestrictions { get; set; }
+        public Revocation[] TransitionalRevocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

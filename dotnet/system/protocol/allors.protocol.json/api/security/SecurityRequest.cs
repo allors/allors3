@@ -8,12 +8,12 @@ namespace Allors.Protocol.Json.Api.Security
     public class SecurityRequest
     {
         /// <summary>
-        /// AccessControls
+        /// Grants
         /// </summary>
         public long[] a { get; set; }
 
         /// <summary>
-        /// Restrictions
+        /// Revocations
         /// </summary>
         public long[] r { get; set; }
 

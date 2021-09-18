@@ -22,7 +22,7 @@ namespace Allors.Repository
 
         public Agreement[] Agreements { get; set; }
 
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

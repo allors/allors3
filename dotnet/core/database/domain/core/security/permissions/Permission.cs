@@ -19,7 +19,5 @@ namespace Allors.Database.Domain
         IOperandType OperandType { get; }
 
         Operations Operation { get; }
-
-        bool InWorkspace(string workspaceName);
     }
 }

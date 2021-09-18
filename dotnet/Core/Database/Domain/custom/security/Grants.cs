@@ -7,17 +7,17 @@ namespace Allors.Database.Domain
 {
     using System;
 
-    public partial class AccessControls
+    public partial class Grants
     {
         public static readonly Guid SalesId = new Guid("9DD281CA-E699-4A2E-8C4F-BCA6CC7B227F");
         public static readonly Guid OperationsId = new Guid("88F6061E-9677-4AA1-ACAC-D7972D527941");
         public static readonly Guid ProcurementId = new Guid("91083059-28D5-419E-B47D-D88E7A621D54");
 
-        public AccessControl Sales => this.Cache[SalesId];
+        public Grant Sales => this.Cache[SalesId];
 
-        public AccessControl Operations => this.Cache[OperationsId];
+        public Grant Operations => this.Cache[OperationsId];
 
-        public AccessControl Procurement => this.Cache[ProcurementId];
+        public Grant Procurement => this.Cache[ProcurementId];
 
         protected override void CustomSetup(Setup setup)
         {

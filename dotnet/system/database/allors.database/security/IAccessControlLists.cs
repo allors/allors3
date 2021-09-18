@@ -14,8 +14,8 @@ namespace Allors.Database.Security
             get;
         }
 
-        ISet<long> PermissionIds(IAccessControl accessControl);
+        IEnumerable<IGrant> Grants { get; }
 
-        ISet<long> DeniedPermissionIds(IRestriction restriction);
+        IEnumerable<IRevocation> Revocations { get; }
     }
 }

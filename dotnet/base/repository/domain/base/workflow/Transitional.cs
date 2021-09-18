@@ -43,6 +43,6 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
         [Indexed]
-        Restriction[] TransitionalRestrictions { get; set; }
+        Revocation[] TransitionalRevocations { get; set; }
     }
 }

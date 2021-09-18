@@ -30,7 +30,7 @@ namespace Allors.Repository
 
         #region inherited methods
 
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

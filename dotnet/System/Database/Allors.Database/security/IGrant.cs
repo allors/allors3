@@ -8,10 +8,10 @@ namespace Allors.Database.Security
     /// <summary>
     /// List of permissions for an object/user combination.
     /// </summary>
-    public interface IRestriction
+    public interface IGrant
     {
         IStrategy Strategy { get; }
 
-        IPermission[] DeniedPermissions { get; }
+        IPermission[] Permissions { get; }
     }
 }

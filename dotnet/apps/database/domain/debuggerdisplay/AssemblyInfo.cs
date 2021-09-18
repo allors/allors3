@@ -12,7 +12,7 @@ using static DebuggerDisplayConstants;
 [assembly: DebuggerDisplay("[Key={Key}, Value={Value}]", Target = typeof(KeyValuePair<,>))]
 
 // Allors
-[assembly: DebuggerDisplay("{DebuggerDisplay}" + id, Target = typeof(AccessControl))]
+[assembly: DebuggerDisplay("{DebuggerDisplay}" + id, Target = typeof(Grant))]
 [assembly: DebuggerDisplay(name, Target = typeof(Facility))]
 [assembly: DebuggerDisplay(name, Target = typeof(NonSerialisedInventoryItem))]
 [assembly: DebuggerDisplay(name, Target = typeof(NonUnifiedPart))]

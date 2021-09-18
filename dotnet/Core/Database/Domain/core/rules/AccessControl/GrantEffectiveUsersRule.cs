@@ -12,19 +12,19 @@ namespace Allors.Database.Domain
     using Derivations.Rules;
     using Meta;
 
-    public class AccessControlEffectiveUsersRule : Rule
+    public class GrantEffectiveUsersRule : Rule
     {
-        public AccessControlEffectiveUsersRule(MetaPopulation m) : base(m, new Guid("2D3F4F02-7439-48E7-9E5B-363F4A4384F0")) =>
+        public GrantEffectiveUsersRule(MetaPopulation m) : base(m, new Guid("2D3F4F02-7439-48E7-9E5B-363F4A4384F0")) =>
             this.Patterns = new Pattern[]
             {
-                m.AccessControl.RolePattern(v=>v.Subjects),
-                m.AccessControl.RolePattern(v=>v.SubjectGroups),
-                m.UserGroup.RolePattern(v=>v.Members, v=>v.AccessControlsWhereSubjectGroup),
+                m.Grant.RolePattern(v=>v.Subjects),
+                m.Grant.RolePattern(v=>v.SubjectGroups),
+                m.UserGroup.RolePattern(v=>v.Members, v=>v.GrantsWhereSubjectGroup),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var accessControl in matches.Cast<AccessControl>())
+            foreach (var accessControl in matches.Cast<Grant>())
             {
                 accessControl.EffectiveUsers = accessControl
                     .SubjectGroups.SelectMany(v => v.Members)
@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
                     .ToArray();
 
                 // Invalidate cache
-                ((IObject)accessControl).Strategy.Transaction.Database.Services.Get<IAccessControlCache>().Clear(accessControl.Id);
+                accessControl.Strategy.Transaction.Database.Services.Get<IGrantCache>().Clear(accessControl.Id);
             }
         }
     }

@@ -10,10 +10,10 @@ namespace Allors.Repository
     #region Allors
     [Id("e41be1b2-715b-4bc0-b095-ac23d9950ee4")]
     #endregion
-    public partial class AccountingTransactionDetail : DelegatedAccessControlledObject
+    public partial class AccountingTransactionDetail : DelegatedAccessObject
     {
         #region inherited properties
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

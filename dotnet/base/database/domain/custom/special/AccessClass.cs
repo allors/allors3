@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     public partial class AccessClass
     {
-        public void CustomDelegateAccess(DelegatedAccessControlledObjectDelegateAccess method)
+        public void CustomDelegateAccess(DelegatedAccessObjectDelegateAccess method)
         {
             if (this.Block)
             {

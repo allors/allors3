@@ -175,9 +175,9 @@ namespace Allors.Database.Domain
                 this.TimeSheetWhereWorker.Delete();
             }
 
-            if (this.ExistOwnerAccessControl)
+            if (this.ExistOwnerGrant)
             {
-                this.OwnerAccessControl.Delete();
+                this.OwnerGrant.Delete();
             }
 
             if (this.ExistOwnerSecurityToken)

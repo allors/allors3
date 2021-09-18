@@ -26,11 +26,11 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Commit();
 
             var defaultSecurityToken = new SecurityTokens(this.Transaction).DefaultSecurityToken;
-            var dstAcs = defaultSecurityToken.AccessControls.Where(v => v.EffectiveUsers.Contains(administrator));
-            var dstAcs2 = defaultSecurityToken.AccessControls.Where(v => v.SubjectGroups.Contains(administrators));
+            var dstAcs = defaultSecurityToken.Grants.Where(v => v.EffectiveUsers.Contains(administrator));
+            var dstAcs2 = defaultSecurityToken.Grants.Where(v => v.SubjectGroups.Contains(administrators));
 
-            var acs = new AccessControls(this.Transaction).Extent().Where(v => v.EffectiveUsers.Contains(administrator));
-            var acs2 = new AccessControls(this.Transaction).Extent().Where(v => v.SubjectGroups.Contains(administrators));
+            var acs = new Grants(this.Transaction).Extent().Where(v => v.EffectiveUsers.Contains(administrator));
+            var acs2 = new Grants(this.Transaction).Extent().Where(v => v.SubjectGroups.Contains(administrators));
 
             var acl = new DatabaseAccessControlLists(administrator)[accessClass];
             Assert.True(acl.CanRead(this.M.AccessClass.Property));

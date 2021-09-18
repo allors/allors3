@@ -7,7 +7,7 @@ namespace Allors.Database.Domain
 {
     using System;
 
-    public partial class AccessControls
+    public partial class Grants
     {
         public static readonly Guid SalesId = new Guid("9DD281CA-E699-4A2E-8C4F-BCA6CC7B227F");
         public static readonly Guid OperationsId = new Guid("88F6061E-9677-4AA1-ACAC-D7972D527941");

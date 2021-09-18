@@ -7,7 +7,7 @@ namespace Allors.Workspace.Adapters
 {
     using Ranges;
 
-    public class Restriction
+    public class Revocation
     {
         public long Version { get; set; }
 

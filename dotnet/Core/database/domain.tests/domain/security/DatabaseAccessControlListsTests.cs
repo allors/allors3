@@ -9,7 +9,7 @@ namespace Allors.Database.Domain.Tests
     using System.Linq;
     using Meta;
     using Xunit;
-    using AccessControl = Domain.AccessControl;
+    using Grant = Domain.Grant;
     using Object = Domain.Object;
     using Permission = Domain.Permission;
     using Role = Domain.Role;
@@ -51,7 +51,7 @@ namespace Allors.Database.Domain.Tests
             var permission = this.FindPermission(this.M.Organisation.Name, Operations.Read);
             var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
             var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
-            new AccessControlBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
+            new GrantBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
 
             this.Transaction.Derive();
             this.Transaction.Commit();
@@ -65,7 +65,7 @@ namespace Allors.Database.Domain.Tests
                 var token = new SecurityTokenBuilder(session).Build();
                 organisation.AddSecurityToken(token);
 
-                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First());
+                var accessControl = (Grant)session.Instantiate(role.GrantsWhereRole.First());
                 token.AddAccessControl(accessControl);
 
                 this.Transaction.Derive();
@@ -88,7 +88,7 @@ namespace Allors.Database.Domain.Tests
             var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
             new UserGroupBuilder(this.Transaction).WithName("Group").WithMember(person).Build();
 
-            new AccessControlBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
+            new GrantBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
 
             this.Transaction.Derive();
             this.Transaction.Commit();
@@ -102,7 +102,7 @@ namespace Allors.Database.Domain.Tests
                 var token = new SecurityTokenBuilder(session).Build();
                 organisation.AddSecurityToken(token);
 
-                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First());
+                var accessControl = (Grant)session.Instantiate(role.GrantsWhereRole.First());
                 token.AddAccessControl(accessControl);
 
                 Assert.False(this.Transaction.Derive(false).HasErrors);
@@ -129,7 +129,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            new AccessControlBuilder(this.Transaction).WithSubject(anotherPerson).WithRole(databaseRole).Build();
+            new GrantBuilder(this.Transaction).WithSubject(anotherPerson).WithRole(databaseRole).Build();
             this.Transaction.Commit();
 
             foreach (var session in new[] { this.Transaction })
@@ -142,7 +142,7 @@ namespace Allors.Database.Domain.Tests
                 organisation.AddSecurityToken(token);
 
                 var role = (Role)session.Instantiate(new Roles(this.Transaction).FindBy(this.M.Role.Name, "Role"));
-                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First());
+                var accessControl = (Grant)session.Instantiate(role.GrantsWhereRole.First());
                 token.AddAccessControl(accessControl);
 
                 Assert.False(this.Transaction.Derive(false).HasErrors);
@@ -168,7 +168,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            new AccessControlBuilder(this.Transaction).WithSubjectGroup(anotherUserGroup).WithRole(databaseRole).Build();
+            new GrantBuilder(this.Transaction).WithSubjectGroup(anotherUserGroup).WithRole(databaseRole).Build();
 
             this.Transaction.Commit();
 
@@ -182,7 +182,7 @@ namespace Allors.Database.Domain.Tests
                 organisation.AddSecurityToken(token);
 
                 var role = (Role)session.Instantiate(new Roles(this.Transaction).FindBy(this.M.Role.Name, "Role"));
-                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First());
+                var accessControl = (Grant)session.Instantiate(role.GrantsWhereRole.First());
                 token.AddAccessControl(accessControl);
 
                 Assert.False(this.Transaction.Derive(false).HasErrors);
@@ -202,7 +202,7 @@ namespace Allors.Database.Domain.Tests
             var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
             var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
             var person2 = new PersonBuilder(this.Transaction).WithFirstName("Jane").WithLastName("Doe").Build();
-            new AccessControlBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
+            new GrantBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
 
             this.Transaction.Derive();
             this.Transaction.Commit();
@@ -216,7 +216,7 @@ namespace Allors.Database.Domain.Tests
                 var token = new SecurityTokenBuilder(session).Build();
                 organisation.AddSecurityToken(token);
 
-                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First());
+                var accessControl = (Grant)session.Instantiate(role.GrantsWhereRole.First());
                 token.AddAccessControl(accessControl);
 
                 this.Transaction.Derive();
@@ -237,12 +237,12 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void Restrictions()
+        public void Revocations()
         {
             var readOrganisationName = this.FindPermission(this.M.Organisation.Name, Operations.Read);
             var databaseRole = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(readOrganisationName).Build();
             var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
-            new AccessControlBuilder(this.Transaction).WithRole(databaseRole).WithSubject(person).Build();
+            new GrantBuilder(this.Transaction).WithRole(databaseRole).WithSubject(person).Build();
 
             this.Transaction.Derive();
             this.Transaction.Commit();
@@ -257,7 +257,7 @@ namespace Allors.Database.Domain.Tests
                 organisation.AddSecurityToken(token);
 
                 var role = (Role)session.Instantiate(new Roles(this.Transaction).FindBy(this.M.Role.Name, "Role"));
-                var accessControl = (AccessControl)session.Instantiate(role.AccessControlsWhereRole.First());
+                var accessControl = (Grant)session.Instantiate(role.GrantsWhereRole.First());
                 token.AddAccessControl(accessControl);
 
                 Assert.False(this.Transaction.Derive(false).HasErrors);
@@ -266,9 +266,9 @@ namespace Allors.Database.Domain.Tests
 
                 Assert.True(acl.CanRead(this.M.Organisation.Name));
 
-                var restriction = new RestrictionBuilder(this.Transaction).WithDeniedPermission(readOrganisationName).Build();
+                var revocation = new RevocationBuilder(this.Transaction).WithDeniedPermission(readOrganisationName).Build();
 
-                organisation.AddRestriction(restriction);
+                organisation.AddRevocation(revocation);
 
                 acl = new DatabaseAccessControlLists(person)[organisation];
 

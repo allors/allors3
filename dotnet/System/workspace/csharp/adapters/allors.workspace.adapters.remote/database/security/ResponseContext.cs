@@ -17,17 +17,17 @@ namespace Allors.Workspace.Adapters.Remote
             this.database = database;
 
             this.MissingAccessControlIds = new HashSet<long>();
-            this.MissingRestrictionIds = new HashSet<long>();
+            this.MissingRevocationIds = new HashSet<long>();
             this.MissingPermissionIds = new HashSet<long>();
         }
 
         internal HashSet<long> MissingAccessControlIds { get; }
 
-        internal HashSet<long> MissingRestrictionIds { get; }
+        internal HashSet<long> MissingRevocationIds { get; }
 
         internal HashSet<long> MissingPermissionIds { get; }
 
-        internal long[] CheckForMissingAccessControls(long[] value)
+        internal long[] CheckForMissingGrants(long[] value)
         {
             if (value == null)
             {
@@ -42,16 +42,16 @@ namespace Allors.Workspace.Adapters.Remote
             return value;
         }
 
-        internal long[] CheckForMissingRestrictions(long[] value)
+        internal long[] CheckForMissingRevocations(long[] value)
         {
             if (value == null)
             {
                 return null;
             }
 
-            foreach (var restrictionId in value.Where(v => !this.database.RestrictionById.ContainsKey(v)))
+            foreach (var revocationId in value.Where(v => !this.database.RevocationById.ContainsKey(v)))
             {
-                this.MissingRestrictionIds.Add(restrictionId);
+                this.MissingRevocationIds.Add(revocationId);
             }
 
             return value;

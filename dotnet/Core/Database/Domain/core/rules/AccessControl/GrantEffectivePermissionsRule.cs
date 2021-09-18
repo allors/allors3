@@ -12,23 +12,23 @@ namespace Allors.Database.Domain
     using Derivations.Rules;
     using Meta;
 
-    public class AccessControlEffectivePermissionsRule : Rule
+    public class GrantEffectivePermissionsRule : Rule
     {
-        public AccessControlEffectivePermissionsRule(MetaPopulation m) : base(m, new Guid("1F897B84-EF92-4E94-8877-3501D56D426B")) =>
+        public GrantEffectivePermissionsRule(MetaPopulation m) : base(m, new Guid("1F897B84-EF92-4E94-8877-3501D56D426B")) =>
             this.Patterns = new Pattern[]
             {
-                m.AccessControl.RolePattern(v=>v.Role),
-                m.Role.RolePattern(v=>v.Permissions, v=>v.AccessControlsWhereRole),
+                m.Grant.RolePattern(v=>v.Role),
+                m.Role.RolePattern(v=>v.Permissions, v=>v.GrantsWhereRole),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var accessControl in matches.Cast<AccessControl>())
+            foreach (var accessControl in matches.Cast<Grant>())
             {
                 accessControl.EffectivePermissions = (accessControl.Role?.Permissions.ToArray());
 
                 // Invalidate cache
-                ((IObject)accessControl).Strategy.Transaction.Database.Services.Get<IAccessControlCache>().Clear(accessControl.Id);
+                ((IObject)accessControl).Strategy.Transaction.Database.Services.Get<IGrantCache>().Clear(accessControl.Id);
             }
         }
     }

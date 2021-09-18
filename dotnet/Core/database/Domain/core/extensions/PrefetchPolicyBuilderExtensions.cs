@@ -24,18 +24,18 @@ namespace Allors.Database.Domain
         {
             // TODO: Cache
             var AccessControlPrefetchPolicy = new PrefetchPolicyBuilder()
-                .WithRule(m.AccessControl.UniqueId)
+                .WithRule(m.Grant.UniqueId)
                 .Build();
 
             var SecurityTokenPrefetchPolicy = new PrefetchPolicyBuilder()
-                .WithRule(m.SecurityToken.AccessControls, AccessControlPrefetchPolicy)
+                .WithRule(m.SecurityToken.Grants, AccessControlPrefetchPolicy)
                 .Build();
 
             if (@class.DelegatedAccessRoleTypes != null)
             {
                 var builder = new PrefetchPolicyBuilder()
                     .WithRule(m.Object.SecurityTokens, SecurityTokenPrefetchPolicy)
-                    .WithRule(m.Object.Restrictions)
+                    .WithRule(m.Object.Revocations)
                     .Build();
 
                 foreach (var delegatedAccessRoleType in @class.DelegatedAccessRoleTypes)
@@ -45,7 +45,7 @@ namespace Allors.Database.Domain
             }
 
             @this.WithRule(m.Object.SecurityTokens, SecurityTokenPrefetchPolicy);
-            @this.WithRule(m.Object.Restrictions);
+            @this.WithRule(m.Object.Revocations);
         }
     }
 }

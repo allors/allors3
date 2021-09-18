@@ -13,10 +13,10 @@ namespace Allors.Repository
     #region Allors
     [Id("f67e7755-5848-4601-ba70-4d1a39abfe4b")]
     #endregion
-    public partial class WorkEffortInventoryAssignment : Versioned, Deletable, DelegatedAccessControlledObject
+    public partial class WorkEffortInventoryAssignment : Versioned, Deletable, DelegatedAccessObject
     {
         #region inherited properties
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

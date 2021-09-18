@@ -11,10 +11,10 @@ namespace Allors.Repository
     #region Allors
     [Id("7fec090e-3d4a-4ec7-895f-4b30d01f59bb")]
     #endregion
-    public partial class PickListItem : DelegatedAccessControlledObject, Deletable
+    public partial class PickListItem : DelegatedAccessObject, Deletable
     {
         #region inherited properties
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

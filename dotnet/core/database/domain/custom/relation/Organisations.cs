@@ -12,14 +12,14 @@ namespace Allors.Database.Domain
 
         public UniquelyIdentifiableCache<Organisation> Cache => this.cache ??= new UniquelyIdentifiableCache<Organisation>(this.Transaction);
 
-        protected override void CustomPrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.Restriction);
+        protected override void CustomPrepare(Setup setup) => setup.AddDependency(this.ObjectType, M.Revocation);
 
         protected override void CustomSecure(Security security)
         {
-            var restrictions = new Restrictions(this.Transaction);
+            var revocations = new Revocations(this.Transaction);
             var permissions = new Permissions(this.Transaction);
 
-            restrictions.ToggleRestriction.DeniedPermissions = new[]
+            revocations.ToggleRevocation.DeniedPermissions = new[]
             {
                 permissions.Get(this.Meta, this.Meta.Name, Operations.Write),
                 permissions.Get(this.Meta, this.Meta.Owner, Operations.Write),

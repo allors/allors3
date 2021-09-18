@@ -14,11 +14,11 @@ namespace Allors.Repository
     public partial class ShipmentItemState : ObjectState
     {
         #region inherited properties
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 
-        public Restriction ObjectRestriction { get; set; }
+        public Revocation ObjectRevocation { get; set; }
 
         public string Name { get; set; }
 

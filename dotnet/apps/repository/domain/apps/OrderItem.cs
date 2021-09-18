@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("f3ef0124-e867-4da2-9323-80fbe1f214c2")]
     #endregion
-    public partial interface OrderItem : Transitional, Priceable, Deletable, DelegatedAccessControlledObject
+    public partial interface OrderItem : Transitional, Priceable, Deletable, DelegatedAccessObject
     {
         #region Allors
         [Id("7D6B04D2-062C-45B8-96AB-DC41A3DECAF8")]

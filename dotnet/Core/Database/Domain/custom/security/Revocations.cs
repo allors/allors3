@@ -8,17 +8,17 @@ namespace Allors.Database.Domain
 {
     using System;
 
-    public partial class Restrictions
+    public partial class Revocations
     {
-        public static readonly Guid ToggleRestrictionId = new Guid("68BB6EC4-CF15-47D1-8F87-D817419C9482");
+        public static readonly Guid ToggleRevocationId = new Guid("68BB6EC4-CF15-47D1-8F87-D817419C9482");
 
-        public Restriction ToggleRestriction => this.Cache[ToggleRestrictionId];
+        public Revocation ToggleRevocation => this.Cache[ToggleRevocationId];
 
         protected override void CustomSecure(Security security)
         {
             var merge = this.Cache.Merger().Action();
 
-            merge(ToggleRestrictionId, _ => { });
+            merge(ToggleRevocationId, _ => { });
         }
     }
 }

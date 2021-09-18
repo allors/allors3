@@ -247,7 +247,7 @@ namespace Allors.Repository
         public DateTime DatabaseI12AllorsDateTime { get; set; }
 
 
-        public Restriction[] Restrictions { get; set; }
+        public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 

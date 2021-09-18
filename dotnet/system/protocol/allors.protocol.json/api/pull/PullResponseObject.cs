@@ -23,7 +23,7 @@ namespace Allors.Protocol.Json.Api.Pull
         public long[] a { get; set; }
 
         /// <summary>
-        /// Restrictions (Range)
+        /// Revocations (Range)
         /// </summary>
         public long[] r { get; set; }
     }
