@@ -25,14 +25,11 @@ namespace Commands
 
             database.Init();
 
+            var config = new Config { DataPath = this.Parent.DataPath };
+            new Setup(database, config).Apply();
+
             using (var session = database.CreateTransaction())
             {
-                var config = new Config { DataPath = this.Parent.DataPath };
-                new Setup(session, config).Apply();
-
-                session.Derive();
-                session.Commit();
-
                 var scheduler = new AutomatedAgents(session).System;
                 session.Services.Get<IUserService>().User = scheduler;
 

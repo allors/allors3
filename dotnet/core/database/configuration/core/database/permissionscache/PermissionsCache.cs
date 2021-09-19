@@ -7,6 +7,7 @@ namespace Allors.Database.Configuration
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using Domain;
     using Security;
@@ -18,14 +19,13 @@ namespace Allors.Database.Configuration
 
         public IDatabase Database { get; }
 
-        private Dictionary<Guid, IPermissionsCacheEntry> PermissionCacheEntryByClassId { get; set; }
+        private Dictionary<Guid, IPermissionsCacheEntry> permissionCacheEntryByClassId { get; set; }
 
         public IPermissionsCacheEntry Create(IGrouping<Guid, IPermission> permissions) => new PermissionsCacheEntry(permissions);
 
         public IPermissionsCacheEntry Get(Guid classId)
         {
-            var permissionCacheEntryByClassId = this.PermissionCacheEntryByClassId;
-            if (permissionCacheEntryByClassId == null)
+            if (this.permissionCacheEntryByClassId == null)
             {
                 var transaction = this.Database.CreateTransaction();
                 try
@@ -33,13 +33,16 @@ namespace Allors.Database.Configuration
                     var permissions = new Permissions(transaction).Extent();
                     transaction.Prefetch(this.Database.Services.Get<IPrefetchPolicyCache>().PermissionsWithClass, permissions);
 
-                    permissionCacheEntryByClassId = permissions
+                    if (permissions.Count == 0)
+                    {
+                        Debugger.Break();
+                    }
+
+                    this.permissionCacheEntryByClassId = permissions
                         .GroupBy(v => v.ClassPointer)
                         .ToDictionary(
                             v => v.Key,
                             w => (IPermissionsCacheEntry)new PermissionsCacheEntry(w));
-
-                    this.PermissionCacheEntryByClassId = permissionCacheEntryByClassId;
                 }
                 finally
                 {
@@ -50,10 +53,10 @@ namespace Allors.Database.Configuration
                 }
             }
 
-            permissionCacheEntryByClassId.TryGetValue(classId, out var permissionsCacheEntry);
+            this.permissionCacheEntryByClassId.TryGetValue(classId, out var permissionsCacheEntry);
             return permissionsCacheEntry;
         }
 
-        public void Clear() => this.PermissionCacheEntryByClassId = null;
+        public void Clear() => this.permissionCacheEntryByClassId = null;
     }
 }

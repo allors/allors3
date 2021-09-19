@@ -15,10 +15,11 @@ namespace Allors.Database.Domain
         private readonly Dictionary<IObjectType, IObjects> objectsByObjectType;
         private readonly ObjectsGraph objectsGraph;
 
-        public Setup(ITransaction transaction, Config config)
+        public Setup(IDatabase database, Config config)
         {
             this.Config = config;
-            this.transaction = transaction;
+            Permissions.Sync(database);
+            this.transaction = database.CreateTransaction();
 
             this.objectsByObjectType = new Dictionary<IObjectType, IObjects>();
             foreach (var objectType in transaction.Database.MetaPopulation.DatabaseComposites)
@@ -54,6 +55,9 @@ namespace Allors.Database.Domain
             {
                 new Security(this.transaction).Apply();
             }
+
+            this.transaction.Derive();
+            this.transaction.Commit();
         }
 
         public void Add(IObjects objects) => this.objectsGraph.Add(objects);

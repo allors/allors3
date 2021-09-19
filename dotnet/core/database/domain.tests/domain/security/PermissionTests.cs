@@ -69,7 +69,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void NoPermissionsForAssociationsWhenUnitType()
         {
-            new Permissions(this.Transaction).Sync();
+            Permissions.Sync(this.Transaction.Database);
+            this.Transaction.Rollback();
+
             var permissions = new Permissions(this.Transaction).Extent().ToArray();
 
             Assert.Empty(permissions.Where(v => v.OperandType is IAssociationType associationType && associationType.RoleType.ObjectType.IsUnit));
@@ -84,7 +86,9 @@ namespace Allors.Database.Domain.Tests
 
             var permission = new ExecutePermissionBuilder(this.Transaction).WithClassPointer(new Guid()).WithMethodTypePointer(new Guid()).Build();
 
-            new Permissions(this.Transaction).Sync();
+            Permissions.Sync(this.Transaction.Database);
+
+            this.Transaction.Rollback();
 
             Assert.Equal(count, new Permissions(this.Transaction).Extent().Count);
         }
@@ -94,7 +98,9 @@ namespace Allors.Database.Domain.Tests
         {
             var permission = new ReadPermissionBuilder(this.Transaction).Build();
 
-            new Permissions(this.Transaction).Sync();
+            Permissions.Sync(this.Transaction.Database);
+
+            this.Transaction.Rollback();
 
             Assert.True(permission.Strategy.IsDeleted);
         }

@@ -10,6 +10,7 @@ namespace Allors.Database.Domain
     using Database.Security;
     using Meta;
     using Ranges;
+    using Services;
 
     public class DatabaseAccessControl : IInternalAccessControl
     {
@@ -18,10 +19,14 @@ namespace Allors.Database.Domain
         private readonly Dictionary<IObject, IAccessControlList> aclByObject;
 
         private readonly IRanges<long> ranges;
+        private readonly IPermissionsCache permissionCache;
 
         public DatabaseAccessControl(User user)
         {
-            this.ranges = user.Strategy.Transaction.Database.Services.Get<IRanges<long>>();
+            var services = user.Strategy.Transaction.Database.Services;
+
+            this.ranges = services.Get<IRanges<long>>();
+            this.permissionCache = services.Get<IPermissionsCache>();
 
             this.User = user;
             this.aclByObject = new Dictionary<IObject, IAccessControlList>();
@@ -37,7 +42,7 @@ namespace Allors.Database.Domain
             {
                 if (!this.aclByObject.TryGetValue(@object, out var acl))
                 {
-                    acl = new AccessControlList(this, @object);
+                    acl = new AccessControlList(this, @object, this.permissionCache);
                     this.aclByObject.Add(@object, acl);
                 }
 

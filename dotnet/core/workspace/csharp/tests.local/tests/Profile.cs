@@ -63,11 +63,10 @@ namespace Tests.Workspace.Local
 
             this.Database.Init();
 
-            using var transaction = this.Database.CreateTransaction();
             var config = new Config();
-            new Setup(transaction, config).Apply();
-            transaction.Derive();
-            transaction.Commit();
+            new Setup(this.Database, config).Apply();
+
+            using var transaction = this.Database.CreateTransaction();
 
             var administrator = new PersonBuilder(transaction).WithUserName("administrator").Build();
             new UserGroups(transaction).Administrators.AddMember(administrator);

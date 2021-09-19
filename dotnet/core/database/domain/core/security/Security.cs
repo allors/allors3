@@ -129,7 +129,6 @@ namespace Allors.Database.Domain
 
             this.objectsGraph.Invoke(objects => objects.Secure(this));
 
-
             this.OnPostSetup();
 
             this.transaction.Derive();

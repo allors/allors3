@@ -24,12 +24,10 @@ namespace Allors.Database.Domain
 
         private bool lazyLoaded;
 
-        internal AccessControlList(IInternalAccessControl accessControl, IObject @object)
+        internal AccessControlList(IInternalAccessControl accessControl, IObject @object, IPermissionsCache permissionsCache)
         {
             this.accessControl = accessControl;
             this.Object = (Object)@object;
-
-            var permissionsCache = @object.Strategy.Transaction.Database.Services.Get<IPermissionsCache>();
             this.permissionsCacheEntry = permissionsCache.Get(this.Object.Strategy.Class.Id);
 
             this.lazyLoaded = false;

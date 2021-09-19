@@ -24,14 +24,11 @@ namespace Commands
 
             database.Init();
 
+            var config = new Config { DataPath = this.Parent.DataPath };
+            new Setup(database, config).Apply();
+
             using (var session = database.CreateTransaction())
             {
-                var config = new Config { DataPath = this.Parent.DataPath };
-                new Setup(session, config).Apply();
-
-                session.Derive();
-                session.Commit();
-
                 new Allors.Database.Domain.Upgrade(session, this.Parent.DataPath).Execute();
 
                 session.Derive();

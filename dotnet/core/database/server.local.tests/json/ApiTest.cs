@@ -61,11 +61,12 @@ namespace Tests
         {
             database.Init();
 
+            new Setup(database, this.Config).Apply();
+
             this.Transaction = database.CreateTransaction();
 
             if (populate)
             {
-                new Setup(this.Transaction, this.Config).Apply();
                 this.Transaction.Commit();
 
                 new TestPopulation(this.Transaction).Apply();

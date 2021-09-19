@@ -74,13 +74,12 @@ namespace Allors.Database.Domain.Tests
         {
             database.Init();
 
-            this.Session = database.CreateTransaction();
-
             if (populate)
             {
-                new Setup(this.Session, this.Config).Apply();
-                this.Session.Commit();
+                new Setup(database, this.Config).Apply();
             }
+
+            this.Session = database.CreateTransaction();
         }
 
         protected Stream GetResource(string name)

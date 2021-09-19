@@ -57,10 +57,11 @@ namespace Allors.Server.Controllers
                 var database = this.Database;
                 database.Init();
 
+                var config = new Config();
+                new Setup(database, config).Apply();
+
                 using (var transaction = database.CreateTransaction())
                 {
-                    var config = new Config();
-                    new Setup(transaction, config).Apply();
                     transaction.Derive();
                     transaction.Commit();
 

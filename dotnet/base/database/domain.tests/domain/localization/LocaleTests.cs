@@ -22,14 +22,18 @@ namespace Allors.Database.Domain.Tests
 
             this.Session.Rollback();
 
-            builder.WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "en"));
+            var language = new Languages(this.Session).FindBy(this.M.Language.IsoCode, "en");
+
+            builder.WithLanguage(language);
             builder.Build();
 
             Assert.True(this.Session.Derive(false).HasErrors);
 
             this.Session.Rollback();
 
-            builder.WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"));
+            var country = new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE");
+
+            builder.WithCountry(country);
             builder.Build();
 
             Assert.False(this.Session.Derive(false).HasErrors);

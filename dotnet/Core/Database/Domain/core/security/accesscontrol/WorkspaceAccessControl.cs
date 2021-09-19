@@ -7,10 +7,12 @@ namespace Allors.Database.Domain
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using Database.Security;
     using Meta;
     using Ranges;
+    using Services;
 
     public class WorkspaceAccessControl : IInternalAccessControl
     {
@@ -20,10 +22,20 @@ namespace Allors.Database.Domain
         private readonly Dictionary<IObject, IAccessControlList> aclByObject;
 
         private readonly IRanges<long> ranges;
+        private readonly IPermissionsCache permissionCache;
 
         public WorkspaceAccessControl(string workspaceName, User user)
         {
-            this.ranges = user.Strategy.Transaction.Database.Services.Get<IRanges<long>>();
+            var services = user.Strategy.Transaction.Database.Services;
+
+            this.ranges = services.Get<IRanges<long>>();
+            this.permissionCache = services.Get<IPermissionsCache>();
+
+            var entry = this.permissionCache.Get(new Guid("7041c691-d896-4628-8f50-1c24f5d03414"));
+            if (entry == null)
+            {
+                Debugger.Break();
+            }
 
             this.workspaceName = workspaceName ?? throw new ArgumentNullException(nameof(workspaceName));
             this.User = user ?? throw new ArgumentNullException(nameof(user));
@@ -40,7 +52,7 @@ namespace Allors.Database.Domain
             {
                 if (!this.aclByObject.TryGetValue(@object, out var acl))
                 {
-                    acl = new AccessControlList(this, @object);
+                    acl = new AccessControlList(this, @object, this.permissionCache);
                     this.aclByObject.Add(@object, acl);
                 }
 
