@@ -15,6 +15,11 @@ namespace Allors.Database.Domain
         {
         }
 
+        protected virtual void CustomPrepare(Security security)
+        {
+        }
+
+
         protected virtual void CustomSecure(Security security)
         {
         }

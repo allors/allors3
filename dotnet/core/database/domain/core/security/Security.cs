@@ -16,11 +16,14 @@ namespace Allors.Database.Domain
 
         private readonly Dictionary<Guid, Dictionary<IOperandType, Permission>> deniablePermissionByOperandTypeByObjectTypeId;
         private readonly Dictionary<Guid, Dictionary<IOperandType, Permission>> executePermissionsByObjectTypeId;
-        private readonly Dictionary<ObjectType, IObjects> objectsByObjectType;
         private readonly Dictionary<Guid, Dictionary<IOperandType, Permission>> readPermissionsByObjectTypeId;
+        private readonly Dictionary<Guid, Dictionary<IOperandType, Permission>> writePermissionsByObjectTypeId;
+
         private readonly Dictionary<Guid, Role> roleById;
         private readonly ITransaction transaction;
-        private readonly Dictionary<Guid, Dictionary<IOperandType, Permission>> writePermissionsByObjectTypeId;
+
+        private readonly Dictionary<ObjectType, IObjects> objectsByObjectType;
+        private readonly ObjectsGraph objectsGraph;
 
         public Security(ITransaction transaction)
         {
@@ -31,6 +34,8 @@ namespace Allors.Database.Domain
             {
                 this.objectsByObjectType[objectType] = objectType.GetObjects(transaction);
             }
+
+            this.objectsGraph = new ObjectsGraph();
 
             this.roleById = new Dictionary<Guid, Role>();
             foreach (Role role in transaction.Extent<Role>())
@@ -119,13 +124,20 @@ namespace Allors.Database.Domain
 
             foreach (var objects in this.objectsByObjectType.Values)
             {
-                objects.Secure(this);
+                objects.Prepare(this);
             }
+
+            this.objectsGraph.Invoke(objects => objects.Secure(this));
+
 
             this.OnPostSetup();
 
             this.transaction.Derive();
         }
+
+        public void Add(IObjects objects) => this.objectsGraph.Add(objects);
+
+        public void AddDependency(ObjectType dependent, ObjectType dependee) => this.objectsGraph.AddDependency(this.objectsByObjectType[dependent], this.objectsByObjectType[dependee]);
 
         public void Grant(Guid roleId, ObjectType objectType, params Operations[] operations)
         {

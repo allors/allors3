@@ -10,6 +10,7 @@ namespace Allors.Database.Domain
         public void Prepare(Setup setup)
         {
             this.CorePrepare(setup);
+            this.BasePrepare(setup);
             this.AppsPrepare(setup);
             this.CustomPrepare(setup);
         }
@@ -17,13 +18,23 @@ namespace Allors.Database.Domain
         public void Setup(Setup setup)
         {
             this.CoreSetup(setup);
+            this.BaseSetup(setup);
             this.AppsSetup(setup);
             this.CustomSetup(setup);
+        }
+
+        public void Prepare(Security security)
+        {
+            this.CorePrepare(security);
+            this.BasePrepare(security);
+            this.AppsPrepare(security);
+            this.CustomPrepare(security);
         }
 
         public void Secure(Security security)
         {
             this.CoreSecure(security);
+            this.BaseSecure(security);
             this.AppsSecure(security);
             this.CustomSecure(security);
         }

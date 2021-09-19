@@ -15,6 +15,10 @@ namespace Allors.Database.Domain
         {
         }
 
+        protected virtual void LegacyPrepare(Security security)
+        {
+        }
+
         protected virtual void LegacySecure(Security config)
         {
         }

@@ -73,31 +73,15 @@ namespace Tests
             };
 
             var api = new Api(this.Transaction, workspaceName);
-            var securityResponse = api.Access(accessRequest);
+            var accessResponse = api.Access(accessRequest);
 
-            Assert.Single(securityResponse.g);
+            Assert.Single(accessResponse.g);
 
-            var securityResponseAccessControl = securityResponse.g.First();
+            var accessResponseGrant = accessResponse.g.First();
 
-            Assert.Equal(accessControl.Id, securityResponseAccessControl.i);
-            Assert.Equal(accessControl.Strategy.ObjectVersion, securityResponseAccessControl.v);
-
-            var permissions = securityResponseAccessControl.p
-                .Select(v => this.Transaction.Instantiate(v))
-                .Cast<Permission>()
-                .Where(v => v != null)
-                .ToArray();
-
-            foreach (var permission in permissions)
-            {
-                Assert.Contains(permission, accessControl.EffectivePermissions);
-                Assert.Contains(permission.Class, metaCache.GetWorkspaceClasses(workspaceName));
-            }
-
-            foreach (var effectivePermission in accessControl.EffectivePermissions.Where(v => v.InWorkspace(workspaceName)))
-            {
-                Assert.Contains(effectivePermission, permissions);
-            }
+            Assert.Equal(accessControl.Id, accessResponseGrant.i);
+            Assert.Equal(accessControl.Strategy.ObjectVersion, accessResponseGrant.v);
+            Assert.Null(accessResponseGrant.p);
         }
     }
 }

@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using Database;
-
     public abstract partial class ObjectsBase<T> where T : IObject
     {
         public void Prepare(Setup setup)
@@ -21,6 +19,12 @@ namespace Allors.Database.Domain
             this.CustomSetup(setup);
 
             this.Transaction.Derive();
+        }
+
+        public void Prepare(Security security)
+        {
+            this.CorePrepare(security);
+            this.CustomPrepare(security);
         }
 
         public void Secure(Security security)

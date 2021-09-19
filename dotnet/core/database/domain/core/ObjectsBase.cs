@@ -42,6 +42,8 @@ namespace Allors.Database.Domain
         {
         }
 
+        protected virtual void CorePrepare(Security security) => security.Add(this);
+
         protected virtual void CoreSecure(Security config)
         {
         }
