@@ -27,9 +27,9 @@ namespace Allors.Database
                 { "../Core/Workspace/CSharp/Templates/meta.cs.stg", "Workspace/CSharp/Meta/generated" },
                 { "../Core/Workspace/CSharp/Templates/domain.cs.stg", "Workspace/CSharp/Domain/generated" },
 
-                { "../../typescript/templates/workspace.meta.ts.stg", "../../typescript/libs/workspace/meta/base/src/lib/generated" },
-                { "../../typescript/templates/workspace.meta.json.ts.stg", "../../typescript/libs/workspace/meta/json/base/src/lib/generated" },
-                { "../../typescript/templates/workspace.domain.ts.stg", "../../typescript/libs/workspace/domain/base/src/lib/generated" },
+                { "../../typescript/modules/templates/workspace.meta.ts.stg", "../../typescript/modules/libs/workspace/meta/base/src/lib/generated" },
+                { "../../typescript/modules/templates/workspace.meta.json.ts.stg", "../../typescript/modules/libs/workspace/meta/json/base/src/lib/generated" },
+                { "../../typescript/modules/templates/workspace.domain.ts.stg", "../../typescript/modules/libs/workspace/domain/base/src/lib/generated" },
             };
 
             var metaPopulation = MetaBuilder.Build();

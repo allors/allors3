@@ -18,7 +18,6 @@ namespace Allors.Workspace.Adapters.Remote
 
             this.MissingAccessControlIds = new HashSet<long>();
             this.MissingRevocationIds = new HashSet<long>();
-            this.MissingPermissionIds = new HashSet<long>();
         }
 
         internal HashSet<long> MissingAccessControlIds { get; }
