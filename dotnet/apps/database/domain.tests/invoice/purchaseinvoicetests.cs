@@ -1209,7 +1209,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[invoice];
+            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[invoice];
 
             Assert.Equal(new PurchaseInvoiceStates(this.Transaction).Created, invoice.PurchaseInvoiceState);
             Assert.False(acl.CanExecute(this.M.PurchaseInvoice.Approve));
@@ -1227,14 +1227,14 @@ namespace Allors.Database.Domain.Tests
     {
         public PurchaseInvoiceDeniedPermissionRuleTests(Fixture fixture) : base(fixture)
         {
-            this.deletePermission = new Permissions(this.Transaction).Get(this.M.PurchaseInvoice, this.M.PurchaseInvoice.Delete);
-            this.createSalesInvoicePermission = new Permissions(this.Transaction).Get(this.M.PurchaseInvoice, this.M.PurchaseInvoice.CreateSalesInvoice);
+            this.deleteRevocation = new Revocations(this.Transaction).PurchaseInvoiceDeleteRevocation;
+            this.createSalesInvoiceRevocation = new Revocations(this.Transaction).PurchaseInvoiceCreateSalesInvoiceRevocation;
         }
 
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission deletePermission;
-        private readonly Permission createSalesInvoicePermission;
+        private readonly Revocation deleteRevocation;
+        private readonly Revocation createSalesInvoiceRevocation;
 
         [Fact]
         public void OnChangedPurchaseInvoiceStateCreatedDeriveDeletePermission()
@@ -1244,7 +1244,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.True(purchaseInvoice.PurchaseInvoiceState.IsCreated);
-            Assert.DoesNotContain(this.deletePermission, purchaseInvoice.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, purchaseInvoice.Revocations);
         }
 
         [Fact]
@@ -1257,7 +1257,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.True(purchaseInvoice.PurchaseInvoiceState.IsCancelled);
-            Assert.DoesNotContain(this.deletePermission, purchaseInvoice.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, purchaseInvoice.Revocations);
         }
 
         [Fact]
@@ -1270,7 +1270,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.True(purchaseInvoice.PurchaseInvoiceState.IsRejected);
-            Assert.DoesNotContain(this.deletePermission, purchaseInvoice.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, purchaseInvoice.Revocations);
         }
 
         [Fact]
@@ -1284,7 +1284,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Derive();
 
-            Assert.Contains(this.deletePermission, purchaseInvoice.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, purchaseInvoice.Revocations);
         }
 
         [Fact]
@@ -1296,7 +1296,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Derive();
 
-            Assert.Contains(this.deletePermission, purchaseInvoice.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, purchaseInvoice.Revocations);
         }
 
         [Fact]
@@ -1310,7 +1310,7 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.RemovePurchaseInvoice();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, purchaseInvoice.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, purchaseInvoice.Revocations);
         }
 
         [Fact]
@@ -1320,7 +1320,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Derive();
 
-            Assert.Contains(this.createSalesInvoicePermission, purchaseInvoice.DeniedPermissions);
+            Assert.Contains(this.createSalesInvoiceRevocation, purchaseInvoice.Revocations);
         }
 
         [Fact]
@@ -1335,7 +1335,7 @@ namespace Allors.Database.Domain.Tests
             purchaseInvoice.SetPaid();
             this.Derive();
 
-            Assert.DoesNotContain(this.createSalesInvoicePermission, purchaseInvoice.DeniedPermissions);
+            Assert.DoesNotContain(this.createSalesInvoiceRevocation, purchaseInvoice.Revocations);
         }
     }
 }

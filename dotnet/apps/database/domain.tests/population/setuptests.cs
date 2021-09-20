@@ -18,20 +18,19 @@ namespace Allors.Database.Domain.Tests
         public void Twice()
         {
             var transaction = this.Transaction;
+            var database = transaction.Database;
 
             var config = new Config();
-            new Setup(transaction, config).Apply();
+            new Setup(database, config).Apply();
 
-            transaction.Derive();
-            transaction.Commit();
+            transaction.Rollback();
 
             var objects1 = new Objects(transaction).Extent().ToArray();
 
-            new Setup(transaction, config).Apply();
+            new Setup(database, config).Apply();
 
-            transaction.Derive();
-            transaction.Commit();
-
+            transaction.Rollback();
+ 
             var objects2 = new Objects(transaction).Extent().ToArray();
 
             var diff = objects2.Except(objects1).ToArray();

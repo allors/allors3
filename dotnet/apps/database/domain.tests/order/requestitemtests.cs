@@ -14,10 +14,10 @@ namespace Allors.Database.Domain.Tests
 
     public class RequestItemRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public RequestItemRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.RequestItem, this.M.RequestItem.Delete);
+        public RequestItemRuleTests(Fixture fixture) : base(fixture) => this.deleteRevocation = new Revocations(this.Transaction).RequestItemDeleteRevocation;
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission deletePermission;
+        private readonly Revocation deleteRevocation;
 
         [Fact]
         public void OnChangedRequestItemStateDraftThrowValidationError()
@@ -228,10 +228,10 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class RequestItemDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public RequestItemDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.RequestItem, this.M.RequestItem.Delete);
+        public RequestItemDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deleteRevocation = new Revocations(this.Transaction).RequestItemDeleteRevocation;
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission deletePermission;
+        private readonly Revocation deleteRevocation;
 
         [Fact]
         public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
@@ -239,7 +239,7 @@ namespace Allors.Database.Domain.Tests
             var requestItem = new RequestItemBuilder(this.Transaction).WithRequestItemState(new RequestItemStates(this.Transaction).Draft).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, requestItem.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, requestItem.Revocations);
         }
 
         [Fact]
@@ -248,7 +248,7 @@ namespace Allors.Database.Domain.Tests
             var requestItem = new RequestItemBuilder(this.Transaction).WithRequestItemState(new RequestItemStates(this.Transaction).Quoted).Build();
             this.Derive();
 
-            Assert.Contains(this.deletePermission, requestItem.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, requestItem.Revocations);
         }
     }
 }

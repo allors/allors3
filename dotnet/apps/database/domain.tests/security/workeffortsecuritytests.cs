@@ -31,7 +31,7 @@ namespace Allors.Database.Domain.Tests
             User user = this.Administrator;
             this.Transaction.SetUser(user);
 
-            var acl = new DatabaseAccessControlLists(this.Administrator)[workTask];
+            var acl = new DatabaseAccessControl(this.Administrator)[workTask];
             Assert.True(acl.CanExecute(this.M.WorkEffort.Cancel));
             Assert.False(acl.CanExecute(this.M.WorkEffort.Reopen));
             Assert.False(acl.CanExecute(this.M.WorkEffort.Complete));
@@ -58,7 +58,7 @@ namespace Allors.Database.Domain.Tests
             User user = this.Administrator;
             this.Transaction.SetUser(user);
 
-            var acl = new DatabaseAccessControlLists(this.Administrator)[workTask];
+            var acl = new DatabaseAccessControl(this.Administrator)[workTask];
             Assert.True(acl.CanExecute(this.M.WorkEffort.Invoice));
             Assert.False(acl.CanExecute(this.M.WorkEffort.Cancel));
             Assert.False(acl.CanExecute(this.M.WorkEffort.Reopen));
@@ -113,7 +113,7 @@ namespace Allors.Database.Domain.Tests
             User user = this.Administrator;
             this.Transaction.SetUser(user);
 
-            var acl = new DatabaseAccessControlLists(this.Administrator)[workTask];
+            var acl = new DatabaseAccessControl(this.Administrator)[workTask];
             Assert.False(acl.CanExecute(this.M.WorkEffort.Invoice));
             Assert.False(acl.CanExecute(this.M.WorkEffort.Cancel));
             Assert.False(acl.CanExecute(this.M.WorkEffort.Reopen));
@@ -156,7 +156,7 @@ namespace Allors.Database.Domain.Tests
             User user = this.Administrator;
             this.Transaction.SetUser(user);
 
-            var acl = new DatabaseAccessControlLists(this.Administrator)[timeEntry];
+            var acl = new DatabaseAccessControl(this.Administrator)[timeEntry];
             Assert.False(acl.CanWrite(this.M.TimeEntry.AmountOfTime));
         }
     }
@@ -167,14 +167,14 @@ namespace Allors.Database.Domain.Tests
     {
         public WorkEffortDeniedPermissionRuleTests(Fixture fixture) : base(fixture)
         {
-            this.invoicePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Invoice);
-            this.completePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Complete);
+            this.invoiceRevocation = new Revocations(this.Transaction).WorkTaskInvoiceRevocation;
+            this.completeRevocation = new Revocations(this.Transaction).WorkTaskCompleteRevocation;
         }
 
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission invoicePermission;
-        private readonly Permission completePermission;
+        private readonly Revocation invoiceRevocation;
+        private readonly Revocation completeRevocation;
 
         [Fact]
         public void OnChangedWorkTaskDeriveInvoicePermission()
@@ -182,7 +182,7 @@ namespace Allors.Database.Domain.Tests
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.Contains(this.invoicePermission, workEffort.DeniedPermissions);
+            Assert.Contains(this.invoiceRevocation, workEffort.Revocations);
         }
 
         [Fact]
@@ -194,7 +194,7 @@ namespace Allors.Database.Domain.Tests
             workEffort.Complete();
             this.Derive();
 
-            Assert.DoesNotContain(this.invoicePermission, workEffort.DeniedPermissions);
+            Assert.DoesNotContain(this.invoiceRevocation, workEffort.Revocations);
         }
 
         [Fact]
@@ -203,7 +203,7 @@ namespace Allors.Database.Domain.Tests
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.Contains(this.completePermission, workEffort.DeniedPermissions);
+            Assert.Contains(this.completeRevocation, workEffort.Revocations);
         }
 
         [Fact]
@@ -218,7 +218,7 @@ namespace Allors.Database.Domain.Tests
             var serviceEntrie = new ExpenseEntryBuilder(this.Transaction).WithWorkEffort(workEffort).Build();
             this.Derive();
 
-            Assert.Contains(this.completePermission, workEffort.DeniedPermissions);
+            Assert.Contains(this.completeRevocation, workEffort.Revocations);
         }
 
         [Fact]
@@ -230,7 +230,7 @@ namespace Allors.Database.Domain.Tests
             var serviceEntrie = new ExpenseEntryBuilder(this.Transaction).WithWorkEffort(workEffort).WithThroughDate(this.Transaction.Now().AddDays(1)).Build();
             this.Derive();
 
-            Assert.Contains(this.completePermission, workEffort.DeniedPermissions);
+            Assert.Contains(this.completeRevocation, workEffort.Revocations);
         }
 
         [Fact]
@@ -243,7 +243,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
             // HOW TO IN PROGRESS
 
-            Assert.DoesNotContain(this.completePermission, workEffort.DeniedPermissions);
+            Assert.DoesNotContain(this.completeRevocation, workEffort.Revocations);
         }
     }
 }

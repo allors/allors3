@@ -841,11 +841,11 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class QuoteItemDeniedPermissonRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public QuoteItemDeniedPermissonRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.QuoteItem, this.M.QuoteItem.Delete);
+        public QuoteItemDeniedPermissonRuleTests(Fixture fixture) : base(fixture) => this.deleteRevocation = new Revocations(this.Transaction).QuoteItemDeleteRevocation;
 
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission deletePermission;
+        private readonly Revocation deleteRevocation;
 
         [Fact]
         public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
@@ -857,7 +857,7 @@ namespace Allors.Database.Domain.Tests
             quote.AddQuoteItem(quoteItem);
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, quoteItem.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, quoteItem.Revocations);
         }
 
         [Fact]
@@ -873,7 +873,7 @@ namespace Allors.Database.Domain.Tests
             quote.QuoteState = new QuoteStates(this.Transaction).Accepted;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, quoteItem.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, quoteItem.Revocations);
         }
 
         [Fact]
@@ -889,7 +889,7 @@ namespace Allors.Database.Domain.Tests
             quote.Request = new RequestForQuoteBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.Contains(this.deletePermission, quoteItem.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, quoteItem.Revocations);
         }
 
         [Fact]
@@ -908,7 +908,7 @@ namespace Allors.Database.Domain.Tests
             quote.RemoveRequest();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, quoteItem.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, quoteItem.Revocations);
         }
 
         [Fact]
@@ -926,7 +926,7 @@ namespace Allors.Database.Domain.Tests
             salesOrder.Quote = quote;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, quoteItem.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, quoteItem.Revocations);
         }
 
         [Fact]
@@ -947,7 +947,7 @@ namespace Allors.Database.Domain.Tests
             salesOrder.RemoveQuote();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, quoteItem.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, quoteItem.Revocations);
         }
     }
 }

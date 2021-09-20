@@ -2399,11 +2399,11 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class SalesInvoiceItemDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceItemDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.SalesInvoiceItem, this.M.SalesInvoiceItem.Delete);
+        public SalesInvoiceItemDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deleteRevocation = new Revocations(this.Transaction).SalesInvoiceItemDeleteRevocation;
 
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission deletePermission;
+        private readonly Revocation deleteRevocation;
 
         [Fact]
         public void OnChangedSalesInvoiceItemStateReadyForPostingDeriveDeletePermission()
@@ -2411,7 +2411,7 @@ namespace Allors.Database.Domain.Tests
             var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, invoiceItem.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, invoiceItem.Revocations);
         }
 
         [Fact]
@@ -2423,7 +2423,7 @@ namespace Allors.Database.Domain.Tests
             invoiceItem.CancelFromInvoice();
             this.Derive();
 
-            Assert.Contains(this.deletePermission, invoiceItem.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, invoiceItem.Revocations);
         }
     }
 }

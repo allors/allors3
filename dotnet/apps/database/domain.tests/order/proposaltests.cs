@@ -29,11 +29,11 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class ProposalDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public ProposalDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.Proposal, this.M.Proposal.Delete);
+        public ProposalDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deleteRevocation = new Revocations(this.Transaction).ProposalDeleteRevocation;
 
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission deletePermission;
+        private readonly Revocation deleteRevocation;
 
         [Fact]
         public void OnChangedProposalTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
@@ -41,7 +41,7 @@ namespace Allors.Database.Domain.Tests
             var quote = new ProposalBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, quote.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, quote.Revocations);
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace Allors.Database.Domain.Tests
             quote.QuoteState = new QuoteStates(this.Transaction).Accepted;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, quote.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, quote.Revocations);
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace Allors.Database.Domain.Tests
             quote.Request = new RequestForQuoteBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.Contains(this.deletePermission, quote.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, quote.Revocations);
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace Allors.Database.Domain.Tests
             quote.RemoveRequest();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, quote.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, quote.Revocations);
         }
     }
 }

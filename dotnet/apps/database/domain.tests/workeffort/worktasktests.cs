@@ -1681,8 +1681,8 @@ namespace Allors.Database.Domain.Tests
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
             this.Derive();
 
-            var invoicePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Invoice);
-            Assert.Contains(invoicePermission, workTask.DeniedPermissions);
+            var invoiceRevocation = new Revocations(this.Transaction).WorkTaskInvoiceRevocation;
+            Assert.Contains(invoiceRevocation, workTask.Revocations);
         }
 
         [Fact]
@@ -1694,8 +1694,8 @@ namespace Allors.Database.Domain.Tests
             workTask.CanInvoice = true;
             this.Derive();
 
-            var invoicePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Invoice);
-            Assert.DoesNotContain(invoicePermission, workTask.DeniedPermissions);
+            var invoiceRevocation = new Revocations(this.Transaction).WorkTaskInvoiceRevocation;
+            Assert.DoesNotContain(invoiceRevocation, workTask.Revocations);
         }
 
         [Fact]
@@ -1707,8 +1707,8 @@ namespace Allors.Database.Domain.Tests
             workTask.WorkEffortState = new WorkEffortStates(this.Transaction).InProgress;
             this.Derive();
 
-            var completePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Complete);
-            Assert.DoesNotContain(completePermission, workTask.DeniedPermissions);
+            var completeRevocation = new Revocations(this.Transaction).WorkTaskCompleteRevocation;
+            Assert.DoesNotContain(completeRevocation, workTask.Revocations);
         }
 
         [Fact]
@@ -1723,8 +1723,8 @@ namespace Allors.Database.Domain.Tests
             timeEntry.WorkEffort = workTask;
             this.Derive();
 
-            var completePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Complete);
-            Assert.Contains(completePermission, workTask.DeniedPermissions);
+            var completeRevocation = new Revocations(this.Transaction).WorkTaskCompleteRevocation;
+            Assert.Contains(completeRevocation, workTask.Revocations);
         }
 
         [Fact]
@@ -1736,13 +1736,13 @@ namespace Allors.Database.Domain.Tests
             var timeEntry = new TimeEntryBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithWorkEffort(workTask).Build();
             this.Derive();
 
-            var completePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Complete);
-            Assert.Contains(completePermission, workTask.DeniedPermissions);
+            var completeRevocation = new Revocations(this.Transaction).WorkTaskCompleteRevocation;
+            Assert.Contains(completeRevocation, workTask.Revocations);
 
             timeEntry.ThroughDate = timeEntry.FromDate;
             this.Derive();
 
-            Assert.DoesNotContain(completePermission, workTask.DeniedPermissions);
+            Assert.DoesNotContain(completeRevocation, workTask.Revocations);
         }
 
         [Fact]
@@ -1751,13 +1751,13 @@ namespace Allors.Database.Domain.Tests
             var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation).WithExecutedBy(this.InternalOrganisation).Build();
             this.Derive();
 
-            var revisePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Revise);
-            Assert.Contains(revisePermission, workTask.DeniedPermissions);
+            var reviseRevocation = new Revocations(this.Transaction).WorkTaskReviseRevocation;
+            Assert.Contains(reviseRevocation, workTask.Revocations);
 
             workTask.WorkEffortState = new WorkEffortStates(this.Transaction).Finished;
             this.Derive();
 
-            Assert.DoesNotContain(revisePermission, workTask.DeniedPermissions);
+            Assert.DoesNotContain(reviseRevocation, workTask.Revocations);
         }
 
         [Fact]
@@ -1766,13 +1766,13 @@ namespace Allors.Database.Domain.Tests
             var workTask = new WorkTaskBuilder(this.Transaction).WithExecutedBy(this.InternalOrganisation).WithWorkEffortState(new WorkEffortStates(this.Transaction).Finished).Build();
             var result = this.Derive();
 
-            var revisePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Revise);
-            Assert.Contains(revisePermission, workTask.DeniedPermissions);
+            var reviseRevocation = new Revocations(this.Transaction).WorkTaskReviseRevocation;
+            Assert.Contains(reviseRevocation, workTask.Revocations);
 
             workTask.Customer = this.InternalOrganisation;
             this.Derive();
 
-            Assert.DoesNotContain(revisePermission, workTask.DeniedPermissions);
+            Assert.DoesNotContain(reviseRevocation, workTask.Revocations);
         }
 
         [Fact]
@@ -1785,13 +1785,13 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            var revisePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Revise);
-            Assert.Contains(revisePermission, workTask.DeniedPermissions);
+            var reviseRevocation = new Revocations(this.Transaction).WorkTaskReviseRevocation;
+            Assert.Contains(reviseRevocation, workTask.Revocations);
 
             workTask.ExecutedBy = this.InternalOrganisation.ActiveSuppliers.FirstOrDefault();
             this.Derive();
 
-            Assert.DoesNotContain(revisePermission, workTask.DeniedPermissions);
+            Assert.DoesNotContain(reviseRevocation, workTask.Revocations);
         }
     }
 }

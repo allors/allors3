@@ -16,12 +16,12 @@ namespace Allors.Database.Domain.Tests
         public void TestPopulate()
         {
             var transaction = this.Transaction;
+            var database = transaction.Database;
 
             var config = new Config();
-            new Setup(transaction, config).Apply();
+            new Setup(database, config).Apply();
 
-            transaction.Derive();
-            transaction.Commit();
+            transaction.Rollback();
 
             new Upgrade(transaction, null).Execute();
 

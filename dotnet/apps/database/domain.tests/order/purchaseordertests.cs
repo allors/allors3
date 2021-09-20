@@ -11,9 +11,7 @@ namespace Allors.Database.Domain.Tests
     using TestPopulation;
     using Resources;
     using Xunit;
-    using Meta;
     using ContactMechanism = Domain.ContactMechanism;
-    using Permission = Domain.Permission;
 
     public class PurchaseOrderTests : DomainTest, IClassFixture<Fixture>
     {
@@ -693,7 +691,7 @@ namespace Allors.Database.Domain.Tests
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
 
             var errors = this.Derive().Errors.OfType<IDerivationErrorAtLeastOne>();
-            Assert.Equal(new IRoleType[]
+            Assert.Equal(new Meta.IRoleType[]
             {
                 this.M.PurchaseOrder.TakenViaSupplier,
                 this.M.PurchaseOrder.TakenViaSubcontractor,
@@ -711,7 +709,7 @@ namespace Allors.Database.Domain.Tests
             order.TakenViaSupplier = this.InternalOrganisation.ActiveSuppliers.FirstOrDefault();
 
             var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
-            Assert.Equal(new IRoleType[]
+            Assert.Equal(new Meta.IRoleType[]
             {
                 this.M.PurchaseOrder.TakenViaSupplier,
                 this.M.PurchaseOrder.TakenViaSubcontractor,
@@ -729,7 +727,7 @@ namespace Allors.Database.Domain.Tests
             order.TakenViaSubcontractor = this.InternalOrganisation.ActiveSubContractors.FirstOrDefault();
 
             var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
-            Assert.Equal(new IRoleType[]
+            Assert.Equal(new Meta.IRoleType[]
             {
                 this.M.PurchaseOrder.TakenViaSupplier,
                 this.M.PurchaseOrder.TakenViaSubcontractor,
@@ -1547,24 +1545,20 @@ namespace Allors.Database.Domain.Tests
     {
         public PurchaseOrderDeniedPermissionRuleTests(Fixture fixture) : base(fixture)
         {
-            this.deletePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder, this.M.PurchaseOrder.Delete);
-            this.setReadyPermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder, this.M.PurchaseOrder.SetReadyForProcessing);
-            this.invoicePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder, this.M.PurchaseOrder.Invoice);
-            this.revisePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder, this.M.PurchaseOrder.Revise);
-            this.quickReceivePermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder, this.M.PurchaseOrder.QuickReceive);
-            this.rejectPermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder, this.M.PurchaseOrder.Reject);
-            this.cancelPermission = new Permissions(this.Transaction).Get(this.M.PurchaseOrder, this.M.PurchaseOrder.Cancel);
+            this.deleteRevocation = new Revocations(this.Transaction).PurchaseOrderDeleteRevocation;
+            this.invoiceRevocation = new Revocations(this.Transaction).PurchaseOrderInvoiceRevocation;
+            this.reviseRevocation = new Revocations(this.Transaction).PurchaseOrderReviseRevocation;
+            this.quickReceiveRevocation = new Revocations(this.Transaction).PurchaseOrderReceivedRevocation;
+            this.receivedRevocation = new Revocations(this.Transaction).PurchaseOrderReceivedRevocation;
         }
 
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission deletePermission;
-        private readonly Permission setReadyPermission;
-        private readonly Permission invoicePermission;
-        private readonly Permission revisePermission;
-        private readonly Permission quickReceivePermission;
-        private readonly Permission rejectPermission;
-        private readonly Permission cancelPermission;
+        private readonly Revocation deleteRevocation;
+        private readonly Revocation invoiceRevocation;
+        private readonly Revocation reviseRevocation;
+        private readonly Revocation quickReceiveRevocation;
+        private readonly Revocation receivedRevocation;
 
         [Fact]
         public void OnChangedTransitionalDeniedPermissionsDeriveInvoicePermissionAllowed()
@@ -1579,7 +1573,7 @@ namespace Allors.Database.Domain.Tests
             order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).Completed;
             this.Derive();
 
-            Assert.DoesNotContain(this.invoicePermission, order.DeniedPermissions);
+            Assert.DoesNotContain(this.invoiceRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1595,12 +1589,12 @@ namespace Allors.Database.Domain.Tests
             order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).Completed;
             this.Derive();
 
-            Assert.DoesNotContain(this.invoicePermission, order.DeniedPermissions);
+            Assert.DoesNotContain(this.invoiceRevocation, order.Revocations);
 
             order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).AwaitingApprovalLevel1;
             this.Derive();
 
-            Assert.Contains(this.invoicePermission, order.DeniedPermissions);
+            Assert.Contains(this.invoiceRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1616,12 +1610,12 @@ namespace Allors.Database.Domain.Tests
             order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).Completed;
             this.Derive();
 
-            Assert.DoesNotContain(this.invoicePermission, order.DeniedPermissions);
+            Assert.DoesNotContain(this.invoiceRevocation, order.Revocations);
 
             new OrderItemBillingBuilder(this.Transaction).WithOrderItem(orderItem).Build();
             this.Derive();
 
-            Assert.Contains(this.invoicePermission, order.DeniedPermissions);
+            Assert.Contains(this.invoiceRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1633,7 +1627,7 @@ namespace Allors.Database.Domain.Tests
             order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).InProcess;
             this.Derive();
 
-            Assert.DoesNotContain(this.revisePermission, order.DeniedPermissions);
+            Assert.DoesNotContain(this.reviseRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1642,7 +1636,7 @@ namespace Allors.Database.Domain.Tests
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.Contains(this.revisePermission, order.DeniedPermissions);
+            Assert.Contains(this.reviseRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1658,7 +1652,7 @@ namespace Allors.Database.Domain.Tests
             order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).InProcess;
             this.Derive();
 
-            Assert.DoesNotContain(this.revisePermission, order.DeniedPermissions);
+            Assert.DoesNotContain(this.reviseRevocation, order.Revocations);
 
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
             this.Derive();
@@ -1666,7 +1660,7 @@ namespace Allors.Database.Domain.Tests
             invoice.AddPurchaseOrder(order);
             this.Derive();
 
-            Assert.Contains(this.revisePermission, order.DeniedPermissions);
+            Assert.Contains(this.reviseRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1677,12 +1671,12 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.revisePermission, order.DeniedPermissions);
+            Assert.DoesNotContain(this.reviseRevocation, order.Revocations);
 
             order.PurchaseOrderShipmentState = new PurchaseOrderShipmentStates(this.Transaction).Received;
             this.Derive();
 
-            Assert.Contains(this.revisePermission, order.DeniedPermissions);
+            Assert.Contains(this.reviseRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1695,12 +1689,12 @@ namespace Allors.Database.Domain.Tests
             order.AddPurchaseOrderItem(orderItem);
             this.Derive();
 
-            Assert.Contains(this.quickReceivePermission, order.DeniedPermissions);
+            Assert.Contains(this.quickReceiveRevocation, order.Revocations);
 
             order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).Sent;
             this.Derive();
 
-            Assert.DoesNotContain(this.quickReceivePermission, order.DeniedPermissions);
+            Assert.DoesNotContain(this.quickReceiveRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1716,7 +1710,7 @@ namespace Allors.Database.Domain.Tests
             order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).AwaitingApprovalLevel1;
             this.Derive();
 
-            Assert.Contains(this.quickReceivePermission, order.DeniedPermissions);
+            Assert.Contains(this.quickReceiveRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1725,7 +1719,7 @@ namespace Allors.Database.Domain.Tests
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1737,7 +1731,7 @@ namespace Allors.Database.Domain.Tests
             order.PurchaseOrderState = new PurchaseOrderStates(this.Transaction).Sent;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, order.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1749,12 +1743,12 @@ namespace Allors.Database.Domain.Tests
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, order.Revocations);
 
             invoice.AddPurchaseOrder(order);
             this.Derive();
 
-            Assert.Contains(this.deletePermission, order.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1766,12 +1760,12 @@ namespace Allors.Database.Domain.Tests
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, order.Revocations);
 
             serialisedItem.PurchaseOrder = order;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, order.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1783,12 +1777,12 @@ namespace Allors.Database.Domain.Tests
             var assignment = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, order.Revocations);
 
             assignment.PurchaseOrder = order;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, order.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1804,12 +1798,12 @@ namespace Allors.Database.Domain.Tests
             var orderItemBilling = new OrderItemBillingBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, order.Revocations);
 
             orderItemBilling.OrderItem = orderItem;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, order.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1822,12 +1816,12 @@ namespace Allors.Database.Domain.Tests
             order.AddPurchaseOrderItem(orderItem);
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, order.Revocations);
 
             orderItem.PurchaseOrderItemState = new PurchaseOrderItemStates(this.Transaction).InProcess;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, order.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1843,12 +1837,12 @@ namespace Allors.Database.Domain.Tests
             var orderShipment = new OrderShipmentBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, order.Revocations);
 
             orderShipment.OrderItem = orderItem;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, order.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1864,12 +1858,12 @@ namespace Allors.Database.Domain.Tests
             var requirementCommitment = new OrderRequirementCommitmentBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, order.Revocations);
 
             requirementCommitment.OrderItem = orderItem;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, order.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1885,12 +1879,12 @@ namespace Allors.Database.Domain.Tests
             var worktask = new WorkTaskBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, order.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, order.Revocations);
 
             worktask.OrderItemFulfillment = orderItem;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, order.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1902,11 +1896,10 @@ namespace Allors.Database.Domain.Tests
             order.PurchaseOrderShipmentState = new PurchaseOrderShipmentStates(this.Transaction).Received;
             this.Derive();
 
-            Assert.Contains(this.rejectPermission, order.DeniedPermissions);
-            Assert.Contains(this.cancelPermission, order.DeniedPermissions);
-            Assert.Contains(this.quickReceivePermission, order.DeniedPermissions);
-            Assert.Contains(this.revisePermission, order.DeniedPermissions);
-            Assert.Contains(this.setReadyPermission, order.DeniedPermissions);
+            Assert.Contains(this.receivedRevocation, order.Revocations);
+            Assert.Contains(this.quickReceiveRevocation, order.Revocations);
+            Assert.Contains(this.reviseRevocation, order.Revocations);
+            Assert.Contains(this.receivedRevocation, order.Revocations);
         }
     }
 }

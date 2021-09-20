@@ -384,11 +384,11 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class OrganisationDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public OrganisationDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.Organisation, this.M.Organisation.Delete);
+        public OrganisationDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deleteRevocation = new Revocations(this.Transaction).OrganisationDeleteRevocation;
 
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission deletePermission;
+        private readonly Revocation deleteRevocation;
 
         [Fact]
         public void OnChangeOrganisationDeriveDeletePermission()
@@ -396,7 +396,7 @@ namespace Allors.Database.Domain.Tests
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, organisation.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -408,7 +408,7 @@ namespace Allors.Database.Domain.Tests
             organisation.IsInternalOrganisation = true;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -423,7 +423,7 @@ namespace Allors.Database.Domain.Tests
             accountingTransaction.FromParty = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -438,7 +438,7 @@ namespace Allors.Database.Domain.Tests
             accountingTransaction.ToParty = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -453,7 +453,7 @@ namespace Allors.Database.Domain.Tests
             shipment.ShipFromParty = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -468,7 +468,7 @@ namespace Allors.Database.Domain.Tests
             shipment.ShipToParty = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -483,7 +483,7 @@ namespace Allors.Database.Domain.Tests
             payment.Receiver = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -498,7 +498,7 @@ namespace Allors.Database.Domain.Tests
             payment.Sender = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -513,7 +513,7 @@ namespace Allors.Database.Domain.Tests
             employment.Employer = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -528,7 +528,7 @@ namespace Allors.Database.Domain.Tests
             engagement.BillToParty = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -543,7 +543,7 @@ namespace Allors.Database.Domain.Tests
             engagement.PlacingParty = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -558,7 +558,7 @@ namespace Allors.Database.Domain.Tests
             part.ManufacturedBy = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -573,7 +573,7 @@ namespace Allors.Database.Domain.Tests
             part.AddSuppliedBy(organisation);
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -588,7 +588,7 @@ namespace Allors.Database.Domain.Tests
             organisationGlAccount.InternalOrganisation = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -603,7 +603,7 @@ namespace Allors.Database.Domain.Tests
             organisationRollUp.Parent = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -618,7 +618,7 @@ namespace Allors.Database.Domain.Tests
             partyFixedAssetAssignment.Party = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -633,7 +633,7 @@ namespace Allors.Database.Domain.Tests
             pickList.ShipToParty = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -648,7 +648,7 @@ namespace Allors.Database.Domain.Tests
             quote.Issuer = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -663,7 +663,7 @@ namespace Allors.Database.Domain.Tests
             quote.Receiver = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -678,7 +678,7 @@ namespace Allors.Database.Domain.Tests
             purchaseInvoice.BilledTo = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -693,7 +693,7 @@ namespace Allors.Database.Domain.Tests
             purchaseInvoice.BilledFrom = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -708,7 +708,7 @@ namespace Allors.Database.Domain.Tests
             purchaseInvoice.ShipToCustomer = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -723,7 +723,7 @@ namespace Allors.Database.Domain.Tests
             purchaseInvoice.BillToEndCustomer = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -738,7 +738,7 @@ namespace Allors.Database.Domain.Tests
             purchaseInvoice.ShipToEndCustomer = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -753,7 +753,7 @@ namespace Allors.Database.Domain.Tests
             purchaseOrder.TakenViaSupplier = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -768,7 +768,7 @@ namespace Allors.Database.Domain.Tests
             purchaseOrder.TakenViaSubcontractor = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -783,7 +783,7 @@ namespace Allors.Database.Domain.Tests
             request.Originator = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -798,7 +798,7 @@ namespace Allors.Database.Domain.Tests
             request.Recipient = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -813,7 +813,7 @@ namespace Allors.Database.Domain.Tests
             requirement.Authorizer = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -828,7 +828,7 @@ namespace Allors.Database.Domain.Tests
             requirement.NeededFor = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -843,7 +843,7 @@ namespace Allors.Database.Domain.Tests
             requirement.Originator = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -858,7 +858,7 @@ namespace Allors.Database.Domain.Tests
             requirement.ServicedBy = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -873,7 +873,7 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.BilledFrom = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -888,7 +888,7 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.BillToCustomer = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -903,7 +903,7 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.BillToEndCustomer = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -918,7 +918,7 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.ShipToCustomer = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -933,7 +933,7 @@ namespace Allors.Database.Domain.Tests
             salesInvoice.ShipToEndCustomer = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -948,7 +948,7 @@ namespace Allors.Database.Domain.Tests
             salesOrder.BillToCustomer = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -963,7 +963,7 @@ namespace Allors.Database.Domain.Tests
             salesOrder.BillToEndCustomer = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -978,7 +978,7 @@ namespace Allors.Database.Domain.Tests
             salesOrder.ShipToCustomer = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -993,7 +993,7 @@ namespace Allors.Database.Domain.Tests
             salesOrder.ShipToEndCustomer = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -1008,7 +1008,7 @@ namespace Allors.Database.Domain.Tests
             salesOrder.PlacingCustomer = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -1023,7 +1023,7 @@ namespace Allors.Database.Domain.Tests
             salesOrder.TakenBy = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, this.InternalOrganisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, this.InternalOrganisation.Revocations);
         }
 
         [Fact]
@@ -1037,7 +1037,7 @@ namespace Allors.Database.Domain.Tests
             salesOrderItem.AssignedShipToParty = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -1052,7 +1052,7 @@ namespace Allors.Database.Domain.Tests
             serialisedItem.AssignedSuppliedBy = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -1067,7 +1067,7 @@ namespace Allors.Database.Domain.Tests
             serialisedItem.OwnedBy = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -1082,7 +1082,7 @@ namespace Allors.Database.Domain.Tests
             serialisedItem.RentedBy = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -1097,7 +1097,7 @@ namespace Allors.Database.Domain.Tests
             serialisedItem.Buyer = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -1112,7 +1112,7 @@ namespace Allors.Database.Domain.Tests
             serialisedItem.Seller = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -1127,7 +1127,7 @@ namespace Allors.Database.Domain.Tests
             workTask.Customer = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -1142,7 +1142,7 @@ namespace Allors.Database.Domain.Tests
             workTask.ExecutedBy = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
 
         [Fact]
@@ -1157,7 +1157,7 @@ namespace Allors.Database.Domain.Tests
             partyAssignment.Party = organisation;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, organisation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, organisation.Revocations);
         }
     }
 }

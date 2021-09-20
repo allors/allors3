@@ -226,14 +226,14 @@ namespace Allors.Database.Domain.Tests
     {
         public ProductQuoteDeniedPermissionRuleTests(Fixture fixture) : base(fixture)
         {
-            this.deletePermission = new Permissions(this.Transaction).Get(this.M.ProductQuote, this.M.ProductQuote.Delete);
-            this.setReadyPermission = new Permissions(this.Transaction).Get(this.M.ProductQuote, this.M.ProductQuote.SetReadyForProcessing);
+            this.deleteRevocation = new Revocations(this.Transaction).ProductQuoteDeleteRevocation;
+            this.setReadyForProcessingRevocation = new Revocations(this.Transaction).ProductQuoteSetReadyForProcessingRevocation;
         }
 
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission deletePermission;
-        private readonly Permission setReadyPermission;
+        private readonly Revocation deleteRevocation;
+        private readonly Revocation setReadyForProcessingRevocation;
 
         [Fact]
         public void OnChangedProductQuoteValidQuoteItemsDeriveSetReadyPermissionAllowed()
@@ -249,7 +249,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Derive();
 
-            Assert.DoesNotContain(this.setReadyPermission, productQuote.DeniedPermissions);
+            Assert.DoesNotContain(this.setReadyForProcessingRevocation, productQuote.Revocations);
         }
 
         [Fact]
@@ -268,7 +268,7 @@ namespace Allors.Database.Domain.Tests
             quoteItem.Cancel();
             this.Derive();
 
-            Assert.Contains(this.setReadyPermission, productQuote.DeniedPermissions);
+            Assert.Contains(this.setReadyForProcessingRevocation, productQuote.Revocations);
         }
 
         [Fact]
@@ -281,7 +281,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.True(productQuote.QuoteState.IsAwaitingAcceptance);
-            Assert.Contains(this.setReadyPermission, productQuote.DeniedPermissions);
+            Assert.Contains(this.setReadyForProcessingRevocation, productQuote.Revocations);
         }
 
         [Fact]
@@ -290,7 +290,7 @@ namespace Allors.Database.Domain.Tests
             var productQuote = new ProductQuoteBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, productQuote.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, productQuote.Revocations);
         }
 
         [Fact]
@@ -302,7 +302,7 @@ namespace Allors.Database.Domain.Tests
             productQuote.QuoteState = new QuoteStates(this.Transaction).Accepted;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, productQuote.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, productQuote.Revocations);
         }
 
         [Fact]
@@ -314,7 +314,7 @@ namespace Allors.Database.Domain.Tests
             productQuote.Request = new RequestForQuoteBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.Contains(this.deletePermission, productQuote.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, productQuote.Revocations);
         }
 
         [Fact]
@@ -329,7 +329,7 @@ namespace Allors.Database.Domain.Tests
             productQuote.RemoveRequest();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, productQuote.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, productQuote.Revocations);
         }
 
         [Fact]
@@ -343,7 +343,7 @@ namespace Allors.Database.Domain.Tests
             salesOrder.Quote = quote;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, quote.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, quote.Revocations);
         }
 
         [Fact]
@@ -360,7 +360,7 @@ namespace Allors.Database.Domain.Tests
             salesOrder.RemoveQuote();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, quote.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, quote.Revocations);
         }
     }
 }

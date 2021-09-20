@@ -3056,11 +3056,11 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class SalesInvoiceDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SalesInvoiceDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.SalesInvoice, this.M.SalesInvoice.Delete);
+        public SalesInvoiceDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deleteRevocation = new Revocations(this.Transaction).SalesInvoiceDeleteRevocation;
 
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission deletePermission;
+        private readonly Revocation deleteRevocation;
 
         [Fact]
         public void OnChangedSalesInvoiceStateReadyForPostingDeriveDeletePermission()
@@ -3068,7 +3068,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new SalesInvoiceBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, invoice.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, invoice.Revocations);
         }
 
         [Fact]
@@ -3080,7 +3080,7 @@ namespace Allors.Database.Domain.Tests
             invoice.CancelInvoice();
             this.Derive();
 
-            Assert.Contains(this.deletePermission, invoice.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, invoice.Revocations);
         }
 
         [Fact]
@@ -3093,7 +3093,7 @@ namespace Allors.Database.Domain.Tests
             invoice.AddSalesInvoiceItem(invoiceItem);
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, invoice.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, invoice.Revocations);
         }
 
         [Fact]
@@ -3109,7 +3109,7 @@ namespace Allors.Database.Domain.Tests
             invoiceItem.CancelFromInvoice();
             this.Derive();
 
-            Assert.Contains(this.deletePermission, invoice.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, invoice.Revocations);
         }
 
         [Fact]
@@ -3121,7 +3121,7 @@ namespace Allors.Database.Domain.Tests
             new RepeatingSalesInvoiceBuilder(this.Transaction).WithSource(invoice).Build();
             this.Derive();
 
-            Assert.Contains(this.deletePermission, invoice.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, invoice.Revocations);
         }
 
         [Fact]
@@ -3133,7 +3133,7 @@ namespace Allors.Database.Domain.Tests
             invoice.IsRepeatingInvoice = true;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, invoice.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, invoice.Revocations);
         }
 
         [Fact]
@@ -3145,7 +3145,7 @@ namespace Allors.Database.Domain.Tests
             invoice.IsRepeatingInvoice = false;
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, invoice.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, invoice.Revocations);
         }
 
         [Fact]
@@ -3157,7 +3157,7 @@ namespace Allors.Database.Domain.Tests
             invoice.AddSalesOrder(new SalesOrderBuilder(this.Transaction).Build());
             this.Derive();
 
-            Assert.Contains(this.deletePermission, invoice.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, invoice.Revocations);
         }
 
         [Fact]
@@ -3169,7 +3169,7 @@ namespace Allors.Database.Domain.Tests
             invoice.PurchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.Contains(this.deletePermission, invoice.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, invoice.Revocations);
         }
     }
 
@@ -3208,7 +3208,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[invoice];
+            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[invoice];
             Assert.True(acl.CanExecute(this.M.SalesInvoice.Send));
             Assert.False(acl.CanExecute(this.M.SalesInvoice.WriteOff));
             Assert.True(acl.CanExecute(this.M.SalesInvoice.CancelInvoice));
@@ -3253,7 +3253,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(new SalesInvoiceStates(this.Transaction).NotPaid, invoice.SalesInvoiceState);
 
-            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[invoice];
+            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[invoice];
             Assert.False(acl.CanExecute(this.M.SalesInvoice.Send));
             Assert.True(acl.CanExecute(this.M.SalesInvoice.WriteOff));
             Assert.False(acl.CanExecute(this.M.SalesInvoice.CancelInvoice));
@@ -3328,7 +3328,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[invoice];
+            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[invoice];
 
             Assert.Equal(new SalesInvoiceStates(this.Transaction).Paid, invoice.SalesInvoiceState);
             Assert.False(acl.CanExecute(this.M.SalesInvoice.Send));
@@ -3380,7 +3380,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[invoice];
+            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[invoice];
             Assert.False(acl.CanExecute(this.M.SalesInvoice.Send));
             Assert.True(acl.CanExecute(this.M.SalesInvoice.WriteOff));
             Assert.False(acl.CanExecute(this.M.SalesInvoice.CancelInvoice));
@@ -3420,7 +3420,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[invoice];
+            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[invoice];
             Assert.False(acl.CanExecute(this.M.SalesInvoice.Send));
             Assert.False(acl.CanExecute(this.M.SalesInvoice.WriteOff));
             Assert.False(acl.CanExecute(this.M.SalesInvoice.CancelInvoice));
@@ -3458,7 +3458,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var acl = new DatabaseAccessControlLists(this.Transaction.GetUser())[invoice];
+            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[invoice];
             Assert.Equal(new SalesInvoiceStates(this.Transaction).Cancelled, invoice.SalesInvoiceState);
             Assert.False(acl.CanExecute(this.M.SalesInvoice.Send));
             Assert.False(acl.CanExecute(this.M.SalesInvoice.WriteOff));

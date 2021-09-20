@@ -11,8 +11,6 @@ namespace Allors.Database.Domain.Tests
     using Resources;
     using System.Linq;
     using Database.Derivations;
-    using Meta;
-    using Permission = Domain.Permission;
 
     public class SerialisedItemTests : DomainTest, IClassFixture<Fixture>
     {
@@ -139,7 +137,7 @@ namespace Allors.Database.Domain.Tests
             serialisedItem.AcquisitionYear = 2020;
 
             var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
-            Assert.Equal(new IRoleType[]
+            Assert.Equal(new Meta.IRoleType[]
             {
                 this.M.SerialisedItem.AcquiredDate,
                 this.M.SerialisedItem.AcquisitionYear,
@@ -155,7 +153,7 @@ namespace Allors.Database.Domain.Tests
             serialisedItem.AcquiredDate = this.Transaction.Now();
 
             var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
-            Assert.Equal(new IRoleType[]
+            Assert.Equal(new Meta.IRoleType[]
             {
                 this.M.SerialisedItem.AcquiredDate,
                 this.M.SerialisedItem.AcquisitionYear,
@@ -803,11 +801,11 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class SerialisedItemDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SerialisedItemDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.SerialisedItem, this.M.SerialisedItem.Delete);
+        public SerialisedItemDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deleteRevocation = new Revocations(this.Transaction).SerialisedItemDeleteRevocation;
 
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission deletePermission;
+        private readonly Revocation deleteRevocation;
 
         [Fact]
         public void OnChangeSerialisedItemDeriveDeletePermission()
@@ -815,7 +813,7 @@ namespace Allors.Database.Domain.Tests
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, serialisedItem.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, serialisedItem.Revocations);
         }
 
         [Fact]
@@ -830,7 +828,7 @@ namespace Allors.Database.Domain.Tests
             inventoryItemTransaction.SerialisedItem = serialisedItem;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, serialisedItem.Revocations);
         }
 
         [Fact]
@@ -845,7 +843,7 @@ namespace Allors.Database.Domain.Tests
             purchaseInvoiceItem.SerialisedItem = serialisedItem;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, serialisedItem.Revocations);
         }
 
         [Fact]
@@ -860,7 +858,7 @@ namespace Allors.Database.Domain.Tests
             purchaseOrderItem.SerialisedItem = serialisedItem;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, serialisedItem.Revocations);
         }
 
         [Fact]
@@ -875,7 +873,7 @@ namespace Allors.Database.Domain.Tests
             quoteItem.SerialisedItem = serialisedItem;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, serialisedItem.Revocations);
         }
 
         [Fact]
@@ -890,7 +888,7 @@ namespace Allors.Database.Domain.Tests
             salesInvoiceItem.SerialisedItem = serialisedItem;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, serialisedItem.Revocations);
         }
 
         [Fact]
@@ -905,7 +903,7 @@ namespace Allors.Database.Domain.Tests
             salesOrderItem.SerialisedItem = serialisedItem;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, serialisedItem.Revocations);
         }
 
         [Fact]
@@ -920,7 +918,7 @@ namespace Allors.Database.Domain.Tests
             serialisedInventoryItem.SerialisedItem = serialisedItem;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, serialisedItem.Revocations);
         }
 
         [Fact]
@@ -935,7 +933,7 @@ namespace Allors.Database.Domain.Tests
             shipmentItem.SerialisedItem = serialisedItem;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, serialisedItem.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, serialisedItem.Revocations);
         }
     }
 }

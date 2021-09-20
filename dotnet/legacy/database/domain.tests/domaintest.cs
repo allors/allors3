@@ -59,24 +59,15 @@ namespace Allors.Database.Domain.Tests
         {
             database.Init();
 
-            this.Transaction = database.CreateTransaction();
-
             if (populate)
             {
-                this.Populate();
-                this.Transaction.Commit();
+                CultureInfo.CurrentCulture = new CultureInfo("en-GB");
+                CultureInfo.CurrentUICulture = new CultureInfo("en-GB");
+
+                new Setup(database, this.Config).Apply();
             }
-        }
 
-        private void Populate()
-        {
-            CultureInfo.CurrentCulture = new CultureInfo("en-GB");
-            CultureInfo.CurrentUICulture = new CultureInfo("en-GB");
-
-            new Setup(this.Transaction, this.Config).Apply();
-
-            this.Transaction.Derive();
-            this.Transaction.Commit();
+            this.Transaction = database.CreateTransaction();
         }
     }
 }

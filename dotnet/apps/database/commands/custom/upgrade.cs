@@ -95,12 +95,13 @@ namespace Commands
                 return 1;
             }
 
+            Permissions.Sync(this.Parent.Database);
+
             using (var transaction = this.Parent.Database.CreateTransaction())
             {
                 new Allors.Database.Domain.Upgrade(transaction, this.Parent.DataPath).Execute();
                 transaction.Commit();
 
-                new Permissions(transaction).Sync();
                 new Security(transaction).Apply();
 
                 transaction.Commit();

@@ -218,11 +218,11 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class RequestDeniedPermissonDerivationSecurityTests : DomainTest, IClassFixture<Fixture>
     {
-        public RequestDeniedPermissonDerivationSecurityTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.RequestForInformation, this.M.RequestForInformation.Delete);
+        public RequestDeniedPermissonDerivationSecurityTests(Fixture fixture) : base(fixture) => this.deleteRevocation = new Revocations(this.Transaction).RequestForInformationDeleteRevocation;
 
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission deletePermission;
+        private readonly Revocation deleteRevocation;
 
         [Fact]
         public void OnChangedRequestStateSubmittedDeriveDeletePermission()
@@ -231,7 +231,7 @@ namespace Allors.Database.Domain.Tests
                 .WithOriginator(this.InternalOrganisation).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, requestForInformation.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, requestForInformation.Revocations);
         }
 
         [Fact]
@@ -240,7 +240,7 @@ namespace Allors.Database.Domain.Tests
             var requestForInformation = new RequestForInformationBuilder(this.Transaction).WithEmailAddress("test@test.com").Build();
             this.Derive();
 
-            Assert.Contains(this.deletePermission, requestForInformation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, requestForInformation.Revocations);
         }
 
         [Fact]
@@ -254,7 +254,7 @@ namespace Allors.Database.Domain.Tests
             var quote = new ProductQuoteBuilder(this.Transaction).WithRequest(requestForInformation).Build();
             this.Derive();
 
-            Assert.Contains(this.deletePermission, requestForInformation.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, requestForInformation.Revocations);
         }
     }
 }

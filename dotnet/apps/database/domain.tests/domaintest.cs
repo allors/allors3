@@ -70,21 +70,20 @@ namespace Allors.Database.Domain.Tests
         {
             database.Init();
 
-            this.Transaction = database.CreateTransaction();
-
             if (populate)
             {
-                this.Populate();
-                this.Transaction.Commit();
+                this.Populate(database);
             }
+
+            this.Transaction = database.CreateTransaction();
         }
 
-        private void Populate()
+        private void Populate(IDatabase database)
         {
             CultureInfo.CurrentCulture = new CultureInfo("en-GB");
             CultureInfo.CurrentUICulture = new CultureInfo("en-GB");
 
-            new Setup(this.Transaction, this.Config).Apply();
+            new Setup(database, this.Config).Apply();
 
             this.Transaction.Derive();
             this.Transaction.Commit();

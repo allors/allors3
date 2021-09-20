@@ -45,11 +45,11 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class RequestForProposalDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public RequestForProposalDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.RequestForProposal, this.M.RequestForProposal.Delete);
+        public RequestForProposalDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deleteRevocation = new Revocations(this.Transaction).RequestForProposalDeleteRevocation;
 
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission deletePermission;
+        private readonly Revocation deleteRevocation;
 
         [Fact]
         public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionDenied()
@@ -57,7 +57,7 @@ namespace Allors.Database.Domain.Tests
             var request = new RequestForProposalBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.Contains(this.deletePermission, request.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, request.Revocations);
         }
 
         [Fact]
@@ -69,7 +69,7 @@ namespace Allors.Database.Domain.Tests
             request.RequestState = new RequestStates(this.Transaction).Submitted;
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, request.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, request.Revocations);
         }
 
         [Fact]
@@ -84,7 +84,7 @@ namespace Allors.Database.Domain.Tests
             quote.Request = request;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, request.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, request.Revocations);
         }
 
         [Fact]
@@ -99,12 +99,12 @@ namespace Allors.Database.Domain.Tests
             request.AddRequestItem(requestItem);
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, request.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, request.Revocations);
 
             requestItem.RequestItemState = new RequestItemStates(this.Transaction).Quoted;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, request.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, request.Revocations);
         }
     }
 }

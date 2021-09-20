@@ -190,10 +190,10 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class NonUnifiedPartDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public NonUnifiedPartDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.NonUnifiedPart, this.M.NonUnifiedPart.Delete);
+        public NonUnifiedPartDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deleteRevocation = new Revocations(this.Transaction).NonUnifiedPartDeleteRevocation;
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission deletePermission;
+        private readonly Revocation deleteRevocation;
 
         [Fact]
         public void OnChangedNonUnifiedPartDeriveDeletePermission()
@@ -201,7 +201,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, nonUnifiedPart.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, nonUnifiedPart.Revocations);
         }
 
         [Fact]
@@ -215,7 +215,7 @@ namespace Allors.Database.Domain.Tests
             inventoryProduced.Part = nonUnifiedPart;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, nonUnifiedPart.Revocations);
         }
 
         [Fact]
@@ -230,7 +230,7 @@ namespace Allors.Database.Domain.Tests
             workEffortStandard.Part = nonUnifiedPart;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, nonUnifiedPart.Revocations);
         }
 
         [Fact]
@@ -245,7 +245,7 @@ namespace Allors.Database.Domain.Tests
             bom.Part = nonUnifiedPart;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, nonUnifiedPart.Revocations);
         }
 
         [Fact]
@@ -260,7 +260,7 @@ namespace Allors.Database.Domain.Tests
             bom.ComponentPart = nonUnifiedPart;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, nonUnifiedPart.Revocations);
         }
 
         [Fact]
@@ -275,7 +275,7 @@ namespace Allors.Database.Domain.Tests
             good.Part = nonUnifiedPart;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, nonUnifiedPart.Revocations);
         }
 
         [Fact]
@@ -290,7 +290,7 @@ namespace Allors.Database.Domain.Tests
             invoice.Part = nonUnifiedPart;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, nonUnifiedPart.Revocations);
         }
 
         [Fact]
@@ -305,7 +305,7 @@ namespace Allors.Database.Domain.Tests
             invoice.Part = nonUnifiedPart;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, nonUnifiedPart.Revocations);
         }
 
         [Fact]
@@ -320,7 +320,7 @@ namespace Allors.Database.Domain.Tests
             order.Part = nonUnifiedPart;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, nonUnifiedPart.Revocations);
         }
 
         [Fact]
@@ -335,7 +335,7 @@ namespace Allors.Database.Domain.Tests
             shipmentItem.Part = nonUnifiedPart;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, nonUnifiedPart.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, nonUnifiedPart.Revocations);
         }
     }
 }

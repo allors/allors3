@@ -200,11 +200,11 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class UnifiedGoodDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public UnifiedGoodDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deletePermission = new Permissions(this.Transaction).Get(this.M.UnifiedGood, this.M.UnifiedGood.Delete);
+        public UnifiedGoodDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deleteRevocation = new Revocations(this.Transaction).UnifiedGoodDeleteRevocation;
 
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission deletePermission;
+        private readonly Revocation deleteRevocation;
 
         [Fact]
         public void OnChangedNonUnifiedGoodDeriveDeletePermission()
@@ -212,7 +212,7 @@ namespace Allors.Database.Domain.Tests
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -227,7 +227,7 @@ namespace Allors.Database.Domain.Tests
             deployment.ProductOffering = unifiedGood;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -242,7 +242,7 @@ namespace Allors.Database.Domain.Tests
             engagementItem.Product = unifiedGood;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -257,7 +257,7 @@ namespace Allors.Database.Domain.Tests
             generalLedgerAccount.AddAssignedCostUnitsAllowed(unifiedGood);
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -272,7 +272,7 @@ namespace Allors.Database.Domain.Tests
             generalLedgerAccount.DefaultCostUnit = unifiedGood;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -287,7 +287,7 @@ namespace Allors.Database.Domain.Tests
             quoteItem.Product = unifiedGood;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -302,7 +302,7 @@ namespace Allors.Database.Domain.Tests
             shipmentItem.Good = unifiedGood;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -317,7 +317,7 @@ namespace Allors.Database.Domain.Tests
             workEffortGoodStandard.UnifiedProduct = unifiedGood;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -332,7 +332,7 @@ namespace Allors.Database.Domain.Tests
             marketingPackage.AddProductsUsedIn(unifiedGood);
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -347,7 +347,7 @@ namespace Allors.Database.Domain.Tests
             marketingPackage.Product = unifiedGood;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -362,7 +362,7 @@ namespace Allors.Database.Domain.Tests
             organisationGlAccount.Product = unifiedGood;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -377,7 +377,7 @@ namespace Allors.Database.Domain.Tests
             productConfiguration.AddProductsUsedIn(unifiedGood);
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -392,7 +392,7 @@ namespace Allors.Database.Domain.Tests
             productConfiguration.Product = unifiedGood;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -407,7 +407,7 @@ namespace Allors.Database.Domain.Tests
             requestItem.Product = unifiedGood;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -422,7 +422,7 @@ namespace Allors.Database.Domain.Tests
             salesInvoiceItem.Product = unifiedGood;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -437,7 +437,7 @@ namespace Allors.Database.Domain.Tests
             salesOrderItem.Product = unifiedGood;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -452,7 +452,7 @@ namespace Allors.Database.Domain.Tests
             workEffortType.ProductToProduce = unifiedGood;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -467,7 +467,7 @@ namespace Allors.Database.Domain.Tests
             workEffortInventoryProduced.Part = unifiedGood;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -482,7 +482,7 @@ namespace Allors.Database.Domain.Tests
             workEffortPartStandard.Part = unifiedGood;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -497,7 +497,7 @@ namespace Allors.Database.Domain.Tests
             partBillOfMaterial.Part = unifiedGood;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -512,7 +512,7 @@ namespace Allors.Database.Domain.Tests
             partBillOfMaterial.ComponentPart = unifiedGood;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -524,7 +524,7 @@ namespace Allors.Database.Domain.Tests
             var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction).WithReason(new InventoryTransactionReasonBuilder(this.Transaction).Build()).WithPart(unifiedGood).Build();
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
 
         [Fact]
@@ -537,7 +537,7 @@ namespace Allors.Database.Domain.Tests
             unifiedGood.AddSerialisedItem(serialisedItem);
             this.Derive();
 
-            Assert.Contains(this.deletePermission, unifiedGood.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, unifiedGood.Revocations);
         }
     }
 }

@@ -47,14 +47,14 @@ namespace Allors.Database.Domain.Tests
     {
         public RequestForQuoteDeniedPermissionRuleTests(Fixture fixture) : base(fixture)
         {
-            this.deletePermission = new Permissions(this.Transaction).Get(this.M.RequestForQuote, this.M.RequestForQuote.Delete);
-            this.submitPermission = new Permissions(this.Transaction).Get(this.M.RequestForQuote, this.M.RequestForQuote.Submit);
+            this.deleteRevocation = new Revocations(this.Transaction).RequestForQuoteDeleteRevocation;
+            this.submitRevocation = new Revocations(this.Transaction).RequestForQuoteSubmitRevocation;
         }
 
         public override Config Config => new Config { SetupSecurity = true };
 
-        private readonly Permission deletePermission;
-        private readonly Permission submitPermission;
+        private readonly Revocation deleteRevocation;
+        private readonly Revocation submitRevocation;
 
         [Fact]
         public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionDenied()
@@ -62,7 +62,7 @@ namespace Allors.Database.Domain.Tests
             var request = new RequestForQuoteBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.Contains(this.deletePermission, request.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, request.Revocations);
         }
 
         [Fact]
@@ -74,7 +74,7 @@ namespace Allors.Database.Domain.Tests
             request.RequestState = new RequestStates(this.Transaction).Submitted;
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, request.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, request.Revocations);
         }
 
         [Fact]
@@ -89,7 +89,7 @@ namespace Allors.Database.Domain.Tests
             quote.Request = request;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, request.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, request.Revocations);
         }
 
         [Fact]
@@ -104,12 +104,12 @@ namespace Allors.Database.Domain.Tests
             request.AddRequestItem(requestItem);
             this.Derive();
 
-            Assert.DoesNotContain(this.deletePermission, request.DeniedPermissions);
+            Assert.DoesNotContain(this.deleteRevocation, request.Revocations);
 
             requestItem.RequestItemState = new RequestItemStates(this.Transaction).Quoted;
             this.Derive();
 
-            Assert.Contains(this.deletePermission, request.DeniedPermissions);
+            Assert.Contains(this.deleteRevocation, request.Revocations);
         }
 
         [Fact]
@@ -118,7 +118,7 @@ namespace Allors.Database.Domain.Tests
             var requestForQuote = new RequestForQuoteBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.Contains(this.submitPermission, requestForQuote.DeniedPermissions);
+            Assert.Contains(this.submitRevocation, requestForQuote.Revocations);
         }
 
         [Fact]
@@ -127,12 +127,12 @@ namespace Allors.Database.Domain.Tests
             var requestForQuote = new RequestForQuoteBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.Contains(this.submitPermission, requestForQuote.DeniedPermissions);
+            Assert.Contains(this.submitRevocation, requestForQuote.Revocations);
 
             requestForQuote.Originator = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
             this.Derive();
 
-            Assert.DoesNotContain(this.submitPermission, requestForQuote.DeniedPermissions);
+            Assert.DoesNotContain(this.submitRevocation, requestForQuote.Revocations);
         }
     }
 }
