@@ -127,15 +127,15 @@ export class ReactiveDatabaseClient implements IReactiveDatabaseClient {
           const database = session.workspace.database as DatabaseConnection;
           return this.client.sync(syncRequest).pipe(
             concatMap((syncResponse) => {
-              const securityRequest = database.onSyncResponse(syncResponse);
-              if (securityRequest != null) {
-                return this.client.security(securityRequest).pipe(
-                  concatMap((securityResponse) => {
-                    const securityRequest = database.securityResponse(securityResponse);
-                    if (securityRequest != null) {
-                      return this.client.security(securityRequest).pipe(
-                        concatMap((securityResponse) => {
-                          database.securityResponse(securityResponse);
+              const accessRequest = database.onSyncResponse(syncResponse);
+              if (accessRequest != null) {
+                return this.client.access(accessRequest).pipe(
+                  concatMap((accessResponse) => {
+                    const permissionRequest = database.accessResponse(accessResponse);
+                    if (permissionRequest != null) {
+                      return this.client.permission(permissionRequest).pipe(
+                        concatMap((permissionResponse) => {
+                          database.permissionResponse(permissionResponse);
                           return of({ pullResult, pullResponse });
                         })
                       );

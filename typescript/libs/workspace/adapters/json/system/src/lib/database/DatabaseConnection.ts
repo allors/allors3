@@ -1,5 +1,5 @@
-import { PullResponse, SecurityRequest, SecurityResponse, SyncRequest, SyncResponse } from '@allors/protocol/json/system';
-import { AccessControl, Configuration, DatabaseConnection as SystemDatabaseConnection, IdGenerator, MapMap, ServicesBuilder } from '@allors/workspace/adapters/system';
+import { PullResponse, SyncRequest, SyncResponse, AccessRequest, AccessResponse, PermissionRequest, PermissionResponse } from '@allors/protocol/json/system';
+import { Grant, Configuration, DatabaseConnection as SystemDatabaseConnection, IdGenerator, MapMap, ServicesBuilder, Revocation } from '@allors/workspace/adapters/system';
 import { IWorkspace, Operations } from '@allors/workspace/domain/system';
 import { Class, MethodType, OperandType, RelationType } from '@allors/workspace/meta/system';
 import { DatabaseRecord } from './DatabaseRecord';
@@ -9,9 +9,10 @@ import { Workspace } from '../workspace/Workspace';
 export class DatabaseConnection extends SystemDatabaseConnection {
   private recordsById: Map<number, DatabaseRecord>;
 
-  accessControlById: Map<number, AccessControl>;
+  grantById: Map<number, Grant>;
+  revocationById: Map<number, Revocation>;
   permissions: Set<number>;
-  
+
   readPermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
   writePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
   executePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
@@ -21,7 +22,8 @@ export class DatabaseConnection extends SystemDatabaseConnection {
 
     this.recordsById = new Map();
 
-    this.accessControlById = new Map();
+    this.grantById = new Map();
+    this.revocationById = new Map();
     this.permissions = new Set();
 
     this.readPermissionByOperandTypeByClass = new MapMap();
@@ -47,15 +49,13 @@ export class DatabaseConnection extends SystemDatabaseConnection {
             return true;
           }
 
-          if (!this.ranges.equals(record.accessControlIds, v.a)) {
+          if (!this.ranges.equals(record.grants, v.g)) {
             return true;
           }
 
-          if (!this.ranges.equals(record.deniedPermissionIds, v.d)) {
+          if (!this.ranges.equals(record.revocations, v.r)) {
             return true;
           }
-
-          // TODO: Use smarter updates for DeniedPermissions
 
           return false;
         })
@@ -63,7 +63,7 @@ export class DatabaseConnection extends SystemDatabaseConnection {
     };
   }
 
-  onSyncResponse(syncResponse: SyncResponse): SecurityRequest | null {
+  onSyncResponse(syncResponse: SyncResponse): AccessRequest | null {
     const ctx = new ResponseContext(this);
 
     for (const syncResponseObject of syncResponse.o) {
@@ -71,53 +71,45 @@ export class DatabaseConnection extends SystemDatabaseConnection {
       this.recordsById.set(databaseObjects.id, databaseObjects);
     }
 
-    if (ctx.missingAccessControlIds.size > 0 || ctx.missingPermissionIds.size > 0) {
+    if (ctx.missingGrantIds.size > 0 || ctx.missingRevocationIds.size > 0) {
       return {
-        a: Array.from(ctx.missingAccessControlIds),
-        p: Array.from(ctx.missingPermissionIds),
+        g: Array.from(ctx.missingGrantIds),
+        r: Array.from(ctx.missingRevocationIds),
       };
     }
 
     return null;
   }
 
-  securityResponse(securityResponse: SecurityResponse): SecurityRequest | undefined {
-    // TODO: Koen - Restrictions
-    // if (securityResponse.p != null) {
-    //   for (const syncResponsePermission of securityResponse.p) {
-    //     const id = syncResponsePermission[0];
-    //     const cls = this.configuration.metaPopulation.metaObjectByTag.get(syncResponsePermission[1]) as Class;
-    //     const metaObject = this.configuration.metaPopulation.metaObjectByTag.get(syncResponsePermission[2]);
-    //     const operandType: OperandType = (metaObject as RelationType)?.roleType ?? (metaObject as MethodType);
-    //     const operation = syncResponsePermission[3];
-
-    //     this.permissions.add(id);
-
-    //     switch (operation) {
-    //       case Operations.Read:
-    //         this.readPermissionByOperandTypeByClass.set(cls, operandType, id);
-    //         break;
-    //       case Operations.Write:
-    //         this.writePermissionByOperandTypeByClass.set(cls, operandType, id);
-    //         break;
-    //       case Operations.Execute:
-    //         this.executePermissionByOperandTypeByClass.set(cls, operandType, id);
-    //         break;
-    //       case Operations.Create:
-    //         throw new Error('Create is not supported');
-    //       default:
-    //         throw new Error('Argument out of range');
-    //     }
-    //   }
-    // }
-
+  accessResponse(accessResponse: AccessResponse): PermissionRequest | undefined {
     let missingPermissionIds: Set<number> | undefined = undefined;
-    if (securityResponse.a != null) {
-      for (const syncResponseAccessControl of securityResponse.a) {
-        const id = syncResponseAccessControl.i;
-        const version = syncResponseAccessControl.v;
-        const permissionIds = syncResponseAccessControl.p;
-        this.accessControlById.set(id, new AccessControl(version, permissionIds));
+
+    if (accessResponse.g != null) {
+      for (const accessResponseGrant of accessResponse.g) {
+        const id = accessResponseGrant.i;
+        const version = accessResponseGrant.v;
+        const permissionIds = accessResponseGrant.p;
+        this.grantById.set(id, new Grant(version, permissionIds));
+
+        if (permissionIds != null) {
+          for (const permissionId of permissionIds) {
+            if (this.permissions.has(permissionId)) {
+              continue;
+            }
+
+            missingPermissionIds ??= new Set();
+            missingPermissionIds.add(permissionId);
+          }
+        }
+      }
+    }
+
+    if (accessResponse.r != null) {
+      for (const accessResponseRevocation of accessResponse.r) {
+        const id = accessResponseRevocation.i;
+        const version = accessResponseRevocation.v;
+        const permissionIds = accessResponseRevocation.p;
+        this.revocationById.set(id, new Revocation(version, permissionIds));
 
         if (permissionIds != null) {
           for (const permissionId of permissionIds) {
@@ -139,6 +131,36 @@ export class DatabaseConnection extends SystemDatabaseConnection {
     }
 
     return undefined;
+  }
+
+  permissionResponse(permissionResponse: PermissionResponse): void {
+    if (permissionResponse.p != null) {
+      for (const syncResponsePermission of permissionResponse.p) {
+        const id = syncResponsePermission.i;
+        const cls = this.configuration.metaPopulation.metaObjectByTag.get(syncResponsePermission.c) as Class;
+        const metaObject = this.configuration.metaPopulation.metaObjectByTag.get(syncResponsePermission.t);
+        const operandType: OperandType = (metaObject as RelationType)?.roleType ?? (metaObject as MethodType);
+        const operation = syncResponsePermission.o;
+
+        this.permissions.add(id);
+
+        switch (operation) {
+          case Operations.Read:
+            this.readPermissionByOperandTypeByClass.set(cls, operandType, id);
+            break;
+          case Operations.Write:
+            this.writePermissionByOperandTypeByClass.set(cls, operandType, id);
+            break;
+          case Operations.Execute:
+            this.executePermissionByOperandTypeByClass.set(cls, operandType, id);
+            break;
+          case Operations.Create:
+            throw new Error('Create is not supported');
+          default:
+            throw new Error('Argument out of range');
+        }
+      }
+    }
   }
 
   getPermission(cls: Class, operandType: OperandType, operation: Operations): number | undefined {

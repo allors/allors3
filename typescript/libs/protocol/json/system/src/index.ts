@@ -1,8 +1,17 @@
 // api
+export * from './lib/api/access/AccessRequest';
+export * from './lib/api/access/AccessResponse';
+export * from './lib/api/access/AccessResponseGrant';
+export * from './lib/api/access/AccessResponseRevocation';
+
 export * from './lib/api/invoke/Invocation';
 export * from './lib/api/invoke/InvokeOptions';
 export * from './lib/api/invoke/InvokeRequest';
 export * from './lib/api/invoke/InvokeResponse';
+
+export * from './lib/api/permission/PermissionRequest';
+export * from './lib/api/permission/PermissionResponse';
+export * from './lib/api/permission/PermissionResponsePermission';
 
 export * from './lib/api/pull/PullArgs';
 export * from './lib/api/pull/PullRequest';
@@ -15,10 +24,6 @@ export * from './lib/api/push/PushRequestObject';
 export * from './lib/api/push/PushRequestRole';
 export * from './lib/api/push/PushResponse';
 export * from './lib/api/push/PushResponseNewObject';
-
-export * from './lib/api/security/SecurityRequest';
-export * from './lib/api/security/SecurityResponse';
-export * from './lib/api/security/SecurityResponseAccessControl';
 
 export * from './lib/api/sync/SyncRequest';
 export * from './lib/api/sync/SyncResponse';

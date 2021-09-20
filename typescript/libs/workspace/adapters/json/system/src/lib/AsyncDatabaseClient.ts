@@ -122,14 +122,14 @@ export class AsyncDatabaseClient implements IAsyncDatabaseClient {
     if (syncRequest.o.length > 0) {
       const database = session.workspace.database as DatabaseConnection;
       const syncResponse = await this.client.sync(syncRequest);
-      let securityRequest = database.onSyncResponse(syncResponse);
+      const accessRequest = database.onSyncResponse(syncResponse);
 
-      if (securityRequest != null) {
-        let securityResponse = await this.client.security(securityRequest);
-        securityRequest = database.securityResponse(securityResponse);
-        if (securityRequest != null) {
-          securityResponse = await this.client.security(securityRequest);
-          database.securityResponse(securityResponse);
+      if (accessRequest != null) {
+        const accessResponse = await this.client.access(accessRequest);
+        const permissionRequest = database.accessResponse(accessResponse);
+        if (permissionRequest != null) {
+          const permissionResponse = await this.client.permission(permissionRequest);
+          database.permissionResponse(permissionResponse);
         }
       }
     }

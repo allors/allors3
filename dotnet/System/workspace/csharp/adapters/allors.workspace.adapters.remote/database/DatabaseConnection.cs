@@ -113,6 +113,8 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal PermissionRequest AccessResponse(AccessResponse accessResponse)
         {
+            var responseContext = new ResponseContext(this);
+
             HashSet<long> missingPermissionIds = null;
             if (accessResponse.g != null)
             {
@@ -143,7 +145,7 @@ namespace Allors.Workspace.Adapters.Remote
                     var id = syncResponseRevocation.i;
                     var version = syncResponseRevocation.v;
                     var permissionIds = this.Ranges.Load(syncResponseRevocation.p);
-                    this.AccessControlById[id] = new AccessControl { Version = version, PermissionIds = this.Ranges.Load(permissionIds) };
+                    this.RevocationById[id] = new Revocation { Version = version, PermissionIds = this.Ranges.Load(permissionIds) };
 
                     foreach (var permissionId in permissionIds)
                     {

@@ -11,5 +11,5 @@ export interface PullArgs {
   v: { [name: string]: IUnit };
 
   /** Pool */
-  Pool: number[][];
+  p: number[][];
 }

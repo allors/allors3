@@ -1,4 +1,4 @@
-import { InvokeRequest, InvokeResponse, PullRequest, PullResponse, PushRequest, PushResponse, SecurityRequest, SecurityResponse, SyncRequest, SyncResponse } from '@allors/protocol/json/system';
+import { InvokeRequest, InvokeResponse, PullRequest, PullResponse, PushRequest, PushResponse, SyncRequest, SyncResponse, AccessRequest, AccessResponse, PermissionRequest, PermissionResponse } from '@allors/protocol/json/system';
 import { Observable } from 'rxjs';
 
 export interface IReactiveDatabaseJsonClient {
@@ -10,5 +10,7 @@ export interface IReactiveDatabaseJsonClient {
 
   invoke(invokeRequest: InvokeRequest): Observable<InvokeResponse>;
 
-  security(securityRequest: SecurityRequest): Observable<SecurityResponse>;
+  access(accessRequest: AccessRequest): Observable<AccessResponse>;
+
+  permission(permissionRequest: PermissionRequest): Observable<PermissionResponse>;
 }

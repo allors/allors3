@@ -1,5 +1,5 @@
 import fetch from 'cross-fetch';
-import { InvokeRequest, PullRequest, PullResponse, PushRequest, PushResponse, Response, SecurityRequest, SecurityResponse, SyncRequest, SyncResponse } from '@allors/protocol/json/system';
+import { InvokeRequest, PullRequest, PullResponse, PushRequest, PushResponse, Response, SyncRequest, SyncResponse, AccessRequest, AccessResponse, PermissionRequest, PermissionResponse} from '@allors/protocol/json/system';
 import { IAsyncDatabaseJsonClient } from '@allors/workspace/adapters/json/system';
 
 interface AuthenticationTokenRequest {
@@ -74,8 +74,12 @@ export class FetchClient implements IAsyncDatabaseJsonClient {
     return await this.post('invoke', invokeRequest);
   }
 
-  async security(securityRequest: SecurityRequest): Promise<SecurityResponse> {
-    return await this.post('security', securityRequest);
+  async access(accessRequest: AccessRequest): Promise<AccessResponse> {
+    return await this.post('access', accessRequest);
+  }
+
+  async permission(permissionRequest: PermissionRequest): Promise<PermissionResponse> {
+    return await this.post('permission', permissionRequest);
   }
 
   async post<T>(relativeUrl: string, data: any): Promise<T> {
