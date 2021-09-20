@@ -34,7 +34,7 @@ namespace Allors.Database.Domain
 
             if (method.Revocations == null)
             {
-                method.Revocations = this.SyncedShipment?.DeniedPermissions.ToArray();
+                method.Revocations = this.SyncedShipment?.Revocations.ToArray();
             }
         }
 

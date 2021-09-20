@@ -134,6 +134,8 @@ namespace Allors.Database.Domain
             }
         }
 
+        protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);
+
         protected override void AppsSecure(Security config)
         {
             var created = new WorkEffortStates(this.Transaction).Created;
@@ -182,6 +184,24 @@ namespace Allors.Database.Domain
             config.Deny(this.M.WorkEffortFixedAssetAssignment, cancelled, Operations.Write);
             config.Deny(this.M.WorkEffortFixedAssetAssignment, finished, Operations.Write);
             config.Deny(this.M.WorkEffortFixedAssetAssignment, completed, Operations.Write);
+
+            var revocations = new Revocations(this.Transaction);
+            var permissions = new Permissions(this.Transaction);
+
+            revocations.WorkTaskCompleteRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Complete),
+            };
+
+            revocations.WorkTaskInvoiceRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Invoice),
+            };
+
+            revocations.WorkTaskReviseRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Revise),
+            };
         }
     }
 }

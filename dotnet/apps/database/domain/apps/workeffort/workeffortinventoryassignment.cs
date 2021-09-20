@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
 
             if (method.Revocations == null)
             {
-                method.Revocations = this.Assignment?.DeniedPermissions.ToArray();
+                method.Revocations = this.Assignment?.Revocations.ToArray();
             }
         }
 

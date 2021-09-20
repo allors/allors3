@@ -69,7 +69,7 @@ namespace Allors.Database.Domain
 
             if (method.Revocations == null)
             {
-                method.Revocations = this.WorkEffort?.DeniedPermissions.ToArray();
+                method.Revocations = this.WorkEffort?.Revocations.ToArray();
             }
         }
     }

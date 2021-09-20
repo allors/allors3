@@ -34,31 +34,33 @@ namespace Allors.Database.Domain
             {
                 @this.Revocations = @this.TransitionalRevocations;
 
+                var completeRevocation = new Revocations(@this.Strategy.Transaction).WorkTaskCompleteRevocation;
+                var invoiceRevocation = new Revocations(@this.Strategy.Transaction).WorkTaskInvoiceRevocation;
+                var reviseRevocation = new Revocations(@this.Strategy.Transaction).WorkTaskReviseRevocation;
+
                 if (!@this.CanInvoice)
                 {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get((Class)@this.Strategy.Class, @this.Meta.Invoice));
+                    @this.AddRevocation(invoiceRevocation);
                 }
                 else
                 {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get((Class)@this.Strategy.Class, @this.Meta.Invoice));
+                    @this.RemoveRevocation(invoiceRevocation);
                 }
-
-                var completePermission = new Permissions(@this.Strategy.Transaction).Get((Class)@this.Strategy.Class, @this.Meta.Complete);
 
                 if (@this.ServiceEntriesWhereWorkEffort.Any(v => !v.ExistThroughDate))
                 {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get((Class)@this.Strategy.Class, @this.Meta.Complete));
+                    @this.AddRevocation(completeRevocation);
                 }
                 else if (@this.WorkEffortState.IsInProgress)
                 {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get((Class)@this.Strategy.Class, @this.Meta.Complete));
+                    @this.RemoveRevocation(completeRevocation);
                 }
 
                 if (@this.WorkEffortState.IsFinished)
                 {
                     if (@this.ExecutedBy.Equals(@this.Customer))
                     {
-                        @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get((Class)@this.Strategy.Class, @this.Meta.Revise));
+                        @this.RemoveRevocation(reviseRevocation);
                     }
                 }
             }
