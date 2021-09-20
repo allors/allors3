@@ -2,7 +2,7 @@ group AllorsCSharpRepository;
 
 TemplateId() ::= <<14F49218-A676-43ba-9CBD-B8FFA059D1BF>>
 TemplateName() ::= <<Allors C# Meta>>
-TemplateVersion() ::= <<1.0.7>>
+TemplateVersion() ::= <<1.0.8>>
 TemplateAllors() ::= <<1.0>>
 TemplateConfiguration(repository) ::= <<
 $!
@@ -106,7 +106,7 @@ $repository.Interfaces:{interface|$define_interface(interface)$}; separator="\n"
 >>
 
 define_interface(interface) ::= <<
-    public class $interface.SingularName$ : Interface {
+    public partial class $interface.SingularName$ : Interface {
         public $interface.SingularName$(MetaPopulation metaPopulation, System.Guid id, string tag = null) : base(metaPopulation, id, tag)
         {
         }
@@ -135,7 +135,7 @@ $repository.Classes:{class|$define_class(class)$}; separator="\n"$
 >>
 
 define_class(class) ::= <<
-    public class $class.SingularName$ : Class {
+    public partial class $class.SingularName$ : Class {
         public $class.SingularName$(MetaPopulation metaPopulation, System.Guid id, string tag = null) : base(metaPopulation, id, tag)
         {
         }
@@ -356,7 +356,7 @@ $class.ImplementedProperties:{property|                 this.$class.SingularName
 >>
 
 define_methods(composite) ::= <<
-$composite.DefinedMethods:{method|          public IMethodType $method.DefiningType.SingularName$$method.Name$;}; separator="\n"$
+$composite.DefinedMethods:{method|          public MethodType $method.DefiningType.SingularName$$method.Name$;}; separator="\n"$
 >>
 
 build_domain(assembly) ::= <<
