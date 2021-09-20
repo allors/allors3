@@ -28,6 +28,21 @@ namespace Allors.Database.Domain
         public static readonly Guid PurchaseOrderWriteRevocationId = new Guid("99a3a62e-4367-4f13-851e-810fae4801a6");
         public static readonly Guid PurchaseOrderItemDeleteRevocationId = new Guid("c2b44a75-7d80-4399-aad9-aaa2fa3c9dc3");
         public static readonly Guid RequestForProposalDeleteRevocationId = new Guid("2e09cae8-c4fe-4938-88d1-55aad026a515");
+        public static readonly Guid QuoteItemDeleteRevocationId = new Guid("c3a15312-bbf2-4b79-8052-cddd4ee52f6b");
+        public static readonly Guid RequestForInformationDeleteRevocationId = new Guid("cfd6bb96-5acc-4b73-993b-70cb5e076de2");
+        public static readonly Guid RequestForQuoteDeleteRevocationId = new Guid("5a5864e2-b452-4da1-9915-093b0250cd61");
+        public static readonly Guid RequestForQuoteSubmitRevocationId = new Guid("3de464eb-acad-47e6-be0f-8ceb38a81abc");
+        public static readonly Guid RequestItemDeleteRevocationId = new Guid("23aeb662-32f5-4a6d-9b7e-f6078914f7e4");
+        public static readonly Guid SalesInvoiceDeleteRevocationId = new Guid("8f07e179-9a61-4244-ad9f-53d1985ec639");
+        public static readonly Guid SalesInvoiceItemDeleteRevocationId = new Guid("69faf684-6ca3-4106-a9d1-7b9268c0893d");
+        public static readonly Guid SalesOrderDeleteRevocationId = new Guid("c7841df0-9b8c-4667-8b21-70ec31453052");
+        public static readonly Guid SalesOrderInvoiceRevocationId = new Guid("4c186591-08aa-4f8c-8ee2-e33a1fff3c23");
+        public static readonly Guid SalesOrderShipRevocationId = new Guid("0f41b121-75e7-450d-8aaf-da624765ff30");
+        public static readonly Guid SalesOrderStateRevocationId = new Guid("375354ff-ddc5-4596-9ce4-4ece3cd1007c");
+        public static readonly Guid SalesOrderWriteRevocationId = new Guid("1f6f1ab5-8062-430b-82a7-4adb9c520daf");
+        public static readonly Guid SalesOrderItemDeleteRevocationId = new Guid("7d0a1b60-4017-472d-b8f8-e0a9f2675c02");
+        public static readonly Guid SalesOrderItemWriteRevocationId = new Guid("04258294-8044-4107-8703-84b3f679179b");
+        public static readonly Guid SerialisedItemDeleteRevocationId = new Guid("df9751a6-50e5-41d7-bbc1-befaf38b38ec");
 
         public Revocation NonUnifiedGoodDeleteRevocation => this.Cache[NonUnifiedGoodDeleteRevocationId];
 
@@ -65,6 +80,36 @@ namespace Allors.Database.Domain
 
         public Revocation PurchaseOrderItemDeleteRevocation => this.Cache[PurchaseOrderItemDeleteRevocationId];
 
+        public Revocation QuoteItemDeleteRevocation => this.Cache[QuoteItemDeleteRevocationId];
+
+        public Revocation RequestForInformationDeleteRevocation => this.Cache[RequestForInformationDeleteRevocationId];
+
+        public Revocation RequestForQuoteDeleteRevocation => this.Cache[RequestForQuoteDeleteRevocationId];
+
+        public Revocation RequestForQuoteSubmitRevocation => this.Cache[RequestForQuoteSubmitRevocationId];
+
+        public Revocation RequestItemDeleteRevocation => this.Cache[RequestItemDeleteRevocationId];
+
+        public Revocation SalesInvoiceDeleteRevocation => this.Cache[SalesInvoiceDeleteRevocationId];
+
+        public Revocation SalesInvoiceItemDeleteRevocation => this.Cache[SalesInvoiceItemDeleteRevocationId];
+
+        public Revocation SalesOrderDeleteRevocation => this.Cache[SalesOrderDeleteRevocationId];
+
+        public Revocation SalesOrderInvoiceRevocation => this.Cache[SalesOrderInvoiceRevocationId];
+
+        public Revocation SalesOrderShipRevocation => this.Cache[SalesOrderShipRevocationId];
+
+        public Revocation SalesOrderStateRevocation => this.Cache[SalesOrderStateRevocationId];
+
+        public Revocation SalesOrderWriteRevocation => this.Cache[SalesOrderWriteRevocationId];
+
+        public Revocation SalesOrderItemDeleteRevocation => this.Cache[SalesOrderItemDeleteRevocationId];
+
+        public Revocation SalesOrderItemWriteRevocation => this.Cache[SalesOrderItemWriteRevocationId];
+
+        public Revocation SerialisedItemDeleteRevocation => this.Cache[SerialisedItemDeleteRevocationId];
+
         protected override void CustomSecure(Security security)
         {
             var merge = this.Cache.Merger().Action();
@@ -87,6 +132,21 @@ namespace Allors.Database.Domain
             merge(PurchaseOrderWriteRevocationId, _ => { });
             merge(RequestForProposalDeleteRevocationId, _ => { });
             merge(PurchaseOrderItemDeleteRevocationId, _ => { });
+            merge(QuoteItemDeleteRevocationId, _ => { });
+            merge(RequestForInformationDeleteRevocationId, _ => { });
+            merge(RequestForQuoteDeleteRevocationId, _ => { });
+            merge(RequestForQuoteSubmitRevocationId, _ => { });
+            merge(RequestItemDeleteRevocationId, _ => { });
+            merge(SalesInvoiceDeleteRevocationId, _ => { });
+            merge(SalesInvoiceItemDeleteRevocationId, _ => { });
+            merge(SalesOrderDeleteRevocationId, _ => { });
+            merge(SalesOrderInvoiceRevocationId, _ => { });
+            merge(SalesOrderShipRevocationId, _ => { });
+            merge(SalesOrderStateRevocationId, _ => { });
+            merge(SalesOrderWriteRevocationId, _ => { });
+            merge(SalesOrderItemDeleteRevocationId, _ => { });
+            merge(SalesOrderItemWriteRevocationId, _ => { });
+            merge(SerialisedItemDeleteRevocationId, _ => { });
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
 
             if (method.Revocations == null)
             {
-                method.Revocations = this.SyncedRequest?.DeniedPermissions.ToArray();
+                method.Revocations = this.SyncedRequest?.Revocations.ToArray();
             }
         }
 

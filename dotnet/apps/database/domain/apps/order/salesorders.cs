@@ -12,6 +12,8 @@ namespace Allors.Database.Domain
     {
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.SalesOrderState);
 
+        protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);
+
         protected override void AppsSecure(Security config)
         {
             var provisional = new SalesOrderStates(this.Transaction).Provisional;
@@ -71,6 +73,47 @@ namespace Allors.Database.Domain
             config.DenyExcept(this.ObjectType, completed, except, Operations.Write);
             config.DenyExcept(this.ObjectType, finished, except, Operations.Execute, Operations.Write);
             config.DenyExcept(this.ObjectType, tranferred, transferredExcept, Operations.Execute, Operations.Write);
+
+            var revocations = new Revocations(this.Transaction);
+            var permissions = new Permissions(this.Transaction);
+
+            revocations.SalesOrderDeleteRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Delete),
+            };
+
+            revocations.SalesOrderInvoiceRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Invoice),
+            };
+
+            revocations.SalesOrderShipRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Ship),
+            };
+
+            revocations.SalesOrderStateRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.SetReadyForPosting),
+                permissions.Get(this.Meta, this.Meta.Post),
+                permissions.Get(this.Meta, this.Meta.Reopen),
+                permissions.Get(this.Meta, this.Meta.Approve),
+                permissions.Get(this.Meta, this.Meta.Hold),
+                permissions.Get(this.Meta, this.Meta.Continue),
+                permissions.Get(this.Meta, this.Meta.Accept),
+                permissions.Get(this.Meta, this.Meta.Revise),
+                permissions.Get(this.Meta, this.Meta.Complete),
+                permissions.Get(this.Meta, this.Meta.Reject),
+                permissions.Get(this.Meta, this.Meta.Cancel),
+            };
+
+            var writePermisions = new List<Permission>();
+            foreach (RoleType roleType in this.Meta.RoleTypes)
+            {
+                writePermisions.Add(permissions.Get(this.Meta, roleType, Operations.Write));
+            }
+
+            revocations.SalesOrderWriteRevocation.DeniedPermissions = writePermisions;
         }
     }
 }

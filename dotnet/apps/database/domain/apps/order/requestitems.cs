@@ -7,6 +7,8 @@ namespace Allors.Database.Domain
 {
     public partial class RequestItems
     {
+        protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);
+
         protected override void AppsSecure(Security config)
         {
             var draft = new RequestItemStates(this.Transaction).Draft;
@@ -28,6 +30,14 @@ namespace Allors.Database.Domain
             config.Deny(this.ObjectType, cancelled, Operations.Write);
             config.Deny(this.ObjectType, rejected, Operations.Write);
             config.Deny(this.ObjectType, quoted, Operations.Write);
+
+            var revocations = new Revocations(this.Transaction);
+            var permissions = new Permissions(this.Transaction);
+
+            revocations.RequestItemDeleteRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Delete),
+            };
         }
     }
 }

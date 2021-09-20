@@ -31,23 +31,25 @@ namespace Allors.Database.Domain
             {
                 @this.Revocations = @this.TransitionalRevocations;
 
+                var deleteRevocation = new Revocations(@this.Strategy.Transaction).RequestForQuoteDeleteRevocation;
+                var submitRevocation = new Revocations(@this.Strategy.Transaction).RequestForQuoteSubmitRevocation;
+
                 if (@this.ExistOriginator)
                 {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Submit));
+                    @this.RemoveRevocation(submitRevocation);
                 }
                 else
                 {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Submit));
+                    @this.AddRevocation(submitRevocation);
                 }
 
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.IsDeletable())
                 {
-                    @this.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveRevocation(deleteRevocation);
                 }
                 else
                 {
-                    @this.AddDeniedPermission(deletePermission);
+                    @this.AddRevocation(deleteRevocation);
                 }
             }
         }

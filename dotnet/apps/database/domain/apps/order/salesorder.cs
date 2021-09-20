@@ -338,7 +338,7 @@ namespace Allors.Database.Domain
                         }
 
                         shipments.Add(pendingShipment);
-                        this.AddDeniedPermission(new Permissions(this.Strategy.Transaction).Get(this.Meta, this.Meta.Ship));
+                        this.AddRevocation(new Revocations(this.Strategy.Transaction).SalesOrderShipRevocation);
                     }
                 }
             }

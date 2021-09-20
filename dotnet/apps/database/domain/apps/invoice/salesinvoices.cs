@@ -13,6 +13,8 @@ namespace Allors.Database.Domain
     {
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.SalesInvoiceState);
 
+        protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);
+
         protected override void AppsSecure(Security config)
         {
             var notPaid = new SalesInvoiceStates(this.Transaction).NotPaid;
@@ -50,6 +52,14 @@ namespace Allors.Database.Domain
             config.DenyExcept(this.ObjectType, paid, except, Operations.Write);
             config.DenyExcept(this.ObjectType, writtenOff, except, Operations.Write);
             config.DenyExcept(this.ObjectType, cancelled, except, Operations.Write);
+
+            var revocations = new Revocations(this.Transaction);
+            var permissions = new Permissions(this.Transaction);
+
+            revocations.SalesInvoiceDeleteRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Delete),
+            };
         }
     }
 }

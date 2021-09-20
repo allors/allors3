@@ -35,33 +35,21 @@ namespace Allors.Database.Domain
             {
                 @this.Revocations = @this.TransitionalRevocations;
 
+                var deleteRevocation = new Revocations(@this.Strategy.Transaction).SalesOrderItemDeleteRevocation;
+                var writeRevocation = new Revocations(@this.Strategy.Transaction).SalesOrderItemWriteRevocation;
+
                 if (!@this.SalesOrderItemInvoiceState.IsNotInvoiced || !@this.SalesOrderItemShipmentState.IsNotShipped)
                 {
-                    var deniablePermissionByOperandTypeId = new Dictionary<IOperandType, Permission>();
-
-                    foreach (Permission permission in @this.Transaction().Extent<Permission>())
-                    {
-                        if (permission.ClassPointer == @this.Strategy.Class.Id
-                            && (permission.Operation == Operations.Write || permission.Operation == Operations.Execute))
-                        {
-                            deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
-                        }
-                    }
-
-                    foreach (var keyValuePair in deniablePermissionByOperandTypeId)
-                    {
-                        @this.AddDeniedPermission(keyValuePair.Value);
-                    }
+                    @this.AddRevocation(writeRevocation);
                 }
 
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.IsDeletable)
                 {
-                    @this.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveRevocation(deleteRevocation);
                 }
                 else
                 {
-                    @this.AddDeniedPermission(deletePermission);
+                    @this.AddRevocation(deleteRevocation);
                 }
             }
         }

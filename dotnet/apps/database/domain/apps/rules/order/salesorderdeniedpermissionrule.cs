@@ -39,62 +39,43 @@ namespace Allors.Database.Domain
             {
                 @this.Revocations = @this.TransitionalRevocations;
 
+                var deleteRevocation = new Revocations(@this.Strategy.Transaction).SalesOrderDeleteRevocation;
+                var invoiceRevocation = new Revocations(@this.Strategy.Transaction).SalesOrderInvoiceRevocation;
+                var shipRevocation = new Revocations(@this.Strategy.Transaction).SalesOrderShipRevocation;
+                var stateRevocation = new Revocations(@this.Strategy.Transaction).SalesOrderStateRevocation;
+                var writeRevocation = new Revocations(@this.Strategy.Transaction).SalesOrderWriteRevocation;
+
                 if (@this.CanShip)
                 {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Ship));
+                    @this.RemoveRevocation(shipRevocation);
                 }
                 else
                 {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Ship));
+                    @this.AddRevocation(shipRevocation);
                 }
 
                 if (@this.CanInvoice)
                 {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Invoice));
+                    @this.RemoveRevocation(invoiceRevocation);
                 }
                 else
                 {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Invoice));
+                    @this.AddRevocation(invoiceRevocation);
                 }
 
                 if (!@this.SalesOrderInvoiceState.IsNotInvoiced || !@this.SalesOrderShipmentState.IsNotShipped)
                 {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.SetReadyForPosting));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Post));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Reopen));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Approve));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Hold));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Continue));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Accept));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Revise));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Complete));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Reject));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Cancel));
-
-                    var deniablePermissionByOperandTypeId = new Dictionary<IOperandType, Permission>();
-
-                    foreach (Permission permission in @this.Transaction().Extent<Permission>())
-                    {
-                        if (permission.ClassPointer == @this.Strategy.Class.Id && permission.Operation == Operations.Write)
-                        {
-                            deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
-                        }
-                    }
-
-                    foreach (var keyValuePair in deniablePermissionByOperandTypeId)
-                    {
-                        @this.AddDeniedPermission(keyValuePair.Value);
-                    }
+                    @this.AddRevocation(stateRevocation);
+                    @this.AddRevocation(writeRevocation);
                 }
 
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.IsDeletable)
                 {
-                    @this.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveRevocation(deleteRevocation);
                 }
                 else
                 {
-                    @this.AddDeniedPermission(deletePermission);
+                    @this.AddRevocation(deleteRevocation);
                 }
             }
         }

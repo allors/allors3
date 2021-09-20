@@ -9,6 +9,8 @@ namespace Allors.Database.Domain
     {
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.RequestState);
 
+        protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);
+
         protected override void AppsSecure(Security config)
         {
             var anonymous = new RequestStates(this.Transaction).Anonymous;
@@ -35,6 +37,19 @@ namespace Allors.Database.Domain
             config.Deny(this.ObjectType, cancelled, Operations.Write);
             config.Deny(this.ObjectType, rejected, Operations.Write);
             config.Deny(this.ObjectType, quoted, Operations.Write);
+
+            var revocations = new Revocations(this.Transaction);
+            var permissions = new Permissions(this.Transaction);
+
+            revocations.RequestForQuoteDeleteRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Delete),
+            };
+
+            revocations.RequestForQuoteSubmitRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Submit),
+            };
         }
     }
 }

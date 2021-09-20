@@ -5,11 +5,15 @@
 
 namespace Allors.Database.Domain
 {
+    using System.Collections.Generic;
     using Allors;
+    using Allors.Database.Meta;
 
     public partial class SalesOrderItems
     {
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.SalesOrderItemState);
+
+        protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);
 
         protected override void AppsSecure(Security config)
         {
@@ -42,6 +46,22 @@ namespace Allors.Database.Domain
             config.Deny(this.ObjectType, rejected, Operations.Write);
             config.Deny(this.ObjectType, completed, Operations.Execute, Operations.Write);
             config.Deny(this.ObjectType, finished, Operations.Execute, Operations.Write);
+
+            var revocations = new Revocations(this.Transaction);
+            var permissions = new Permissions(this.Transaction);
+
+            revocations.SalesOrderItemDeleteRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Delete),
+            };
+
+            var writePermisions = new List<Permission>();
+            foreach (RoleType roleType in this.Meta.RoleTypes)
+            {
+                writePermisions.Add(permissions.Get(this.Meta, roleType, Operations.Write));
+            }
+
+            revocations.SalesOrderItemWriteRevocation.DeniedPermissions = writePermisions;
         }
     }
 }

@@ -32,14 +32,14 @@ namespace Allors.Database.Domain
             {
                 @this.Revocations = @this.TransitionalRevocations;
 
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
+                var revocation = new Revocations(@this.Strategy.Transaction).RequestForInformationDeleteRevocation;
                 if (@this.IsDeletable())
                 {
-                    @this.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveRevocation(revocation);
                 }
                 else
                 {
-                    @this.AddDeniedPermission(deletePermission);
+                    @this.AddRevocation(revocation);
                 }
             }
         }
