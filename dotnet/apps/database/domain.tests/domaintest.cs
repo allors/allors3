@@ -75,7 +75,7 @@ namespace Allors.Database.Domain.Tests
                 this.Populate(database);
             }
 
-            this.Transaction = database.CreateTransaction();
+            this.Transaction ??= database.CreateTransaction();
         }
 
         private void Populate(IDatabase database)
@@ -84,6 +84,8 @@ namespace Allors.Database.Domain.Tests
             CultureInfo.CurrentUICulture = new CultureInfo("en-GB");
 
             new Setup(database, this.Config).Apply();
+
+            this.Transaction = database.CreateTransaction();
 
             this.Transaction.Derive();
             this.Transaction.Commit();
