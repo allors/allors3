@@ -3,7 +3,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\Repository\Domain\Attributes*\**\*.cs" />
+    <Compile Include="..\..\..\..\Repository\attributes\Attributes*\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Shared\Allors.Shared.csproj" />

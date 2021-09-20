@@ -4,7 +4,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\System\Repository\Domain\Attributes*\**\*.cs" />
+    <Compile Include="..\..\..\System\Repository\attributes\Attributes*\**\*.cs" />
     <Compile Include="..\..\..\Core\Repository\Domain\Core*\**\*.cs" />
   </ItemGroup>
 
