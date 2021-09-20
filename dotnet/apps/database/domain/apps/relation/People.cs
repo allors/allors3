@@ -29,6 +29,8 @@ namespace Allors.Database.Domain
             setup.AddDependency(this.ObjectType, this.M.PersonalTitle);
         }
 
+        protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);
+
         protected override void AppsSetup(Setup setup)
         {
             var employeeUserGroup = new UserGroups(this.Transaction).Employees;
@@ -64,6 +66,14 @@ namespace Allors.Database.Domain
             var full = new[] { Operations.Read, Operations.Write, Operations.Execute };
 
             config.GrantOwner(this.ObjectType, full);
+
+            var revocations = new Revocations(this.Transaction);
+            var permissions = new Permissions(this.Transaction);
+
+            revocations.PersonDeleteRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Delete),
+            };
         }
     }
 }

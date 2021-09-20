@@ -12,6 +12,8 @@ namespace Allors.Database.Domain
     {
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.PurchaseOrderState);
 
+        protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);
+
         protected override void AppsSecure(Security config)
         {
             var states = new PurchaseOrderStates(this.Transaction);
@@ -60,6 +62,51 @@ namespace Allors.Database.Domain
             config.DenyExcept(this.ObjectType, rejected, except, Operations.Write);
             config.DenyExcept(this.ObjectType, completed, except, Operations.Write);
             config.DenyExcept(this.ObjectType, finished, except, Operations.Execute, Operations.Write);
+
+            var revocations = new Revocations(this.Transaction);
+            var permissions = new Permissions(this.Transaction);
+
+            revocations.PurchaseOrderDeleteRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Delete),
+            };
+
+            revocations.PurchaseOrderInvoiceRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Invoice),
+            };
+
+            revocations.PurchaseOrderQuickReceiveRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.QuickReceive),
+            };
+
+            revocations.PurchaseOrderReviseRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Revise),
+            };
+
+            revocations.PurchaseOrderReceivedRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Cancel),
+                permissions.Get(this.Meta, this.Meta.Reject),
+                permissions.Get(this.Meta, this.Meta.QuickReceive),
+                permissions.Get(this.Meta, this.Meta.Revise),
+                permissions.Get(this.Meta, this.Meta.SetReadyForProcessing),
+            };
+
+            revocations.PurchaseOrderReopenRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Reopen),
+            };
+
+            var writePermisions = new List<Permission>();
+            foreach (RoleType roleType in this.Meta.RoleTypes)
+            {
+                writePermisions.Add(permissions.Get(this.Meta, roleType, Operations.Write));
+            }
+
+            revocations.PurchaseOrderWriteRevocation.DeniedPermissions = writePermisions;
         }
     }
 }

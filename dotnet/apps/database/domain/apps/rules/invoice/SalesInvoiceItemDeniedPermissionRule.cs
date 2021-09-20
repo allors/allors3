@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public SalesInvoiceItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("c7ede487-9920-4e47-bb72-1b8f27bdd552")) =>
             this.Patterns = new Pattern[]
         {
-            m.SalesInvoiceItem.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.SalesInvoiceItem.RolePattern(v => v.TransitionalRevocations),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SalesInvoiceItem>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
 
                 var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.IsDeletable)

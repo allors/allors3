@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public NonSerialisedInventoryItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("29737b61-0cfe-4dc8-9b71-12f40861af3c")) =>
             this.Patterns = new Pattern[]
         {
-            m.NonSerialisedInventoryItem.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.NonSerialisedInventoryItem.RolePattern(v => v.TransitionalRevocations),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<NonSerialisedInventoryItem>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
             }
         }
     }

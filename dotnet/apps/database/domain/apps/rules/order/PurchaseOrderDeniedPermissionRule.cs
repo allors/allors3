@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public PurchaseOrderDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("23ec4c76-b156-406f-ad16-4b83a17db3c6")) =>
             this.Patterns = new Pattern[]
         {
-            m.PurchaseOrder.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.PurchaseOrder.RolePattern(v => v.TransitionalRevocations),
             m.PurchaseOrder.RolePattern(v => v.PurchaseOrderShipmentState),
             m.PurchaseOrder.AssociationPattern(v => v.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrder),
             m.PurchaseOrder.AssociationPattern(v => v.PurchaseInvoicesWherePurchaseOrder),
@@ -36,72 +36,61 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseOrder>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
+
+                var deleteRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderDeleteRevocation;
+                var invoiceRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderInvoiceRevocation;
+                var quickReceiveRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderQuickReceiveRevocation;
+                var reviseRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderReviseRevocation;
+                var receivedRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderReceivedRevocation;
+                var reopenRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderReopenRevocation;
+                var writeRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderWriteRevocation;
 
                 if (@this.CanInvoice)
                 {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Invoice));
+                    @this.RemoveRevocation(invoiceRevocation);
                 }
                 else
                 {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Invoice));
+                    @this.AddRevocation(invoiceRevocation);
                 }
 
                 if (@this.CanRevise)
                 {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Revise));
+                    @this.RemoveRevocation(reviseRevocation);
                 }
                 else
                 {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Revise));
+                    @this.AddRevocation(reviseRevocation);
                 }
 
                 if (@this.IsReceivable)
                 {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.QuickReceive));
+                    @this.RemoveRevocation(quickReceiveRevocation);
                 }
                 else
                 {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.QuickReceive));
+                    @this.AddRevocation(quickReceiveRevocation);
                 }
 
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.IsDeletable)
                 {
-                    @this.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveRevocation(deleteRevocation);
                 }
                 else
                 {
-                    @this.AddDeniedPermission(deletePermission);
+                    @this.AddRevocation(deleteRevocation);
                 }
 
                 if (!@this.PurchaseOrderShipmentState.IsNotReceived && !@this.PurchaseOrderShipmentState.IsNa)
                 {
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Reject));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Cancel));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.QuickReceive));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Revise));
-                    @this.AddDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.SetReadyForProcessing));
-
-                    var deniablePermissionByOperandTypeId = new Dictionary<IOperandType, Permission>();
-
-                    foreach (Permission permission in @this.Transaction().Extent<Permission>())
-                    {
-                        if (permission.ClassPointer == @this.Strategy.Class.Id && permission.Operation == Operations.Write)
-                        {
-                            deniablePermissionByOperandTypeId.Add(permission.OperandType, permission);
-                        }
-                    }
-
-                    foreach (var keyValuePair in deniablePermissionByOperandTypeId)
-                    {
-                        @this.AddDeniedPermission(keyValuePair.Value);
-                    }
+                    @this.AddRevocation(receivedRevocation);
+                    @this.AddRevocation(writeRevocation);
                 }
 
                 if (@this.PurchaseOrderState.IsCompleted && @this.PurchaseOrderPaymentState.IsNotPaid && @this.PurchaseOrderShipmentState.IsNa)
                 {
-                    @this.RemoveDeniedPermission(new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Reopen));
+                    @this.RemoveRevocation(reopenRevocation);
                 }
             }
         }

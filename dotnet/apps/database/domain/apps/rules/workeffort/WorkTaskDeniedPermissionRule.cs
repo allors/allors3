@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public WorkTaskDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("bbff43c6-24ad-4038-9bbd-d666c41751f6")) =>
             this.Patterns = new Pattern[]
         {
-            m.WorkTask.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.WorkTask.RolePattern(v => v.TransitionalRevocations),
             m.WorkTask.RolePattern(v => v.CanInvoice),
             m.WorkTask.RolePattern(v => v.Customer),
             m.WorkTask.RolePattern(v => v.ExecutedBy),
@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<WorkTask>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
 
                 if (!@this.CanInvoice)
                 {

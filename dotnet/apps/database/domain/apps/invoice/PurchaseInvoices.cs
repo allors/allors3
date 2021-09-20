@@ -12,6 +12,8 @@ namespace Allors.Database.Domain
     {
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.PurchaseInvoiceState);
 
+        protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);
+
         protected override void AppsSecure(Security config)
         {
             var created = new PurchaseInvoiceStates(this.Transaction).Created;
@@ -58,6 +60,19 @@ namespace Allors.Database.Domain
             config.DenyExcept(this.ObjectType, paid, except, Operations.Write);
             config.DenyExcept(this.ObjectType, cancelled, except, Operations.Write);
             config.DenyExcept(this.ObjectType, rejected, except, Operations.Write);
+
+            var revocations = new Revocations(this.Transaction);
+            var permissions = new Permissions(this.Transaction);
+
+            revocations.PurchaseInvoiceCreateSalesInvoiceRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.CreateSalesInvoice),
+            };
+
+            revocations.PurchaseInvoiceDeleteRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Delete),
+            };
         }
     }
 }

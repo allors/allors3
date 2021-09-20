@@ -17,14 +17,14 @@ namespace Allors.Database.Domain
         public PartSpecificationDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("6764a4ea-6335-4252-8957-93b352df8d7b")) =>
             this.Patterns = new Pattern[]
         {
-            m.PartSpecification.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.PartSpecification.RolePattern(v => v.TransitionalRevocations),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<PartSpecification>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
             }
         }
     }

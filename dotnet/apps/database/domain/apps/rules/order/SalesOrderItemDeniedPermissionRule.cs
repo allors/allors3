@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public SalesOrderItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("84ff5d0c-c15d-426d-a019-ad8ab0bdbcf2")) =>
             this.Patterns = new Pattern[]
         {
-            m.SalesOrderItem.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.SalesOrderItem.RolePattern(v => v.TransitionalRevocations),
             m.SalesOrderItem.RolePattern(v => v.SalesOrderItemInvoiceState),
             m.SalesOrderItem.RolePattern(v => v.SalesOrderItemShipmentState),
             m.OrderItem.AssociationPattern(v => v.OrderItemBillingsWhereOrderItem, m.SalesOrderItem),
@@ -33,7 +33,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SalesOrderItem>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
 
                 if (!@this.SalesOrderItemInvoiceState.IsNotInvoiced || !@this.SalesOrderItemShipmentState.IsNotShipped)
                 {

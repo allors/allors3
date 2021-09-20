@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public CommunicationEventDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("a2565a9c-cb13-43ba-bcf2-9db538e456ae")) =>
             this.Patterns = new Pattern[]
         {
-            m.CommunicationEvent.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.CommunicationEvent.RolePattern(v => v.TransitionalRevocations),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<CommunicationEvent>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
             }
         }
     }

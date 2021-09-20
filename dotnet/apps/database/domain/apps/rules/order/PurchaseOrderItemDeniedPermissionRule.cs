@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public PurchaseOrderItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("68b556f7-00ae-49a7-8d51-49c52ae18b4d")) =>
             this.Patterns = new Pattern[]
         {
-            m.PurchaseOrderItem.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.PurchaseOrderItem.RolePattern(v => v.TransitionalRevocations),
             m.OrderItemBilling.RolePattern(v => v.OrderItem, v => v.OrderItem, m.PurchaseOrderItem),
             m.OrderRequirementCommitment.RolePattern(v => v.OrderItem, v => v.OrderItem, m.PurchaseOrderItem),
             m.OrderItem.AssociationPattern(v => v.WorkEffortsWhereOrderItemFulfillment, m.PurchaseOrderItem),
@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseOrderItem>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
 
                 var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.IsDeletable)

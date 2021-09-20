@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public RequestForQuoteDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("eb67ef60-1a60-4b52-85ac-979fb9346242")) =>
             this.Patterns = new Pattern[]
         {
-            m.RequestForQuote.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.RequestForQuote.RolePattern(v => v.TransitionalRevocations),
             m.RequestItem.RolePattern(v => v.RequestItemState, v => v.RequestWhereRequestItem, m.RequestForQuote),
             m.Request.AssociationPattern(v => v.QuoteWhereRequest, m.RequestForQuote),
         };
@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<RequestForQuote>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
 
                 if (@this.ExistOriginator)
                 {

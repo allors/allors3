@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public SalesOrderDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("6e383218-1d0f-41bb-83ed-7f6f3bf551ca")) =>
             this.Patterns = new Pattern[]
         {
-            m.SalesOrder.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.SalesOrder.RolePattern(v => v.TransitionalRevocations),
             m.SalesOrder.RolePattern(v => v.CanShip),
             m.SalesOrder.RolePattern(v => v.CanInvoice),
             m.SalesOrder.RolePattern(v => v.Quote),
@@ -37,7 +37,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SalesOrder>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
 
                 if (@this.CanShip)
                 {

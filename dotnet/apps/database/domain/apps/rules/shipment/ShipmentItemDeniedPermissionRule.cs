@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public ShipmentItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("a690e467-5509-4e2a-905b-b5a3fb0bee12")) =>
             this.Patterns = new Pattern[]
         {
-            m.ShipmentItem.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.ShipmentItem.RolePattern(v => v.TransitionalRevocations),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<ShipmentItem>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
             }
         }
     }

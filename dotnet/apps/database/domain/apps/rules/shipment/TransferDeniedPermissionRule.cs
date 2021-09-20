@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public TransferDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("d1c10c75-b65b-4410-a700-a54f898310d1")) =>
             this.Patterns = new Pattern[]
         {
-            m.Transfer.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.Transfer.RolePattern(v => v.TransitionalRevocations),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Transfer>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
             }
         }
     }

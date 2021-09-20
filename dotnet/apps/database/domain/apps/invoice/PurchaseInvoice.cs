@@ -319,7 +319,7 @@ namespace Allors.Database.Domain
                     .Build();
             }
 
-            this.AddDeniedPermission(new Permissions(this.Strategy.Transaction).Get(this.Meta, this.Meta.CreateSalesInvoice));
+            this.AddRevocation(new Revocations(this.Strategy.Transaction).PurchaseInvoiceCreateSalesInvoiceRevocation);
 
             method.StopPropagation = true;
         }

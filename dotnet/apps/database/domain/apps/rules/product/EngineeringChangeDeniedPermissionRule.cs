@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public EngineeringChangeDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("1e2ca1f7-3c8c-45e6-a8c1-640200d0beed")) =>
             this.Patterns = new Pattern[]
         {
-            m.EngineeringChange.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.EngineeringChange.RolePattern(v => v.TransitionalRevocations),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<EngineeringChange>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
             }
         }
     }

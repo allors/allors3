@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public ProductQuoteDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("5629cded-4afb-4ca7-9c78-24c998b8698c")) =>
             this.Patterns = new Pattern[]
         {
-            m.ProductQuote.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.ProductQuote.RolePattern(v => v.TransitionalRevocations),
             m.ProductQuote.RolePattern(v => v.ValidQuoteItems),
             m.ProductQuote.RolePattern(v => v.Request),
             m.ProductQuote.AssociationPattern(v => v.SalesOrderWhereQuote, m.ProductQuote),
@@ -30,30 +30,31 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<ProductQuote>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
 
-                var SetReadyPermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.SetReadyForProcessing);
+                var deleteRevocation = new Revocations(@this.Strategy.Transaction).ProductQuoteDeleteRevocation;
+                var setReadyForProcessingRevocation = new Revocations(@this.Strategy.Transaction).ProductQuoteSetReadyForProcessingRevocation;
 
                 if (@this.QuoteState.IsCreated)
                 {
                     if (@this.ExistValidQuoteItems)
                     {
-                        @this.RemoveDeniedPermission(SetReadyPermission);
+                        @this.RemoveRevocation(setReadyForProcessingRevocation);
                     }
                     else
                     {
-                        @this.AddDeniedPermission(SetReadyPermission);
+                        @this.AddRevocation(setReadyForProcessingRevocation);
                     }
                 }
 
                 var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.IsDeletable())
                 {
-                    @this.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveRevocation(deleteRevocation);
                 }
                 else
                 {
-                    @this.AddDeniedPermission(deletePermission);
+                    @this.AddRevocation(deleteRevocation);
                 }
             }
         }

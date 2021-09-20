@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public PickListDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("5650fa14-e2bb-4b7c-b08d-976b11994dea")) =>
             this.Patterns = new Pattern[]
         {
-           m.PickList.RolePattern(v => v.TransitionalDeniedPermissions),
+           m.PickList.RolePattern(v => v.TransitionalRevocations),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PickList>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
             }
         }
     }

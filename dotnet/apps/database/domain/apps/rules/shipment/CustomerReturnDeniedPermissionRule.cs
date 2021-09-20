@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public CustomerReturnDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("c075cce8-97e4-4385-a8f4-982dfc416f03")) =>
             this.Patterns = new Pattern[]
         {
-            m.CustomerReturn.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.CustomerReturn.RolePattern(v => v.TransitionalRevocations),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<CustomerReturn>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
             }
         }
     }

@@ -12,6 +12,8 @@ namespace Allors.Database.Domain
     {
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.QuoteState);
 
+        protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);
+
         protected override void AppsSecure(Security config)
         {
             var created = new QuoteStates(this.Transaction).Created;
@@ -55,6 +57,19 @@ namespace Allors.Database.Domain
             config.DenyExcept(this.ObjectType, accepted, except, Operations.Write);
             config.DenyExcept(this.ObjectType, ordered, except, Operations.Write);
             config.DenyExcept(this.ObjectType, cancelled, except, Operations.Write);
+
+            var revocations = new Revocations(this.Transaction);
+            var permissions = new Permissions(this.Transaction);
+
+            revocations.ProductQuoteDeleteRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Delete),
+            };
+
+            revocations.ProductQuoteSetReadyForProcessingRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.SetReadyForProcessing),
+            };
         }
     }
 }

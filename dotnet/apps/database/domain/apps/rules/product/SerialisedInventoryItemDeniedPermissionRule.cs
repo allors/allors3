@@ -17,14 +17,14 @@ namespace Allors.Database.Domain
         public SerialisedInventoryItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("30ae162a-ac07-4a80-817c-1f5455976f93")) =>
             this.Patterns = new Pattern[]
         {
-            m.SerialisedInventoryItem.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.SerialisedInventoryItem.RolePattern(v => v.TransitionalRevocations),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<SerialisedInventoryItem>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
             }
         }
     }

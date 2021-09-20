@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public BudgetDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("d0807b6c-a7c9-4bd5-a4eb-c84cadcd9a8f")) =>
             this.Patterns = new Pattern[]
             {
-                m.Budget.RolePattern(v => v.TransitionalDeniedPermissions),
+                m.Budget.RolePattern(v => v.TransitionalRevocations),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Budget>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
             }
         }
     }

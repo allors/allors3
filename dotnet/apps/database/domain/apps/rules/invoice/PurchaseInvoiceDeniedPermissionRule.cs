@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public PurchaseInvoiceDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("f245b128-a597-4311-aad9-d68cb54bac7d")) =>
             this.Patterns = new Pattern[]
         {
-            m.PurchaseInvoice.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.PurchaseInvoice.RolePattern(v => v.TransitionalRevocations),
             m.PurchaseInvoice.RolePattern(v => v.BilledFrom),
             m.PurchaseInvoice.AssociationPattern(v => v.SalesInvoiceWherePurchaseInvoice),
         };
@@ -29,16 +29,18 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseInvoice>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
 
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
+                var createSalesInvoiceRevocation = new Revocations(@this.Strategy.Transaction).PurchaseInvoiceCreateSalesInvoiceRevocation;
+                var deleteRevocation = new Revocations(@this.Strategy.Transaction).PurchaseInvoiceDeleteRevocation;
+
                 if (@this.IsDeletable)
                 {
-                    @this.RemoveDeniedPermission(deletePermission);
+                    @this.RemoveRevocation(deleteRevocation);
                 }
                 else
                 {
-                    @this.AddDeniedPermission(deletePermission);
+                    @this.AddRevocation(deleteRevocation);
                 }
 
                 var createSalesInvoicePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.CreateSalesInvoice);
@@ -46,11 +48,11 @@ namespace Allors.Database.Domain
                     && (@this.BilledFrom as Organisation)?.IsInternalOrganisation == true
                     && (@this.PurchaseInvoiceState.IsPaid || @this.PurchaseInvoiceState.IsPartiallyPaid || @this.PurchaseInvoiceState.IsNotPaid))
                 {
-                    @this.RemoveDeniedPermission(createSalesInvoicePermission);
+                    @this.RemoveRevocation(createSalesInvoiceRevocation);
                 }
                 else
                 {
-                    @this.AddDeniedPermission(createSalesInvoicePermission);
+                    @this.AddRevocation(createSalesInvoiceRevocation);
                 }
             }
         }

@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public RequestItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("45bfa303-4cff-4e8f-889a-eac847d02849")) =>
             this.Patterns = new Pattern[]
         {
-            m.RequestItem.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.RequestItem.RolePattern(v => v.TransitionalRevocations),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<RequestItem>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
 
                 var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.IsDeletable)

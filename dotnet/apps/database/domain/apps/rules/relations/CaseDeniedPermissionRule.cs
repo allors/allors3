@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public CaseDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("2923079d-34b0-483e-b728-fdd8b49aeab0")) =>
             this.Patterns = new Pattern[]
         {
-            m.Case.RolePattern(v => v.TransitionalDeniedPermissions),
+            m.Case.RolePattern(v => v.TransitionalRevocations),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Case>())
             {
-                @this.DeniedPermissions = @this.TransitionalDeniedPermissions;
+                @this.Revocations = @this.TransitionalRevocations;
             }
         }
     }
