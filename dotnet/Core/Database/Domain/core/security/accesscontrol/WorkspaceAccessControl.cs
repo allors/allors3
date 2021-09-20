@@ -12,7 +12,7 @@ namespace Allors.Database.Domain
     using Database.Security;
     using Meta;
     using Ranges;
-    using Services;
+    using Allors.Database.Services;
 
     public class WorkspaceAccessControl : IInternalAccessControl
     {
