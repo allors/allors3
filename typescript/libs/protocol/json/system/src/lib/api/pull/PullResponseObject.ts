@@ -5,9 +5,9 @@ export interface PullResponseObject {
   /** Version */
   v: number;
 
-  /** AccessControls (Range) */
-  a: number[];
+  /** Sorted Grants */
+  g: number[];
 
-  /** DeniedPermissions (Range) */
-  d: number[];
+  /** Sorted Revocations */
+  r: number[];
 }

@@ -7,15 +7,15 @@ export interface SyncResponseObject {
   /** Version */
   v: number;
 
-  /** ObjectType */
-  t: string;
+  /** Class Tag */
+  c: string;
 
-  /** AccessControls (Range) */
-  a: number[];
+  /** Sorted Grants */
+  g: number[];
 
-  /** DeniedPermissions (Range) */
-  d: number[];
+  /** Sorted Revocations */
+  r: number[];
 
   /** Roles */
-  r: SyncResponseRole[];
+  ro: SyncResponseRole[];
 }

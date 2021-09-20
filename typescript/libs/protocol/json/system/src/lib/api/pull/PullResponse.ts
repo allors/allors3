@@ -14,6 +14,9 @@ export interface PullResponse extends Response {
   /** Pool */
   p: PullResponseObject[];
 
-  /** AccessControls */
-  a: number[][];
+  /** Grants [id, version] */
+  g: number[][];
+
+  /** Revocations [id, version] */
+  r: number[][];
 }

@@ -25,8 +25,6 @@ namespace Allors.Workspace.Adapters.Remote
 
         internal HashSet<long> MissingRevocationIds { get; }
 
-        internal HashSet<long> MissingPermissionIds { get; }
-
         internal long[] CheckForMissingGrants(long[] value)
         {
             if (value == null)
@@ -56,21 +54,5 @@ namespace Allors.Workspace.Adapters.Remote
 
             return value;
         }
-
-        internal long[] CheckForMissingPermissions(long[] value)
-        {
-            if (value == null)
-            {
-                return null;
-            }
-
-            foreach (var permissionId in value.Where(v => !this.database.Permissions.Contains(v)))
-            {
-                this.MissingPermissionIds.Add(permissionId);
-            }
-
-            return value;
-        }
-
     }
 }

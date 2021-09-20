@@ -6,9 +6,11 @@ export * from './lib/collections/frozenEmptyMap'
 export * from './lib/collections/frozenEmptySet'
 export * from './lib/collections/MapMap'
 
+export * from './lib/database/security/Grant'
+export * from './lib/database/security/Revocation'
+
 export * from './lib/database/DatabaseConnection'
 export * from './lib/database/DatabaseRecord'
-export * from './lib/database/security/AccessControl'
 
 export * from './lib/session/originstate/DatabaseOriginState'
 export * from './lib/session/originstate/PropertyByObjectByPropertyType'

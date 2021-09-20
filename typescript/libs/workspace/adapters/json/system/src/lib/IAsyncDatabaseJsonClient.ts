@@ -1,4 +1,4 @@
-import { InvokeRequest, InvokeResponse, PullRequest, PullResponse, PushRequest, PushResponse, SecurityRequest, SecurityResponse, SyncRequest, SyncResponse } from '@allors/protocol/json/system';
+import { InvokeRequest, InvokeResponse, PullRequest, PullResponse, PushRequest, PushResponse, SyncRequest, SyncResponse, AccessRequest, AccessResponse, PermissionRequest, PermissionResponse } from '@allors/protocol/json/system';
 
 export interface IAsyncDatabaseJsonClient {
   pull(pullRequest: PullRequest): Promise<PullResponse>;
@@ -9,5 +9,7 @@ export interface IAsyncDatabaseJsonClient {
 
   invoke(invokeRequest: InvokeRequest): Promise<InvokeResponse>;
 
-  security(securityRequest: SecurityRequest): Promise<SecurityResponse>;
+  access(accessRequest: AccessRequest): Promise<AccessResponse>;
+
+  permission(permissionRequest: PermissionRequest): Promise<PermissionResponse>;
 }

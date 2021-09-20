@@ -5,6 +5,6 @@
   /** Version */
   v: number;
 
-  /** Method Type */
+  /** Method Type Tag */
   m: string;
 }

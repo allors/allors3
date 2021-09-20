@@ -1,8 +1,8 @@
 export interface SyncResponseRole {
-  /** RoleType */
+  /** RoleType Tag */
   t: string;
 
-  /** Collection (Range) */
+  /** Sorted Collection */
   c: number[];
 
   /** Object */

@@ -2,7 +2,7 @@ import { Procedure } from "../../data/Procedure";
 import { Pull } from "../../data/Pull";
 
 export interface PullRequest {
-  /** List */
+  /** List of Pulls */
   l?: Pull[];
 
   /** Procedure */

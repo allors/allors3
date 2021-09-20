@@ -6,8 +6,8 @@ import { ResponseContext } from './Security/ResponseContext';
 import { unitFromJson } from '../json/fromJson';
 
 export class DatabaseRecord extends SystemDatabaseRecord {
-  accessControlIds: IRange<number>;
-  deniedPermissionIds: IRange<number>;
+  grants: IRange<number>;
+  revocations: IRange<number>;
 
   private _roleByRelationType?: Map<RelationType, unknown>;
   private syncResponseRoles?: SyncResponseRole[];
@@ -17,10 +17,10 @@ export class DatabaseRecord extends SystemDatabaseRecord {
   }
 
   static fromResponse(database: DatabaseConnection, ctx: ResponseContext, syncResponseObject: SyncResponseObject): DatabaseRecord {
-    const obj = new DatabaseRecord(database, database.configuration.metaPopulation.metaObjectByTag.get(syncResponseObject.t) as Class, syncResponseObject.i, syncResponseObject.v);
-    obj.syncResponseRoles = syncResponseObject.r;
-    obj.accessControlIds = ctx.checkForMissingAccessControls(syncResponseObject.a);
-    obj.deniedPermissionIds = ctx.checkForMissingPermissions(syncResponseObject.d);
+    const obj = new DatabaseRecord(database, database.configuration.metaPopulation.metaObjectByTag.get(syncResponseObject.c) as Class, syncResponseObject.i, syncResponseObject.v);
+    obj.syncResponseRoles = syncResponseObject.ro;
+    obj.grants = ctx.checkForMissingGrants(syncResponseObject.g);
+    obj.revocations = ctx.checkForMissingRevocations(syncResponseObject.r);
     return obj;
   }
 
@@ -60,18 +60,18 @@ export class DatabaseRecord extends SystemDatabaseRecord {
   }
 
   isPermitted(permission: number): boolean {
-    if (this.accessControlIds == null) {
+    if (this.grants == null) {
       return false;
     }
 
-    if (this.database.ranges.has(this.deniedPermissionIds, permission)) {
+    if (this.database.ranges.has(this.revocations, permission)) {
       return false;
     }
 
-    if (this.accessControlIds == null) {
+    if (this.grants == null) {
       return false;
     }
 
-    return this.accessControlIds.some((v) => this.database.ranges.has(this.database.accessControlById.get(v).permissionIds, permission));
+    return this.grants.some((v) => this.database.ranges.has(this.database.grantById.get(v).permissionIds, permission));
   }
 }

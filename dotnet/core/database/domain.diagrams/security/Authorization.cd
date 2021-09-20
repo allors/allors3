@@ -7,7 +7,7 @@
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Domain.AccessControl">
+  <Interface Name="Allors.Domain.Grant">
     <Position X="3.75" Y="1" Width="2.5" />
     <AssociationLine Name="Subjects" Type="Allors.Domain.User" FixedFromPoint="true">
       <Path>
@@ -71,22 +71,22 @@
   <Interface Name="Allors.Domain.SecurityToken">
     <Position X="0.75" Y="1" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="AccessControls" />
+      <Property Name="Grants" />
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.Object">
     <Position X="0.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAIAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAIAAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="SecurityTokens" />
-      <Property Name="_Restrictions" />
+      <Property Name="_Revocations" />
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.Person" Collapsed="true">
@@ -124,7 +124,7 @@
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Allors.Domain.Restriction">
+  <Interface Name="Allors.Domain.Revocation">
     <Position X="0.75" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
