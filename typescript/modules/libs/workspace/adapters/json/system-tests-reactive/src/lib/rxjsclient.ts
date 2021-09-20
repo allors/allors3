@@ -1,5 +1,5 @@
 import fetch from 'cross-fetch';
-import { InvokeRequest, PullRequest, PullResponse, PushRequest, PushResponse, Response, SecurityRequest, SecurityResponse, SyncRequest, SyncResponse } from '@allors/protocol/json/system';
+import { AccessRequest, AccessResponse, PermissionRequest, PermissionResponse, InvokeRequest, InvokeResponse, PullRequest, PullResponse, PushRequest, PushResponse, Response, SyncRequest, SyncResponse } from '@allors/protocol/json/system';
 import { IReactiveDatabaseJsonClient } from '@allors/workspace/adapters/json/system';
 import { from, Observable } from 'rxjs';
 
@@ -71,12 +71,16 @@ export class RxjsClient implements IReactiveDatabaseJsonClient {
     return from(this.post<PushResponse>('push', pushRequest));
   }
 
-  invoke(invokeRequest: InvokeRequest): Observable<Response> {
+  invoke(invokeRequest: InvokeRequest): Observable<InvokeResponse> {
     return from(this.post<Response>('invoke', invokeRequest));
   }
 
-  security(securityRequest: SecurityRequest): Observable<SecurityResponse> {
-    return from(this.post<SecurityResponse>('security', securityRequest));
+  access(accessRequest: AccessRequest): Observable<AccessResponse> {
+    return from(this.post<AccessResponse>('access', accessRequest));
+  }
+
+  permission(permissionRequest: PermissionRequest): Observable<PermissionResponse> {
+    return from(this.post<PermissionResponse>('permission', permissionRequest));
   }
 
   post<T>(relativeUrl: string, data: any): Promise<T> {

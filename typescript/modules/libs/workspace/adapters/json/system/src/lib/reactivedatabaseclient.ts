@@ -1,4 +1,4 @@
-import { InvokeRequest, PullRequest, PullResponse, PushRequest } from '@allors/protocol/json/system';
+import { InvokeRequest, PullRequest, PushRequest } from '@allors/protocol/json/system';
 import { IReactiveDatabaseClient, IInvokeResult, InvokeOptions, IPullResult, IPushResult, ISession, Method, Procedure, Pull } from '@allors/workspace/domain/system';
 import { Origin } from '@allors/workspace/meta/system';
 import { procedureToJson, pullToJson } from './json/toJson';
@@ -40,9 +40,9 @@ export class ReactiveDatabaseClient implements IReactiveDatabaseClient {
     return this.client.invoke(invokeRequest).pipe(switchMap((invokeResponse) => of(new InvokeResult(session, invokeResponse))));
   }
 
-  pullReactive(session: ISession,  pullOrPulls: Pull | Pull[]): Observable<IPullResult> {
+  pullReactive(session: ISession, pullOrPulls: Pull | Pull[]): Observable<IPullResult> {
     const pulls = Array.isArray(pullOrPulls) ? pullOrPulls : [pullOrPulls];
-    
+
     for (const pull of pulls) {
       if (pull.objectId < 0 || pull.object?.id < 0) {
         throw new Error('Id is not in the database');
@@ -154,7 +154,6 @@ export class ReactiveDatabaseClient implements IReactiveDatabaseClient {
         }
       }),
       map(({ pullResult, pullResponse }) => {
-
         if (pullResponse.p == null || pullResult.hasErrors) {
           return pullResult;
         }

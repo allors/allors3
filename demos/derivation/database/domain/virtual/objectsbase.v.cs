@@ -19,6 +19,12 @@ namespace Allors.Database.Domain
             this.CustomSetup(setup);
         }
 
+        public void Prepare(Security security)
+        {
+            this.CorePrepare(security);
+            this.CustomPrepare(security);
+        }
+
         public void Secure(Security security)
         {
             this.CoreSecure(security);

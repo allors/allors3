@@ -33,10 +33,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPerson_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var builder = new PersonBuilder(this.Session);
+            var builder = new PersonBuilder(this.Transaction);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
     }
 }

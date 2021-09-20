@@ -58,13 +58,12 @@ namespace Allors.Database.Domain.Tests
         {
             database.Init();
 
-            this.Transaction = database.CreateTransaction();
-
             if (populate)
             {
-                new Setup(this.Transaction, this.Config).Apply();
-                this.Transaction.Commit();
+                new Setup(database, this.Config).Apply();
             }
+
+            this.Transaction = database.CreateTransaction();
         }
 
         protected void SelectDerivationType(DerivationTypes derivationType)
