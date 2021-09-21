@@ -125,7 +125,7 @@ namespace Allors.Database.Domain
 
         public Revocation WorkTaskReviseRevocation => this.Cache[WorkTaskReviseRevocationId];
 
-        protected override void CustomSecure(Security security)
+        protected override void AppsSecure(Security security)
         {
             var merge = this.Cache.Merger().Action();
 
