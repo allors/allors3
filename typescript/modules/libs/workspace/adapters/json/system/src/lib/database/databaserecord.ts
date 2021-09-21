@@ -64,11 +64,7 @@ export class DatabaseRecord extends SystemDatabaseRecord {
       return false;
     }
 
-    if (this.database.ranges.has(this.revocations, permission)) {
-      return false;
-    }
-
-    if (this.grants == null) {
+    if (this.revocations != null && this.revocations.some((v) => this.database.ranges.has(this.database.revocationById.get(v).permissionIds, permission))) {
       return false;
     }
 
