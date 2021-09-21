@@ -111,6 +111,8 @@ define_interface(interface) ::= <<
         {
         }
 
+        MetaPopulation M;
+
 $interface.Subtypes:{subtype|        public $subtype.SingularName$ As$subtype.SingularName$ => this.M.$subtype.SingularName$;}; separator="\n"$
 
         $interface.DefinedProperties:{property|$define_propertyType(property)$}; separator="\n"$
@@ -139,6 +141,8 @@ define_class(class) ::= <<
         public $class.SingularName$(MetaPopulation metaPopulation, System.Guid id, string tag = null) : base(metaPopulation, id, tag)
         {
         }
+        
+        public MetaPopulation M => (MetaPopulation)this.MetaPopulation;
 
         $class.DefinedProperties:{property|$define_propertyType(property)$}; separator="\n"$
 
