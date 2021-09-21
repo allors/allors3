@@ -41,7 +41,7 @@ namespace Allors.Database.Domain
         public static readonly Guid SalesOrderStateRevocationId = new Guid("375354ff-ddc5-4596-9ce4-4ece3cd1007c");
         public static readonly Guid SalesOrderWriteRevocationId = new Guid("1f6f1ab5-8062-430b-82a7-4adb9c520daf");
         public static readonly Guid SalesOrderItemDeleteRevocationId = new Guid("7d0a1b60-4017-472d-b8f8-e0a9f2675c02");
-        public static readonly Guid SalesOrderItemWriteRevocationId = new Guid("04258294-8044-4107-8703-84b3f679179b");
+        public static readonly Guid SalesOrderItemChangeRevocationId = new Guid("04258294-8044-4107-8703-84b3f679179b");
         public static readonly Guid SerialisedItemDeleteRevocationId = new Guid("df9751a6-50e5-41d7-bbc1-befaf38b38ec");
         public static readonly Guid StatementOfWorkDeleteRevocationId = new Guid("a6d8c7dc-c849-4850-a37c-696bba468fb5");
         public static readonly Guid UnifiedGoodDeleteRevocationId = new Guid("c742b7f9-2310-4272-ab89-25898a7db3cc");
@@ -111,7 +111,7 @@ namespace Allors.Database.Domain
 
         public Revocation SalesOrderItemDeleteRevocation => this.Cache[SalesOrderItemDeleteRevocationId];
 
-        public Revocation SalesOrderItemWriteRevocation => this.Cache[SalesOrderItemWriteRevocationId];
+        public Revocation SalesOrderItemChangeRevocation => this.Cache[SalesOrderItemChangeRevocationId];
 
         public Revocation SerialisedItemDeleteRevocation => this.Cache[SerialisedItemDeleteRevocationId];
 
@@ -160,7 +160,7 @@ namespace Allors.Database.Domain
             merge(SalesOrderStateRevocationId, _ => { });
             merge(SalesOrderWriteRevocationId, _ => { });
             merge(SalesOrderItemDeleteRevocationId, _ => { });
-            merge(SalesOrderItemWriteRevocationId, _ => { });
+            merge(SalesOrderItemChangeRevocationId, _ => { });
             merge(SerialisedItemDeleteRevocationId, _ => { });
             merge(StatementOfWorkDeleteRevocationId, _ => { });
             merge(UnifiedGoodDeleteRevocationId, _ => { });

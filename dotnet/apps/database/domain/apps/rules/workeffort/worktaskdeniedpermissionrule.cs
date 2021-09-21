@@ -58,9 +58,9 @@ namespace Allors.Database.Domain
 
                 if (@this.WorkEffortState.IsFinished)
                 {
-                    if (@this.ExecutedBy.Equals(@this.Customer))
+                    if (!@this.ExecutedBy.Equals(@this.Customer))
                     {
-                        @this.RemoveRevocation(reviseRevocation);
+                        @this.AddRevocation(reviseRevocation);
                     }
                 }
             }
