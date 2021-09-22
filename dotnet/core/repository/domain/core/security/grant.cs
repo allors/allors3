@@ -29,7 +29,6 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
-        [Repository]
         public UserGroup[] SubjectGroups { get; set; }
 
         #region Allors

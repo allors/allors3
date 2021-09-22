@@ -14,6 +14,8 @@ namespace Allors.Database.Configuration.Derivations.Default
 
     public class Derivation : IDerivation
     {
+        private Properties properties;
+
         public Derivation(ITransaction transaction, IValidation validation, Engine engine, int maxCycles, bool embedded, bool continueOnError)
         {
             this.Transaction = transaction;
@@ -208,6 +210,17 @@ namespace Allors.Database.Configuration.Derivations.Default
             }
 
             return this.Validation;
+        }
+
+        public object this[string name]
+        {
+            get => this.properties?.Get(name);
+
+            set
+            {
+                this.properties ??= new Properties();
+                this.properties.Set(name, value);
+            }
         }
     }
 }

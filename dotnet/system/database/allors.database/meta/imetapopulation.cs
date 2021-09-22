@@ -44,7 +44,7 @@ namespace Allors.Database.Meta
 
         IMetaIdentifiableObject FindByTag(string tag);
 
-        IObjectType FindDatabaseCompositeByName(string name);
+        IComposite FindDatabaseCompositeByName(string name);
 
         IValidationLog Validate();
 

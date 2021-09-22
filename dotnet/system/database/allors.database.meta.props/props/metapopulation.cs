@@ -622,6 +622,6 @@ namespace Allors.Database.Meta
         public IMethodTypeBase MethodType(string id) => (IMethodTypeBase)this.FindById(new Guid(id));
 
         public IRoleTypeBase RoleType(string id) => ((RelationType)this.FindById(new Guid(id))).RoleType;
-        IObjectType IMetaPopulation.FindDatabaseCompositeByName(string name) => this.FindDatabaseCompositeByName(name);
+        IComposite IMetaPopulation.FindDatabaseCompositeByName(string name) => this.FindDatabaseCompositeByName(name);
     }
 }

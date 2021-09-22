@@ -21,5 +21,7 @@ namespace Allors.Database.Derivations
         IAccumulatedChangeSet ChangeSet { get; }
 
         IValidation Derive();
+
+        object this[string key] { get; set; }
     }
 }

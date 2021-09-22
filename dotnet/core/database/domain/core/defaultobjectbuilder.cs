@@ -8,8 +8,7 @@ namespace Allors.Database.Domain
     using System;
     using Database.Services;
     using Meta;
-
-
+    
     public static class DefaultObjectBuilder
     {
         public static IObject Build(ITransaction transaction, IClass @class)

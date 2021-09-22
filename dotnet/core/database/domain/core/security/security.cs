@@ -14,7 +14,6 @@ namespace Allors.Database.Domain
     {
         private static readonly Operations[] ReadWriteExecute = { Operations.Read, Operations.Write, Operations.Execute };
 
-        private readonly Dictionary<Guid, Dictionary<IOperandType, Permission>> deniablePermissionByOperandTypeByObjectTypeId;
         private readonly Dictionary<Guid, Dictionary<IOperandType, Permission>> executePermissionsByObjectTypeId;
         private readonly Dictionary<Guid, Dictionary<IOperandType, Permission>> readPermissionsByObjectTypeId;
         private readonly Dictionary<Guid, Dictionary<IOperandType, Permission>> writePermissionsByObjectTypeId;
@@ -52,7 +51,7 @@ namespace Allors.Database.Domain
             this.writePermissionsByObjectTypeId = new Dictionary<Guid, Dictionary<IOperandType, Permission>>();
             this.executePermissionsByObjectTypeId = new Dictionary<Guid, Dictionary<IOperandType, Permission>>();
 
-            this.deniablePermissionByOperandTypeByObjectTypeId = new Dictionary<Guid, Dictionary<IOperandType, Permission>>();
+            var deniablePermissionByOperandTypeByObjectTypeId = new Dictionary<Guid, Dictionary<IOperandType, Permission>>();
 
             foreach (Permission permission in transaction.Extent<Permission>())
             {
@@ -67,10 +66,10 @@ namespace Allors.Database.Domain
                 {
                     var operandType = permission.OperandType;
 
-                    if (!this.deniablePermissionByOperandTypeByObjectTypeId.TryGetValue(objectId, out var deniablePermissionByOperandTypeId))
+                    if (!deniablePermissionByOperandTypeByObjectTypeId.TryGetValue(objectId, out var deniablePermissionByOperandTypeId))
                     {
                         deniablePermissionByOperandTypeId = new Dictionary<IOperandType, Permission>();
-                        this.deniablePermissionByOperandTypeByObjectTypeId[objectId] = deniablePermissionByOperandTypeId;
+                        deniablePermissionByOperandTypeByObjectTypeId[objectId] = deniablePermissionByOperandTypeId;
                     }
 
                     deniablePermissionByOperandTypeId.Add(operandType, permission);
