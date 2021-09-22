@@ -1751,13 +1751,13 @@ namespace Allors.Database.Domain.Tests
             var workTask = new WorkTaskBuilder(this.Transaction).WithCustomer(this.InternalOrganisation).WithExecutedBy(this.InternalOrganisation).Build();
             this.Derive();
 
-            var reviseRevocation = new Revocations(this.Transaction).WorkTaskReviseRevocation;
-            Assert.Contains(reviseRevocation, workTask.Revocations);
+            var revisePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Revise);
+            Assert.Contains(revisePermission, workTask.Revocations.SelectMany(v => v.DeniedPermissions));
 
             workTask.WorkEffortState = new WorkEffortStates(this.Transaction).Finished;
             this.Derive();
 
-            Assert.DoesNotContain(reviseRevocation, workTask.Revocations);
+            Assert.DoesNotContain(revisePermission, workTask.Revocations.SelectMany(v => v.DeniedPermissions));
         }
 
         [Fact]

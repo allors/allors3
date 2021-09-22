@@ -33,7 +33,7 @@ namespace Allors.Database.Domain
                 @this.Revocations = @this.TransitionalRevocations;
 
                 var revocation = new Revocations(@this.Strategy.Transaction).QuoteItemDeleteRevocation;
-                if (@this.QuoteWhereQuoteItem.IsDeletable())
+                if (@this.ExistQuoteWhereQuoteItem && @this.QuoteWhereQuoteItem.IsDeletable())
                 {
                     @this.RemoveRevocation(revocation);
                 }

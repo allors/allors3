@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
                 @this.Revocations = @this.TransitionalRevocations;
 
                 var deleteRevocation = new Revocations(@this.Strategy.Transaction).SalesOrderItemDeleteRevocation;
-                var writeRevocation = new Revocations(@this.Strategy.Transaction).SalesOrderItemWriteRevocation;
+                var writeRevocation = new Revocations(@this.Strategy.Transaction).SalesOrderItemChangeRevocation;
 
                 if (!@this.SalesOrderItemInvoiceState.IsNotInvoiced || !@this.SalesOrderItemShipmentState.IsNotShipped)
                 {

@@ -281,7 +281,9 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.True(productQuote.QuoteState.IsAwaitingAcceptance);
-            Assert.Contains(this.setReadyForProcessingRevocation, productQuote.Revocations);
+
+            var setReadyForProcessingPermission = new Permissions(this.Transaction).Get(this.M.ProductQuote, this.M.ProductQuote.SetReadyForProcessing);
+            Assert.Contains(setReadyForProcessingPermission, productQuote.Revocations.SelectMany(v => v.DeniedPermissions));
         }
 
         [Fact]

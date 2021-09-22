@@ -154,7 +154,7 @@ namespace Allors.Database.Domain
             config.Deny(this.ObjectType, inProgress, cancel, reopen, revise);
             config.Deny(this.ObjectType, cancelled, cancel, invoice, complete, revise);
             config.Deny(this.ObjectType, completed, cancel, reopen, complete);
-            config.Deny(this.ObjectType, finished, cancel, reopen, complete, invoice, revise);
+            config.Deny(this.ObjectType, finished, cancel, reopen, complete, invoice);
 
             var except = new HashSet<IOperandType>
             {

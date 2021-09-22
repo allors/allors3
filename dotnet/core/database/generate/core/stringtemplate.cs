@@ -15,6 +15,7 @@ namespace Allors.Development.Repository.Generation
     using Database.Meta;
     using Antlr4.StringTemplate;
     using Antlr4.StringTemplate.Misc;
+    using Location = Storage.Location;
 
     public class StringTemplate
     {

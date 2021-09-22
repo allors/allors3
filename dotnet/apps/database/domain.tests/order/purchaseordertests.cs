@@ -1548,7 +1548,7 @@ namespace Allors.Database.Domain.Tests
             this.deleteRevocation = new Revocations(this.Transaction).PurchaseOrderDeleteRevocation;
             this.invoiceRevocation = new Revocations(this.Transaction).PurchaseOrderInvoiceRevocation;
             this.reviseRevocation = new Revocations(this.Transaction).PurchaseOrderReviseRevocation;
-            this.quickReceiveRevocation = new Revocations(this.Transaction).PurchaseOrderReceivedRevocation;
+            this.quickReceiveRevocation = new Revocations(this.Transaction).PurchaseOrderQuickReceiveRevocation;
             this.receivedRevocation = new Revocations(this.Transaction).PurchaseOrderReceivedRevocation;
         }
 

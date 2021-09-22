@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<CustomerShipment>())
             {
-                @this.Revocations = @this.Revocations;
+                @this.Revocations = @this.TransitionalRevocations;
             }
         }
     }

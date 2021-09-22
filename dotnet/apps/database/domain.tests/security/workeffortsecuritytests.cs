@@ -203,7 +203,8 @@ namespace Allors.Database.Domain.Tests
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.Contains(this.completeRevocation, workEffort.Revocations);
+            var completePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Complete);
+            Assert.Contains(completePermission, workEffort.Revocations.SelectMany(v => v.DeniedPermissions));
         }
 
         [Fact]
@@ -230,7 +231,8 @@ namespace Allors.Database.Domain.Tests
             var serviceEntrie = new ExpenseEntryBuilder(this.Transaction).WithWorkEffort(workEffort).WithThroughDate(this.Transaction.Now().AddDays(1)).Build();
             this.Derive();
 
-            Assert.Contains(this.completeRevocation, workEffort.Revocations);
+            var completePermission = new Permissions(this.Transaction).Get(this.M.WorkTask, this.M.WorkTask.Complete);
+            Assert.Contains(completePermission, workEffort.Revocations.SelectMany(v => v.DeniedPermissions));
         }
 
         [Fact]
