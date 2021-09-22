@@ -41,7 +41,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        internal bool IsDeletable =>
+        public bool IsDeletable =>
             this.SalesInvoiceItemState.Equals(new SalesInvoiceItemStates(this.Strategy.Transaction).ReadyForPosting);
 
         public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)

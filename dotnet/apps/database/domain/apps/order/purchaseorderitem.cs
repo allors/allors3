@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
 
         public bool IsValid => !(this.PurchaseOrderItemState.IsCancelled || this.PurchaseOrderItemState.IsRejected);
 
-        internal bool IsDeletable =>
+        public bool IsDeletable =>
             (this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(this.Strategy.Transaction).Created)
                 || this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(this.Strategy.Transaction).Cancelled)
                 || this.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(this.Strategy.Transaction).Rejected))

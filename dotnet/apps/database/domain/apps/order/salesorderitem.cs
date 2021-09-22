@@ -22,7 +22,7 @@ namespace Allors.Database.Domain
 
         public bool WasValid => this.ExistLastObjectStates && !(this.LastSalesOrderItemState.IsCancelled || this.LastSalesOrderItemState.IsRejected);
 
-        internal bool IsDeletable =>
+        public bool IsDeletable =>
             (this.SalesOrderItemState.Equals(new SalesOrderItemStates(this.Strategy.Transaction).Provisional)
                 || this.SalesOrderItemState.Equals(new SalesOrderItemStates(this.Strategy.Transaction).ReadyForPosting)
                 || this.SalesOrderItemState.Equals(new SalesOrderItemStates(this.Strategy.Transaction).Cancelled)

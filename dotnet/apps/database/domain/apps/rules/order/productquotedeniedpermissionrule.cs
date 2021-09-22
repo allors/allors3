@@ -47,7 +47,6 @@ namespace Allors.Database.Domain
                     }
                 }
 
-                var deletePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.Delete);
                 if (@this.IsDeletable())
                 {
                     @this.RemoveRevocation(deleteRevocation);

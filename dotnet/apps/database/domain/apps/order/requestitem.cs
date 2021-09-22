@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
 
         public bool IsValid => !(this.RequestItemState.IsCancelled || this.RequestItemState.IsRejected);
 
-        internal bool IsDeletable =>
+        public bool IsDeletable =>
             this.ExistRequestItemState
             && (this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Transaction).Draft)
                 || this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Transaction).Submitted)
