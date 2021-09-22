@@ -72,10 +72,10 @@ namespace Allors.Database
             var extensionMethodsByInterface = (from type in this.Assembly.ExportedTypes
                                                where type.GetTypeInfo().IsSealed && !type.GetTypeInfo().IsGenericType && !type.IsNested
                                                from method in type.GetTypeInfo().DeclaredMethods
-                                               let parameterType = method.GetParameters()[0].ParameterType
+                                               let parameterType = method.GetParameters().FirstOrDefault()?.ParameterType
                                                where method.IsStatic &&
                                                      method.IsDefined(typeof(ExtensionAttribute), false) &&
-                                                     parameterType.IsInterface
+                                                     parameterType?.IsInterface == true
                                                select new KeyValuePair<Type, MethodInfo>(parameterType, method))
                 .GroupBy(kvp => kvp.Key, kvp => kvp.Value)
                 .ToDictionary(v => v.Key, v => v.ToArray());
