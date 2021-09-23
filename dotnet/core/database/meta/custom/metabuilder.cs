@@ -7,6 +7,8 @@ using System;
 
 namespace Allors.Database.Meta
 {
+    using System.Linq;
+
     public partial class MetaBuilder
     {
         static void AddWorkspace(MethodType methodType, string workspaceName) => methodType.AssignedWorkspaceNames = (methodType.AssignedWorkspaceNames ?? Array.Empty<string>()).Append(workspaceName).Distinct().ToArray();
