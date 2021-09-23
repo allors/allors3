@@ -12,7 +12,6 @@ namespace Tests.Workspace.Remote
     using Allors.Workspace.Adapters;
     using Allors.Workspace.Adapters.Remote;
     using Allors.Workspace.Adapters.Remote.ResthSharp;
-    using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
     using Allors.Workspace.Meta.Lazy;
     using RestSharp;
@@ -40,7 +39,7 @@ namespace Tests.Workspace.Remote
 
         public IWorkspace Workspace { get; private set; }
 
-        public M M => ((IWorkspaceServices)this.Workspace.Services).Get<M>();
+        public M M => this.Workspace.Services.Get<M>();
 
         public Profile()
         {

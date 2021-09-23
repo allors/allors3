@@ -67,6 +67,11 @@ namespace Allors.Database.Domain
 
         public bool CanWrite(IRoleType roleType)
         {
+            if (roleType.RelationType.IsDerived)
+            {
+                return false;
+            }
+
             if (this.Object != null && this.permissionsCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(roleType.RelationType.Id, out var permissionId))
             {
                 return this.IsPermitted(permissionId);
