@@ -147,9 +147,9 @@ namespace Allors.Security
                 {
                     var user = (User)transaction.Instantiate(identityUser.Id);
 
-                    if (user is Deletable)
+                    if (user is Deletable deletable)
                     {
-                        user.Delete();
+                        deletable.Delete();
                     }
 
                     transaction.Derive();
