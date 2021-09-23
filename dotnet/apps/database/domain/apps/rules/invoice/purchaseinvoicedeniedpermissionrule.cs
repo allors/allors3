@@ -43,7 +43,6 @@ namespace Allors.Database.Domain
                     @this.AddRevocation(deleteRevocation);
                 }
 
-                var createSalesInvoicePermission = new Permissions(@this.Strategy.Transaction).Get(@this.Meta, @this.Meta.CreateSalesInvoice);
                 if (!@this.ExistSalesInvoiceWherePurchaseInvoice
                     && (@this.BilledFrom as Organisation)?.IsInternalOrganisation == true
                     && (@this.PurchaseInvoiceState.IsPaid || @this.PurchaseInvoiceState.IsPartiallyPaid || @this.PurchaseInvoiceState.IsNotPaid))

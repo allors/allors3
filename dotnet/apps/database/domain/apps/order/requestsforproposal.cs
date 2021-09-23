@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
             var revocations = new Revocations(this.Transaction);
             var permissions = new Permissions(this.Transaction);
 
-            revocations.PurchaseOrderDeleteRevocation.DeniedPermissions = new[]
+            revocations.RequestForProposalDeleteRevocation.DeniedPermissions = new[]
             {
                 permissions.Get(this.Meta, this.Meta.Delete),
             };
