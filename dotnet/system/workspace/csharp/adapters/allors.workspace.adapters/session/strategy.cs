@@ -357,7 +357,7 @@ namespace Allors.Workspace.Adapters
         {
             if (associationType.Origin != Origin.Session)
             {
-                return this.Session.GetCompositesAssociation(this, associationType).Select(v => v.@object).Cast<T>();
+                return this.Session.GetCompositesAssociation(this, associationType).Select(v => v.Object).Cast<T>();
             }
 
             var association = this.Session.SessionOriginState.GetCompositesAssociation(this, associationType);
