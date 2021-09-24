@@ -35,5 +35,7 @@ namespace Allors.Database.Meta
         bool IsDerived { get; }
 
         string[] WorkspaceNames { get; }
+
+        string[] AssignedWorkspaceNames { get; }
     }
 }

@@ -51,7 +51,7 @@ namespace Allors.Database.Meta
 
         public string[] AssignedWorkspaceNames
         {
-            get => this.assignedWorkspaceNames;
+            get => this.assignedWorkspaceNames ?? Array.Empty<string>();
 
             set
             {

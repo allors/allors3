@@ -72,6 +72,8 @@ namespace Allors.Database.Meta
 
         string[] IOperandType.WorkspaceNames => this.RelationType.WorkspaceNames;
 
+        string[] IOperandType.AssignedWorkspaceNames => this.RelationType.AssignedWorkspaceNames;
+
         /// <summary>
         /// Gets the name.
         /// </summary>

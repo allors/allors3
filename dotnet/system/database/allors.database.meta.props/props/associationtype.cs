@@ -54,6 +54,8 @@ namespace Allors.Database.Meta
 
         string[] IOperandType.WorkspaceNames => this.relationType.WorkspaceNames;
 
+        string[] IOperandType.AssignedWorkspaceNames => this.relationType.AssignedWorkspaceNames;
+
         #endregion
 
         #region IPropertyType & IPropertyTypeBase
