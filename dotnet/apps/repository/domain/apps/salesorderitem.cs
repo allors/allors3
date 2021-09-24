@@ -257,7 +257,6 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Derived]
         [Workspace(Default)]
         public SalesOrderItemInventoryAssignment[] SalesOrderItemInventoryAssignments { get; set; }
 

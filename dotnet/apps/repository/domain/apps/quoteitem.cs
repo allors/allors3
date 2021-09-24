@@ -269,7 +269,6 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Derived]
         public Quote SyncedQuote { get; set; }
 
         #region Allors
