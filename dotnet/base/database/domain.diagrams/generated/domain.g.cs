@@ -91,11 +91,11 @@ namespace Allors.Domain
 		}
 		public interface TransitionalVersion  : Object 
 		{
-						ObjectState[] _PreviousObjectStates {set;}
+						ObjectState[] PreviousObjectStates {set;}
 
-						ObjectState[] _LastObjectStates {set;}
+						ObjectState[] LastObjectStates {set;}
 
-						ObjectState[] _ObjectStates {set;}
+						ObjectState[] ObjectStates {set;}
 
 		}
 		public interface User  : Deletable, UniquelyIdentifiable, SecurityTokenOwner 
