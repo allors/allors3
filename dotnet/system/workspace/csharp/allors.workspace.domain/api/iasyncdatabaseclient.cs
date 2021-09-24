@@ -17,8 +17,12 @@ namespace Allors.Workspace
 
         Task<IPullResult> CallAsync(ISession session, Procedure procedure, params Pull[] pull);
 
+      	Task<IPullResult> CallAsync(ISession session, object args, string name);
+
         Task<IPullResult> PullAsync(ISession session, params Pull[] pull);
 
         Task<IPushResult> PushAsync(ISession session);
+
+        Task<IPullResult> LoadAsync(ISession session, object args, string name);
     }
 }

@@ -20,6 +20,8 @@ namespace Allors.Workspace
 
         IChangeSet Checkpoint();
 
+	void Reset();
+
         T Create<T>() where T : class, IObject;
 
         T Create<T>(IClass @class) where T : class, IObject;
