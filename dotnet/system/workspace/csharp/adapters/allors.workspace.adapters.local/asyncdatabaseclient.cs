@@ -32,6 +32,15 @@ namespace Allors.Workspace.Adapters.Local
             return Task.FromResult<IPullResult>(result);
         }
 
+        public Task<IPullResult> CallAsync(ISession session, object args, string name)
+        {
+            var result = new Pull((Session)session);
+
+            result.Execute(args, name);
+
+            return Task.FromResult<IPullResult>(result);
+        }
+
         public Task<IPullResult> PullAsync(ISession session, params Data.Pull[] pulls)
         {
             foreach (var pull in pulls)

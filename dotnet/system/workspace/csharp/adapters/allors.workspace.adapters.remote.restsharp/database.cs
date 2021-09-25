@@ -50,6 +50,12 @@ namespace Allors.Workspace.Adapters.Remote.ResthSharp
             return await this.client.PostOnce<PushResponse>(uri, pushRequest);
         }
 
+        public override async Task<PullResponse> Pull(object args, string name)
+        {
+            var uri = new Uri($"{name}/pull", UriKind.Relative);
+            return await this.client.Post<PullResponse>(uri, args);
+        }
+
         public override async Task<PullResponse> Pull(PullRequest pullRequest)
         {
             var uri = new Uri("pull", UriKind.Relative);

@@ -364,6 +364,8 @@ namespace Allors.Workspace.Adapters
             return true;
         }
 
+        public bool HashChanges() => this.ChangedRoleByRelationType != null;
+
         public void Reset() => this.ChangedRoleByRelationType = null;
 
         public bool IsAssociationForRole(IRoleType roleType, Strategy forRole)

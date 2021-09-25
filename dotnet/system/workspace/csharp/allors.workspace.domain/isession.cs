@@ -20,7 +20,13 @@ namespace Allors.Workspace
 
         IChangeSet Checkpoint();
 
-	void Reset();
+        bool HasDatabaseChanges();
+
+        void DatabaseReset();
+
+        bool HasWorkspaceChanges();
+
+        void WorkspaceReset();
 
         T Create<T>() where T : class, IObject;
 

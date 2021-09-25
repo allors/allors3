@@ -68,13 +68,6 @@ namespace Allors.Workspace.Adapters
         public bool IsNew => Session.IsNewId(this.Id);
 
         public IObject Object => this.@object ??= this.Session.Workspace.DatabaseConnection.Configuration.ObjectFactory.Create(this);
-
-        public void Reset()
-        {
-            this.WorkspaceOriginState?.Reset();
-            this.DatabaseOriginState?.Reset();
-        }
-
         public IReadOnlyList<IDiff> Diff()
         {
             var diffs = new List<IDiff>();
@@ -84,6 +77,23 @@ namespace Allors.Workspace.Adapters
 
             return diffs.ToArray();
         }
+
+        public bool HasDatabaseChanges() => this.DatabaseOriginState.HashChanges();
+
+        public void DatabaseReset()
+        {
+            this.WorkspaceOriginState?.Reset();
+            this.DatabaseOriginState?.Reset();
+        }
+
+        public bool HasWorkspaceChanges() => this.DatabaseOriginState.HashChanges();
+
+        public void WorkspaceReset()
+        {
+            this.WorkspaceOriginState?.Reset();
+            this.DatabaseOriginState?.Reset();
+        }
+
 
         public bool ExistRole(IRoleType roleType)
         {

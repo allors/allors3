@@ -13,9 +13,9 @@ namespace Tests.Workspace
     using Allors.Workspace.Domain;
     using Xunit;
 
-    public abstract class ResetTests : Test
+    public abstract class DatabaseResetTests : Test
     {
-        protected ResetTests(Fixture fixture) : base(fixture) { }
+        protected DatabaseResetTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
         public async void ResetUnitWithoutPush()
@@ -36,7 +36,7 @@ namespace Tests.Workspace
 
             var c2aString = c2a.C1AllorsString;
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.DatabaseReset();
 
             Assert.Equal(c2aString, c1a.C1AllorsString);
 
@@ -59,7 +59,7 @@ namespace Tests.Workspace
 
             Assert.Equal("X", c1a.C1AllorsString);
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.DatabaseReset();
 
             Assert.Null(c1a.C1AllorsString);
         }
@@ -85,7 +85,7 @@ namespace Tests.Workspace
 
             await this.AsyncDatabaseClient.PushAsync(session);
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.DatabaseReset();
 
             Assert.Equal("X", c2a.C1AllorsString);
         }
@@ -111,7 +111,7 @@ namespace Tests.Workspace
 
             c1a.C1C1One2One = c1x;
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.DatabaseReset();
 
             Assert.NotNull(Record.Exception(() =>
             {
@@ -150,7 +150,7 @@ namespace Tests.Workspace
 
             c1a.C1C1One2One = c1x;
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.DatabaseReset();
 
             Assert.Equal(c1b, c1a.C1C1One2One);
             Assert.Null(c1x.C1WhereC1C1One2One);
@@ -172,7 +172,7 @@ namespace Tests.Workspace
 
             await this.AsyncDatabaseClient.PushAsync(session);
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.DatabaseReset();
 
             Assert.NotNull(Record.Exception(() =>
             {
@@ -213,7 +213,7 @@ namespace Tests.Workspace
 
             await this.AsyncDatabaseClient.PushAsync(session);
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.DatabaseReset();
 
             Assert.Equal(c1b, c1a.C1C1One2One);
             Assert.Null(c1x.C1WhereC1C1One2One);
@@ -244,7 +244,7 @@ namespace Tests.Workspace
             Assert.Null(c1a.C1C1One2One);
             Assert.Null(c1b.C1WhereC1C1One2One);
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.DatabaseReset();
 
             Assert.Equal(c1b, c1a.C1C1One2One);
             Assert.Equal(c1a, c1b.C1WhereC1C1One2One);
@@ -264,7 +264,7 @@ namespace Tests.Workspace
 
             c1a.C1C1Many2One = c1b;
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.DatabaseReset();
 
             Assert.Null(c1a.C1C1Many2One);
             Assert.Empty(c1b.C1sWhereC1C1Many2One);
@@ -286,7 +286,7 @@ namespace Tests.Workspace
 
             await this.AsyncDatabaseClient.PushAsync(session);
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.DatabaseReset();
 
             Assert.Null(c1a.C1C1Many2One);
             Assert.Empty(c1b.C1sWhereC1C1Many2One);
@@ -317,7 +317,7 @@ namespace Tests.Workspace
             Assert.Null(c1a.C1C1Many2One);
             Assert.Empty(c1b.C1sWhereC1C1Many2One);
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.DatabaseReset();
 
             Assert.Equal(c1b, c1a.C1C1Many2One);
             Assert.Contains(c1a, c1b.C1sWhereC1C1Many2One);
@@ -337,7 +337,7 @@ namespace Tests.Workspace
 
             c1a.AddC1C1One2Many(c1b);
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.DatabaseReset();
 
             Assert.Empty(c1a.C1C1One2Manies);
             Assert.Null(c1b.C1WhereC1C1One2Many);
@@ -359,7 +359,7 @@ namespace Tests.Workspace
 
             await this.AsyncDatabaseClient.PushAsync(session);
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.DatabaseReset();
 
             Assert.Empty(c1a.C1C1One2Manies);
             Assert.Null(c1b.C1WhereC1C1One2Many);
@@ -387,7 +387,7 @@ namespace Tests.Workspace
 
             c1a.RemoveC1C1One2Many(c1b);
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.DatabaseReset();
 
             Assert.Contains(c1b, c1a.C1C1One2Manies);
             Assert.Equal(c1a, c1b.C1WhereC1C1One2Many);
@@ -407,7 +407,7 @@ namespace Tests.Workspace
 
             c1a.AddC1C1Many2Many(c1b);
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.DatabaseReset();
 
             Assert.Empty(c1a.C1C1Many2Manies);
             Assert.Empty(c1b.C1sWhereC1C1Many2Many);
@@ -429,7 +429,7 @@ namespace Tests.Workspace
 
             await this.AsyncDatabaseClient.PushAsync(session);
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.DatabaseReset();
 
             Assert.Empty(c1a.C1C1Many2Manies);
             Assert.Empty(c1b.C1sWhereC1C1Many2Many);
@@ -465,7 +465,7 @@ namespace Tests.Workspace
             Assert.Empty(c1a.C1C1Many2Manies);
             Assert.Empty(c1b_2.C1sWhereC1C1Many2Many);
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.DatabaseReset();
 
             Assert.Contains(c1b, c1a.C1C1Many2Manies);
             Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);

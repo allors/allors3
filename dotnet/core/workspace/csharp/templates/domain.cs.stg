@@ -2,7 +2,7 @@ delimiters "$", "$"
 
 TemplateId() ::= <<07F63139-1791-4F55-AAED-F1A6D8D40055>>
 TemplateName() ::= <<Allors C# Workspace Domain>>
-TemplateVersion() ::= <<3.0.2>>
+TemplateVersion() ::= <<3.0.3>>
 TemplateAllors() ::= <<1.0>>
 TemplateConfiguration(meta, workspaceName) ::= <<
 $!
@@ -168,7 +168,7 @@ $endif$
 		{
 			get
 			{
-				return this.m.$class._.SingularName$;
+				return this.M.$class._.SingularName$;
 			}
 		}
 

@@ -473,7 +473,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetBeforeAndAfterResetWithSessionObject()
+        public async void ChangeSetBeforeAndAfterDatabaseResetWithSessionObject()
         {
             await this.Login("administrator");
 
@@ -489,14 +489,37 @@ namespace Tests.Workspace
 
             Assert.Single(changeSet.AssociationsByRoleType);
 
-            sessionC1a.Strategy.Reset();
+            sessionC1a.Strategy.DatabaseReset();
             changeSet = session.Checkpoint();
 
             Assert.Empty(changeSet.AssociationsByRoleType);
         }
 
         [Fact]
-        public async void ChangeSetBeforeAndAfterResetWithChangeSessionObject()
+        public async void ChangeSetBeforeAndAfterWorkspaceResetWithSessionObject()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var sessionC1a = session.Create<SC1>();
+
+            sessionC1a.SessionAllorsString = "X";
+
+            await this.AsyncDatabaseClient.PushAsync(session);
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.AssociationsByRoleType);
+
+            sessionC1a.Strategy.WorkspaceReset();
+            changeSet = session.Checkpoint();
+
+            Assert.Empty(changeSet.AssociationsByRoleType);
+        }
+
+        [Fact]
+        public async void ChangeSetBeforeAndAfterDatabaseResetWithChangeSessionObject()
         {
             await this.Login("administrator");
 
@@ -519,7 +542,7 @@ namespace Tests.Workspace
             Assert.Single(changeSet.AssociationsByRoleType);
             Assert.Equal("Y", sessionC1a.SessionAllorsString);
 
-            sessionC1a.Strategy.Reset();
+            sessionC1a.Strategy.DatabaseReset();
             changeSet = session.Checkpoint();
 
             Assert.Empty(changeSet.AssociationsByRoleType);
@@ -527,7 +550,38 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetAfterDoubleReset()
+        public async void ChangeSetBeforeAndAfterWorkspaceResetWithChangeSessionObject()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var sessionC1a = session.Create<SC1>();
+
+            sessionC1a.SessionAllorsString = "X";
+
+            await this.AsyncDatabaseClient.PushAsync(session);
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.AssociationsByRoleType);
+
+            sessionC1a.SessionAllorsString = "Y";
+
+            changeSet = session.Checkpoint();
+
+            Assert.Single(changeSet.AssociationsByRoleType);
+            Assert.Equal("Y", sessionC1a.SessionAllorsString);
+
+            sessionC1a.Strategy.WorkspaceReset();
+            changeSet = session.Checkpoint();
+
+            Assert.Empty(changeSet.AssociationsByRoleType);
+            Assert.Equal("Y", sessionC1a.SessionAllorsString);
+        }
+
+        [Fact]
+        public async void ChangeSetAfterDoubleDatabaseReset()
         {
             await this.Login("administrator");
 
@@ -552,8 +606,45 @@ namespace Tests.Workspace
 
             await this.AsyncDatabaseClient.PushAsync(session);
 
-            c1a_2.Strategy.Reset();
-            c1a_2.Strategy.Reset();
+            c1a_2.Strategy.DatabaseReset();
+            c1a_2.Strategy.DatabaseReset();
+
+            var changeSet = session.Checkpoint();
+
+            Assert.Empty(changeSet.Created);
+            Assert.Empty(changeSet.Instantiated);
+            Assert.Single(changeSet.AssociationsByRoleType);
+            Assert.Empty(changeSet.RolesByAssociationType);
+        }
+
+        [Fact]
+        public async void ChangeSetAfterDoubleWorkspaceReset()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
+            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var c1a_1 = result.GetCollection<C1>()[0];
+
+            session.Checkpoint();
+
+            c1a_1.C1AllorsString = "X";
+
+            await this.AsyncDatabaseClient.PushAsync(session);
+
+            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            Assert.False(result.HasErrors);
+
+            var c1a_2 = result.GetCollection<C1>()[0];
+
+            c1a_2.C1AllorsString = "Y";
+
+            await this.AsyncDatabaseClient.PushAsync(session);
+
+            c1a_2.Strategy.WorkspaceReset();
+            c1a_2.Strategy.WorkspaceReset();
 
             var changeSet = session.Checkpoint();
 

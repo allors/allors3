@@ -67,7 +67,7 @@ namespace Tests.Workspace
 
             c1a_2.C1AllorsString = "Y";
 
-            c1a_2.Strategy.Reset();
+            c1a_2.Strategy.DatabaseReset();
             var diff = c1a_2.Strategy.Diff();
 
             Assert.Empty(diff);
@@ -93,8 +93,8 @@ namespace Tests.Workspace
 
             c1b.C1AllorsString = "Y";
 
-            c1b.Strategy.Reset();
-            c1b.Strategy.Reset();
+            c1b.Strategy.DatabaseReset();
+            c1b.Strategy.DatabaseReset();
 
             var diff = c1b.Strategy.Diff();
 
@@ -185,7 +185,7 @@ namespace Tests.Workspace
 
             c1a.WorkspaceAllorsString = "Y";
 
-            c1a.Strategy.Reset();
+            c1a.Strategy.WorkspaceReset();
 
             var diffs = c1a.Strategy.Diff();
             Assert.Empty(diffs);

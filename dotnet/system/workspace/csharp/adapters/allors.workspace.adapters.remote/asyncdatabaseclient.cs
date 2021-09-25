@@ -46,6 +46,12 @@ namespace Allors.Workspace.Adapters.Remote
             return new InvokeResult(session, invokeResponse);
         }
 
+        public async Task<IPullResult> CallAsync(ISession session, object args, string name)
+        {
+            var pullResponse = await this.databaseConnection.Pull(args, name);
+            return await((Session)session).OnPull(pullResponse);
+        }
+
         public async Task<IPullResult> PullAsync(ISession session, params Pull[] pulls)
         {
             foreach (var pull in pulls)

@@ -131,6 +131,52 @@ namespace Allors.Workspace.Adapters
             return changeSet;
         }
 
+        // TODO: Optimize
+        public bool HasDatabaseChanges()
+        {
+            foreach (var kvp in this.StrategyByWorkspaceId)
+            {
+                if (kvp.Value.HasDatabaseChanges())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // TODO: Optimize
+        public void DatabaseReset()
+        {
+            foreach (var kvp in this.StrategyByWorkspaceId)
+            {
+                kvp.Value.DatabaseReset();
+            }
+        }
+
+        // TODO: Optimize
+        public bool HasWorkspaceChanges()
+        {
+            foreach (var kvp in this.StrategyByWorkspaceId)
+            {
+                if (kvp.Value.HasWorkspaceChanges())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // TODO: Optimize
+        public void WorkspaceReset()
+        {
+            foreach (var kvp in this.StrategyByWorkspaceId)
+            {
+                kvp.Value.WorkspaceReset();
+            }
+        }
+
         #region Instantiate
         public T Instantiate<T>(IObject @object) where T : class, IObject => this.Instantiate<T>(@object.Id);
 

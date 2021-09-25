@@ -5,6 +5,7 @@
 
 namespace Allors.Workspace.Adapters.Local
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Database;
@@ -130,6 +131,12 @@ namespace Allors.Workspace.Adapters.Local
         public object GetValue(string key) => this.Values[key];
 
         public T GetValue<T>(string key) => (T)this.GetValue(key);
+
+        public void Execute(object args, string name)
+        {
+            // TODO: Use a Service for raw procedures
+            throw new NotImplementedException();
+        }
 
         public void Execute(Data.Procedure workspaceProcedure)
         {

@@ -265,6 +265,8 @@ namespace Allors.Workspace.Adapters.Remote
             return databaseObjects;
         }
 
+        public abstract Task<PullResponse> Pull(object args, string name);
+
         public abstract Task<PullResponse> Pull(PullRequest pullRequest);
 
         public abstract Task<SyncResponse> Sync(SyncRequest syncRequest);

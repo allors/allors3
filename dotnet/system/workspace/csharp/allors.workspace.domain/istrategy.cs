@@ -20,9 +20,15 @@ namespace Allors.Workspace
 
         long Version { get; }
 
-        void Reset();
-
         IReadOnlyList<IDiff> Diff();
+
+        bool HasDatabaseChanges();
+
+        void DatabaseReset();
+
+        bool HasWorkspaceChanges();
+
+        void WorkspaceReset();
 
         bool CanRead(IRoleType roleType);
 

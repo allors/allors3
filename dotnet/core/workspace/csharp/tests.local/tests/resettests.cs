@@ -7,7 +7,7 @@ namespace Tests.Workspace.Local
 {
     using Xunit;
 
-    public class ResetTests : Workspace.ResetTests, IClassFixture<Fixture>
+    public class ResetTests : Workspace.WorkspaceResetTests, IClassFixture<Fixture>
     {
         public ResetTests(Fixture fixture) : base(fixture) => this.Profile = new Profile(fixture);
 
