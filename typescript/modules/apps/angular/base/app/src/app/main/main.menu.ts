@@ -1,7 +1,7 @@
 import { tags } from '@allors/workspace/meta/default';
 
 export interface MenuItem {
-  tag?: number;
+  tag?: string;
   link?: string;
   title?: string;
   icon?: string;

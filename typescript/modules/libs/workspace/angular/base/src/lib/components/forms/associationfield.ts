@@ -106,7 +106,7 @@ export abstract class AssociationField extends Field implements AfterViewInit, O
     return this.object?.id;
   }
 
-  get dataAllorsAssociationType(): number {
+  get dataAllorsAssociationType(): string {
     return this.associationType?.relationType.tag;
   }
 }

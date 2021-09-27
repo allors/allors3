@@ -32,6 +32,9 @@
     "test:workspace-adapters-json-system-async": "npx nx test workspace-adapters-json-system-tests-async --skipNxCache",
     "test:workspace-adapters-json-system-reactive": "npx nx test workspace-adapters-json-system-tests-reactive --skipNxCache",
     "test:all": "npm run test:workspace-meta-system && npm run test:workspace-meta-json-system && npm run test:workspace-adapters-system && npm run test:workspace-adapters-json-system-async && npm run test:workspace-adapters-json-system-reactive",
+    "scaffold:project": "npx tsc --project ./tools/scaffold/tsconfig.json && node ./dist/out-tsc/tools/scaffold/main.js",
+    "scaffold:config": "npx nx test angular-base-app",
+    "scaffold": "npm run scaffold:project && npm run scaffold:config",
     "postinstall": "ngcc --properties es2015 browser module main"
   },
   "private": true,

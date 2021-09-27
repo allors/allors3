@@ -190,7 +190,7 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
     return this.object?.id;
   }
 
-  get dataAllorsRoleType(): number {
+  get dataAllorsRoleType(): string {
     return this.roleType?.relationType.tag;
   }
 }

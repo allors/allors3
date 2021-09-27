@@ -1,39 +1,34 @@
 import * as fs from 'fs';
-import { menu } from '@allors/angular/material/custom';
 
-import '@allors/meta/core';
-import '@allors/angular/core';
-import { MetaPopulation } from '@allors/meta/system';
-import { Workspace } from '@allors/domain/system';
-import { data } from '@allors/meta/generated';
-
-import { extend as extendDomain } from '@allors/domain/custom';
-import { extend as extendAngular } from '@allors/angular/core';
-import { configure as configureMaterial } from '@allors/angular/material/custom';
+import { data } from '@allors/workspace/meta/json/default';
+import { menu } from './app/main/main.menu';
+import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
+import { AngularMetaService } from '@allors/workspace/configuration/base';
+import { configure } from './app/configure';
+import { M } from '@allors/workspace/meta/default';
 
 interface MetaInfo {
-  id: string;
+  tag: string;
   list: string;
   overview: string;
 }
 
 describe('Scaffold', () => {
   it('meta and menu', () => {
-    const metaPopulation = new MetaPopulation(data);
-    const workspace = new Workspace(metaPopulation);
+    const metaPopulation = new LazyMetaPopulation(data);
+    const angularMetaService = new AngularMetaService();
 
-    // Extend
-    extendDomain(workspace);
-    extendAngular(workspace);
-    
-    // Configure
-    configureMaterial(metaPopulation);
+    const m: M = metaPopulation as unknown as M;
 
-    const meta: MetaInfo[] = metaPopulation.composites.map((v) => {
+    configure(m, angularMetaService);
+
+    const meta: MetaInfo[] = [...metaPopulation.composites].map((v) => {
+      const angularMeta = angularMetaService.for(v);
+
       return {
-        id: v.id,
-        list: v.list,
-        overview: v.overview,
+        tag: v.tag,
+        list: angularMeta.list,
+        overview: angularMeta.overview,
       };
     });
 

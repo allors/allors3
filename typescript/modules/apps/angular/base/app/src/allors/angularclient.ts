@@ -1,7 +1,7 @@
-import { InvokeRequest, PullRequest, PullResponse, PushRequest, PushResponse, Response, SecurityRequest, SecurityResponse, SyncRequest, SyncResponse } from '@allors/protocol/json/system';
+import { AccessRequest, AccessResponse, InvokeRequest, PermissionRequest, PermissionResponse, PullRequest, PullResponse, PushRequest, PushResponse, Response, SyncRequest, SyncResponse } from '@allors/protocol/json/system';
 import { IReactiveDatabaseJsonClient } from '@allors/workspace/adapters/json/system';
 import { Observable } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 interface AuthenticationTokenRequest {
   /** login */
@@ -45,8 +45,12 @@ export class AngularClient implements IReactiveDatabaseJsonClient {
     return this.post<Response>('invoke', invokeRequest);
   }
 
-  security(securityRequest: SecurityRequest): Observable<SecurityResponse> {
-    return this.post<SecurityResponse>('security', securityRequest);
+  access(accessRequest: AccessRequest): Observable<AccessResponse> {
+    return this.post<AccessResponse>('access', accessRequest);
+  }
+
+  permission(permissionRequest: PermissionRequest): Observable<PermissionResponse> {
+    return this.post<PermissionResponse>('permission', permissionRequest);
   }
 
   post<T>(relativeUrl: string, data: any): Observable<T> {
