@@ -153,7 +153,7 @@ namespace Allors.Workspace.Adapters
             {
                 Origin.Session => this.Session.SessionOriginState.GetCompositesRole(this, roleType).Select(v => (T)v.Object),
                 Origin.Workspace => this.WorkspaceOriginState?.GetCompositesRole(roleType).Select(v => (T)v.Object),
-                Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState?.GetCompositesRole(roleType).Select(v => (T)v.Object) : null,
+                Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState?.GetCompositesRole(roleType).Select(v => (T)v.Object) : Array.Empty<T>(),
                 _ => throw new ArgumentException("Unsupported Origin")
             };
 
