@@ -1,7 +1,7 @@
 import { Directive, ElementRef, Inject, PLATFORM_ID, Input, OnDestroy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { timer, Subscription } from 'rxjs';
-import { filter, switchMap, tap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 
 import { AllorsFocusService } from '../../services/focus/focus.service';
 

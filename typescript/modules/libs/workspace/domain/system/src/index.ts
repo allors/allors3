@@ -1,80 +1,80 @@
 // api
-export * from './lib/api/derivation/IDatabaseDerivationError';
-export * from './lib/api/derivation/IDatabaseDerivationException';
-export * from './lib/api/derivation/IDatabaseValidation';
+export * from './lib/api/derivation/idatabase-derivation-error';
+export * from './lib/api/derivation/idatabase-derivation-exception';
+export * from './lib/api/derivation/idatabase-validation';
 
-export * from './lib/api/pull/FlatPull';
-export * from './lib/api/pull/FlatResult';
-export * from './lib/api/pull/Procedure';
-export * from './lib/api/pull/Pull';
-export * from './lib/api/pull/IPullResult';
-export * from './lib/api/pull/IInvokeResult';
-export * from './lib/api/pull/InvokeOptions';
+export * from './lib/api/pull/flat-pull';
+export * from './lib/api/pull/flat-result';
+export * from './lib/api/pull/procedure';
+export * from './lib/api/pull/pull';
+export * from './lib/api/pull/ipull-result';
+export * from './lib/api/pull/iinvoke-Result';
+export * from './lib/api/pull/invoke-options';
 
-export * from './lib/api/push/IPushResult';
+export * from './lib/api/push/ipush-result';
 
-export * from './lib/api/IAsyncDatabaseClient';
-export * from './lib/api/IReactiveDatabaseClient';
-export * from './lib/api/IResult';
-export * from './lib/api/ResultError';
+export * from './lib/api/iasync-database-client';
+export * from './lib/api/ireactive-database-client';
+export * from './lib/api/iresult';
+export * from './lib/api/result-error';
 
 // data
-export * from './lib/data/Node';
-export * from './lib/data/Select';
-export * from './lib/data/Extent';
-export * from './lib/data/Sort';
-export * from './lib/data/SortDirection';
-export * from './lib/data/Predicate';
-export * from './lib/data/ParameterizablePredicate';
-export * from './lib/data/And';
-export * from './lib/data/Between';
-export * from './lib/data/ContainedIn';
-export * from './lib/data/Contains';
-export * from './lib/data/Equals';
-export * from './lib/data/Exists';
-export * from './lib/data/GreaterThan';
-export * from './lib/data/Instanceof';
-export * from './lib/data/LessThan';
-export * from './lib/data/Like';
-export * from './lib/data/Not';
-export * from './lib/data/Or';
-export * from './lib/data/Union';
-export * from './lib/data/Intersect';
-export * from './lib/data/Except';
-export * from './lib/data/Filter';
-export * from './lib/data/Result';
-export * from './lib/data/Operator';
+export * from './lib/data/node';
+export * from './lib/data/select';
+export * from './lib/data/extent';
+export * from './lib/data/sort';
+export * from './lib/data/sort-direction';
+export * from './lib/data/predicate';
+export * from './lib/data/parameterizable-predicate';
+export * from './lib/data/and';
+export * from './lib/data/between';
+export * from './lib/data/contained-in';
+export * from './lib/data/contains';
+export * from './lib/data/equals';
+export * from './lib/data/exists';
+export * from './lib/data/greater-than';
+export * from './lib/data/instance-of';
+export * from './lib/data/less-than';
+export * from './lib/data/like';
+export * from './lib/data/not';
+export * from './lib/data/or';
+export * from './lib/data/union';
+export * from './lib/data/intersect';
+export * from './lib/data/except';
+export * from './lib/data/filter';
+export * from './lib/data/result';
+export * from './lib/data/operator';
 
 // derivation
-export * from './lib/derivation/rules/IAssociationPattern';
-export * from './lib/derivation/rules/ICycle';
-export * from './lib/derivation/rules/IPattern';
-export * from './lib/derivation/rules/IRolePattern';
-export * from './lib/derivation/rules/IRule';
-export * from './lib/derivation/IDerivation';
-export * from './lib/derivation/IValidation';
+export * from './lib/derivation/rules/iassociation-pattern';
+export * from './lib/derivation/rules/icycle';
+export * from './lib/derivation/rules/ipattern';
+export * from './lib/derivation/rules/irole-pattern';
+export * from './lib/derivation/rules/irule';
+export * from './lib/derivation/iderivation';
+export * from './lib/derivation/ivalidation';
 
 // diff
-export * from './lib/diff/ICompositeDiff';
-export * from './lib/diff/ICompositesDiff';
-export * from './lib/diff/IDiff';
-export * from './lib/diff/IUnitDiff';
+export * from './lib/diff/icomposite-diff';
+export * from './lib/diff/icomposites-diff';
+export * from './lib/diff/idiff';
+export * from './lib/diff/iunit-diff';
 
 // services
-export * from './lib/services/ISessionServices';
-export * from './lib/services/IWorkspaceServices';
-export * from './lib/services/derivation/IDerivationService';
+export * from './lib/services/isession-services';
+export * from './lib/services/iworkspace-services';
+export * from './lib/services/derivation/iderivation-service';
 
-export * from './lib/IChangeSet';
-export * from './lib/IConfiguration';
-export * from './lib/IObject';
-export * from './lib/IObjectFactory';
-export * from './lib/ISession';
-export * from './lib/IStrategy';
-export * from './lib/IWorkspace';
-export * from './lib/IWorkspaceResult';
-export * from './lib/Method';
-export * from './lib/Operations';
-export * from './lib/Role';
-export * from './lib/Types';
+export * from './lib/ichange-set';
+export * from './lib/iconfiguration';
+export * from './lib/iobject';
+export * from './lib/iobjectFactory';
+export * from './lib/isession';
+export * from './lib/istrategy';
+export * from './lib/iworkspace';
+export * from './lib/iworkspaceResult';
+export * from './lib/method';
+export * from './lib/operations';
+export * from './lib/role';
+export * from './lib/types';
 

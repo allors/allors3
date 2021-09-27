@@ -1,5 +1,5 @@
-import { ICycle, IDerivation, IObject, IRule, ISession, IValidation, Node, resolve } from '@allors/workspace/domain/system';
-import { Engine } from './Engine';
+import { ICycle, IDerivation, IObject, IRule, ISession, IValidation, resolve } from '@allors/workspace/domain/system';
+import { Engine } from './engine';
 
 export class Derivation implements IDerivation {
   public constructor(session: ISession, engine: Engine, maxDomainDerivationCycles: number) {

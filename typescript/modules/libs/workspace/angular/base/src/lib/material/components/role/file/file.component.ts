@@ -4,11 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { ISession } from '@allors/workspace/domain/system';
 import { Media } from '@allors/workspace/domain/default';
-
-import { RoleField } from '../../../../components/forms/RoleField';
-import { MediaService } from '../../../../services/media/media.service';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
+
+import { RoleField } from '../../../../components/forms/role-field';
+import { MediaService } from '../../../../services/media/media.service';
 
 @Component({
   // tslint:disable-next-line:component-selector

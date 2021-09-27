@@ -1,5 +1,5 @@
-import { Select } from './Select';
-import { Node } from "./Node";
+import { Select } from './select';
+import { Node } from "./node";
 
 export interface Result {
   selectRef?: string;

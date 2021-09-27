@@ -1,1 +1,1 @@
-export * from './lib/LazyMetaPopulation';
+export * from './lib/lazy-meta-population';

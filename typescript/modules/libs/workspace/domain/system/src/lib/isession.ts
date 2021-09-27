@@ -1,10 +1,11 @@
 import { Class, Composite } from '@allors/workspace/meta/system';
-import { IObject } from './IObject';
-import { IWorkspace } from './IWorkspace';
-import { IChangeSet } from './IChangeSet';
-import { IWorkspaceResult } from './IWorkspaceResult';
 
-import { ISessionServices } from './services/ISessionServices';
+import { ISessionServices } from './services/isession-services';
+
+import { IObject } from './iobject';
+import { IWorkspace } from './iworkspace';
+import { IChangeSet } from './ichangeSet';
+import { IWorkspaceResult } from './iworkspaceResult';
 
 export interface ISession {
   workspace: IWorkspace;

@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
-import { ActionTarget } from './ActionTarget';
-import { ActionResult } from './ActionResult';
+import { ActionTarget } from './action-target';
+import { ActionResult } from './action-result';
 
 export interface Action {
   name: string;

@@ -1,11 +1,11 @@
-export * from './lib/json/fromJson';
-export * from './lib/json/toJson';
+export * from './lib/json/from-json';
+export * from './lib/json/to-json';
 
-export * from './lib/database/DatabaseConnection';
-export * from './lib/session/Session';
-export * from './lib/workspace/Workspace';
+export * from './lib/database/database-connection';
+export * from './lib/session/session';
+export * from './lib/workspace/workspace';
 
-export * from './lib/AsyncDatabaseClient';
-export * from './lib/IAsyncDatabaseJsonClient';
-export * from './lib/ReactiveDatabaseClient';
-export * from './lib/IReactiveDatabaseJsonClient';
+export * from './lib/async-database-client';
+export * from './lib/iasync-database-json-client';
+export * from './lib/reactive-database-client';
+export * from './lib/ireactive-database-json-client';

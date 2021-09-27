@@ -1,4 +1,4 @@
-import { OperatorBase } from './Operator';
+import { OperatorBase } from './operator';
 
 export interface Intersect extends OperatorBase {
   kind: 'Intersect';

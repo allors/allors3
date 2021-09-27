@@ -1,8 +1,8 @@
 import { AssociationType, Class, MethodType, RoleType } from '@allors/workspace/meta/system';
-import { IDiff } from './diff/IDiff';
-import { IObject } from './IObject';
-import { ISession } from './ISession';
-import { IUnit } from './Types';
+import { IDiff } from './diff/idiff';
+import { IObject } from './iobject';
+import { ISession } from './isession';
+import { IUnit } from './types';
 
 export interface IStrategy {
   session: ISession;

@@ -1,8 +1,8 @@
 import { Component, ViewChild, ElementRef, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { Filter } from '../../../components/filter/Filter';
-import { FilterField } from '../../../components/filter/FilterField';
+import { Filter } from '../../../components/filter/filter';
+import { FilterField } from '../../../components/filter/filter-field';
 
 import { AllorsMaterialFilterFieldDialogComponent } from './field/dialog.component';
 

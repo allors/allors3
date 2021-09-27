@@ -1,9 +1,10 @@
 import { IConfiguration, ISession, IWorkspace, IWorkspaceServices } from '@allors/workspace/domain/system';
 import { Class, RelationType } from '@allors/workspace/meta/system';
-import { Ranges } from '../collections/ranges/Ranges';
-import { DatabaseConnection } from '../database/DatabaseConnection';
-import { Strategy } from '../session/Strategy';
-import { WorkspaceRecord } from './WorkspaceRecord';
+
+import { Ranges } from '../collections/ranges/ranges';
+import { DatabaseConnection } from '../database/database-connection';
+import { Strategy } from '../session/strategy';
+import { WorkspaceRecord } from './workspace-record';
 
 export abstract class Workspace implements IWorkspace {
   configuration: IConfiguration;

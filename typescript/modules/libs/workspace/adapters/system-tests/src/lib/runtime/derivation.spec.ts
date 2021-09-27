@@ -2,8 +2,8 @@ import { IAsyncDatabaseClient, IWorkspace, IReactiveDatabaseClient, Pull } from 
 import '@allors/workspace/domain/default';
 import { Person } from '@allors/workspace/domain/default';
 
-import { Fixture } from '../Fixture';
-import '../Matchers';
+import { Fixture } from '../fixture';
+import '../matchers';
 
 let fixture: Fixture;
 

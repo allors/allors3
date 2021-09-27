@@ -1,1 +1,1 @@
-export * from './lib/ruleBuilder';
+export * from './lib/rule-builder';

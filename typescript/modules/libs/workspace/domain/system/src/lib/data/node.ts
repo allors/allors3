@@ -1,6 +1,6 @@
 import { AssociationType, Composite, PropertyType, RoleType } from '@allors/workspace/meta/system';
-import { IObject } from '../IObject';
-import { IStrategy } from '../IStrategy';
+import { IObject } from '../iobject';
+import { IStrategy } from '../istrategy';
 
 export interface Node {
   propertyType: PropertyType;

@@ -1,6 +1,6 @@
 import { Response } from '@allors/protocol/json/system';
 import { IDatabaseDerivationError, IObject, IResult, ISession } from '@allors/workspace/domain/system';
-import { DerivationError } from './DerivationError';
+import { DerivationError } from './derivation-error';
 
 export abstract class Result implements IResult {
   private _derivationErrors: IDatabaseDerivationError[];

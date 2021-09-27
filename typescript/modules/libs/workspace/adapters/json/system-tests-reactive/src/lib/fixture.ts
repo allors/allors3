@@ -1,5 +1,4 @@
 import { MetaPopulation } from '@allors/workspace/meta/system';
-import { RxjsClient } from './RxjsClient';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
 import { ReactiveDatabaseClient, DatabaseConnection } from '@allors/workspace/adapters/json/system';
@@ -7,6 +6,8 @@ import { Configuration, PrototypeObjectFactory } from '@allors/workspace/adapter
 import { WorkspaceServices } from '@allors/workspace/adapters/system-tests';
 import { ruleBuilder } from '@allors/workspace/derivations/core-custom';
 import { M } from '@allors/workspace/meta/default';
+
+import { RxjsClient } from './rxjs-client';
 
 const BASE_URL = 'http://localhost:5000/allors/';
 const AUTH_URL = 'TestAuthentication/Token';

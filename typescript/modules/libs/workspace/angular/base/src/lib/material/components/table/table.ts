@@ -8,10 +8,10 @@ import { IObject } from '@allors/workspace/domain/system';
 
 import { Action } from '../../../components/actions/Action';
 
-import { TableConfig } from './TableConfig';
-import { BaseTable } from './BaseTable';
-import { Column } from './Column';
-import { TableRow } from './TableRow';
+import { BaseTable } from './base-table';
+import { TableConfig } from './table-config';
+import { TableRow } from './table-row';
+import { Column } from './column';
 
 export class Table<Row extends TableRow> implements BaseTable {
 

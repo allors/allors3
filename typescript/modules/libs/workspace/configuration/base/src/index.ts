@@ -1,1 +1,1 @@
-export * from './lib/angular/AngularMetaService'
+export * from './lib/angular/angular-meta-service'

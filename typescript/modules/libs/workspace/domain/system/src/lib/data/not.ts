@@ -1,4 +1,4 @@
-import { Predicate, PredicateBase } from "./Predicate";
+import { Predicate, PredicateBase } from "./predicate";
 
 export interface Not extends PredicateBase {
   kind: 'Not',

@@ -5,10 +5,11 @@ import { map, catchError } from 'rxjs/operators';
 import { throwError, Observable } from 'rxjs';
 
 import { AuthenticationService } from '../../services/authentication/authentication.service';
-import { AuthenticationTokenResponse } from '../../services/authentication/AuthenticationTokenResponse';
-import { UserId } from '../../services/state/UserId';
+import { AuthenticationTokenResponse } from '../../services/authentication/authentication-token-response';
+import { AuthenticationTokenRequest } from '../../services/authentication/authentication-token-request';
+import { UserId } from '../../services/state/user-id';
+
 import { AuthenticationConfig } from './authentication.config';
-import { AuthenticationTokenRequest } from '../../services/authentication/AuthenticationTokenRequest';
 
 @Injectable()
 export class AuthenticationServiceBase extends AuthenticationService {

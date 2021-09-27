@@ -1,4 +1,4 @@
-import { IStrategy } from "./IStrategy";
+import { IStrategy } from "./istrategy";
 
 export interface IObject {
   id: number;

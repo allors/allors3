@@ -6,7 +6,7 @@ import { MatAutocompleteTrigger, MatAutocompleteSelectedEvent } from '@angular/m
 
 import { IObject, TypeForParameter } from '@allors/workspace/domain/system';
 
-import { RoleField } from '../../../../components/forms/RoleField';
+import { RoleField } from '../../../../components/forms/role-field';
 
 @Component({
   // tslint:disable-next-line:component-selector

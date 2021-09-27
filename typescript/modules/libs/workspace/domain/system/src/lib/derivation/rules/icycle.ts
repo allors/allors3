@@ -1,6 +1,6 @@
-import { IChangeSet } from "../../IChangeSet";
-import { ISession } from "../../ISession";
-import { IValidation } from "../IValidation";
+import { IChangeSet } from "../../ichangeSet";
+import { ISession } from "../../isession";
+import { IValidation } from "../ivalidation";
 
 export interface ICycle {
     

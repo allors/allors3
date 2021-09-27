@@ -1,5 +1,4 @@
 import { MetaPopulation } from '@allors/workspace/meta/system';
-import { FetchClient } from './FetchClient';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
 import { ruleBuilder } from '@allors/workspace/derivations/core-custom';
@@ -7,6 +6,8 @@ import { AsyncDatabaseClient, DatabaseConnection } from '@allors/workspace/adapt
 import { Configuration, PrototypeObjectFactory } from '@allors/workspace/adapters/system';
 import { WorkspaceServices } from '@allors/workspace/adapters/system-tests';
 import { M } from '@allors/workspace/meta/default';
+
+import { FetchClient } from './fetch-client';
 
 const BASE_URL = 'http://localhost:5000/allors/';
 const AUTH_URL = 'TestAuthentication/Token';

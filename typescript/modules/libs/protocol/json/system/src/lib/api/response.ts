@@ -1,4 +1,4 @@
-import { ResponseDerivationError } from './ResponseDerivationError';
+import { ResponseDerivationError } from './response-derivation-error';
 
 export interface Response {
   /** error message */

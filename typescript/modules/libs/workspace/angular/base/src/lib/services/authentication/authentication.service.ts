@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { AuthenticationTokenResponse } from './AuthenticationTokenResponse';
+import { AuthenticationTokenResponse } from './authentication-token-response';
 
 @Injectable()
 export abstract class AuthenticationService {

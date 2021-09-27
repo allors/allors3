@@ -6,7 +6,7 @@ import { filter, debounceTime, distinctUntilChanged, switchMap, map } from 'rxjs
 
 import { IObject, TypeForParameter } from '@allors/workspace/domain/system';
 
-import { AssociationField } from '../../../../components/forms/AssociationField';
+import { AssociationField } from '../../../../components/forms/association-field';
 
 @Component({
   // tslint:disable-next-line:component-selector

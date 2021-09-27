@@ -1,8 +1,8 @@
 import { ObjectType } from '@allors/workspace/meta/system';
-import { Extent } from '../../data/Extent';
-import { Result } from '../../data/Result';
-import { IObject } from '../../IObject';
-import { TypeForParameter } from '../../Types';
+import { Extent } from '../../data/extent';
+import { Result } from '../../data/result';
+import { IObject } from '../../iobject';
+import { TypeForParameter } from '../../types';
 
 export interface Pull {
   extentRef?: string;

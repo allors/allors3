@@ -1,5 +1,5 @@
 import { MethodType } from '@allors/workspace/meta/system';
-import { IObject } from './IObject';
+import { IObject } from './iobject';
 
 export interface Method {
   object: IObject;

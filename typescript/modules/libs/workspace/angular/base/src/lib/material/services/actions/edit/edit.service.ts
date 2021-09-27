@@ -5,7 +5,7 @@ import { RoleType } from '@allors/workspace/meta/system';
 import { ObjectService } from '../../object/object.service';
 import { RefreshService } from '../../../../services/refresh/refresh.service';
 
-import { EditAction } from './EditAction';
+import { EditAction } from './edit-action';
 
 @Injectable({
   providedIn: 'root',

@@ -1,2 +1,2 @@
-export { SessionService } from './lib/session/SessionService';
-export { WorkspaceService } from './lib/workspace/WorkspaceService';
+export { SessionService } from './lib/session/session-service';
+export { WorkspaceService } from './lib/workspace/workspace-service';

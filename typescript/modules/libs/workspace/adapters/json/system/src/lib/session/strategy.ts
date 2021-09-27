@@ -1,7 +1,7 @@
 import { Session, Strategy as SystemStrategy } from '@allors/workspace/adapters/system';
 import { Class, Origin } from '@allors/workspace/meta/system';
-import { DatabaseOriginState } from './originstate/DatabaseOriginState';
-import { DatabaseRecord } from '../database/DatabaseRecord';
+import { DatabaseOriginState } from './originstate/database-origin-state';
+import { DatabaseRecord } from '../database/database-record';
 
 export class Strategy extends SystemStrategy {
   constructor(public session: Session, public cls: Class, public id: number) {

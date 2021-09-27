@@ -2,11 +2,11 @@ import { Component, EventEmitter, Input, Optional, Output } from '@angular/core'
 import { NgForm } from '@angular/forms';
 
 import { Media } from '@allors/workspace/domain/default';
-import { RoleField } from '../../../../components/forms/RoleField';
-import { MediaService } from '../../../../services/media/media.service';
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { MetaPopulation } from '../../../../../../../../meta/system/src/lib/MetaPopulation';
 import { M } from '@allors/workspace/meta/default';
+
+import { RoleField } from '../../../../components/forms/role-field';
+import { MediaService } from '../../../../services/media/media.service';
 
 @Component({
   // tslint:disable-next-line:component-selector

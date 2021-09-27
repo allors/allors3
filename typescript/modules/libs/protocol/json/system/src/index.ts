@@ -1,50 +1,50 @@
 // api
-export * from './lib/api/access/AccessRequest';
-export * from './lib/api/access/AccessResponse';
-export * from './lib/api/access/AccessResponseGrant';
-export * from './lib/api/access/AccessResponseRevocation';
+export * from './lib/api/access/access-request';
+export * from './lib/api/access/access-response';
+export * from './lib/api/access/access-response-grant';
+export * from './lib/api/access/access-response-revocation';
 
-export * from './lib/api/invoke/Invocation';
-export * from './lib/api/invoke/InvokeOptions';
-export * from './lib/api/invoke/InvokeRequest';
-export * from './lib/api/invoke/InvokeResponse';
+export * from './lib/api/invoke/invocation';
+export * from './lib/api/invoke/invoke-options';
+export * from './lib/api/invoke/invoke-request';
+export * from './lib/api/invoke/invoke-response';
 
-export * from './lib/api/permission/PermissionRequest';
-export * from './lib/api/permission/PermissionResponse';
-export * from './lib/api/permission/PermissionResponsePermission';
+export * from './lib/api/permission/permission-request';
+export * from './lib/api/permission/permission-response';
+export * from './lib/api/permission/permission-response-permission';
 
-export * from './lib/api/pull/PullArgs';
-export * from './lib/api/pull/PullRequest';
-export * from './lib/api/pull/PullResponse';
-export * from './lib/api/pull/PullResponseObject';
+export * from './lib/api/pull/pull-args';
+export * from './lib/api/pull/pull-request';
+export * from './lib/api/pull/pull-response';
+export * from './lib/api/pull/pull-response-object';
 
-export * from './lib/api/push/PushRequest';
-export * from './lib/api/push/PushRequestNewObject';
-export * from './lib/api/push/PushRequestObject';
-export * from './lib/api/push/PushRequestRole';
-export * from './lib/api/push/PushResponse';
-export * from './lib/api/push/PushResponseNewObject';
+export * from './lib/api/push/push-request';
+export * from './lib/api/push/push-request-new-object';
+export * from './lib/api/push/push-request-object';
+export * from './lib/api/push/push-request-role';
+export * from './lib/api/push/push-response';
+export * from './lib/api/push/push-response-new-object';
 
-export * from './lib/api/sync/SyncRequest';
-export * from './lib/api/sync/SyncResponse';
-export * from './lib/api/sync/SyncResponseObject';
-export * from './lib/api/sync/SyncResponseRole';
+export * from './lib/api/sync/sync-request';
+export * from './lib/api/sync/sync-response';
+export * from './lib/api/sync/sync-response-object';
+export * from './lib/api/sync/sync-response-role';
 
-export * from './lib/api/Response';
-export * from './lib/api/ResponseDerivationError';
+export * from './lib/api/response';
+export * from './lib/api/response-derivation-error';
 
 // data
-export * from './lib/data/Extent';
-export * from './lib/data/ExtentKind';
-export * from './lib/data/Node';
-export * from './lib/data/Predicate';
-export * from './lib/data/PredicateKind';
-export * from './lib/data/Procedure';
-export * from './lib/data/PropertyKind';
+export * from './lib/data/extent';
+export * from './lib/data/extent-kind';
+export * from './lib/data/node';
+export * from './lib/data/predicate';
+export * from './lib/data/predicate-kind';
+export * from './lib/data/procedure';
+export * from './lib/data/property-Kind';
 export * from './lib/data/Pull';
 export * from './lib/data/Result';
 export * from './lib/data/Select';
 export * from './lib/data/Sort';
 
 // meta
-export * from './lib/meta/MetaData';
+export * from './lib/meta/meta-data';

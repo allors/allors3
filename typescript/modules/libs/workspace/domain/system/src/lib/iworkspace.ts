@@ -1,6 +1,6 @@
-import { IConfiguration } from './IConfiguration';
-import { ISession } from './ISession';
-import { IWorkspaceServices } from './services/IWorkspaceServices';
+import { IConfiguration } from './iconfiguration';
+import { ISession } from './isession';
+import { IWorkspaceServices } from './services/iworkspace-services';
 
 export interface IWorkspace {
 

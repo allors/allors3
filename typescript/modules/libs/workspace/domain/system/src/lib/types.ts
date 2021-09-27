@@ -1,4 +1,4 @@
-﻿import { IObject } from './IObject';
+﻿import { IObject } from './iobject';
 
 export type IUnit = string | Date | boolean | number;
 

@@ -1,6 +1,6 @@
-import { IObject } from "../../IObject";
-import { ICycle } from "./ICycle";
-import { IPattern } from "./IPattern";
+import { IObject } from "../../iobject";
+import { ICycle } from "./icycle";
+import { IPattern } from "./ipattern";
 
 export interface IRule {
     

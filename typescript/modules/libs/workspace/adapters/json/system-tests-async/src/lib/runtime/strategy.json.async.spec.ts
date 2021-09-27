@@ -1,5 +1,5 @@
 import { initStrategy, addCompositesWrongObjectType, setUnitWrongObjectType, setCompositeRoleWrongObjectType, addCompositesRoleWrongRoleType, setCompositeRoleWrongRoleType } from '@allors/workspace/adapters/system-tests';
-import { Fixture } from '../Fixture';
+import { Fixture } from '../fixture';
 
 let fixture: Fixture;
 

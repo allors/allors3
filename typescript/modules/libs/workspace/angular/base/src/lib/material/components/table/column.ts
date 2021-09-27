@@ -1,6 +1,6 @@
 import { humanize } from '@allors/workspace/meta/system';
 
-import { Action } from '../../../components/actions/Action';
+import { Action } from '../../../components/actions/action';
 
 export class Column {
 

@@ -2,8 +2,8 @@ import { IAsyncDatabaseClient, IReactiveDatabaseClient, IWorkspace, Pull } from 
 import { C1, Denied } from '@allors/workspace/domain/default';
 import { Origin } from '@allors/workspace/meta/system';
 
-import { Fixture, name_c1A, name_c1B } from '../Fixture';
-import '../Matchers';
+import { Fixture } from '../fixture';
+import '../matchers';
 
 let fixture: Fixture;
 

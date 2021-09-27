@@ -3,10 +3,10 @@ import { Router } from '@angular/router';
 
 import { IObject } from '@allors/workspace/domain/system';
 import { Composite } from '@allors/workspace/meta/system';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 import { NavigationService } from '../../services/navigation/navigation.service';
-import { WorkspaceService } from '@allors/workspace/angular/core';
-import { IAngularMetaService } from '../../meta/IAngularMetaService';
+import { IAngularMetaService } from '../../meta/iangular-meta-service';
 
 @Injectable({
   providedIn: 'root',

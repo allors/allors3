@@ -1,10 +1,11 @@
 import { IDiff, IObject, IStrategy, IUnit } from '@allors/workspace/domain/system';
-import { DatabaseOriginState } from './originstate/DatabaseOriginState';
-import { WorkspaceOriginState } from './originstate/WorkspaceOriginState';
-import { isNewId, Session } from './Session';
 import { AssociationType, Class, Composite, MethodType, Origin, RoleType, UnitTags } from '@allors/workspace/meta/system';
-import { WorkspaceInitialVersion } from '../Version';
-import { frozenEmptyArray } from '../collections/frozenEmptyArray';
+
+import { DatabaseOriginState } from './originstate/database-origin-state';
+import { WorkspaceOriginState } from './originstate/workspace-origin-state';
+import { frozenEmptyArray } from '../collections/frozen-empty-array';
+import { isNewId, Session } from './session';
+import { WorkspaceInitialVersion } from '../version';
 
 export abstract class Strategy implements IStrategy {
   DatabaseOriginState: DatabaseOriginState;

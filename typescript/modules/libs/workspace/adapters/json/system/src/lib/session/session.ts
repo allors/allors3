@@ -1,8 +1,8 @@
 import { Session as SystemSession } from '@allors/workspace/adapters/system';
 import { IObject, ISessionServices } from '@allors/workspace/domain/system';
 import { Class, Origin } from '@allors/workspace/meta/system';
-import { DatabaseConnection } from '../database/DatabaseConnection';
-import { DatabaseRecord } from '../database/DatabaseRecord';
+import { DatabaseConnection } from '../database/database-connection';
+import { DatabaseRecord } from '../database/database-record';
 import { Workspace } from '../workspace/Workspace';
 import { Strategy } from './Strategy';
 

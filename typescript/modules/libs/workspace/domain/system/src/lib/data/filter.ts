@@ -1,6 +1,6 @@
 import { ObjectType } from '@allors/workspace/meta/system';
-import { Predicate } from './Predicate';
-import { Sort } from './Sort';
+import { Predicate } from './predicate';
+import { Sort } from './sort';
 
 export interface Filter {
   kind: 'Filter';

@@ -1,4 +1,4 @@
-import { IValidation } from "./IValidation";
+import { IValidation } from "./ivalidation";
 
 export interface IDerivation {
    

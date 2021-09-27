@@ -1,8 +1,9 @@
 import { MetaPopulation } from '@allors/workspace/meta/system';
 import { M } from '@allors/workspace/meta/default';
 import { IAsyncDatabaseClient, IReactiveDatabaseClient, ISession, IWorkspace, Pull } from '@allors/workspace/domain/system';
-import { ClientAdapter } from './ClientAdapter';
 import { C1, C2 } from '@allors/workspace/domain/default';
+
+import { ClientAdapter } from './client-adapter';
 
 export const name_c1A = 'c1A';
 export const name_c1B = 'c1B';

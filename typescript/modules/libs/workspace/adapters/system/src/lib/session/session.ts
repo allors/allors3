@@ -1,17 +1,18 @@
-import { IChangeSet, IObject, ISession, ISessionServices, IWorkspaceResult } from '@allors/workspace/domain/system';
-import { Workspace } from '../workspace/Workspace';
-import { SessionOriginState } from './originstate/SessionOriginState';
-import { Strategy } from './Strategy';
-import { ChangeSetTracker } from './trackers/ChangSetTracker';
-import { PushToDatabaseTracker } from './trackers/PushToDatabaseTracker';
-import { PushToWorkspaceTracker } from './trackers/PushToWorkspaceTracker';
-import { ChangeSet } from './ChangeSet';
+import { IChangeSet, IObject, ISession, ISessionServices, IStrategy, IWorkspaceResult } from '@allors/workspace/domain/system';
 import { AssociationType, Class, Composite, Origin } from '@allors/workspace/meta/system';
-import { WorkspaceResult } from '../workspace/WorkspaceResult';
-import { ObjectBase } from '../ObjectBase';
-import { Ranges } from '../collections/ranges/Ranges';
-import { DefaultStrategyRanges } from '../collections/ranges/DefaultStrategyRanges';
-import { IStrategy } from '../../../../../domain/system/src/lib/IStrategy';
+
+import { Workspace } from '../workspace/workspace';
+import { WorkspaceResult } from '../workspace/workspace-result';
+import { ObjectBase } from '../object-base';
+import { DefaultStrategyRanges } from '../collections/ranges/default-strategy-ranges';
+import { Ranges } from '../collections/ranges/ranges';
+
+import { SessionOriginState } from './originstate/session-origin-state';
+import { Strategy } from './strategy';
+import { ChangeSetTracker } from './trackers/change-set-tracker';
+import { PushToDatabaseTracker } from './trackers/push-to-database-tracker';
+import { PushToWorkspaceTracker } from './trackers/push-to-workspace-tracker';
+import { ChangeSet } from './change-set';
 
 export function isNewId(id: number): boolean {
   return id < 0;

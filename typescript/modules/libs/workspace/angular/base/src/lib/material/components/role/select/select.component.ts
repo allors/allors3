@@ -3,7 +3,7 @@ import { NgForm } from '@angular/forms';
 
 import { IObject } from '@allors/workspace/domain/system';
 
-import { RoleField } from '../../../../components/forms/RoleField';
+import { RoleField } from '../../../../components/forms/role-field';
 
 @Component({
   // tslint:disable-next-line:component-selector

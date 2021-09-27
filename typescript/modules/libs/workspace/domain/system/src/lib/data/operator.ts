@@ -1,8 +1,8 @@
-import { Extent } from './Extent';
-import { Sort } from './Sort';
-import { Except } from './Except';
-import { Intersect } from './Intersect';
-import { Union } from './Union';
+import { Extent } from './extent';
+import { Sort } from './sort';
+import { Except } from './except';
+import { Intersect } from './intersect';
+import { Union } from './union';
 
 export type Operator = Except | Intersect | Union;
 

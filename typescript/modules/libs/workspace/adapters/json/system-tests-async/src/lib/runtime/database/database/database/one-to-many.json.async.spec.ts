@@ -1,0 +1,33 @@
+import { initDatabaseOneToMany, databaseOneToManySetRole, databaseOneToManySetRoleToNull, databaseOneToManyRemoveRole, databaseOneToManyRemoveNullRole } from '@allors/workspace/adapters/system-tests';
+import { Fixture } from '../../../../fixture'
+
+let fixture: Fixture;
+
+beforeEach(async () => {
+  fixture = new Fixture();
+  await fixture.init();
+  await initDatabaseOneToMany(
+    fixture.asyncDatabaseClient,
+    null,
+    fixture.databaseConnection.createWorkspace(),
+    (login) => fixture.client.login(login),
+    () => fixture.databaseConnection.createWorkspace(),
+    () => fixture.createDatabaseConnection().createWorkspace()
+  );
+});
+
+test('databaseOneToManySetRole', async () => {
+  await databaseOneToManySetRole();
+});
+
+test('databaseOneToManySetRoleToNull', async () => {
+  await databaseOneToManySetRoleToNull();
+});
+
+test('databaseOneToManyRemoveRole', async () => {
+  await databaseOneToManyRemoveRole();
+});
+
+test('databaseOneToManyRemoveNullRole', async () => {
+  await databaseOneToManyRemoveNullRole();
+});

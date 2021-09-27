@@ -1,5 +1,5 @@
 import { MetaPopulation } from '@allors/workspace/meta/system';
-import { IObjectFactory } from './IObjectFactory';
+import { IObjectFactory } from './iobject-factory';
 
 export interface IConfiguration {
   name: string;

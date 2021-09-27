@@ -1,5 +1,5 @@
 import { RelationType } from "@allors/workspace/meta/system";
-import { IStrategy } from "../IStrategy";
+import { IStrategy } from "../istrategy";
 
 export interface IDiff {
     

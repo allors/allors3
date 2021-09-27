@@ -1,7 +1,7 @@
-import { Filter } from './Filter';
-import { Union } from './Union';
-import { Intersect } from './Intersect';
-import { Except } from './Except';
+import { Filter } from './filter';
+import { Union } from './union';
+import { Intersect } from './intersect';
+import { Except } from './except';
 
 export type Extent = Filter | Union | Intersect | Except;
 

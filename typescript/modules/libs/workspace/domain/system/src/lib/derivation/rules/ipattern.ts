@@ -1,7 +1,7 @@
 import { Composite } from '@allors/workspace/meta/system';
 import { Node } from '../../data/Node';
-import { IAssociationPattern } from './IAssociationPattern';
-import { IRolePattern } from './IRolePattern';
+import { IAssociationPattern } from './iassociation-pattern';
+import { IRolePattern } from './irole-pattern';
 
 export interface IPatternBase {
   tree?: Node[];

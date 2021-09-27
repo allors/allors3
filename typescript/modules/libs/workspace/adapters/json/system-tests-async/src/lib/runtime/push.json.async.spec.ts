@@ -10,7 +10,7 @@ import {
   pushShouldDerive,
   pushTwice,
 } from '@allors/workspace/adapters/system-tests';
-import { Fixture } from '../Fixture';
+import { Fixture } from '../fixture';
 
 let fixture: Fixture;
 

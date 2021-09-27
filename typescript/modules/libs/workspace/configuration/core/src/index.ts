@@ -1,3 +1,3 @@
-export * from './lib/derivations/Derivation'
-export * from './lib/derivations/DerivationService'
-export * from './lib/derivations/Engine'
+export * from './lib/derivations/derivation'
+export * from './lib/derivations/derivation-service'
+export * from './lib/derivations/engine'

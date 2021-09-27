@@ -1,5 +1,5 @@
-import { IObject } from '../IObject';
-import { IDatabaseDerivationError } from './derivation/IDatabaseDerivationError';
+import { IObject } from '../iobject';
+import { IDatabaseDerivationError } from './derivation/idatabase-derivation-error';
 
 export interface IResult {
 

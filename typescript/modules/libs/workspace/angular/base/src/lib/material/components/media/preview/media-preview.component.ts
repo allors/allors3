@@ -4,9 +4,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Media } from '@allors/workspace/domain/default';
 
 import { MediaService } from '../../../../services/media/media.service';
+import { isImage } from '../media';
 
 import { MediaDialogData } from './dialog.data';
-import { isImage } from '../media';
 
 @Component({
   templateUrl: './media-preview.component.html',
