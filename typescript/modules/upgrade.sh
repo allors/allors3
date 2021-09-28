@@ -13,6 +13,7 @@ npm install @angular/material
 npm install bootstrap@4.6.0
 npm install date-fns
 npm install easymde
+npm install jsnlog
 
 npx nx g @nrwl/angular:application angular/apps/app --routing=true --style=scss --e2eTestRunner=none
 npx nx g @nrwl/angular:application angular/base/app --routing=true --style=scss --e2eTestRunner=none

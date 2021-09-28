@@ -1,1 +1,1 @@
-export * from './lib/workspace-derivations-apps-custom';
+export * from './lib/rule-builder';

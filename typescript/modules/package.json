@@ -24,8 +24,9 @@
     "workspace-generator": "nx workspace-generator",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "angular-core:serve": "npx nx serve angular-core-app",
+    "angular-apps:serve": "npx nx serve angular-apps-app",
     "angular-base:serve": "npx nx serve angular-base-app",
+    "angular-core:serve": "npx nx serve angular-core-app",
     "test:workspace-meta-system": "npx nx test workspace-meta-system-tests --skipNxCache",
     "test:workspace-meta-json-system": "npx nx test workspace-meta-json-system-tests --skipNxCache",
     "test:workspace-adapters-system": "npx nx test workspace-adapters-system-tests --skipNxCache",
@@ -53,6 +54,7 @@
     "cross-fetch": "^3.1.4",
     "date-fns": "^2.23.0",
     "easymde": "^2.15.0",
+    "jsnlog": "^2.30.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.4"

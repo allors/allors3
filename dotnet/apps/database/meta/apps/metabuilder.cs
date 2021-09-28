@@ -9,8 +9,6 @@ namespace Allors.Database.Meta
     {
         private void BuildApps(MetaPopulation meta, Domains domains, RelationTypes relationTypes, MethodTypes methodTypes)
         {
-            //methodClasses.OrganisationDelete.Workspace = "Default";
-            //methodClasses.PersonDelete.Workspace = "Default";
         }
     }
 }
