@@ -564,6 +564,8 @@ namespace Allors.Database.Domain.Tests
             this.InternalOrganisation.AddSerialisedItemSoldOn(new SerialisedItemSoldOns(this.Transaction).PurchaseInvoiceConfirm);
 
             var purchaseInvoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
+            var serialisedItem = purchaseInvoice.PurchaseInvoiceItems.ElementAt(0).SerialisedItem;
+            serialisedItem.RemoveAssignedPurchasePrice();
             this.Derive();
 
             purchaseInvoice.Confirm();
@@ -572,7 +574,7 @@ namespace Allors.Database.Domain.Tests
             purchaseInvoice.Approve();
             this.Derive();
 
-            Assert.Equal(purchaseInvoice.PurchaseInvoiceItems.ElementAt(0).TotalExVat, purchaseInvoice.PurchaseInvoiceItems.ElementAt(0).SerialisedItem.PurchasePrice);
+            Assert.Equal(purchaseInvoice.PurchaseInvoiceItems.ElementAt(0).TotalExVat, serialisedItem.PurchasePrice);
         }
     }
 

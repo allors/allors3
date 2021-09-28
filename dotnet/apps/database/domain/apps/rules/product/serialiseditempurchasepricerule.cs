@@ -26,16 +26,11 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                if (@this.ExistPurchaseInvoice)
-                {
-                    @this.PurchasePrice = @this.PurchaseInvoiceItemsWhereSerialisedItem
-                        .LastOrDefault(v => v.ExistInvoiceWhereValidInvoiceItem
-                                            && (v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).PartItem)
-                                                || v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).ProductItem)))?
-                        .UnitPrice ?? 0M;
-
-                    @this.RemoveAssignedPurchasePrice();
-                }
+                @this.PurchasePrice = @this.AssignedPurchasePrice ?? @this.PurchaseInvoiceItemsWhereSerialisedItem
+                    .LastOrDefault(v => v.ExistInvoiceWhereValidInvoiceItem
+                                        && (v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).PartItem)
+                                            || v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).ProductItem)))?
+                    .UnitPrice ?? 0M;
             }
         }
     }
