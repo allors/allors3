@@ -20,7 +20,7 @@ import {
 } from '@allors/domain/generated';
 import { Equals, Sort } from '@allors/data/system';
 import { FetcherService, InternalOrganisationId, Filters } from '@allors/angular/base';
-import { IObject, ISessionObject } from '@allors/domain/system';
+import { IObject, IObject } from '@allors/domain/system';
 import { Meta } from '@allors/meta/generated';
 import { TestScope, SearchFactory } from '@allors/angular/core';
 
@@ -71,7 +71,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
 
   public ngOnInit(): void {
 
-    const { m, pull } = this.metaService;
+    const m = this.m; const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
@@ -88,8 +88,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
 
           this.suppliersFilter = Filters.suppliersFilter(m, this.internalOrganisationId.value);
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
@@ -178,7 +177,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
     this.shipment.ShipToAddress = partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
-  public supplierSelected(supplier: ISessionObject) {
+  public supplierSelected(supplier: IObject) {
     this.updateSupplier(supplier as Party);
   }
 

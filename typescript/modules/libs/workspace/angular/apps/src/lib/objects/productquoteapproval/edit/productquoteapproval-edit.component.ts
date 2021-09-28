@@ -65,8 +65,7 @@ export class ProductQuoteApprovalEditComponent extends TestScope implements OnIn
             }),
           ];
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(
               map((loaded) => (loaded))
             );
@@ -95,13 +94,13 @@ export class ProductQuoteApprovalEditComponent extends TestScope implements OnIn
   }
 
   saveAndInvoke(methodCall: () => Observable<Invoked>): void {
-    const { pull } = this.metaService;
+    const { pullBuilder: pull } = this.m;
 
     this.allors.context
       .save()
       .pipe(
         switchMap(() => {
-          return this.allors.context.load(pull.ProductQuoteApproval({ objectId: this.data.id }));
+          return this.allors.client.pullReactive(this.allors.session, pull.ProductQuoteApproval({ objectId: this.data.id }))
         }),
         switchMap(() => {
           this.allors.session.reset();

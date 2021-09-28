@@ -44,7 +44,7 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
 
   public ngOnInit(): void {
 
-    const { pull } = this.metaService;
+    const { pullBuilder: pull } = this.m;
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -57,8 +57,7 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
             }),
           ];
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {

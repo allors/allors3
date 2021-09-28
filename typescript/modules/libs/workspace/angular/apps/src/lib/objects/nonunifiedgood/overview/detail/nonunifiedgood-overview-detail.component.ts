@@ -124,7 +124,7 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
         switchMap(() => {
           this.good = undefined;
 
-          const { m, pull, x } = this.metaService;
+          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [

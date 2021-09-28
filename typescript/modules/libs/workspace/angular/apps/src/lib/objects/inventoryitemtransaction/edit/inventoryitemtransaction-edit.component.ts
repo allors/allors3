@@ -60,7 +60,7 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
 
   public ngOnInit(): void {
 
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
@@ -140,7 +140,7 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
         }
 
         this.inventoryItemTransaction = this.allors.session.create<InventoryItemTransaction>(m.InventoryItemTransaction);
-        this.inventoryItemTransaction.TransactionDate = new Date().toISOString();
+        this.inventoryItemTransaction.TransactionDate = new Date();;
         this.inventoryItemTransaction.Part = this.part;
         this.inventoryItemTransaction.Cost = this.part.PartWeightedAverage?.AverageCost;
 

@@ -5,11 +5,13 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, ObjectData, OverviewService, RefreshService, SaveService, Table, TestScope } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectData, OverviewService, RefreshService, SaveService, Sorter, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
+import { And } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+
 interface Row extends TableRow {
   object: Brand;
   name: string;
@@ -32,14 +34,14 @@ export class BrandsOverviewComponent extends TestScope implements OnInit, OnDest
 
   constructor(
     @Self() public allors: SessionService,
-    
+
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public editService: EditService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
-    titleService: Title,
+    titleService: Title
   ) {
     super();
 
@@ -50,7 +52,7 @@ export class BrandsOverviewComponent extends TestScope implements OnInit, OnDest
       this.table.selection.clear();
     });
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -65,23 +67,20 @@ export class BrandsOverviewComponent extends TestScope implements OnInit, OnDest
   }
 
   ngOnInit(): void {
-    const { m, x, pull } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
 
-    const predicate = new And([new Like({ roleType: m.Brand.Name, parameter: 'name' })]);
+    const predicate: And = { kind: 'And', operands: [{ kind: 'Like', roleType: m.Brand.Name, parameter: 'name' }] };
 
     const filterDefinition = new FilterDefinition(predicate);
     this.filter = new Filter(filterDefinition);
 
-    const sorter = new Sorter({
-      name: m.Brand.Name,
-    });
+    const sorter = new Sorter({ name: m.Brand.Name });
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-
-            pageEvent =
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
+          pageEvent =
             previousRefresh !== refresh || filterFields !== previousFilterFields
               ? {
                   ...pageEvent,
@@ -99,21 +98,21 @@ export class BrandsOverviewComponent extends TestScope implements OnInit, OnDest
           const pulls = [
             pull.Brand({
               predicate,
-              sort: sorter.create(sort),
-              parameters: this.filter.parameters(filterFields),
+              sorting: sorter.create(sort),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
           ];
 
           return this.allors.client.pullReactive(this.allors.session, pulls);
-        }),
+        })
       )
       .subscribe((loaded) => {
         this.allors.session.reset();
 
         const objects = loaded.collection<Brand>(m.Brand);
-        this.table.total = loaded.values.Brands_total;
+        this.table.total = loaded.value('Brands_total') as number;
         this.table.data = objects.map((v) => {
           return {
             object: v,

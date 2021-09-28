@@ -36,7 +36,7 @@ import { PullRequest } from '@allors/protocol/system';
 import { Meta, ids } from '@allors/meta/generated';
 import { SaveService, ObjectData } from '@allors/angular/material/services/core';
 import { InternalOrganisationId, FetcherService } from '@allors/angular/base';
-import { IObject, ISessionObject } from '@allors/domain/system';
+import { IObject, IObject } from '@allors/domain/system';
 import { TestScope, Action, SearchFactory } from '@allors/angular/core';
 
 @Component({
@@ -67,7 +67,7 @@ export class NonSerialisedInventoryItemEditComponent extends TestScope implement
   }
 
   public ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(

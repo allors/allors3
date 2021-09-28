@@ -58,7 +58,7 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
 
     titleService.setTitle(this.title);
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -82,7 +82,7 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
   }
 
   ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
     this.filter = m.RequestForQuote.filter = m.RequestForQuote.filter ?? new Filter(m.RequestForQuote.filterDefinition);
 
     const internalOrganisationPredicate = new Equals({ propertyType: m.Request.Recipient });
@@ -130,7 +130,7 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
                 Originator: x,
                 RequestState: x,
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
@@ -148,7 +148,7 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
         this.canCreate = this.internalOrganisation.CanExecuteCreateRequest;
 
         const requests = loaded.collection<Request>(m.Request);
-        this.table.total = loaded.values.Requests_total;
+        this.table.total = loaded.value('Requests_total') as number;
         this.table.data = requests
           .filter((v) => v.CanReadRequestNumber)
           .map((v) => {

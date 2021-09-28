@@ -4,13 +4,14 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { MetaService, SessionService, RefreshService, Saved } from '@allors/angular/services/core';
-import { Organisation, WorkTask, WorkEffortState, Priority, WorkEffortPurpose, Person, WorkEffortPartyAssignment, CommunicationEvent } from '@allors/domain/generated';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { Sort, Equals } from '@allors/data/system';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { WorkTask, Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale, Carrier, SerialisedItemCharacteristicType, WorkTask, ContactMechanism, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Catalogue, Singleton, ProductCategory, Scope, CommunicationEvent, WorkEffortState, Priority, WorkEffortPurpose, WorkEffortPartyAssignment } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectData, ObjectService, OverviewService, PanelService, RefreshService, SaveService, SearchFactory, Sorter, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
+import { And } from '@allors/workspace/domain/system';
+
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './communicationevent-worktask.component.html',
@@ -50,7 +51,7 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
 
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest([this.route.url, this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
@@ -65,7 +66,7 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
               include: { CommunicationEventState: x }
             }),
             pull.WorkTask({
-              object: roleId,
+              objectId: roleId,
             }),
             pull.InternalOrganisation({
               objectId: id,
@@ -96,7 +97,7 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
         if (!this.workTask) {
           this.subTitle = 'add a new work task';
           this.workTask = this.allors.session.create<WorkTask>(m.WorkTask);
-          communicationEvent.AddWorkEffort(this.workTask);
+          communicationEvent.addWorkEffort(this.workTask);
         }
 
         this.workEffortStates = loaded.collection<WorkEffortState>(m.WorkEffortState);

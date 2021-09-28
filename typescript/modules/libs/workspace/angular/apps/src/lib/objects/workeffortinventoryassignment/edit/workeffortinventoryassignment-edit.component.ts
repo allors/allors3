@@ -10,7 +10,7 @@ import { PullRequest } from '@allors/protocol/system';
 import { Meta } from '@allors/meta/generated';
 import { SaveService, ObjectData } from '@allors/angular/material/services/core';
 import { InternalOrganisationId } from '@allors/angular/base';
-import { IObject, ISessionObject } from '@allors/domain/system';
+import { IObject, IObject } from '@allors/domain/system';
 import { Sort } from '@allors/data/system';
 import { TestScope } from '@allors/angular/core';
 
@@ -50,7 +50,7 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
 
   public ngOnInit(): void {
 
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -104,8 +104,7 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
             ];
           }
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(
               map((loaded) => ({ loaded, isCreate }))
             );
@@ -177,7 +176,7 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
       );
   }
 
-  public inventoryItemSelected(inventoryItem: ISessionObject): void {
+  public inventoryItemSelected(inventoryItem: IObject): void {
     this.serialised = (inventoryItem as InventoryItem).Part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 
     if (inventoryItem.objectType === this.metaService.m.NonSerialisedInventoryItem) {

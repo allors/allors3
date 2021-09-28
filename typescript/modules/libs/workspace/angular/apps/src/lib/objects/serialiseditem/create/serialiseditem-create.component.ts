@@ -17,7 +17,7 @@ import {
 } from '@allors/domain/generated';
 import { Equals, Sort } from '@allors/data/system';
 import { FetcherService, InternalOrganisationId, Filters } from '@allors/angular/base';
-import { IObject, ISessionObject } from '@allors/domain/system';
+import { IObject, IObject } from '@allors/domain/system';
 import { Meta } from '@allors/meta/generated';
 import { TestScope, SearchFactory } from '@allors/angular/core';
 
@@ -65,7 +65,7 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
 
   public ngOnInit(): void {
 
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
@@ -96,8 +96,7 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
           this.partiesFilter = Filters.partiesFilter(m);
           this.serialisedgoodsFilter = Filters.serialisedgoodsFilter(m);
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
@@ -131,7 +130,7 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
     }
   }
 
-  public partSelected(obj: ISessionObject): void {
+  public partSelected(obj: IObject): void {
     if (obj) {
       const part = obj as Part;
       this.selectedPart = part;

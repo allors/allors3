@@ -68,7 +68,7 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
 
   public ngOnInit(): void {
 
-    const { m, pull } = this.metaService;
+    const m = this.m; const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(

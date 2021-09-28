@@ -10,7 +10,7 @@ import { PullRequest } from '@allors/protocol/system';
 import { Meta } from '@allors/meta/generated';
 import { SaveService, ObjectData } from '@allors/angular/material/services/core';
 import { FetcherService, Filters } from '@allors/angular/base';
-import { IObject, ISessionObject } from '@allors/domain/system';
+import { IObject, IObject } from '@allors/domain/system';
 import { Equals, Sort } from '@allors/data/system';
 import { TestScope, SearchFactory } from '@allors/angular/core';
 
@@ -105,7 +105,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
 
   public ngOnInit(): void {
 
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
@@ -197,8 +197,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
 
           this.goodsFilter = Filters.goodsFilter(m);
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(
               map((loaded) => ({ loaded, isCreate }))
             );
@@ -327,13 +326,13 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
       );
   }
 
-  public goodSelected(product: ISessionObject): void {
+  public goodSelected(product: IObject): void {
     if (product) {
       this.refreshSerialisedItems(product as Product);
     }
   }
 
-  public serialisedItemSelected(obj: ISessionObject): void {
+  public serialisedItemSelected(obj: IObject): void {
     if (obj) {
       const serialisedItem = obj as SerialisedItem;
       const onRequestItem = serialisedItem.RequestItemsWhereSerialisedItem

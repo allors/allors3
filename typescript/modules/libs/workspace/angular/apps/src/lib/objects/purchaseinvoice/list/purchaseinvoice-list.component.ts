@@ -92,7 +92,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
     this.reopen = methodService.create(allors.context, this.m.PurchaseInvoice.Reopen, { name: 'Reopen' });
     this.print = printService.print();
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -183,7 +183,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
   }
 
   public ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
     this.filter = m.PurchaseInvoice.filter = m.PurchaseInvoice.filter ?? new Filter(m.PurchaseInvoice.filterDefinition);
 
     const internalOrganisationPredicate = new Equals({ propertyType: m.PurchaseInvoice.BilledTo });
@@ -238,7 +238,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
                   Media: x,
                 },
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
@@ -256,7 +256,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
         this.canCreate = this.internalOrganisation.CanExecuteCreatePurchaseInvoice;
 
         const purchaseInvoices = loaded.collection<PurchaseInvoice>(m.PurchaseInvoice);
-        this.table.total = loaded.values.PurchaseInvoices_total;
+        this.table.total = loaded.value('PurchaseInvoices_total') as number;
         this.table.data = purchaseInvoices
           .filter((v) => v.CanReadInvoiceNumber)
           .map((v) => {

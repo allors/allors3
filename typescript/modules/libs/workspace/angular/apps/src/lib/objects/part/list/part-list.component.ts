@@ -56,7 +56,7 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
 
     titleService.setTitle(this.title);
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -79,7 +79,7 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
     this.filter = m.Part.filter = m.Part.filter ?? new Filter(m.Part.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
@@ -115,7 +115,7 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
                   ProductIdentificationType: x,
                 },
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
@@ -140,7 +140,7 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
           return map;
         }, {});
 
-        this.table.total = loaded.values.NonUnifiedParts_total;
+        this.table.total = loaded.value('NonUnifiedParts_total') as number;
 
         this.table.data = parts.map((v) => {
           return {

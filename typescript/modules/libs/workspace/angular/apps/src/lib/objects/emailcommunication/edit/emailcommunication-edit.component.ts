@@ -4,21 +4,32 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { SessionService, MetaService, RefreshService, NavigationService } from '@allors/angular/services/core';
-import { EmailCommunication, Party, Person, Organisation, CommunicationEventPurpose, ContactMechanism, EmailTemplate, CommunicationEventState, PartyContactMechanism, EmailAddress, OrganisationContactRelationship } from '@allors/domain/generated';
+import {
+  EmailCommunication,
+  Party,
+  Person,
+  Organisation,
+  CommunicationEventPurpose,
+  ContactMechanism,
+  EmailTemplate,
+  CommunicationEventState,
+  PartyContactMechanism,
+  EmailAddress,
+  OrganisationContactRelationship,
+} from '@allors/domain/generated';
 import { PullRequest } from '@allors/protocol/system';
 import { Meta } from '@allors/meta/generated';
 import { SaveService, ObjectData } from '@allors/angular/material/services/core';
 import { InternalOrganisationId } from '@allors/angular/base';
-import { IObject, ISessionObject } from '@allors/domain/system';
+import { IObject, IObject } from '@allors/domain/system';
 import { Equals, Sort } from '@allors/data/system';
 import { TestScope } from '@allors/angular/core';
 
 @Component({
   templateUrl: './emailcommunication-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class EmailCommunicationEditComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   addFromParty = false;
@@ -47,25 +58,22 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<EmailCommunicationEditComponent>,
     public refreshService: RefreshService,
-    
+
     public navigation: NavigationService,
     private saveService: SaveService,
-    private internalOrganisationId: InternalOrganisationId) {
-
+    private internalOrganisationId: InternalOrganisationId
+  ) {
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
-    const { m, pull, x } = this.metaService;
-
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-
           const isCreate = this.data.id === undefined;
 
           let pulls = [
@@ -76,16 +84,16 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
                 ActiveEmployees: {
                   CurrentPartyContactMechanisms: {
                     ContactMechanism: x,
-                  }
-                }
-              }
+                  },
+                },
+              },
             }),
             pull.CommunicationEventPurpose({
               predicate: { kind: 'Equals', propertyType: m.CommunicationEventPurpose.IsActive, value: true },
-              sorting: [{ roleType: m.CommunicationEventPurpose.Name }]
+              sorting: [{ roleType: m.CommunicationEventPurpose.Name }],
             }),
             pull.CommunicationEventState({
-              sorting: [{ roleType: m.CommunicationEventState.Name }]
+              sorting: [{ roleType: m.CommunicationEventState.Name }],
             }),
           ];
 
@@ -96,27 +104,27 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
                 include: {
                   FromParty: {
                     CurrentPartyContactMechanisms: {
-                      ContactMechanism: x
-                    }
+                      ContactMechanism: x,
+                    },
                   },
                   ToParty: {
                     CurrentPartyContactMechanisms: {
-                      ContactMechanism: x
-                    }
+                      ContactMechanism: x,
+                    },
                   },
                   FromEmail: x,
                   ToEmail: x,
                   EmailTemplate: x,
                   EventPurposes: x,
-                  CommunicationEventState: x
-                }
+                  CommunicationEventState: x,
+                },
               }),
               pull.CommunicationEvent({
                 objectId: this.data.id,
                 select: {
-                  InvolvedParties: x
-                }
-              }),
+                  InvolvedParties: x,
+                },
+              })
             );
           }
 
@@ -129,8 +137,8 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
                   CurrentContacts: x,
                   CurrentPartyContactMechanisms: {
                     ContactMechanism: x,
-                  }
-                }
+                  },
+                },
               }),
               pull.Person({
                 object: this.data.associationId,
@@ -144,24 +152,19 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
                         CurrentContacts: x,
                         CurrentPartyContactMechanisms: {
                           ContactMechanism: x,
-                        }
-                      }
-                    }
-                  }
-                }
-              })
+                        },
+                      },
+                    },
+                  },
+                },
+              }),
             ];
           }
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }))
-            .pipe(
-              map((loaded) => ({ loaded, isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-
         this.allors.session.reset();
 
         this.purposes = loaded.collection<CommunicationEventPurpose>(m.CommunicationEventPurpose);
@@ -180,7 +183,6 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
           this.communicationEvent.EmailTemplate = this.emailTemplate;
 
           this.party = this.organisation || this.person;
-
         } else {
           this.communicationEvent = loaded.object<EmailCommunication>(m.EmailCommunication);
 
@@ -223,7 +225,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
 
         this.contacts.push(...contacts);
         this.sortContacts();
-    });
+      });
   }
 
   public ngOnDestroy(): void {
@@ -233,7 +235,6 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
   }
 
   public fromEmailAdded(partyContactMechanism: PartyContactMechanism): void {
-
     if (!!this.communicationEvent.FromParty) {
       this.communicationEvent.FromParty.AddPartyContactMechanism(partyContactMechanism);
     }
@@ -245,7 +246,6 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
   }
 
   public toEmailAdded(partyContactMechanism: PartyContactMechanism): void {
-
     if (!!this.communicationEvent.ToParty) {
       this.communicationEvent.ToParty.AddPartyContactMechanism(partyContactMechanism);
     }
@@ -270,14 +270,14 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
     this.sortContacts();
   }
 
-  public fromPartySelected(party: ISessionObject) {
+  public fromPartySelected(party: IObject) {
     if (party) {
       this.updateFromParty(party as Party);
     }
   }
 
   private sortContacts(): void {
-    this.contacts.sort((a, b) => (a.displayName > b.displayName) ? 1 : ((b.displayName > a.displayName) ? -1 : 0));
+    this.contacts.sort((a, b) => (a.displayName > b.displayName ? 1 : b.displayName > a.displayName ? -1 : 0));
   }
 
   private addContactRelationship(party: Person): void {
@@ -289,7 +289,9 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
   }
 
   private updateFromParty(party: Party): void {
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.Party({
@@ -298,31 +300,30 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
           PartyContactMechanisms: {
             include: {
               ContactMechanism: {
-                ContactMechanismType: x
-              }
-            }
-          }
+                ContactMechanismType: x,
+              },
+            },
+          },
         },
-      })
+      }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
-
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-        this.fromEmails = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.EmailAddress).map((v) => v.ContactMechanism);
-      });
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      this.fromEmails = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.EmailAddress).map((v) => v.ContactMechanism);
+    });
   }
 
-  public toPartySelected(party: ISessionObject) {
+  public toPartySelected(party: IObject) {
     if (party) {
       this.updateToParty(party as Party);
     }
   }
 
   private updateToParty(party: Party): void {
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.Party({
@@ -331,36 +332,29 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
           PartyContactMechanisms: {
             include: {
               ContactMechanism: {
-                ContactMechanismType: x
-              }
-            }
-          }
+                ContactMechanismType: x,
+              },
+            },
+          },
         },
-      })
+      }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
-
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-        this.toEmails = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.EmailAddress).map((v) => v.ContactMechanism);
-      });
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      this.toEmails = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.EmailAddress).map((v) => v.ContactMechanism);
+    });
   }
 
   public save(): void {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      const data: IObject = {
+        id: this.communicationEvent.id,
+        objectType: this.communicationEvent.objectType,
+      };
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.communicationEvent.id,
-          objectType: this.communicationEvent.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

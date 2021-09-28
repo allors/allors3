@@ -44,7 +44,7 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
   }
 
   public ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -146,7 +146,7 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
           this.title = 'Add Party ContactMechanism';
 
           this.partyContactMechanism = this.allors.session.create<PartyContactMechanism>(m.PartyContactMechanism);
-          this.partyContactMechanism.FromDate = new Date().toISOString();
+          this.partyContactMechanism.FromDate = new Date();;
           this.partyContactMechanism.UseAsDefault = true;
 
           this.party = loaded.object<Party>(m.Party);

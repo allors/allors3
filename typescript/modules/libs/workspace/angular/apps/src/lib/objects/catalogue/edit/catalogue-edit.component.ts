@@ -3,14 +3,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { Organisation, InternalOrganisation, Catalogue, Singleton, ProductCategory, Scope, Locale } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { ObjectData, SaveService } from '@allors/angular/material/services/core';
-import { FetcherService, InternalOrganisationId } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale, Carrier, SerialisedItemCharacteristicType, WorkTask, ContactMechanism, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Catalogue, Singleton, ProductCategory, Scope } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectData, OverviewService, RefreshService, SaveService, SearchFactory, Sorter, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { And } from '@allors/workspace/domain/system';
+
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './catalogue-edit.component.html',
@@ -62,7 +62,7 @@ export class CatalogueEditComponent extends TestScope implements OnInit, OnDestr
             this.fetcher.categories,
             this.fetcher.locales,
             this.fetcher.internalOrganisation,
-            pull.Scope()
+            pull.Scope({})
           ];
 
           if (!isCreate) {

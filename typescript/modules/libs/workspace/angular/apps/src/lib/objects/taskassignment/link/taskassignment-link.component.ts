@@ -46,7 +46,7 @@ export class TaskAssignmentLinkComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = this.refreshService.refresh$
       .pipe(

@@ -62,7 +62,7 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });

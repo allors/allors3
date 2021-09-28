@@ -8,7 +8,7 @@ import { SalesTerm, TermType } from '@allors/domain/generated';
 import { PullRequest } from '@allors/protocol/system';
 import { Meta } from '@allors/meta/generated';
 import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { IObject, ISessionObject } from '@allors/domain/system';
+import { IObject, IObject } from '@allors/domain/system';
 import { Equals, Sort } from '@allors/data/system';
 import { TestScope } from '@allors/angular/core';
 
@@ -22,7 +22,7 @@ export class SalesOrderTransferEditComponent extends TestScope implements OnInit
 
   public title = 'Edit Term Type';
 
-  public container: ISessionObject;
+  public container: IObject;
   public object: SalesTerm;
   public termTypes: TermType[];
 
@@ -43,7 +43,7 @@ export class SalesOrderTransferEditComponent extends TestScope implements OnInit
 
   public ngOnInit(): void {
 
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(

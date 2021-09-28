@@ -3,12 +3,15 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { MetaService, RefreshService,  NavigationService, PanelManagerService, SessionService,  } from '@allors/angular/services/core';
-import { CustomerShipment, ShipmentItem, Good, SalesInvoice, BillingProcess, SerialisedInventoryItemState } from '@allors/domain/generated';
+import { M } from '@allors/workspace/meta/default';
+import { WorkTask, Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale, Carrier, SerialisedItemCharacteristicType, WorkTask, ContactMechanism, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Catalogue, Singleton, ProductCategory, Scope, CommunicationEvent, WorkEffortState, Priority, WorkEffortPurpose, WorkEffortPartyAssignment, CustomerRelationship, Party, CustomerShipment, Currency, PostalAddress, Facility, ShipmentMethod, ShipmentItem, SalesInvoice, BillingProcess, SerialisedInventoryItemState } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectData, ObjectService, OverviewService, PanelService, RefreshService, SaveService, SearchFactory, Sorter, Table, TableRow, TestScope, PanelManagerService, NavigationActivatedRoute } from '@allors/workspace/angular/base';
+import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
+import { And, IObject } from '@allors/workspace/domain/system';
+
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { ActivatedRoute } from '@angular/router';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { PullRequest } from '@allors/protocol/system';
-import { NavigationActivatedRoute, TestScope } from '@allors/angular/core';
 
 @Component({
   templateUrl: './customershipment-overview.component.html',
@@ -50,7 +53,7 @@ export class CustomerShipmentOverviewComponent extends TestScope implements Afte
       .pipe(
         switchMap(() => {
 
-          const { m, pull, x } = this.metaService;
+          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
           const navRoute = new NavigationActivatedRoute(this.route);
           this.panelManager.id = navRoute.id();

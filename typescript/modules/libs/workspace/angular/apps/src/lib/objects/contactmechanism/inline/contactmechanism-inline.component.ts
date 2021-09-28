@@ -1,7 +1,7 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 
-import { SessionService } from '@allors/angular/services/core';
-import { PartyContactMechanism } from '@allors/domain/generated';
+import { PartyContactMechanism } from '@allors/workspace/domain/default';
+import { SessionService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -13,5 +13,5 @@ export class ContactMechanismInlineComponent {
 
   @Output() public cancelled: EventEmitter<any> = new EventEmitter();
 
-  constructor(public allors: SessionService) { }
+  constructor(public allors: SessionService) {}
 }

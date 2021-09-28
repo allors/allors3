@@ -56,7 +56,7 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
       this.table.selection.clear();
     });
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -76,7 +76,7 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
   }
 
   ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
     this.filter = m.ProductCategory.filter = m.ProductCategory.filter ?? new Filter(m.ProductCategory.filterDefinition);
 
     const internalOrganisationPredicate = new Equals({ propertyType: m.ProductCategory.InternalOrganisation });
@@ -128,7 +128,7 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
                   PrimaryAncestors: x,
                 },
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
@@ -141,7 +141,7 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
         this.allors.session.reset();
 
         const objects = loaded.collection<ProductCategory>(m.ProductCategory);
-        this.table.total = loaded.values.ProductCategories_total;
+        this.table.total = loaded.value('ProductCategories_total') as number;
         this.table.data = objects.map((v) => {
           return {
             object: v,

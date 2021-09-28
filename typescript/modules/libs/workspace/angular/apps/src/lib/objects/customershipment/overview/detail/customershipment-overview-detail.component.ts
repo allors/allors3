@@ -9,7 +9,7 @@ import { Meta } from '@allors/meta/generated';
 import { FetcherService, Filters, InternalOrganisationId } from '@allors/angular/base';
 import { PullRequest } from '@allors/protocol/system';
 import { Sort, Equals } from '@allors/data/system';
-import { ISessionObject } from '@allors/domain/system';
+import { IObject } from '@allors/domain/system';
 import { TestScope, SearchFactory } from '@allors/angular/core';
 
 @Component({
@@ -80,7 +80,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
       this.customerShipment = undefined;
 
       if (this.panel.isCollapsed) {
-        const { pull } = this.metaService;
+        const { pullBuilder: pull } = this.m;
         const id = this.panel.manager.id;
 
         pulls.push(
@@ -113,7 +113,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
 
           this.customerShipment = undefined;
 
-          const { m, pull, x } = this.metaService;
+          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -211,7 +211,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
     this.customerShipment.ShipFromAddress = partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
-  public customerSelected(customer: ISessionObject) {
+  public customerSelected(customer: IObject) {
     this.updateShipToParty(customer as Party);
   }
 

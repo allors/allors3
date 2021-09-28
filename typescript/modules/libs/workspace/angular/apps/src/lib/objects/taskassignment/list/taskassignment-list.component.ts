@@ -67,7 +67,7 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
   }
 
   public ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     const predicate = new And([
       new Equals({ propertyType: m.TaskAssignment.User, object: this.userId.value }),
@@ -105,14 +105,14 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
           const pulls = [
             pull.TaskAssignment({
               predicate,
-              // sort: sorter.create(sort),
+              // sorting: sorter.create(sort),
               include: {
                 Task: {
                   WorkItem: x,
                 },
                 User: x,
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
@@ -124,7 +124,7 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
       .subscribe((loaded) => {
         this.allors.session.reset();
         const taskAssignments = loaded.collection<TaskAssignment>(m.TaskAssignment);
-        this.table.total = loaded.values.TaskAssignments_total;
+        this.table.total = loaded.value('TaskAssignments_total') as number;
         this.table.data = taskAssignments.map((v) => {
           return {
             object: v,

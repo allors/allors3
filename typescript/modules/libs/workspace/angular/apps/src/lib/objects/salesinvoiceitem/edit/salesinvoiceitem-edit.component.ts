@@ -9,7 +9,7 @@ import { PullRequest } from '@allors/protocol/system';
 import { Meta } from '@allors/meta/generated';
 import { SaveService, ObjectData } from '@allors/angular/material/services/core';
 import { FetcherService, Filters } from '@allors/angular/base';
-import { IObject, ISessionObject } from '@allors/domain/system';
+import { IObject, IObject } from '@allors/domain/system';
 import { Equals, Sort } from '@allors/data/system';
 import { TestScope, SearchFactory } from '@allors/angular/core';
 
@@ -74,7 +74,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
 
   public ngOnInit(): void {
 
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
@@ -232,7 +232,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
     }
   }
 
-  public serialisedItemSelected(serialisedItem: ISessionObject): void {
+  public serialisedItemSelected(serialisedItem: IObject): void {
     const unifiedGood = this.invoiceItem.Product as UnifiedGood;
     this.serialisedItem = unifiedGood.SerialisedItems.find((v) => v === serialisedItem);
     this.invoiceItem.AssignedUnitPrice = this.serialisedItem.ExpectedSalesPrice;

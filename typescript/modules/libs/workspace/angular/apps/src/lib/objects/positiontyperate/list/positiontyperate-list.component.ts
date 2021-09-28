@@ -58,7 +58,7 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
       this.table.selection.clear();
     });
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -81,7 +81,7 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
   }
 
   ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
     this.filter = m.PositionTypeRate.filter = m.PositionTypeRate.filter ?? new Filter(m.PositionTypeRate.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
@@ -111,7 +111,7 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
                 Frequency: x,
                 RateType: x,
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
@@ -131,7 +131,7 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
         this.positionTypes = loaded.collection<PositionType>(m.PositionType);
         const objects = loaded.collection<PositionTypeRate>(m.PositionTypeRate);
 
-        this.table.total = loaded.values.PositionTypeRates_total;
+        this.table.total = loaded.value('PositionTypeRates_total') as number;
         this.table.data = objects.map((v) => {
           return {
             object: v,

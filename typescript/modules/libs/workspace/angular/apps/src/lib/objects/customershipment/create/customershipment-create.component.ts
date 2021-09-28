@@ -1,31 +1,16 @@
 import { Component, OnDestroy, OnInit, Self, Optional, Inject } from '@angular/core';
-import { Meta } from '@allors/meta/generated';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, PanelManagerService } from '@allors/angular/services/core';
-import { PullRequest } from '@allors/protocol/system';
-import { ObjectData, SaveService } from '@allors/angular/material/services/core';
-import {
-  Organisation,
-  Party,
-  Person,
-  CustomerShipment,
-  Currency,
-  PostalAddress,
-  Facility,
-  ShipmentMethod,
-  Carrier,
-  ShipmentPackage,
-  OrganisationContactRelationship,
-  PartyContactMechanism,
-} from '@allors/domain/generated';
-import { Equals, Sort } from '@allors/data/system';
-import { InternalOrganisationId, FetcherService, Filters } from '@allors/angular/base';
-import { IObject, ISessionObject } from '@allors/domain/system';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { WorkTask, Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale, Carrier, SerialisedItemCharacteristicType, WorkTask, ContactMechanism, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Catalogue, Singleton, ProductCategory, Scope, CommunicationEvent, WorkEffortState, Priority, WorkEffortPurpose, WorkEffortPartyAssignment, CustomerRelationship, Party, CustomerShipment, Currency, PostalAddress, Facility, ShipmentMethod } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectData, ObjectService, OverviewService, PanelService, RefreshService, SaveService, SearchFactory, Sorter, Table, TableRow, TestScope, PanelManagerService } from '@allors/workspace/angular/base';
+import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
+import { And, IObject } from '@allors/workspace/domain/system';
 
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './customershipment-create.component.html',
@@ -80,7 +65,7 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
   }
 
   public ngOnInit(): void {
-    const { m, pull } = this.metaService;
+    const m = this.m; const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
@@ -153,12 +138,7 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.customerShipment.id,
-        objectType: this.customerShipment.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.customerShipment);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
@@ -175,7 +155,7 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
   }
 
   public shipToAddressAdded(partyContactMechanism: PartyContactMechanism): void {
-    this.customerShipment.ShipToParty.AddPartyContactMechanism(partyContactMechanism);
+    this.customerShipment.ShipToParty.addPartyContactMechanism(partyContactMechanism);
 
     const postalAddress = partyContactMechanism.ContactMechanism as PostalAddress;
     this.shipToAddresses.push(postalAddress);
@@ -184,11 +164,11 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
 
   public shipFromAddressAdded(partyContactMechanism: PartyContactMechanism): void {
     this.shipFromAddresses.push(partyContactMechanism.ContactMechanism as PostalAddress);
-    this.customerShipment.ShipFromParty.AddPartyContactMechanism(partyContactMechanism);
+    this.customerShipment.ShipFromParty.addPartyContactMechanism(partyContactMechanism);
     this.customerShipment.ShipFromAddress = partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
-  public customerSelected(customer: ISessionObject) {
+  public customerSelected(customer: IObject) {
     this.updateShipToParty(customer as Party);
   }
 

@@ -88,7 +88,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
 
   public ngOnInit(): void {
 
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
@@ -120,15 +120,14 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
             }),
           ];
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
 
         this.allors.session.reset();
 
-        const now = new Date().toISOString();
+        const now = new Date();;
 
         this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
         this.productTypes = loaded.collection<ProductType>(m.ProductType);

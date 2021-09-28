@@ -89,7 +89,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
     panel.onPull = (pulls) => {
       this.part = undefined;
       if (this.panel.isCollapsed) {
-        const { pull } = this.metaService;
+        const { pullBuilder: pull } = this.m;
         const id = this.panel.manager.id;
 
         pulls.push(
@@ -118,7 +118,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
         switchMap(() => {
           this.part = undefined;
 
-          const { m, pull, x } = this.metaService;
+          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [

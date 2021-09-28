@@ -55,7 +55,7 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {
-        const { pull } = this.metaService;
+        const { pullBuilder: pull } = this.m;
         const id = this.panel.manager.id;
 
         pulls.push(
@@ -123,8 +123,7 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
             }),
           ];
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {

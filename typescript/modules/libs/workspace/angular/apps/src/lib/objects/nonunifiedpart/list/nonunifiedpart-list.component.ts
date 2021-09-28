@@ -94,7 +94,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
 
     this.print = printService.print();
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -120,7 +120,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     const predicate = new And([
       new Or([
@@ -269,7 +269,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
             this.fetcher.internalOrganisation,
             pull.NonUnifiedPart({
               predicate,
-              sort: sorter.create(sort),
+              sorting: sorter.create(sort),
               include: {
                 Brand: x,
                 Model: x,
@@ -283,13 +283,13 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
                   ProductIdentificationType: x,
                 },
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
             pull.NonUnifiedPart({
               predicate,
-              sort: sorter.create(sort),
+              sorting: sorter.create(sort),
               select: {
                 PartCategoriesWherePart: {
                   include: {
@@ -363,7 +363,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
         const partCategories = loaded.collection<PartCategory>(m.PartCategory);
         const partNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
 
-        this.table.total = loaded.values.NonUnifiedParts_total;
+        this.table.total = loaded.value('NonUnifiedParts_total') as number;
 
         this.table.data = this.parts.map((v) => {
           return {

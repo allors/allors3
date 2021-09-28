@@ -35,7 +35,7 @@ import { PullRequest } from '@allors/protocol/system';
 import { Meta } from '@allors/meta/generated';
 import { SaveService, ObjectData } from '@allors/angular/material/services/core';
 import { Filters } from '@allors/angular/base';
-import { IObject, ISessionObject } from '@allors/domain/system';
+import { IObject, IObject } from '@allors/domain/system';
 import { Equals, Sort, And, ContainedIn, Extent } from '@allors/data/system';
 import { TestScope, SearchFactory } from '@allors/angular/core';
 
@@ -421,7 +421,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
     }, this.saveService.errorHandler);
   }
 
-  public salesOrderItemSelected(obj: ISessionObject): void {
+  public salesOrderItemSelected(obj: IObject): void {
     if (obj) {
       const salesOrderItem = obj as SalesOrderItem;
       this.shipmentItem.Good = salesOrderItem.Product as Good;
@@ -430,7 +430,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
     }
   }
 
-  public purchaseOrderItemSelected(obj: ISessionObject): void {
+  public purchaseOrderItemSelected(obj: IObject): void {
     if (obj) {
       const purchaseOrderItem = obj as PurchaseOrderItem;
       this.shipmentItem.Part = purchaseOrderItem.Part as Part;
@@ -439,7 +439,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
     }
   }
 
-  public goodSelected(product: ISessionObject): void {
+  public goodSelected(product: IObject): void {
     this.goodIsSelected = true;
     this.partIsSelected = false;
 
@@ -448,7 +448,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
     }
   }
 
-  public partSelected(part: ISessionObject): void {
+  public partSelected(part: IObject): void {
     this.partIsSelected = true;
     this.goodIsSelected = false;
 
@@ -457,7 +457,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
     }
   }
 
-  public serialisedItemSelected(obj: ISessionObject): void {
+  public serialisedItemSelected(obj: IObject): void {
     if (obj) {
       const serialisedItem = obj as SerialisedItem;
       const onRequestItem = serialisedItem.RequestItemsWhereSerialisedItem.find(

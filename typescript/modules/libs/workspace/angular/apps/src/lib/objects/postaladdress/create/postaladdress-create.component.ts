@@ -54,7 +54,7 @@ export class PostalAddressCreateComponent extends TestScope implements OnInit, O
 
   public ngOnInit(): void {
 
-    const { m, pull } = this.metaService;
+    const m = this.m; const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -73,8 +73,7 @@ export class PostalAddressCreateComponent extends TestScope implements OnInit, O
             })
           ];
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {

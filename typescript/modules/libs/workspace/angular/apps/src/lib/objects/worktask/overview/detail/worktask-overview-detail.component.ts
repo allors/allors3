@@ -9,7 +9,7 @@ import { Meta } from '@allors/meta/generated';
 import { Filters, FetcherService, InternalOrganisationId } from '@allors/angular/base';
 import { PullRequest } from '@allors/protocol/system';
 import { Sort, Equals } from '@allors/data/system';
-import { ISessionObject } from '@allors/domain/system';
+import { IObject } from '@allors/domain/system';
 import { TestScope, SearchFactory } from '@allors/angular/core';
 
 @Component({
@@ -103,7 +103,7 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
 
           this.workTask = undefined;
 
-          const { m, pull, x } = this.metaService;
+          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -182,7 +182,7 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
     this.workTask.FullfillContactMechanism = partyContactMechanism.ContactMechanism;
   }
 
-  public customerSelected(customer: ISessionObject) {
+  public customerSelected(customer: IObject) {
     this.updateCustomer(customer as Party);
   }
 

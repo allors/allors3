@@ -60,7 +60,7 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
 
     titleService.setTitle(this.title);
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -86,7 +86,7 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
   }
 
   ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
     this.filter = m.ProductQuote.filter = m.ProductQuote.filter ?? new Filter(m.ProductQuote.filterDefinition);
 
     const internalOrganisationPredicate = new Equals({ propertyType: m.Quote.Issuer });
@@ -137,7 +137,7 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
                 Receiver: x,
                 QuoteState: x,
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
@@ -155,7 +155,7 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
         this.canCreate = this.internalOrganisation.CanExecuteCreateQuote;
 
         const quotes = loaded.collection<Quote>(m.Quote);
-        this.table.total = loaded.values.Quotes_total;
+        this.table.total = loaded.value('Quotes_total') as number;
         this.table.data = quotes
           .filter((v) => v.CanReadQuoteNumber)
           .map((v) => {

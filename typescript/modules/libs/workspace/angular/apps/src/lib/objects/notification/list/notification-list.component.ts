@@ -106,7 +106,7 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
       .subscribe((loaded) => {
         this.allors.session.reset();
         const notifications = loaded.collection<Notification>(m.Notification);
-        this.table.total = loaded.values.Notifications_total;
+        this.table.total = loaded.value('Notifications_total') as number;
         this.table.data = notifications.map((v) => {
           return {
             object: v,

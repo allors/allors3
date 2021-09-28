@@ -84,7 +84,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
       this.good = undefined;
 
       if (this.panel.isCollapsed) {
-        const { pull } = this.metaService;
+        const { pullBuilder: pull } = this.m;
         const id = this.panel.manager.id;
 
         pulls.push(
@@ -115,7 +115,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
 
           this.good = undefined;
 
-          const { m, pull, x } = this.metaService;
+          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -379,7 +379,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
             isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
 
           if (supplierOffering !== undefined) {
-            supplierOffering.ThroughDate = new Date().toISOString();
+            supplierOffering.ThroughDate = new Date();;
           }
         });
       }

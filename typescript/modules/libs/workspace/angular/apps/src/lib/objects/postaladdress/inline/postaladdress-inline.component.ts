@@ -37,7 +37,7 @@ export class PartyContactMechanismPostalAddressInlineComponent implements OnInit
 
   public ngOnInit(): void {
 
-    const { pull } = this.metaService;
+    const { pullBuilder: pull } = this.m;
 
     const pulls = [
       pull.Country({

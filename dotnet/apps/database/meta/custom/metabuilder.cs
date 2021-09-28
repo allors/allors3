@@ -50,6 +50,9 @@ namespace Allors.Database.Meta
 
             AddWorkspace(relationTypes.RoleName, "Default");
 
+            // Objects
+            AddWorkspace(meta.WorkTask, "Default");
+
             // Classes
             // TODO: Optimize
             foreach (Class @class in meta.Classes)

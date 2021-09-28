@@ -10,7 +10,7 @@ import { Meta } from '@allors/meta/generated';
 import { Filters, FetcherService, InternalOrganisationId } from '@allors/angular/base';
 import { PullRequest } from '@allors/protocol/system';
 import { Sort, Equals } from '@allors/data/system';
-import { ISessionObject } from '@allors/domain/system';
+import { IObject } from '@allors/domain/system';
 import { TestScope, SearchFactory } from '@allors/angular/core';
 
 
@@ -122,7 +122,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {
-        const { m, pull, x } = this.metaService;
+        const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
         pulls.push(
 
@@ -221,7 +221,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
 
           this.order = undefined;
 
-          const { m, pull, x } = this.metaService;
+          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -275,8 +275,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
 
           this.customersFilter = Filters.customersFilter(m, this.internalOrganisationId.value);
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
@@ -412,15 +411,15 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
     this.order.ShipToEndCustomerContactPerson = person;
   }
 
-  public billToCustomerSelected(party: ISessionObject) {
+  public billToCustomerSelected(party: IObject) {
     this.updateBillToCustomer(party as Party);
   }
 
-  public billToEndCustomerSelected(party: ISessionObject) {
+  public billToEndCustomerSelected(party: IObject) {
     this.updateBillToEndCustomer(party as Party);
   }
 
-  public shipToEndCustomerSelected(party: ISessionObject) {
+  public shipToEndCustomerSelected(party: IObject) {
     this.updateShipToEndCustomer(party as Party);
   }
 
@@ -667,7 +666,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
       });
   }
 
-  public shipToCustomerSelected(party: ISessionObject) {
+  public shipToCustomerSelected(party: IObject) {
     if (party) {
       this.updateShipToCustomer(party as Party);
     }

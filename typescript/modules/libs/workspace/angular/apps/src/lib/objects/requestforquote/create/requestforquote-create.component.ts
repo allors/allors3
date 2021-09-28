@@ -19,7 +19,7 @@ import {
 } from '@allors/domain/generated';
 import { Sort } from '@allors/data/system';
 import { FetcherService, InternalOrganisationId, Filters } from '@allors/angular/base';
-import { IObject, ISessionObject } from '@allors/domain/system';
+import { IObject, IObject } from '@allors/domain/system';
 import { Meta } from '@allors/meta/generated';
 import { TestScope, SearchFactory } from '@allors/angular/core';
 
@@ -66,7 +66,7 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
 
   public ngOnInit(): void {
 
-    const { m, pull } = this.metaService;
+    const m = this.m; const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
@@ -79,8 +79,7 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
 
           this.customersFilter = Filters.customersFilter(m, internalOrganisationId);
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
@@ -92,7 +91,7 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
 
         this.request = this.allors.session.create<RequestForQuote>(m.RequestForQuote);
         this.request.Recipient = this.internalOrganisation;
-        this.request.RequestDate = new Date().toISOString();
+        this.request.RequestDate = new Date();;
 
       });
   }
@@ -124,7 +123,7 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
     return !this.request.Originator || this.request.Originator.objectType.name === this.m.Person.name;
   }
 
-  public originatorSelected(party: ISessionObject) {
+  public originatorSelected(party: IObject) {
     if (party) {
       this.updateOriginator(party as Party);
     }

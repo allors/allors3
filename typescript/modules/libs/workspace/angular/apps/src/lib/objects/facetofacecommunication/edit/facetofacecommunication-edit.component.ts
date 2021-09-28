@@ -53,7 +53,7 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
 
   public ngOnInit(): void {
 
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -148,8 +148,7 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
             ];
           }
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(
               map((loaded) => ({ loaded, isCreate }))
             );

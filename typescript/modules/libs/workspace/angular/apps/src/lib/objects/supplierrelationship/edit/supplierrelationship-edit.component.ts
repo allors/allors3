@@ -99,7 +99,7 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
           this.title = 'Add Supplier Relationship';
 
           this.partyRelationship = this.allors.session.create<SupplierRelationship>(m.SupplierRelationship);
-          this.partyRelationship.FromDate = new Date().toISOString();
+          this.partyRelationship.FromDate = new Date();;
           this.partyRelationship.Supplier = this.organisation;
           this.partyRelationship.InternalOrganisation = this.internalOrganisation;
           this.partyRelationship.NeedsApproval = false;

@@ -64,7 +64,7 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
 
     titleService.setTitle(this.title);
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -94,7 +94,7 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
   }
 
   ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
     this.filter = m.SalesOrder.filter = m.SalesOrder.filter ?? new Filter(m.SalesOrder.filterDefinition);
 
     const internalOrganisationPredicate = new Equals({ propertyType: m.SalesOrder.TakenBy });
@@ -146,7 +146,7 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
                 SalesOrderState: x,
                 SalesInvoicesWhereSalesOrder: x,
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
@@ -164,7 +164,7 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
         this.canCreate = this.internalOrganisation.CanExecuteCreateSalesOrder;
 
         const requests = loaded.collection<SalesOrder>(m.SalesOrder);
-        this.table.total = loaded.values.SalesOrders_total;
+        this.table.total = loaded.value('SalesOrders_total') as number;
         this.table.data = requests
           .filter((v) => v.CanReadOrderNumber)
           .map((v) => {

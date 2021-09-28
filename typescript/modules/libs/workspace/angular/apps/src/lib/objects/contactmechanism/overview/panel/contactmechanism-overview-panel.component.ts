@@ -1,12 +1,9 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { formatDistance } from 'date-fns';
 
-import { TestScope, Action } from '@allors/angular/core';
-import { ContactMechanism } from '@allors/domain/generated';
-import { TableRow, Table, EditService, DeleteService } from '@allors/angular/material/core';
-import { Meta } from '@allors/meta/generated';
-import { MetaService, PanelService, RefreshService, NavigationService } from '@allors/angular/services/core';
-import { ObjectData } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { ContactMechanism } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 
 interface Row extends TableRow {
   object: ContactMechanism;
@@ -42,7 +39,7 @@ export class ContactMechanismOverviewPanelComponent extends TestScope implements
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     public deleteService: DeleteService,
@@ -78,7 +75,9 @@ export class ContactMechanismOverviewPanelComponent extends TestScope implements
     const pullName = `${this.panel.name}_${this.m.PartyContactMechanism.name}`;
 
     this.panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
       const id = this.panel.manager.id;
 
       pulls.push(

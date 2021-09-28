@@ -4,24 +4,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, NavigationService } from '@allors/angular/services/core';
-import { PullRequest } from '@allors/protocol/system';
-import { SaveService } from '@allors/angular/material/services/core';
-import {
-  Organisation,
-  InternalOrganisation,
-  Person,
-  OrganisationContactRelationship,
-  Party,
-  PartyContactMechanism,
-  ContactMechanism,
-  WorkTask,
-} from '@allors/domain/generated';
-import { Sort } from '@allors/data/system';
-import { FetcherService, InternalOrganisationId, Filters } from '@allors/angular/base';
-import { IObject, ISessionObject } from '@allors/domain/system';
-import { Meta } from '@allors/meta/generated';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale, Carrier, SerialisedItemCharacteristicType, WorkTask, ContactMechanism, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectData, OverviewService, RefreshService, SaveService, SearchFactory, Sorter, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { And } from '@allors/workspace/domain/system';
+
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './worktask-create.component.html',
@@ -71,7 +61,7 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
 
   public ngOnInit(): void {
 
-    const { m, pull } = this.metaService;
+    const m = this.m; const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest([this.route.url, this.refresh$, this.internalOrganisationId.observable$])
       .pipe(
@@ -90,8 +80,7 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
           this.organisationsFilter = Filters.organisationsFilter(m);
           this.subContractorsFilter = Filters.subContractorsFilter(m, this.internalOrganisationId.value);
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
@@ -107,7 +96,7 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
       });
   }
 
-  public customerSelected(customer: ISessionObject) {
+  public customerSelected(customer: IObject) {
     this.updateCustomer(customer as Party);
   }
 
@@ -159,7 +148,7 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
   public contactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
 
     this.contactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.workTask.Customer.AddPartyContactMechanism(partyContactMechanism);
+    this.workTask.Customer.addPartyContactMechanism(partyContactMechanism);
     this.workTask.FullfillContactMechanism = partyContactMechanism.ContactMechanism;
   }
 
@@ -174,12 +163,7 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
     this.allors.context
       .save()
       .subscribe(() => {
-        const data: IObject = {
-          id: this.workTask.id,
-          objectType: this.workTask.objectType,
-        };
-
-        this.dialogRef.close(data);
+        this.dialogRef.close(this.workTask);
         this.refreshService.refresh();
       },
         this.saveService.errorHandler

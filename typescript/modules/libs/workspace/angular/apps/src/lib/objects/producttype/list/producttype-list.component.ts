@@ -51,7 +51,7 @@ export class ProductTypesOverviewComponent extends TestScope implements OnInit, 
       this.table.selection.clear();
     });
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -66,7 +66,7 @@ export class ProductTypesOverviewComponent extends TestScope implements OnInit, 
   }
 
   ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
     this.filter = m.ProductType.filter = m.ProductType.filter ?? new Filter(m.ProductType.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
@@ -95,7 +95,7 @@ export class ProductTypesOverviewComponent extends TestScope implements OnInit, 
               include: {
                 SerialisedItemCharacteristicTypes: x,
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
@@ -108,7 +108,7 @@ export class ProductTypesOverviewComponent extends TestScope implements OnInit, 
         this.allors.session.reset();
 
         const objects = loaded.collection<ProductType>(m.ProductType);
-        this.table.total = loaded.values.ProductTypes_total;
+        this.table.total = loaded.value('ProductTypes_total') as number;
         this.table.data = objects.map((v) => {
           return {
             object: v,

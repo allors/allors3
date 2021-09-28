@@ -22,7 +22,7 @@ import {
 } from '@allors/domain/generated';
 import { Sort } from '@allors/data/system';
 import { FetcherService, InternalOrganisationId, Filters } from '@allors/angular/base';
-import { IObject, ISessionObject } from '@allors/domain/system';
+import { IObject, IObject } from '@allors/domain/system';
 import { Meta } from '@allors/meta/generated';
 import { TestScope, SearchFactory } from '@allors/angular/core';
 
@@ -73,7 +73,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
 
   public ngOnInit(): void {
 
-    const { m, pull } = this.metaService;
+    const m = this.m; const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
@@ -87,8 +87,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
 
           this.customersFilter = Filters.customersFilter(m, internalOrganisationId);
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
@@ -104,8 +103,8 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
 
         this.quote = this.allors.session.create<ProductQuote>(m.ProductQuote);
         this.quote.Issuer = this.internalOrganisation;
-        this.quote.IssueDate = new Date().toISOString();
-        this.quote.ValidFromDate = new Date().toISOString();
+        this.quote.IssueDate = new Date();;
+        this.quote.ValidFromDate = new Date();;
       });
   }
 
@@ -113,7 +112,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
     return !this.quote.Receiver || this.quote.Receiver.objectType.name === this.m.Person.name;
   }
 
-  public receiverSelected(party: ISessionObject): void {
+  public receiverSelected(party: IObject): void {
     if (party) {
       this.update(party as Party);
     }

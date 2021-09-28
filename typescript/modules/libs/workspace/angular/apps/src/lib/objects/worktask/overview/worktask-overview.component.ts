@@ -45,7 +45,7 @@ export class WorkTaskOverviewComponent extends TestScope implements AfterViewIni
       .pipe(
         switchMap(([,,]) => {
 
-          const { m, pull } = this.metaService;
+          const m = this.m; const { pullBuilder: pull } = m;
 
           const navRoute = new NavigationActivatedRoute(this.route);
           this.panelManager.objectType = m.WorkTask;

@@ -8,7 +8,7 @@ import { OrderAdjustment } from '@allors/domain/generated';
 import { PullRequest } from '@allors/protocol/system';
 import { Meta } from '@allors/meta/generated';
 import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { IObject, ISessionObject } from '@allors/domain/system';
+import { IObject, IObject } from '@allors/domain/system';
 import { TestScope } from '@allors/angular/core';
 
 @Component({
@@ -21,7 +21,7 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
 
   public title: string;
 
-  public container: ISessionObject;
+  public container: IObject;
   public object: OrderAdjustment;
 
   private subscription: Subscription;
@@ -41,7 +41,7 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
 
   public ngOnInit(): void {
 
-    const { pull } = this.metaService;
+    const { pullBuilder: pull } = this.m;
 
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(

@@ -1,11 +1,13 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
-import { MetaService, RefreshService, NavigationService, PanelService } from '@allors/angular/services/core';
-import { CommunicationEvent } from '@allors/domain/generated';
-import { TableRow, Table, EditService, DeleteService } from '@allors/angular/material/core';
-import { Meta } from '@allors/meta/generated';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData, ObjectService } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale, Carrier, SerialisedItemCharacteristicType, WorkTask, ContactMechanism, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Catalogue, Singleton, ProductCategory, Scope, CommunicationEvent } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectData, ObjectService, OverviewService, PanelService, RefreshService, SaveService, SearchFactory, Sorter, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
+import { And } from '@allors/workspace/domain/system';
+
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 interface Row extends TableRow {
   object: CommunicationEvent;
@@ -44,7 +46,7 @@ export class CommunicationEventOverviewPanelComponent extends TestScope implemen
 
   constructor(
     @Self() public panel: PanelService,
-    
+    public workspaceService: WorkspaceService,
     public objectService: ObjectService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
@@ -53,7 +55,7 @@ export class CommunicationEventOverviewPanelComponent extends TestScope implemen
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {
@@ -105,10 +107,10 @@ export class CommunicationEventOverviewPanelComponent extends TestScope implemen
     };
 
     this.panel.onPulled = (loaded) => {
-      this.objects = loaded.collections[pullName] as CommunicationEvent[];
+      this.objects = loaded.collection(pullName) as CommunicationEvent[];
 
       if (this.objects) {
-        this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;
+        this.table.total = loaded.value(`${pullName}_total`) || this.objects.length;
         this.table.data = this.objects.map((v) => {
           return {
             object: v,

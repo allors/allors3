@@ -54,7 +54,7 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
       this.table.selection.clear();
     });
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -76,7 +76,7 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
   }
 
   ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
     this.filter = m.ExchangeRate.filter = m.ExchangeRate.filter ?? new Filter(m.ExchangeRate.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
@@ -106,7 +106,7 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
                 FromCurrency: x,
                 ToCurrency: x,
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
@@ -119,7 +119,7 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
         this.allors.session.reset();
 
         const objects = loaded.collection<ExchangeRate>(m.ExchangeRate);
-        this.table.total = loaded.values.ExchangeRates_total;
+        this.table.total = loaded.value('ExchangeRates_total') as number;
         this.table.data = objects.map((v) => {
           return {
             object: v,

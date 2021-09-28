@@ -56,7 +56,7 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
 
     titleService.setTitle(this.title);
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -82,7 +82,7 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
   }
 
   ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
     this.filter = m.Shipment.filter = m.Shipment.filter ?? new Filter(m.Shipment.filterDefinition);
 
     const fromInternalOrganisationPredicate = new Equals({ propertyType: m.Shipment.ShipFromParty });
@@ -134,7 +134,7 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
                 ShipFromParty: x,
                 ShipmentState: x,
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
@@ -146,7 +146,7 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
       .subscribe((loaded) => {
         this.allors.session.reset();
         const objects = loaded.collection<Shipment>(m.Shipment);
-        this.table.total = loaded.values.Shipments_total;
+        this.table.total = loaded.value('Shipments_total') as number;
         this.table.data = objects.map((v) => {
           return {
             object: v,

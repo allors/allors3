@@ -4,11 +4,14 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { format, formatDistance } from 'date-fns';
 
-import { SessionService, MetaService, RefreshService, NavigationService, MediaService } from '@allors/angular/services/core';
-import { CommunicationEvent } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { TableRow, Table, EditService, DeleteService } from '@allors/angular/material/core';
-import { Action, TestScope, Filter } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale, Carrier, SerialisedItemCharacteristicType, WorkTask, ContactMechanism, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Catalogue, Singleton, ProductCategory, Scope, CommunicationEvent } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectData, OverviewService, RefreshService, SaveService, SearchFactory, Sorter, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { And } from '@allors/workspace/domain/system';
+
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 interface Row extends TableRow {
   object: CommunicationEvent;
@@ -52,7 +55,7 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
 
     titleService.setTitle(this.title);
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.edit = editService.edit();
 
     this.delete.result.subscribe(() => {
@@ -77,7 +80,8 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
   }
 
   ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+
     this.filter = m.CommunicationEvent.filter = m.CommunicationEvent.filter ?? new Filter(m.CommunicationEvent.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
@@ -107,7 +111,7 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
                 CommunicationEventState: x,
                 InvolvedParties: x,
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
@@ -119,7 +123,7 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
       .subscribe((loaded) => {
         this.allors.session.reset();
         const communicationEvents = loaded.collection<CommunicationEvent>(m.CommunicationEvent);
-        this.table.total = loaded.values.CommunicationEvents_total;
+        this.table.total = loaded.value('CommunicationEvents_total') as number;
         this.table.data = communicationEvents.map((v) => {
           return {
             object: v,

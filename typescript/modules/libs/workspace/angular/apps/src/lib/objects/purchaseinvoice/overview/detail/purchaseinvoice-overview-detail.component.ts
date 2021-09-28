@@ -9,7 +9,7 @@ import { Meta } from '@allors/meta/generated';
 import { Filters, FetcherService, InternalOrganisationId } from '@allors/angular/base';
 import { PullRequest } from '@allors/protocol/system';
 import { Sort, Equals } from '@allors/data/system';
-import { ISessionObject } from '@allors/domain/system';
+import { IObject } from '@allors/domain/system';
 import { TestScope, SearchFactory } from '@allors/angular/core';
 import {
   PurchaseInvoice,
@@ -172,7 +172,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
         switchMap(() => {
           this.invoice = undefined;
 
-          const { m, pull, x } = this.metaService;
+          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -361,25 +361,25 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
     this.invoice.AssignedShipToEndCustomerAddress = partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
-  public billedFromSelected(organisation: ISessionObject) {
+  public billedFromSelected(organisation: IObject) {
     if (organisation) {
       this.updateBilledFrom(organisation as Organisation);
     }
   }
 
-  public shipToCustomerSelected(party: ISessionObject) {
+  public shipToCustomerSelected(party: IObject) {
     if (party) {
       this.updateShipToCustomer(party as Party);
     }
   }
 
-  public billToEndCustomerSelected(party: ISessionObject) {
+  public billToEndCustomerSelected(party: IObject) {
     if (party) {
       this.updateBillToEndCustomer(party as Party);
     }
   }
 
-  public shipToEndCustomerSelected(party: ISessionObject) {
+  public shipToEndCustomerSelected(party: IObject) {
     if (party) {
       this.updateShipToEndCustomer(party as Party);
     }

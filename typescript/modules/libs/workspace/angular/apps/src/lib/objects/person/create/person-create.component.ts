@@ -82,7 +82,7 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
 
   public ngOnInit(): void {
 
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.route.url, this.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -129,8 +129,7 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
             }),
           ];
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {

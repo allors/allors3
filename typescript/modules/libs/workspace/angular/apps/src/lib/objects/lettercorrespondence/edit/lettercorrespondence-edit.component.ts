@@ -9,7 +9,7 @@ import { PullRequest } from '@allors/protocol/system';
 import { Meta } from '@allors/meta/generated';
 import { SaveService, ObjectData } from '@allors/angular/material/services/core';
 import { InternalOrganisationId } from '@allors/angular/base';
-import { IObject, ISessionObject } from '@allors/domain/system';
+import { IObject, IObject } from '@allors/domain/system';
 import { Equals, Sort } from '@allors/data/system';
 import { TestScope } from '@allors/angular/core';
 
@@ -58,7 +58,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
 
   public ngOnInit(): void {
 
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -158,8 +158,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
             ];
           }
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(
               map((loaded) => ({ loaded, isCreate }))
             );
@@ -275,7 +274,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
     }
   }
 
-  public fromPartySelected(party: ISessionObject) {
+  public fromPartySelected(party: IObject) {
     if (party) {
       this.updateFromParty(party as Party);
     }
@@ -313,7 +312,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
       });
   }
 
-  public toPartySelected(party: ISessionObject) {
+  public toPartySelected(party: IObject) {
     if (party) {
       this.updateToParty(party as Party);
     }

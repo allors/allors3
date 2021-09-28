@@ -9,7 +9,7 @@ import { Meta } from '@allors/meta/generated';
 import { Filters, FetcherService, InternalOrganisationId } from '@allors/angular/base';
 import { PullRequest } from '@allors/protocol/system';
 import { Sort, Equals } from '@allors/data/system';
-import { ISessionObject } from '@allors/domain/system';
+import { IObject } from '@allors/domain/system';
 import { TestScope, SearchFactory } from '@allors/angular/core';
 
 @Component({
@@ -79,7 +79,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {
-        const { pull } = this.metaService;
+        const { pullBuilder: pull } = this.m;
 
         pulls.push(
 
@@ -110,7 +110,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
 
           this.order = undefined;
 
-          const { m, pull, x } = this.metaService;
+          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -149,8 +149,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
 
           this.suppliersFilter = Filters.suppliersFilter(m, this.internalOrganisationId.value);
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
@@ -264,7 +263,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
     this.order.AssignedShipToAddress = partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
-  public supplierSelected(supplier: ISessionObject) {
+  public supplierSelected(supplier: IObject) {
     this.updateSupplier(supplier as Party);
   }
 

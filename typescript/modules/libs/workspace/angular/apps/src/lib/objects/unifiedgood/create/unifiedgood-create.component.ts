@@ -56,7 +56,7 @@ export class UnifiedGoodCreateComponent extends TestScope implements OnInit, OnD
   }
 
   public ngOnInit(): void {
-    const { m, pull } = this.metaService;
+    const m = this.m; const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(

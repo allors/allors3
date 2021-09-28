@@ -52,7 +52,7 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
 
     titleService.setTitle(this.title);
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -74,7 +74,7 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
   }
 
   public ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
     this.filter = m.UnifiedGood.filter = m.UnifiedGood.filter ?? new Filter(m.UnifiedGood.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
@@ -107,7 +107,7 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
                   ProductIdentificationType: x,
                 },
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
@@ -134,7 +134,7 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
         const goods = loaded.collection<UnifiedGood>(m.UnifiedGood);
         const productCategories = loaded.collection<ProductCategory>(m.ProductCategory);
 
-        this.table.total = loaded.values.UnifiedGoods_total;
+        this.table.total = loaded.value('UnifiedGoods_total') as number;
         this.table.data = goods.map((v) => {
           return {
             object: v,

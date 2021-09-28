@@ -41,7 +41,7 @@ export class PositionTypeEditComponent extends TestScope implements OnInit, OnDe
 
   public ngOnInit(): void {
 
-    const { pull } = this.metaService;
+    const { pullBuilder: pull } = this.m;
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
@@ -60,8 +60,7 @@ export class PositionTypeEditComponent extends TestScope implements OnInit, OnDe
             );
           }
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(
               map((loaded) => ({ loaded, isCreate }))
             );

@@ -50,7 +50,7 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
 
     titleService.setTitle(this.title);
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -66,7 +66,7 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
   }
 
   public ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
     this.filter = m.Person.filter = m.Person.filter ?? new Filter(m.Person.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
@@ -101,7 +101,7 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
                   },
                 },
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
@@ -113,7 +113,7 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
       .subscribe((loaded) => {
         this.allors.session.reset();
         const people = loaded.collection<Person>(m.Person);
-        this.table.total = loaded.values.People_total;
+        this.table.total = loaded.value('People_total') as number;
         this.table.data = people.map((v) => {
           return {
             object: v,

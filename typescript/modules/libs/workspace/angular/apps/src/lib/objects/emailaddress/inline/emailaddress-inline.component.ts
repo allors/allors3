@@ -30,7 +30,7 @@ export class PartyContactMechanismEmailAddressInlineComponent implements OnInit,
   }
 
   public ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.ContactMechanismPurpose({

@@ -92,8 +92,7 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
             ];
           }
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(
               map((loaded) => ({ loaded, isCreate }))
             );

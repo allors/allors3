@@ -103,7 +103,7 @@ export class OrganisationContactRelationshipEditComponent extends TestScope impl
           this.title = 'Add Organisation Contact';
 
           this.partyRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
-          this.partyRelationship.FromDate = new Date().toISOString();
+          this.partyRelationship.FromDate = new Date();;
           this.partyRelationship.AddContactKind(this.generalContact);
 
           this.party = loaded.object<Party>(m.Party);

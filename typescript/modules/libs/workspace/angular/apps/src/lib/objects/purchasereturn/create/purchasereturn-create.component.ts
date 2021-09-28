@@ -19,7 +19,7 @@ import {
 } from '@allors/domain/generated';
 import { Sort, Equals } from '@allors/data/system';
 import { FetcherService, InternalOrganisationId, Filters } from '@allors/angular/base';
-import { IObject, ISessionObject } from '@allors/domain/system';
+import { IObject, IObject } from '@allors/domain/system';
 import { Meta } from '@allors/meta/generated';
 import { TestScope, SearchFactory } from '@allors/angular/core';
 
@@ -65,7 +65,7 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
 
   public ngOnInit(): void {
 
-    const { m, pull } = this.metaService;
+    const m = this.m; const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -82,8 +82,7 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
 
           this.suppliersFilter = Filters.suppliersFilter(m, this.internalOrganisationId.value);
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
@@ -151,7 +150,7 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
     this.purchaseReturn.ShipToAddress = postalAddress;
   }
 
-  public supplierSelected(supplier: ISessionObject) {
+  public supplierSelected(supplier: IObject) {
     this.updateShipToParty(supplier as Party);
   }
 

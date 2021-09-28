@@ -8,7 +8,7 @@ import { SalesTerm, TermType } from '@allors/domain/generated';
 import { PullRequest } from '@allors/protocol/system';
 import { Meta } from '@allors/meta/generated';
 import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { IObject, ISessionObject } from '@allors/domain/system';
+import { IObject, IObject } from '@allors/domain/system';
 import { Equals, Sort } from '@allors/data/system';
 import { TestScope } from '@allors/angular/core';
 
@@ -21,7 +21,7 @@ export class SalesTermEditComponent extends TestScope implements OnInit, OnDestr
 
   public title = 'Edit Term Type';
 
-  public container: ISessionObject;
+  public container: IObject;
   public object: SalesTerm;
   public termTypes: TermType[];
 
@@ -41,7 +41,7 @@ export class SalesTermEditComponent extends TestScope implements OnInit, OnDestr
   }
 
   public ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
@@ -71,8 +71,7 @@ export class SalesTermEditComponent extends TestScope implements OnInit, OnDestr
             pulls.push(pull.SalesInvoice({ object: this.data.associationId }), pull.SalesOrder({ object: this.data.associationId }));
           }
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(map((loaded) => ({ loaded, create: isCreate, objectType, associationRoleType })));
         })
       )

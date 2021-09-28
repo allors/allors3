@@ -37,7 +37,7 @@ export class SelectInternalOrganisationComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    const { m, pull } = this.metaService;
+    const m = this.m; const { pullBuilder: pull } = m;
 
     const pulls = [
       pull.Organisation(

@@ -58,7 +58,7 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
 
     titleService.setTitle(this.title);
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -85,7 +85,7 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
   }
 
   public ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
     this.filter = m.Organisation.filter = m.Organisation.filter ?? new Filter(m.Organisation.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
@@ -121,7 +121,7 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
                   },
                 },
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
@@ -136,7 +136,7 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
         this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
         const organisations = loaded.collection<Organisation>(m.Organisation);
 
-        this.table.total = loaded.values.Organisations_total;
+        this.table.total = loaded.value('Organisations_total') as number;
         this.table.data = organisations.map((v) => {
           return {
             object: v,

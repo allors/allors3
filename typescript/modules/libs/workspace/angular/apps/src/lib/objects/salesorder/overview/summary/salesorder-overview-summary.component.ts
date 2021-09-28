@@ -55,7 +55,7 @@ export class SalesOrderOverviewSummaryComponent {
     const serialisedInventoryItemStatePullName = `${panel.name}_${this.m.SerialisedInventoryItemState.name}`;
 
     panel.onPull = (pulls) => {
-      const { m, pull, x } = this.metaService;
+      const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
       pulls.push(
 

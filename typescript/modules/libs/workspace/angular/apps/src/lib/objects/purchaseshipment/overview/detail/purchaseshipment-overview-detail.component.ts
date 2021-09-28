@@ -9,7 +9,7 @@ import { Meta } from '@allors/meta/generated';
 import { Filters, FetcherService, InternalOrganisationId } from '@allors/angular/base';
 import { PullRequest } from '@allors/protocol/system';
 import { Sort, Equals } from '@allors/data/system';
-import { ISessionObject } from '@allors/domain/system';
+import { IObject } from '@allors/domain/system';
 import { TestScope, SearchFactory } from '@allors/angular/core';
 
 @Component({
@@ -77,7 +77,7 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
       this.purchaseShipment = undefined;
 
       if (this.panel.isCollapsed) {
-        const { pull } = this.metaService;
+        const { pullBuilder: pull } = this.m;
         const id = this.panel.manager.id;
 
         pulls.push(
@@ -110,7 +110,7 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
 
           this.purchaseShipment = undefined;
 
-          const { m, pull, x } = this.metaService;
+          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -232,7 +232,7 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
     this.purchaseShipment.ShipToAddress = postalAddress;
   }
 
-  public supplierSelected(customer: ISessionObject) {
+  public supplierSelected(customer: IObject) {
     this.updateShipFromParty(customer as Party);
   }
 

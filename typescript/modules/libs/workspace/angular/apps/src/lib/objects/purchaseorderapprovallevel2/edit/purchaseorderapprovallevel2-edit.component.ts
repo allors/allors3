@@ -32,7 +32,7 @@ export class PurchaseOrderApprovalLevel2EditComponent extends TestScope implemen
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PurchaseOrderApprovalLevel2EditComponent>,
-    
+
     public printService: PrintService,
     public refreshService: RefreshService,
     private saveService: SaveService
@@ -45,7 +45,9 @@ export class PurchaseOrderApprovalLevel2EditComponent extends TestScope implemen
   }
 
   public ngOnInit(): void {
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
@@ -87,13 +89,13 @@ export class PurchaseOrderApprovalLevel2EditComponent extends TestScope implemen
   }
 
   saveAndInvoke(methodCall: () => Observable<Invoked>): void {
-    const { pull } = this.metaService;
+    const { pullBuilder: pull } = this.m;
 
     this.allors.context
       .save()
       .pipe(
         switchMap(() => {
-          return this.allors.context.load(pull.PurchaseOrderApprovalLevel2({ objectId: this.data.id }));
+          return this.allors.client.pullReactive(this.allors.session, pull.PurchaseOrderApprovalLevel2({ objectId: this.data.id }));
         }),
         switchMap(() => {
           this.allors.session.reset();

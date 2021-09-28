@@ -36,7 +36,7 @@ export class FacilityInlineComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
 
-    const { pull } = this.metaService;
+    const { pullBuilder: pull } = this.m;
 
     const pulls = [
       this.fetcher.internalOrganisation,

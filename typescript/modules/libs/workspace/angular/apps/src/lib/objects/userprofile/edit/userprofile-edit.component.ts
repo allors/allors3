@@ -46,7 +46,7 @@ export class UserProfileEditComponent extends TestScope implements OnInit, OnDes
 
   public ngOnInit(): void {
 
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
@@ -74,8 +74,7 @@ export class UserProfileEditComponent extends TestScope implements OnInit, OnDes
             )
           ];
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(
               map((loaded) => ({ loaded }))
             );

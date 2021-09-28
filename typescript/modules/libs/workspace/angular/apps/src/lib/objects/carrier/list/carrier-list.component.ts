@@ -52,7 +52,7 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
       this.table.selection.clear();
     });
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -73,7 +73,7 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
 
   ngOnInit(): void {
 
-    const { m, pull } = this.metaService;
+    const m = this.m; const { pullBuilder: pull } = m;
     this.filter = m.Carrier.filter = m.Carrier.filter ?? new Filter(m.Carrier.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
@@ -99,7 +99,7 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
             pull.Carrier({
               predicate: this.filter.definition.predicate,
               sort: sort ? m.Carrier.sorter.create(sort) : null,
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             })];
@@ -111,7 +111,7 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
         this.allors.session.reset();
 
         const objects = loaded.collection<Carrier>(m.Carrier);
-        this.table.total = loaded.values.Carriers_total;
+        this.table.total = loaded.value('Carriers_total') as number;
         this.table.data = objects.map((v) => {
           return {
             object: v,

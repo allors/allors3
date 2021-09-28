@@ -9,7 +9,7 @@ import { Meta } from '@allors/meta/generated';
 import { Filters, FetcherService, InternalOrganisationId } from '@allors/angular/base';
 import { PullRequest } from '@allors/protocol/system';
 import { Sort } from '@allors/data/system';
-import { ISessionObject } from '@allors/domain/system';
+import { IObject } from '@allors/domain/system';
 import { TestScope, SearchFactory } from '@allors/angular/core';
 
 @Component({
@@ -126,7 +126,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
 
           this.productQuote = undefined;
 
-          const { m, pull, x } = this.metaService;
+          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -150,8 +150,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
 
           this.customersFilter = Filters.customersFilter(m, this.internalOrganisationId.value);
 
-          return this.allors.context
-            .load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
@@ -207,7 +206,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
     this.productQuote.FullfillContactMechanism = partyContactMechanism.ContactMechanism;
   }
 
-  public receiverSelected(party: ISessionObject): void {
+  public receiverSelected(party: IObject): void {
     if (party) {
       this.update(party as Party);
     }

@@ -3,13 +3,14 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, NavigationService, MediaService } from '@allors/angular/services/core';
-import { Catalogue, Scope } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { TableRow, Table, OverviewService, EditService, DeleteService, Sorter } from '@allors/angular/material/core';
-import { And, Like, Equals } from '@allors/data/system';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { TestScope, Filter, SearchFactory, FilterDefinition, Action } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale, Carrier, SerialisedItemCharacteristicType, WorkTask, ContactMechanism, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Catalogue, Singleton, ProductCategory, Scope } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectData, OverviewService, RefreshService, SaveService, SearchFactory, Sorter, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { And } from '@allors/workspace/domain/system';
+
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 interface Row extends TableRow {
   object: Catalogue;
@@ -56,7 +57,7 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
       this.table.selection.clear();
     });
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -79,7 +80,7 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
 
   ngOnInit(): void {
 
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
     this.filter = m.Catalogue.filter = m.Catalogue.filter ?? new Filter(m.Catalogue.filterDefinition);
 
     const internalOrganisationPredicate = new Equals({ propertyType: m.Catalogue.InternalOrganisation });
@@ -118,7 +119,7 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
                 ProductCategories: x,
                 CatScope: x
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             })];
@@ -130,7 +131,7 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
         this.allors.session.reset();
 
         const objects = loaded.collection<Catalogue>(m.Catalogue);
-        this.table.total = loaded.values.Catalogues_total;
+        this.table.total = loaded.value('Catalogues_total') as number;
         this.table.data = objects.map((v) => {
           return {
             object: v,

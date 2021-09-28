@@ -23,7 +23,7 @@ import {
 } from '@allors/domain/generated';
 import { Equals, Sort } from '@allors/data/system';
 import { FetcherService, InternalOrganisationId, Filters } from '@allors/angular/base';
-import { IObject, ISessionObject } from '@allors/domain/system';
+import { IObject, IObject } from '@allors/domain/system';
 import { Meta } from '@allors/meta/generated';
 import { TestScope, SearchFactory } from '@allors/angular/core';
 
@@ -112,7 +112,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
   }
 
   public ngOnInit(): void {
-    const { m, pull } = this.metaService;
+    const m = this.m; const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
@@ -288,25 +288,25 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
     this.invoice.AssignedShipToEndCustomerAddress = partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
-  public billToCustomerSelected(party: ISessionObject) {
+  public billToCustomerSelected(party: IObject) {
     if (party) {
       this.updateBillToCustomer(party as Party);
     }
   }
 
-  public billToEndCustomerSelected(party: ISessionObject) {
+  public billToEndCustomerSelected(party: IObject) {
     if (party) {
       this.updateBillToEndCustomer(party as Party);
     }
   }
 
-  public shipToCustomerSelected(party: ISessionObject) {
+  public shipToCustomerSelected(party: IObject) {
     if (party) {
       this.updateShipToCustomer(party as Party);
     }
   }
 
-  public shipToEndCustomerSelected(party: ISessionObject) {
+  public shipToEndCustomerSelected(party: IObject) {
     if (party) {
       this.updateShipToEndCustomer(party as Party);
     }

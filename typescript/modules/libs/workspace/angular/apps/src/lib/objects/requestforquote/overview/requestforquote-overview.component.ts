@@ -44,7 +44,7 @@ export class RequestForQuoteOverviewComponent extends TestScope implements After
       .pipe(
         switchMap(() => {
 
-          const { m, pull, x } = this.metaService;
+          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
           const navRoute = new NavigationActivatedRoute(this.route);
           this.panelManager.id = navRoute.id();

@@ -65,7 +65,7 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
       this.serialisedItem = undefined;
 
       if (this.panel.isCollapsed) {
-        const { pull } = this.metaService;
+        const { pullBuilder: pull } = this.m;
         const id = this.panel.manager.id;
 
         pulls.push(
@@ -96,7 +96,7 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
 
           this.serialisedItem = undefined;
 
-          const { m, pull, x } = this.metaService;
+          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [

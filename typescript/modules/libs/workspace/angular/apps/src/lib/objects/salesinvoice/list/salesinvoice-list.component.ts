@@ -102,7 +102,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
     this.credit = methodService.create(allors.context, this.m.SalesInvoice.Credit, { name: 'Credit' });
     this.reopen = methodService.create(allors.context, this.m.SalesInvoice.Reopen, { name: 'Reopen' });
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete(allors);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -203,7 +203,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
     });
   }
   public ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
     this.filter = m.SalesInvoice.filter = m.SalesInvoice.filter ?? new Filter(m.SalesInvoice.filterDefinition);
 
     const internalOrganisationPredicate = new Equals({ propertyType: m.SalesInvoice.BilledFrom });
@@ -256,7 +256,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
                 SalesInvoiceType: x,
                 DerivedCurrency: x,
               },
-              parameters: this.filter.parameters(filterFields),
+              arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
@@ -274,7 +274,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
         this.canCreate = this.internalOrganisation.CanExecuteCreateSalesInvoice;
 
         const salesInvoices = loaded.collection<SalesInvoice>(m.SalesInvoice);
-        this.table.total = loaded.values.SalesInvoices_total;
+        this.table.total = loaded.value('SalesInvoices_total') as number;
         this.table.data = salesInvoices
           .filter((v) => v.CanReadInvoiceNumber)
           .map((v) => {

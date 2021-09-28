@@ -25,7 +25,7 @@ import { PullRequest } from '@allors/protocol/system';
 import { Meta, TreeFactory } from '@allors/meta/generated';
 import { SaveService, ObjectData } from '@allors/angular/material/services/core';
 import { FetcherService, Filters } from '@allors/angular/base';
-import { IObject, ISessionObject } from '@allors/domain/system';
+import { IObject, IObject } from '@allors/domain/system';
 import { Equals, Sort, And, ContainedIn, Extent } from '@allors/data/system';
 import { TestScope, SearchFactory } from '@allors/angular/core';
 
@@ -82,7 +82,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
   }
 
   public ngOnInit(): void {
-    const { m, pull, x } = this.metaService;
+    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
@@ -217,19 +217,19 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
     }
   }
 
-  public goodSelected(unifiedGood: ISessionObject): void {
+  public goodSelected(unifiedGood: IObject): void {
     if (unifiedGood) {
       this.part = unifiedGood as UnifiedGood;
       this.refreshSerialisedItems(unifiedGood as UnifiedGood);
     }
   }
 
-  public serialisedItemSelected(serialisedItem: ISessionObject): void {
+  public serialisedItemSelected(serialisedItem: IObject): void {
     this.serialisedItem = this.part.SerialisedItems.find((v) => v === serialisedItem);
     this.invoiceItem.Quantity = '1';
   }
 
-  public partSelected(part: ISessionObject): void {
+  public partSelected(part: IObject): void {
     if (part) {
       this.unifiedGood = this.invoiceItem.Part.objectType.name === this.m.UnifiedGood.name;
       this.nonUnifiedPart = this.invoiceItem.Part.objectType.name === this.m.NonUnifiedPart.name;
