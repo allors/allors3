@@ -30,9 +30,8 @@ namespace Allors.Database.Domain
                 {
                     foreach (PurchaseInvoiceItem invoiceItem in @this.ValidInvoiceItems)
                     {
-                        if (invoiceItem.ExistSerialisedItem)
+                        if (invoiceItem.ExistSerialisedItem && !invoiceItem.SerialisedItem.ExistAssignedPurchasePrice)
                         {
-                            invoiceItem.SerialisedItem.RemoveAssignedPurchasePrice();
                             invoiceItem.SerialisedItem.PurchasePrice = invoiceItem.TotalExVat;
                         }
 
