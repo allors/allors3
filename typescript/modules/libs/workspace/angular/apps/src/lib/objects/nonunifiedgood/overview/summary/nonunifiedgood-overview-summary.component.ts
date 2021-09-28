@@ -31,14 +31,14 @@ export class NonUnifiedGoodOverviewSummaryComponent extends TestScope {
     const pullName = `${panel.name}_${this.m.NonUnifiedGood.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.NonUnifiedGood({
           name: pullName,
-          object: id,
+          objectId: id,
           include: {
             ProductIdentifications: {
               ProductIdentificationType: x

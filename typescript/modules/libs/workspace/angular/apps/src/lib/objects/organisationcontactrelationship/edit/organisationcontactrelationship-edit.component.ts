@@ -67,7 +67,7 @@ export class OrganisationContactRelationshipEditComponent extends TestScope impl
           if (!isCreate) {
             pulls.push(
               pull.OrganisationContactRelationship({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   Organisation: x,
                   Contact: x,
@@ -88,25 +88,25 @@ export class OrganisationContactRelationshipEditComponent extends TestScope impl
 
           this.peopleFilter = Filters.peopleFilter(m);
 
-          return this.allors.context.load(new PullRequest({ pulls })).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.organisations = loaded.collections.Organisations as Organisation[];
+        this.organisations = loaded.collection<Organisation>(m.Organisation);
 
-        this.contactKinds = loaded.collections.OrganisationContactKinds as OrganisationContactKind[];
+        this.contactKinds = loaded.collection<OrganisationContactKind>(m.OrganisationContactKind);
         this.generalContact = this.contactKinds.find((v) => v.UniqueId === 'eebe4d65-c452-49c9-a583-c0ffec385e98');
 
         if (isCreate) {
           this.title = 'Add Organisation Contact';
 
-          this.partyRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+          this.partyRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
           this.partyRelationship.FromDate = new Date().toISOString();
           this.partyRelationship.AddContactKind(this.generalContact);
 
-          this.party = loaded.objects.Party as Party;
+          this.party = loaded.object<Party>(m.Party);
 
           if (this.party.objectType.name === m.Person.name) {
             this.person = this.party as Person;
@@ -118,11 +118,11 @@ export class OrganisationContactRelationshipEditComponent extends TestScope impl
             this.partyRelationship.Organisation = this.organisation;
           }
         } else {
-          this.partyRelationship = loaded.objects.OrganisationContactRelationship as OrganisationContactRelationship;
+          this.partyRelationship = loaded.object<OrganisationContactRelationship>(m.OrganisationContactRelationship);
           this.person = this.partyRelationship.Contact;
           this.organisation = this.partyRelationship.Organisation as Organisation;
 
-          if (this.partyRelationship.CanWriteFromDate) {
+          if (this.partyRelationship.canWriteFromDate) {
             this.title = 'Edit Organisation Contact';
           } else {
             this.title = 'View Organisation Contact';
@@ -142,7 +142,7 @@ export class OrganisationContactRelationshipEditComponent extends TestScope impl
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const data: IObject = {
         id: this.partyRelationship.id,
         objectType: this.partyRelationship.objectType,

@@ -25,7 +25,7 @@ export class PartyContactMechanismEmailAddressInlineComponent implements OnInit,
 
   public m: M;
 
-  constructor(private allors: SessionService, public metaService: MetaService) {
+  constructor(private allors: SessionService, public ) {
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
@@ -34,17 +34,17 @@ export class PartyContactMechanismEmailAddressInlineComponent implements OnInit,
 
     const pulls = [
       pull.ContactMechanismPurpose({
-        predicate: new Equals({ propertyType: this.m.ContactMechanismPurpose.IsActive, value: true }),
+        predicate: { kind: 'Equals', propertyType: this.m.ContactMechanismPurpose.IsActive, value: true },
         sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }],
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe(
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe(
       (loaded) => {
-        this.contactMechanismPurposes = loaded.collections.ContactMechanismPurposes as ContactMechanismPurpose[];
+        this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
 
-        this.partyContactMechanism = this.allors.context.create('PartyContactMechanism') as PartyContactMechanism;
-        this.emailAddress = this.allors.context.create('EmailAddress') as EmailAddress;
+        this.partyContactMechanism = this.allors.session.create<PartyContactMechanism>(m.PartyContactMechanism);
+        this.emailAddress = this.allors.session.create<EmailAddress>(m.EmailAddress);
         this.partyContactMechanism.ContactMechanism = this.emailAddress;
       },
       (error: any) => {
@@ -54,9 +54,9 @@ export class PartyContactMechanismEmailAddressInlineComponent implements OnInit,
   }
 
   public ngOnDestroy(): void {
-    if (!!this.partyContactMechanism) {
-      this.allors.context.delete(this.partyContactMechanism);
-      this.allors.context.delete(this.emailAddress);
+    if (this.partyContactMechanism) {
+      this.allors.client.invokeReactive(this.allors.session, this.partyContactMechanism.Delete);
+      this.allors.client.invokeReactive(this.allors.session, this.emailAddress.Delete);
     }
   }
 

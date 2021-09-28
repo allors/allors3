@@ -78,13 +78,13 @@ export class ContactMechanismOverviewPanelComponent extends TestScope implements
     const pullName = `${this.panel.name}_${this.m.PartyContactMechanism.name}`;
 
     this.panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.Party({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             PartyContactMechanisms: {
               ContactMechanism: {

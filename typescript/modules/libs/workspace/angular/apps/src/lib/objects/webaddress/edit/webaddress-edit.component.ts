@@ -53,7 +53,7 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
 
           const pulls = [
             pull.ContactMechanism({
-              object: this.data.id,
+              objectId: this.data.id,
             }),
           ];
 
@@ -63,13 +63,13 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
       )
       .subscribe((loaded) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.contactMechanismTypes = loaded.collections.ContactMechanismTypes as Enumeration[];
+        this.contactMechanismTypes = loaded.collection<Enumeration>(m.Enumeration);
 
-        this.contactMechanism = loaded.objects.ContactMechanism as ElectronicAddress;
+        this.contactMechanism = loaded.object<ContactMechanism>(m.ContactMechanism);
 
-        if (this.contactMechanism.CanWriteElectronicAddressString) {
+        if (this.contactMechanism.canWriteElectronicAddressString) {
           this.title = 'Edit Web Address';
         } else {
           this.title = 'View Web Address';
@@ -85,7 +85,7 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.contactMechanism.id,

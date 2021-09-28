@@ -82,7 +82,7 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
           if (!isCreate) {
             pulls.push(
               pull.WorkEffortInventoryAssignment({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   Assignment: x,
                   InventoryItem: {
@@ -113,27 +113,27 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        const internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
-        const inventoryItems = loaded.collections.InventoryItems as InventoryItem[];
+        const inventoryItems = loaded.collection<InventoryItem>(m.InventoryItem);
         this.inventoryItems = inventoryItems.filter(v => internalOrganisation.FacilitiesWhereOwner.includes(v.Facility));
 
         if (isCreate) {
-          this.workEffort = loaded.objects.WorkEffort as WorkEffort;
+          this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
 
           this.title = 'Add inventory assignment';
 
-          this.workEffortInventoryAssignment = this.allors.context.create('WorkEffortInventoryAssignment') as WorkEffortInventoryAssignment;
+          this.workEffortInventoryAssignment = this.allors.session.create<WorkEffortInventoryAssignment>(m.WorkEffortInventoryAssignment);
           this.workEffortInventoryAssignment.Assignment = this.workEffort;
 
         } else {
-          this.workEffortInventoryAssignment = loaded.objects.WorkEffortInventoryAssignment as WorkEffortInventoryAssignment;
+          this.workEffortInventoryAssignment = loaded.object<WorkEffortInventoryAssignment>(m.WorkEffortInventoryAssignment);
           this.workEffort = this.workEffortInventoryAssignment.Assignment;
           this.inventoryItemSelected(this.workEffortInventoryAssignment.InventoryItem);
 
-          if (this.workEffortInventoryAssignment.CanWriteInventoryItem) {
+          if (this.workEffortInventoryAssignment.canWriteInventoryItem) {
             this.title = 'Edit inventory assignment';
           } else {
             this.title = 'View inventory assignment';
@@ -163,7 +163,7 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.workEffortInventoryAssignment.id,

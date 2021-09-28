@@ -37,7 +37,7 @@ export class RequestForQuoteOverviewSummaryComponent {
     const productQuotePullName = `${panel.name}_${this.m.ProductQuote.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       pulls.push(
         pull.RequestForQuote(
@@ -74,7 +74,7 @@ export class RequestForQuoteOverviewSummaryComponent {
 
     panel.onPulled = (loaded) => {
       this.requestForQuote = loaded.objects[requestForQuotePullName] as RequestForQuote;
-      this.quote = loaded.objects.Quote as Quote;
+      this.quote = loaded.object<Quote>(m.Quote);
     };
   }
 

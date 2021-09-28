@@ -52,7 +52,7 @@ export class EmailAddressEditComponent extends TestScope implements OnInit, OnDe
 
           const pulls = [
             pull.ContactMechanism({
-              object: this.data.id,
+              objectId: this.data.id,
             }),
           ];
 
@@ -62,10 +62,10 @@ export class EmailAddressEditComponent extends TestScope implements OnInit, OnDe
       )
       .subscribe((loaded) => {
 
-        this.allors.context.reset();
-        this.contactMechanism = loaded.objects.ContactMechanism as ElectronicAddress;
+        this.allors.session.reset();
+        this.contactMechanism = loaded.object<ContactMechanism>(m.ContactMechanism);
 
-        if (this.contactMechanism.CanWriteElectronicAddressString) {
+        if (this.contactMechanism.canWriteElectronicAddressString) {
           this.title = 'Edit Email Address';
         } else {
           this.title = 'View Email Address';
@@ -81,7 +81,7 @@ export class EmailAddressEditComponent extends TestScope implements OnInit, OnDe
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.contactMechanism.id,

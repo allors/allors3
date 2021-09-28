@@ -3,13 +3,13 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, NavigationService, MediaService } from '@allors/angular/services/core';
-import { Brand } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { TableRow, Table, OverviewService, EditService, DeleteService, Sorter } from '@allors/angular/material/core';
-import { And, Like } from '@allors/data/system';
-import { TestScope, Filter, FilterDefinition, Action } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, ObjectData, OverviewService, RefreshService, SaveService, Table, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 interface Row extends TableRow {
   object: Brand;
   name: string;
@@ -106,13 +106,13 @@ export class BrandsOverviewComponent extends TestScope implements OnInit, OnDest
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         }),
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        const objects = loaded.collections.Brands as Brand[];
+        const objects = loaded.collection<Brand>(m.Brand);
         this.table.total = loaded.values.Brands_total;
         this.table.data = objects.map((v) => {
           return {

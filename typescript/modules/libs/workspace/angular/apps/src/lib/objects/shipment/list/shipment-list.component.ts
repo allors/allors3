@@ -140,12 +140,12 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
-        const objects = loaded.collections.Shipments as Shipment[];
+        this.allors.session.reset();
+        const objects = loaded.collection<Shipment>(m.Shipment);
         this.table.total = loaded.values.Shipments_total;
         this.table.data = objects.map((v) => {
           return {

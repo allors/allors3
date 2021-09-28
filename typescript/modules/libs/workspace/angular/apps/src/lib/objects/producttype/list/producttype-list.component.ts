@@ -101,13 +101,13 @@ export class ProductTypesOverviewComponent extends TestScope implements OnInit, 
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        const objects = loaded.collections.ProductTypes as ProductType[];
+        const objects = loaded.collection<ProductType>(m.ProductType);
         this.table.total = loaded.values.ProductTypes_total;
         this.table.data = objects.map((v) => {
           return {

@@ -143,18 +143,18 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.user = loaded.objects.Person as Person;
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.user = loaded.object<Person>(m.Person);
 
         this.canCreate = this.internalOrganisation.CanExecuteCreateQuote;
 
-        const quotes = loaded.collections.Quotes as Quote[];
+        const quotes = loaded.collection<Quote>(m.Quote);
         this.table.total = loaded.values.Quotes_total;
         this.table.data = quotes
           .filter((v) => v.CanReadQuoteNumber)

@@ -71,7 +71,7 @@ export class WorkTaskOverviewComponent extends TestScope implements AfterViewIni
         this.panelManager.context.session.reset();
         this.panelManager.onPulled(loaded);
 
-        this.workTask = loaded.objects.WorkTask as WorkTask;
+        this.workTask = loaded.object<WorkTask>(m.WorkTask);
       });
   }
 

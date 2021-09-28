@@ -68,7 +68,7 @@ export class ProductCategoryEditComponent extends TestScope implements OnInit, O
             pulls.push(
               pull.ProductCategory(
                 {
-                  object: this.data.id,
+                  objectId: this.data.id,
                   include: {
                     Children: x,
                     LocalisedNames: {
@@ -83,7 +83,7 @@ export class ProductCategoryEditComponent extends TestScope implements OnInit, O
             );
           }
 
-          return this.allors.context.load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(
               map((loaded) => ({ loaded, isCreate }))
             );
@@ -91,20 +91,20 @@ export class ProductCategoryEditComponent extends TestScope implements OnInit, O
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.category = loaded.objects.ProductCategory as ProductCategory;
-        this.categories = loaded.collections.ProductCategories as ProductCategory[];
-        this.scopes = loaded.collections.Scopes as Scope[];
-        this.locales = loaded.collections.AdditionalLocales as Locale[];
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.category = loaded.object<ProductCategory>(m.ProductCategory);
+        this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
+        this.scopes = loaded.collection<Scope>(m.Scope);
+        this.locales = loaded.collection<Locale>(m.Locale);
 
         if (isCreate) {
           this.title = 'Add Category';
-          this.category = this.allors.context.create('ProductCategory') as ProductCategory;
+          this.category = this.allors.session.create<ProductCategory>(m.ProductCategory);
           this.category.InternalOrganisation = this.internalOrganisation;
         } else {
-          if (this.category.CanWriteCatScope) {
+          if (this.category.canWriteCatScope) {
             this.title = 'Edit Category';
           } else {
             this.title = 'View Category';

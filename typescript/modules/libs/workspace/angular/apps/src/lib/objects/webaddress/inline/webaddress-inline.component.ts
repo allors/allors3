@@ -38,16 +38,16 @@ export class InlineWebAddressComponent implements OnInit, OnDestroy {
 
     const pulls = [
       pull.ContactMechanismPurpose({
-        predicate: new Equals({ propertyType: this.m.ContactMechanismPurpose.IsActive, value: true }),
+        predicate: { kind: 'Equals', propertyType: this.m.ContactMechanismPurpose.IsActive, value: true },
         sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }]
       })
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe(
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe(
       (loaded) => {
-        this.contactMechanismPurposes = loaded.collections.ContactMechanismPurposes as ContactMechanismPurpose[];
-        this.partyContactMechanism = this.allors.context.create('PartyContactMechanism') as PartyContactMechanism;
-        this.webAddress = this.allors.context.create('WebAddress') as WebAddress;
+        this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
+        this.partyContactMechanism = this.allors.session.create<PartyContactMechanism>(m.PartyContactMechanism);
+        this.webAddress = this.allors.session.create<WebAddress>(m.WebAddress);
         this.partyContactMechanism.ContactMechanism = this.webAddress;
       },
       (error: any) => {
@@ -59,8 +59,8 @@ export class InlineWebAddressComponent implements OnInit, OnDestroy {
   public ngOnDestroy(): void {
 
     if (!!this.partyContactMechanism) {
-      this.allors.context.delete(this.partyContactMechanism);
-      this.allors.context.delete(this.webAddress);
+      this.allors.client.invokeReactive(this.allors.session, this.partyContactMechanism.Delete);
+      this.allors.client.invokeReactive(this.allors.session, this.webAddress.Delete);
     }
   }
 

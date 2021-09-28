@@ -30,7 +30,7 @@ export class PersonInlineComponent implements OnInit, OnDestroy {
 
   constructor(
     private allors: SessionService,
-    public metaService: MetaService) {
+    public ) {
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
@@ -44,11 +44,11 @@ export class PersonInlineComponent implements OnInit, OnDestroy {
         sorting: [{ roleType: this.m.Locale.Name }]
       }),
       pull.GenderType({
-        predicate: new Equals({ propertyType: this.m.GenderType.IsActive, value: true }),
+        predicate: { kind: 'Equals', propertyType: this.m.GenderType.IsActive, value: true },
         sorting: [{ roleType: this.m.GenderType.Name }],
       }),
       pull.Salutation({
-        predicate: new Equals({ propertyType: this.m.Salutation.IsActive, value: true }),
+        predicate: { kind: 'Equals', propertyType: this.m.Salutation.IsActive, value: true },
         sorting: [{ roleType: this.m.Salutation.Name }]
       })
     ];
@@ -56,17 +56,17 @@ export class PersonInlineComponent implements OnInit, OnDestroy {
     this.allors.context
       .load(new PullRequest({ pulls }))
       .subscribe((loaded) => {
-        this.locales = loaded.collections.Locales as Locale[];
-        this.genders = loaded.collections.GenderTypes as Enumeration[];
-        this.salutations = loaded.collections.Salutations as Enumeration[];
+        this.locales = loaded.collection<Locale>(m.Locale);
+        this.genders = loaded.collection<Enumeration>(m.Enumeration);
+        this.salutations = loaded.collection<Enumeration>(m.Enumeration);
 
-        this.person = this.allors.context.create('Person') as Person;
+        this.person = this.allors.session.create<Person>(m.Person);
       });
   }
 
   public ngOnDestroy(): void {
     if (!!this.person) {
-      this.allors.context.delete(this.person);
+      this.allors.client.invokeReactive(this.allors.session, this.person.Delete);
     }
   }
 

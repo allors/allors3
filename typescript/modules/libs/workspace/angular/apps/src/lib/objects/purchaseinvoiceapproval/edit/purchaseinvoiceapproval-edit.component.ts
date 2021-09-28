@@ -47,7 +47,7 @@ export class PurchaseInvoiceApprovalEditComponent extends TestScope implements O
 
   public ngOnInit(): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
@@ -55,7 +55,7 @@ export class PurchaseInvoiceApprovalEditComponent extends TestScope implements O
 
           const pulls = [
             pull.PurchaseInvoiceApproval({
-              object: this.data.id,
+              objectId: this.data.id,
               include: {
                 PurchaseInvoice: {
                   PrintDocument: x
@@ -72,8 +72,8 @@ export class PurchaseInvoiceApprovalEditComponent extends TestScope implements O
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
-        this.purchaseInvoiceApproval = loaded.objects.PurchaseInvoiceApproval as PurchaseInvoiceApproval;
+        this.allors.session.reset();
+        this.purchaseInvoiceApproval = loaded.object<PurchaseInvoiceApproval>(m.PurchaseInvoiceApproval);
 
         this.title = this.purchaseInvoiceApproval.Title;
       });
@@ -100,10 +100,10 @@ export class PurchaseInvoiceApprovalEditComponent extends TestScope implements O
       .save()
       .pipe(
         switchMap(() => {
-          return this.allors.context.load(pull.PurchaseInvoiceApproval({ object: this.data.id }));
+          return this.allors.context.load(pull.PurchaseInvoiceApproval({ objectId: this.data.id }));
         }),
         switchMap(() => {
-          this.allors.context.reset();
+          this.allors.session.reset();
           return methodCall();
         })
       )

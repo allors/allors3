@@ -51,7 +51,7 @@ export class SalesTermEditComponent extends TestScope implements OnInit, OnDestr
 
           const pulls = [
             pull.TermType({
-              predicate: new Equals({ propertyType: m.TermType.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.TermType.IsActive, value: true },
               sort: [new Sort(m.TermType.Name)],
             }),
           ];
@@ -59,7 +59,7 @@ export class SalesTermEditComponent extends TestScope implements OnInit, OnDestr
           if (!isCreate) {
             pulls.push(
               pull.SalesTerm({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   TermType: x,
                 },
@@ -77,11 +77,11 @@ export class SalesTermEditComponent extends TestScope implements OnInit, OnDestr
         })
       )
       .subscribe(({ loaded, create, objectType, associationRoleType }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
         this.container = loaded.objects.SalesInvoice || loaded.objects.SalesOrder;
-        this.object = loaded.objects.SalesTerm as SalesTerm;
-        this.termTypes = loaded.collections.TermTypes as TermType[];
+        this.object = loaded.object<SalesTerm>(m.SalesTerm);
+        this.termTypes = loaded.collection<TermType>(m.TermType);
         this.termTypes = this.termTypes.filter((v) => v.objectType.name === `${objectType.name}Type`);
 
         if (create) {
@@ -99,7 +99,7 @@ export class SalesTermEditComponent extends TestScope implements OnInit, OnDestr
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const data: IObject = {
         id: this.object.id,
         objectType: this.object.objectType,

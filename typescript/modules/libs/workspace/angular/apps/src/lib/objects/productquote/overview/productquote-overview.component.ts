@@ -96,9 +96,9 @@ export class ProductQuoteOverviewComponent extends TestScope implements AfterVie
 
         this.panelManager.onPulled(loaded);
 
-        this.productQuote = loaded.objects.ProductQuote as ProductQuote;
-        this.goods = loaded.collections.Goods as Good[];
-        this.salesOrder = loaded.objects.SalesOrder as SalesOrder;
+        this.productQuote = loaded.object<ProductQuote>(m.ProductQuote);
+        this.goods = loaded.collection<Good>(m.Good);
+        this.salesOrder = loaded.object<SalesOrder>(m.SalesOrder);
 
       });
   }

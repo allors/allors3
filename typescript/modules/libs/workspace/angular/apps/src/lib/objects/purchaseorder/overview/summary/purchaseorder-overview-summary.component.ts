@@ -46,7 +46,7 @@ export class PurchaseOrderOverviewSummaryComponent {
     const purchaseInvoicePullName = `${panel.name}_${this.m.PurchaseInvoice.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       pulls.push(
 

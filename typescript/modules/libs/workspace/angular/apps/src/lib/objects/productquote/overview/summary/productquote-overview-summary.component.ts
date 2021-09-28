@@ -44,7 +44,7 @@ export class ProductQuoteOverviewSummaryComponent {
     const requestPullName = `${panel.name}_${this.m.RequestForQuote.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       pulls.push(
         pull.ProductQuote(

@@ -104,13 +104,13 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
               take: pageEvent.pageSize,
             })];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        const objects = loaded.collections.Carriers as Carrier[];
+        const objects = loaded.collection<Carrier>(m.Carrier);
         this.table.total = loaded.values.Carriers_total;
         this.table.data = objects.map((v) => {
           return {

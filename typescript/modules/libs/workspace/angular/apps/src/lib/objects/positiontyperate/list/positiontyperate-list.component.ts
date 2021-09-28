@@ -122,14 +122,14 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.positionTypes = loaded.collections.PositionTypes as PositionType[];
-        const objects = loaded.collections.PositionTypeRates as PositionTypeRate[];
+        this.positionTypes = loaded.collection<PositionType>(m.PositionType);
+        const objects = loaded.collection<PositionTypeRate>(m.PositionTypeRate);
 
         this.table.total = loaded.values.PositionTypeRates_total;
         this.table.data = objects.map((v) => {

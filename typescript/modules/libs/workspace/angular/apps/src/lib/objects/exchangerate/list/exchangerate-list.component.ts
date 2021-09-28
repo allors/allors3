@@ -112,13 +112,13 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        const objects = loaded.collections.ExchangeRates as ExchangeRate[];
+        const objects = loaded.collection<ExchangeRate>(m.ExchangeRate);
         this.table.total = loaded.values.ExchangeRates_total;
         this.table.data = objects.map((v) => {
           return {

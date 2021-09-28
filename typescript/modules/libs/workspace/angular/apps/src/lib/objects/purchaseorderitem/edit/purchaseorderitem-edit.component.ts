@@ -84,7 +84,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.InvoiceItemType({
-              predicate: new Equals({ propertyType: m.InvoiceItemType.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.InvoiceItemType.IsActive, value: true },
               sorting: [{ roleType: m.InvoiceItemType.Name }]
             }),
             pull.IrpfRegime({
@@ -98,7 +98,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
           if (!isCreate) {
             pulls.push(
               pull.PurchaseOrderItem({
-                object: id,
+                objectId: id,
                 include:
                 {
                   InvoiceItemType: x,
@@ -117,7 +117,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
                 }
               }),
               pull.PurchaseOrderItem({
-                object: id,
+                objectId: id,
                 select: {
                   PurchaseOrderWherePurchaseOrderItem: {
                     include: {
@@ -149,23 +149,23 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
 
           this.unifiedGoodsFilter = Filters.unifiedGoodsFilter(m, this.metaService.tree);
 
-          return this.allors.context.load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(
               map((loaded) => ({ loaded, isCreate }))
             );
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === "ES";
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.orderItem = loaded.objects.PurchaseOrderItem as PurchaseOrderItem;
-        this.irpfRegimes = loaded.collections.IrpfRegimes as IrpfRegime[];
-        this.facilities = loaded.collections.Facilities as Facility[];
+        this.orderItem = loaded.object<PurchaseOrderItem>(m.PurchaseOrderItem);
+        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
+        this.facilities = loaded.collection<Facility>(m.Facility);
 
-        this.invoiceItemTypes = loaded.collections.InvoiceItemTypes as InvoiceItemType[];
+        this.invoiceItemTypes = loaded.collection<InvoiceItemType>(m.InvoiceItemType);
         this.partItemType = this.invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b');
         this.productItemType = this.invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === '0d07f778-2735-44cb-8354-fb887ada42ad');
         this.serviceItemType = this.invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === 'a4d2e6d0-c6c1-46ec-a1cf-3a64822e7a9e');
@@ -194,8 +194,8 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
 
         if (isCreate) {
           this.title = 'Add Purchase Order Item';
-          this.order = loaded.objects.PurchaseOrder as PurchaseOrder;
-          this.orderItem = this.allors.context.create('PurchaseOrderItem') as PurchaseOrderItem;
+          this.order = loaded.object<PurchaseOrder>(m.PurchaseOrder);
+          this.orderItem = this.allors.session.create<PurchaseOrderItem>(m.PurchaseOrderItem);
           this.selectedFacility = this.order.StoredInFacility;
           this.order.AddPurchaseOrderItem(this.orderItem);
           this.vatRegimeInitialRole = this.order.DerivedVatRegime;
@@ -210,7 +210,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
             this.updateFromPart(this.orderItem.Part);
           }
 
-          if (this.orderItem.CanWriteQuantityOrdered) {
+          if (this.orderItem.canWriteQuantityOrdered) {
             this.title = 'Edit Purchase Order Item';
           } else {
             this.title = 'View Purchase Order Item';
@@ -253,14 +253,14 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
     this.facilities.push(facility);
     this.selectedFacility = facility;
 
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
   }
 
   public save(): void {
 
     this.onSave();
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.orderItem.id,
@@ -276,7 +276,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
 
   private refreshSerialisedItems(product: Product): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.NonUnifiedGood({
@@ -310,7 +310,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
 
   private updateFromPart(part: Part) {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Part(
@@ -353,12 +353,12 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
         this.part = (loaded.objects.UnifiedGood || loaded.objects.Part) as Part;
         this.serialised = part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 
-        const supplierOfferings = loaded.collections.SupplierOfferings as SupplierOffering[];
+        const supplierOfferings = loaded.collection<SupplierOffering>(m.SupplierOffering);
         this.supplierOffering = supplierOfferings.find(v => isBefore(new Date(v.FromDate), new Date())
           && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date()))
           && v.Supplier === this.order.TakenViaSupplier);
 
-        this.serialisedItems = loaded.collections.SerialisedItems as SerialisedItem[];
+        this.serialisedItems = loaded.collection<SerialisedItem>(m.SerialisedItem);
 
         if (this.orderItem.SerialisedItem) {
           this.serialisedItems.push(this.orderItem.SerialisedItem);

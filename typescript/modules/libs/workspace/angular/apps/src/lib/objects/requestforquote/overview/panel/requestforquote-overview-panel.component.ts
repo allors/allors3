@@ -87,14 +87,14 @@ export class RequestForQuoteOverviewPanelComponent extends TestScope implements 
     const customerPullName = `${this.panel.name}_${this.m.RequestForQuote.name}_customer`;
 
     this.panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.SerialisedItem({
           name: assetPullName,
-          object: id,
+          objectId: id,
           select: {
             RequestItemsWhereSerialisedItem: {
               RequestWhereRequestItem: {
@@ -108,7 +108,7 @@ export class RequestForQuoteOverviewPanelComponent extends TestScope implements 
         }),
         pull.Party({
           name: customerPullName,
-          object: id,
+          objectId: id,
           select: {
             RequestsWhereOriginator: {
               include: {

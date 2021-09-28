@@ -120,30 +120,30 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.Currency({
-              predicate: new Equals({ propertyType: m.Currency.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
               sorting: [{ roleType: m.Currency.IsoCode }],
             }),
             pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
             pull.SalesInvoiceType({
-              predicate: new Equals({ propertyType: m.SalesInvoiceType.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.SalesInvoiceType.IsActive, value: true },
               sorting: [{ roleType: m.SalesInvoiceType.Name }],
             }),
           ];
 
           this.customersFilter = Filters.customersFilter(m, internalOrganisationId);
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === "ES";
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.salesInvoiceTypes = loaded.collections.SalesInvoiceTypes as SalesInvoiceType[];
-        this.currencies = loaded.collections.Currencies as Currency[];
-        this.irpfRegimes = loaded.collections.IrpfRegimes as IrpfRegime[];
+        this.salesInvoiceTypes = loaded.collection<SalesInvoiceType>(m.SalesInvoiceType);
+        this.currencies = loaded.collection<Currency>(m.Currency);
+        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
 
-        this.invoice = this.allors.context.create('SalesInvoice') as SalesInvoice;
+        this.invoice = this.allors.session.create<SalesInvoice>(m.SalesInvoice);
         this.invoice.BilledFrom = this.internalOrganisation;
         this.invoice.AdvancePayment = '0';
 
@@ -177,7 +177,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const data: IObject = {
         id: this.invoice.id,
         objectType: this.invoice.objectType,
@@ -189,7 +189,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
   }
 
   public shipToCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.context.create('CustomerRelationship') as CustomerRelationship;
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -197,7 +197,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
   }
 
   public billToCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.context.create('CustomerRelationship') as CustomerRelationship;
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -205,7 +205,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
   }
 
   public shipToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.context.create('CustomerRelationship') as CustomerRelationship;
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -213,7 +213,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
   }
 
   public billToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.context.create('CustomerRelationship') as CustomerRelationship;
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -313,7 +313,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
   }
 
   private updateShipToCustomer(party: Party): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -346,7 +346,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.previousShipToCustomer && this.invoice.ShipToCustomer !== this.previousShipToCustomer) {
         this.invoice.ShipToContactPerson = null;
       }
@@ -358,18 +358,18 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
         this.updateBillToCustomer(this.invoice.ShipToCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.shipToAddresses = partyContactMechanisms
         .filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress')
         .map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToContacts = loaded.collections.CurrentContacts as Person[];
+      this.shipToContacts = loaded.collection<Person>(m.Person);
       
       this.setDerivedInitialRoles();
     });
   }
 
   private updateBillToCustomer(party: Party) {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -402,7 +402,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.previousBillToCustomer && this.invoice.BillToCustomer !== this.previousBillToCustomer) {
         this.invoice.BillToContactPerson = null;
       }
@@ -414,16 +414,16 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
         this.updateShipToCustomer(this.invoice.ShipToCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.billToContacts = loaded.collections.CurrentContacts as Person[];
+      this.billToContacts = loaded.collection<Person>(m.Person);
       
       this.setDerivedInitialRoles();
     });
   }
 
   private updateBillToEndCustomer(party: Party) {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -456,7 +456,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.previousBillToEndCustomer && this.invoice.BillToEndCustomer !== this.previousBillToEndCustomer) {
         this.invoice.BillToEndCustomerContactPerson = null;
       }
@@ -467,16 +467,16 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
         this.updateShipToEndCustomer(this.invoice.ShipToEndCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.billToEndCustomerContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.billToEndCustomerContacts = loaded.collections.CurrentContacts as Person[];
+      this.billToEndCustomerContacts = loaded.collection<Person>(m.Person);
       
       this.setDerivedInitialRoles();
     });
   }
 
   private updateShipToEndCustomer(party: Party) {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -509,7 +509,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.previousShipToEndCustomer && this.invoice.ShipToEndCustomer !== this.previousShipToEndCustomer) {
         this.invoice.ShipToEndCustomerContactPerson = null;
       }
@@ -521,11 +521,11 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
         this.updateBillToEndCustomer(this.invoice.BillToEndCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.shipToEndCustomerAddresses = partyContactMechanisms
         .filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress')
         .map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToEndCustomerContacts = loaded.collections.CurrentContacts as Person[];
+      this.shipToEndCustomerContacts = loaded.collection<Person>(m.Person);
       
       this.setDerivedInitialRoles();
     });

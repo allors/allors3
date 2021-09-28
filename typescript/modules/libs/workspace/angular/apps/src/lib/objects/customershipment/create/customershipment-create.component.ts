@@ -94,39 +94,39 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
             pull.ShipmentMethod({ sorting: [{ roleType: m.ShipmentMethod.Name }] }),
             pull.Carrier({ sorting: [{ roleType: m.Carrier.Name }] }),
             pull.Organisation({
-              predicate: new Equals({ propertyType: m.Organisation.IsInternalOrganisation, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
               sorting: [{ roleType: m.Organisation.PartyName }],
             }),
           ];
 
           this.customersFilter = Filters.customersFilter(m, internalOrganisationId);
 
-          return this.allors.context.load(new PullRequest({ pulls })).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.locales = loaded.collections.AdditionalLocales as Locale[];
-        this.facilities = loaded.collections.Facilities as Facility[];
-        this.shipmentMethods = loaded.collections.ShipmentMethods as ShipmentMethod[];
-        this.carriers = loaded.collections.Carriers as Carrier[];
+        this.allors.session.reset();
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.locales = loaded.collection<Locale>(m.Locale);
+        this.facilities = loaded.collection<Facility>(m.Facility);
+        this.shipmentMethods = loaded.collection<ShipmentMethod>(m.ShipmentMethod);
+        this.carriers = loaded.collection<Carrier>(m.Carrier);
 
         if (isCreate) {
           this.title = 'Add Customer Shipment';
-          this.customerShipment = this.allors.context.create('CustomerShipment') as CustomerShipment;
+          this.customerShipment = this.allors.session.create<CustomerShipment>(m.CustomerShipment);
           this.customerShipment.ShipFromParty = this.internalOrganisation;
 
-          const shipmentPackage = this.allors.context.create('ShipmentPackage') as ShipmentPackage;
+          const shipmentPackage = this.allors.session.create<ShipmentPackage>(m.ShipmentPackage);
           this.customerShipment.AddShipmentPackage(shipmentPackage);
 
           if (this.facilities.length === 1) {
             this.customerShipment.ShipFromFacility = this.facilities[0];
           }
         } else {
-          this.customerShipment = loaded.objects.CustomerShipment as CustomerShipment;
+          this.customerShipment = loaded.object<CustomerShipment>(m.CustomerShipment);
 
-          if (this.customerShipment.CanWriteComment) {
+          if (this.customerShipment.canWriteComment) {
             this.title = 'Edit Customer Shipment';
           } else {
             this.title = 'View Customer Shipment';
@@ -152,7 +152,7 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const data: IObject = {
         id: this.customerShipment.id,
         objectType: this.customerShipment.objectType,
@@ -193,7 +193,7 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
   }
 
   private updateShipToParty(customer: Party): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -216,23 +216,23 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.customerShipment.ShipToParty !== this.previousShipToparty) {
         this.customerShipment.ShipToAddress = null;
         this.customerShipment.ShipToContactPerson = null;
         this.previousShipToparty = this.customerShipment.ShipToParty;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.shipToAddresses = partyContactMechanisms
         .filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress')
         .map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
-      this.shipToContacts = loaded.collections.CurrentContacts as Person[];
+      this.shipToContacts = loaded.collection<Person>(m.Person);
     });
   }
 
   private updateShipFromParty(organisation: Party): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -255,12 +255,12 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.shipFromAddresses = partyContactMechanisms
         .filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress')
         .map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
-      this.shipToContacts = loaded.collections.CurrentContacts as Person[];
+      this.shipToContacts = loaded.collection<Person>(m.Person);
     });
   }
 }

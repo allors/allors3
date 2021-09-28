@@ -107,13 +107,13 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
     const rentedSerialisedItemsName = `${this.panel.name}_${this.m.SerialisedItem.name}_RentedSerialisedItems`;
 
     this.panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.Part({
           name: partSerialisedItemsName,
-          object: id,
+          objectId: id,
           select: {
             SerialisedItems: {
               include: {
@@ -126,7 +126,7 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
           }
         }),
         pull.Party({
-          object: id,
+          objectId: id,
           name: ownedSerialisedItemsName,
           select: {
             SerialisedItemsWhereOwnedBy: {
@@ -140,7 +140,7 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
           }
         }),
         pull.Party({
-          object: id,
+          objectId: id,
           name: rentedSerialisedItemsName,
           select: {
             SerialisedItemsWhereRentedBy: {

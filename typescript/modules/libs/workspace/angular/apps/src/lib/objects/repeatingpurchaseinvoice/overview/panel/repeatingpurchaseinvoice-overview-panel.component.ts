@@ -89,14 +89,14 @@ export class RepeatingPurchaseInvoiceOverviewPanelComponent extends TestScope {
     const pullName = `${panel.name}_${this.m.RepeatingPurchaseInvoice.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.Organisation({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             RepeatingPurchaseInvoicesWhereSupplier: {
               include: {
@@ -111,7 +111,7 @@ export class RepeatingPurchaseInvoiceOverviewPanelComponent extends TestScope {
     };
 
     panel.onPulled = (loaded) => {
-      this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+      this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
       this.objects = loaded.collections[pullName] as RepeatingPurchaseInvoice[];
 

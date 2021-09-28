@@ -92,7 +92,7 @@ export class CustomerShipmentOverviewComponent extends TestScope implements Afte
 
         this.panelManager.onPulled(loaded);
 
-        this.shipment = loaded.objects.Shipment as CustomerShipment;
+        this.shipment = loaded.object<Shipment>(m.Shipment);
       });
   }
 

@@ -61,48 +61,48 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
 
           const pulls = [
             pull.CommunicationEvent({
-              object: id,
+              objectId: id,
               include: { CommunicationEventState: x }
             }),
             pull.WorkTask({
               object: roleId,
             }),
             pull.InternalOrganisation({
-              object: id,
+              objectId: id,
               include: { ActiveEmployees: x }
             }),
             pull.WorkEffortState({
               sorting: [{ roleType: m.WorkEffortState.Name }]
             }),
             pull.Priority({
-              predicate: new Equals({ propertyType: m.Priority.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Priority.IsActive, value: true },
               sorting: [{ roleType: m.Priority.Name }],
             }),
             pull.WorkEffortPurpose({
-              predicate: new Equals({ propertyType: m.WorkEffortPurpose.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.WorkEffortPurpose.IsActive, value: true },
               sorting: [{ roleType: m.WorkEffortPurpose.Name }],
             }),
             pull.WorkEffortPartyAssignment()
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
         this.subTitle = 'edit work task';
-        this.workTask = loaded.objects.Worktask as WorkTask;
-        const communicationEvent: CommunicationEvent = loaded.objects.CommunicationEvent as CommunicationEvent;
+        this.workTask = loaded.object<Worktask>(m.Worktask);
+        const communicationEvent: CommunicationEvent = loaded.object<CommunicationEvent>(m.CommunicationEvent);
 
         if (!this.workTask) {
           this.subTitle = 'add a new work task';
-          this.workTask = this.allors.context.create('WorkTask') as WorkTask;
+          this.workTask = this.allors.session.create<WorkTask>(m.WorkTask);
           communicationEvent.AddWorkEffort(this.workTask);
         }
 
-        this.workEffortStates = loaded.collections.WorkEffortStates as WorkEffortState[];
-        this.priorities = loaded.collections.Priorities as Priority[];
-        this.workEffortPurposes = loaded.collections.WorkEffortPurposes as WorkEffortPurpose[];
-        const internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        this.workEffortStates = loaded.collection<WorkEffortState>(m.WorkEffortState);
+        this.priorities = loaded.collection<Priority>(m.Priority);
+        this.workEffortPurposes = loaded.collection<WorkEffortPurpose>(m.WorkEffortPurpose);
+        const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
         this.employees = internalOrganisation.ActiveEmployees;
       });
   }
@@ -116,12 +116,12 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
   public save(): void {
 
     this.assignees.forEach((assignee: Person) => {
-      const workEffortPartyAssignment: WorkEffortPartyAssignment = this.allors.context.create('WorkEffortPartyAssignment') as WorkEffortPartyAssignment;
+      const workEffortPartyAssignment: WorkEffortPartyAssignment = this.allors.session.create<WorkEffortPartyAssignment>(m.WorkEffortPartyAssignment);
       workEffortPartyAssignment.Assignment = this.workTask;
       workEffortPartyAssignment.Party = assignee;
     });
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe((saved: Saved) => {
         this.goBack();
         this.refreshService.refresh();

@@ -130,7 +130,7 @@ export class SalesOrderOverviewSummaryComponent {
         }),
         pull.SerialisedInventoryItemState({
           name: serialisedInventoryItemStatePullName,
-          predicate: new Equals({ propertyType: m.SerialisedInventoryItemState.IsActive, value: true }),
+          predicate: { kind: 'Equals', propertyType: m.SerialisedInventoryItemState.IsActive, value: true },
           sorting: [{ roleType: m.SerialisedInventoryItemState.Name }]
         }),
       );

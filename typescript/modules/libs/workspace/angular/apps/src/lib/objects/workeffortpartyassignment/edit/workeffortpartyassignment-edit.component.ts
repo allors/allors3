@@ -71,7 +71,7 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
           if (!isCreate) {
             pulls.push(
               pull.WorkEffortPartyAssignment({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   Assignment: x,
                   Party: x,
@@ -92,18 +92,18 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
             ];
           }
 
-          return this.allors.context.load(new PullRequest({ pulls })).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
         if (isCreate) {
           this.title = 'Add Party Assignment';
 
-          this.workEffortPartyAssignment = this.allors.context.create('WorkEffortPartyAssignment') as WorkEffortPartyAssignment;
-          this.party = loaded.objects.Party as Party;
-          this.workEffort = loaded.objects.WorkEffort as WorkEffort;
+          this.workEffortPartyAssignment = this.allors.session.create<WorkEffortPartyAssignment>(m.WorkEffortPartyAssignment);
+          this.party = loaded.object<Party>(m.Party);
+          this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
 
           if (this.party !== undefined && this.party.objectType.name === m.Person.name) {
             this.person = this.party as Person;
@@ -115,13 +115,13 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
             this.workEffortPartyAssignment.Assignment = this.assignment;
           }
         } else {
-          this.workEffortPartyAssignment = loaded.objects.WorkEffortPartyAssignment as WorkEffortPartyAssignment;
+          this.workEffortPartyAssignment = loaded.object<WorkEffortPartyAssignment>(m.WorkEffortPartyAssignment);
           this.party = this.workEffortPartyAssignment.Party;
           this.workEffort = this.workEffortPartyAssignment.Assignment;
           this.person = this.workEffortPartyAssignment.Party as Person;
           this.assignment = this.workEffortPartyAssignment.Assignment;
 
-          if (this.workEffortPartyAssignment.CanWriteFromDate) {
+          if (this.workEffortPartyAssignment.canWriteFromDate) {
             this.title = 'Edit Party Assignment';
           } else {
             this.title = 'View Party Assignment';
@@ -129,7 +129,7 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
         }
 
         // TODO: Martien
-        const employments = loaded.collections.Employments as Employment[];
+        const employments = loaded.collection<Employment>(m.Employment);
         if (this.workEffort && this.workEffort.ScheduledStart) {
           this.employees = employments
             .filter(
@@ -150,7 +150,7 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const data: IObject = {
         id: this.workEffortPartyAssignment.id,
         objectType: this.workEffortPartyAssignment.objectType,

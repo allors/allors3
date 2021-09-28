@@ -57,7 +57,7 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
             pulls.push(
               pull.OrderAdjustment(
                 {
-                  object: this.data.id,
+                  objectId: this.data.id,
                 }),
               );
           }
@@ -70,17 +70,17 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
             );
           }
 
-          return this.allors.context.load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(
               map((loaded) => ({ loaded, create: isCreate, objectType, associationRoleType }))
             );
         })
       )
       .subscribe(({ loaded, create, objectType, associationRoleType }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
         this.container = loaded.objects.Quote || loaded.objects.Order || loaded.objects.Invoice;
-        this.object = loaded.objects.OrderAdjustment as OrderAdjustment;
+        this.object = loaded.object<OrderAdjustment>(m.OrderAdjustment);
 
         if (create) {
           this.title = `Add ${ objectType.name }`;
@@ -101,7 +101,7 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.object.id,

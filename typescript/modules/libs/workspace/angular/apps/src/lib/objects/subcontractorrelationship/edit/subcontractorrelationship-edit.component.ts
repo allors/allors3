@@ -54,7 +54,7 @@ export class SubContractorRelationshipEditComponent extends TestScope implements
 
   public ngOnInit(): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -69,7 +69,7 @@ export class SubContractorRelationshipEditComponent extends TestScope implements
           if (!isCreate) {
             pulls.push(
               pull.SubContractorRelationship({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   Contractor: x,
                   SubContractor: x,
@@ -96,10 +96,10 @@ export class SubContractorRelationshipEditComponent extends TestScope implements
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.organisation = loaded.objects.Organisation as Organisation;
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.organisation = loaded.object<Organisation>(m.Organisation);
 
         if (isCreate) {
 
@@ -109,14 +109,14 @@ export class SubContractorRelationshipEditComponent extends TestScope implements
 
           this.title = 'Add SubContractor Relationship';
 
-          this.partyRelationship = this.allors.context.create('SubContractorRelationship') as SubContractorRelationship;
+          this.partyRelationship = this.allors.session.create<SubContractorRelationship>(m.SubContractorRelationship);
           this.partyRelationship.FromDate = new Date().toISOString();
           this.partyRelationship.SubContractor = this.organisation;
           this.partyRelationship.Contractor = this.internalOrganisation;
         } else {
-          this.partyRelationship = loaded.objects.SubContractorRelationship as SubContractorRelationship;
+          this.partyRelationship = loaded.object<SubContractorRelationship>(m.SubContractorRelationship);
 
-          if (this.partyRelationship.CanWriteFromDate) {
+          if (this.partyRelationship.canWriteFromDate) {
             this.title = 'Edit SubContractor Relationship';
           } else {
             this.title = 'View SubContractor Relationship';
@@ -133,7 +133,7 @@ export class SubContractorRelationshipEditComponent extends TestScope implements
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.partyRelationship.id,

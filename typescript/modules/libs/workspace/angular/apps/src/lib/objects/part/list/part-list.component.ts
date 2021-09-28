@@ -123,14 +123,14 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
             pull.BasePrice(),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        const parts = loaded.collections.Parts as Part[];
-        this.goodIdentificationTypes = loaded.collections.ProductIdentificationTypes as ProductIdentificationType[];
+        const parts = loaded.collection<Part>(m.Part);
+        this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
         const partNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
 
         const partNumberByPart = parts.reduce((map, obj) => {

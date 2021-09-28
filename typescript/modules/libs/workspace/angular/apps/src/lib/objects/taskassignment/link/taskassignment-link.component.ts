@@ -62,15 +62,15 @@ export class TaskAssignmentLinkComponent implements OnInit, OnDestroy {
               object: this.userId.value
             })];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        const user = loaded.objects.Person as Person;
+        const user = loaded.object<Person>(m.Person);
 
-        const allTasks = loaded.collections.Tasks as Task[];
+        const allTasks = loaded.collection<Task>(m.Task);
         this.tasks = allTasks.filter(v => v.Participants.indexOf(user) > -1);
       });
   }

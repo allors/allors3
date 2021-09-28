@@ -30,7 +30,7 @@
             <div class="row">
               <a-mat-autocomplete class="col-md" [object]="request" [roleType]="m.Request.Originator" [filter]="customersFilter.create(allors.context)"
               display="displayName" (changed)="originatorSelected($event)" label="From"></a-mat-autocomplete>
-                <button mat-mini-fab color="accent" [disabled]="!request.CanWriteRequestItems"
+                <button mat-mini-fab color="accent" [disabled]="!request.canWriteRequestItems"
                 type="button" (click)="addOriginator = !addOriginator">
                 <mat-icon *ngIf="!addOriginator">add</mat-icon>
                 <mat-icon *ngIf="addOriginator">close</mat-icon>
@@ -53,7 +53,7 @@
             <div class="row">
               <a-mat-select class="col" [object]="request" [roleType]="m.Request.FullfillContactMechanism"
                 [options]="contactMechanisms" display="displayName" label="Reply to" class="col-md"></a-mat-select>
-              <button mat-mini-fab color="accent" [disabled]="!request.Originator || !request.CanWriteRequestItems"
+              <button mat-mini-fab color="accent" [disabled]="!request.Originator || !request.canWriteRequestItems"
                 type="button" (click)="addContactMechanism = !addContactMechanism">
                 <mat-icon *ngIf="!addContactMechanism">add</mat-icon>
                 <mat-icon *ngIf="addContactMechanism">close</mat-icon>
@@ -76,7 +76,7 @@
             <div class="row">
               <a-mat-select [disabled]="originatorIsPerson" [object]="request" [roleType]="m.Request.ContactPerson" [options]="contacts"
                 display="displayName" class="col-md"></a-mat-select>
-              <button mat-mini-fab color="accent" [disabled]="originatorIsPerson || !request.CanWriteRequestItems"
+              <button mat-mini-fab color="accent" [disabled]="originatorIsPerson || !request.canWriteRequestItems"
                 type="button" (click)="addContactPerson = !addContactPerson">
                 <mat-icon *ngIf="!addContactPerson">add</mat-icon>
                 <mat-icon *ngIf="addContactPerson">close</mat-icon>

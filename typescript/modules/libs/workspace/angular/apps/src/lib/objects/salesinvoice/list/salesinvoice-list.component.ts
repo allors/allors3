@@ -135,13 +135,13 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
                     salesinvoice.SalesInvoiceType.UniqueId === '92411bf1-835e-41f8-80af-6611efce5b32' ||
                     salesinvoice.SalesInvoiceType.UniqueId === 'ef5b7c52-e782-416d-b46f-89c8c7a5c24d'
                   ) {
-                    const paymentApplication = this.allors.context.create('PaymentApplication') as PaymentApplication;
+                    const paymentApplication = this.allors.session.create<PaymentApplication>(m.PaymentApplication);
                     paymentApplication.Invoice = salesinvoice;
                     paymentApplication.AmountApplied = amountToPay.toString();
 
                     // sales invoice
                     if (salesinvoice.SalesInvoiceType.UniqueId === '92411bf1-835e-41f8-80af-6611efce5b32') {
-                      const receipt = this.allors.context.create('Receipt') as Receipt;
+                      const receipt = this.allors.session.create<Receipt>(m.Receipt);
                       receipt.Amount = amountToPay.toString();
                       receipt.EffectiveDate = paymentDate;
                       receipt.Sender = salesinvoice.BilledFrom;
@@ -150,7 +150,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
 
                     // credit note
                     if (salesinvoice.SalesInvoiceType.UniqueId === 'ef5b7c52-e782-416d-b46f-89c8c7a5c24d') {
-                      const disbursement = this.allors.context.create('Disbursement') as Disbursement;
+                      const disbursement = this.allors.session.create<Disbursement>(m.Disbursement);
                       disbursement.Amount = amountToPay.toString();
                       disbursement.EffectiveDate = paymentDate;
                       disbursement.Sender = salesinvoice.BilledFrom;
@@ -159,7 +159,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
                   }
                 });
 
-                this.allors.context.save().subscribe(() => {
+                this.allors.client.pushReactive(this.allors.session).subscribe(() => {
                   snackBar.open('Successfully set to fully paid.', 'close', { duration: 5000 });
                   refreshService.refresh();
                 });
@@ -262,18 +262,18 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.user = loaded.objects.Person as Person;
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.user = loaded.object<Person>(m.Person);
 
         this.canCreate = this.internalOrganisation.CanExecuteCreateSalesInvoice;
 
-        const salesInvoices = loaded.collections.SalesInvoices as SalesInvoice[];
+        const salesInvoices = loaded.collection<SalesInvoice>(m.SalesInvoice);
         this.table.total = loaded.values.SalesInvoices_total;
         this.table.data = salesInvoices
           .filter((v) => v.CanReadInvoiceNumber)

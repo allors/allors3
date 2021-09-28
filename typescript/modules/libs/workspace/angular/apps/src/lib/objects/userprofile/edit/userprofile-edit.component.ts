@@ -60,7 +60,7 @@ export class UserProfileEditComponent extends TestScope implements OnInit, OnDes
               }
             }),
             pull.UserProfile({
-              object: this.data.id,
+              objectId: this.data.id,
               include: {
                 DefaultInternalOrganization: x,
                 DefaulLocale: x,
@@ -68,7 +68,7 @@ export class UserProfileEditComponent extends TestScope implements OnInit, OnDes
             }),
             pull.Organisation(
               {
-                predicate: new Equals({ propertyType: m.Organisation.IsInternalOrganisation, value: true }),
+                predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
                 sorting: [{ roleType: m.Organisation.PartyName }]
               }
             )
@@ -83,12 +83,12 @@ export class UserProfileEditComponent extends TestScope implements OnInit, OnDes
       )
       .subscribe(({ loaded }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.userProfile = loaded.objects.UserProfile as UserProfile;
-        this.internalOrganizations = loaded.collections.Organisations as Organisation[];
+        this.userProfile = loaded.object<UserProfile>(m.UserProfile);
+        this.internalOrganizations = loaded.collection<Organisation>(m.Organisation);
 
-        const singleton = loaded.objects.Singleton as Singleton;
+        const singleton = loaded.object<Singleton>(m.Singleton);
         this.supportedLocales = singleton.Locales;
 
         this.title = 'Edit User Profile';

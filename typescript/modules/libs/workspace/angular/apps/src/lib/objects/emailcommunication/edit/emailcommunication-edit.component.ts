@@ -81,7 +81,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
               }
             }),
             pull.CommunicationEventPurpose({
-              predicate: new Equals({ propertyType: m.CommunicationEventPurpose.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.CommunicationEventPurpose.IsActive, value: true },
               sorting: [{ roleType: m.CommunicationEventPurpose.Name }]
             }),
             pull.CommunicationEventState({
@@ -92,7 +92,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
           if (!isCreate) {
             pulls.push(
               pull.EmailCommunication({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   FromParty: {
                     CurrentPartyContactMechanisms: {
@@ -112,7 +112,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
                 }
               }),
               pull.CommunicationEvent({
-                object: this.data.id,
+                objectId: this.data.id,
                 select: {
                   InvolvedParties: x
                 }
@@ -162,27 +162,27 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.purposes = loaded.collections.CommunicationEventPurposes as CommunicationEventPurpose[];
-        this.eventStates = loaded.collections.CommunicationEventStates as CommunicationEventState[];
-        this.parties = loaded.collections.InvolvedParties as Party[];
+        this.purposes = loaded.collection<CommunicationEventPurpose>(m.CommunicationEventPurpose);
+        this.eventStates = loaded.collection<CommunicationEventState>(m.CommunicationEventState);
+        this.parties = loaded.collection<Party>(m.Party);
 
-        const internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
-        this.person = loaded.objects.Person as Person;
-        this.organisation = loaded.objects.Organisation as Organisation;
+        this.person = loaded.object<Person>(m.Person);
+        this.organisation = loaded.object<Organisation>(m.Organisation);
 
         if (isCreate) {
           this.title = 'Add Email';
-          this.communicationEvent = this.allors.context.create('EmailCommunication') as EmailCommunication;
-          this.emailTemplate = this.allors.context.create('EmailTemplate') as EmailTemplate;
+          this.communicationEvent = this.allors.session.create<EmailCommunication>(m.EmailCommunication);
+          this.emailTemplate = this.allors.session.create<EmailTemplate>(m.EmailTemplate);
           this.communicationEvent.EmailTemplate = this.emailTemplate;
 
           this.party = this.organisation || this.person;
 
         } else {
-          this.communicationEvent = loaded.objects.EmailCommunication as EmailCommunication;
+          this.communicationEvent = loaded.object<EmailCommunication>(m.EmailCommunication);
 
           if (this.communicationEvent.FromParty) {
             this.updateFromParty(this.communicationEvent.FromParty);
@@ -192,7 +192,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
             this.updateToParty(this.communicationEvent.ToParty);
           }
 
-          if (this.communicationEvent.CanWriteActualEnd) {
+          if (this.communicationEvent.canWriteActualEnd) {
             this.title = 'Edit Email';
           } else {
             this.title = 'View Email';
@@ -282,14 +282,14 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
 
   private addContactRelationship(party: Person): void {
     if (this.organisation) {
-      const relationShip: OrganisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+      const relationShip: OrganisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
       relationShip.Contact = party;
       relationShip.Organisation = this.organisation;
     }
   }
 
   private updateFromParty(party: Party): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -310,7 +310,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
       .load(new PullRequest({ pulls }))
       .subscribe((loaded) => {
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.PartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.fromEmails = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.EmailAddress).map((v) => v.ContactMechanism);
       });
   }
@@ -322,7 +322,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
   }
 
   private updateToParty(party: Party): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -343,14 +343,14 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
       .load(new PullRequest({ pulls }))
       .subscribe((loaded) => {
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.PartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.toEmails = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.EmailAddress).map((v) => v.ContactMechanism);
       });
   }
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.communicationEvent.id,

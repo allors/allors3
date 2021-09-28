@@ -110,7 +110,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
         this.fetcher.internalOrganisation,
         pull.Organisation({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             PurchaseOrdersWhereTakenViaSupplier: {
               include: {
@@ -127,7 +127,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
   };
 
     this.panel.onPulled = (loaded) => {
-      this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+      this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
       const purchaseOrders = loaded.collections[pullName] as PurchaseOrder[];
       this.objects = purchaseOrders.filter(v => v.OrderedBy === this.internalOrganisation);

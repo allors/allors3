@@ -36,7 +36,7 @@ export class UserProfileLinkComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = this.refreshService.refresh$
       .pipe(
@@ -52,13 +52,13 @@ export class UserProfileLinkComponent implements OnInit, OnDestroy {
               }
             })];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.user = loaded.objects.Person as Person;
+        this.user = loaded.object<Person>(m.Person);
       });
   }
 

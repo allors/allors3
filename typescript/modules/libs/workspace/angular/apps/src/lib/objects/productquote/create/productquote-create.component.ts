@@ -93,16 +93,16 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
       )
       .subscribe((loaded) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.quote = loaded.objects.ProductQuote as ProductQuote;
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        this.quote = loaded.object<ProductQuote>(m.ProductQuote);
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === "ES";
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.irpfRegimes = loaded.collections.IrpfRegimes as IrpfRegime[];
-        this.currencies = loaded.collections.Currencies as Currency[];
+        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
+        this.currencies = loaded.collection<Currency>(m.Currency);
 
-        this.quote = this.allors.context.create('ProductQuote') as ProductQuote;
+        this.quote = this.allors.session.create<ProductQuote>(m.ProductQuote);
         this.quote.Issuer = this.internalOrganisation;
         this.quote.IssueDate = new Date().toISOString();
         this.quote.ValidFromDate = new Date().toISOString();
@@ -121,7 +121,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
 
   public receiverAdded(party: Party): void {
 
-    const customerRelationship = this.allors.context.create('CustomerRelationship') as CustomerRelationship;
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -130,7 +130,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
 
   public personAdded(person: Person): void {
 
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.quote.Receiver as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -170,7 +170,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
 
   private update(party: Party) {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party(
@@ -214,11 +214,11 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
 
         this.previousReceiver = this.quote.Receiver;
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.contacts = loaded.collections.CurrentContacts as Person[];
+        this.contacts = loaded.collection<Person>(m.Person);
         
-        const selectedParty = loaded.objects.selectedParty as Person;
+        const selectedParty = loaded.object<selectedParty>(m.selectedParty);
         this.currencyInitialRole = selectedParty.PreferredCurrency ?? this.quote.Issuer.PreferredCurrency;
     });
   }

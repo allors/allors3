@@ -100,12 +100,12 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
-        const notifications = loaded.collections.UnconfirmedNotifications as Notification[];
+        this.allors.session.reset();
+        const notifications = loaded.collection<Notification>(m.Notification);
         this.table.total = loaded.values.Notifications_total;
         this.table.data = notifications.map((v) => {
           return {

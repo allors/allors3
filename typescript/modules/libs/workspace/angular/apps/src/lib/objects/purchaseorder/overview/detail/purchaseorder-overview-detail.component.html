@@ -37,7 +37,7 @@
                   <a-mat-autocomplete class="col-md" [object]="order" [roleType]="m.PurchaseOrder.TakenViaSupplier"
                     [filter]="suppliersFilter.create(allors.context)" display="displayName"
                     (changed)="supplierSelected($event)" label="Supplier"></a-mat-autocomplete>
-                  <button mat-mini-fab color="accent" [disabled]="!order.CanWriteTakenViaSupplier" type="button"
+                  <button mat-mini-fab color="accent" [disabled]="!order.canWriteTakenViaSupplier" type="button"
                     (click)="addSupplier = !addSupplier">
                     <mat-icon *ngIf="!addSupplier">add</mat-icon>
                     <mat-icon *ngIf="addSupplier">close</mat-icon>
@@ -63,7 +63,7 @@
                     [options]="takenViaContactMechanisms" display="displayName" label="Supplier contact mechanism">
                   </a-mat-select>
                   <button mat-mini-fab color="accent"
-                    [disabled]="!order.TakenViaSupplier || !order.CanWriteAssignedTakenViaContactMechanism" type="button"
+                    [disabled]="!order.TakenViaSupplier || !order.canWriteAssignedTakenViaContactMechanism" type="button"
                     (click)="addTakenViaContactMechanism = !addTakenViaContactMechanism">
                     <mat-icon *ngIf="!addTakenViaContactMechanism">add</mat-icon>
                     <mat-icon *ngIf="addTakenViaContactMechanism">close</mat-icon>
@@ -86,7 +86,7 @@
                   <a-mat-select class="col" [object]="order" [roleType]="m.PurchaseOrder.TakenViaContactPerson"
                     [options]="takenViaContacts" display="displayName" label="Supplier contact person"></a-mat-select>
                   <button mat-mini-fab color="accent"
-                    [disabled]="!order.TakenViaSupplier || !order.CanWriteTakenViaContactPerson" type="button"
+                    [disabled]="!order.TakenViaSupplier || !order.canWriteTakenViaContactPerson" type="button"
                     (click)="addTakenViaContactPerson = !addTakenViaContactPerson">
                     <mat-icon *ngIf="!addTakenViaContactPerson">add</mat-icon>
                     <mat-icon *ngIf="addTakenViaContactPerson">close</mat-icon>
@@ -110,7 +110,7 @@
                 <div class="row">
                   <a-mat-select class="col" [object]="order" [roleType]="m.PurchaseOrder.DerivedBillToContactMechanism" [assignedRoleType]="m.PurchaseOrder.AssignedBillToContactMechanism"
                     [options]="billToContactMechanisms" label="Bill to ContactMechanism" display="displayName" class="col-md"></a-mat-select>
-                  <button mat-mini-fab color="accent" [disabled]="!order.CanWriteAssignedBillToContactMechanism" type="button"
+                  <button mat-mini-fab color="accent" [disabled]="!order.canWriteAssignedBillToContactMechanism" type="button"
                     (click)="addBillToContactMechanism = !addBillToContactMechanism">
                     <mat-icon *ngIf="!addBillToContactMechanism">add</mat-icon>
                     <mat-icon *ngIf="addBillToContactMechanism">close</mat-icon>
@@ -134,7 +134,7 @@
                   <a-mat-select class="col" [object]="order" [roleType]="m.PurchaseOrder.BillToContactPerson"
                     [options]="billToContacts" display="displayName" label="Billing Contact Person" class="col-md">
                   </a-mat-select>
-                  <button mat-mini-fab color="accent" [disabled]="!order.CanWriteBillToContactPerson" type="button"
+                  <button mat-mini-fab color="accent" [disabled]="!order.canWriteBillToContactPerson" type="button"
                     (click)="addBillToContactPerson = !addBillToContactPerson">
                     <mat-icon *ngIf="!addBillToContactPerson">add</mat-icon>
                     <mat-icon *ngIf="addBillToContactPerson">close</mat-icon>
@@ -158,7 +158,7 @@
                 <div class="row">
                   <a-mat-select class="col" [object]="order" [roleType]="m.PurchaseOrder.DerivedShipToAddress" [assignedRoleType]="m.PurchaseOrder.AssignedShipToAddress"
                     [options]="shipToAddresses" label="Ship to Address" display="displayName" class="col-md"></a-mat-select>
-                  <button mat-mini-fab color="accent" [disabled]="!order.CanWriteAssignedShipToAddress" type="button"
+                  <button mat-mini-fab color="accent" [disabled]="!order.canWriteAssignedShipToAddress" type="button"
                     (click)="addShipToAddress = !addShipToAddress">
                     <mat-icon *ngIf="!addShipToAddress">add</mat-icon>
                     <mat-icon *ngIf="addShipToAddress">close</mat-icon>
@@ -180,7 +180,7 @@
                 <div class="row">
                   <a-mat-select class="col" [object]="order" [roleType]="m.PurchaseOrder.ShipToContactPerson"
                     [options]="shipToContacts" display="displayName" label="Shipping Contact Person"></a-mat-select>
-                  <button mat-mini-fab color="accent" [disabled]="!order.CanWriteShipToContactPerson" type="button"
+                  <button mat-mini-fab color="accent" [disabled]="!order.canWriteShipToContactPerson" type="button"
                     (click)="addShipToContactPerson = !addShipToContactPerson">
                     <mat-icon *ngIf="!addShipToContactPerson">add</mat-icon>
                     <mat-icon *ngIf="addShipToContactPerson">close</mat-icon>

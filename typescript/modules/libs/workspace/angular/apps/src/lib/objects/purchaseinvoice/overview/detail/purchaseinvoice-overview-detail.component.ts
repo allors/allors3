@@ -116,14 +116,14 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
     const purchaseInvoicePullName = `${panel.name}_${this.m.PurchaseInvoice.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const { id } = this.panel.manager;
 
       pulls.push(
         pull.PurchaseInvoice({
           name: purchaseInvoicePullName,
-          object: id,
+          objectId: id,
           include: {
             PurchaseInvoiceItems: {
               InvoiceItemType: x,
@@ -178,7 +178,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.PurchaseInvoice({
-              object: id,
+              objectId: id,
               include: {
                 BilledFrom: x,
                 BilledFromContactPerson: x,
@@ -197,11 +197,11 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
             }),
             pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
             pull.Currency({
-              predicate: new Equals({ propertyType: m.Currency.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
               sorting: [{ roleType: m.Currency.IsoCode }],
             }),
             pull.PurchaseInvoiceType({
-              predicate: new Equals({ propertyType: m.PurchaseInvoiceType.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.PurchaseInvoiceType.IsActive, value: true },
               sorting: [{ roleType: m.PurchaseInvoiceType.Name }],
             }),
           ];
@@ -210,20 +210,20 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
           this.employeeFilter = Filters.employeeFilter(m, this.internalOrganisationId.value);
           this.suppliersFilter = Filters.suppliersFilter(m, this.internalOrganisationId.value);
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === "ES";
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.irpfRegimes = loaded.collections.IrpfRegimes as IrpfRegime[];
-        this.currencies = loaded.collections.Currencies as Currency[];
-        this.purchaseInvoiceTypes = loaded.collections.PurchaseInvoiceTypes as PurchaseInvoiceType[];
+        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
+        this.currencies = loaded.collection<Currency>(m.Currency);
+        this.purchaseInvoiceTypes = loaded.collection<PurchaseInvoiceType>(m.PurchaseInvoiceType);
 
-        this.invoice = loaded.objects.PurchaseInvoice as PurchaseInvoice;
+        this.invoice = loaded.object<PurchaseInvoice>(m.PurchaseInvoice);
 
         if (this.invoice.BilledFrom) {
           this.updateBilledFrom(this.invoice.BilledFrom);
@@ -255,14 +255,14 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
     }, this.saveService.errorHandler);
   }
 
   public billedFromAdded(organisation: Organisation): void {
-    const supplierRelationship = this.allors.context.create('SupplierRelationship') as SupplierRelationship;
+    const supplierRelationship = this.allors.session.create<SupplierRelationship>(m.SupplierRelationship);
     supplierRelationship.Supplier = organisation;
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -270,7 +270,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   }
 
   public shipToCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.context.create('CustomerRelationship') as CustomerRelationship;
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -278,7 +278,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   }
 
   public billToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.context.create('CustomerRelationship') as CustomerRelationship;
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -286,7 +286,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   }
 
   public shipToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.context.create('CustomerRelationship') as CustomerRelationship;
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -408,28 +408,28 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
         },
       }),
       pull.PurchaseOrder({
-        predicate: new Equals({ propertyType: m.PurchaseOrder.TakenViaSupplier, object: party }),
+        predicate: { kind: 'Equals', propertyType: m.PurchaseOrder.TakenViaSupplier, object: party },
         sorting: [{ roleType: m.PurchaseOrder.OrderNumber }],
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.invoice.BilledFrom !== this.previousBilledFrom) {
         this.invoice.AssignedBilledFromContactMechanism = null;
         this.invoice.BilledFromContactPerson = null;
         this.previousBilledFrom = this.invoice.BilledFrom;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.billedFromContactMechanisms = partyContactMechanisms
         .filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress')
         .map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.billedFromContacts = loaded.collections.CurrentContacts as Person[];
+      this.billedFromContacts = loaded.collection<Person>(m.Person);
     });
   }
 
   private updateShipToCustomer(party: Party) {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -458,21 +458,21 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.invoice.ShipToCustomer !== this.previousShipToCustomer) {
         this.invoice.AssignedShipToEndCustomerAddress = null;
         this.invoice.ShipToCustomerContactPerson = null;
         this.previousShipToCustomer = this.invoice.ShipToCustomer;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.shipToCustomerAddresses = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToCustomerContacts = loaded.collections.CurrentContacts as Person[];
+      this.shipToCustomerContacts = loaded.collection<Person>(m.Person);
     });
   }
 
   private updateBillToEndCustomer(party: Party) {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -495,7 +495,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.invoice.BillToEndCustomer !== this.previousBillToEndCustomer) {
         this.invoice.AssignedBillToEndCustomerContactMechanism = null;
         this.invoice.BillToEndCustomerContactPerson = null;
@@ -507,16 +507,16 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
         this.updateShipToEndCustomer(this.invoice.ShipToEndCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.billToEndCustomerContactMechanisms = partyContactMechanisms
         .filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress')
         .map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.billToEndCustomerContacts = loaded.collections.CurrentContacts as Person[];
+      this.billToEndCustomerContacts = loaded.collection<Person>(m.Person);
     });
   }
 
   private updateShipToEndCustomer(party: Party) {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -539,7 +539,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.invoice.ShipToEndCustomer !== this.previousShipToEndCustomer) {
         this.invoice.AssignedShipToEndCustomerAddress = null;
         this.invoice.ShipToEndCustomerContactPerson = null;
@@ -551,11 +551,11 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
         this.updateBillToEndCustomer(this.invoice.BillToEndCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.shipToEndCustomerAddresses = partyContactMechanisms
         .filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress')
         .map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToEndCustomerContacts = loaded.collections.CurrentContacts as Person[];
+      this.shipToEndCustomerContacts = loaded.collection<Person>(m.Person);
     });
   }
 }

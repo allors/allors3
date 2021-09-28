@@ -87,14 +87,14 @@ export class SalesOrderOverviewPanelComponent extends TestScope implements OnIni
     const customerPullName = `${this.panel.name}_${this.m.SalesOrder.name}_customer`;
 
     this.panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.SerialisedItem({
           name: assetPullName,
-          object: id,
+          objectId: id,
           select: {
             SalesOrderItemsWhereSerialisedItem: {
               SalesOrderWhereSalesOrderItem: {
@@ -108,7 +108,7 @@ export class SalesOrderOverviewPanelComponent extends TestScope implements OnIni
         }),
         pull.Party({
           name: customerPullName,
-          object: id,
+          objectId: id,
           select: {
             SalesOrdersWhereBillToCustomer: {
               include: {

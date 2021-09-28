@@ -58,7 +58,7 @@ export class CarrierEditComponent extends TestScope implements OnInit, OnDestroy
           if (!isCreate) {
             pulls.push(
               pull.Carrier({
-                object: this.data.id,
+                objectId: this.data.id,
               }),
             );
           }
@@ -72,17 +72,17 @@ export class CarrierEditComponent extends TestScope implements OnInit, OnDestroy
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.characteristics = loaded.collections.SerialisedItemCharacteristicTypes as SerialisedItemCharacteristicType[];
+        this.characteristics = loaded.collection<SerialisedItemCharacteristicType>(m.SerialisedItemCharacteristicType);
 
         if (isCreate) {
           this.title = 'Add Carrier';
-          this.carrier = this.allors.context.create('Carrier') as Carrier;
+          this.carrier = this.allors.session.create<Carrier>(m.Carrier);
         } else {
-          this.carrier = loaded.objects.Carrier as Carrier;
+          this.carrier = loaded.object<Carrier>(m.Carrier);
 
-          if (this.carrier.CanWriteName) {
+          if (this.carrier.canWriteName) {
             this.title = 'Edit Carrier';
           } else {
             this.title = 'View Carrier';

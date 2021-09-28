@@ -70,7 +70,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
               sorting: [{ roleType: m.SerialisedItem.Name }]
             }),
             pull.AssetAssignmentStatus({
-              predicate: new Equals({ propertyType: m.AssetAssignmentStatus.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.AssetAssignmentStatus.IsActive, value: true },
               sorting: [{ roleType: m.AssetAssignmentStatus.Name }]
             }),
           ];
@@ -78,7 +78,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
           if (!isCreate) {
             pulls.push(
               pull.WorkEffortFixedAssetAssignment({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   Assignment: x,
                   FixedAsset: x,
@@ -107,12 +107,12 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.workEffort = loaded.objects.WorkEffort as WorkEffort;
-        this.workEfforts = loaded.collections.WorkEfforts as WorkEffort[];
-        this.serialisedItem = loaded.objects.SerialisedItem as SerialisedItem;
-        this.assetAssignmentStatuses = loaded.collections.AssetAssignmentStatuses as Enumeration[];
+        this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
+        this.workEfforts = loaded.collection<WorkEffort>(m.WorkEffort);
+        this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
+        this.assetAssignmentStatuses = loaded.collection<Enumeration>(m.Enumeration);
 
         if (this.serialisedItem === undefined) {
           const b2bCustomer = this.workEffort.Customer as Organisation;
@@ -126,7 +126,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
         if (isCreate) {
           this.title = 'Add Asset Assignment';
 
-          this.workEffortFixedAssetAssignment = this.allors.context.create('WorkEffortFixedAssetAssignment') as WorkEffortFixedAssetAssignment;
+          this.workEffortFixedAssetAssignment = this.allors.session.create<WorkEffortFixedAssetAssignment>(m.WorkEffortFixedAssetAssignment);
 
           if (this.serialisedItem !== undefined) {
             this.workEffortFixedAssetAssignment.FixedAsset = this.serialisedItem;
@@ -138,9 +138,9 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
           }
 
         } else {
-          this.workEffortFixedAssetAssignment = loaded.objects.WorkEffortFixedAssetAssignment as WorkEffortFixedAssetAssignment;
+          this.workEffortFixedAssetAssignment = loaded.object<WorkEffortFixedAssetAssignment>(m.WorkEffortFixedAssetAssignment);
 
-          if (this.workEffortFixedAssetAssignment.CanWriteFromDate) {
+          if (this.workEffortFixedAssetAssignment.canWriteFromDate) {
             this.title = 'Edit Asset Assignment';
           } else {
             this.title = 'View Asset Assignment';
@@ -157,7 +157,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.workEffortFixedAssetAssignment.id,
@@ -173,7 +173,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
 
   private updateSerialisedItems(customer: Party) {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party(
@@ -190,7 +190,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
       .load(new PullRequest({ pulls }))
       .subscribe((loaded) => {
 
-        this.serialisedItems = loaded.collections.SerialisedItems as SerialisedItem[];
+        this.serialisedItems = loaded.collection<SerialisedItem>(m.SerialisedItem);
       });
   }
 }

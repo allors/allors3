@@ -155,8 +155,8 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
 
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
-        this.goods = loaded.collections.Goods as Good[];
-        this.invoice = loaded.objects.SalesInvoice as SalesInvoice;
+        this.goods = loaded.collection<Good>(m.Good);
+        this.invoice = loaded.object<SalesInvoice>(m.SalesInvoice);
       }
     };
   }
@@ -179,7 +179,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.SalesInvoice({
-              object: id,
+              objectId: id,
               include: {
                 BillToCustomer: x,
                 DerivedBillToContactMechanism: x,
@@ -201,11 +201,11 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
             pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
             pull.VatClause({ sorting: [{ roleType: m.VatClause.Name }] }),
             pull.Currency({
-              predicate: new Equals({ propertyType: m.Currency.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
               sorting: [{ roleType: m.Currency.IsoCode }]
             }),
             pull.Organisation({
-              predicate: new Equals({ propertyType: m.Organisation.IsInternalOrganisation, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
               sort: [
                 new Sort(m.Organisation.PartyName),
               ],
@@ -219,16 +219,16 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === "ES";
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.irpfRegimes = loaded.collections.IrpfRegimes as IrpfRegime[];
-        this.vatClauses = loaded.collections.VatClauses as VatClause[];
-        this.currencies = loaded.collections.Currencies as Currency[];
+        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
+        this.vatClauses = loaded.collection<VatClause>(m.VatClause);
+        this.currencies = loaded.collection<Currency>(m.Currency);
 
-        this.invoice = loaded.objects.SalesInvoice as SalesInvoice;
+        this.invoice = loaded.object<SalesInvoice>(m.SalesInvoice);
 
         if (this.invoice.BillToCustomer) {
           this.previousBillToCustomer = this.invoice.BillToCustomer;
@@ -272,7 +272,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
 
   public shipToCustomerAdded(party: Party): void {
 
-    const customerRelationship = this.allors.context.create('CustomerRelationship') as CustomerRelationship;
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -281,7 +281,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
 
   public billToCustomerAdded(party: Party): void {
 
-    const customerRelationship = this.allors.context.create('CustomerRelationship') as CustomerRelationship;
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -290,7 +290,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
 
   public shipToEndCustomerAdded(party: Party): void {
 
-    const customerRelationship = this.allors.context.create('CustomerRelationship') as CustomerRelationship;
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -299,7 +299,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
 
   public billToEndCustomerAdded(party: Party): void {
 
-    const customerRelationship = this.allors.context.create('CustomerRelationship') as CustomerRelationship;
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -308,7 +308,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
 
   public billToContactPersonAdded(person: Person): void {
 
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.invoice.BillToCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -318,7 +318,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
 
   public billToEndCustomerContactPersonAdded(person: Person): void {
 
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.invoice.BillToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -328,7 +328,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
 
   public shipToContactPersonAdded(person: Person): void {
 
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.invoice.ShipToCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -338,7 +338,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
 
   public shipToEndCustomerContactPersonAdded(person: Person): void {
 
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.invoice.ShipToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -400,7 +400,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
 
   private updateBillToCustomer(party: Party) {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party(
@@ -446,14 +446,14 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
           this.updateShipToCustomer(this.invoice.ShipToCustomer);
         }
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.billToContacts = loaded.collections.currentContacts as Person[];
+        this.billToContacts = loaded.collection<Person>(m.Person);
       });
   }
 
   private updateShipToCustomer(party: Party): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party(
@@ -499,15 +499,15 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
           this.updateBillToCustomer(this.invoice.ShipToCustomer);
         }
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.shipToContacts = loaded.collections.currentContacts as Person[];
+        this.shipToContacts = loaded.collection<Person>(m.Person);
       });
   }
 
   private updateBillToEndCustomer(party: Party) {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party(
@@ -547,15 +547,15 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
           this.updateShipToEndCustomer(this.invoice.ShipToEndCustomer);
         }
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.billToEndCustomerContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.billToEndCustomerContacts = loaded.collections.currentContacts as Person[];
+        this.billToEndCustomerContacts = loaded.collection<Person>(m.Person);
       });
   }
 
   private updateShipToEndCustomer(party: Party) {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party(
@@ -595,9 +595,9 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
           this.updateBillToEndCustomer(this.invoice.BillToEndCustomer);
         }
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.shipToEndCustomerAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.shipToEndCustomerContacts = loaded.collections.currentContacts as Person[];
+        this.shipToEndCustomerContacts = loaded.collection<Person>(m.Person);
       });
   }
 }

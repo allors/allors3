@@ -127,14 +127,14 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        const organisations = loaded.collections.Organisations as Organisation[];
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        const organisations = loaded.collection<Organisation>(m.Organisation);
 
         this.table.total = loaded.values.Organisations_total;
         this.table.data = organisations.map((v) => {

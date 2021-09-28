@@ -40,7 +40,7 @@ export class ReceiptEditComponent extends TestScope implements OnInit, OnDestroy
   }
 
   public ngOnInit(): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
@@ -53,7 +53,7 @@ export class ReceiptEditComponent extends TestScope implements OnInit, OnDestroy
           if (!isCreate) {
             pulls.push(
               pull.Receipt({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   PaymentApplications: x,
                 },
@@ -69,26 +69,26 @@ export class ReceiptEditComponent extends TestScope implements OnInit, OnDestroy
             );
           }
 
-          return this.allors.context.load(new PullRequest({ pulls })).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.invoice = loaded.objects.Invoice as Invoice;
+        this.invoice = loaded.object<Invoice>(m.Invoice);
 
         if (isCreate) {
           this.title = 'Add Receipt';
-          this.paymentApplication = this.allors.context.create('PaymentApplication') as PaymentApplication;
+          this.paymentApplication = this.allors.session.create<PaymentApplication>(m.PaymentApplication);
           this.paymentApplication.Invoice = this.invoice;
 
-          this.receipt = this.allors.context.create('Receipt') as Receipt;
+          this.receipt = this.allors.session.create<Receipt>(m.Receipt);
           this.receipt.AddPaymentApplication(this.paymentApplication);
         } else {
-          this.receipt = loaded.objects.Receipt as Receipt;
+          this.receipt = loaded.object<Receipt>(m.Receipt);
           this.paymentApplication = this.receipt.PaymentApplications[0];
 
-          if (this.receipt.CanWriteAmount) {
+          if (this.receipt.canWriteAmount) {
             this.title = 'Edit Receipt';
           } else {
             this.title = 'View Receipt';
@@ -106,7 +106,7 @@ export class ReceiptEditComponent extends TestScope implements OnInit, OnDestroy
   public save(): void {
     this.paymentApplication.AmountApplied = this.receipt.Amount;
 
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const data: IObject = {
         id: this.receipt.id,
         objectType: this.receipt.objectType,

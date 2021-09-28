@@ -95,7 +95,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
         pulls.push(
           pull.Part({
             name: pullName,
-            object: id,
+            objectId: id,
           })
         );
       }
@@ -126,7 +126,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
             this.fetcher.Settings,
             this.fetcher.warehouses,
             pull.Part({
-              object: id,
+              objectId: id,
               include: {
                 PrimaryPhoto: x,
                 Photos: x,
@@ -164,7 +164,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
               },
             }),
             pull.Part({
-              object: id,
+              objectId: id,
               select: {
                 PriceComponentsWherePart: x,
               },
@@ -182,40 +182,40 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
               sorting: [{ roleType: m.Brand.Name }],
             }),
             pull.Organisation({
-              predicate: new Equals({ propertyType: m.Organisation.IsManufacturer, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Organisation.IsManufacturer, value: true },
             }),
             pull.NonUnifiedPart({
               name: 'OriginalCategories',
-              object: id,
+              objectId: id,
               select: { PartCategoriesWherePart: x },
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.part = loaded.objects.Part as Part;
-        this.originalCategories = loaded.collections.OriginalCategories as PartCategory[];
+        this.part = loaded.object<Part>(m.Part);
+        this.originalCategories = loaded.collection<PartCategory>(m.PartCategory);
         this.selectedCategories = this.originalCategories;
 
         this.suppliers = this.part.SuppliedBy.map((w) => w.PartyName).join(', ');
-        this.inventoryItemKinds = loaded.collections.InventoryItemKinds as InventoryItemKind[];
-        this.productTypes = loaded.collections.ProductTypes as ProductType[];
-        this.brands = loaded.collections.Brands as Brand[];
-        this.locales = loaded.collections.AdditionalLocales as Locale[];
-        this.facilities = loaded.collections.Facilities as Facility[];
-        this.unitsOfMeasure = loaded.collections.UnitsOfMeasure as UnitOfMeasure[];
-        this.manufacturers = loaded.collections.Organisations as Organisation[];
-        this.categories = loaded.collections.PartCategories as PartCategory[];
-        this.settings = loaded.objects.Settings as Settings;
+        this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
+        this.productTypes = loaded.collection<ProductType>(m.ProductType);
+        this.brands = loaded.collection<Brand>(m.Brand);
+        this.locales = loaded.collection<Locale>(m.Locale);
+        this.facilities = loaded.collection<Facility>(m.Facility);
+        this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
+        this.manufacturers = loaded.collection<Organisation>(m.Organisation);
+        this.categories = loaded.collection<PartCategory>(m.PartCategory);
+        this.settings = loaded.object<Settings>(m.Settings);
 
-        this.goodIdentificationTypes = loaded.collections.ProductIdentificationTypes as ProductIdentificationType[];
+        this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
         const partNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
 
-        this.manufacturers = loaded.collections.Organisations as Organisation[];
+        this.manufacturers = loaded.collection<Organisation>(m.Organisation);
 
         this.partNumber = this.part.ProductIdentifications.find((v) => v.ProductIdentificationType === partNumberType);
 
@@ -235,7 +235,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
   }
 
   public setDirty(): void {
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
   }
 
   public brandAdded(brand: Brand): void {
@@ -243,7 +243,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
     this.selectedBrand = brand;
     this.models = [];
     this.selectedModel = undefined;
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
     this.setDirty();
   }
 
@@ -251,12 +251,12 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
     this.selectedBrand.AddModel(model);
     this.models = this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
     this.selectedModel = model;
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
     this.setDirty();
   }
 
   public brandSelected(brand: Brand): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Brand({
@@ -267,7 +267,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe(() => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe(() => {
       this.models = this.selectedBrand?.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
     });
 
@@ -277,7 +277,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
   public save(): void {
     this.onSave();
 
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.panel.toggle();
     }, this.saveService.errorHandler);
   }

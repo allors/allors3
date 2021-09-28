@@ -64,7 +64,7 @@ export class EmailAddressCreateComponent extends TestScope implements OnInit, On
               object: this.data.associationId,
             }),
             pull.ContactMechanismPurpose({
-              predicate: new Equals({ propertyType: m.ContactMechanismPurpose.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.ContactMechanismPurpose.IsActive, value: true },
               sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }]
             })
           ];
@@ -75,14 +75,14 @@ export class EmailAddressCreateComponent extends TestScope implements OnInit, On
       )
       .subscribe((loaded) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.party = loaded.objects.Party as Party;
-        this.contactMechanismPurposes = loaded.collections.ContactMechanismPurposes as Enumeration[];
+        this.party = loaded.object<Party>(m.Party);
+        this.contactMechanismPurposes = loaded.collection<Enumeration>(m.Enumeration);
 
-        this.contactMechanism = this.allors.context.create('EmailAddress') as ElectronicAddress;
+        this.contactMechanism = this.allors.session.create<EmailAddress>(m.EmailAddress);
 
-        this.partyContactMechanism = this.allors.context.create('PartyContactMechanism') as PartyContactMechanism;
+        this.partyContactMechanism = this.allors.session.create<PartyContactMechanism>(m.PartyContactMechanism);
         this.partyContactMechanism.UseAsDefault = true;
         this.partyContactMechanism.ContactMechanism = this.contactMechanism;
 
@@ -98,7 +98,7 @@ export class EmailAddressCreateComponent extends TestScope implements OnInit, On
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.contactMechanism.id,

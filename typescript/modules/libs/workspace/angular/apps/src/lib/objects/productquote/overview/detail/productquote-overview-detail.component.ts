@@ -70,7 +70,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {
-        const { pullBuilder: pull } = this.m; const x = {};
+        const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
         pulls.push(
           pull.ProductQuote(
@@ -108,8 +108,8 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
 
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
-        this.productQuote = loaded.objects.ProductQuote as ProductQuote;
-        this.salesOrder = loaded.objects.SalesOrder as SalesOrder;
+        this.productQuote = loaded.object<ProductQuote>(m.ProductQuote);
+        this.salesOrder = loaded.object<SalesOrder>(m.SalesOrder);
       }
     };
   }
@@ -134,7 +134,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
             pull.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
             pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
             pull.ProductQuote({
-              object: id,
+              objectId: id,
               include: {
                 AssignedCurrency: x,
                 DerivedCurrency: x,
@@ -155,14 +155,14 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === "ES";
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.irpfRegimes = loaded.collections.IrpfRegimes as IrpfRegime[];
-        this.productQuote = loaded.objects.ProductQuote as ProductQuote;
-        this.currencies = loaded.collections.Currencies as Currency[];
+        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
+        this.productQuote = loaded.object<ProductQuote>(m.ProductQuote);
+        this.currencies = loaded.collection<Currency>(m.Currency);
 
         if (this.productQuote.Receiver) {
           this.previousReceiver = this.productQuote.Receiver;
@@ -192,7 +192,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
 
   public personAdded(person: Person): void {
 
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.productQuote.Receiver as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -215,7 +215,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
 
   public receiverAdded(party: Party): void {
 
-    const customerRelationship = this.allors.context.create('CustomerRelationship') as CustomerRelationship;
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -224,7 +224,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
 
   private update(party: Party) {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party(
@@ -260,9 +260,9 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
           this.previousReceiver = this.productQuote.Receiver;
         }
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.contacts = loaded.collections.CurrentContacts as Person[];
+        this.contacts = loaded.collection<Person>(m.Person);
 
       });
   }

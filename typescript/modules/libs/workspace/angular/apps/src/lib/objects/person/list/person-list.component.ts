@@ -107,12 +107,12 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
-        const people = loaded.collections.People as Person[];
+        this.allors.session.reset();
+        const people = loaded.collection<Person>(m.Person);
         this.table.total = loaded.values.People_total;
         this.table.data = people.map((v) => {
           return {

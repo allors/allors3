@@ -55,13 +55,13 @@ export class SalesOrderTransferEditComponent extends TestScope implements OnInit
           const pulls = [
             pull.SalesTerm(
               {
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   TermType: x,
                 }
               }),
             pull.TermType({
-              predicate: new Equals({ propertyType: m.TermType.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.TermType.IsActive, value: true },
               sort: [
                 new Sort(m.TermType.Name),
               ],
@@ -72,7 +72,7 @@ export class SalesOrderTransferEditComponent extends TestScope implements OnInit
             pulls.push(
               pull.SalesTerm(
                 {
-                  object: this.data.id,
+                  objectId: this.data.id,
                   include: {
                     TermType: x,
                   }
@@ -87,18 +87,18 @@ export class SalesOrderTransferEditComponent extends TestScope implements OnInit
             );
           }
 
-          return this.allors.context.load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(
               map((loaded) => ({ loaded, create: isCreate, objectType, associationRoleType }))
             );
         })
       )
       .subscribe(({ loaded, create, objectType, associationRoleType }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
         this.container = loaded.objects.SalesInvoice || loaded.objects.SalesOrder;
-        this.object = loaded.objects.SalesTerm as SalesTerm;
-        this.termTypes = loaded.collections.TermTypes as TermType[];
+        this.object = loaded.object<SalesTerm>(m.SalesTerm);
+        this.termTypes = loaded.collection<TermType>(m.TermType);
         this.termTypes = this.termTypes.filter(v => v.objectType.name === `${objectType.name}Type`);
 
         if (create) {
@@ -118,7 +118,7 @@ export class SalesOrderTransferEditComponent extends TestScope implements OnInit
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.object.id,

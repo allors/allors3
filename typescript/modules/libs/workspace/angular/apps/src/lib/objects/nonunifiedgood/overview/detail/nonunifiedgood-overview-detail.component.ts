@@ -91,7 +91,7 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
         pulls.push(
           pull.NonUnifiedGood({
             name: pullName,
-            object: id,
+            objectId: id,
             include: {
               ProductIdentifications: {
                 ProductIdentificationType: x,
@@ -133,7 +133,7 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
             pull.ProductIdentificationType(),
             pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] }),
             pull.NonUnifiedGood({
-              object: id,
+              objectId: id,
               include: {
                 Part: {
                   Brand: x,
@@ -162,11 +162,11 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
             }),
             pull.NonUnifiedGood({
               name: 'OriginalCategories',
-              object: id,
+              objectId: id,
               select: { ProductCategoriesWhereProduct: x },
             }),
             pull.NonUnifiedGood({
-              object: id,
+              objectId: id,
               select: {
                 ProductFeatureApplicabilitiesWhereAvailableFor: {
                   include: {
@@ -183,20 +183,20 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
 
           this.nonUnifiedPartsFilter = Filters.nonUnifiedPartsFilter(m);
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.good = loaded.objects.NonUnifiedGood as NonUnifiedGood;
-        this.originalCategories = loaded.collections.OriginalCategories as ProductCategory[];
+        this.good = loaded.object<NonUnifiedGood>(m.NonUnifiedGood);
+        this.originalCategories = loaded.collection<ProductCategory>(m.ProductCategory);
         this.selectedCategories = this.originalCategories;
 
-        this.categories = loaded.collections.ProductCategories as ProductCategory[];
-        this.goodIdentificationTypes = loaded.collections.ProductIdentificationTypes as ProductIdentificationType[];
-        this.locales = loaded.collections.AdditionalLocales as Locale[];
-        this.productFeatureApplicabilities = loaded.collections.ProductFeatureApplicabilities as ProductFeatureApplicability[];
+        this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
+        this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
+        this.locales = loaded.collection<Locale>(m.Locale);
+        this.productFeatureApplicabilities = loaded.collection<ProductFeatureApplicability>(m.ProductFeatureApplicability);
         this.productDimensions = this.productFeatureApplicabilities
           .map((v) => v.ProductFeature)
           .filter((v) => v.objectType.name === this.m.ProductDimension.name) as ProductDimension[];
@@ -227,13 +227,13 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
       category.RemoveProduct(this.good);
     });
 
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
     }, this.saveService.errorHandler);
   }
 
   public setDirty(): void {
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
   }
 }

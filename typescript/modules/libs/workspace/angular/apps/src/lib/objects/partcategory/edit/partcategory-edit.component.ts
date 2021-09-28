@@ -64,7 +64,7 @@ export class PartCategoryEditComponent extends TestScope implements OnInit, OnDe
             pulls.push(
               pull.PartCategory(
                 {
-                  object: this.data.id,
+                  objectId: this.data.id,
                   include: {
                     Children: x,
                     LocalisedNames: {
@@ -79,7 +79,7 @@ export class PartCategoryEditComponent extends TestScope implements OnInit, OnDe
             );
           }
 
-          return this.allors.context.load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(
               map((loaded) => ({ loaded, isCreate }))
             );
@@ -87,17 +87,17 @@ export class PartCategoryEditComponent extends TestScope implements OnInit, OnDe
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.category = loaded.objects.PartCategory as PartCategory;
-        this.categories = loaded.collections.PartCategories as PartCategory[];
-        this.locales = loaded.collections.AdditionalLocales as Locale[];
+        this.category = loaded.object<PartCategory>(m.PartCategory);
+        this.categories = loaded.collection<PartCategory>(m.PartCategory);
+        this.locales = loaded.collection<Locale>(m.Locale);
 
         if (isCreate) {
           this.title = 'Add Part Category';
-          this.category = this.allors.context.create('PartCategory') as PartCategory;
+          this.category = this.allors.session.create<PartCategory>(m.PartCategory);
         } else {
-          if (this.category.CanWriteName) {
+          if (this.category.canWriteName) {
             this.title = 'Edit Part Category';
           } else {
             this.title = 'View Part Category';

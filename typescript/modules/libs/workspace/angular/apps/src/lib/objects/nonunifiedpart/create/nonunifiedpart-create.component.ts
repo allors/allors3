@@ -116,7 +116,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
               sorting: [{ roleType: m.Brand.Name }]
             }),
             pull.Organisation({
-              predicate: new Equals({ propertyType: m.Organisation.IsManufacturer, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Organisation.IsManufacturer, value: true },
             }),
           ];
 
@@ -126,37 +126,37 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
       )
       .subscribe((loaded) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
         const now = new Date().toISOString();
 
-        this.inventoryItemKinds = loaded.collections.InventoryItemKinds as InventoryItemKind[];
-        this.productTypes = loaded.collections.ProductTypes as ProductType[];
-        this.brands = loaded.collections.Brands as Brand[];
-        this.locales = loaded.collections.AdditionalLocales as Locale[];
-        this.facilities = loaded.collections.Facilities as Facility[];
-        this.manufacturers = loaded.collections.Organisations as Organisation[];
-        this.categories = loaded.collections.PartCategories as PartCategory[];
-        this.settings = loaded.objects.Settings as Settings;
+        this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
+        this.productTypes = loaded.collection<ProductType>(m.ProductType);
+        this.brands = loaded.collection<Brand>(m.Brand);
+        this.locales = loaded.collection<Locale>(m.Locale);
+        this.facilities = loaded.collection<Facility>(m.Facility);
+        this.manufacturers = loaded.collection<Organisation>(m.Organisation);
+        this.categories = loaded.collection<PartCategory>(m.PartCategory);
+        this.settings = loaded.object<Settings>(m.Settings);
 
-        const supplierRelationships = loaded.collections.SupplierRelationships as SupplierRelationship[];
+        const supplierRelationships = loaded.collection<SupplierRelationship>(m.SupplierRelationship);
         const currentsupplierRelationships = supplierRelationships.filter(v => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
         this.currentSuppliers = new Set(currentsupplierRelationships.map(v => v.Supplier).sort((a, b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0)));
 
-        this.unitsOfMeasure = loaded.collections.UnitsOfMeasure as UnitOfMeasure[];
+        this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
         const piece = this.unitsOfMeasure.find((v) => v.UniqueId === 'f4bbdb52-3441-4768-92d4-729c6c5d6f1b');
 
-        this.goodIdentificationTypes = loaded.collections.ProductIdentificationTypes as ProductIdentificationType[];
+        this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
         const partNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
 
-        this.manufacturers = loaded.collections.Organisations as Organisation[];
+        this.manufacturers = loaded.collection<Organisation>(m.Organisation);
 
-        this.part = this.allors.context.create('NonUnifiedPart') as NonUnifiedPart;
+        this.part = this.allors.session.create<NonUnifiedPart>(m.NonUnifiedPart);
         this.part.DefaultFacility = this.settings.DefaultFacility;
         this.part.UnitOfMeasure = piece;
 
         if (!this.settings.UsePartNumberCounter) {
-          this.partNumber = this.allors.context.create('PartNumber') as PartNumber;
+          this.partNumber = this.allors.session.create<PartNumber>(m.PartNumber);
           this.partNumber.ProductIdentificationType = partNumberType;
 
           this.part.AddProductIdentification(this.partNumber);
@@ -179,7 +179,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
 
   public brandSelected(brand: Brand): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Brand({
@@ -248,7 +248,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
 
     if (this.selectedSuppliers !== undefined) {
       this.selectedSuppliers.forEach((supplier: Organisation) => {
-        const supplierOffering = this.allors.context.create('SupplierOffering') as SupplierOffering;
+        const supplierOffering = this.allors.session.create<SupplierOffering>(m.SupplierOffering);
         supplierOffering.Supplier = supplier;
         supplierOffering.Part = this.part;
         supplierOffering.UnitOfMeasure = this.part.UnitOfMeasure;

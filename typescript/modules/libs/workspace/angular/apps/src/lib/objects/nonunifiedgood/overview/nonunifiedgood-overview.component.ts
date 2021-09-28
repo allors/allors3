@@ -78,7 +78,7 @@ export class NonUnifiedGoodOverviewComponent extends TestScope implements AfterV
         this.panelManager.context.session.reset();
         this.panelManager.onPulled(loaded);
 
-        this.good = loaded.objects.NonUnifiedGood as Good;
+        this.good = loaded.object<NonUnifiedGood>(m.NonUnifiedGood);
       });
   }
 

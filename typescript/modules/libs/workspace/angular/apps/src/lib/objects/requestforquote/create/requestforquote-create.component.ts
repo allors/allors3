@@ -85,12 +85,12 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
       )
       .subscribe((loaded) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.currencies = loaded.collections.Currencies as Currency[];
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.currencies = loaded.collection<Currency>(m.Currency);
 
-        this.request = this.allors.context.create('RequestForQuote') as RequestForQuote;
+        this.request = this.allors.session.create<RequestForQuote>(m.RequestForQuote);
         this.request.Recipient = this.internalOrganisation;
         this.request.RequestDate = new Date().toISOString();
 
@@ -132,7 +132,7 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
 
   public originatorAdded(party: Party): void {
 
-    const customerRelationship = this.allors.context.create('CustomerRelationship') as CustomerRelationship;
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -148,7 +148,7 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
 
   public personAdded(person: Person): void {
 
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.request.Originator as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -158,7 +158,7 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
 
   private updateOriginator(party: Party) {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -191,9 +191,9 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
           this.previousOriginator = this.request.Originator;
         }
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.contacts = loaded.collections.CurrentContacts as Person[];
+        this.contacts = loaded.collection<Person>(m.Person);
       });
   }
 }

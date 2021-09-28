@@ -95,14 +95,14 @@ export class PurchaseInvoiceItemOverviewPanelComponent extends TestScope {
     const invoicePullName = `${panel.name}_${this.m.PurchaseInvoice.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.PurchaseInvoice({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             PurchaseInvoiceItems: {
               include: {
@@ -115,7 +115,7 @@ export class PurchaseInvoiceItemOverviewPanelComponent extends TestScope {
         }),
         pull.PurchaseInvoice({
           name: invoicePullName,
-          object: id
+          objectId: id
         }),
       );
     };

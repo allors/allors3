@@ -61,7 +61,7 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
 
   ngOnInit() {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     this.panel.name = 'serialised Inventory item';
     this.panel.title = 'Serialised Inventory items';
@@ -105,7 +105,7 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
       pulls.push(
         pull.Part({
           name: inventoryPullName,
-          object: id,
+          objectId: id,
           select: {
             InventoryItemsWherePart: {
               include: {
@@ -118,7 +118,7 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
         }),
         pull.SerialisedItem({
           name: serialiseditemPullName,
-          object: id,
+          objectId: id,
           select: {
             SerialisedInventoryItemsWhereSerialisedItem: {
               include: {
@@ -131,7 +131,7 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
           },
         }),
         pull.SerialisedItem({
-          object: id,
+          objectId: id,
           include: {
             PartWhereSerialisedItem: x
           }
@@ -140,7 +140,7 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
 
       this.panel.onPulled = (loaded) => {
 
-        this.serialisedItem = loaded.objects.SerialisedItem as SerialisedItem;
+        this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
         const inventoryObjects = loaded.collections[inventoryPullName] as SerialisedInventoryItem[] ?? [];
 
         const serialisedItemobjects = loaded.collections[serialiseditemPullName] as SerialisedInventoryItem[] ?? [];

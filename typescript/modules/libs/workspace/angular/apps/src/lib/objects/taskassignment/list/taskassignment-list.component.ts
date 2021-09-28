@@ -118,12 +118,12 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
-        const taskAssignments = loaded.collections.TaskAssignments as TaskAssignment[];
+        this.allors.session.reset();
+        const taskAssignments = loaded.collection<TaskAssignment>(m.TaskAssignment);
         this.table.total = loaded.values.TaskAssignments_total;
         this.table.data = taskAssignments.map((v) => {
           return {

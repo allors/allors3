@@ -46,15 +46,15 @@ export class FacilityInlineComponent implements OnInit, OnDestroy {
       })
     ];
 
-    this.allors.context.load(new PullRequest({ pulls }))
+    this.allors.client.pullReactive(this.allors.session, pulls)
       .subscribe((loaded) => {
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.facilities = loaded.collections.Facilities as Facility[];
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.facilities = loaded.collection<Facility>(m.Facility);
 
-        this.facilityTypes = loaded.collections.FacilityTypes as FacilityType[];
+        this.facilityTypes = loaded.collection<FacilityType>(m.FacilityType);
         const storageLocation = this.facilityTypes.find((v) => v.UniqueId === 'ff66c1ad-3048-48fd-a7d9-fbf97a090edd');
 
-        this.facility = this.allors.context.create('Facility') as Facility;
+        this.facility = this.allors.session.create<Facility>(m.Facility);
         this.facility.Owner = this.internalOrganisation;
         this.facility.FacilityType = storageLocation;
       });
@@ -62,7 +62,7 @@ export class FacilityInlineComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     if (!!this.facility) {
-      this.allors.context.delete(this.facility);
+      this.allors.client.invokeReactive(this.allors.session, this.facility.Delete);
     }
   }
 

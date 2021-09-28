@@ -96,13 +96,13 @@ export class PartyRateOverviewPanelComponent extends TestScope implements OnInit
 
     this.panel.onPull = (pulls) => {
 
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.Party({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             PartyRates: {
               include: {

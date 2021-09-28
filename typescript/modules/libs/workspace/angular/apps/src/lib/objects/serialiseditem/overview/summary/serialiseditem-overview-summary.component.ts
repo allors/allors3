@@ -36,14 +36,14 @@ export class SerialisedItemOverviewSummaryComponent {
     const partPullName = `${panel.name}_${this.m.Part.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.SerialisedItem({
           name: serialisedItemPullName,
-          object: id,
+          objectId: id,
           include: {
             SerialisedItemState: x,
             OwnedBy: x,
@@ -52,13 +52,13 @@ export class SerialisedItemOverviewSummaryComponent {
         }),
         pull.SerialisedItem({
           name: partPullName,
-          object: id,
+          objectId: id,
           select: {
             PartWhereSerialisedItem: x
           }
         }),
         pull.SerialisedItem({
-          object: id,
+          objectId: id,
           select: {
             RequestItemsWhereSerialisedItem: {
               RequestWhereRequestItem: x
@@ -66,7 +66,7 @@ export class SerialisedItemOverviewSummaryComponent {
           }
         }),
         pull.SerialisedItem({
-          object: id,
+          objectId: id,
           select: {
             QuoteItemsWhereSerialisedItem: {
               QuoteWhereQuoteItem: x
@@ -74,7 +74,7 @@ export class SerialisedItemOverviewSummaryComponent {
           }
         }),
         pull.SerialisedItem({
-          object: id,
+          objectId: id,
           select: {
             SalesOrderItemsWhereSerialisedItem: {
               SalesOrderWhereSalesOrderItem: x
@@ -82,7 +82,7 @@ export class SerialisedItemOverviewSummaryComponent {
           }
         }),
         pull.SerialisedItem({
-          object: id,
+          objectId: id,
           select: {
             ShipmentItemsWhereSerialisedItem: {
               ShipmentWhereShipmentItem: x
@@ -90,7 +90,7 @@ export class SerialisedItemOverviewSummaryComponent {
           }
         }),
         pull.SerialisedItem({
-          object: id,
+          objectId: id,
           select: {
             SalesInvoiceItemsWhereSerialisedItem: {
               SalesInvoiceWhereSalesInvoiceItem: x
@@ -104,27 +104,27 @@ export class SerialisedItemOverviewSummaryComponent {
       this.serialisedItem = loaded.objects[serialisedItemPullName] as SerialisedItem;
       this.part = loaded.objects[partPullName] as Part;
 
-      const requests = loaded.collections.Requests as RequestForQuote[] || [];
+      const requests = loaded.collection<RequestForQuote>(m.RequestForQuote) || [];
       if (requests.length > 0) {
         this.request = requests.reduce(function (a, b) { return a.RequestDate > b.RequestDate ? a : b; });
       }
 
-      const quotes = loaded.collections.Quotes as ProductQuote[] || [];
+      const quotes = loaded.collection<ProductQuote>(m.ProductQuote) || [];
       if (quotes.length > 0) {
         this.quote = quotes.reduce(function (a, b) { return a.IssueDate > b.IssueDate ? a : b; });
       }
 
-      const orders = loaded.collections.SalesOrders as SalesOrder[] || [];
+      const orders = loaded.collection<SalesOrder>(m.SalesOrder) || [];
       if (orders.length > 0) {
         this.order = orders.reduce(function (a, b) { return a.OrderDate > b.OrderDate ? a : b; });
       }
 
-      const shipments = loaded.collections.Shipments as CustomerShipment[] || [];
+      const shipments = loaded.collection<CustomerShipment>(m.CustomerShipment) || [];
       if (shipments.length > 0) {
         this.shipment = shipments.reduce(function (a, b) { return a.EstimatedShipDate > b.EstimatedShipDate ? a : b; });
       }
 
-      const invoices = loaded.collections.SalesInvoices as SalesInvoice[] || [];
+      const invoices = loaded.collection<SalesInvoice>(m.SalesInvoice) || [];
       if (invoices.length > 0) {
         this.invoice = invoices.reduce(function (a, b) { return a.InvoiceDate > b.InvoiceDate ? a : b; });
       }

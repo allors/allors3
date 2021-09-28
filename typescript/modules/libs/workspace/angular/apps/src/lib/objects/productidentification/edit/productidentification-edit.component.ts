@@ -55,7 +55,7 @@ export class ProductIdentificationEditComponent extends TestScope implements OnI
 
           const pulls = [
             pull.ProductIdentificationType({
-              predicate: new Equals({ propertyType: m.ProductIdentificationType.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.ProductIdentificationType.IsActive, value: true },
               sort: [
                 new Sort(m.ProductIdentificationType.Name),
               ],
@@ -66,7 +66,7 @@ export class ProductIdentificationEditComponent extends TestScope implements OnI
             pulls.push(
               pull.ProductIdentification(
                 {
-                  object: this.data.id,
+                  objectId: this.data.id,
                   include: {
                     ProductIdentificationType: x,
                   }
@@ -81,18 +81,18 @@ export class ProductIdentificationEditComponent extends TestScope implements OnI
             );
           }
 
-          return this.allors.context.load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(
               map((loaded) => ({ loaded, create: isCreate, objectType, associationRoleType }))
             );
         })
       )
       .subscribe(({ loaded, create, objectType, associationRoleType }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
         this.container = loaded.objects.Good || loaded.objects.Part;
-        this.object = loaded.objects.ProductIdentification as ProductIdentification;
-        this.productIdentificationTypes = loaded.collections.ProductIdentificationTypes as ProductIdentificationType[];
+        this.object = loaded.object<ProductIdentification>(m.ProductIdentification);
+        this.productIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
 
         if (create) {
           this.title = 'Add Identification';
@@ -111,7 +111,7 @@ export class ProductIdentificationEditComponent extends TestScope implements OnI
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.object.id,

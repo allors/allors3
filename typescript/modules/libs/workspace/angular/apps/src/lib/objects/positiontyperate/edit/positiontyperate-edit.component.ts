@@ -48,7 +48,7 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
 
   public ngOnInit(): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
@@ -70,7 +70,7 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
           if (!isCreate) {
             pulls.push(
               pull.PositionTypeRate({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   RateType: x,
                   Frequency: x
@@ -88,27 +88,27 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.rateTypes = loaded.collections.RateTypes as RateType[];
-        this.timeFrequencies = loaded.collections.TimeFrequencies as TimeFrequency[];
+        this.rateTypes = loaded.collection<RateType>(m.RateType);
+        this.timeFrequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
         const hour = this.timeFrequencies.find((v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5');
 
         if (isCreate) {
           this.title = 'Add Position Type Rate';
-          this.positionTypeRate = this.allors.context.create('PositionTypeRate') as PositionTypeRate;
+          this.positionTypeRate = this.allors.session.create<PositionTypeRate>(m.PositionTypeRate);
           this.positionTypeRate.Frequency = hour;
         } else {
-          this.positionTypeRate = loaded.objects.PositionTypeRate as PositionTypeRate;
+          this.positionTypeRate = loaded.object<PositionTypeRate>(m.PositionTypeRate);
 
-          if (this.positionTypeRate.CanWriteRate) {
+          if (this.positionTypeRate.canWriteRate) {
             this.title = 'Edit Position Type Rate';
           } else {
             this.title = 'View Position Type Rate';
           }
         }
 
-        this.positionTypes = loaded.collections.PositionTypes as PositionType[];
+        this.positionTypes = loaded.collection<PositionType>(m.PositionType);
         this.selectedPositionTypes = this.positionTypes.filter(v => v.PositionTypeRate === this.positionTypeRate);
         this.originalPositionTypes = this.selectedPositionTypes;
 
@@ -122,7 +122,7 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
   }
 
   public setDirty(): void {
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
   }
 
   public save(): void {

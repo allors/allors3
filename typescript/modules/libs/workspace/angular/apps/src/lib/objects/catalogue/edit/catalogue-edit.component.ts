@@ -50,7 +50,7 @@ export class CatalogueEditComponent extends TestScope implements OnInit, OnDestr
 
   public ngOnInit(): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
@@ -68,7 +68,7 @@ export class CatalogueEditComponent extends TestScope implements OnInit, OnDestr
           if (!isCreate) {
             pulls.push(
               pull.Catalogue({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   CatalogueImage: x,
                   LocalisedNames: {
@@ -82,7 +82,7 @@ export class CatalogueEditComponent extends TestScope implements OnInit, OnDestr
             );
           }
 
-          return this.allors.context.load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(
               map((loaded) => ({ loaded, create: isCreate }))
             );
@@ -90,20 +90,20 @@ export class CatalogueEditComponent extends TestScope implements OnInit, OnDestr
       )
       .subscribe(({ loaded, create }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.catalogue = loaded.objects.Catalogue as Catalogue;
-        this.locales = loaded.collections.AdditionalLocales as Locale[];
-        this.categories = loaded.collections.ProductCategories as ProductCategory[];
-        this.scopes = loaded.collections.Scopes as Scope[];
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        this.catalogue = loaded.object<Catalogue>(m.Catalogue);
+        this.locales = loaded.collection<Locale>(m.Locale);
+        this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
+        this.scopes = loaded.collection<Scope>(m.Scope);
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
         if (create) {
           this.title = 'Add Catalogue';
-          this.catalogue = this.allors.context.create('Catalogue') as Catalogue;
+          this.catalogue = this.allors.session.create<Catalogue>(m.Catalogue);
           this.catalogue.InternalOrganisation = this.internalOrganisation;
         } else {
-          if (this.catalogue.CanWriteCatScope) {
+          if (this.catalogue.canWriteCatScope) {
             this.title = 'Edit Catalogue';
           } else {
             this.title = 'View Catalogue';
@@ -120,7 +120,7 @@ export class CatalogueEditComponent extends TestScope implements OnInit, OnDestr
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.catalogue.id,

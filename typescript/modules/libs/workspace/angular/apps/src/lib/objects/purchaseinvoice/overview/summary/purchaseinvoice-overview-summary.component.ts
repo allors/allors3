@@ -55,7 +55,7 @@ export class PurchasInvoiceOverviewSummaryComponent {
       pulls.push(
         pull.PurchaseInvoice({
           name: purchaseInvoicePullName,
-          object: id,
+          objectId: id,
           include: {
             PurchaseInvoiceItems: {
               InvoiceItemType: x,
@@ -83,7 +83,7 @@ export class PurchasInvoiceOverviewSummaryComponent {
         }),
         pull.PurchaseInvoice({
           name: purchaseOrderPullName,
-          object: id,
+          objectId: id,
           select: {
             PurchaseOrders: x,
           },

@@ -99,13 +99,13 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
 
     this.panel.onPull = (pulls) => {
 
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.WorkEffort({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             WorkEffortAssignmentRatesWhereWorkEffort: {
               include: {
@@ -119,13 +119,13 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
           }
         }),
         pull.WorkEffort({
-          object: id,
+          objectId: id,
         }),
       );
     };
 
     this.panel.onPulled = (loaded) => {
-      this.workEffort = loaded.objects.WorkEffort as WorkEffort;
+      this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
       this.objects = loaded.collections[pullName] as WorkEffortAssignmentRate[];
 
       if (this.objects) {

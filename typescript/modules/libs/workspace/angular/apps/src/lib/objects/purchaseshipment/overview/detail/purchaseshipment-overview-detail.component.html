@@ -35,7 +35,7 @@
             <div class="row">
               <a-mat-select class="col" [disabled]="shipFromCustomerIsPerson" [object]="purchaseShipment" [roleType]="m.PurchaseShipment.ShipFromContactPerson" [options]="shipFromContacts"
                             display="displayName" label="Supplier contact person"></a-mat-select>
-              <button mat-mini-fab color="accent" [disabled]="!purchaseShipment.ShipFromParty || !purchaseShipment.CanWriteShipFromContactPerson || shipFromCustomerIsPerson"
+              <button mat-mini-fab color="accent" [disabled]="!purchaseShipment.ShipFromParty || !purchaseShipment.canWriteShipFromContactPerson || shipFromCustomerIsPerson"
                       type="button" (click)="addShipFromContactPerson = !addShipFromContactPerson">
                 <mat-icon *ngIf="!addShipFromContactPerson">add</mat-icon>
                 <mat-icon *ngIf="addShipFromContactPerson">close</mat-icon>
@@ -57,7 +57,7 @@
           <div class="col-md">
             <div class="row">
               <a-mat-select class="col" [object]="purchaseShipment" [roleType]="m.PurchaseShipment.ShipToAddress" [options]="shipToAddresses" display="displayName"></a-mat-select>
-              <button mat-mini-fab color="accent" [disabled]="!purchaseShipment.ShipToParty || !purchaseShipment.CanWriteShipToAddress"
+              <button mat-mini-fab color="accent" [disabled]="!purchaseShipment.ShipToParty || !purchaseShipment.canWriteShipToAddress"
                       type="button" (click)="addShipToAddress = !addShipToAddress">
                 <mat-icon *ngIf="!addShipToAddress">add</mat-icon>
                 <mat-icon *ngIf="addShipToAddress">close</mat-icon>

@@ -90,7 +90,7 @@ export class CommunicationEventOverviewPanelComponent extends TestScope implemen
       pulls.push(
         pull.Party({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             CommunicationEventsWhereInvolvedParty: {
               include: {

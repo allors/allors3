@@ -113,14 +113,14 @@ export class SalesOrderItemOverviewPanelComponent extends TestScope {
     const orderPullName = `${panel.name}_${this.m.SalesOrder.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.SalesOrder({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             SalesOrderItems: {
               include: {
@@ -134,7 +134,7 @@ export class SalesOrderItemOverviewPanelComponent extends TestScope {
         }),
         pull.SalesOrder({
           name: orderPullName,
-          object: id,
+          objectId: id,
         }),
       );
     };

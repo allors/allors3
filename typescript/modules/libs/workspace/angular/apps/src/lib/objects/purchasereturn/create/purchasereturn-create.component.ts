@@ -75,7 +75,7 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
             this.fetcher.internalOrganisation,
             this.fetcher.ownWarehouses,
             pull.Organisation({
-              predicate: new Equals({ propertyType: m.Organisation.IsInternalOrganisation, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
               sorting: [{ roleType: m.Organisation.PartyName }],
             })
           ];
@@ -88,10 +88,10 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
       )
       .subscribe((loaded) => {
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.facilities = loaded.collections.Facilities as Facility[];
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.facilities = loaded.collection<Facility>(m.Facility);
 
-        this.purchaseReturn = this.allors.context.create('PurchaseReturn') as PurchaseReturn;
+        this.purchaseReturn = this.allors.session.create<PurchaseReturn>(m.PurchaseReturn);
         this.purchaseReturn.ShipFromParty = this.internalOrganisation;
 
         if (this.facilities.length > 0) {
@@ -134,7 +134,7 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
 
   public shipToContactPersonAdded(person: Person): void {
 
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.purchaseReturn.ShipToParty as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -157,7 +157,7 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
 
   private updateShipToParty(supplier: Party): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party(
@@ -186,15 +186,15 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
       .load(new PullRequest({ pulls }))
       .subscribe((loaded) => {
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
-        this.shipToContacts = loaded.collections.CurrentContacts as Person[];
+        this.shipToContacts = loaded.collection<Person>(m.Person);
       });
   }
 
   private updateShipFromParty(organisation: Party): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party(
@@ -223,9 +223,9 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
       .load(new PullRequest({ pulls }))
       .subscribe((loaded) => {
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
-        this.shipToContacts = loaded.collections.CurrentContacts as Person[];
+        this.shipToContacts = loaded.collection<Person>(m.Person);
       });
   }
 }

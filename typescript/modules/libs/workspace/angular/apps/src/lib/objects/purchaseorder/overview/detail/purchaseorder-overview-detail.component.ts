@@ -116,7 +116,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.PurchaseOrder({
-              object: id,
+              objectId: id,
               include: {
                 OrderedBy: x,
                 StoredInFacility: x,
@@ -142,7 +142,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
             pull.IrpfRegime(),
             pull.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
             pull.Currency({
-              predicate: new Equals({ propertyType: m.Currency.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
               sorting: [{ roleType: m.Currency.IsoCode }]
             }),
           ];
@@ -154,15 +154,15 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.order = loaded.objects.PurchaseOrder as PurchaseOrder;
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        this.order = loaded.object<PurchaseOrder>(m.PurchaseOrder);
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === "ES";
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.irpfRegimes = loaded.collections.IrpfRegimes as IrpfRegime[];
-        this.facilities  = loaded.collections.Facilities as Facility[];
-        this.currencies = loaded.collections.Currencies as Currency[];
+        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
+        this.facilities  = loaded.collection<Facility>(m.Facility);
+        this.currencies = loaded.collection<Currency>(m.Currency);
 
         if (this.order.TakenViaSupplier) {
           this.takenVia = this.order.TakenViaSupplier;
@@ -200,12 +200,12 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
     this.facilities.push(facility);
     this.order.StoredInFacility = facility;
 
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
   }
 
   public supplierAdded(organisation: Organisation): void {
 
-    const supplierRelationship = this.allors.context.create('SupplierRelationship') as SupplierRelationship;
+    const supplierRelationship = this.allors.session.create<SupplierRelationship>(m.SupplierRelationship);
     supplierRelationship.Supplier = organisation;
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -215,7 +215,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
 
   public takenViaContactPersonAdded(person: Person): void {
 
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.takenVia as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -232,7 +232,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
 
   public billToContactPersonAdded(person: Person): void {
 
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -249,7 +249,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
 
   public shipToContactPersonAdded(person: Person): void {
 
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -270,7 +270,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
 
   private updateSupplier(supplier: Party): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party(
@@ -305,15 +305,15 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
           this.previousSupplier = this.order.TakenViaSupplier;
         }
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.takenViaContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.takenViaContacts = loaded.collections.CurrentContacts as Person[];
+        this.takenViaContacts = loaded.collection<Person>(m.Person);
       });
   }
 
   private updateOrderedBy(organisation: Party): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party(
@@ -342,10 +342,10 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
       .load(new PullRequest({ pulls }))
       .subscribe((loaded) => {
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
         this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.billToContacts = loaded.collections.CurrentContacts as Person[];
+        this.billToContacts = loaded.collection<Person>(m.Person);
         this.shipToContacts = this.billToContacts;
       });
   }

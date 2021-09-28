@@ -96,13 +96,13 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
 
     this.panel.onPull = (pulls) => {
 
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.Party({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             PartyRelationshipsWhereParty: {
               include: {
@@ -113,7 +113,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
         }),
         pull.Party({
           name: active,
-          object: id,
+          objectId: id,
           select: {
             CurrentPartyRelationships: {
               include: {
@@ -124,7 +124,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
         }),
         pull.Party({
           name: inactive,
-          object: id,
+          objectId: id,
           select: {
             InactivePartyRelationships: {
               include: {

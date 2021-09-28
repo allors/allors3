@@ -70,7 +70,7 @@ export class WorkTaskOverviewSummaryComponent {
       pulls.push(
         pull.WorkTask({
           name: workTaskPullName,
-          object: id,
+          objectId: id,
           include: {
             Customer: x,
             WorkEffortState: x,
@@ -82,14 +82,14 @@ export class WorkTaskOverviewSummaryComponent {
         }),
         pull.WorkTask({
           name: parentPullName,
-          object: id,
+          objectId: id,
           select: {
             WorkEffortWhereChild: x
           }
         }),
         pull.WorkEffort({
           name: workEffortBillingPullName,
-          object: id,
+          objectId: id,
           select: {
             WorkEffortBillingsWhereWorkEffort: {
               InvoiceItem: {
@@ -100,7 +100,7 @@ export class WorkTaskOverviewSummaryComponent {
         }),
         pull.WorkEffort({
           name: fixedAssetPullName,
-          object: id,
+          objectId: id,
           select: {
             WorkEffortFixedAssetAssignmentsWhereAssignment: {
               FixedAsset: x,
@@ -115,7 +115,7 @@ export class WorkTaskOverviewSummaryComponent {
               extent: new Extent({
                 objectType: m.ServiceEntry,
                 predicate: new Equals({
-                  propertyType: m.ServiceEntry.WorkEffort, object: id
+                  propertyType: m.ServiceEntry.WorkEffort, objectId: id
                 })
               })
             }),

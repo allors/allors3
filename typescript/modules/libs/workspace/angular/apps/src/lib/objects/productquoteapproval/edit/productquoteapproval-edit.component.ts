@@ -48,7 +48,7 @@ export class ProductQuoteApprovalEditComponent extends TestScope implements OnIn
 
   public ngOnInit(): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
@@ -56,7 +56,7 @@ export class ProductQuoteApprovalEditComponent extends TestScope implements OnIn
 
           const pulls = [
             pull.ProductQuoteApproval({
-              object: this.data.id,
+              objectId: this.data.id,
               include: {
                 ProductQuote: {
                   PrintDocument: x
@@ -73,8 +73,8 @@ export class ProductQuoteApprovalEditComponent extends TestScope implements OnIn
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
-        this.productQuoteApproval = loaded.objects.ProductQuoteApproval as ProductQuoteApproval;
+        this.allors.session.reset();
+        this.productQuoteApproval = loaded.object<ProductQuoteApproval>(m.ProductQuoteApproval);
 
         this.title = this.productQuoteApproval.Title;
       });
@@ -101,10 +101,10 @@ export class ProductQuoteApprovalEditComponent extends TestScope implements OnIn
       .save()
       .pipe(
         switchMap(() => {
-          return this.allors.context.load(pull.ProductQuoteApproval({ object: this.data.id }));
+          return this.allors.context.load(pull.ProductQuoteApproval({ objectId: this.data.id }));
         }),
         switchMap(() => {
-          this.allors.context.reset();
+          this.allors.session.reset();
           return methodCall();
         })
       )

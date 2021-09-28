@@ -36,7 +36,7 @@ export class CustomerShipmentOverviewSummaryComponent {
     const shipmentPullName = `${panel.name}_${this.m.Shipment.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       pulls.push(
 
@@ -77,7 +77,7 @@ export class CustomerShipmentOverviewSummaryComponent {
 
     panel.onPulled = (loaded) => {
       this.shipment = loaded.objects[shipmentPullName] as CustomerShipment;
-      this.salesOrders = loaded.collections.Orders as SalesOrder[];
+      this.salesOrders = loaded.collection<SalesOrder>(m.SalesOrder);
     };
   }
 

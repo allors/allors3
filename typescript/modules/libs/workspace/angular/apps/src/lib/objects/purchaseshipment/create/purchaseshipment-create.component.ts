@@ -81,7 +81,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
             this.fetcher.internalOrganisation,
             pull.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
             pull.Organisation({
-              predicate: new Equals({ propertyType: m.Organisation.IsInternalOrganisation, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
               sorting: [{ roleType: m.Organisation.PartyName }],
             })
           ];
@@ -94,10 +94,10 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
       )
       .subscribe((loaded) => {
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.facilities = loaded.collections.Facilities as Facility[];
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.facilities = loaded.collection<Facility>(m.Facility);
 
-        this.shipment = this.allors.context.create('PurchaseShipment') as PurchaseShipment;
+        this.shipment = this.allors.session.create<PurchaseShipment>(m.PurchaseShipment);
         this.shipment.ShipToParty = this.internalOrganisation;
 
         if (this.shipment.ShipFromParty) {
@@ -139,12 +139,12 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
     this.facilities.push(facility);
     this.selectedFacility = facility;
 
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
   }
 
   public supplierAdded(organisation: Organisation): void {
 
-    const supplierRelationship = this.allors.context.create('SupplierRelationship') as SupplierRelationship;
+    const supplierRelationship = this.allors.session.create<SupplierRelationship>(m.SupplierRelationship);
     supplierRelationship.Supplier = organisation;
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -153,7 +153,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
 
   public shipFromContactPersonAdded(person: Person): void {
 
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.shipment.ShipFromParty as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -163,7 +163,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
 
   public shipToContactPersonAdded(person: Person): void {
 
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.shipment.ShipToParty as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -184,7 +184,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
 
   private updateSupplier(supplier: Party): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party(
@@ -213,13 +213,13 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
       .load(new PullRequest({ pulls }))
       .subscribe((loaded) => {
 
-        this.shipFromContacts = loaded.collections.CurrentContacts as Person[];
+        this.shipFromContacts = loaded.collection<Person>(m.Person);
       });
   }
 
   private updateOrderedBy(organisation: Party): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party(
@@ -248,9 +248,9 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
       .load(new PullRequest({ pulls }))
       .subscribe((loaded) => {
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.shipToContacts = loaded.collections.CurrentContacts as Person[];
+        this.shipToContacts = loaded.collection<Person>(m.Person);
       });
   }
 }

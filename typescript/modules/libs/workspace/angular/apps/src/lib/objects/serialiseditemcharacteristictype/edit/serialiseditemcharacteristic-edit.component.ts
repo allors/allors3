@@ -66,11 +66,11 @@ export class SerialisedItemCharacteristicEditComponent extends TestScope impleme
               },
             }),
             pull.UnitOfMeasure({
-              predicate: new Equals({ propertyType: m.UnitOfMeasure.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.UnitOfMeasure.IsActive, value: true },
               sorting: [{ roleType: m.UnitOfMeasure.Name }],
             }),
             pull.TimeFrequency({
-              predicate: new Equals({ propertyType: m.TimeFrequency.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.TimeFrequency.IsActive, value: true },
               sorting: [{ roleType: m.TimeFrequency.Name }],
             }),
           ];
@@ -78,7 +78,7 @@ export class SerialisedItemCharacteristicEditComponent extends TestScope impleme
           if (!isCreate) {
             pulls.push(
               pull.SerialisedItemCharacteristicType({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   LocalisedNames: {
                     Locale: x,
@@ -88,27 +88,27 @@ export class SerialisedItemCharacteristicEditComponent extends TestScope impleme
             );
           }
 
-          return this.allors.context.load(new PullRequest({ pulls })).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
         this.singleton = loaded.collections.Singletons[0] as Singleton;
-        this.uoms = loaded.collections.UnitsOfMeasure as UnitOfMeasure[];
-        this.timeFrequencies = loaded.collections.TimeFrequencies as TimeFrequency[];
+        this.uoms = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
+        this.timeFrequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
         this.allUoms = this.uoms.concat(this.timeFrequencies).sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
-        this.locales = loaded.collections.AdditionalLocales as Locale[];
+        this.locales = loaded.collection<Locale>(m.Locale);
 
         if (isCreate) {
           this.title = 'Add Product Characteristic';
 
-          this.productCharacteristic = this.allors.context.create('SerialisedItemCharacteristicType') as SerialisedItemCharacteristicType;
+          this.productCharacteristic = this.allors.session.create<SerialisedItemCharacteristicType>(m.SerialisedItemCharacteristicType);
           this.productCharacteristic.IsActive = true;
         } else {
-          this.productCharacteristic = loaded.objects.SerialisedItemCharacteristicType as SerialisedItemCharacteristicType;
+          this.productCharacteristic = loaded.object<SerialisedItemCharacteristicType>(m.SerialisedItemCharacteristicType);
 
-          if (this.productCharacteristic.CanWriteName) {
+          if (this.productCharacteristic.canWriteName) {
             this.title = 'Edit Product Characteristic';
           } else {
             this.title = 'View Product Characteristic';
@@ -124,7 +124,7 @@ export class SerialisedItemCharacteristicEditComponent extends TestScope impleme
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const data: IObject = {
         id: this.productCharacteristic.id,
         objectType: this.productCharacteristic.objectType,

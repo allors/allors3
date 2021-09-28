@@ -81,7 +81,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
               }
             }),
             pull.CommunicationEventPurpose({
-              predicate: new Equals({ propertyType: m.CommunicationEventPurpose.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.CommunicationEventPurpose.IsActive, value: true },
               sorting: [{ roleType: m.CommunicationEventPurpose.Name }]
             }),
             pull.CommunicationEventState({
@@ -93,7 +93,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
             pulls = [
               ...pulls,
               pull.LetterCorrespondence({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   FromParty: {
                     CurrentPartyContactMechanisms: {
@@ -113,7 +113,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
                 }
               }),
               pull.CommunicationEvent({
-                object: this.data.id,
+                objectId: this.data.id,
                 select: {
                   InvolvedParties: x,
                 }
@@ -167,29 +167,29 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.purposes = loaded.collections.CommunicationEventPurposes as CommunicationEventPurpose[];
-        this.eventStates = loaded.collections.CommunicationEventStates as CommunicationEventState[];
-        this.parties = loaded.collections.InvolvedParties as Party[];
+        this.purposes = loaded.collection<CommunicationEventPurpose>(m.CommunicationEventPurpose);
+        this.eventStates = loaded.collection<CommunicationEventState>(m.CommunicationEventState);
+        this.parties = loaded.collection<Party>(m.Party);
 
-        const internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
-        this.person = loaded.objects.Person as Person;
-        this.organisation = loaded.objects.Organisation as Organisation;
+        this.person = loaded.object<Person>(m.Person);
+        this.organisation = loaded.object<Organisation>(m.Organisation);
 
         if (isCreate) {
           this.title = 'Add Letter';
-          this.communicationEvent = this.allors.context.create('LetterCorrespondence') as LetterCorrespondence;
+          this.communicationEvent = this.allors.session.create<LetterCorrespondence>(m.LetterCorrespondence);
 
           this.party = this.organisation || this.person;
         } else {
-          this.communicationEvent = loaded.objects.LetterCorrespondence as LetterCorrespondence;
+          this.communicationEvent = loaded.object<LetterCorrespondence>(m.LetterCorrespondence);
 
           this.updateFromParty(this.communicationEvent.FromParty);
           this.updateToParty(this.communicationEvent.ToParty);
 
-          if (this.communicationEvent.CanWriteActualEnd) {
+          if (this.communicationEvent.canWriteActualEnd) {
             this.title = 'Edit Letter';
           } else {
             this.title = 'View Letter';
@@ -269,7 +269,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
 
   private addContactRelationship(party: Person): void {
     if (this.organisation) {
-      const relationShip: OrganisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+      const relationShip: OrganisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
       relationShip.Contact = party;
       relationShip.Organisation = this.organisation;
     }
@@ -286,7 +286,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
   }
 
   private updateFromParty(party: Party): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -308,7 +308,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
       .load(new PullRequest({ pulls }))
       .subscribe((loaded) => {
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.PartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.fromPostalAddresses = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.PostalAddress).map((v) => v.ContactMechanism);
       });
   }
@@ -320,7 +320,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
   }
 
   private updateToParty(party: Party): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -341,7 +341,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
       .load(new PullRequest({ pulls }))
       .subscribe((loaded) => {
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.PartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.toPostalAddresses = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.PostalAddress).map((v) => v.ContactMechanism);
       });
   }
@@ -356,7 +356,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(
         () => {
           const data: IObject = {

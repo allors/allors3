@@ -39,7 +39,7 @@ export class PurchaseShipmentOverviewSummaryComponent {
     const shipmentPullName = `${panel.name}_${this.m.Shipment.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       pulls.push(
 
@@ -81,7 +81,7 @@ export class PurchaseShipmentOverviewSummaryComponent {
     panel.onPulled = (loaded) => {
       this.shipment = loaded.objects[shipmentPullName] as PurchaseShipment;
       this.shipmentItems = loaded.collections[shipmentPullName] as ShipmentItem[];
-      this.purchaseOrders = loaded.collections.Orders as PurchaseOrder[];
+      this.purchaseOrders = loaded.collection<PurchaseOrder>(m.PurchaseOrder);
     };
   }
 

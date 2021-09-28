@@ -71,7 +71,7 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
         pulls.push(
           pull.SerialisedItem({
             name: pullName,
-            object: id,
+            objectId: id,
           })
         );
       }
@@ -101,7 +101,7 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
 
           const pulls = [
             pull.SerialisedItem({
-              object: id,
+              objectId: id,
               include: {
                 SerialisedItemState: x,
                 SerialisedItemCharacteristics: {
@@ -143,13 +143,13 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
             this.fetcher.internalOrganisation,
             this.fetcher.locales,
             pull.SerialisedItem({
-              object: id,
+              objectId: id,
               select: {
                 PartWhereSerialisedItem: x
               }
             }),
             pull.SerialisedItem({
-              object: id,
+              objectId: id,
               select: {
                 SerialisedInventoryItemsWhereSerialisedItem: {
                   include: {
@@ -165,15 +165,15 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
               }
             }),
             pull.SerialisedItemState({
-              predicate: new Equals({ propertyType: m.SerialisedItemState.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.SerialisedItemState.IsActive, value: true },
               sorting: [{ roleType: m.SerialisedItemState.Name }],
             }),
             pull.SerialisedItemAvailability({
-              predicate: new Equals({ propertyType: m.SerialisedItemAvailability.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.SerialisedItemAvailability.IsActive, value: true },
               sorting: [{ roleType: m.SerialisedItemAvailability.Name }],
             }),
             pull.Ownership({
-              predicate: new Equals({ propertyType: m.Ownership.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Ownership.IsActive, value: true },
               sorting: [{ roleType: m.Ownership.Name }],
             }),
           ];
@@ -181,23 +181,23 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
           this.internalOrganisationsFilter = Filters.internalOrganisationsFilter(m);
           this.partiesFilter = Filters.partiesFilter(m);
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.currentSuppliers = loaded.collections.CurrentSuppliers as Organisation[];
+        this.currentSuppliers = loaded.collection<Organisation>(m.Organisation);
 
-        this.serialisedItem = loaded.objects.SerialisedItem as SerialisedItem;
-        this.locales = loaded.collections.AdditionalLocales as Locale[];
-        this.serialisedItemStates = loaded.collections.SerialisedItemStates as Enumeration[];
-        this.serialisedItemAvailabilities = loaded.collections.SerialisedItemAvailabilities as Enumeration[];
-        this.ownerships = loaded.collections.Ownerships as Enumeration[];
-        this.part = loaded.objects.Part as Part;
+        this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
+        this.locales = loaded.collection<Locale>(m.Locale);
+        this.serialisedItemStates = loaded.collection<Enumeration>(m.Enumeration);
+        this.serialisedItemAvailabilities = loaded.collection<Enumeration>(m.Enumeration);
+        this.ownerships = loaded.collection<Enumeration>(m.Enumeration);
+        this.part = loaded.object<Part>(m.Part);
 
-        const serialisedInventoryItems = loaded.collections.SerialisedInventoryItems as SerialisedInventoryItem[];
+        const serialisedInventoryItems = loaded.collection<SerialisedInventoryItem>(m.SerialisedInventoryItem);
         const inventoryItem = serialisedInventoryItems.find(v => v.Quantity === 1);
         if (inventoryItem) {
           this.currentFacility = inventoryItem.Facility;
@@ -222,7 +222,7 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
 
     // this.onSave();
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         this.refreshService.refresh();
         this.panel.toggle();

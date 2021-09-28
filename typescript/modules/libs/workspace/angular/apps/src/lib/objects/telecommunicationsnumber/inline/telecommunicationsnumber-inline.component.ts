@@ -30,7 +30,7 @@ export class PartyContactMechanismTelecommunicationsNumberInlineComponent implem
 
   constructor(
     private allors: SessionService,
-    public metaService: MetaService) {
+    public ) {
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
@@ -41,11 +41,11 @@ export class PartyContactMechanismTelecommunicationsNumberInlineComponent implem
 
     const pulls = [
       pull.ContactMechanismPurpose({
-        predicate: new Equals({ propertyType: this.m.ContactMechanismPurpose.IsActive, value: true }),
+        predicate: { kind: 'Equals', propertyType: this.m.ContactMechanismPurpose.IsActive, value: true },
         sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }],
       }),
       pull.ContactMechanismType({
-        predicate: new Equals({ propertyType: this.m.ContactMechanismType.IsActive, value: true }),
+        predicate: { kind: 'Equals', propertyType: this.m.ContactMechanismType.IsActive, value: true },
         sorting: [{ roleType: this.m.ContactMechanismType.Name }],
       })
     ];
@@ -53,11 +53,11 @@ export class PartyContactMechanismTelecommunicationsNumberInlineComponent implem
     this.allors.context
       .load(new PullRequest({ pulls }))
       .subscribe((loaded) => {
-        this.contactMechanismPurposes = loaded.collections.ContactMechanismPurposes as ContactMechanismPurpose[];
-        this.contactMechanismTypes = loaded.collections.ContactMechanismTypes as ContactMechanismType[];
+        this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
+        this.contactMechanismTypes = loaded.collection<ContactMechanismType>(m.ContactMechanismType);
 
-        this.partyContactMechanism = this.allors.context.create('PartyContactMechanism') as PartyContactMechanism;
-        this.telecommunicationsNumber = this.allors.context.create('TelecommunicationsNumber') as TelecommunicationsNumber;
+        this.partyContactMechanism = this.allors.session.create<PartyContactMechanism>(m.PartyContactMechanism);
+        this.telecommunicationsNumber = this.allors.session.create<TelecommunicationsNumber>(m.TelecommunicationsNumber);
         this.partyContactMechanism.ContactMechanism = this.telecommunicationsNumber;
       });
   }
@@ -65,8 +65,8 @@ export class PartyContactMechanismTelecommunicationsNumberInlineComponent implem
   public ngOnDestroy(): void {
 
     if (!!this.partyContactMechanism) {
-      this.allors.context.delete(this.partyContactMechanism);
-      this.allors.context.delete(this.telecommunicationsNumber);
+      this.allors.client.invokeReactive(this.allors.session, this.partyContactMechanism.Delete);
+      this.allors.client.invokeReactive(this.allors.session, this.telecommunicationsNumber.Delete);
     }
   }
 

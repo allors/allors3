@@ -65,13 +65,13 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
       this.workTask = undefined;
 
       if (this.panel.isCollapsed) {
-        const { pullBuilder: pull } = this.m; const x = {};
+        const m = this.m; const { pullBuilder: pull } = m; const x = {};
         const id = this.panel.manager.id;
 
         pulls.push(
           pull.WorkTask({
             name: pullName,
-            object: id,
+            objectId: id,
             include: {
               WorkEffortState: x,
               FullfillContactMechanism: x,
@@ -109,7 +109,7 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.WorkTask({
-              object: id,
+              objectId: id,
               include: {
                 WorkEffortState: x,
                 FullfillContactMechanism: x,
@@ -128,11 +128,11 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
               sorting: [{ roleType: m.WorkEffortState.Name }]
             }),
             pull.Priority({
-              predicate: new Equals({ propertyType: m.Priority.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Priority.IsActive, value: true },
               sorting: [{ roleType: m.Priority.Name }],
             }),
             pull.WorkEffortPurpose({
-              predicate: new Equals({ propertyType: this.m.WorkEffortPurpose.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: this.m.WorkEffortPurpose.IsActive, value: true },
               sorting: [{ roleType: m.WorkEffortPurpose.Name }],
             })
           ];
@@ -140,19 +140,19 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
           this.customersFilter = Filters.customersFilter(m, this.internalOrganisationId.value);
           this.subContractorsFilter = Filters.subContractorsFilter(m, this.internalOrganisationId.value);
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        const internalOrganisation: Organisation = loaded.objects.InternalOrganisation as Organisation;
+        const internalOrganisation: Organisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
         this.employees = internalOrganisation.ActiveEmployees;
 
-        this.workTask = loaded.objects.WorkTask as WorkTask;
-        this.workEffortStates = loaded.collections.WorkEffortStates as WorkEffortState[];
-        this.priorities = loaded.collections.Priorities as Priority[];
-        this.workEffortPurposes = loaded.collections.WorkEffortPurposes as WorkEffortPurpose[];
+        this.workTask = loaded.object<WorkTask>(m.WorkTask);
+        this.workEffortStates = loaded.collection<WorkEffortState>(m.WorkEffortState);
+        this.priorities = loaded.collection<Priority>(m.Priority);
+        this.workEffortPurposes = loaded.collection<WorkEffortPurpose>(m.WorkEffortPurpose);
 
         this.updateCustomer(this.workTask.Customer);
 
@@ -167,7 +167,7 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
 
   public contactPersonAdded(contact: Person): void {
 
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.workTask.Customer as Organisation;
     organisationContactRelationship.Contact = contact;
 
@@ -188,7 +188,7 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
 
   private updateCustomer(party: Party) {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -221,26 +221,26 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
       })
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe(
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe(
       (loaded) => {
-        this.workEfforts = loaded.collections.WorkEfforts as WorkEffort[];
+        this.workEfforts = loaded.collection<WorkEffort>(m.WorkEffort);
         const indexMyself = this.workEfforts.indexOf(this.workTask, 0);
         if (indexMyself > -1) {
           this.workEfforts.splice(indexMyself, 1);
         }
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
 
         this.contactMechanisms = partyContactMechanisms
           .map((v: PartyContactMechanism) => v.ContactMechanism);
 
-        this.contacts = loaded.collections.CurrentContacts as Person[];
+        this.contacts = loaded.collection<Person>(m.Person);
       });
   }
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         this.refreshService.refresh();
         this.panel.toggle();

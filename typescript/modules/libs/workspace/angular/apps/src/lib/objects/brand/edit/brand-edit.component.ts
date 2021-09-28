@@ -3,14 +3,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { TestScope } from '@allors/angular/core';
-import { Brand, Model, Locale } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { FetcherService } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { MetaService, SessionService, RefreshService } from '@allors/angular/services/core';
-import { ObjectData, SaveService } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './brand-edit.component.html',
@@ -44,7 +43,7 @@ export class BrandEditComponent extends TestScope implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
@@ -58,7 +57,7 @@ export class BrandEditComponent extends TestScope implements OnInit, OnDestroy {
           if (!isCreate) {
             pulls.push(
               pull.Brand({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   LogoImage: x,
                   Models: x,
@@ -68,20 +67,20 @@ export class BrandEditComponent extends TestScope implements OnInit, OnDestroy {
             );
           }
 
-          return this.allors.context.load(new PullRequest({ pulls })).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
-        this.locales = loaded.collections.AdditionalLocales as Locale[];
+        this.allors.session.reset();
+        this.locales = loaded.collection<Locale>(m.Locale);
 
         if (isCreate) {
           this.title = 'Add Brand';
-          this.brand = this.allors.context.create('Brand') as Brand;
+          this.brand = this.allors.session.create<Brand>(m.Brand);
         } else {
-          this.brand = loaded.objects.Brand as Brand;
+          this.brand = loaded.object<Brand>(m.Brand);
 
-          if (this.brand.CanWriteName) {
+          if (this.brand.canWriteName) {
             this.title = 'Edit Brand';
           } else {
             this.title = 'View Brand';
@@ -93,9 +92,9 @@ export class BrandEditComponent extends TestScope implements OnInit, OnDestroy {
   }
 
   public modelAdded(model: Model): void {
-    this.brand.AddModel(model);
+    this.brand.addModel(model);
     this.models = this.brand.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
   }
 
   public ngOnDestroy(): void {
@@ -105,13 +104,8 @@ export class BrandEditComponent extends TestScope implements OnInit, OnDestroy {
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.brand.id,
-        objectType: this.brand.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.brand);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

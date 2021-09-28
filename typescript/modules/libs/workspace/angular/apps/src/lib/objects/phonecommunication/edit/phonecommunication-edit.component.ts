@@ -75,7 +75,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
               },
             }),
             pull.CommunicationEventPurpose({
-              predicate: new Equals({ propertyType: m.CommunicationEventPurpose.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.CommunicationEventPurpose.IsActive, value: true },
               sorting: [{ roleType: m.CommunicationEventPurpose.Name }],
             }),
             pull.CommunicationEventState({
@@ -87,7 +87,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
             pulls = [
               ...pulls,
               pull.PhoneCommunication({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   FromParty: {
                     CurrentPartyContactMechanisms: {
@@ -105,7 +105,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
                 },
               }),
               pull.CommunicationEvent({
-                object: this.data.id,
+                objectId: this.data.id,
                 select: {
                   InvolvedParties: x,
                 },
@@ -135,33 +135,33 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
             ];
           }
 
-          return this.allors.context.load(new PullRequest({ pulls })).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         }),
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.purposes = loaded.collections.CommunicationEventPurposes as CommunicationEventPurpose[];
-        this.eventStates = loaded.collections.CommunicationEventStates as CommunicationEventState[];
-        this.parties = loaded.collections.InvolvedParties as Party[];
+        this.purposes = loaded.collection<CommunicationEventPurpose>(m.CommunicationEventPurpose);
+        this.eventStates = loaded.collection<CommunicationEventState>(m.CommunicationEventState);
+        this.parties = loaded.collection<Party>(m.Party);
 
-        const internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
-        this.person = loaded.objects.Person as Person;
-        this.organisation = loaded.objects.Organisation as Organisation;
+        this.person = loaded.object<Person>(m.Person);
+        this.organisation = loaded.object<Organisation>(m.Organisation);
 
         if (isCreate) {
           this.title = 'Add Phone call';
-          this.communicationEvent = this.allors.context.create('PhoneCommunication') as PhoneCommunication;
+          this.communicationEvent = this.allors.session.create<PhoneCommunication>(m.PhoneCommunication);
 
           this.party = this.organisation || this.person;
         } else {
-          this.communicationEvent = loaded.objects.PhoneCommunication as PhoneCommunication;
+          this.communicationEvent = loaded.object<PhoneCommunication>(m.PhoneCommunication);
 
           this.updateFromParty(this.communicationEvent.FromParty);
           this.updateToParty(this.communicationEvent.ToParty);
 
-          if (this.communicationEvent.CanWriteActualEnd) {
+          if (this.communicationEvent.canWriteActualEnd) {
             this.title = 'Edit Phone call';
           } else {
             this.title = 'View Phone call';
@@ -258,7 +258,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
   }
 
   private updateFromParty(party: Party): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -275,8 +275,8 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.PartyContactMechanisms as PartyContactMechanism[];
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.fromPhonenumbers = partyContactMechanisms
         .filter((v) => v.ContactMechanism.objectType === this.metaService.m.TelecommunicationsNumber)
         .map((v) => v.ContactMechanism);
@@ -290,7 +290,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
   }
 
   private updateToParty(party: Party): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -307,8 +307,8 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.PartyContactMechanisms as PartyContactMechanism[];
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.toPhonenumbers = partyContactMechanisms
         .filter((v) => v.ContactMechanism.objectType === this.metaService.m.TelecommunicationsNumber)
         .map((v) => v.ContactMechanism);
@@ -316,7 +316,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const data: IObject = {
         id: this.communicationEvent.id,
         objectType: this.communicationEvent.objectType,

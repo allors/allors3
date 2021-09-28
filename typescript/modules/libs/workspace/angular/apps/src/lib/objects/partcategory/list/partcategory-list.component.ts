@@ -132,13 +132,13 @@ export class PartCategoryListComponent extends TestScope implements OnInit, OnDe
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        const objects = loaded.collections.PartCategories as PartCategory[];
+        const objects = loaded.collection<PartCategory>(m.PartCategory);
         this.table.total = loaded.values.PartCategories_total;
         this.table.data = objects.map((v) => {
           return {

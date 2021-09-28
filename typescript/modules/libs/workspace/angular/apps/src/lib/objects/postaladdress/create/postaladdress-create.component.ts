@@ -68,7 +68,7 @@ export class PostalAddressCreateComponent extends TestScope implements OnInit, O
               sorting: [{ roleType: m.Country.Name }]
             }),
             pull.ContactMechanismPurpose({
-              predicate: new Equals({ propertyType: m.ContactMechanismPurpose.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.ContactMechanismPurpose.IsActive, value: true },
               sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }]
             })
           ];
@@ -79,15 +79,15 @@ export class PostalAddressCreateComponent extends TestScope implements OnInit, O
       )
       .subscribe((loaded) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.countries = loaded.collections.Countries as Country[];
-        this.contactMechanismPurposes = loaded.collections.ContactMechanismPurposes as Enumeration[];
-        this.party = loaded.objects.Party as Party;
+        this.countries = loaded.collection<Country>(m.Country);
+        this.contactMechanismPurposes = loaded.collection<Enumeration>(m.Enumeration);
+        this.party = loaded.object<Party>(m.Party);
 
-        this.contactMechanism = this.allors.context.create('PostalAddress') as PostalAddress;
+        this.contactMechanism = this.allors.session.create<PostalAddress>(m.PostalAddress);
 
-        this.partyContactMechanism = this.allors.context.create('PartyContactMechanism') as PartyContactMechanism;
+        this.partyContactMechanism = this.allors.session.create<PartyContactMechanism>(m.PartyContactMechanism);
         this.partyContactMechanism.UseAsDefault = true;
         this.partyContactMechanism.ContactMechanism = this.contactMechanism;
 
@@ -103,7 +103,7 @@ export class PostalAddressCreateComponent extends TestScope implements OnInit, O
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.contactMechanism.id,

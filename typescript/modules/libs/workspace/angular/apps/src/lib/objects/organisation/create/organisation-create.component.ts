@@ -102,10 +102,10 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
                 }
               }
             }),
-            pull.Organisation({ object: id }),
+            pull.Organisation({ objectId: id }),
             pull.OrganisationRole(),
             pull.Currency({
-              predicate: new Equals({ propertyType: m.Currency.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
               sorting: [{ roleType: m.Currency.Name }],
             }),
             pull.CustomOrganisationClassification({
@@ -126,7 +126,7 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
                 {
                   predicate: new And({
                     operands: [
-                      new Equals({ propertyType: m.CustomerRelationship.Customer, object: id }),
+                      new Equals({ propertyType: m.CustomerRelationship.Customer, objectId: id }),
                       new Equals({ propertyType: m.CustomerRelationship.InternalOrganisation, object: internalOrganisationId }),
                       new Not({
                         operand: new Exists({ propertyType: m.CustomerRelationship.ThroughDate }),
@@ -141,7 +141,7 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
                 {
                   predicate: new And({
                     operands: [
-                      new Equals({ propertyType: m.SupplierRelationship.Supplier, object: id }),
+                      new Equals({ propertyType: m.SupplierRelationship.Supplier, objectId: id }),
                       new Equals({ propertyType: m.SupplierRelationship.InternalOrganisation, object: internalOrganisationId }),
                       new Not({
                         operand: new Exists({ propertyType: m.SupplierRelationship.ThroughDate }),
@@ -158,26 +158,26 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
       )
       .subscribe((loaded) => {
 
-        this.organisation = loaded.objects.Organisation as Organisation;
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        this.organisation = loaded.object<Organisation>(m.Organisation);
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
         if (this.organisation) {
           this.customerRelationship = loaded.collections.CustomerRelationships[0] as CustomerRelationship;
           this.supplierRelationship = loaded.collections.SupplierRelationships[0] as SupplierRelationship;
         } else {
-          this.organisation = this.allors.context.create('Organisation') as Organisation;
+          this.organisation = this.allors.session.create<Organisation>(m.Organisation);
           this.organisation.IsManufacturer = false;
           this.organisation.IsInternalOrganisation = false;
           this.organisation.CollectiveWorkEffortInvoice = false;
           this.organisation.PreferredCurrency = this.internalOrganisation.PreferredCurrency;
         }
 
-        this.currencies = loaded.collections.Currencies as Currency[];
-        this.locales = loaded.collections.Locales as Locale[] || [];
-        this.classifications = loaded.collections.CustomOrganisationClassifications as CustomOrganisationClassification[];
-        this.industries = loaded.collections.IndustryClassifications as IndustryClassification[];
-        this.legalForms = loaded.collections.LegalForms as LegalForm[];
-        this.roles = loaded.collections.OrganisationRoles as OrganisationRole[];
+        this.currencies = loaded.collection<Currency>(m.Currency);
+        this.locales = loaded.collection<Locale>(m.Locale) || [];
+        this.classifications = loaded.collection<CustomOrganisationClassification>(m.CustomOrganisationClassification);
+        this.industries = loaded.collection<IndustryClassification>(m.IndustryClassification);
+        this.legalForms = loaded.collection<LegalForm>(m.LegalForm);
+        this.roles = loaded.collection<OrganisationRole>(m.OrganisationRole);
         this.customerRole = this.roles.find((v: OrganisationRole) => v.UniqueId === '8b5e0cee-4c98-42f1-8f18-3638fba943a0');
         this.supplierRole = this.roles.find((v: OrganisationRole) => v.UniqueId === '8c6d629b-1e27-4520-aa8c-e8adf93a5095');
         this.manufacturerRole = this.roles.find((v: OrganisationRole) => v.UniqueId === '32e74bef-2d79-4427-8902-b093afa81661');
@@ -209,7 +209,7 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
   public save(): void {
 
     if (this.activeRoles.indexOf(this.customerRole) > -1 && !this.isActiveCustomer) {
-      const customerRelationship = this.allors.context.create('CustomerRelationship') as CustomerRelationship;
+      const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
       customerRelationship.Customer = this.organisation;
       customerRelationship.InternalOrganisation = this.internalOrganisation;
     }
@@ -223,7 +223,7 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
     }
 
     if (this.activeRoles.indexOf(this.supplierRole) > -1 && !this.isActiveSupplier) {
-      const supplierRelationship = this.allors.context.create('SupplierRelationship') as SupplierRelationship;
+      const supplierRelationship = this.allors.session.create<SupplierRelationship>(m.SupplierRelationship);
       supplierRelationship.Supplier = this.organisation;
       supplierRelationship.InternalOrganisation = this.internalOrganisation;
     }

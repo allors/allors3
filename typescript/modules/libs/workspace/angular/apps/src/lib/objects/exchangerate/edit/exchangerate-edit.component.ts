@@ -58,7 +58,7 @@ export class ExchangeRateEditComponent extends TestScope implements OnInit, OnDe
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.Currency({
-              predicate: new Equals({ propertyType: m.Currency.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
               sorting: [{ roleType: m.Currency.Name }],
             }),
           ];
@@ -66,7 +66,7 @@ export class ExchangeRateEditComponent extends TestScope implements OnInit, OnDe
           if (!isCreate) {
             pulls.push(
               pull.ExchangeRate({
-                object: this.data.id,
+                objectId: this.data.id,
               }),
             );
           }
@@ -80,18 +80,18 @@ export class ExchangeRateEditComponent extends TestScope implements OnInit, OnDe
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.currencies = loaded.collections.Currencies as Currency[];
+        this.allors.session.reset();
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.currencies = loaded.collection<Currency>(m.Currency);
 
         if (isCreate) {
           this.title = 'Add Position Type';
-          this.exchangeRate = this.allors.context.create('ExchangeRate') as ExchangeRate;
+          this.exchangeRate = this.allors.session.create<ExchangeRate>(m.ExchangeRate);
           this.exchangeRate.ToCurrency = this.internalOrganisation.PreferredCurrency;
         } else {
-          this.exchangeRate = loaded.objects.ExchangeRate as ExchangeRate;
+          this.exchangeRate = loaded.object<ExchangeRate>(m.ExchangeRate);
 
-          if (this.exchangeRate.CanWriteRate) {
+          if (this.exchangeRate.canWriteRate) {
             this.title = 'Edit Exchange Rate';
           } else {
             this.title = 'View Exchange Rate';

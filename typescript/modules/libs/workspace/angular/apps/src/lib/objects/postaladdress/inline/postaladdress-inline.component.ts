@@ -30,7 +30,7 @@ export class PartyContactMechanismPostalAddressInlineComponent implements OnInit
 
   constructor(
     private allors: SessionService,
-    public metaService: MetaService) {
+    public ) {
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
@@ -44,7 +44,7 @@ export class PartyContactMechanismPostalAddressInlineComponent implements OnInit
         sorting: [{ roleType: this.m.Country.Name }]
       }),
       pull.ContactMechanismPurpose({
-        predicate: new Equals({ propertyType: this.m.ContactMechanismPurpose.IsActive, value: true }),
+        predicate: { kind: 'Equals', propertyType: this.m.ContactMechanismPurpose.IsActive, value: true },
         sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }]
       })
     ];
@@ -52,11 +52,11 @@ export class PartyContactMechanismPostalAddressInlineComponent implements OnInit
     this.allors.context
       .load(new PullRequest({ pulls }))
       .subscribe((loaded) => {
-        this.countries = loaded.collections.Countries as Country[];
-        this.contactMechanismPurposes = loaded.collections.ContactMechanismPurposes as ContactMechanismPurpose[];
+        this.countries = loaded.collection<Country>(m.Country);
+        this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
 
-        this.partyContactMechanism = this.allors.context.create('PartyContactMechanism') as PartyContactMechanism;
-        this.postalAddress = this.allors.context.create('PostalAddress') as PostalAddress;
+        this.partyContactMechanism = this.allors.session.create<PartyContactMechanism>(m.PartyContactMechanism);
+        this.postalAddress = this.allors.session.create<PostalAddress>(m.PostalAddress);
         this.partyContactMechanism.ContactMechanism = this.postalAddress;
       });
   }
@@ -64,8 +64,8 @@ export class PartyContactMechanismPostalAddressInlineComponent implements OnInit
   public ngOnDestroy(): void {
 
     if (!!this.partyContactMechanism) {
-      this.allors.context.delete(this.partyContactMechanism);
-      this.allors.context.delete(this.postalAddress);
+      this.allors.client.invokeReactive(this.allors.session, this.partyContactMechanism.Delete);
+      this.allors.client.invokeReactive(this.allors.session, this.postalAddress.Delete);
     }
   }
 

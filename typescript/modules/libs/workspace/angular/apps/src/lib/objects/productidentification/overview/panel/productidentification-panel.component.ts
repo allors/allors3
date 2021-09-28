@@ -91,7 +91,7 @@ export class ProductIdentificationsPanelComponent extends TestScope implements O
       pulls.push(
         new Pull(objectType, {
           name: pullName,
-          object: id,
+          objectId: id,
           fetch: new Fetch({
             step: new Step({
               propertyType: this.roleType,

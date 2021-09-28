@@ -152,18 +152,18 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.user = loaded.objects.Person as Person;
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.user = loaded.object<Person>(m.Person);
 
         this.canCreate = this.internalOrganisation.CanExecuteCreateSalesOrder;
 
-        const requests = loaded.collections.SalesOrders as SalesOrder[];
+        const requests = loaded.collection<SalesOrder>(m.SalesOrder);
         this.table.total = loaded.values.SalesOrders_total;
         this.table.data = requests
           .filter((v) => v.CanReadOrderNumber)

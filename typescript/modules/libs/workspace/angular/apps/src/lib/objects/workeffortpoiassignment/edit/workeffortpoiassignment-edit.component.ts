@@ -49,7 +49,7 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
 
   public ngOnInit(): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -74,7 +74,7 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
           if (!isCreate) {
             pulls.push(
               pull.WorkEffortPurchaseOrderItemAssignment({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   Assignment: x,
                   PurchaseOrderItem: x
@@ -101,29 +101,29 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
         if (isCreate) {
-          this.workEffort = loaded.objects.WorkEffort as WorkEffort;
+          this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
           this.title = 'Add purchase order item assignment';
 
-          this.workEffortPurchaseOrderItemAssignment = this.allors.context.create('WorkEffortPurchaseOrderItemAssignment') as WorkEffortPurchaseOrderItemAssignment;
+          this.workEffortPurchaseOrderItemAssignment = this.allors.session.create<WorkEffortPurchaseOrderItemAssignment>(m.WorkEffortPurchaseOrderItemAssignment);
           this.workEffortPurchaseOrderItemAssignment.Assignment = this.workEffort;
           this.workEffortPurchaseOrderItemAssignment.Quantity = 1;
 
         } else {
-          this.workEffortPurchaseOrderItemAssignment = loaded.objects.WorkEffortPurchaseOrderItemAssignment as WorkEffortPurchaseOrderItemAssignment;
+          this.workEffortPurchaseOrderItemAssignment = loaded.object<WorkEffortPurchaseOrderItemAssignment>(m.WorkEffortPurchaseOrderItemAssignment);
           this.selectedPurchaseOrder = this.workEffortPurchaseOrderItemAssignment.PurchaseOrder;
           this.workEffort = this.workEffortPurchaseOrderItemAssignment.Assignment;
 
-          if (this.workEffortPurchaseOrderItemAssignment.CanWritePurchaseOrderItem) {
+          if (this.workEffortPurchaseOrderItemAssignment.canWritePurchaseOrderItem) {
             this.title = 'Edit purchase order item assignment';
           } else {
             this.title = 'View purchase order item assignment';
           }
         }
 
-        const purchaseOrders = loaded.collections.PurchaseOrders as PurchaseOrder[];
+        const purchaseOrders = loaded.collection<PurchaseOrder>(m.PurchaseOrder);
         this.purchaseOrders = purchaseOrders
           .filter(v => v.PurchaseOrderItems
                   .find(i => i.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem.length === 0
@@ -153,7 +153,7 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.workEffortPurchaseOrderItemAssignment.id,

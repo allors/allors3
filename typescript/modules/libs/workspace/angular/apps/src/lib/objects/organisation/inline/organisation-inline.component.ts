@@ -24,7 +24,7 @@ export class OrganisationInlineComponent implements OnInit, OnDestroy {
 
   constructor(
     private allors: SessionService,
-    public metaService: MetaService) {
+    public ) {
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
@@ -34,13 +34,13 @@ export class OrganisationInlineComponent implements OnInit, OnDestroy {
     this.allors.context
       .load(new PullRequest({}))
       .subscribe(() => {
-        this.organisation = this.allors.context.create('Organisation') as Organisation;
+        this.organisation = this.allors.session.create<Organisation>(m.Organisation);
       });
   }
 
   public ngOnDestroy(): void {
     if (!!this.organisation) {
-      this.allors.context.delete(this.organisation);
+      this.allors.client.invokeReactive(this.allors.session, this.organisation.Delete);
     }
   }
 

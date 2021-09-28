@@ -51,7 +51,7 @@ export class NonUnifiedPartOverviewSummaryComponent {
       pulls.push(
         pull.PriceComponent({
           name: priceComponentPullName,
-          predicate: new Equals({ propertyType: m.PriceComponent.Part, object: id }),
+          predicate: { kind: 'Equals', propertyType: m.PriceComponent.Part, objectId: id },
           include: {
             Part: x,
             Currency: x
@@ -60,7 +60,7 @@ export class NonUnifiedPartOverviewSummaryComponent {
         }),
         pull.Part({
           name: partPullName,
-          object: id,
+          objectId: id,
           include: {
             ProductIdentifications: {
               ProductIdentificationType: x
@@ -80,7 +80,7 @@ export class NonUnifiedPartOverviewSummaryComponent {
         }),
         pull.Part({
           name: supplierOfferingsPullName,
-          object: id,
+          objectId: id,
           select: {
             SupplierOfferingsWherePart: {
               include: {
@@ -107,7 +107,7 @@ export class NonUnifiedPartOverviewSummaryComponent {
       this.currentSupplierOfferings = this.allSupplierOfferings.filter(v => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
       this.inactiveSupplierOfferings = this.allSupplierOfferings.filter(v => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate !== null && isBefore(new Date(v.ThroughDate), new Date())));
 
-      const goodIdentificationTypes = loaded.collections.ProductIdentificationTypes as ProductIdentificationType[];
+      const goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
       const partNumberType = goodIdentificationTypes.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
       this.partnumber = this.part.ProductIdentifications.filter(v => v.ProductIdentificationType === partNumberType).map(w => w.Identification);
 

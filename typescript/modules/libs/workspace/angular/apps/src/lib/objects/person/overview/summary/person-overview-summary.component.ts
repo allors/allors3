@@ -50,7 +50,7 @@ export class PersonOverviewSummaryComponent extends TestScope {
       pulls.push(
         pull.Person({
           name: personPullName,
-          object: id,
+          objectId: id,
           include: {
             Locale: x,
             LastModifiedBy: x,
@@ -66,7 +66,7 @@ export class PersonOverviewSummaryComponent extends TestScope {
       pulls.push(
         pull.Person({
           name: organisationContactRelationshipsPullName,
-          object: id,
+          objectId: id,
           select: {
             OrganisationContactRelationshipsWhereContact: {
               include: {

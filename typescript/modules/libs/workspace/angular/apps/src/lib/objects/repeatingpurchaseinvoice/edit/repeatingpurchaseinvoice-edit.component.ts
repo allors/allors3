@@ -55,10 +55,10 @@ export class RepeatingPurchaseInvoiceEditComponent extends TestScope implements 
           const pulls = [
             pull.Organisation({
               name: 'InternalOrganisations',
-              predicate: new Equals({ propertyType: m.Organisation.IsInternalOrganisation, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
             }),
             pull.TimeFrequency({
-              predicate: new Equals({ propertyType: m.TimeFrequency.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.TimeFrequency.IsActive, value: true },
               sorting: [{ roleType: m.TimeFrequency.Name }],
             }),
             pull.DayOfWeek(),
@@ -67,7 +67,7 @@ export class RepeatingPurchaseInvoiceEditComponent extends TestScope implements 
           if (!isCreate) {
             pulls.push(
               pull.RepeatingPurchaseInvoice({
-                object: id,
+                objectId: id,
                 include: {
                   Frequency: x,
                   DayOfWeek: x,
@@ -82,24 +82,24 @@ export class RepeatingPurchaseInvoiceEditComponent extends TestScope implements 
             );
           }
 
-          return this.allors.context.load(new PullRequest({ pulls })).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.supplier = loaded.objects.Organisation as Organisation;
-        this.repeatinginvoice = loaded.objects.RepeatingPurchaseInvoice as RepeatingPurchaseInvoice;
-        this.frequencies = loaded.collections.TimeFrequencies as TimeFrequency[];
-        this.daysOfWeek = loaded.collections.DaysOfWeek as DayOfWeek[];
-        this.internalOrganisations = loaded.collections.InternalOrganisations as Organisation[];
+        this.supplier = loaded.object<Organisation>(m.Organisation);
+        this.repeatinginvoice = loaded.object<RepeatingPurchaseInvoice>(m.RepeatingPurchaseInvoice);
+        this.frequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
+        this.daysOfWeek = loaded.collection<DayOfWeek>(m.DayOfWeek);
+        this.internalOrganisations = loaded.collection<Organisation>(m.Organisation);
 
         if (isCreate) {
           this.title = 'Create Repeating Purchase Invoice';
-          this.repeatinginvoice = this.allors.context.create('RepeatingPurchaseInvoice') as RepeatingPurchaseInvoice;
+          this.repeatinginvoice = this.allors.session.create<RepeatingPurchaseInvoice>(m.RepeatingPurchaseInvoice);
           this.repeatinginvoice.Supplier = this.supplier;
         } else {
-          if (this.repeatinginvoice.CanWriteFrequency) {
+          if (this.repeatinginvoice.canWriteFrequency) {
             this.title = 'Edit Repeating Purchase Invoice';
           } else {
             this.title = 'View Repeating Purchase Invoice';
@@ -115,7 +115,7 @@ export class RepeatingPurchaseInvoiceEditComponent extends TestScope implements 
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const data: IObject = {
         id: this.repeatinginvoice.id,
         objectType: this.repeatinginvoice.objectType,

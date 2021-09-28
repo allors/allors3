@@ -61,7 +61,7 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
         pulls.push(
           pull.Organisation({
             name: pullName,
-            object: id,
+            objectId: id,
           })
         );
       }
@@ -103,13 +103,13 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
               }
             }),
             pull.Organisation({ 
-              object: id,
+              objectId: id,
               include: {
                 LogoImage: x
               }
             }),
             pull.Currency({
-              predicate: new Equals({ propertyType: m.Currency.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
               sorting: [{ roleType: m.Currency.Name }],
             }),
             pull.CustomOrganisationClassification({
@@ -129,13 +129,13 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
       )
       .subscribe((loaded) => {
 
-        this.organisation = loaded.objects.Organisation as Organisation;
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.currencies = loaded.collections.Currencies as Currency[];
-        this.locales = loaded.collections.Locales as Locale[] || [];
-        this.classifications = loaded.collections.CustomOrganisationClassifications as CustomOrganisationClassification[];
-        this.industries = loaded.collections.IndustryClassifications as IndustryClassification[];
-        this.legalForms = loaded.collections.LegalForms as LegalForm[];
+        this.organisation = loaded.object<Organisation>(m.Organisation);
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.currencies = loaded.collection<Currency>(m.Currency);
+        this.locales = loaded.collection<Locale>(m.Locale) || [];
+        this.classifications = loaded.collection<CustomOrganisationClassification>(m.CustomOrganisationClassification);
+        this.industries = loaded.collection<IndustryClassification>(m.IndustryClassification);
+        this.legalForms = loaded.collection<LegalForm>(m.LegalForm);
       });
   }
 

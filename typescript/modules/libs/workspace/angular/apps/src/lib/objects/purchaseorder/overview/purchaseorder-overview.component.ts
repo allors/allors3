@@ -76,7 +76,7 @@ export class PurchaseOrderOverviewComponent extends TestScope implements AfterVi
 
         this.panelManager.onPulled(loaded);
 
-        this.order = loaded.objects.PurchaseOrder as PurchaseOrder;
+        this.order = loaded.object<PurchaseOrder>(m.PurchaseOrder);
         this.orderItems = this.order.PurchaseOrderItems;
 
       });

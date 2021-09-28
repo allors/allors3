@@ -95,13 +95,13 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.locales = loaded.collections.AdditionalLocales as Locale[];
-        this.organisations = loaded.collections.Organisations as Organisation[];
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.locales = loaded.collection<Locale>(m.Locale);
+        this.organisations = loaded.collection<Organisation>(m.Organisation);
 
-        this.workTask = this.allors.context.create('WorkTask') as WorkTask;
+        this.workTask = this.allors.session.create<WorkTask>(m.WorkTask);
         this.workTask.TakenBy = this.internalOrganisation as Organisation;
 
       });
@@ -113,7 +113,7 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
 
   private updateCustomer(party: Party) {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -136,19 +136,19 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
       })
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe(
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe(
       (loaded) => {
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.contactMechanisms = partyContactMechanisms
           .map((v: PartyContactMechanism) => v.ContactMechanism);
 
-        this.contacts = loaded.collections.CurrentContacts as Person[];
+        this.contacts = loaded.collection<Person>(m.Person);
       });
   }
 
   public contactPersonAdded(contact: Person): void {
 
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.workTask.Customer as Organisation;
     organisationContactRelationship.Contact = contact;
 

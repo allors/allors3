@@ -157,7 +157,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
         pull.InvoiceItemType(),
         pull.PurchaseInvoice({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             BilledFrom: {
               PurchaseOrdersWhereTakenViaSupplier: {
@@ -195,7 +195,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
         ),
         pull.PurchaseInvoice({
           name: invoicePullName,
-          object: id,
+          objectId: id,
           include: {
             PurchaseOrders: x,
             PurchaseInvoiceItems: {
@@ -209,11 +209,11 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
     };
 
     this.panel.onPulled = (loaded) => {
-      this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+      this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
       this.purchaseInvoice = loaded.objects[invoicePullName] as PurchaseInvoice;
-      this.orderItemBillings = loaded.collections.OrderItemBillings as OrderItemBilling[];
+      this.orderItemBillings = loaded.collection<OrderItemBilling>(m.OrderItemBilling);
 
-      const invoiceItemTypes = loaded.collections.InvoiceItemTypes as InvoiceItemType[];
+      const invoiceItemTypes = loaded.collection<InvoiceItemType>(m.InvoiceItemType);
       this.partItem = invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b');
       this.workItem = invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === 'a4d2e6d0-c6c1-46ec-a1cf-3a64822e7a9e');
 

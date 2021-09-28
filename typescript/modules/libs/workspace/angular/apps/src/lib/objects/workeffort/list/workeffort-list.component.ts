@@ -146,12 +146,12 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
-        const workEfforts = loaded.collections.WorkEfforts as WorkEffort[];
+        this.allors.session.reset();
+        const workEfforts = loaded.collection<WorkEffort>(m.WorkEffort);
         this.table.total = loaded.values.WorkTasks_total;
         this.table.data = workEfforts
           .filter((v) => v.CanReadWorkEffortNumber)

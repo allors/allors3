@@ -28,12 +28,12 @@ export class InlineModelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.model = this.allors.context.create('Model') as Model;
+    this.model = this.allors.session.create<Model>(m.Model);
   }
 
   public ngOnDestroy(): void {
     if (!!this.model) {
-      this.allors.context.delete(this.model);
+      this.allors.client.invokeReactive(this.allors.session, this.model.Delete);
     }
   }
 

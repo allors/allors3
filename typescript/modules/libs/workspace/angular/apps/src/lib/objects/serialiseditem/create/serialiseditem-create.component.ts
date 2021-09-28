@@ -84,11 +84,11 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
               }
             }),
             pull.SerialisedItemState({
-              predicate: new Equals({ propertyType: m.SerialisedItemState.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.SerialisedItemState.IsActive, value: true },
               sorting: [{ roleType: m.SerialisedInventoryItemState.Name }],
             }),
             pull.SerialisedItemAvailability({
-              predicate: new Equals({ propertyType: m.SerialisedItemAvailability.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.SerialisedItemAvailability.IsActive, value: true },
               sorting: [{ roleType: m.SerialisedItemAvailability.Name }],
             }),
           ];
@@ -102,20 +102,20 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
       )
       .subscribe((loaded) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        const internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        const externalOwner = loaded.objects.Party as Organisation;
+        const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        const externalOwner = loaded.object<Party>(m.Party);
         this.owner = externalOwner || internalOrganisation;
 
-        this.part = loaded.objects.forPart as Part;
+        this.part = loaded.object<forPart>(m.forPart);
 
-        this.serialisedItemStates = loaded.collections.SerialisedItemStates as SerialisedItemState[];
-        this.serialisedItemAvailabilities = loaded.collections.SerialisedItemAvailabilities as Enumeration[];
-        this.ownerships = loaded.collections.Ownerships as Ownership[];
-        this.locales = loaded.collections.AdditionalLocales as Locale[];
+        this.serialisedItemStates = loaded.collection<SerialisedItemState>(m.SerialisedItemState);
+        this.serialisedItemAvailabilities = loaded.collection<Enumeration>(m.Enumeration);
+        this.ownerships = loaded.collection<Ownership>(m.Ownership);
+        this.locales = loaded.collection<Locale>(m.Locale);
 
-        this.serialisedItem = this.allors.context.create('SerialisedItem') as SerialisedItem;
+        this.serialisedItem = this.allors.session.create<SerialisedItem>(m.SerialisedItem);
         this.serialisedItem.AvailableForSale = false;
         this.serialisedItem.OwnedBy = this.owner;
 
@@ -137,7 +137,7 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
       this.selectedPart = part;
       this.serialisedItem.Name = part.Name;
 
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const pulls = [
         pull.Part(
@@ -153,7 +153,7 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
       this.allors.context
         .load(new PullRequest({ pulls }))
         .subscribe((loaded) => {
-          this.selectedPart = loaded.objects.Part as Part;
+          this.selectedPart = loaded.object<Part>(m.Part);
           this.serialisedItem.Name = this.selectedPart.Name;
         });
 

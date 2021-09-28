@@ -102,7 +102,7 @@ export class PriceComponentOverviewPanelComponent extends TestScope implements O
       pulls.push(
         pull.Part({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             PriceComponentsWherePart: {
               include: {
@@ -113,7 +113,7 @@ export class PriceComponentOverviewPanelComponent extends TestScope implements O
         }),
         pull.Product({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             PriceComponentsWhereProduct: {
               include: {

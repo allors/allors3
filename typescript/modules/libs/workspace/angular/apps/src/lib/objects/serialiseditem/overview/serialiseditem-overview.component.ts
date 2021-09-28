@@ -77,7 +77,7 @@ export class SerialisedItemOverviewComponent extends TestScope implements AfterV
         this.panelManager.context.session.reset();
         this.panelManager.onPulled(loaded);
 
-        this.serialisedItem = loaded.objects.SerialisedItem as SerialisedItem;
+        this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
         this.owner = this.serialisedItem.OwnedBy;
       });
   }

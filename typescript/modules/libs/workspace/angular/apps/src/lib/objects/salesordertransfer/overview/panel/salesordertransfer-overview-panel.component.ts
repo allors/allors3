@@ -95,14 +95,14 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
     const salesInvoicePullName = `${panel.name}_${this.m.SalesInvoice.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.SalesOrder({
           name: salesOrderTermsPullName,
-          object: id,
+          objectId: id,
           select: {
             SalesTerms: {
               include: {
@@ -113,7 +113,7 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
         }),
         pull.SalesInvoice({
           name: salesInvoiceTermsPullName,
-          object: id,
+          objectId: id,
           select: {
             SalesTerms: {
               include: {
@@ -124,11 +124,11 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
         }),
         pull.SalesOrder({
           name: salesOrderPullName,
-          object: id,
+          objectId: id,
         }),
         pull.SalesInvoice({
           name: salesInvoicePullName,
-          object: id,
+          objectId: id,
         }),
       );
     };

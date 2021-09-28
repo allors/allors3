@@ -88,14 +88,14 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
     const assetPullName = `${this.panel.name}_${this.m.WorkEffort.name}_fixedasset`;
 
     this.panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.Party({
           name: customerPullName,
-          object: id,
+          objectId: id,
           select: {
             WorkEffortsWhereCustomer: {
               include: {
@@ -107,7 +107,7 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
         }),
         pull.Person({
           name: contactPullName,
-          object: id,
+          objectId: id,
           select: {
             WorkEffortsWhereContactPerson: {
               include: {
@@ -119,7 +119,7 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
         }),
         pull.SerialisedItem({
           name: assetPullName,
-          object: id,
+          objectId: id,
           select: {
             WorkEffortFixedAssetAssignmentsWhereFixedAsset: {
               Assignment: {
@@ -132,13 +132,13 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
           },
         }),
         pull.SerialisedItem({
-          object: id,
+          objectId: id,
         })
       );
     };
 
     this.panel.onPulled = (loaded) => {
-      this.serialisedItem = loaded.objects.SerialisedItem as SerialisedItem;
+      this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
       const fromCustomer = loaded.collections[customerPullName] as WorkEffort[];
       const fromContact = loaded.collections[contactPullName] as WorkEffort[];
       const fromAsset = loaded.collections[assetPullName] as WorkEffort[];

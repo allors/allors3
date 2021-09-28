@@ -101,14 +101,14 @@ export class RequestItemOverviewPanelComponent extends TestScope {
     const pullName = `${panel.name}_${this.m.RequestItem.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.RequestForQuote({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             RequestItems: {
               include: {
@@ -121,7 +121,7 @@ export class RequestItemOverviewPanelComponent extends TestScope {
         }),
         pull.Request({
           name: 'Request',
-          object: id
+          objectId: id
         }),
       );
     };
@@ -129,7 +129,7 @@ export class RequestItemOverviewPanelComponent extends TestScope {
     panel.onPulled = (loaded) => {
 
       this.requestItems = loaded.collections[pullName] as RequestItem[];
-      this.request = loaded.objects.Request as RequestForQuote;
+      this.request = loaded.object<Request>(m.Request);
       this.table.total = loaded.values[`${pullName}_total`] || this.requestItems.length;
       this.table.data = this.requestItems.map((v) => {
         return {

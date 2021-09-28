@@ -109,14 +109,14 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         }),
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        const goods = loaded.collections.Goods as Good[];
-        const productCategories = loaded.collections.ProductCategories as ProductCategory[];
+        const goods = loaded.collection<Good>(m.Good);
+        const productCategories = loaded.collection<ProductCategory>(m.ProductCategory);
 
         this.table.total = loaded.values.NonUnifiedGoods_total;
         this.table.data = goods.map((v) => {

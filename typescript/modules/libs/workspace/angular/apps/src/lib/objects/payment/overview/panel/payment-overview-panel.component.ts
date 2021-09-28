@@ -94,7 +94,7 @@ export class PaymentOverviewPanelComponent extends TestScope {
       pulls.push(
         pull.PaymentApplication({
           name: pullName,
-          predicate: new Equals({ propertyType: m.PaymentApplication.Invoice, object: id }),
+          predicate: { kind: 'Equals', propertyType: m.PaymentApplication.Invoice, objectId: id },
           select: {
             PaymentWherePaymentApplication: {
               include: {
@@ -116,7 +116,7 @@ export class PaymentOverviewPanelComponent extends TestScope {
 
     panel.onPulled = (loaded) => {
 
-      const invoice = loaded.objects.Invoice as Invoice;
+      const invoice = loaded.object<Invoice>(m.Invoice);
 
       if (invoice.objectType.name === this.m.SalesInvoice.name) {
         const salesInvoice = invoice as SalesInvoice;

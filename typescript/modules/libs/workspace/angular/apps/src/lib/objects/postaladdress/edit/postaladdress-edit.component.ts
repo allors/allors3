@@ -54,7 +54,7 @@ export class PostalAddressEditComponent extends TestScope implements OnInit, OnD
 
           const pulls = [
             pull.ContactMechanism({
-              object: this.data.id,
+              objectId: this.data.id,
               include: {
                 PostalAddress_Country: x
               },
@@ -70,12 +70,12 @@ export class PostalAddressEditComponent extends TestScope implements OnInit, OnD
       )
       .subscribe((loaded) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.countries = loaded.collections.Countries as Country[];
-        this.contactMechanism = loaded.objects.ContactMechanism as PostalAddress;
+        this.countries = loaded.collection<Country>(m.Country);
+        this.contactMechanism = loaded.object<ContactMechanism>(m.ContactMechanism);
 
-        if (this.contactMechanism.CanWriteAddress1) {
+        if (this.contactMechanism.canWriteAddress1) {
           this.title = 'Edit Postal Address';
         } else {
           this.title = 'View Postal Address';
@@ -91,7 +91,7 @@ export class PostalAddressEditComponent extends TestScope implements OnInit, OnD
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.contactMechanism.id,

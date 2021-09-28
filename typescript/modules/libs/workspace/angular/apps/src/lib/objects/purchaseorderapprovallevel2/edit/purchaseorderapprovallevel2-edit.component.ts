@@ -45,14 +45,14 @@ export class PurchaseOrderApprovalLevel2EditComponent extends TestScope implemen
   }
 
   public ngOnInit(): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
           const pulls = [
             pull.PurchaseOrderApprovalLevel2({
-              object: this.data.id,
+              objectId: this.data.id,
               include: {
                 PurchaseOrder: {
                   PrintDocument: x,
@@ -61,12 +61,12 @@ export class PurchaseOrderApprovalLevel2EditComponent extends TestScope implemen
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls })).pipe(map((loaded) => loaded));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => loaded));
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
-        this.purchaseOrderApproval = loaded.objects.PurchaseOrderApprovalLevel2 as PurchaseOrderApprovalLevel2;
+        this.allors.session.reset();
+        this.purchaseOrderApproval = loaded.object<PurchaseOrderApprovalLevel2>(m.PurchaseOrderApprovalLevel2);
 
         this.title = this.purchaseOrderApproval.Title;
       });
@@ -93,10 +93,10 @@ export class PurchaseOrderApprovalLevel2EditComponent extends TestScope implemen
       .save()
       .pipe(
         switchMap(() => {
-          return this.allors.context.load(pull.PurchaseOrderApprovalLevel2({ object: this.data.id }));
+          return this.allors.context.load(pull.PurchaseOrderApprovalLevel2({ objectId: this.data.id }));
         }),
         switchMap(() => {
-          this.allors.context.reset();
+          this.allors.session.reset();
           return methodCall();
         })
       )

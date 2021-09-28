@@ -65,11 +65,11 @@ export class TelecommunicationsNumberCreateComponent extends TestScope implement
               object: this.data.associationId,
             }),
             pull.ContactMechanismType({
-              predicate: new Equals({ propertyType: m.ContactMechanismType.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.ContactMechanismType.IsActive, value: true },
               sorting: [{ roleType: this.m.ContactMechanismType.Name }]
             }),
             pull.ContactMechanismPurpose({
-              predicate: new Equals({ propertyType: m.ContactMechanismPurpose.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.ContactMechanismPurpose.IsActive, value: true },
               sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }]
             })
           ];
@@ -80,15 +80,15 @@ export class TelecommunicationsNumberCreateComponent extends TestScope implement
       )
       .subscribe((loaded) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.contactMechanismTypes = loaded.collections.ContactMechanismTypes as Enumeration[];
-        this.contactMechanismPurposes = loaded.collections.ContactMechanismPurposes as Enumeration[];
-        this.party = loaded.objects.Party as Party;
+        this.contactMechanismTypes = loaded.collection<Enumeration>(m.Enumeration);
+        this.contactMechanismPurposes = loaded.collection<Enumeration>(m.Enumeration);
+        this.party = loaded.object<Party>(m.Party);
 
-        this.contactMechanism = this.allors.context.create('TelecommunicationsNumber') as TelecommunicationsNumber;
+        this.contactMechanism = this.allors.session.create<TelecommunicationsNumber>(m.TelecommunicationsNumber);
 
-        this.partyContactMechanism = this.allors.context.create('PartyContactMechanism') as PartyContactMechanism;
+        this.partyContactMechanism = this.allors.session.create<PartyContactMechanism>(m.PartyContactMechanism);
         this.partyContactMechanism.UseAsDefault = true;
         this.partyContactMechanism.ContactMechanism = this.contactMechanism;
 
@@ -104,7 +104,7 @@ export class TelecommunicationsNumberCreateComponent extends TestScope implement
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.contactMechanism.id,

@@ -94,14 +94,14 @@ export class RepeatingSalesInvoiceOverviewPanelComponent extends TestScope {
     const invoicePullName = `${panel.name}_${this.m.SalesInvoice.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.SalesInvoice({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             RepeatingSalesInvoiceWhereSource: {
               include: {
@@ -113,7 +113,7 @@ export class RepeatingSalesInvoiceOverviewPanelComponent extends TestScope {
         }),
         pull.SalesInvoice({
           name: invoicePullName,
-          object: id
+          objectId: id
         }),
       );
     };

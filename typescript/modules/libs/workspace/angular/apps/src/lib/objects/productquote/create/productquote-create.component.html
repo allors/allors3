@@ -15,7 +15,7 @@
               (changed)="receiverSelected($event)"
               label="To"
             ></a-mat-autocomplete>
-            <button mat-mini-fab color="accent" [disabled]="!quote.CanWriteReceiver" type="button" (click)="addReceiver = !addReceiver">
+            <button mat-mini-fab color="accent" [disabled]="!quote.canWriteReceiver" type="button" (click)="addReceiver = !addReceiver">
               <mat-icon *ngIf="!addReceiver">add</mat-icon>
               <mat-icon *ngIf="addReceiver">close</mat-icon>
             </button>
@@ -45,7 +45,7 @@
               mat-mini-fab
               color="accent"
               type="button"
-              [disabled]="!quote.Receiver || !quote.CanWriteFullfillContactMechanism"
+              [disabled]="!quote.Receiver || !quote.canWriteFullfillContactMechanism"
               (click)="addContactMechanism = !addContactMechanism"
             >
               <mat-icon *ngIf="!addContactMechanism">add</mat-icon>
@@ -82,7 +82,7 @@
               mat-mini-fab
               color="accent"
               type="button"
-              [disabled]="receiverIsPerson || !quote.CanWriteContactPerson"
+              [disabled]="receiverIsPerson || !quote.canWriteContactPerson"
               (click)="addContactPerson = !addContactPerson"
             >
               <mat-icon *ngIf="!addContactPerson">add</mat-icon>

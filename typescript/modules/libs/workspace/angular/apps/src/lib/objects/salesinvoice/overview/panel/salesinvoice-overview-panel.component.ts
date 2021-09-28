@@ -89,14 +89,14 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
     const customerPullName = `${this.panel.name}_${this.m.SalesInvoice.name}_customer`;
 
     this.panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.SerialisedItem({
           name: assetPullName,
-          object: id,
+          objectId: id,
           select: {
             SalesInvoiceItemsWhereSerialisedItem: {
               SalesInvoiceWhereSalesInvoiceItem: {
@@ -110,7 +110,7 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
         }),
         pull.Party({
           name: customerPullName,
-          object: id,
+          objectId: id,
           select: {
             SalesInvoicesWhereBillToCustomer: {
               include: {

@@ -94,14 +94,14 @@ export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope impl
     const workeffortpullName = `${this.panel.name}_${this.m.WorkEffortFixedAssetAssignment.name}_workeffort`;
 
     this.panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.WorkEffort({
           name: workeffortpullName,
-          object: id,
+          objectId: id,
           select: {
             WorkEffortFixedAssetAssignmentsWhereAssignment: {
               include: {
@@ -115,13 +115,13 @@ export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope impl
           }
         }),
         pull.WorkEffort({
-          object: id,
+          objectId: id,
         }),
       );
     };
 
     this.panel.onPulled = (loaded) => {
-      this.workEffort = loaded.objects.WorkEffort as WorkEffort;
+      this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
       this.objects = loaded.collections[workeffortpullName] as WorkEffortFixedAssetAssignment[];
 
       if (this.objects) {

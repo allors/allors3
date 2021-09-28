@@ -107,7 +107,7 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
             })
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(
               map((loaded) => ({ loaded }))
             );
@@ -115,31 +115,31 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
       )
       .subscribe(({ loaded }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.inventoryTransactionReasons = loaded.collections.InventoryTransactionReasons as InventoryTransactionReason[];
-        this.nonSerialisedInventoryItemState = loaded.collections.NonSerialisedInventoryItemStates as NonSerialisedInventoryItemState[];
-        this.serialisedInventoryItemState = loaded.collections.SerialisedInventoryItemStates as SerialisedInventoryItemState[];
-        this.part = loaded.objects.Part as Part;
-        this.parts = loaded.collections.Parts as Part[];
-        this.facilities = loaded.collections.Facilities as Facility[];
-        this.lots = loaded.collections.Lots as Lot[];
-        this.serialisedItem = loaded.objects.SerialisedItem as SerialisedItem;
-        this.inventoryItem = loaded.objects.InventoryItem as InventoryItem;
+        this.inventoryTransactionReasons = loaded.collection<InventoryTransactionReason>(m.InventoryTransactionReason);
+        this.nonSerialisedInventoryItemState = loaded.collection<NonSerialisedInventoryItemState>(m.NonSerialisedInventoryItemState);
+        this.serialisedInventoryItemState = loaded.collection<SerialisedInventoryItemState>(m.SerialisedInventoryItemState);
+        this.part = loaded.object<Part>(m.Part);
+        this.parts = loaded.collection<Part>(m.Part);
+        this.facilities = loaded.collection<Facility>(m.Facility);
+        this.lots = loaded.collection<Lot>(m.Lot);
+        this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
+        this.inventoryItem = loaded.object<InventoryItem>(m.InventoryItem);
 
         if (this.part) {
           this.selectedPart = this.part;
         }
 
         if (this.inventoryItem) {
-          this.serialisedInventoryItem = loaded.objects.InventoryItem as SerialisedInventoryItem;
-          this.nonSerialisedInventoryItem = loaded.objects.InventoryItem as NonSerialisedInventoryItem;
+          this.serialisedInventoryItem = loaded.object<InventoryItem>(m.InventoryItem);
+          this.nonSerialisedInventoryItem = loaded.object<InventoryItem>(m.InventoryItem);
           this.part = this.inventoryItem.Part;
           this.selectedFacility = this.inventoryItem.Facility;
           this.serialised = this.inventoryItem.Part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
         }
 
-        this.inventoryItemTransaction = this.allors.context.create('InventoryItemTransaction') as InventoryItemTransaction;
+        this.inventoryItemTransaction = this.allors.session.create<InventoryItemTransaction>(m.InventoryItemTransaction);
         this.inventoryItemTransaction.TransactionDate = new Date().toISOString();
         this.inventoryItemTransaction.Part = this.part;
         this.inventoryItemTransaction.Cost = this.part.PartWeightedAverage?.AverageCost;
@@ -174,7 +174,7 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
 
     this.inventoryItemTransaction.Facility = this.selectedFacility;
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.inventoryItemTransaction.id,
@@ -192,6 +192,6 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
     this.facilities.push(facility);
     this.selectedFacility = facility;
 
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
   }
 }

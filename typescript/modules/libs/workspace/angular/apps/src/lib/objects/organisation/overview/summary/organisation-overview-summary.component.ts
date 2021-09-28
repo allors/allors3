@@ -33,14 +33,14 @@ export class OrganisationOverviewSummaryComponent extends TestScope {
     const organisationPullName = `${panel.name}_${this.m.Organisation.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.Organisation({
           name: organisationPullName,
-          object: id,
+          objectId: id,
           include: {
             Locale: x,
             LastModifiedBy: x,

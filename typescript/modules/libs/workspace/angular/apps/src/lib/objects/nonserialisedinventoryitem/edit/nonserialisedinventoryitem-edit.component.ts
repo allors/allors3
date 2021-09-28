@@ -81,20 +81,20 @@ export class NonSerialisedInventoryItemEditComponent extends TestScope implement
           if (!isCreate) {
             pulls.push(
               pull.NonSerialisedInventoryItem({
-                object: this.data.id,
+                objectId: this.data.id,
               }),
             );
           }
 
-          return this.allors.context.load(new PullRequest({ pulls })).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.nonSerialisedInventoryItem = loaded.objects.NonSerialisedInventoryItem as NonSerialisedInventoryItem;
+        this.nonSerialisedInventoryItem = loaded.object<NonSerialisedInventoryItem>(m.NonSerialisedInventoryItem);
 
-        if (this.nonSerialisedInventoryItem.CanWritePartLocation) {
+        if (this.nonSerialisedInventoryItem.canWritePartLocation) {
           this.title = 'Edit Inventory Item';
         } else {
           this.title = 'View Inventory Item';
@@ -109,7 +109,7 @@ export class NonSerialisedInventoryItemEditComponent extends TestScope implement
   }
 
   public save(): void {
-    this.allors.context.save().subscribe((saved: Saved) => {
+    this.allors.client.pushReactive(this.allors.session).subscribe((saved: Saved) => {
       const data: IObject = {
         id: this.nonSerialisedInventoryItem.id,
         objectType: this.nonSerialisedInventoryItem.objectType,

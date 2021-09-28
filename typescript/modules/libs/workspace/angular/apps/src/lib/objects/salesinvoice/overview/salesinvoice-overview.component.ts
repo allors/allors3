@@ -59,7 +59,7 @@ export class SalesInvoiceOverviewComponent extends TestScope implements AfterVie
 
           const pulls = [
             pull.SalesInvoice({
-              object: id,
+              objectId: id,
               include: {
                 SalesInvoiceItems: {
                   Product: x,
@@ -93,7 +93,7 @@ export class SalesInvoiceOverviewComponent extends TestScope implements AfterVie
             }),
             pull.RepeatingSalesInvoice(
               {
-                predicate: new Equals({ propertyType: m.RepeatingSalesInvoice.Source, object: id }),
+                predicate: { kind: 'Equals', propertyType: m.RepeatingSalesInvoice.Source, objectId: id },
                 include: {
                   Frequency: x,
                   DayOfWeek: x
@@ -113,8 +113,8 @@ export class SalesInvoiceOverviewComponent extends TestScope implements AfterVie
 
         this.panelManager.onPulled(loaded);
 
-        this.invoice = loaded.objects.SalesInvoice as SalesInvoice;
-        this.repeatingInvoices = loaded.collections.RepeatingSalesInvoices as RepeatingSalesInvoice[];
+        this.invoice = loaded.object<SalesInvoice>(m.SalesInvoice);
+        this.repeatingInvoices = loaded.collection<RepeatingSalesInvoice>(m.RepeatingSalesInvoice);
         if (this.repeatingInvoices.length > 0) {
           this.repeatingInvoice = this.repeatingInvoices[0];
         } else {

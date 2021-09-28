@@ -87,12 +87,12 @@ export class TimeEntryOverviewPanelComponent extends TestScope implements OnInit
 
     this.panel.onPull = (pulls) => {
 
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.WorkEffort({
-          object: id,
+          objectId: id,
           select: {
             ServiceEntriesWhereWorkEffort: {
               include: {
@@ -102,14 +102,14 @@ export class TimeEntryOverviewPanelComponent extends TestScope implements OnInit
           }
         }),
         pull.WorkEffort({
-          object: id,
+          objectId: id,
         }),
       );
     };
 
     this.panel.onPulled = (loaded) => {
-      this.workEffort = loaded.objects.WorkEffort as WorkEffort;
-      this.objects = loaded.collections.ServiceEntries as TimeEntry[];
+      this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
+      this.objects = loaded.collection<TimeEntry>(m.TimeEntry);
 
       if (this.objects) {
         this.table.total = this.objects.length;

@@ -70,7 +70,7 @@ export class SalesOrderOverviewComponent extends TestScope implements AfterViewI
 
         this.panelManager.onPulled(loaded);
 
-        this.order = loaded.objects.SalesOrder as SalesOrder;
+        this.order = loaded.object<SalesOrder>(m.SalesOrder);
       });
   }
 

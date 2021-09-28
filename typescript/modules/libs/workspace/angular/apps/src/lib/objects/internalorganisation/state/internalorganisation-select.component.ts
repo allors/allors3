@@ -42,15 +42,15 @@ export class SelectInternalOrganisationComponent implements OnInit, OnDestroy {
     const pulls = [
       pull.Organisation(
         {
-          predicate: new Equals({ propertyType: m.Organisation.IsInternalOrganisation, value: true }),
+          predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
           sorting: [{ roleType: m.Organisation.PartyName }]
         }
       )
     ];
 
-    this.subscription = this.allors.context.load(new PullRequest({ pulls }))
+    this.subscription = this.allors.client.pullReactive(this.allors.session, pulls)
       .subscribe((loaded) => {
-        this.internalOrganisations = loaded.collections.Organisations as Organisation[];
+        this.internalOrganisations = loaded.collection<Organisation>(m.Organisation);
       });
   }
 

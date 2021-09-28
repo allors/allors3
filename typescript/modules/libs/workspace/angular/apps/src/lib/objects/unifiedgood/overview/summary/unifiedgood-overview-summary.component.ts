@@ -30,14 +30,14 @@ export class UnifiedGoodOverviewSummaryComponent {
     const pullName = `${panel.name}_${this.m.UnifiedGood.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.UnifiedGood({
           name: pullName,
-          object: id,
+          objectId: id,
           include: {
             ProductType: x,
             Brand: x,

@@ -62,7 +62,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {
-        const { pullBuilder: pull } = this.m; const x = {};
+        const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
         pulls.push(
           pull.RequestForQuote(
@@ -100,7 +100,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
         this.request = loaded.objects[requestForQuotePullName] as RequestForQuote;
-        this.quote = loaded.objects.Quote as Quote;
+        this.quote = loaded.object<Quote>(m.Quote);
       }
     };
   }
@@ -125,7 +125,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
             pull.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
             pull.RequestForQuote(
               {
-                object: id,
+                objectId: id,
                 include: {
                   Currency: x,
                   Originator: x,
@@ -146,11 +146,11 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.request = loaded.objects.RequestForQuote as RequestForQuote;
-        this.currencies = loaded.collections.Currencies as Currency[];
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.request = loaded.object<RequestForQuote>(m.RequestForQuote);
+        this.currencies = loaded.collection<Currency>(m.Currency);
 
         if (this.request.Originator) {
           this.previousOriginator = this.request.Originator;
@@ -167,7 +167,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         this.refreshService.refresh();
         this.panel.toggle();
@@ -195,7 +195,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
 
   public personAdded(person: Person): void {
 
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.request.Originator as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -205,7 +205,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
 
   public originatorAdded(party: Party): void {
 
-    const customerRelationship = this.allors.context.create('CustomerRelationship') as CustomerRelationship;
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -214,7 +214,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
 
   private update(party: Party) {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -247,9 +247,9 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
           this.previousOriginator = this.request.Originator;
         }
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.contacts = loaded.collections.CurrentContacts as Person[];
+        this.contacts = loaded.collection<Person>(m.Person);
       });
   }
 }

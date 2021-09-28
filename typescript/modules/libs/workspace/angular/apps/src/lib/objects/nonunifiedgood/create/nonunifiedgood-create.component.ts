@@ -84,24 +84,24 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
 
           this.nonUnifiedPartsFilter = Filters.nonUnifiedPartsFilter(m);
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.categories = loaded.collections.ProductCategories as ProductCategory[];
-        this.goodIdentificationTypes = loaded.collections.ProductIdentificationTypes as ProductIdentificationType[];
-        this.locales = loaded.collections.AdditionalLocales as Locale[];
-        this.settings = loaded.objects.Settings as Settings;
+        this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
+        this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
+        this.locales = loaded.collection<Locale>(m.Locale);
+        this.settings = loaded.object<Settings>(m.Settings);
 
         this.goodNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
 
-        this.good = this.allors.context.create('NonUnifiedGood') as Good;
+        this.good = this.allors.session.create<NonUnifiedGood>(m.NonUnifiedGood);
 
         if (!this.settings.UseProductNumberCounter) {
-          this.productNumber = this.allors.context.create('ProductNumber') as ProductNumber;
+          this.productNumber = this.allors.session.create<ProductNumber>(m.ProductNumber);
           this.productNumber.ProductIdentificationType = this.goodNumberType;
 
           this.good.AddProductIdentification(this.productNumber);
@@ -121,7 +121,7 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
       category.AddProduct(this.good);
     });
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.good.id,

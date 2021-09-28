@@ -153,7 +153,7 @@ export class Filters {
             propertyType: m.Person.EmploymentsWhereEmployee,
             extent: new Extent({
               objectType: m.Employment,
-              predicate: new Equals({ propertyType: m.Employment.Employer, object: internalOrganisationId }),
+              predicate: { kind: 'Equals', propertyType: m.Employment.Employer, object: internalOrganisationId },
             }),
           })
         );

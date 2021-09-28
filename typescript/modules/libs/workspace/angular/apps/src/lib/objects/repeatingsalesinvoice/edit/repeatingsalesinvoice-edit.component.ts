@@ -51,7 +51,7 @@ export class RepeatingSalesInvoiceEditComponent extends TestScope implements OnI
 
           const pulls = [
             pull.TimeFrequency({
-              predicate: new Equals({ propertyType: m.TimeFrequency.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.TimeFrequency.IsActive, value: true },
               sorting: [{ roleType: m.TimeFrequency.Name }],
             }),
             pull.DayOfWeek(),
@@ -60,7 +60,7 @@ export class RepeatingSalesInvoiceEditComponent extends TestScope implements OnI
           if (!isCreate) {
             pulls.push(
               pull.RepeatingSalesInvoice({
-                object: id,
+                objectId: id,
                 include: {
                   Frequency: x,
                   DayOfWeek: x,
@@ -75,23 +75,23 @@ export class RepeatingSalesInvoiceEditComponent extends TestScope implements OnI
             );
           }
 
-          return this.allors.context.load(new PullRequest({ pulls })).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.invoice = loaded.objects.SalesInvoice as SalesInvoice;
-        this.repeatinginvoice = loaded.objects.RepeatingSalesInvoice as RepeatingSalesInvoice;
-        this.frequencies = loaded.collections.TimeFrequencies as TimeFrequency[];
-        this.daysOfWeek = loaded.collections.DaysOfWeek as DayOfWeek[];
+        this.invoice = loaded.object<SalesInvoice>(m.SalesInvoice);
+        this.repeatinginvoice = loaded.object<RepeatingSalesInvoice>(m.RepeatingSalesInvoice);
+        this.frequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
+        this.daysOfWeek = loaded.collection<DayOfWeek>(m.DayOfWeek);
 
         if (isCreate) {
           this.title = 'Create Repeating Invoice';
-          this.repeatinginvoice = this.allors.context.create('RepeatingSalesInvoice') as RepeatingSalesInvoice;
+          this.repeatinginvoice = this.allors.session.create<RepeatingSalesInvoice>(m.RepeatingSalesInvoice);
           this.repeatinginvoice.Source = this.invoice;
         } else {
-          if (this.repeatinginvoice.CanWriteFrequency) {
+          if (this.repeatinginvoice.canWriteFrequency) {
             this.title = 'Edit Repeating Invoice';
           } else {
             this.title = 'View Repeating Invoice';
@@ -107,7 +107,7 @@ export class RepeatingSalesInvoiceEditComponent extends TestScope implements OnI
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const data: IObject = {
         id: this.repeatinginvoice.id,
         objectType: this.repeatinginvoice.objectType,

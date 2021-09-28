@@ -45,7 +45,7 @@ export class PartyRateEditComponent extends TestScope implements OnInit, OnDestr
 
   public ngOnInit(): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
@@ -61,7 +61,7 @@ export class PartyRateEditComponent extends TestScope implements OnInit, OnDestr
           if (!isCreate) {
             pulls.push(
               pull.PartyRate({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   RateType: x,
                   Frequency: x
@@ -91,22 +91,22 @@ export class PartyRateEditComponent extends TestScope implements OnInit, OnDestr
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.party = loaded.objects.Party as Party;
-        this.rateTypes = loaded.collections.RateTypes as RateType[];
-        this.timeFrequencies = loaded.collections.TimeFrequencies as TimeFrequency[];
+        this.party = loaded.object<Party>(m.Party);
+        this.rateTypes = loaded.collection<RateType>(m.RateType);
+        this.timeFrequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
         const hour = this.timeFrequencies.find((v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5');
 
         if (isCreate) {
           this.title = 'Add Party Rate';
-          this.partyRate = this.allors.context.create('PartyRate') as PartyRate;
+          this.partyRate = this.allors.session.create<PartyRate>(m.PartyRate);
           this.partyRate.Frequency = hour;
           this.party.AddPartyRate(this.partyRate);
         } else {
-          this.partyRate = loaded.objects.PartyRate as PartyRate;
+          this.partyRate = loaded.object<PartyRate>(m.PartyRate);
 
-          if (this.partyRate.CanWriteRate) {
+          if (this.partyRate.canWriteRate) {
             this.title = 'Edit Party Rate';
           } else {
             this.title = 'View Party Rate';
@@ -122,7 +122,7 @@ export class PartyRateEditComponent extends TestScope implements OnInit, OnDestr
   }
 
   public setDirty(): void {
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
   }
 
   public save(): void {

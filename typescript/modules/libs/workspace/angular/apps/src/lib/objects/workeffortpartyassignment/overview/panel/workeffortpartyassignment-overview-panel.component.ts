@@ -102,14 +102,14 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
     const workeffortpullName = `${this.panel.name}_${this.m.WorkEffortPartyAssignment.name}_workeffort`;
 
     this.panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.Person({
           name: partypullName,
-          object: id,
+          objectId: id,
           select: {
             WorkEffortPartyAssignmentsWhereParty: {
               include: {
@@ -124,7 +124,7 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
         }),
         pull.WorkEffort({
           name: workeffortpullName,
-          object: id,
+          objectId: id,
           select: {
             WorkEffortPartyAssignmentsWhereAssignment: {
               include: {
@@ -138,13 +138,13 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
           }
         }),
         pull.WorkEffort({
-          object: id,
+          objectId: id,
         }),
       );
     };
 
     this.panel.onPulled = (loaded) => {
-      this.workEffort = loaded.objects.WorkEffort as WorkEffort;
+      this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
       this.fromParty = loaded.collections[partypullName] as WorkEffortPartyAssignment[];
       this.fromWorkEffort = loaded.collections[workeffortpullName] as WorkEffortPartyAssignment[];
 

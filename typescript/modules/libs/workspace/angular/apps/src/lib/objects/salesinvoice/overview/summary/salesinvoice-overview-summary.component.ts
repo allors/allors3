@@ -60,7 +60,7 @@ export class SalesInvoiceOverviewSummaryComponent {
       pulls.push(
         pull.SalesInvoice({
           name: salesInvoicePullName,
-          object: id,
+          objectId: id,
           include: {
             SalesInvoiceItems: {
               Product: x,
@@ -98,28 +98,28 @@ export class SalesInvoiceOverviewSummaryComponent {
         }),
         pull.SalesInvoice({
           name: salesOrderPullName,
-          object: id,
+          objectId: id,
           select: {
             SalesOrders: x,
           },
         }),
         pull.SalesInvoice({
           name: workEffortPullName,
-          object: id,
+          objectId: id,
           select: {
             WorkEfforts: x,
           },
         }),
         pull.SalesInvoice({
           name: creditNotePullName,
-          object: id,
+          objectId: id,
           select: {
             SalesInvoiceWhereCreditedFromInvoice: x,
           },
         }),
         pull.RepeatingSalesInvoice({
           name: repeatingSalesInvoicePullName,
-          predicate: new Equals({ propertyType: m.RepeatingSalesInvoice.Source, object: id }),
+          predicate: { kind: 'Equals', propertyType: m.RepeatingSalesInvoice.Source, objectId: id },
           include: {
             Frequency: x,
             DayOfWeek: x,
@@ -129,10 +129,10 @@ export class SalesInvoiceOverviewSummaryComponent {
     };
 
     panel.onPulled = (loaded) => {
-      this.orders = loaded.collections.SalesOrders as SalesOrder[];
+      this.orders = loaded.collection<SalesOrder>(m.SalesOrder);
       this.workEfforts = loaded.collections[workEffortPullName] as WorkEffort[];
-      this.invoice = loaded.objects.SalesInvoice as SalesInvoice;
-      this.repeatingInvoices = loaded.collections.RepeatingSalesInvoices as RepeatingSalesInvoice[];
+      this.invoice = loaded.object<SalesInvoice>(m.SalesInvoice);
+      this.repeatingInvoices = loaded.collection<RepeatingSalesInvoice>(m.RepeatingSalesInvoice);
       this.hasIrpf = Number(this.invoice.TotalIrpf) !== 0;
       this.creditNote = loaded.objects[creditNotePullName] as SalesInvoice;
 

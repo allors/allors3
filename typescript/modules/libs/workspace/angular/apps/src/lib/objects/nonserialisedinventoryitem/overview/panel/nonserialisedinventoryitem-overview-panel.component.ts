@@ -65,7 +65,7 @@ export class NonSerialisedInventoryItemComponent extends TestScope implements On
 
   ngOnInit() {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     this.panel.name = 'nonserialised Inventory item';
     this.panel.title = 'Nonserialised Inventory items';
@@ -117,7 +117,7 @@ export class NonSerialisedInventoryItemComponent extends TestScope implements On
       pulls.push(
         pull.Part({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             InventoryItemsWherePart: {
               include: {

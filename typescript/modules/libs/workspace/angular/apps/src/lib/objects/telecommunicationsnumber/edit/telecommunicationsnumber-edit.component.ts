@@ -48,24 +48,24 @@ export class TelecommunicationsNumberEditComponent extends TestScope implements 
         switchMap(() => {
           const pulls = [
             pull.ContactMechanism({
-              object: this.data.id,
+              objectId: this.data.id,
             }),
             pull.ContactMechanismType({
-              predicate: new Equals({ propertyType: m.ContactMechanismType.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.ContactMechanismType.IsActive, value: true },
               sorting: [{ roleType: this.m.ContactMechanismType.Name }],
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.contactMechanismTypes = loaded.collections.ContactMechanismTypes as Enumeration[];
-        this.contactMechanism = loaded.objects.ContactMechanism as TelecommunicationsNumber;
+        this.contactMechanismTypes = loaded.collection<Enumeration>(m.Enumeration);
+        this.contactMechanism = loaded.object<ContactMechanism>(m.ContactMechanism);
 
-        if (this.contactMechanism.CanWriteAreaCode) {
+        if (this.contactMechanism.canWriteAreaCode) {
           this.title = 'Edit Phone Number';
         } else {
           this.title = 'View Phone Number';
@@ -80,7 +80,7 @@ export class TelecommunicationsNumberEditComponent extends TestScope implements 
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const data: IObject = {
         id: this.contactMechanism.id,
         objectType: this.contactMechanism.objectType,

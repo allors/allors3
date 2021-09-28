@@ -63,7 +63,7 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
   }
 
   public ngOnInit(): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const workEffortPartyAssignmentPullName = `${this.m.WorkEffortPartyAssignment.name}`;
 
@@ -80,14 +80,14 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
           if (!isCreate) {
             pulls.push(
               pull.TimeEntry({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   TimeFrequency: x,
                   BillingFrequency: x,
                 },
               }),
               pull.TimeEntry({
-                object: this.data.id,
+                objectId: this.data.id,
                 select: {
                   WorkEffort: {
                     WorkEffortPartyAssignmentsWhereAssignment: {
@@ -121,21 +121,21 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
             ];
           }
 
-          return this.allors.context.load(new PullRequest({ pulls })).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.rateTypes = loaded.collections.RateTypes as RateType[];
-        this.frequencies = loaded.collections.TimeFrequencies as TimeFrequency[];
+        this.rateTypes = loaded.collection<RateType>(m.RateType);
+        this.frequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
         const hour = this.frequencies.find((v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5');
 
         if (isCreate) {
-          this.workEffort = loaded.objects.WorkEffort as WorkEffort;
+          this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
 
           this.title = 'Add Time Entry';
-          this.timeEntry = this.allors.context.create('TimeEntry') as TimeEntry;
+          this.timeEntry = this.allors.session.create<TimeEntry>(m.TimeEntry);
           this.timeEntry.WorkEffort = this.workEffort;
           this.timeEntry.IsBillable = true;
           this.timeEntry.BillingFrequency = hour;
@@ -144,14 +144,14 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
           const workEffortPartyAssignments = loaded.collections[workEffortPartyAssignmentPullName] as WorkEffortPartyAssignment[];
           this.workers = Array.from(new Set(workEffortPartyAssignments.map((v) => v.Party)).values());
         } else {
-          this.timeEntry = loaded.objects.TimeEntry as TimeEntry;
+          this.timeEntry = loaded.object<TimeEntry>(m.TimeEntry);
           this.selectedWorker = this.timeEntry.Worker;
           this.workEffort = this.timeEntry.WorkEffort;
 
-          const workEffortPartyAssignments = loaded.collections.WorkEffortPartyAssignments as WorkEffortPartyAssignment[];
+          const workEffortPartyAssignments = loaded.collection<WorkEffortPartyAssignment>(m.WorkEffortPartyAssignment);
           this.workers = Array.from(new Set(workEffortPartyAssignments.map((v) => v.Party)).values());
 
-          if (this.timeEntry.CanWriteAssignedAmountOfTime) {
+          if (this.timeEntry.canWriteAssignedAmountOfTime) {
             this.title = 'Edit Time Entry';
           } else {
             this.title = 'View Time Entry';
@@ -171,7 +171,7 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
   }
 
   public setDirty(): void {
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
   }
 
   public findBillingRate(): void {
@@ -192,8 +192,8 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
-      this.timeSheet = loaded.objects.TimeSheet as TimeSheet;
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+      this.timeSheet = loaded.object<TimeSheet>(m.TimeSheet);
     });
   }
 
@@ -211,7 +211,7 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
       this.timeSheet.AddTimeEntry(this.timeEntry);
     }
 
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const data: IObject = {
         id: this.timeEntry.id,
         objectType: this.timeEntry.objectType,

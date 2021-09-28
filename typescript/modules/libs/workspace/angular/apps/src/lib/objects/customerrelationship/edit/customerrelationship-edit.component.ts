@@ -45,7 +45,7 @@ export class CustomerRelationshipEditComponent extends TestScope implements OnIn
 
   public ngOnInit(): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
@@ -60,7 +60,7 @@ export class CustomerRelationshipEditComponent extends TestScope implements OnIn
           if (!isCreate) {
             pulls.push(
               pull.CustomerRelationship({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   InternalOrganisation: x
                 }
@@ -85,22 +85,22 @@ export class CustomerRelationshipEditComponent extends TestScope implements OnIn
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.party = loaded.objects.Party as Party;
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.party = loaded.object<Party>(m.Party);
 
         if (isCreate) {
           this.title = 'Add Customer Relationship';
 
-          this.partyRelationship = this.allors.context.create('CustomerRelationship') as CustomerRelationship;
+          this.partyRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
           this.partyRelationship.FromDate = new Date().toISOString();
           this.partyRelationship.Customer = this.party;
           this.partyRelationship.InternalOrganisation = this.internalOrganisation;
         } else {
-          this.partyRelationship = loaded.objects.CustomerRelationship as CustomerRelationship;
+          this.partyRelationship = loaded.object<CustomerRelationship>(m.CustomerRelationship);
 
-          if (this.partyRelationship.CanWriteFromDate) {
+          if (this.partyRelationship.canWriteFromDate) {
             this.title = 'Edit Customer Relationship';
           } else {
             this.title = 'View Customer Relationship';
@@ -117,7 +117,7 @@ export class CustomerRelationshipEditComponent extends TestScope implements OnIn
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.partyRelationship.id,

@@ -47,7 +47,7 @@ export class WorkEffortAssignmentRateEditComponent extends TestScope implements 
 
   public ngOnInit(): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
@@ -63,7 +63,7 @@ export class WorkEffortAssignmentRateEditComponent extends TestScope implements 
           if (!isCreate) {
             pulls.push(
               pull.WorkEffortAssignmentRate({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   RateType: x,
                   Frequency: x,
@@ -102,23 +102,23 @@ export class WorkEffortAssignmentRateEditComponent extends TestScope implements 
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.workEffort = loaded.objects.WorkEffort as WorkEffort;
-        this.workEffortPartyAssignments = loaded.collections.WorkEffortPartyAssignments as WorkEffortPartyAssignment[];
-        this.rateTypes = loaded.collections.RateTypes as RateType[];
-        this.timeFrequencies = loaded.collections.TimeFrequencies as TimeFrequency[];
+        this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
+        this.workEffortPartyAssignments = loaded.collection<WorkEffortPartyAssignment>(m.WorkEffortPartyAssignment);
+        this.rateTypes = loaded.collection<RateType>(m.RateType);
+        this.timeFrequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
         const hour = this.timeFrequencies.find((v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5');
 
         if (isCreate) {
           this.title = 'Add Rate';
-          this.workEffortAssignmentRate = this.allors.context.create('WorkEffortAssignmentRate') as WorkEffortAssignmentRate;
+          this.workEffortAssignmentRate = this.allors.session.create<WorkEffortAssignmentRate>(m.WorkEffortAssignmentRate);
           this.workEffortAssignmentRate.WorkEffort = this.workEffort;
           this.workEffortAssignmentRate.Frequency = hour;
         } else {
-          this.workEffortAssignmentRate = loaded.objects.WorkEffortAssignmentRate as WorkEffortAssignmentRate;
+          this.workEffortAssignmentRate = loaded.object<WorkEffortAssignmentRate>(m.WorkEffortAssignmentRate);
 
-          if (this.workEffortAssignmentRate.CanWriteRate) {
+          if (this.workEffortAssignmentRate.canWriteRate) {
             this.title = 'Edit Rate';
           } else {
             this.title = 'View Rate';
@@ -134,7 +134,7 @@ export class WorkEffortAssignmentRateEditComponent extends TestScope implements 
   }
 
   public setDirty(): void {
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
   }
 
   public save(): void {

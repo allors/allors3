@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Currency, Enumeration, InternalOrganisation, Organisation, Person } from '@allors/workspace/domain/default';
+import { Currency, Enumeration, InternalOrganisation, Locale, Person } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService, SingletonId, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -78,6 +78,10 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
   }
 
   public ngOnInit(): void {
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
+
     // Maximized
     this.subscription = this.panel.manager.on$
       .pipe(
@@ -86,10 +90,6 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
         }),
         switchMap(() => {
           this.person = undefined;
-
-          const m = this.allors.workspace.configuration.metaPopulation as M;
-          const { pullBuilder: pull } = m;
-          const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -111,21 +111,21 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
               sorting: [{ roleType: m.Currency.Name }],
             }),
             pull.GenderType({
-              predicate: new Equals({ propertyType: m.GenderType.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.GenderType.IsActive, value: true },
               sorting: [{ roleType: m.GenderType.Name }],
             }),
             pull.Salutation({
-              predicate: new Equals({ propertyType: m.Salutation.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Salutation.IsActive, value: true },
               sorting: [{ roleType: m.Salutation.Name }],
             }),
             pull.Person({
-              object: id,
+              objectId: id,
               select: {
                 OrganisationContactRelationshipsWhereContact: x,
               },
             }),
             pull.Person({
-              object: id,
+              objectId: id,
               include: {
                 PreferredCurrency: x,
                 Gender: x,
@@ -136,18 +136,18 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.person = loaded.objects.Person as Person;
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.currencies = loaded.collections.Currencies as Currency[];
-        this.locales = (loaded.collections.Locales as Locale[]) || [];
-        this.genders = loaded.collections.GenderTypes as Enumeration[];
-        this.salutations = loaded.collections.Salutations as Enumeration[];
+        this.person = loaded.object<Person>(m.Person);
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.currencies = loaded.collection<Currency>(m.Currency);
+        this.locales = (loaded.collection<Locale>(m.Locale)) || [];
+        this.genders = loaded.collection<Enumeration>(m.Enumeration);
+        this.salutations = loaded.collection<Enumeration>(m.Enumeration);
       });
   }
 
@@ -158,7 +158,7 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
     }, this.saveService.errorHandler);

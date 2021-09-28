@@ -55,7 +55,7 @@ export class PositionTypeEditComponent extends TestScope implements OnInit, OnDe
           if (!isCreate) {
             pulls.push(
               pull.PositionType({
-                object: this.data.id,
+                objectId: this.data.id,
               }),
             );
           }
@@ -69,15 +69,15 @@ export class PositionTypeEditComponent extends TestScope implements OnInit, OnDe
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
         if (isCreate) {
           this.title = 'Add Position Type';
-          this.positionType = this.allors.context.create('PositionType') as PositionType;
+          this.positionType = this.allors.session.create<PositionType>(m.PositionType);
         } else {
-          this.positionType = loaded.objects.PositionType as PositionType;
+          this.positionType = loaded.object<PositionType>(m.PositionType);
 
-          if (this.positionType.CanWriteTitle) {
+          if (this.positionType.canWriteTitle) {
             this.title = 'Edit Position Type';
           } else {
             this.title = 'View Position Type';

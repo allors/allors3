@@ -319,18 +319,18 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.user = loaded.objects.Person as Person;
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.facilities = loaded.collections.Facilities as Facility[];
-        this.nonUnifiedPartBarcodePrint = loaded.objects.NonUnifiedPartBarcodePrint as NonUnifiedPartBarcodePrint;
+        this.user = loaded.object<Person>(m.Person);
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.facilities = loaded.collection<Facility>(m.Facility);
+        this.nonUnifiedPartBarcodePrint = loaded.object<NonUnifiedPartBarcodePrint>(m.NonUnifiedPartBarcodePrint);
 
-        this.parts = loaded.collections.NonUnifiedParts as NonUnifiedPart[];
+        this.parts = loaded.collection<NonUnifiedPart>(m.NonUnifiedPart);
 
         const inStockSearch = this.filter.fields.find((v) => v.definition.name === 'In Stock');
         let facilitySearchId = inStockSearch?.value;
@@ -359,8 +359,8 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
           });
         }
 
-        this.goodIdentificationTypes = loaded.collections.ProductIdentificationTypes as ProductIdentificationType[];
-        const partCategories = loaded.collections.PartCategories as PartCategory[];
+        this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
+        const partCategories = loaded.collection<PartCategory>(m.PartCategory);
         const partNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
 
         this.table.total = loaded.values.NonUnifiedParts_total;
@@ -401,7 +401,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
     this.nonUnifiedPartBarcodePrint.Locale = this.user.Locale;
 
     context.save().subscribe(() => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const pulls = [
         pull.Singleton({
@@ -418,10 +418,10 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
         }),
       ];
 
-      this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
-        this.allors.context.reset();
+      this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+        this.allors.session.reset();
 
-        this.nonUnifiedPartBarcodePrint = loaded.objects.NonUnifiedPartBarcodePrint as NonUnifiedPartBarcodePrint;
+        this.nonUnifiedPartBarcodePrint = loaded.object<NonUnifiedPartBarcodePrint>(m.NonUnifiedPartBarcodePrint);
 
         this.print.execute(this.nonUnifiedPartBarcodePrint);
         this.refreshService.refresh();

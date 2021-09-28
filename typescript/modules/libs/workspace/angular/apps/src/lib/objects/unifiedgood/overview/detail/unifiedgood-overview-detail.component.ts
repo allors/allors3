@@ -90,7 +90,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
         pulls.push(
           pull.UnifiedGood({
             name: pullName,
-            object: id,
+            objectId: id,
           }),
         );
       }
@@ -122,7 +122,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
             this.fetcher.locales,
             this.fetcher.Settings,
             pull.UnifiedGood({
-              object: id,
+              objectId: id,
               include: {
                 PrimaryPhoto: x,
                 Photos: x,
@@ -163,7 +163,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
             }),
             pull.UnifiedGood(
               {
-                object: id,
+                objectId: id,
                 select: {
                   SupplierOfferingsWherePart: x
                 }
@@ -171,7 +171,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
             ),
             pull.UnifiedGood(
               {
-                object: id,
+                objectId: id,
                 select: {
                   PriceComponentsWherePart: x
                 }
@@ -196,11 +196,11 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
               sorting: [{ roleType: m.Brand.Name }]
             }),
             pull.Organisation({
-              predicate: new Equals({ propertyType: m.Organisation.IsManufacturer, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Organisation.IsManufacturer, value: true },
             }),
             pull.UnifiedGood({
               name: 'OriginalCategories',
-              object: id,
+              objectId: id,
               select: {
                 ProductCategoriesWhereProduct: {
                   include: {
@@ -211,32 +211,32 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
         
 
-        this.good = loaded.objects.UnifiedGood as UnifiedGood;
-        this.originalCategories = loaded.collections.OriginalCategories as ProductCategory[];
+        this.good = loaded.object<UnifiedGood>(m.UnifiedGood);
+        this.originalCategories = loaded.collection<ProductCategory>(m.ProductCategory);
         this.selectedCategories = this.originalCategories;
 
-        this.inventoryItemKinds = loaded.collections.InventoryItemKinds as InventoryItemKind[];
-        this.productTypes = loaded.collections.ProductTypes as ProductType[];
-        this.brands = loaded.collections.Brands as Brand[];
-        this.locales = loaded.collections.AdditionalLocales as Locale[];
-        this.facilities = loaded.collections.Facilities as Facility[];
-        this.unitsOfMeasure = loaded.collections.UnitsOfMeasure as UnitOfMeasure[];
-        this.manufacturers = loaded.collections.Organisations as Organisation[];
-        this.settings = loaded.objects.Settings as Settings;
-        this.goodIdentificationTypes = loaded.collections.ProductIdentificationTypes as ProductIdentificationType[];
-        this.locales = loaded.collections.AdditionalLocales as Locale[];
-        this.manufacturers = loaded.collections.Organisations as Organisation[];
-        this.categories = loaded.collections.ProductCategories as ProductCategory[];
+        this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
+        this.productTypes = loaded.collection<ProductType>(m.ProductType);
+        this.brands = loaded.collection<Brand>(m.Brand);
+        this.locales = loaded.collection<Locale>(m.Locale);
+        this.facilities = loaded.collection<Facility>(m.Facility);
+        this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
+        this.manufacturers = loaded.collection<Organisation>(m.Organisation);
+        this.settings = loaded.object<Settings>(m.Settings);
+        this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
+        this.locales = loaded.collection<Locale>(m.Locale);
+        this.manufacturers = loaded.collection<Organisation>(m.Organisation);
+        this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
 
-        const supplierRelationships = loaded.collections.SupplierRelationships as SupplierRelationship[];
+        const supplierRelationships = loaded.collection<SupplierRelationship>(m.SupplierRelationship);
         const currentsupplierRelationships = supplierRelationships.filter(v => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
         this.currentSuppliers = new Set(currentsupplierRelationships.map(v => v.Supplier).sort((a, b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0)));
 
@@ -254,7 +254,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
           this.brandSelected(this.selectedBrand);
         }
 
-        this.supplierOfferings = loaded.collections.SupplierOfferings as SupplierOffering[];
+        this.supplierOfferings = loaded.collection<SupplierOffering>(m.SupplierOffering);
 
       });
 
@@ -271,7 +271,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
     this.selectedBrand = brand;
     this.models = [];
     this.selectedModel = undefined;
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
     this.setDirty();
   }
 
@@ -279,13 +279,13 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
     this.selectedBrand.AddModel(model);
     this.models = this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0));
     this.selectedModel = model;
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
     this.setDirty();
   }
 
   public brandSelected(brand: Brand): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Brand({
@@ -308,7 +308,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
 
     this.onSave();
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         this.refreshService.refresh();
         this.panel.toggle();
@@ -388,7 +388,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
 
   private newSupplierOffering(supplier: Organisation): SupplierOffering {
 
-    const supplierOffering = this.allors.context.create('SupplierOffering') as SupplierOffering;
+    const supplierOffering = this.allors.session.create<SupplierOffering>(m.SupplierOffering);
     supplierOffering.Supplier = supplier;
     supplierOffering.Part = this.good;
     supplierOffering.UnitOfMeasure = this.good.UnitOfMeasure;
@@ -397,6 +397,6 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   }
 
   public setDirty(): void {
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
   }
 }

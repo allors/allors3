@@ -76,7 +76,7 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
           if (!isCreate) {
             pulls.push(
               pull.Employment({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   Employee: x,
                   Employer: x,
@@ -103,19 +103,19 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.people = loaded.collections.People as Person[];
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        this.people = loaded.collection<Person>(m.Person);
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
         if (isCreate) {
           this.title = 'Add Employment';
 
-          this.partyRelationship = this.allors.context.create('Employment') as Employment;
+          this.partyRelationship = this.allors.session.create<Employment>(m.Employment);
           this.partyRelationship.FromDate = new Date().toISOString();
           this.partyRelationship.Employer = this.internalOrganisation;
 
-          this.party = loaded.objects.Party as Party;
+          this.party = loaded.object<Party>(m.Party);
 
           if (this.party.objectType.name === m.Person.name) {
             this.person = this.party as Person;
@@ -130,11 +130,11 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
             }
           }
         } else {
-          this.partyRelationship = loaded.objects.Employment as Employment;
+          this.partyRelationship = loaded.object<Employment>(m.Employment);
           this.person = this.partyRelationship.Employee;
           this.organisation = this.partyRelationship.Employer as Organisation;
 
-          if (this.partyRelationship.CanWriteFromDate) {
+          if (this.partyRelationship.canWriteFromDate) {
             this.title = 'Edit Employment';
           } else {
             this.title = 'View Employment';
@@ -156,7 +156,7 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.partyRelationship.id,

@@ -68,23 +68,23 @@ export class UnifiedGoodCreateComponent extends TestScope implements OnInit, OnD
             pull.ProductIdentificationType(),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.inventoryItemKinds = loaded.collections.InventoryItemKinds as InventoryItemKind[];
-        this.productTypes = loaded.collections.ProductTypes as ProductType[];
-        this.goodIdentificationTypes = loaded.collections.ProductIdentificationTypes as ProductIdentificationType[];
-        this.settings = loaded.objects.Settings as Settings;
+        this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
+        this.productTypes = loaded.collection<ProductType>(m.ProductType);
+        this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
+        this.settings = loaded.object<Settings>(m.Settings);
 
         this.goodNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
 
-        this.good = this.allors.context.create('UnifiedGood') as UnifiedGood;
+        this.good = this.allors.session.create<UnifiedGood>(m.UnifiedGood);
 
         if (!this.settings.UseProductNumberCounter) {
-          this.productNumber = this.allors.context.create('ProductNumber') as ProductNumber;
+          this.productNumber = this.allors.session.create<ProductNumber>(m.ProductNumber);
           this.productNumber.ProductIdentificationType = this.goodNumberType;
 
           this.good.AddProductIdentification(this.productNumber);
@@ -99,7 +99,7 @@ export class UnifiedGoodCreateComponent extends TestScope implements OnInit, OnD
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const data: IObject = {
         id: this.good.id,
         objectType: this.good.objectType,

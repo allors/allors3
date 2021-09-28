@@ -136,18 +136,18 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.user = loaded.objects.Person as Person;
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.user = loaded.object<Person>(m.Person);
 
         this.canCreate = this.internalOrganisation.CanExecuteCreateRequest;
 
-        const requests = loaded.collections.Requests as Request[];
+        const requests = loaded.collection<Request>(m.Request);
         this.table.total = loaded.values.Requests_total;
         this.table.data = requests
           .filter((v) => v.CanReadRequestNumber)

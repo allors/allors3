@@ -119,13 +119,13 @@ export class SerialisedItemListComponent extends TestScope implements OnInit, On
             }),
           ];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        const objects = loaded.collections.SerialisedItems as SerialisedItem[];
+        const objects = loaded.collection<SerialisedItem>(m.SerialisedItem);
 
         this.table.total = loaded.values.SerialisedItems_total;
         this.table.data = objects.map((v) => {

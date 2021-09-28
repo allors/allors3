@@ -111,14 +111,14 @@ export class QuoteItemOverviewPanelComponent extends TestScope {
     const quotePullName = `${panel.name}_${this.m.ProductQuote.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.Quote({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             QuoteItems: {
               include: {
@@ -131,7 +131,7 @@ export class QuoteItemOverviewPanelComponent extends TestScope {
         }),
         pull.Quote({
           name: quotePullName,
-          object: id
+          objectId: id
         }),
       );
     };

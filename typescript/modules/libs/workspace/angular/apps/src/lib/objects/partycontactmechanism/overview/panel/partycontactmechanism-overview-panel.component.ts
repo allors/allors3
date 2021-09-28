@@ -106,7 +106,7 @@ export class PartyContactMechanismOverviewPanelComponent extends TestScope imple
       pulls.push(
         pull.Party({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             PartyContactMechanisms: {
               include: partyContactMechanismTree
@@ -115,7 +115,7 @@ export class PartyContactMechanismOverviewPanelComponent extends TestScope imple
         }),
         pull.Party({
           name: active,
-          object: id,
+          objectId: id,
           select: {
             CurrentPartyContactMechanisms: {
               include: partyContactMechanismTree
@@ -124,7 +124,7 @@ export class PartyContactMechanismOverviewPanelComponent extends TestScope imple
         }),
         pull.Party({
           name: inactive,
-          object: id,
+          objectId: id,
           select: {
             InactivePartyContactMechanisms: {
               include: partyContactMechanismTree

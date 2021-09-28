@@ -88,7 +88,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
             this.fetcher.warehouses,
             pull.SerialisedItemAvailability(),
             pull.InvoiceItemType({
-              predicate: new Equals({ propertyType: m.InvoiceItemType.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.InvoiceItemType.IsActive, value: true },
               sorting: [{ roleType: m.InvoiceItemType.Name }],
             }),
             pull.IrpfRegime({ 
@@ -99,7 +99,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
           if (!isCreate) {
             pulls.push(
               pull.SalesInvoiceItem({
-                object: id,
+                objectId: id,
                 include:
                 {
                   SalesInvoiceItemState: x,
@@ -117,7 +117,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
                 }
               }),
               pull.SalesInvoiceItem({
-                object: id,
+                objectId: id,
                 select: {
                   SalesInvoiceWhereSalesInvoiceItem: {
                     include: {
@@ -152,35 +152,35 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
 
           this.goodsFilter = Filters.goodsFilter(m);
 
-          return this.allors.context.load(new PullRequest({ pulls }))
+          return this.allors.client.pullReactive(this.allors.session, pulls)
             .pipe(
               map((loaded) => ({ loaded, isCreate }))
             );
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === "ES";
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.invoiceItem = loaded.objects.SalesInvoiceItem as SalesInvoiceItem;
-        this.orderItem = loaded.objects.SalesOrderItem as SalesOrderItem;
-        this.parts = loaded.collections.NonUnifiedParts as NonUnifiedPart[];
-        this.irpfRegimes = loaded.collections.IrpfRegimes as IrpfRegime[];
-        this.serialisedItemAvailabilities = loaded.collections.SerialisedItemAvailabilities as SerialisedItemAvailability[];
-        this.facilities = loaded.collections.Facilities as Facility[];
-        this.invoiceItemTypes = loaded.collections.InvoiceItemTypes as InvoiceItemType[];
+        this.invoiceItem = loaded.object<SalesInvoiceItem>(m.SalesInvoiceItem);
+        this.orderItem = loaded.object<SalesOrderItem>(m.SalesOrderItem);
+        this.parts = loaded.collection<NonUnifiedPart>(m.NonUnifiedPart);
+        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
+        this.serialisedItemAvailabilities = loaded.collection<SerialisedItemAvailability>(m.SerialisedItemAvailability);
+        this.facilities = loaded.collection<Facility>(m.Facility);
+        this.invoiceItemTypes = loaded.collection<InvoiceItemType>(m.InvoiceItemType);
         this.productItemType = this.invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === '0d07f778-2735-44cb-8354-fb887ada42ad');
         this.partItemType = this.invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b');
 
-        const serialisedItemAvailabilities = loaded.collections.SerialisedItemAvailabilities as SerialisedItemAvailability[];
+        const serialisedItemAvailabilities = loaded.collection<SerialisedItemAvailability>(m.SerialisedItemAvailability);
         this.inRent = serialisedItemAvailabilities.find((v: SerialisedItemAvailability) => v.UniqueId === 'ec87f723-2284-4f5c-ba57-fcf328a0b738');
 
         if (isCreate) {
           this.title = 'Add sales invoice Item';
-          this.invoice = loaded.objects.SalesInvoice as SalesInvoice;
-          this.invoiceItem = this.allors.context.create('SalesInvoiceItem') as SalesInvoiceItem;
+          this.invoice = loaded.object<SalesInvoice>(m.SalesInvoice);
+          this.invoiceItem = this.allors.session.create<SalesInvoiceItem>(m.SalesInvoiceItem);
           this.invoice.AddSalesInvoiceItem(this.invoiceItem);
           this.vatRegimeInitialRole = this.invoice.DerivedVatRegime;
           this.irpfRegimeInitialRole = this.invoice.DerivedIrpfRegime;
@@ -195,7 +195,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
             this.goodSelected(this.invoiceItem.Product);
           }
 
-          if (this.invoiceItem.CanWriteQuantity) {
+          if (this.invoiceItem.canWriteQuantity) {
             this.title = 'Edit invoice Item';
           } else {
             this.title = 'View invoice Item';
@@ -212,7 +212,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.invoiceItem.id,
@@ -241,7 +241,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
 
   private refreshSerialisedItems(good: Product): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const unifiedGoodPullName = `${this.m.UnifiedGood.name}_items`;
     const nonUnifiedGoodPullName = `${this.m.NonUnifiedGood.name}_items`;

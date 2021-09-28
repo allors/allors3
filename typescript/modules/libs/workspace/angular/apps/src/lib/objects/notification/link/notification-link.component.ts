@@ -47,7 +47,7 @@ export class NotificationLinkComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = this.refreshService.refresh$
       .pipe(
@@ -63,13 +63,13 @@ export class NotificationLinkComponent implements OnInit, OnDestroy {
               }
             })];
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        const user = loaded.objects.Person as Person;
+        const user = loaded.object<Person>(m.Person);
         this.notifications = user.NotificationList.UnconfirmedNotifications;
       });
   }

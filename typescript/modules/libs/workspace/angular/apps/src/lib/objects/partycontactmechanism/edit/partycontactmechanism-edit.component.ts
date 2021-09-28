@@ -53,7 +53,7 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
 
           const pulls = [
             pull.ContactMechanismPurpose({
-              predicate: new Equals({ propertyType: m.ContactMechanismPurpose.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.ContactMechanismPurpose.IsActive, value: true },
               sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }],
             }),
           ];
@@ -61,7 +61,7 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
           if (!isCreate) {
             pulls.push(
               pull.PartyContactMechanism({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   ContactMechanism: {
                     PostalAddress_Country: x,
@@ -69,7 +69,7 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
                 },
               }),
               pull.PartyContactMechanism({
-                object: this.data.id,
+                objectId: this.data.id,
                 name: 'test',
                 select: {
                   PartyWherePartyContactMechanism: {
@@ -102,7 +102,7 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
                 },
               }),
               pull.PartyContactMechanism({
-                object: this.data.id,
+                objectId: this.data.id,
                 name: 'test',
                 select: {
                   PartyWherePartyContactMechanism: {
@@ -119,19 +119,19 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
             );
           }
 
-          return this.allors.context.load(new PullRequest({ pulls })).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
         this.contactMechanisms = [];
         this.ownContactMechanisms = [];
 
-        this.contactMechanismPurposes = loaded.collections.ContactMechanismPurposes as Enumeration[];
-        this.organisationContactMechanisms = loaded.collections.CurrentOrganisationContactMechanisms as ContactMechanism[];
+        this.contactMechanismPurposes = loaded.collection<Enumeration>(m.Enumeration);
+        this.organisationContactMechanisms = loaded.collection<ContactMechanism>(m.ContactMechanism);
 
-        const partyContactMechanisms = loaded.collections.test as PartyContactMechanism[];
+        const partyContactMechanisms = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         partyContactMechanisms.forEach((v) => this.ownContactMechanisms.push(v.ContactMechanism));
 
         if (this.organisationContactMechanisms !== undefined) {
@@ -145,16 +145,16 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
         if (isCreate) {
           this.title = 'Add Party ContactMechanism';
 
-          this.partyContactMechanism = this.allors.context.create('PartyContactMechanism') as PartyContactMechanism;
+          this.partyContactMechanism = this.allors.session.create<PartyContactMechanism>(m.PartyContactMechanism);
           this.partyContactMechanism.FromDate = new Date().toISOString();
           this.partyContactMechanism.UseAsDefault = true;
 
-          this.party = loaded.objects.Party as Party;
+          this.party = loaded.object<Party>(m.Party);
           this.party.AddPartyContactMechanism(this.partyContactMechanism);
         } else {
-          this.partyContactMechanism = loaded.objects.PartyContactMechanism as PartyContactMechanism;
+          this.partyContactMechanism = loaded.object<PartyContactMechanism>(m.PartyContactMechanism);
 
-          if (this.partyContactMechanism.CanWriteComment) {
+          if (this.partyContactMechanism.canWriteComment) {
             this.title = 'Edit Party ContactMechanism';
           } else {
             this.title = 'View Party ContactMechanism';
@@ -170,7 +170,7 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const data: IObject = {
         id: this.partyContactMechanism.id,
         objectType: this.partyContactMechanism.objectType,

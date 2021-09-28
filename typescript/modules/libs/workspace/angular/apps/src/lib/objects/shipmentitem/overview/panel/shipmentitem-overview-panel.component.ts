@@ -93,14 +93,14 @@ export class ShipmentItemOverviewPanelComponent extends TestScope {
     const shipmentPullName = `${panel.name}_${this.m.Shipment.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.Shipment({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             ShipmentItems: {
               include: {
@@ -113,7 +113,7 @@ export class ShipmentItemOverviewPanelComponent extends TestScope {
         }),
         pull.Shipment({
           name: shipmentPullName,
-          object: id
+          objectId: id
         }),
       );
     };

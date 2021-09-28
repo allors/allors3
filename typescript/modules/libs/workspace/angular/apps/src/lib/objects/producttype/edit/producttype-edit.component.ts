@@ -62,7 +62,7 @@ export class ProductTypeEditComponent extends TestScope implements OnInit, OnDes
           if (!isCreate) {
             pulls.push(
               pull.ProductType({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   SerialisedItemCharacteristicTypes: x,
                 }
@@ -79,17 +79,17 @@ export class ProductTypeEditComponent extends TestScope implements OnInit, OnDes
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.characteristics = loaded.collections.SerialisedItemCharacteristicTypes as SerialisedItemCharacteristicType[];
+        this.characteristics = loaded.collection<SerialisedItemCharacteristicType>(m.SerialisedItemCharacteristicType);
 
         if (isCreate) {
           this.title = 'Add Product Type';
-          this.productType = this.allors.context.create('ProductType') as ProductType;
+          this.productType = this.allors.session.create<ProductType>(m.ProductType);
         } else {
-          this.productType = loaded.objects.ProductType as ProductType;
+          this.productType = loaded.object<ProductType>(m.ProductType);
 
-          if (this.productType.CanWriteName) {
+          if (this.productType.canWriteName) {
             this.title = 'Edit Product Type';
           } else {
             this.title = 'View Product Type';

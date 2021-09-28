@@ -84,7 +84,7 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
           this.fetcher.internalOrganisation,
           pull.PurchaseShipment({
             name: pullName,
-            object: id,
+            objectId: id,
           }),
         );
       }
@@ -93,7 +93,7 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
         this.purchaseShipment = loaded.objects[pullName] as PurchaseShipment;
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
       }
     };
   }
@@ -139,11 +139,11 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
             pull.ShipmentMethod({ sorting: [{ roleType: m.ShipmentMethod.Name }] }),
             pull.Carrier({ sorting: [{ roleType: m.Carrier.Name }] }),
             pull.Organisation({
-              predicate: new Equals({ propertyType: m.Organisation.IsInternalOrganisation, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
               sorting: [{ roleType: m.Organisation.PartyName }],
             }),
             pull.PurchaseShipment({
-              object: id,
+              objectId: id,
               include: {
                 ShipFromParty: x,
                 ShipFromAddress: x,
@@ -161,22 +161,22 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
           
           this.suppliersFilter = Filters.suppliersFilter(m, this.internalOrganisationId.value);
 
-          return this.allors.context.load(new PullRequest({ pulls }));
+          return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collections.CurrentPartyContactMechanisms as PartyContactMechanism[];
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
         this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
-        this.shipToContacts = loaded.collections.CurrentContacts as Person[];
+        this.shipToContacts = loaded.collection<Person>(m.Person);
 
-        this.purchaseShipment = loaded.objects.PurchaseShipment as PurchaseShipment;
+        this.purchaseShipment = loaded.object<PurchaseShipment>(m.PurchaseShipment);
         this.selectedFacility = this.purchaseShipment.ShipToFacility;
 
-        this.facilities = loaded.collections.Facilities as Facility[];
-        this.shipmentMethods = loaded.collections.ShipmentMethods as ShipmentMethod[];
-        this.carriers = loaded.collections.Carriers as Carrier[];
+        this.facilities = loaded.collection<Facility>(m.Facility);
+        this.shipmentMethods = loaded.collection<ShipmentMethod>(m.ShipmentMethod);
+        this.carriers = loaded.collection<Carrier>(m.Carrier);
 
         if (this.purchaseShipment.ShipFromParty) {
           this.updateShipFromParty(this.purchaseShipment.ShipFromParty);
@@ -197,7 +197,7 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
 
     this.purchaseShipment.ShipToFacility = this.selectedFacility;
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         this.refreshService.refresh();
         this.panel.toggle();
@@ -210,12 +210,12 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
     this.facilities.push(facility);
     this.selectedFacility = facility;
 
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
   }
 
   public shipFromContactPersonAdded(person: Person): void {
 
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.purchaseShipment.ShipFromParty as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -238,7 +238,7 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
 
   private updateShipFromParty(organisation: Party): void {
 
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Party({
@@ -253,11 +253,11 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
       .load(new PullRequest({ pulls }))
       .subscribe((loaded) => {
 
-        this.shipFromContacts = loaded.collections.CurrentContacts as Person[];
+        this.shipFromContacts = loaded.collection<Person>(m.Person);
       });
   }
 
   public setDirty(): void {
-    this.allors.context.session.hasChanges = true;
+    this.allors.session.hasChanges = true;
   }
 }

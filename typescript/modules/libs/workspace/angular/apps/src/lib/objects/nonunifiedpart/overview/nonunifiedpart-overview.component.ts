@@ -73,7 +73,7 @@ export class NonUnifiedPartOverviewComponent extends TestScope implements AfterV
         this.panelManager.context.session.reset();
         this.panelManager.onPulled(loaded);
 
-        const part = loaded.objects.NonUnifiedPart as NonUnifiedPart;
+        const part = loaded.object<NonUnifiedPart>(m.NonUnifiedPart);
         this.serialised = part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
       });
   }

@@ -58,7 +58,7 @@ export class PurchaseInvoiceOverviewComponent extends TestScope implements After
 
           const pulls = [
             pull.PurchaseInvoice({
-              object: id,
+              objectId: id,
               include: {
                 PurchaseInvoiceItems: {
                   InvoiceItemType: x
@@ -96,8 +96,8 @@ export class PurchaseInvoiceOverviewComponent extends TestScope implements After
 
         this.panelManager.onPulled(loaded);
 
-        this.order = loaded.objects.PurchaseOrder as PurchaseOrder;
-        this.invoice = loaded.objects.PurchaseInvoice as PurchaseInvoice;
+        this.order = loaded.object<PurchaseOrder>(m.PurchaseOrder);
+        this.invoice = loaded.object<PurchaseInvoice>(m.PurchaseInvoice);
 
       });
   }

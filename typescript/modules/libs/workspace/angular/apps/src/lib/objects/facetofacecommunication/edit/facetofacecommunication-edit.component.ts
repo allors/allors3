@@ -74,7 +74,7 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
               }
             }),
             pull.CommunicationEventPurpose({
-              predicate: new Equals({ propertyType: m.CommunicationEventPurpose.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.CommunicationEventPurpose.IsActive, value: true },
               sorting: [{ roleType: m.CommunicationEventPurpose.Name }]
             }),
             pull.CommunicationEventState({
@@ -86,7 +86,7 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
             pulls = [
               ...pulls,
               pull.FaceToFaceCommunication({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   FromParty: {
                     CurrentPartyContactMechanisms: {
@@ -103,7 +103,7 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
                 }
               }),
               pull.CommunicationEvent({
-                object: this.data.id,
+                objectId: this.data.id,
                 select: {
                   InvolvedParties: {
                     include: {
@@ -157,25 +157,25 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
       )
       .subscribe(({ loaded, isCreate }) => {
 
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.purposes = loaded.collections.CommunicationEventPurposes as CommunicationEventPurpose[];
-        this.eventStates = loaded.collections.CommunicationEventStates as CommunicationEventState[];
-        this.parties = loaded.collections.InvolvedParties as Party[];
-        const internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        this.purposes = loaded.collection<CommunicationEventPurpose>(m.CommunicationEventPurpose);
+        this.eventStates = loaded.collection<CommunicationEventState>(m.CommunicationEventState);
+        this.parties = loaded.collection<Party>(m.Party);
+        const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
-        this.person = loaded.objects.Person as Person;
-        this.organisation = loaded.objects.Organisation as Organisation;
+        this.person = loaded.object<Person>(m.Person);
+        this.organisation = loaded.object<Organisation>(m.Organisation);
 
         if (isCreate) {
           this.title = 'Add Meeting';
-          this.communicationEvent = this.allors.context.create('FaceToFaceCommunication') as FaceToFaceCommunication;
+          this.communicationEvent = this.allors.session.create<FaceToFaceCommunication>(m.FaceToFaceCommunication);
 
           this.party = this.organisation || this.person;
         } else {
-          this.communicationEvent = loaded.objects.FaceToFaceCommunication as FaceToFaceCommunication;
+          this.communicationEvent = loaded.object<FaceToFaceCommunication>(m.FaceToFaceCommunication);
 
-          if (this.communicationEvent.CanWriteActualEnd) {
+          if (this.communicationEvent.canWriteActualEnd) {
             this.title = 'Edit Meeting';
           } else {
             this.title = 'View Meeting';
@@ -235,7 +235,7 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
 
   public save(): void {
 
-    this.allors.context.save()
+    this.allors.client.pushReactive(this.allors.session)
       .subscribe(() => {
         const data: IObject = {
           id: this.communicationEvent.id,
@@ -251,7 +251,7 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
 
   private addContactRelationship(party: Person): void {
     if (this.organisation) {
-      const relationShip: OrganisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+      const relationShip: OrganisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
       relationShip.Contact = party;
       relationShip.Organisation = this.organisation;
     }

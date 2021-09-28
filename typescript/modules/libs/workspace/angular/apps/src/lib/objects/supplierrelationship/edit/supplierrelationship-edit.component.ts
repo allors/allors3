@@ -51,7 +51,7 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
   }
 
   public ngOnInit(): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -65,7 +65,7 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
           if (!isCreate) {
             pulls.push(
               pull.SupplierRelationship({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   InternalOrganisation: x,
                   Parties: x,
@@ -82,14 +82,14 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
             );
           }
 
-          return this.allors.context.load(new PullRequest({ pulls })).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.organisation = loaded.objects.Organisation as Organisation;
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.organisation = loaded.object<Organisation>(m.Organisation);
 
         if (isCreate) {
           if (this.organisation === undefined) {
@@ -98,15 +98,15 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
 
           this.title = 'Add Supplier Relationship';
 
-          this.partyRelationship = this.allors.context.create('SupplierRelationship') as SupplierRelationship;
+          this.partyRelationship = this.allors.session.create<SupplierRelationship>(m.SupplierRelationship);
           this.partyRelationship.FromDate = new Date().toISOString();
           this.partyRelationship.Supplier = this.organisation;
           this.partyRelationship.InternalOrganisation = this.internalOrganisation;
           this.partyRelationship.NeedsApproval = false;
         } else {
-          this.partyRelationship = loaded.objects.SupplierRelationship as SupplierRelationship;
+          this.partyRelationship = loaded.object<SupplierRelationship>(m.SupplierRelationship);
 
-          if (this.partyRelationship.CanWriteFromDate) {
+          if (this.partyRelationship.canWriteFromDate) {
             this.title = 'Edit Supplier Relationship';
           } else {
             this.title = 'View Supplier Relationship';
@@ -122,7 +122,7 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const data: IObject = {
         id: this.partyRelationship.id,
         objectType: this.partyRelationship.objectType,

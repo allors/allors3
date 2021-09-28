@@ -111,14 +111,14 @@ export class PurchaseOrderItemOverviewPanelComponent extends TestScope {
     const orderPullName = `${panel.name}_${this.m.PurchaseOrder.name}`;
 
     panel.onPull = (pulls) => {
-      const { pullBuilder: pull } = this.m; const x = {};
+      const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
       pulls.push(
         pull.PurchaseOrder({
           name: pullName,
-          object: id,
+          objectId: id,
           select: {
             PurchaseOrderItems: {
               include: {
@@ -132,7 +132,7 @@ export class PurchaseOrderItemOverviewPanelComponent extends TestScope {
         }),
         pull.PurchaseOrder({
           name: orderPullName,
-          object: id
+          objectId: id
         }),
       );
     };

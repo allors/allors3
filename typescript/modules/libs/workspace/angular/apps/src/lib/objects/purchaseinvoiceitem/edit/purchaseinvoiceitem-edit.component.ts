@@ -93,7 +93,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.InvoiceItemType({
-              predicate: new Equals({ propertyType: m.InvoiceItemType.IsActive, value: true }),
+              predicate: { kind: 'Equals', propertyType: m.InvoiceItemType.IsActive, value: true },
               sorting: [{ roleType: m.InvoiceItemType.Name }],
             }),
             pull.IrpfRegime({
@@ -104,7 +104,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
           if (!isCreate) {
             pulls.push(
               pull.PurchaseInvoiceItem({
-                object: id,
+                objectId: id,
                 include: {
                   PurchaseInvoiceItemState: x,
                   SerialisedItem: x,
@@ -117,7 +117,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
             },
               }),
               pull.PurchaseInvoiceItem({
-                object: id,
+                objectId: id,
                 select: {
                   PurchaseInvoiceWherePurchaseInvoiceItem: {
                     include: {
@@ -152,19 +152,19 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
 
           this.unifiedGoodsFilter = Filters.unifiedGoodsFilter(m, this.metaService.tree);
 
-          return this.allors.context.load(new PullRequest({ pulls })).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
+        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === "ES";
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.invoiceItem = loaded.objects.PurchaseInvoiceItem as PurchaseInvoiceItem;
-        this.orderItem = loaded.objects.PurchaseOrderItem as PurchaseOrderItem;
-        this.irpfRegimes = loaded.collections.IrpfRegimes as IrpfRegime[];
-        this.invoiceItemTypes = loaded.collections.InvoiceItemTypes as InvoiceItemType[];
+        this.invoiceItem = loaded.object<PurchaseInvoiceItem>(m.PurchaseInvoiceItem);
+        this.orderItem = loaded.object<PurchaseOrderItem>(m.PurchaseOrderItem);
+        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
+        this.invoiceItemTypes = loaded.collection<InvoiceItemType>(m.InvoiceItemType);
         this.partItemType = this.invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b');
         this.productItemType = this.invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === '0d07f778-2735-44cb-8354-fb887ada42ad');
         this.serviceItemType = this.invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === 'a4d2e6d0-c6c1-46ec-a1cf-3a64822e7a9e');
@@ -179,7 +179,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
                 propertyType: this.m.Part.SupplierOfferingsWherePart,
                 extent: new Extent({
                   objectType: this.m.SupplierOffering,
-                  predicate: new Equals({ propertyType: m.SupplierOffering.Supplier, object: this.invoice.BilledFrom }),
+                  predicate: { kind: 'Equals', propertyType: m.SupplierOffering.Supplier, object: this.invoice.BilledFrom },
                 }),
               })
             );
@@ -188,8 +188,8 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
 
         if (isCreate) {
           this.title = 'Add purchase invoice Item';
-          this.invoice = loaded.objects.PurchaseInvoice as PurchaseInvoice;
-          this.invoiceItem = this.allors.context.create('PurchaseInvoiceItem') as PurchaseInvoiceItem;
+          this.invoice = loaded.object<PurchaseInvoice>(m.PurchaseInvoice);
+          this.invoiceItem = this.allors.session.create<PurchaseInvoiceItem>(m.PurchaseInvoiceItem);
           this.invoice.AddPurchaseInvoiceItem(this.invoiceItem);
           this.vatRegimeInitialRole = this.invoice.DerivedVatRegime;
           this.irpfRegimeInitialRole = this.invoice.DerivedIrpfRegime;
@@ -202,7 +202,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
             this.updateFromPart(this.invoiceItem.Part);
           }
 
-          if (this.invoiceItem.CanWriteQuantity) {
+          if (this.invoiceItem.canWriteQuantity) {
             this.title = 'Edit purchase invoice Item';
           } else {
             this.title = 'View purchase invoice Item';
@@ -241,7 +241,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
   public save(): void {
     this.onSave();
 
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const data: IObject = {
         id: this.invoiceItem.id,
         objectType: this.invoiceItem.objectType,
@@ -253,7 +253,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
   }
 
   private refreshSerialisedItems(unifiedGood: UnifiedGood): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.NonUnifiedGood({
@@ -276,14 +276,14 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe(() => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe(() => {
       this.serialisedItems = this.part.SerialisedItems;
       this.serialised = this.part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
     });
   }
 
   private updateFromPart(part: Part) {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const m = this.m; const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Part({
@@ -314,11 +314,11 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       this.part = (loaded.objects.UnifiedGood || loaded.objects.Part) as Part;
       this.serialised = part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 
-      const supplierOfferings = loaded.collections.SupplierOfferings as SupplierOffering[];
+      const supplierOfferings = loaded.collection<SupplierOffering>(m.SupplierOffering);
       this.supplierOffering = supplierOfferings.find(
         (v) =>
           isBefore(new Date(v.FromDate), new Date()) &&
@@ -326,7 +326,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
           v.Supplier === this.invoice.BilledFrom
       );
 
-      this.serialisedItems = loaded.collections.SerialisedItems as SerialisedItem[];
+      this.serialisedItems = loaded.collection<SerialisedItem>(m.SerialisedItem);
 
       if (this.invoiceItem.SerialisedItem) {
         this.serialisedItems.push(this.invoiceItem.SerialisedItem);

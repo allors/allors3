@@ -92,7 +92,7 @@ export class SupplierOfferingEditComponent extends TestScope implements OnInit, 
             pulls = [
               ...pulls,
               pull.SupplierOffering({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   Part: x,
                   Rating: x,
@@ -107,30 +107,30 @@ export class SupplierOfferingEditComponent extends TestScope implements OnInit, 
 
           this.allSuppliersFilter = Filters.allSuppliersFilter(m);
 
-          return this.allors.context.load(new PullRequest({ pulls })).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.ratingTypes = loaded.collections.RatingTypes as RatingType[];
-        this.preferences = loaded.collections.Ordinals as Ordinal[];
-        this.unitsOfMeasure = loaded.collections.UnitsOfMeasure as UnitOfMeasure[];
-        this.currencies = loaded.collections.Currencies as Currency[];
-        this.settings = loaded.objects.Settings as Settings;
+        this.ratingTypes = loaded.collection<RatingType>(m.RatingType);
+        this.preferences = loaded.collection<Ordinal>(m.Ordinal);
+        this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
+        this.currencies = loaded.collection<Currency>(m.Currency);
+        this.settings = loaded.object<Settings>(m.Settings);
 
         if (isCreate) {
           this.title = 'Add supplier offering';
 
-          this.supplierOffering = this.allors.context.create('SupplierOffering') as SupplierOffering;
-          this.part = loaded.objects.Part as Part;
+          this.supplierOffering = this.allors.session.create<SupplierOffering>(m.SupplierOffering);
+          this.part = loaded.object<Part>(m.Part);
           this.supplierOffering.Part = this.part;
           this.supplierOffering.Currency = this.settings.PreferredCurrency;
         } else {
-          this.supplierOffering = loaded.objects.SupplierOffering as SupplierOffering;
+          this.supplierOffering = loaded.object<SupplierOffering>(m.SupplierOffering);
           this.part = this.supplierOffering.Part;
 
-          if (this.supplierOffering.CanWritePrice) {
+          if (this.supplierOffering.canWritePrice) {
             this.title = 'Edit supplier offering';
           } else {
             this.title = 'View supplier offering';
@@ -146,7 +146,7 @@ export class SupplierOfferingEditComponent extends TestScope implements OnInit, 
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const data: IObject = {
         id: this.supplierOffering.id,
         objectType: this.supplierOffering.objectType,
