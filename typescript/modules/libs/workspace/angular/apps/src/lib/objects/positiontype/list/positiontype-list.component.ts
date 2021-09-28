@@ -91,7 +91,7 @@ export class PositionTypesOverviewComponent extends TestScope implements OnInit,
           const pulls = [
             pull.PositionType({
               predicate: this.filter.definition.predicate,
-              sort: sort ? m.PositionType.sorter.create(sort) : null,
+              sorting: sort ? m.PositionType.sorter.create(sort) : null,
               include: {
                 PositionTypeRate: x,
               },

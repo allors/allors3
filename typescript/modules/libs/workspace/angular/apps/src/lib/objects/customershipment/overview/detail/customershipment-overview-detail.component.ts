@@ -69,7 +69,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
     panel.expandable = true;
 
     // Collapsed
-    const pullName = `${this.panel.name}_${this.m.CustomerShipment.name}`;
+    const pullName = `${this.panel.name}_${this.m.CustomerShipment.tag}`;
 
     panel.onPull = (pulls) => {
 

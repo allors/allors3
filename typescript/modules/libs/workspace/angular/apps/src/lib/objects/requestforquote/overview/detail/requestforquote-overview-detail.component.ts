@@ -54,8 +54,8 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
     panel.expandable = true;
 
     // Collapsed
-    const requestForQuotePullName = `${panel.name}_${this.m.RequestForQuote.name}`;
-    const productQuotePullName = `${panel.name}_${this.m.ProductQuote.name}`;
+    const requestForQuotePullName = `${panel.name}_${this.m.RequestForQuote.tag}`;
+    const productQuotePullName = `${panel.name}_${this.m.ProductQuote.tag}`;
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {

@@ -29,7 +29,7 @@ export class OrganisationOverviewSummaryComponent extends TestScope {
 
     panel.name = 'summary';
 
-    const organisationPullName = `${panel.name}_${this.m.Organisation.name}`;
+    const organisationPullName = `${panel.name}_${this.m.Organisation.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.m; const { pullBuilder: pull } = m; const x = {};

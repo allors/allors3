@@ -114,7 +114,7 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
           const pulls = [
             pull.WorkEffort({
               predicate,
-              sort: sort ? m.WorkEffort.sorter.create(sort) : null,
+              sorting: sort ? m.WorkEffort.sorter.create(sort) : null,
               include: {
                 Customer: x,
                 ExecutedBy: x,

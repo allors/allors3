@@ -65,8 +65,10 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
   public ngOnInit(): void {
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
-    const x = {};
-    this.filter = m.UnifiedGood.filter = m.UnifiedGood.filter ?? new Filter(m.UnifiedGood.filterDefinition);
+    const { angularMetaService: a } = this.allors.workspace.services;
+    const angularUnifiedGood = a.for(m.UnifiedGood);
+
+    this.filter = angularUnifiedGood.filter ??= new Filter(angularUnifiedGood.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -89,12 +91,12 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
           const pulls = [
             pull.UnifiedGood({
               predicate: this.filter.definition.predicate,
-              sort: sort ? m.UnifiedGood.sorter.create(sort) : null,
+              sorting: sort ? a.for(m.UnifiedGood).sorter?.create(sort) : null,
               include: {
-                Photos: x,
-                PrimaryPhoto: x,
+                Photos: {},
+                PrimaryPhoto: {},
                 ProductIdentifications: {
-                  ProductIdentificationType: x,
+                  ProductIdentificationType: {},
                 },
               },
               arguments: this.filter.parameters(filterFields),
@@ -103,12 +105,12 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
             }),
             pull.UnifiedGood({
               predicate: this.filter.definition.predicate,
-              sort: sort ? m.UnifiedGood.sorter.create(sort) : null,
+              sorting: sort ? a.for(m.UnifiedGood).sorter?.create(sort) : null,
               select: {
                 ProductCategoriesWhereProduct: {
                   include: {
-                    Products: x,
-                    PrimaryAncestors: x,
+                    Products: {},
+                    PrimaryAncestors: {},
                   },
                 },
               },

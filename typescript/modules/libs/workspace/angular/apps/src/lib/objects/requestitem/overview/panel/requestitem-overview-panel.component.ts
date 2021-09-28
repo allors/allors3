@@ -89,7 +89,7 @@ export class RequestItemOverviewPanelComponent extends TestScope {
       autoFilter: true,
     });
 
-    const pullName = `${panel.name}_${this.m.RequestItem.name}`;
+    const pullName = `${panel.name}_${this.m.RequestItem.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.m;

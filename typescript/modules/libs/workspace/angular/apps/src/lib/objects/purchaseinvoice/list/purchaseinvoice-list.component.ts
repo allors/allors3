@@ -204,7 +204,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
             }),
             pull.PurchaseInvoice({
               predicate,
-              sort: sort ? m.PurchaseInvoice.sorter.create(sort) : null,
+              sorting: sort ? m.PurchaseInvoice.sorter.create(sort) : null,
               include: {
                 BilledFrom: x,
                 BilledTo: x,

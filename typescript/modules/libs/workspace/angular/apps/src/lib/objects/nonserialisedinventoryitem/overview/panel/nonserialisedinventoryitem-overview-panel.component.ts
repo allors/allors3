@@ -106,7 +106,7 @@ export class NonSerialisedInventoryItemComponent extends TestScope implements On
       autoFilter: true,
     });
 
-    const pullName = `${this.panel.name}_${this.m.NonSerialisedInventoryItem.name}`;
+    const pullName = `${this.panel.name}_${this.m.NonSerialisedInventoryItem.tag}`;
 
     this.panel.onPull = (pulls) => {
       const id = this.panel.manager.id;

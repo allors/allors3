@@ -96,9 +96,9 @@ export class OrderAdjustmentOverviewPanelComponent extends TestScope {
     const quoteOrderAdjustmentsPullName = `${panel.name}_${this.m.Quote.name}_adjustments`;
     const orderOrderAdjustmentsPullName = `${panel.name}_${this.m.Order.name}_adjustments`;
     const invoiceOrderAdjustmentsPullName = `${panel.name}_${this.m.Invoice.name}_adjustments`;
-    const quotePullName = `${panel.name}_${this.m.Quote.name}`;
-    const orderPullName = `${panel.name}_${this.m.Order.name}`;
-    const invoicePullName = `${panel.name}_${this.m.Invoice.name}`;
+    const quotePullName = `${panel.name}_${this.m.Quote.tag}`;
+    const orderPullName = `${panel.name}_${this.m.Order.tag}`;
+    const invoicePullName = `${panel.name}_${this.m.Invoice.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.m; const { pullBuilder: pull } = m; const x = {};

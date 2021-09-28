@@ -89,7 +89,7 @@ export class ProductTypesOverviewComponent extends TestScope implements OnInit, 
           const pulls = [
             pull.ProductType({
               predicate: this.filter.definition.predicate,
-              sort: sort ? m.ProductType.sorter.create(sort) : null,
+              sorting: sort ? m.ProductType.sorter.create(sort) : null,
               include: {
                 SerialisedItemCharacteristicTypes: x,
               },

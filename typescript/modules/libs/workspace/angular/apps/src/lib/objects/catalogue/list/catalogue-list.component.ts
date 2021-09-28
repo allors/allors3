@@ -113,7 +113,7 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
           const pulls = [
             pull.Catalogue({
               predicate: predicate,
-              sort: sort ? m.Catalogue.sorter.create(sort) : null,
+              sorting: sort ? m.Catalogue.sorter.create(sort) : null,
               include: {
                 CatalogueImage: x,
                 ProductCategories: x,

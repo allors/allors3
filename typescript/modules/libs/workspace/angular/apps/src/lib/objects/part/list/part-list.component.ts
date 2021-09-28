@@ -100,7 +100,7 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
           const pulls = [
             pull.Part({
               predicate: this.filter.definition.predicate,
-              sort: sort ? m.Part.sorter.create(sort) : null,
+              sorting: sort ? m.Part.sorter.create(sort) : null,
               include: {
                 Brand: x,
                 Model: x,

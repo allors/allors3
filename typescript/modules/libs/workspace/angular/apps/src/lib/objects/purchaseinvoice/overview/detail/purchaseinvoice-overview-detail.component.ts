@@ -110,7 +110,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
     panel.expandable = true;
 
     // Normal
-    const purchaseInvoicePullName = `${panel.name}_${this.m.PurchaseInvoice.name}`;
+    const purchaseInvoicePullName = `${panel.name}_${this.m.PurchaseInvoice.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.m;

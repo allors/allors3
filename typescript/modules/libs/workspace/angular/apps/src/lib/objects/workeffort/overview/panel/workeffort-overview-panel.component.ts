@@ -76,7 +76,7 @@ export class WorkEffortOverviewPanelComponent extends TestScope implements OnIni
       autoFilter: true,
     });
 
-    const pullName = `${this.panel.name}_${this.m.WorkEffort.name}`;
+    const pullName = `${this.panel.name}_${this.m.WorkEffort.tag}`;
 
     this.panel.onPull = (pulls) => {
       const m = this.m;

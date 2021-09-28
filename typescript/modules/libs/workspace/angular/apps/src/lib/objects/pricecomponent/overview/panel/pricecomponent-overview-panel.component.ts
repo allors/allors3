@@ -92,7 +92,7 @@ export class PriceComponentOverviewPanelComponent extends TestScope implements O
     });
 
 
-    const pullName = `${this.panel.name}_${this.m.PriceComponent.name}`;
+    const pullName = `${this.panel.name}_${this.m.PriceComponent.tag}`;
 
     this.panel.onPull = (pulls) => {
 

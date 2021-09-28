@@ -208,7 +208,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
             }),
             pull.SalesInvoice({
               predicate,
-              sort: sort ? m.SalesInvoice.sorter.create(sort) : null,
+              sorting: sort ? m.SalesInvoice.sorter.create(sort) : null,
               include: {
                 PrintDocument: {
                   Media: x,

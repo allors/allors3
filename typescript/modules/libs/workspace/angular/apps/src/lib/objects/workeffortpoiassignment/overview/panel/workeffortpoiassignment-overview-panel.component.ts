@@ -73,7 +73,7 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope imp
       autoFilter: true,
     });
 
-    const pullName = `${this.panel.name}_${this.m.WorkEffortPurchaseOrderItemAssignment.name}`;
+    const pullName = `${this.panel.name}_${this.m.WorkEffortPurchaseOrderItemAssignment.tag}`;
 
     this.panel.onPull = (pulls) => {
       const m = this.m;

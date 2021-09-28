@@ -74,7 +74,7 @@ export class ProductIdentificationsPanelComponent extends TestScope implements O
       autoFilter: true,
     });
 
-    const pullName = `${this.panel.name}_${this.m.ProductIdentification.name}`;
+    const pullName = `${this.panel.name}_${this.m.ProductIdentification.tag}`;
 
     this.panel.onPull = (pulls) => {
       const { x, tree } = this.metaService;

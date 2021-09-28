@@ -66,7 +66,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
     panel.expandable = true;
 
     // Collapsed
-    const pullName = `${this.panel.name}_${this.m.Part.name}`;
+    const pullName = `${this.panel.name}_${this.m.Part.tag}`;
 
     panel.onPull = (pulls) => {
       this.part = undefined;

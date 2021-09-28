@@ -78,8 +78,8 @@ export class PurchaseInvoiceItemOverviewPanelComponent extends TestScope {
       autoFilter: true,
     });
 
-    const pullName = `${panel.name}_${this.m.PurchaseInvoiceItem.name}`;
-    const invoicePullName = `${panel.name}_${this.m.PurchaseInvoice.name}`;
+    const pullName = `${panel.name}_${this.m.PurchaseInvoiceItem.tag}`;
+    const invoicePullName = `${panel.name}_${this.m.PurchaseInvoice.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.m;

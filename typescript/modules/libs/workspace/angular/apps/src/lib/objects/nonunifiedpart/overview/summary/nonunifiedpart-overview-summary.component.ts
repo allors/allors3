@@ -37,9 +37,9 @@ export class NonUnifiedPartOverviewSummaryComponent {
 
     panel.name = 'summary';
 
-    const partPullName = `${panel.name}_${this.m.Part.name}`;
-    const priceComponentPullName = `${panel.name}_${this.m.PriceComponent.name}`;
-    const supplierOfferingsPullName = `${panel.name}_${this.m.SupplierOffering.name}`;
+    const partPullName = `${panel.name}_${this.m.Part.tag}`;
+    const priceComponentPullName = `${panel.name}_${this.m.PriceComponent.tag}`;
+    const supplierOfferingsPullName = `${panel.name}_${this.m.SupplierOffering.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};

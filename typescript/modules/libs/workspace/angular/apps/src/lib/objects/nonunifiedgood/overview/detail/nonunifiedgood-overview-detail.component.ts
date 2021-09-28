@@ -79,7 +79,7 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
     panel.expandable = true;
 
     // Collapsed
-    const pullName = `${this.panel.name}_${this.m.Good.name}`;
+    const pullName = `${this.panel.name}_${this.m.Good.tag}`;
 
     panel.onPull = (pulls) => {
       this.good = undefined;

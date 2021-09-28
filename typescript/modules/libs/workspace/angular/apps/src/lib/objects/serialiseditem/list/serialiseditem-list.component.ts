@@ -100,7 +100,7 @@ export class SerialisedItemListComponent extends TestScope implements OnInit, On
           const pulls = [
             pull.SerialisedItem({
               predicate: this.filter.definition.predicate,
-              sort: sort ? m.SerialisedItem.sorter.create(sort) : null,
+              sorting: sort ? m.SerialisedItem.sorter.create(sort) : null,
               include: {
                 SerialisedItemState: x,
                 SerialisedItemAvailability: x,

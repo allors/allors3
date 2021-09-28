@@ -132,11 +132,11 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
     panel.expandable = true;
 
     // Collapsed
-    const salesOrderPullName = `${panel.name}_${this.m.SalesOrder.name}`;
-    const salesInvoicePullName = `${panel.name}_${this.m.SalesInvoice.name}`;
-    const goodPullName = `${panel.name}_${this.m.Good.name}`;
-    const billingProcessPullName = `${panel.name}_${this.m.BillingProcess.name}`;
-    const serialisedInventoryItemStatePullName = `${panel.name}_${this.m.SerialisedInventoryItemState.name}`;
+    const salesOrderPullName = `${panel.name}_${this.m.SalesOrder.tag}`;
+    const salesInvoicePullName = `${panel.name}_${this.m.SalesInvoice.tag}`;
+    const goodPullName = `${panel.name}_${this.m.Good.tag}`;
+    const billingProcessPullName = `${panel.name}_${this.m.BillingProcess.tag}`;
+    const serialisedInventoryItemStatePullName = `${panel.name}_${this.m.SerialisedInventoryItemState.tag}`;
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {

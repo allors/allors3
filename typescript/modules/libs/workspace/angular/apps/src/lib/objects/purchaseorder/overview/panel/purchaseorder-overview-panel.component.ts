@@ -95,7 +95,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
       this.table.actions.push(this.delete);
     }
 
-    const pullName = `${this.panel.name}_${this.m.PurchaseOrder.name}`;
+    const pullName = `${this.panel.name}_${this.m.PurchaseOrder.tag}`;
 
     this.panel.onPull = (pulls) => {
       const { x, pull } = this.metaService;

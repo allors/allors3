@@ -112,8 +112,8 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
     panel.expandable = true;
 
     // Collapsed
-    const salesInvoicePullName = `${panel.name}_${this.m.SalesInvoice.name}`;
-    const goodPullName = `${panel.name}_${this.m.Good.name}`;
+    const salesInvoicePullName = `${panel.name}_${this.m.SalesInvoice.tag}`;
+    const goodPullName = `${panel.name}_${this.m.Good.tag}`;
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {

@@ -85,7 +85,7 @@ export class PartyContactMechanismOverviewPanelComponent extends TestScope imple
       autoFilter: true,
     });
 
-    const pullName = `${this.panel.name}_${this.m.PartyContactMechanism.name}`;
+    const pullName = `${this.panel.name}_${this.m.PartyContactMechanism.tag}`;
     const active = `${this.panel.name}_${this.m.PartyContactMechanism.name}_active`;
     const inactive = `${this.panel.name}_${this.m.PartyContactMechanism.name}_inactive`;
 

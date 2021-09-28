@@ -12,21 +12,21 @@ import { IAngularMetaService } from '../../meta/iangular-meta-service';
   providedIn: 'root',
 })
 export class NavigationServiceCore extends NavigationService {
-  readonly angularMeta: IAngularMetaService;
+  readonly angulerMeta: IAngularMetaService;
 
   constructor(private router: Router, private workspaceService: WorkspaceService) {
     super();
 
-    this.angularMeta = this.workspaceService.workspace.services.angularMetaService;
+    this.angulerMeta = this.workspaceService.workspace.services.angularMetaService;
   }
 
   hasList(obj: IObject): boolean {
-    const angularClass = this.angularMeta.for(obj?.strategy.cls);
+    const angularClass = this.angulerMeta.for(obj?.strategy.cls);
     return angularClass?.list != null;
   }
 
   list(objectType: Composite) {
-    const angularComposite = this.angularMeta.for(objectType);
+    const angularComposite = this.angulerMeta.for(objectType);
     const url = angularComposite?.list;
     if (url != null) {
       this.router.navigate([url]);
@@ -34,12 +34,12 @@ export class NavigationServiceCore extends NavigationService {
   }
 
   hasOverview(obj: IObject): boolean {
-    const angularClass = this.angularMeta.for(obj?.strategy.cls);
+    const angularClass = this.angulerMeta.for(obj?.strategy.cls);
     return angularClass?.overview != null;
   }
 
   overview(obj: IObject) {
-    const angularComposite = this.angularMeta.for(obj.strategy.cls);
+    const angularComposite = this.angulerMeta.for(obj.strategy.cls);
     const url = angularComposite?.overview.replace(`:id`, obj.strategy.id.toString());
     if (url != null) {
       this.router.navigate([url]);

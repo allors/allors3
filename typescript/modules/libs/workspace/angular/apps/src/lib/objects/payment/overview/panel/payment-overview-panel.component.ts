@@ -80,7 +80,7 @@ export class PaymentOverviewPanelComponent extends TestScope {
       autoFilter: true,
     });
 
-    const pullName = `${panel.name}_${this.m.Payment.name}`;
+    const pullName = `${panel.name}_${this.m.Payment.tag}`;
 
     panel.onPull = (pulls) => {
       const { pull, x, m } = this.metaService;

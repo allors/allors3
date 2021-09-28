@@ -69,7 +69,7 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
     panel.expandable = true;
 
     // Minimized
-    const pullName = `${this.panel.name}_${this.m.WorkTask.name}`;
+    const pullName = `${this.panel.name}_${this.m.WorkTask.tag}`;
 
     panel.onPull = (pulls) => {
       this.workTask = undefined;

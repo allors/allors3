@@ -99,7 +99,7 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
             this.fetcher.internalOrganisation,
             pull.Organisation({
               predicate: this.filter.definition.predicate,
-              sort: sort ? m.Organisation.sorter.create(sort) : null,
+              sorting: sort ? m.Organisation.sorter.create(sort) : null,
               include: {
                 CustomerRelationshipsWhereCustomer: x,
                 SupplierRelationshipsWhereSupplier: x,

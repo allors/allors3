@@ -98,7 +98,7 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
           const pulls = [
             pull.Carrier({
               predicate: this.filter.definition.predicate,
-              sort: sort ? m.Carrier.sorter.create(sort) : null,
+              sorting: sort ? m.Carrier.sorter.create(sort) : null,
               arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,

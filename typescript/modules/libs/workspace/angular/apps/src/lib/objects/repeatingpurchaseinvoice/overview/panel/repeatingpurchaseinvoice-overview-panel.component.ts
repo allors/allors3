@@ -77,7 +77,7 @@ export class RepeatingPurchaseInvoiceOverviewPanelComponent extends TestScope {
       autoFilter: true,
     });
 
-    const pullName = `${panel.name}_${this.m.RepeatingPurchaseInvoice.name}`;
+    const pullName = `${panel.name}_${this.m.RepeatingPurchaseInvoice.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.m;

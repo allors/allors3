@@ -83,7 +83,7 @@ export class CommunicationEventOverviewPanelComponent extends TestScope implemen
       autoFilter: true,
     });
 
-    const pullName = `${this.panel.name}_${this.m.CommunicationEvent.name}`;
+    const pullName = `${this.panel.name}_${this.m.CommunicationEvent.tag}`;
 
     this.panel.onPull = (pulls) => {
       const { x, pull } = this.metaService;

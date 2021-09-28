@@ -28,7 +28,7 @@ export class NonUnifiedGoodOverviewSummaryComponent extends TestScope {
 
     panel.name = 'summary';
 
-    const pullName = `${panel.name}_${this.m.NonUnifiedGood.name}`;
+    const pullName = `${panel.name}_${this.m.NonUnifiedGood.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.m; const { pullBuilder: pull } = m; const x = {};

@@ -87,7 +87,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
       autoFilter: true,
     });
 
-    const pullName = `${this.panel.name}_${this.m.PartyRelationship.name}`;
+    const pullName = `${this.panel.name}_${this.m.PartyRelationship.tag}`;
     const active = `${this.panel.name}_${this.m.PartyRelationship.name}_active`;
     const inactive = `${this.panel.name}_${this.m.PartyRelationship.name}_inactive`;
 

@@ -72,7 +72,7 @@ export class ContactMechanismOverviewPanelComponent extends TestScope implements
       autoFilter: true,
     });
 
-    const pullName = `${this.panel.name}_${this.m.PartyContactMechanism.name}`;
+    const pullName = `${this.panel.name}_${this.m.PartyContactMechanism.tag}`;
 
     this.panel.onPull = (pulls) => {
       const m = this.m;

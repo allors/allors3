@@ -32,8 +32,8 @@ export class PersonOverviewSummaryComponent extends TestScope {
 
     panel.name = 'summary';
 
-    const personPullName = `${panel.name}_${this.m.Person.name}`;
-    const organisationContactRelationshipsPullName = `${panel.name}_${this.m.OrganisationContactRelationship.name}`;
+    const personPullName = `${panel.name}_${this.m.Person.tag}`;
+    const organisationContactRelationshipsPullName = `${panel.name}_${this.m.OrganisationContactRelationship.tag}`;
 
     panel.onPull = (pulls) => {
       const { pull, tree, x } = this.metaService;

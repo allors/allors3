@@ -88,7 +88,7 @@ export class PartyRateOverviewPanelComponent extends TestScope implements OnInit
       autoFilter: true,
     });
 
-    const pullName = `${this.panel.name}_${this.m.PartyRate.name}`;
+    const pullName = `${this.panel.name}_${this.m.PartyRate.tag}`;
 
     this.panel.onPull = (pulls) => {
 

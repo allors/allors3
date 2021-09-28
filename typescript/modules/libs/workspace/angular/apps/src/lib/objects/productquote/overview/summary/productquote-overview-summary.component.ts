@@ -35,9 +35,9 @@ export class ProductQuoteOverviewSummaryComponent {
 
     panel.name = 'summary';
 
-    const productQuotePullName = `${panel.name}_${this.m.ProductQuote.name}`;
-    const salesOrderPullName = `${panel.name}_${this.m.SalesOrder.name}`;
-    const requestPullName = `${panel.name}_${this.m.RequestForQuote.name}`;
+    const productQuotePullName = `${panel.name}_${this.m.ProductQuote.tag}`;
+    const salesOrderPullName = `${panel.name}_${this.m.SalesOrder.tag}`;
+    const requestPullName = `${panel.name}_${this.m.RequestForQuote.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.m;

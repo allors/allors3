@@ -136,7 +136,7 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
             }),
             pull.PurchaseOrder({
               predicate,
-              sort: sort ? m.PurchaseOrder.sorter.create(sort) : null,
+              sorting: sort ? m.PurchaseOrder.sorter.create(sort) : null,
               include: {
                 PrintDocument: {
                   Media: x,

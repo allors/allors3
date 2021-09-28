@@ -82,7 +82,7 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
       autoFilter: true,
     });
 
-    const pullName = `${this.panel.name}_${this.m.SupplierOffering.name}`;
+    const pullName = `${this.panel.name}_${this.m.SupplierOffering.tag}`;
 
     this.panel.onPull = (pulls) => {
       const m = this.m;

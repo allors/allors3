@@ -88,7 +88,7 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
       autoFilter: true,
     });
 
-    const partSerialisedItemsName = `${this.panel.name}_${this.m.SerialisedItem.name}`;
+    const partSerialisedItemsName = `${this.panel.name}_${this.m.SerialisedItem.tag}`;
     const ownedSerialisedItemsName = `${this.panel.name}_${this.m.SerialisedItem.name}_OwnedSerialisedItemsName`;
     const rentedSerialisedItemsName = `${this.panel.name}_${this.m.SerialisedItem.name}_RentedSerialisedItems`;
 

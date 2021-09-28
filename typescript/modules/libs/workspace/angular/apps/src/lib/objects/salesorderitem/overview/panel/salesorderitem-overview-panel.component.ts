@@ -107,8 +107,8 @@ export class SalesOrderItemOverviewPanelComponent extends TestScope {
       autoFilter: true,
     });
 
-    const pullName = `${panel.name}_${this.m.SalesOrderItem.name}`;
-    const orderPullName = `${panel.name}_${this.m.SalesOrder.name}`;
+    const pullName = `${panel.name}_${this.m.SalesOrderItem.tag}`;
+    const orderPullName = `${panel.name}_${this.m.SalesOrder.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.m; const { pullBuilder: pull } = m; const x = {};

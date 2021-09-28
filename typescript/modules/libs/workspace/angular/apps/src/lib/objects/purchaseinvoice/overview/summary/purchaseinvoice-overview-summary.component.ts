@@ -42,8 +42,8 @@ export class PurchasInvoiceOverviewSummaryComponent {
 
     panel.name = 'summary';
 
-    const purchaseInvoicePullName = `${panel.name}_${this.m.PurchaseInvoice.name}`;
-    const purchaseOrderPullName = `${panel.name}_${this.m.PurchaseOrder.name}`;
+    const purchaseInvoicePullName = `${panel.name}_${this.m.PurchaseInvoice.tag}`;
+    const purchaseOrderPullName = `${panel.name}_${this.m.PurchaseOrder.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.allors.workspace.configuration.metaPopulation as M;

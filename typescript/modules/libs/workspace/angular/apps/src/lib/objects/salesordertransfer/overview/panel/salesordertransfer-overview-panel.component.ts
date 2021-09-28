@@ -85,8 +85,8 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
 
     const salesOrderTermsPullName = `${panel.name}_${this.m.SalesOrder.name}_terms`;
     const salesInvoiceTermsPullName = `${panel.name}_${this.m.SalesInvoice.name}_terms`;
-    const salesOrderPullName = `${panel.name}_${this.m.SalesOrder.name}`;
-    const salesInvoicePullName = `${panel.name}_${this.m.SalesInvoice.name}`;
+    const salesOrderPullName = `${panel.name}_${this.m.SalesOrder.tag}`;
+    const salesInvoicePullName = `${panel.name}_${this.m.SalesInvoice.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.m;

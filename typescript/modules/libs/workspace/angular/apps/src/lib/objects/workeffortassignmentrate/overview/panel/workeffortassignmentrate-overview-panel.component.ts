@@ -88,7 +88,7 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
       autoFilter: true,
     });
 
-    const pullName = `${this.panel.name}_${this.m.WorkEffortAssignmentRate.name}`;
+    const pullName = `${this.panel.name}_${this.m.WorkEffortAssignmentRate.tag}`;
 
     this.panel.onPull = (pulls) => {
       const m = this.m;

@@ -54,7 +54,7 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const workEffortPartyAssignmentPullName = `${this.m.WorkEffortPartyAssignment.name}`;
+    const workEffortPartyAssignmentPullName = `${this.m.WorkEffortPartyAssignment.tag}`;
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(

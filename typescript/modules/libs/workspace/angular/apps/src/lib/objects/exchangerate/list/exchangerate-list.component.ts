@@ -95,7 +95,7 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
           const pulls = [
             pull.ExchangeRate({
               predicate: this.filter.definition.predicate,
-              sort: sort ? m.ExchangeRate.sorter.create(sort) : null,
+              sorting: sort ? m.ExchangeRate.sorter.create(sort) : null,
               include: {
                 FromCurrency: x,
                 ToCurrency: x,

@@ -89,7 +89,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
     panel.expandable = true;
 
     // Collapsed
-    const purchaseOrderPullName = `${panel.name}_${this.m.PurchaseOrder.name}`;
+    const purchaseOrderPullName = `${panel.name}_${this.m.PurchaseOrder.tag}`;
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {

@@ -69,11 +69,11 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
         this.object = loaded.object<OrderAdjustment>(m.OrderAdjustment);
 
         if (create) {
-          this.title = `Add ${objectType.name}`;
+          this.title = `Add ${objectType.tag}`;
           this.object = this.allors.context.create(objectType.name) as OrderAdjustment;
           this.container.add(associationRoleType, this.object);
         } else {
-          this.title = `Edit ${objectType.name}`;
+          this.title = `Edit ${objectType.tag}`;
         }
       });
   }

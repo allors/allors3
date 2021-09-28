@@ -52,11 +52,11 @@ export class WorkTaskOverviewSummaryComponent {
 
     panel.name = 'summary';
 
-    const workTaskPullName = `${panel.name}_${this.m.WorkTask.name}`;
-    const serviceEntryPullName = `${panel.name}_${this.m.ServiceEntry.name}`;
-    const workEffortBillingPullName = `${panel.name}_${this.m.WorkEffortBilling.name}`;
-    const fixedAssetPullName = `${panel.name}_${this.m.FixedAsset.name}`;
-    const parentPullName = `${panel.name}_${this.m.WorkTask.name}_parent`;
+    const workTaskPullName = `${panel.name}_${this.m.WorkTask.tag}`;
+    const serviceEntryPullName = `${panel.name}_${this.m.ServiceEntry.tag}`;
+    const workEffortBillingPullName = `${panel.name}_${this.m.WorkEffortBilling.tag}`;
+    const fixedAssetPullName = `${panel.name}_${this.m.FixedAsset.tag}`;
+    const parentPullName = `${panel.name}_${this.m.WorkTask.tag}_parent`;
 
     panel.onPull = (pulls) => {
       const m = this.allors.workspace.configuration.metaPopulation as M;

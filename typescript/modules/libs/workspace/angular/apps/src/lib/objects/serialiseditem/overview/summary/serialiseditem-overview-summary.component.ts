@@ -31,8 +31,8 @@ export class SerialisedItemOverviewSummaryComponent {
 
     panel.name = 'summary';
 
-    const serialisedItemPullName = `${panel.name}_${this.m.SerialisedItem.name}`;
-    const partPullName = `${panel.name}_${this.m.Part.name}`;
+    const serialisedItemPullName = `${panel.name}_${this.m.SerialisedItem.tag}`;
+    const partPullName = `${panel.name}_${this.m.Part.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.m; const { pullBuilder: pull } = m; const x = {};

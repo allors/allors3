@@ -82,7 +82,7 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
           const pulls = [
             pull.Good({
               predicate: this.filter.definition.predicate,
-              sort: sort ? m.Good.sorter.create(sort) : null,
+              sorting: sort ? m.Good.sorter.create(sort) : null,
               include: {
                 NonUnifiedGood_Part: x,
                 ProductIdentifications: {
@@ -95,7 +95,7 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
             }),
             pull.Good({
               predicate: this.filter.definition.predicate,
-              sort: sort ? m.Good.sorter.create(sort) : null,
+              sorting: sort ? m.Good.sorter.create(sort) : null,
               select: {
                 ProductCategoriesWhereProduct: {
                   include: {

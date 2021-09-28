@@ -90,7 +90,7 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
           const pulls = [
             pull.Person({
               predicate: this.filter.definition.predicate,
-              sort: sort ? m.Person.sorter.create(sort) : null,
+              sorting: sort ? m.Person.sorter.create(sort) : null,
               include: {
                 Salutation: x,
                 Picture: x,

@@ -71,7 +71,7 @@ export class WorkEffortInventoryAssignmentOverviewPanelComponent extends TestSco
       autoFilter: true,
     });
 
-    const pullName = `${this.panel.name}_${this.m.WorkEffortInventoryAssignment.name}`;
+    const pullName = `${this.panel.name}_${this.m.WorkEffortInventoryAssignment.tag}`;
 
     this.panel.onPull = (pulls) => {
       const m = this.m;

@@ -114,7 +114,7 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
             }),
             pull.Quote({
               predicate,
-              sort: sort ? m.ProductQuote.sorter.create(sort) : null,
+              sorting: sort ? m.ProductQuote.sorter.create(sort) : null,
               include: {
                 PrintDocument: {
                   Media: x,

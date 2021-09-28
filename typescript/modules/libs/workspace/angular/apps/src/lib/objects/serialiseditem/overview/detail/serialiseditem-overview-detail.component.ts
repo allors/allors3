@@ -56,7 +56,7 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
     panel.expandable = true;
 
     // Minimized
-    const pullName = `${this.panel.name}_${this.m.SerialisedItem.name}`;
+    const pullName = `${this.panel.name}_${this.m.SerialisedItem.tag}`;
 
     panel.onPull = (pulls) => {
       this.serialisedItem = undefined;

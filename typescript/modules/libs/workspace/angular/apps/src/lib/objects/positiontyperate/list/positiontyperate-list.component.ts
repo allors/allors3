@@ -105,7 +105,7 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
           const pulls = [
             pull.PositionTypeRate({
               predicate: this.filter.definition.predicate,
-              sort: sort ? m.PositionTypeRate.sorter.create(sort) : null,
+              sorting: sort ? m.PositionTypeRate.sorter.create(sort) : null,
               include: {
                 Frequency: x,
                 RateType: x,

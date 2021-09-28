@@ -33,7 +33,7 @@ export class CustomerShipmentOverviewSummaryComponent {
 
     panel.name = 'summary';
 
-    const shipmentPullName = `${panel.name}_${this.m.Shipment.name}`;
+    const shipmentPullName = `${panel.name}_${this.m.Shipment.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.m; const { pullBuilder: pull } = m; const x = {};

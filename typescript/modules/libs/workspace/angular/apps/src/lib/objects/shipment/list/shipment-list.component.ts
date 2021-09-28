@@ -116,7 +116,7 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
           const pulls = [
             pull.Shipment({
               predicate,
-              sort: sort ? m.Shipment.sorter.create(sort) : null,
+              sorting: sort ? m.Shipment.sorter.create(sort) : null,
               include: {
                 ShipToParty: x,
                 ShipFromParty: x,

@@ -125,7 +125,7 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
             }),
             pull.Request({
               predicate,
-              sort: sort ? m.RequestForQuote.sorter.create(sort) : null,
+              sorting: sort ? m.RequestForQuote.sorter.create(sort) : null,
               include: {
                 Originator: x,
                 RequestState: x,

@@ -83,8 +83,8 @@ export class ShipmentItemOverviewPanelComponent extends TestScope {
       autoFilter: true,
     });
 
-    const pullName = `${panel.name}_${this.m.ShipmentItem.name}`;
-    const shipmentPullName = `${panel.name}_${this.m.Shipment.name}`;
+    const pullName = `${panel.name}_${this.m.ShipmentItem.tag}`;
+    const shipmentPullName = `${panel.name}_${this.m.Shipment.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.m;

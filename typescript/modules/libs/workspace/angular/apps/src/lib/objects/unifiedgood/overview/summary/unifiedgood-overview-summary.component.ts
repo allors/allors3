@@ -25,7 +25,7 @@ export class UnifiedGoodOverviewSummaryComponent {
 
     panel.name = 'summary';
 
-    const pullName = `${panel.name}_${this.m.UnifiedGood.name}`;
+    const pullName = `${panel.name}_${this.m.UnifiedGood.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.m;

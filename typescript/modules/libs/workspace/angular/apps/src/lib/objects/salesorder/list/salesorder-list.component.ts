@@ -122,7 +122,7 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
             }),
             pull.SalesOrder({
               predicate,
-              sort: sort ? m.SalesOrder.sorter.create(sort) : null,
+              sorting: sort ? m.SalesOrder.sorter.create(sort) : null,
               include: {
                 PrintDocument: {
                   Media: x,

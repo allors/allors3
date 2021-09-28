@@ -95,8 +95,8 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
       defaultAction: this.changeInventory,
     });
 
-    const inventoryPullName = `${this.panel.name}_${this.m.SerialisedInventoryItem.name}`;
-    const serialiseditemPullName = `${this.panel.name}_${this.m.SerialisedItem.name}`;
+    const inventoryPullName = `${this.panel.name}_${this.m.SerialisedInventoryItem.tag}`;
+    const serialiseditemPullName = `${this.panel.name}_${this.m.SerialisedItem.tag}`;
 
     this.panel.onPull = (pulls) => {
       const id = this.panel.manager.id;

@@ -88,8 +88,8 @@ export class QuoteItemOverviewPanelComponent extends TestScope {
       autoFilter: true,
     });
 
-    const pullName = `${panel.name}_${this.m.QuoteItem.name}`;
-    const quotePullName = `${panel.name}_${this.m.ProductQuote.name}`;
+    const pullName = `${panel.name}_${this.m.QuoteItem.tag}`;
+    const quotePullName = `${panel.name}_${this.m.ProductQuote.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.m;

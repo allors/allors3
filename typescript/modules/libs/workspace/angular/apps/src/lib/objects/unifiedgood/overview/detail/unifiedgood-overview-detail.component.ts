@@ -91,7 +91,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
     panel.expandable = true;
 
     // Collapsed
-    const pullName = `${this.panel.name}_${this.m.UnifiedGood.name}`;
+    const pullName = `${this.panel.name}_${this.m.UnifiedGood.tag}`;
 
     panel.onPull = (pulls) => {
       this.good = undefined;

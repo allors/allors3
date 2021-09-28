@@ -48,7 +48,7 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
     panel.expandable = true;
 
     // Collapsed
-    const pullName = `${this.panel.name}_${this.m.Organisation.name}`;
+    const pullName = `${this.panel.name}_${this.m.Organisation.tag}`;
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {

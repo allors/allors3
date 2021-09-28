@@ -44,11 +44,11 @@ export class SalesInvoiceOverviewSummaryComponent {
 
     panel.name = 'summary';
 
-    const salesInvoicePullName = `${panel.name}_${this.m.PurchaseInvoice.name}`;
-    const salesOrderPullName = `${panel.name}_${this.m.PurchaseOrder.name}`;
-    const workEffortPullName = `${panel.name}_${this.m.WorkEffort.name}`;
-    const repeatingSalesInvoicePullName = `${panel.name}_${this.m.Good.name}`;
-    const creditNotePullName = `${panel.name}_${this.m.SalesInvoice.name}`;
+    const salesInvoicePullName = `${panel.name}_${this.m.PurchaseInvoice.tag}`;
+    const salesOrderPullName = `${panel.name}_${this.m.PurchaseOrder.tag}`;
+    const workEffortPullName = `${panel.name}_${this.m.WorkEffort.tag}`;
+    const repeatingSalesInvoicePullName = `${panel.name}_${this.m.Good.tag}`;
+    const creditNotePullName = `${panel.name}_${this.m.SalesInvoice.tag}`;
 
     panel.onPull = (pulls) => {
       const m = this.allors.workspace.configuration.metaPopulation as M;

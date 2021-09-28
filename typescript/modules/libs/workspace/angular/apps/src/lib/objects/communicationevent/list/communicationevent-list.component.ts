@@ -106,7 +106,7 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
           const pulls = [
             pull.CommunicationEvent({
               predicate: this.filter.definition.predicate,
-              sort: sort ? m.CommunicationEvent.sorter.create(sort) : null,
+              sorting: sort ? m.CommunicationEvent.sorter.create(sort) : null,
               include: {
                 CommunicationEventState: x,
                 InvolvedParties: x,

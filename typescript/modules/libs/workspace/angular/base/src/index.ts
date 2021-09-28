@@ -141,6 +141,7 @@ export { IAngularComposite } from './lib/meta/iangular-composite';
 export { IAngularMetaService, IAngularMetaObject } from './lib/meta/iangular-meta-service';
 export { IAngularRoleType } from './lib/meta/iangular-role-type';
 
+import { M } from '@allors/workspace/meta/default';
 import { IAngularMetaService } from './lib/meta/iangular-meta-service';
 
 declare module '@allors/workspace/domain/system' {

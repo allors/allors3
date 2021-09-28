@@ -105,7 +105,7 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
           const pulls = [
             pull.ProductCategory({
               predicate: predicate,
-              sort: sort ? m.ProductCategory.sorter.create(sort) : null,
+              sorting: sort ? m.ProductCategory.sorter.create(sort) : null,
               include: {
                 CategoryImage: x,
                 LocalisedNames: x,
