@@ -19,6 +19,9 @@
     }
   },
   "projects": {
+    "angular-apps-app": {
+      "tags": []
+    },
     "angular-base-app": {
       "tags": []
     },
@@ -43,16 +46,28 @@
     "workspace-adapters-system-tests": {
       "tags": []
     },
+    "workspace-angular-apps": {
+      "tags": []
+    },
     "workspace-angular-base": {
       "tags": []
     },
     "workspace-angular-core": {
       "tags": []
     },
+    "workspace-configuration-apps": {
+      "tags": []
+    },
     "workspace-configuration-base": {
       "tags": []
     },
     "workspace-configuration-core": {
+      "tags": []
+    },
+    "workspace-derivations-apps": {
+      "tags": []
+    },
+    "workspace-derivations-apps-custom": {
       "tags": []
     },
     "workspace-derivations-base": {
@@ -67,6 +82,9 @@
     "workspace-derivations-core-custom": {
       "tags": []
     },
+    "workspace-domain-apps": {
+      "tags": []
+    },
     "workspace-domain-base": {
       "tags": []
     },
@@ -76,10 +94,16 @@
     "workspace-domain-system": {
       "tags": []
     },
+    "workspace-meta-apps": {
+      "tags": []
+    },
     "workspace-meta-base": {
       "tags": []
     },
     "workspace-meta-core": {
+      "tags": []
+    },
+    "workspace-meta-json-apps": {
       "tags": []
     },
     "workspace-meta-json-base": {

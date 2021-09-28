@@ -26,5 +26,13 @@ module.exports = {
     '<rootDir>/libs/workspace/derivations/base',
     '<rootDir>/libs/workspace/derivations/base-custom',
     '<rootDir>/libs/workspace/configuration/base',
+    '<rootDir>/apps/angular/apps/app',
+    '<rootDir>/libs/workspace/angular/apps',
+    '<rootDir>/libs/workspace/configuration/apps',
+    '<rootDir>/libs/workspace/derivations/apps',
+    '<rootDir>/libs/workspace/derivations/apps-custom',
+    '<rootDir>/libs/workspace/domain/apps',
+    '<rootDir>/libs/workspace/meta/apps',
+    '<rootDir>/libs/workspace/meta/json/apps',
   ],
 };

@@ -1,6 +1,93 @@
 {
   "version": 2,
   "projects": {
+    "angular-apps-app": {
+      "projectType": "application",
+      "root": "apps/angular/apps/app",
+      "sourceRoot": "apps/angular/apps/app/src",
+      "prefix": "allors",
+      "targets": {
+        "build": {
+          "executor": "@angular-devkit/build-angular:browser",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/angular/apps/app",
+            "index": "apps/angular/apps/app/src/index.html",
+            "main": "apps/angular/apps/app/src/main.ts",
+            "polyfills": "apps/angular/apps/app/src/polyfills.ts",
+            "tsConfig": "apps/angular/apps/app/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": ["apps/angular/apps/app/src/favicon.ico", "apps/angular/apps/app/src/assets"],
+            "styles": ["apps/angular/apps/app/src/styles.scss"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "apps/angular/apps/app/src/environments/environment.ts",
+                  "with": "apps/angular/apps/app/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "executor": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "angular-apps-app:build:production"
+            },
+            "development": {
+              "browserTarget": "angular-apps-app:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "executor": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "angular-apps-app:build"
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/angular/apps/app/src/**/*.ts", "apps/angular/apps/app/src/**/*.html"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/angular/apps/app"],
+          "options": {
+            "jestConfig": "apps/angular/apps/app/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "angular-base-app": {
       "projectType": "application",
       "root": "apps/angular/base/app",
@@ -18,15 +105,9 @@
             "tsConfig": "apps/angular/base/app/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": ["apps/angular/base/app/src/favicon.ico", "apps/angular/base/app/src/assets"],
-            "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-              "apps/angular/base/app/src/styles.scss",
-              "./node_modules/easymde/dist/easymde.min.css"
-            ],
+            "styles": ["./node_modules/@angular/material/prebuilt-themes/indigo-pink.css", "apps/angular/base/app/src/styles.scss", "./node_modules/easymde/dist/easymde.min.css"],
             "scripts": [],
-            "allowedCommonJsDependencies": [
-              "easymde"
-            ]
+            "allowedCommonJsDependencies": ["easymde"]
           },
           "configurations": {
             "production": {
@@ -312,6 +393,27 @@
         }
       }
     },
+    "workspace-angular-apps": {
+      "root": "libs/workspace/angular/apps",
+      "sourceRoot": "libs/workspace/angular/apps/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/angular/apps/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/angular/apps"],
+          "options": {
+            "jestConfig": "libs/workspace/angular/apps/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "workspace-angular-base": {
       "root": "libs/workspace/angular/base",
       "sourceRoot": "libs/workspace/angular/base/src",
@@ -354,6 +456,27 @@
         }
       }
     },
+    "workspace-configuration-apps": {
+      "root": "libs/workspace/configuration/apps",
+      "sourceRoot": "libs/workspace/configuration/apps/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/configuration/apps/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/configuration/apps"],
+          "options": {
+            "jestConfig": "libs/workspace/configuration/apps/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "workspace-configuration-base": {
       "root": "libs/workspace/configuration/base",
       "sourceRoot": "libs/workspace/configuration/base/src",
@@ -391,6 +514,48 @@
           "outputs": ["coverage/libs/workspace/configuration/core"],
           "options": {
             "jestConfig": "libs/workspace/configuration/core/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-derivations-apps": {
+      "root": "libs/workspace/derivations/apps",
+      "sourceRoot": "libs/workspace/derivations/apps/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/derivations/apps/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/derivations/apps"],
+          "options": {
+            "jestConfig": "libs/workspace/derivations/apps/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-derivations-apps-custom": {
+      "root": "libs/workspace/derivations/apps-custom",
+      "sourceRoot": "libs/workspace/derivations/apps-custom/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/derivations/apps-custom/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/derivations/apps-custom"],
+          "options": {
+            "jestConfig": "libs/workspace/derivations/apps-custom/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -480,6 +645,27 @@
         }
       }
     },
+    "workspace-domain-apps": {
+      "root": "libs/workspace/domain/apps",
+      "sourceRoot": "libs/workspace/domain/apps/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/domain/apps/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/domain/apps"],
+          "options": {
+            "jestConfig": "libs/workspace/domain/apps/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "workspace-domain-base": {
       "root": "libs/workspace/domain/base",
       "sourceRoot": "libs/workspace/domain/base/src",
@@ -543,6 +729,27 @@
         }
       }
     },
+    "workspace-meta-apps": {
+      "root": "libs/workspace/meta/apps",
+      "sourceRoot": "libs/workspace/meta/apps/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/meta/apps/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/meta/apps"],
+          "options": {
+            "jestConfig": "libs/workspace/meta/apps/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "workspace-meta-base": {
       "root": "libs/workspace/meta/base",
       "sourceRoot": "libs/workspace/meta/base/src",
@@ -580,6 +787,27 @@
           "outputs": ["coverage/libs/workspace/meta/core"],
           "options": {
             "jestConfig": "libs/workspace/meta/core/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-meta-json-apps": {
+      "root": "libs/workspace/meta/json/apps",
+      "sourceRoot": "libs/workspace/meta/json/apps/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/meta/json/apps/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/meta/json/apps"],
+          "options": {
+            "jestConfig": "libs/workspace/meta/json/apps/jest.config.js",
             "passWithNoTests": true
           }
         }
