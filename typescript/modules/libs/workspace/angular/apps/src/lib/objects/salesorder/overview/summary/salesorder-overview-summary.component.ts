@@ -126,12 +126,12 @@ export class SalesOrderOverviewSummaryComponent {
         }),
         pull.BillingProcess({
           name: billingProcessPullName,
-          sort: new Sort(m.BillingProcess.Name),
+          sorting: [{ roleType: m.BillingProcess.Name }],
         }),
         pull.SerialisedInventoryItemState({
           name: serialisedInventoryItemStatePullName,
           predicate: new Equals({ propertyType: m.SerialisedInventoryItemState.IsActive, value: true }),
-          sort: new Sort(m.SerialisedInventoryItemState.Name)
+          sorting: [{ roleType: m.SerialisedInventoryItemState.Name }]
         }),
       );
     };

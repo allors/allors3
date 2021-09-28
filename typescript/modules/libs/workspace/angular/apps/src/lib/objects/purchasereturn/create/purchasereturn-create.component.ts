@@ -76,7 +76,7 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
             this.fetcher.ownWarehouses,
             pull.Organisation({
               predicate: new Equals({ propertyType: m.Organisation.IsInternalOrganisation, value: true }),
-              sort: new Sort(m.Organisation.PartyName),
+              sorting: [{ roleType: m.Organisation.PartyName }],
             })
           ];
 

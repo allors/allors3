@@ -140,10 +140,10 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
               }
             }),
             pull.IrpfRegime(),
-            pull.Facility({ sort: new Sort(m.Facility.Name) }),
+            pull.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
             pull.Currency({
               predicate: new Equals({ propertyType: m.Currency.IsActive, value: true }),
-              sort: new Sort(m.Currency.IsoCode)
+              sorting: [{ roleType: m.Currency.IsoCode }]
             }),
           ];
 

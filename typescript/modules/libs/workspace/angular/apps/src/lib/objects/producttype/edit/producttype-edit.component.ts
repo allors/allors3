@@ -55,7 +55,7 @@ export class ProductTypeEditComponent extends TestScope implements OnInit, OnDes
 
           const pulls = [
             pull.SerialisedItemCharacteristicType({
-              sort: new Sort(m.SerialisedItemCharacteristicType.Name),
+              sorting: [{ roleType: m.SerialisedItemCharacteristicType.Name }],
             })
           ];
 

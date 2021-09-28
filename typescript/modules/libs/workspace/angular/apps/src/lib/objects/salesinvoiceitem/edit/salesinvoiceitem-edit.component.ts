@@ -89,10 +89,10 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
             pull.SerialisedItemAvailability(),
             pull.InvoiceItemType({
               predicate: new Equals({ propertyType: m.InvoiceItemType.IsActive, value: true }),
-              sort: new Sort(m.InvoiceItemType.Name),
+              sorting: [{ roleType: m.InvoiceItemType.Name }],
             }),
             pull.IrpfRegime({ 
-              sort: new Sort(m.IrpfRegime.Name) }),
+              sorting: [{ roleType: m.IrpfRegime.Name }] }),
             pull.SerialisedItemAvailability(),
           ];
 

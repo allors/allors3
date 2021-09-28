@@ -147,7 +147,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
           }),
           pull.Good({
             name: goodPullName,
-            sort: new Sort(m.Good.Name),
+            sorting: [{ roleType: m.Good.Name }],
           }),
         );
       }
@@ -198,11 +198,11 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
                 DerivedVatClause: x
               },
             }),
-            pull.IrpfRegime({ sort: new Sort(m.IrpfRegime.Name) }),
-            pull.VatClause({ sort: new Sort(m.VatClause.Name) }),
+            pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
+            pull.VatClause({ sorting: [{ roleType: m.VatClause.Name }] }),
             pull.Currency({
               predicate: new Equals({ propertyType: m.Currency.IsActive, value: true }),
-              sort: new Sort(m.Currency.IsoCode)
+              sorting: [{ roleType: m.Currency.IsoCode }]
             }),
             pull.Organisation({
               predicate: new Equals({ propertyType: m.Organisation.IsInternalOrganisation, value: true }),

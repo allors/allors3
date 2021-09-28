@@ -195,14 +195,14 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
                 DerivedVatRegime: x,
               },
             }),
-            pull.IrpfRegime({ sort: new Sort(m.IrpfRegime.Name) }),
+            pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
             pull.Currency({
               predicate: new Equals({ propertyType: m.Currency.IsActive, value: true }),
-              sort: new Sort(m.Currency.IsoCode),
+              sorting: [{ roleType: m.Currency.IsoCode }],
             }),
             pull.PurchaseInvoiceType({
               predicate: new Equals({ propertyType: m.PurchaseInvoiceType.IsActive, value: true }),
-              sort: new Sort(m.PurchaseInvoiceType.Name),
+              sorting: [{ roleType: m.PurchaseInvoiceType.Name }],
             }),
           ];
 
@@ -409,7 +409,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
       }),
       pull.PurchaseOrder({
         predicate: new Equals({ propertyType: m.PurchaseOrder.TakenViaSupplier, object: party }),
-        sort: new Sort(m.PurchaseOrder.OrderNumber),
+        sorting: [{ roleType: m.PurchaseOrder.OrderNumber }],
       }),
     ];
 

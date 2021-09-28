@@ -60,7 +60,7 @@ export class OrganisationContactRelationshipEditComponent extends TestScope impl
           const pulls = [
             pull.Organisation(),
             pull.OrganisationContactKind({
-              sort: new Sort(this.m.OrganisationContactKind.Description),
+              sorting: [{ roleType: this.m.OrganisationContactKind.Description }],
             }),
           ];
 

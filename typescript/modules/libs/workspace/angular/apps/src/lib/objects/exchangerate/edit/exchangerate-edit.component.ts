@@ -59,7 +59,7 @@ export class ExchangeRateEditComponent extends TestScope implements OnInit, OnDe
             this.fetcher.internalOrganisation,
             pull.Currency({
               predicate: new Equals({ propertyType: m.Currency.IsActive, value: true }),
-              sort: new Sort(m.Currency.Name),
+              sorting: [{ roleType: m.Currency.Name }],
             }),
           ];
 

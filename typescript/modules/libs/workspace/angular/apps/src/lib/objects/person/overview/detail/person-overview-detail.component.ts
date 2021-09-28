@@ -2,14 +2,12 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { MetaService, RefreshService, NavigationService, PanelService, SessionService, SingletonId } from '@allors/angular/services/core';
-import { Organisation, Currency, Person, InternalOrganisation, Enumeration, Locale } from '@allors/domain/generated';
-import { SaveService } from '@allors/angular/material/services/core';
-import { Meta } from '@allors/meta/generated';
-import { FetcherService } from '@allors/angular/base';
-import { PullRequest } from '@allors/protocol/system';
-import { Sort, Equals } from '@allors/data/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Currency, Enumeration, InternalOrganisation, Organisation, Person } from '@allors/workspace/domain/default';
+import { NavigationService, PanelService, RefreshService, SaveService, SingletonId, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
+import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -33,7 +31,6 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    private metaService: MetaService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
@@ -50,19 +47,20 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
     panel.expandable = true;
 
     // Minimized
-    const pullName = `${this.panel.name}_${this.m.Person.name}`;
+    const pullName = `${this.panel.name}_${this.m.Person.tag}`;
 
     panel.onPull = (pulls) => {
       this.person = undefined;
 
       if (this.panel.isCollapsed) {
-        const { pullBuilder: pull } = this.m; const x = {};
+        const { pullBuilder: pull } = this.m;
+        const x = {};
         const id = this.panel.manager.id;
 
         pulls.push(
           pull.Person({
             name: pullName,
-            object: id,
+            objectId: id,
             include: {
               GeneralEmail: x,
               PersonalEmailAddress: x,
@@ -89,14 +87,16 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
         switchMap(() => {
           this.person = undefined;
 
-          const { m, pull, x } = this.metaService;
+          const m = this.allors.workspace.configuration.metaPopulation as M;
+          const { pullBuilder: pull } = m;
+          const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
             this.fetcher.internalOrganisation,
             this.fetcher.locales,
             pull.Singleton({
-              object: this.singletonId.value,
+              objectId: this.singletonId.value,
               select: {
                 Locales: {
                   include: {
@@ -107,16 +107,16 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
               },
             }),
             pull.Currency({
-              predicate: new Equals({ propertyType: m.Currency.IsActive, value: true }),
-              sort: new Sort(m.Currency.Name),
+              predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
+              sorting: [{ roleType: m.Currency.Name }],
             }),
             pull.GenderType({
               predicate: new Equals({ propertyType: m.GenderType.IsActive, value: true }),
-              sort: new Sort(m.GenderType.Name),
+              sorting: [{ roleType: m.GenderType.Name }],
             }),
             pull.Salutation({
               predicate: new Equals({ propertyType: m.Salutation.IsActive, value: true }),
-              sort: new Sort(m.Salutation.Name),
+              sorting: [{ roleType: m.Salutation.Name }],
             }),
             pull.Person({
               object: id,

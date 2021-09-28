@@ -41,15 +41,15 @@ export class PersonInlineComponent implements OnInit, OnDestroy {
 
     const pulls = [
       pull.Locale({
-        sort: new Sort(this.m.Locale.Name)
+        sorting: [{ roleType: this.m.Locale.Name }]
       }),
       pull.GenderType({
         predicate: new Equals({ propertyType: this.m.GenderType.IsActive, value: true }),
-        sort: new Sort(this.m.GenderType.Name),
+        sorting: [{ roleType: this.m.GenderType.Name }],
       }),
       pull.Salutation({
         predicate: new Equals({ propertyType: this.m.Salutation.IsActive, value: true }),
-        sort: new Sort(this.m.Salutation.Name)
+        sorting: [{ roleType: this.m.Salutation.Name }]
       })
     ];
 

@@ -72,15 +72,15 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
               include: { ActiveEmployees: x }
             }),
             pull.WorkEffortState({
-              sort: new Sort(m.WorkEffortState.Name)
+              sorting: [{ roleType: m.WorkEffortState.Name }]
             }),
             pull.Priority({
               predicate: new Equals({ propertyType: m.Priority.IsActive, value: true }),
-              sort: new Sort(m.Priority.Name),
+              sorting: [{ roleType: m.Priority.Name }],
             }),
             pull.WorkEffortPurpose({
               predicate: new Equals({ propertyType: m.WorkEffortPurpose.IsActive, value: true }),
-              sort: new Sort(m.WorkEffortPurpose.Name),
+              sorting: [{ roleType: m.WorkEffortPurpose.Name }],
             }),
             pull.WorkEffortPartyAssignment()
           ];

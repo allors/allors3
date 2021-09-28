@@ -60,7 +60,7 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
 
           let pulls = [
             pull.InventoryItem({
-              sort: new Sort(m.InventoryItem.Name),
+              sorting: [{ roleType: m.InventoryItem.Name }],
               include: {
                 Part: {
                   InventoryItemKind: x

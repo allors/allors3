@@ -40,7 +40,7 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    private metaService: MetaService,
+    
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
@@ -166,15 +166,15 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
             }),
             pull.SerialisedItemState({
               predicate: new Equals({ propertyType: m.SerialisedItemState.IsActive, value: true }),
-              sort: new Sort(m.SerialisedItemState.Name),
+              sorting: [{ roleType: m.SerialisedItemState.Name }],
             }),
             pull.SerialisedItemAvailability({
               predicate: new Equals({ propertyType: m.SerialisedItemAvailability.IsActive, value: true }),
-              sort: new Sort(m.SerialisedItemAvailability.Name),
+              sorting: [{ roleType: m.SerialisedItemAvailability.Name }],
             }),
             pull.Ownership({
               predicate: new Equals({ propertyType: m.Ownership.IsActive, value: true }),
-              sort: new Sort(m.Ownership.Name),
+              sorting: [{ roleType: m.Ownership.Name }],
             }),
           ];
 

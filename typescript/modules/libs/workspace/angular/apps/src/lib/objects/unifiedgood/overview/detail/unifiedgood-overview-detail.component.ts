@@ -59,7 +59,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    private metaService: MetaService,
+    
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
@@ -182,8 +182,8 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
             pull.ProductIdentificationType(),
             pull.Facility(),
             pull.ProductIdentificationType(),
-            pull.ProductType({ sort: new Sort(m.ProductType.Name) }),
-            pull.ProductCategory({ sort: new Sort(m.ProductCategory.Name) }),
+            pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
+            pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] }),
             pull.SupplierRelationship({
               include: {
                 Supplier: x
@@ -193,7 +193,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
               include: {
                 Models: x
               },
-              sort: new Sort(m.Brand.Name)
+              sorting: [{ roleType: m.Brand.Name }]
             }),
             pull.Organisation({
               predicate: new Equals({ propertyType: m.Organisation.IsManufacturer, value: true }),

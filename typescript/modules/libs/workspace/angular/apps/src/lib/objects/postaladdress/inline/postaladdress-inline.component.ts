@@ -41,11 +41,11 @@ export class PartyContactMechanismPostalAddressInlineComponent implements OnInit
 
     const pulls = [
       pull.Country({
-        sort: new Sort(this.m.Country.Name)
+        sorting: [{ roleType: this.m.Country.Name }]
       }),
       pull.ContactMechanismPurpose({
         predicate: new Equals({ propertyType: this.m.ContactMechanismPurpose.IsActive, value: true }),
-        sort: new Sort(this.m.ContactMechanismPurpose.Name)
+        sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }]
       })
     ];
 

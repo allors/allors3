@@ -60,7 +60,7 @@ export class ProductCategoryEditComponent extends TestScope implements OnInit, O
             this.fetcher.internalOrganisation,
             pull.Scope(),
             pull.ProductCategory({
-              sort: new Sort(m.ProductCategory.Name),
+              sorting: [{ roleType: m.ProductCategory.Name }],
             }),
           ];
 

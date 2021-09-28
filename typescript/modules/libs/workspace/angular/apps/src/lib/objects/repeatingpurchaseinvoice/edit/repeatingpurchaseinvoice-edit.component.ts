@@ -59,7 +59,7 @@ export class RepeatingPurchaseInvoiceEditComponent extends TestScope implements 
             }),
             pull.TimeFrequency({
               predicate: new Equals({ propertyType: m.TimeFrequency.IsActive, value: true }),
-              sort: new Sort(m.TimeFrequency.Name),
+              sorting: [{ roleType: m.TimeFrequency.Name }],
             }),
             pull.DayOfWeek(),
           ];

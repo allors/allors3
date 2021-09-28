@@ -65,7 +65,7 @@ export class WebAddressCreateComponent extends TestScope implements OnInit, OnDe
             }),
             pull.ContactMechanismPurpose({
               predicate: new Equals({ propertyType: m.ContactMechanismPurpose.IsActive, value: true }),
-              sort: new Sort(this.m.ContactMechanismPurpose.Name)
+              sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }]
             })
           ];
 

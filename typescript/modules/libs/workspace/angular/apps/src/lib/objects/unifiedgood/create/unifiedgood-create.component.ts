@@ -64,7 +64,7 @@ export class UnifiedGoodCreateComponent extends TestScope implements OnInit, OnD
           const pulls = [
             this.fetcher.Settings,
             pull.InventoryItemKind(),
-            pull.ProductType({ sort: new Sort(m.ProductType.Name) }),
+            pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
             pull.ProductIdentificationType(),
           ];
 

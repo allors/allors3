@@ -64,7 +64,7 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
                   },
                 },
               },
-              sort: new Sort(m.Person.PartyName),
+              sorting: [{ roleType: m.Person.PartyName }],
             }),
           ];
 

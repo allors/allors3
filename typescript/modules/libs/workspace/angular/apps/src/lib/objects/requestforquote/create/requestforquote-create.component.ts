@@ -74,7 +74,7 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
 
           const pulls = [
             this.fetcher.internalOrganisation,
-            pull.Currency({ sort: new Sort(m.Currency.Name) })
+            pull.Currency({ sorting: [{ roleType: m.Currency.Name }] })
           ];
 
           this.customersFilter = Filters.customersFilter(m, internalOrganisationId);

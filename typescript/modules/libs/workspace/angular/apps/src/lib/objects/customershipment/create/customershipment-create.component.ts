@@ -91,11 +91,11 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
             this.fetcher.internalOrganisation,
             this.fetcher.locales,
             this.fetcher.ownWarehouses,
-            pull.ShipmentMethod({ sort: new Sort(m.ShipmentMethod.Name) }),
-            pull.Carrier({ sort: new Sort(m.Carrier.Name) }),
+            pull.ShipmentMethod({ sorting: [{ roleType: m.ShipmentMethod.Name }] }),
+            pull.Carrier({ sorting: [{ roleType: m.Carrier.Name }] }),
             pull.Organisation({
               predicate: new Equals({ propertyType: m.Organisation.IsInternalOrganisation, value: true }),
-              sort: new Sort(m.Organisation.PartyName),
+              sorting: [{ roleType: m.Organisation.PartyName }],
             }),
           ];
 

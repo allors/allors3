@@ -63,15 +63,15 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
 
           const pulls = [
             pull.WorkEffort({
-              sort: new Sort(m.WorkEffort.Name)
+              sorting: [{ roleType: m.WorkEffort.Name }]
             }),
             pull.SerialisedItem({
               object: this.data.associationId,
-              sort: new Sort(m.SerialisedItem.Name)
+              sorting: [{ roleType: m.SerialisedItem.Name }]
             }),
             pull.AssetAssignmentStatus({
               predicate: new Equals({ propertyType: m.AssetAssignmentStatus.IsActive, value: true }),
-              sort: new Sort(m.AssetAssignmentStatus.Name)
+              sorting: [{ roleType: m.AssetAssignmentStatus.Name }]
             }),
           ];
 

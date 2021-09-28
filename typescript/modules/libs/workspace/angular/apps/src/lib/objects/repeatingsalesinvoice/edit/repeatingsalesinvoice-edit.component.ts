@@ -52,7 +52,7 @@ export class RepeatingSalesInvoiceEditComponent extends TestScope implements OnI
           const pulls = [
             pull.TimeFrequency({
               predicate: new Equals({ propertyType: m.TimeFrequency.IsActive, value: true }),
-              sort: new Sort(m.TimeFrequency.Name),
+              sorting: [{ roleType: m.TimeFrequency.Name }],
             }),
             pull.DayOfWeek(),
           ];

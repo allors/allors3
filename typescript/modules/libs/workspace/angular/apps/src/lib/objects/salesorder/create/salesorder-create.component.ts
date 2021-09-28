@@ -130,13 +130,13 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
             this.fetcher.internalOrganisation,
             pull.Currency({
               predicate: new Equals({ propertyType: m.Currency.IsActive, value: true }),
-              sort: new Sort(m.Currency.IsoCode)
+              sorting: [{ roleType: m.Currency.IsoCode }]
             }),
-            pull.IrpfRegime({ sort: new Sort(m.IrpfRegime.Name) }),
+            pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
             pull.Store({
               predicate: new Equals({ propertyType: m.Store.InternalOrganisation, object: internalOrganisationId }),
               include: { BillingProcess: x },
-              sort: new Sort(m.Store.Name)
+              sorting: [{ roleType: m.Store.Name }]
             }),
             pull.Party(
               {

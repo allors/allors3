@@ -66,11 +66,11 @@ export class TelecommunicationsNumberCreateComponent extends TestScope implement
             }),
             pull.ContactMechanismType({
               predicate: new Equals({ propertyType: m.ContactMechanismType.IsActive, value: true }),
-              sort: new Sort(this.m.ContactMechanismType.Name)
+              sorting: [{ roleType: this.m.ContactMechanismType.Name }]
             }),
             pull.ContactMechanismPurpose({
               predicate: new Equals({ propertyType: m.ContactMechanismPurpose.IsActive, value: true }),
-              sort: new Sort(this.m.ContactMechanismPurpose.Name)
+              sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }]
             })
           ];
 

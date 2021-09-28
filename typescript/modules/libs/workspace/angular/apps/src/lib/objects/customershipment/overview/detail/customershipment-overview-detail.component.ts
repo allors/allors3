@@ -54,7 +54,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    private metaService: MetaService,
+    
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
@@ -120,11 +120,11 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
             this.fetcher.locales,
             this.fetcher.internalOrganisation,
             this.fetcher.ownWarehouses,
-            pull.ShipmentMethod({ sort: new Sort(m.ShipmentMethod.Name) }),
-            pull.Carrier({ sort: new Sort(m.Carrier.Name) }),
+            pull.ShipmentMethod({ sorting: [{ roleType: m.ShipmentMethod.Name }] }),
+            pull.Carrier({ sorting: [{ roleType: m.Carrier.Name }] }),
             pull.Organisation({
               predicate: new Equals({ propertyType: m.Organisation.IsInternalOrganisation, value: true }),
-              sort: new Sort(m.Organisation.PartyName),
+              sorting: [{ roleType: m.Organisation.PartyName }],
             }),
             pull.CustomerShipment({
               object: id,

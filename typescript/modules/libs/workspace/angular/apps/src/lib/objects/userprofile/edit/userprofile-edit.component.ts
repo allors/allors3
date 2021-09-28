@@ -69,7 +69,7 @@ export class UserProfileEditComponent extends TestScope implements OnInit, OnDes
             pull.Organisation(
               {
                 predicate: new Equals({ propertyType: m.Organisation.IsInternalOrganisation, value: true }),
-                sort: new Sort(m.Organisation.PartyName)
+                sorting: [{ roleType: m.Organisation.PartyName }]
               }
             )
           ];

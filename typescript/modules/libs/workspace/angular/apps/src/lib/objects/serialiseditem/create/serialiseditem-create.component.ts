@@ -75,7 +75,7 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
             this.fetcher.internalOrganisation,
             this.fetcher.locales,
             pull.Party({ object: this.data.associationId }),
-            pull.Ownership({ sort: new Sort(m.Ownership.Name) }),
+            pull.Ownership({ sorting: [{ roleType: m.Ownership.Name }] }),
             pull.Part({
               name: 'forPart',
               object: this.data.associationId,
@@ -85,11 +85,11 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
             }),
             pull.SerialisedItemState({
               predicate: new Equals({ propertyType: m.SerialisedItemState.IsActive, value: true }),
-              sort: new Sort(m.SerialisedInventoryItemState.Name),
+              sorting: [{ roleType: m.SerialisedInventoryItemState.Name }],
             }),
             pull.SerialisedItemAvailability({
               predicate: new Equals({ propertyType: m.SerialisedItemAvailability.IsActive, value: true }),
-              sort: new Sort(m.SerialisedItemAvailability.Name),
+              sorting: [{ roleType: m.SerialisedItemAvailability.Name }],
             }),
           ];
 

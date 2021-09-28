@@ -122,7 +122,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
 
           const pulls = [
             this.fetcher.internalOrganisation,
-            pull.Currency({ sort: new Sort(m.Currency.Name) }),
+            pull.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
             pull.RequestForQuote(
               {
                 object: id,

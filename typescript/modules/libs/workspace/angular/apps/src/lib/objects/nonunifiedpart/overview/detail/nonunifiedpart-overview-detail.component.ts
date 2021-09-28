@@ -67,7 +67,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    private metaService: MetaService,
+    
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
@@ -172,14 +172,14 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
             pull.UnitOfMeasure(),
             pull.InventoryItemKind(),
             pull.ProductIdentificationType(),
-            pull.Ownership({ sort: new Sort(m.Ownership.Name) }),
-            pull.ProductType({ sort: new Sort(m.ProductType.Name) }),
-            pull.PartCategory({ sort: new Sort(m.PartCategory.Name) }),
+            pull.Ownership({ sorting: [{ roleType: m.Ownership.Name }] }),
+            pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
+            pull.PartCategory({ sorting: [{ roleType: m.PartCategory.Name }] }),
             pull.Brand({
               include: {
                 Models: x,
               },
-              sort: new Sort(m.Brand.Name),
+              sorting: [{ roleType: m.Brand.Name }],
             }),
             pull.Organisation({
               predicate: new Equals({ propertyType: m.Organisation.IsManufacturer, value: true }),

@@ -62,7 +62,7 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    private metaService: MetaService,
+    
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
@@ -102,7 +102,7 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
               },
             },
           }),
-          pull.ProductCategory({ sort: new Sort(m.ProductCategory.Name) })
+          pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] })
         );
       }
     };
@@ -131,7 +131,7 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
             this.fetcher.locales,
             this.fetcher.internalOrganisation,
             pull.ProductIdentificationType(),
-            pull.ProductCategory({ sort: new Sort(m.ProductCategory.Name) }),
+            pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] }),
             pull.NonUnifiedGood({
               object: id,
               include: {

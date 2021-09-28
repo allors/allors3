@@ -10,7 +10,6 @@ import { Person, Employment } from '@allors/workspace/domain/default';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { M } from '@allors/workspace/meta/default';
-import { Select } from '../../../../../../../domain/system/src/lib/data/select';
 
 @Component({
   templateUrl: './person-overview.component.html',

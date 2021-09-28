@@ -80,10 +80,10 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.Locale({
-              sort: new Sort(m.Locale.Name)
+              sorting: [{ roleType: m.Locale.Name }]
             }),
             pull.Organisation({
-              sort: new Sort(m.Organisation.PartyName)
+              sorting: [{ roleType: m.Organisation.PartyName }]
             })
           ];
 

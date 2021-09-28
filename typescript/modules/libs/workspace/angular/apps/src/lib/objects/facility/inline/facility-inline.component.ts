@@ -42,7 +42,7 @@ export class FacilityInlineComponent implements OnInit, OnDestroy {
       this.fetcher.internalOrganisation,
       pull.Facility(),
       pull.FacilityType({
-        sort: new Sort(this.m.FacilityType.Name)
+        sorting: [{ roleType: this.m.FacilityType.Name }]
       })
     ];
 

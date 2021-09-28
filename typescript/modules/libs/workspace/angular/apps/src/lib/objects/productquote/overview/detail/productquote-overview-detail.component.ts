@@ -131,8 +131,8 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
 
           const pulls = [
             this.fetcher.internalOrganisation,
-            pull.Currency({ sort: new Sort(m.Currency.Name) }),
-            pull.IrpfRegime({ sort: new Sort(m.IrpfRegime.Name) }),
+            pull.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
+            pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
             pull.ProductQuote({
               object: id,
               include: {

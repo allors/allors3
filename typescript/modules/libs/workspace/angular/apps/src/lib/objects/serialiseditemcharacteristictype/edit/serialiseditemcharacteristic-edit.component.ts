@@ -67,11 +67,11 @@ export class SerialisedItemCharacteristicEditComponent extends TestScope impleme
             }),
             pull.UnitOfMeasure({
               predicate: new Equals({ propertyType: m.UnitOfMeasure.IsActive, value: true }),
-              sort: new Sort(m.UnitOfMeasure.Name),
+              sorting: [{ roleType: m.UnitOfMeasure.Name }],
             }),
             pull.TimeFrequency({
               predicate: new Equals({ propertyType: m.TimeFrequency.IsActive, value: true }),
-              sort: new Sort(m.TimeFrequency.Name),
+              sorting: [{ roleType: m.TimeFrequency.Name }],
             }),
           ];
 

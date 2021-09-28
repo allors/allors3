@@ -79,10 +79,10 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
 
           const pulls = [
             this.fetcher.internalOrganisation,
-            pull.Facility({ sort: new Sort(m.Facility.Name) }),
+            pull.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
             pull.Organisation({
               predicate: new Equals({ propertyType: m.Organisation.IsInternalOrganisation, value: true }),
-              sort: new Sort(m.Organisation.PartyName),
+              sorting: [{ roleType: m.Organisation.PartyName }],
             })
           ];
 

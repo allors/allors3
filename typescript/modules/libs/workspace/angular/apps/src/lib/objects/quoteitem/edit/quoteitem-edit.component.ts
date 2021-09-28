@@ -135,11 +135,11 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.IrpfRegime({
-              sort: new Sort(m.IrpfRegime.Name),
+              sorting: [{ roleType: m.IrpfRegime.Name }],
             }),
             pull.InvoiceItemType({
               predicate: new Equals({ propertyType: m.InvoiceItemType.IsActive, value: true }),
-              sort: new Sort(m.InvoiceItemType.Name),
+              sorting: [{ roleType: m.InvoiceItemType.Name }],
             }),
             pull.UnitOfMeasure({
               predicate: new Equals({ propertyType: m.UnitOfMeasure.IsActive, value: true }),

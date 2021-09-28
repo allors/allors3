@@ -116,16 +116,16 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.IrpfRegime({ 
-              sort: new Sort(m.IrpfRegime.Name) }),
+              sorting: [{ roleType: m.IrpfRegime.Name }] }),
             pull.SerialisedItemAvailability(),
             pull.InvoiceItemType({
               predicate: new Equals({ propertyType: m.InvoiceItemType.IsActive, value: true }),
-              sort: new Sort(m.InvoiceItemType.Name),
+              sorting: [{ roleType: m.InvoiceItemType.Name }],
             }),
             pull.SerialisedInventoryItemState(
               {
                 predicate: new Equals({ propertyType: m.SerialisedInventoryItemState.IsActive, value: true }),
-                sort: new Sort(m.SerialisedInventoryItemState.Name),
+                sorting: [{ roleType: m.SerialisedInventoryItemState.Name }],
               }
             ),
             pull.RequestItemState(),

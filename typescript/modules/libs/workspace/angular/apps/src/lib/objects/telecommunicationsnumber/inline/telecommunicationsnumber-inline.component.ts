@@ -42,11 +42,11 @@ export class PartyContactMechanismTelecommunicationsNumberInlineComponent implem
     const pulls = [
       pull.ContactMechanismPurpose({
         predicate: new Equals({ propertyType: this.m.ContactMechanismPurpose.IsActive, value: true }),
-        sort: new Sort(this.m.ContactMechanismPurpose.Name),
+        sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }],
       }),
       pull.ContactMechanismType({
         predicate: new Equals({ propertyType: this.m.ContactMechanismType.IsActive, value: true }),
-        sort: new Sort(this.m.ContactMechanismType.Name),
+        sorting: [{ roleType: this.m.ContactMechanismType.Name }],
       })
     ];
 

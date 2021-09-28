@@ -56,7 +56,7 @@ export class NonUnifiedPartOverviewSummaryComponent {
             Part: x,
             Currency: x
           },
-          sort: new Sort({ roleType: m.PriceComponent.FromDate, descending: true })
+          sorting: [{ roleType: { roleType: m.PriceComponent.FromDate, descending: true } }]
         }),
         pull.Part({
           name: partPullName,

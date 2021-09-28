@@ -121,12 +121,12 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
             this.fetcher.internalOrganisation,
             pull.Currency({
               predicate: new Equals({ propertyType: m.Currency.IsActive, value: true }),
-              sort: new Sort(m.Currency.IsoCode),
+              sorting: [{ roleType: m.Currency.IsoCode }],
             }),
-            pull.IrpfRegime({ sort: new Sort(m.IrpfRegime.Name) }),
+            pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
             pull.SalesInvoiceType({
               predicate: new Equals({ propertyType: m.SalesInvoiceType.IsActive, value: true }),
-              sort: new Sort(m.SalesInvoiceType.Name),
+              sorting: [{ roleType: m.SalesInvoiceType.Name }],
             }),
           ];
 

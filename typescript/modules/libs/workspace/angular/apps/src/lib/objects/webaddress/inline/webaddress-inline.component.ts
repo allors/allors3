@@ -39,7 +39,7 @@ export class InlineWebAddressComponent implements OnInit, OnDestroy {
     const pulls = [
       pull.ContactMechanismPurpose({
         predicate: new Equals({ propertyType: this.m.ContactMechanismPurpose.IsActive, value: true }),
-        sort: new Sort(this.m.ContactMechanismPurpose.Name)
+        sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }]
       })
     ];
 

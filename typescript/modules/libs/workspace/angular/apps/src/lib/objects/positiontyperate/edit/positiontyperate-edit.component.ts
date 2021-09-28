@@ -57,10 +57,10 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
           const isCreate = this.data.id === undefined;
 
           const pulls = [
-            pull.RateType({ sort: new Sort(this.m.RateType.Name) }),
-            pull.TimeFrequency({ sort: new Sort(this.m.TimeFrequency.Name) }),
+            pull.RateType({ sorting: [{ roleType: this.m.RateType.Name }] }),
+            pull.TimeFrequency({ sorting: [{ roleType: this.m.TimeFrequency.Name }] }),
             pull.PositionType({
-              sort: new Sort(this.m.PositionType.Title),
+              sorting: [{ roleType: this.m.PositionType.Title }],
               include: {
                 PositionTypeRate: x
               }

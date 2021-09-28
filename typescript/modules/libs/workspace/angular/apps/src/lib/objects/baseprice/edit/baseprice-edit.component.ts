@@ -3,9 +3,11 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
+import { M } from '@allors/workspace/meta/default';
+import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
-import { Good, InternalOrganisation, M, Part, PriceComponent } from '@allors/workspace/meta/default';
+
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
@@ -40,7 +42,8 @@ export class BasepriceEditComponent extends TestScope implements OnInit, OnDestr
   }
 
   public ngOnInit(): void {
-    const { pullBuilder: pull } = this.m; const x = {};
+    const { pullBuilder: pull } = this.m;
+    const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
@@ -53,7 +56,7 @@ export class BasepriceEditComponent extends TestScope implements OnInit, OnDestr
             pulls = [
               ...pulls,
               pull.PriceComponent({
-                object: this.data.id,
+                objectId: this.data.id,
                 include: {
                   Currency: x,
                 },
@@ -65,29 +68,29 @@ export class BasepriceEditComponent extends TestScope implements OnInit, OnDestr
             pulls = [
               ...pulls,
               pull.NonUnifiedGood({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
               }),
               pull.Part({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
               }),
             ];
           }
 
-          return this.allors.context.load(new PullRequest({ pulls })).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+        this.allors.session.reset();
 
-        this.internalOrganisation = loaded.objects.InternalOrganisation as Organisation;
-        this.nonUnifiedGood = loaded.objects.NonUnifiedGood as NonUnifiedGood;
-        this.part = loaded.objects.Part as Part;
+        this.internalOrganisation = loaded.object<InternalOrganisation>(this.m.Organisation);
+        this.nonUnifiedGood = loaded.object<NonUnifiedGood>(this.m.NonUnifiedGood);
+        this.part = loaded.object<Part>(this.m.Part);
 
         if (isCreate) {
           this.title = 'Add base price';
 
-          this.priceComponent = this.allors.context.create('BasePrice') as PriceComponent;
-          this.priceComponent.FromDate = new Date().toISOString();
+          this.priceComponent = this.allors.session.create<PriceComponent>(this.m.BasePrice);
+          this.priceComponent.FromDate = new Date();
           this.priceComponent.PricedBy = this.internalOrganisation;
 
           if (this.nonUnifiedGood) {
@@ -98,9 +101,9 @@ export class BasepriceEditComponent extends TestScope implements OnInit, OnDestr
             this.priceComponent.Part = this.part;
           }
         } else {
-          this.priceComponent = loaded.objects.PriceComponent as PriceComponent;
+          this.priceComponent = loaded.object<PriceComponent>(this.m.PriceComponent);
 
-          if (this.priceComponent.CanWritePrice) {
+          if (this.priceComponent.canWritePrice) {
             this.title = 'Edit base price';
           } else {
             this.title = 'View base price';
@@ -116,13 +119,8 @@ export class BasepriceEditComponent extends TestScope implements OnInit, OnDestr
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.priceComponent.id,
-        objectType: this.priceComponent.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.priceComponent);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

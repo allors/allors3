@@ -21,7 +21,7 @@ export class InlineModelComponent implements OnInit, OnDestroy {
 
   constructor(
     private allors: SessionService,
-    private metaService: MetaService,
+    
     ) {
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;

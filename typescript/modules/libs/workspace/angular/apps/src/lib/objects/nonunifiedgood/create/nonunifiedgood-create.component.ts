@@ -79,7 +79,7 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
             this.fetcher.internalOrganisation,
             this.fetcher.Settings,
             pull.ProductIdentificationType(),
-            pull.ProductCategory({ sort: new Sort(m.ProductCategory.Name) }),
+            pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] }),
           ];
 
           this.nonUnifiedPartsFilter = Filters.nonUnifiedPartsFilter(m);

@@ -181,16 +181,16 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
           }),
           pull.BillingProcess({
             name: billingProcessPullName,
-            sort: new Sort(m.BillingProcess.Name),
+            sorting: [{ roleType: m.BillingProcess.Name }],
           }),
           pull.Currency({
             predicate: new Equals({ propertyType: m.Currency.IsActive, value: true }),
-            sort: new Sort(m.Currency.IsoCode),
+            sorting: [{ roleType: m.Currency.IsoCode }],
           }),
           pull.SerialisedInventoryItemState({
             name: serialisedInventoryItemStatePullName,
             predicate: new Equals({ propertyType: m.SerialisedInventoryItemState.IsActive, value: true }),
-            sort: new Sort(m.SerialisedInventoryItemState.Name)
+            sorting: [{ roleType: m.SerialisedInventoryItemState.Name }]
           }),
         );
       }
@@ -249,13 +249,13 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
                 DerivedIrpfRegime: x,
               }
             }),
-            pull.VatClause({ sort: new Sort(m.VatClause.Name) }),
-            pull.Currency({ sort: new Sort(m.Currency.Name) }),
-            pull.IrpfRegime({ sort: new Sort(m.IrpfRegime.Name) }),
+            pull.VatClause({ sorting: [{ roleType: m.VatClause.Name }] }),
+            pull.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
+            pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
             pull.Store({
               predicate: new Equals({ propertyType: m.Store.InternalOrganisation, object: this.internalOrganisation }),
               include: { BillingProcess: x },
-              sort: new Sort(m.Store.Name)
+              sorting: [{ roleType: m.Store.Name }]
             }),
             pull.Party(
               {

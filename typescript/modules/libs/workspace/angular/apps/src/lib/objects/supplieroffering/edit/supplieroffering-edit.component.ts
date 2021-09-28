@@ -70,10 +70,10 @@ export class SupplierOfferingEditComponent extends TestScope implements OnInit, 
 
           let pulls = [
             this.fetcher.Settings,
-            pull.RatingType({ sort: new Sort(m.RateType.Name) }),
-            pull.Ordinal({ sort: new Sort(m.Ordinal.Name) }),
-            pull.UnitOfMeasure({ sort: new Sort(m.UnitOfMeasure.Name) }),
-            pull.Currency({ sort: new Sort(m.Currency.Name) }),
+            pull.RatingType({ sorting: [{ roleType: m.RateType.Name }] }),
+            pull.Ordinal({ sorting: [{ roleType: m.Ordinal.Name }] }),
+            pull.UnitOfMeasure({ sorting: [{ roleType: m.UnitOfMeasure.Name }] }),
+            pull.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
           ];
 
           if (isCreate) {

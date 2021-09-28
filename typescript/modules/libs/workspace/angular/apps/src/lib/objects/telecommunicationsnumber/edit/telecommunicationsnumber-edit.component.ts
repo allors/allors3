@@ -52,7 +52,7 @@ export class TelecommunicationsNumberEditComponent extends TestScope implements 
             }),
             pull.ContactMechanismType({
               predicate: new Equals({ propertyType: m.ContactMechanismType.IsActive, value: true }),
-              sort: new Sort(this.m.ContactMechanismType.Name),
+              sorting: [{ roleType: this.m.ContactMechanismType.Name }],
             }),
           ];
 

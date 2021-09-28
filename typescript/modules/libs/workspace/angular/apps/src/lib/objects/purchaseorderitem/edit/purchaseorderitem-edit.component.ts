@@ -85,13 +85,13 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
             this.fetcher.internalOrganisation,
             pull.InvoiceItemType({
               predicate: new Equals({ propertyType: m.InvoiceItemType.IsActive, value: true }),
-              sort: new Sort(m.InvoiceItemType.Name)
+              sorting: [{ roleType: m.InvoiceItemType.Name }]
             }),
             pull.IrpfRegime({
-              sort: new Sort(m.IrpfRegime.Name)
+              sorting: [{ roleType: m.IrpfRegime.Name }]
             }),
             pull.Facility({
-              sort: new Sort(m.Facility.Name)
+              sorting: [{ roleType: m.Facility.Name }]
             }),
           ];
 

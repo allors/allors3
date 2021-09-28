@@ -101,9 +101,9 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
             pull.UnitOfMeasure(),
             pull.InventoryItemKind(),
             pull.ProductIdentificationType(),
-            pull.Ownership({ sort: new Sort(m.Ownership.Name) }),
-            pull.PartCategory({ sort: new Sort(m.PartCategory.Name) }),
-            pull.ProductType({ sort: new Sort(m.ProductType.Name) }),
+            pull.Ownership({ sorting: [{ roleType: m.Ownership.Name }] }),
+            pull.PartCategory({ sorting: [{ roleType: m.PartCategory.Name }] }),
+            pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
             pull.SupplierRelationship({
               include: {
                 Supplier: x
@@ -113,7 +113,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
               include: {
                 Models: x
               },
-              sort: new Sort(m.Brand.Name)
+              sorting: [{ roleType: m.Brand.Name }]
             }),
             pull.Organisation({
               predicate: new Equals({ propertyType: m.Organisation.IsManufacturer, value: true }),

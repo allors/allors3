@@ -68,12 +68,12 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
 
           const pulls = [
             this.fetcher.internalOrganisation,
-            pull.Facility({ sort: new Sort(m.Facility.Name) }),
+            pull.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
             pull.Part(),
             pull.InventoryTransactionReason(),
             pull.NonSerialisedInventoryItemState(),
             pull.SerialisedInventoryItemState(),
-            pull.Lot({ sort: new Sort(m.Lot.LotNumber) }),
+            pull.Lot({ sorting: [{ roleType: m.Lot.LotNumber }] }),
             pull.InventoryItem({
               object: this.data.associationId,
               include: {

@@ -59,7 +59,7 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
 
           let pulls = [
             pull.PurchaseOrder({
-              sort: new Sort(this.m.PurchaseOrder.OrderNumber),
+              sorting: [{ roleType: this.m.PurchaseOrder.OrderNumber }],
               include: {
                 TakenViaSupplier: x,
                 PurchaseOrderItems: {

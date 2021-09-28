@@ -65,11 +65,11 @@ export class PostalAddressCreateComponent extends TestScope implements OnInit, O
               object: this.data.associationId,
             }),
             pull.Country({
-              sort: new Sort(m.Country.Name)
+              sorting: [{ roleType: m.Country.Name }]
             }),
             pull.ContactMechanismPurpose({
               predicate: new Equals({ propertyType: m.ContactMechanismPurpose.IsActive, value: true }),
-              sort: new Sort(this.m.ContactMechanismPurpose.Name)
+              sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }]
             })
           ];
 

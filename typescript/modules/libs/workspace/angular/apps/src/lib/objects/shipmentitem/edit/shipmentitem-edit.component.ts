@@ -140,7 +140,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
             pull.SerialisedItemAvailability(),
             pull.SerialisedInventoryItemState({
               predicate: new Equals({ propertyType: m.SerialisedInventoryItemState.IsActive, value: true }),
-              sort: new Sort(m.SerialisedInventoryItemState.Name),
+              sorting: [{ roleType: m.SerialisedInventoryItemState.Name }],
             }),
             pull.RequestItemState(),
             pull.RequestState(),

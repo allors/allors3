@@ -60,7 +60,7 @@ export class PostalAddressEditComponent extends TestScope implements OnInit, OnD
               },
             }),
             pull.Country({
-              sort: new Sort(m.Country.Name)
+              sorting: [{ roleType: m.Country.Name }]
             })
           ];
 

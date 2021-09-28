@@ -114,7 +114,7 @@ export class RequestItemEditComponent extends TestScope implements OnInit, OnDes
           const pulls = [
             pull.UnitOfMeasure({
               predicate: new Equals({ propertyType: m.UnitOfMeasure.IsActive, value: true }),
-              sort: new Sort(m.UnitOfMeasure.Name),
+              sorting: [{ roleType: m.UnitOfMeasure.Name }],
             }),
             pull.RequestItemState(),
             pull.RequestState(),

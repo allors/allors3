@@ -73,8 +73,8 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
           const isCreate = this.data.id === undefined;
 
           let pulls = [
-            pull.RateType({ sort: new Sort(this.m.RateType.Name) }),
-            pull.TimeFrequency({ sort: new Sort(this.m.TimeFrequency.Name) }),
+            pull.RateType({ sorting: [{ roleType: this.m.RateType.Name }] }),
+            pull.TimeFrequency({ sorting: [{ roleType: this.m.TimeFrequency.Name }] }),
           ];
 
           if (!isCreate) {

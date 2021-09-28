@@ -75,10 +75,10 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
             }),
             pull.CommunicationEventPurpose({
               predicate: new Equals({ propertyType: m.CommunicationEventPurpose.IsActive, value: true }),
-              sort: new Sort(m.CommunicationEventPurpose.Name)
+              sorting: [{ roleType: m.CommunicationEventPurpose.Name }]
             }),
             pull.CommunicationEventState({
-              sort: new Sort(m.CommunicationEventState.Name)
+              sorting: [{ roleType: m.CommunicationEventState.Name }]
             }),
           ];
 

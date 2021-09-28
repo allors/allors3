@@ -56,7 +56,7 @@ export class PartCategoryEditComponent extends TestScope implements OnInit, OnDe
           const pulls = [
             this.fetcher.locales,
             pull.PartCategory({
-              sort: new Sort(m.PartCategory.Name),
+              sorting: [{ roleType: m.PartCategory.Name }],
             }),
           ];
 

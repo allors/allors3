@@ -41,7 +41,7 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    private metaService: MetaService,
+    
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
@@ -122,18 +122,18 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
               }
             }),
             pull.Locale({
-              sort: new Sort(m.Locale.Name)
+              sorting: [{ roleType: m.Locale.Name }]
             }),
             pull.WorkEffortState({
-              sort: new Sort(m.WorkEffortState.Name)
+              sorting: [{ roleType: m.WorkEffortState.Name }]
             }),
             pull.Priority({
               predicate: new Equals({ propertyType: m.Priority.IsActive, value: true }),
-              sort: new Sort(m.Priority.Name),
+              sorting: [{ roleType: m.Priority.Name }],
             }),
             pull.WorkEffortPurpose({
               predicate: new Equals({ propertyType: this.m.WorkEffortPurpose.IsActive, value: true }),
-              sort: new Sort(m.WorkEffortPurpose.Name),
+              sorting: [{ roleType: m.WorkEffortPurpose.Name }],
             })
           ];
 

@@ -106,16 +106,16 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
             pull.OrganisationRole(),
             pull.Currency({
               predicate: new Equals({ propertyType: m.Currency.IsActive, value: true }),
-              sort: new Sort(m.Currency.Name),
+              sorting: [{ roleType: m.Currency.Name }],
             }),
             pull.CustomOrganisationClassification({
-              sort: new Sort(m.CustomOrganisationClassification.Name)
+              sorting: [{ roleType: m.CustomOrganisationClassification.Name }]
             }),
             pull.IndustryClassification({
-              sort: new Sort(m.IndustryClassification.Name)
+              sorting: [{ roleType: m.IndustryClassification.Name }]
             }),
             pull.LegalForm({
-              sort: new Sort(m.LegalForm.Description)
+              sorting: [{ roleType: m.LegalForm.Description }]
             }),
           ];
 

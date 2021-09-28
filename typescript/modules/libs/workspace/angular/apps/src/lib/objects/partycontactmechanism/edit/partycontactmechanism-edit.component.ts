@@ -54,7 +54,7 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
           const pulls = [
             pull.ContactMechanismPurpose({
               predicate: new Equals({ propertyType: m.ContactMechanismPurpose.IsActive, value: true }),
-              sort: new Sort(this.m.ContactMechanismPurpose.Name),
+              sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }],
             }),
           ];
 

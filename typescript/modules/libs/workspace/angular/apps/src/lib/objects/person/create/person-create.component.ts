@@ -104,28 +104,28 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
             }),
             pull.Currency({
               predicate: new Equals({ propertyType: m.Currency.IsActive, value: true }),
-              sort: new Sort(m.Currency.Name),
+              sorting: [{ roleType: m.Currency.Name }],
             }),
             pull.GenderType({
               predicate: new Equals({ propertyType: m.GenderType.IsActive, value: true }),
-              sort: new Sort(m.GenderType.Name),
+              sorting: [{ roleType: m.GenderType.Name }],
             }),
             pull.Salutation({
               predicate: new Equals({ propertyType: m.Salutation.IsActive, value: true }),
-              sort: new Sort(m.Salutation.Name),
+              sorting: [{ roleType: m.Salutation.Name }],
             }),
             pull.PersonRole({
-              sort: new Sort(m.PersonRole.Name)
+              sorting: [{ roleType: m.PersonRole.Name }]
             }),
             pull.OrganisationContactKind({
-              sort: new Sort(m.OrganisationContactKind.Description),
+              sorting: [{ roleType: m.OrganisationContactKind.Description }],
             }),
             pull.Organisation({
               object: this.data.associationId,
             }),
             pull.Organisation({
               name: 'AllOrganisations',
-              sort: new Sort(m.Organisation.PartyName)
+              sorting: [{ roleType: m.Organisation.PartyName }]
             }),
           ];
 

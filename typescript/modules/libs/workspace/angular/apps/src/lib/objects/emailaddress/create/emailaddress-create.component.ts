@@ -65,7 +65,7 @@ export class EmailAddressCreateComponent extends TestScope implements OnInit, On
             }),
             pull.ContactMechanismPurpose({
               predicate: new Equals({ propertyType: m.ContactMechanismPurpose.IsActive, value: true }),
-              sort: new Sort(this.m.ContactMechanismPurpose.Name)
+              sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }]
             })
           ];
 
