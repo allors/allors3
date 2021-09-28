@@ -4,13 +4,10 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { SessionService, MetaService, RefreshService, NavigationService, MediaService } from '@allors/angular/services/core';
-import { ObjectService } from '@allors/angular/material/services/core';
-import { SearchFactory, FilterDefinition, Filter, TestScope, Action } from '@allors/angular/core';
-import { PullRequest } from '@allors/protocol/system';
-import { TableRow, Table, OverviewService, DeleteService, Sorter } from '@allors/angular/material/core';
-import { Brand, Model, UnifiedGood, ProductCategory, ProductIdentification } from '@allors/domain/generated';
-import { And, Equals, Like, Contains, Exists } from '@allors/data/system';
+import { M } from '@allors/workspace/meta/default';
+import { ProductCategory, UnifiedGood } from '@allors/workspace/domain/default';
+import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: UnifiedGood;
@@ -39,7 +36,6 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
   constructor(
     @Self() public allors: SessionService,
 
-    
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
@@ -59,14 +55,7 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'name', sort: true },
-        { name: 'id', sort: true },
-        { name: 'photos' },
-        { name: 'categories' },
-        { name: 'qoh' },
-        { name: 'lastModifiedDate', sort: true },
-      ],
+      columns: [{ name: 'name', sort: true }, { name: 'id', sort: true }, { name: 'photos' }, { name: 'categories' }, { name: 'qoh' }, { name: 'lastModifiedDate', sort: true }],
       actions: [overviewService.overview(), this.delete],
       defaultAction: overviewService.overview(),
       pageSize: 50,
@@ -74,14 +63,15 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
     this.filter = m.UnifiedGood.filter = m.UnifiedGood.filter ?? new Filter(m.UnifiedGood.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-            pageEvent =
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
+          pageEvent =
             previousRefresh !== refresh || filterFields !== previousFilterFields
               ? {
                   ...pageEvent,

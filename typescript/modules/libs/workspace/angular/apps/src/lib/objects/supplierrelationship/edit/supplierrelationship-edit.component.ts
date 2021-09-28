@@ -3,14 +3,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { Organisation, SupplierRelationship } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta, ids } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { InternalOrganisationId, FetcherService } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Organisation, InternalOrganisation, SupplierRelationship } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './supplierrelationship-edit.component.html',
@@ -30,7 +30,7 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<SupplierRelationshipEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId,
@@ -51,16 +51,16 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
   }
 
   public ngOnInit(): void {
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id === undefined;
 
-          const pulls = [
-            this.fetcher.internalOrganisation,
-          ];
+          const pulls = [this.fetcher.internalOrganisation];
 
           if (!isCreate) {
             pulls.push(
@@ -70,15 +70,15 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
                   InternalOrganisation: x,
                   Parties: x,
                 },
-              }),
+              })
             );
           }
 
           if (isCreate && this.data.associationId) {
             pulls.push(
               pull.Organisation({
-                object: this.data.associationId,
-              }),
+                objectId: this.data.associationId,
+              })
             );
           }
 
@@ -99,7 +99,7 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
           this.title = 'Add Supplier Relationship';
 
           this.partyRelationship = this.allors.session.create<SupplierRelationship>(m.SupplierRelationship);
-          this.partyRelationship.FromDate = new Date();;
+          this.partyRelationship.FromDate = new Date();
           this.partyRelationship.Supplier = this.organisation;
           this.partyRelationship.InternalOrganisation = this.internalOrganisation;
           this.partyRelationship.NeedsApproval = false;

@@ -4,14 +4,13 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { PullRequest } from '@allors/protocol/system';
-import { TableRow, Table, OverviewService, DeleteService, Sorter } from '@allors/angular/material/core';
-import { Party, WorkEffort, WorkEffortState, Person, FixedAsset } from '@allors/domain/generated';
-import { And, Equals, ContainedIn, Extent, Like } from '@allors/data/system';
-import { InternalOrganisationId, PrintService } from '@allors/angular/base';
-import { SessionService, MetaService, RefreshService, NavigationService, MediaService } from '@allors/angular/services/core';
-import { ObjectService } from '@allors/angular/material/services/core';
-import { SearchFactory, FilterDefinition, Filter, TestScope, Action } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { WorkEffort } from '@allors/workspace/domain/default';
+import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { PrintService } from '../../../actions/print/print.service';
 
 interface Row extends TableRow {
   object: WorkEffort;
@@ -43,7 +42,6 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
   constructor(
     @Self() public allors: SessionService,
 
-    
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
@@ -85,26 +83,18 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
     this.filter = m.WorkEffort.filter = m.WorkEffort.filter ?? new Filter(m.WorkEffort.filterDefinition);
 
     const internalOrganisationPredicate = new Equals({ propertyType: m.WorkEffort.TakenBy });
-    const predicate = new And([
-      internalOrganisationPredicate,
-      this.filter.definition.predicate
-    ]);
+    const predicate = new And([internalOrganisationPredicate, this.filter.definition.predicate]);
 
-    this.subscription = combineLatest([
-      this.refreshService.refresh$,
-      this.filter.fields$,
-      this.table.sort$,
-      this.table.pager$,
-      this.internalOrganisationId.observable$
-    ])
+    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
-            pageEvent =
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
+          pageEvent =
             previousRefresh !== refresh || filterFields !== previousFilterFields
               ? {
                   ...pageEvent,
@@ -164,12 +154,8 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
               state: v.WorkEffortState ? v.WorkEffortState.Name : '',
               customer: v.Customer ? v.Customer.displayName : '',
               executedBy: v.ExecutedBy ? v.ExecutedBy.displayName : '',
-              equipment: v.WorkEffortFixedAssetAssignmentsWhereAssignment
-                ? v.WorkEffortFixedAssetAssignmentsWhereAssignment.map((w) => w.FixedAsset.displayName).join(', ')
-                : '',
-              worker: v.WorkEffortPartyAssignmentsWhereAssignment
-                ? v.WorkEffortPartyAssignmentsWhereAssignment.map((w) => w.Party.displayName).join(', ')
-                : '',
+              equipment: v.WorkEffortFixedAssetAssignmentsWhereAssignment ? v.WorkEffortFixedAssetAssignmentsWhereAssignment.map((w) => w.FixedAsset.displayName).join(', ') : '',
+              worker: v.WorkEffortPartyAssignmentsWhereAssignment ? v.WorkEffortPartyAssignmentsWhereAssignment.map((w) => w.Party.displayName).join(', ') : '',
               lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
             } as Row;
           });

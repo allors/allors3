@@ -4,23 +4,37 @@ import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 import { isBefore, isAfter } from 'date-fns';
 
-import { MetaService, RefreshService, NavigationService, PanelService, SessionService } from '@allors/angular/services/core';
-import { Organisation, Facility, UnifiedGood, InventoryItemKind, ProductType, ProductCategory, SupplierOffering, Brand, Model, ProductIdentificationType, ProductNumber, UnitOfMeasure, PriceComponent, Settings, SupplierRelationship, Locale } from '@allors/domain/generated';
-import { SaveService } from '@allors/angular/material/services/core';
-import { Meta } from '@allors/meta/generated';
-import { FetcherService } from '@allors/angular/base';
-import { PullRequest } from '@allors/protocol/system';
-import { Sort, Equals } from '@allors/data/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import {
+  Locale,
+  Organisation,
+  PriceComponent,
+  SupplierOffering,
+  ProductIdentificationType,
+  Facility,
+  InventoryItemKind,
+  ProductType,
+  Brand,
+  Model,
+  UnitOfMeasure,
+  Settings,
+  SupplierRelationship,
+  ProductCategory,
+  ProductNumber,
+  UnifiedGood,
+} from '@allors/workspace/domain/default';
+import { NavigationService, PanelService, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
+import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'unifiedgood-overview-detail',
   templateUrl: './unifiedgood-overview-detail.component.html',
-  providers: [PanelService, SessionService]
+  providers: [PanelService, SessionService],
 })
 export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   good: UnifiedGood;
@@ -59,7 +73,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
@@ -80,7 +94,6 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
     const pullName = `${this.panel.name}_${this.m.UnifiedGood.name}`;
 
     panel.onPull = (pulls) => {
-
       this.good = undefined;
 
       if (this.panel.isCollapsed) {
@@ -91,7 +104,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
           pull.UnifiedGood({
             name: pullName,
             objectId: id,
-          }),
+          })
         );
       }
     };
@@ -104,7 +117,6 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   }
 
   public ngOnInit(): void {
-
     // Maximized
     this.subscription = combineLatest(this.refresh$, this.panel.manager.on$)
       .pipe(
@@ -112,10 +124,11 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
           return this.panel.isExpanded;
         }),
         switchMap(() => {
-
           this.good = undefined;
 
-          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+          const m = this.allors.workspace.configuration.metaPopulation as M;
+          const { pullBuilder: pull } = m;
+          const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -137,14 +150,14 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
                   LocalisedValues: x,
                   SerialisedItemCharacteristicType: {
                     UnitOfMeasure: x,
-                    LocalisedNames: x
-                  }
+                    LocalisedNames: x,
+                  },
                 },
                 ProductIdentifications: {
                   ProductIdentificationType: x,
                 },
                 Brand: {
-                  Models: x
+                  Models: x,
                 },
                 Model: x,
                 LocalisedNames: {
@@ -161,22 +174,18 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
                 },
               },
             }),
-            pull.UnifiedGood(
-              {
-                objectId: id,
-                select: {
-                  SupplierOfferingsWherePart: x
-                }
-              }
-            ),
-            pull.UnifiedGood(
-              {
-                objectId: id,
-                select: {
-                  PriceComponentsWherePart: x
-                }
-              }
-            ),
+            pull.UnifiedGood({
+              objectId: id,
+              select: {
+                SupplierOfferingsWherePart: x,
+              },
+            }),
+            pull.UnifiedGood({
+              objectId: id,
+              select: {
+                PriceComponentsWherePart: x,
+              },
+            }),
             pull.UnitOfMeasure(),
             pull.InventoryItemKind(),
             pull.ProductIdentificationType(),
@@ -186,14 +195,14 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
             pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] }),
             pull.SupplierRelationship({
               include: {
-                Supplier: x
-              }
+                Supplier: x,
+              },
             }),
             pull.Brand({
               include: {
-                Models: x
+                Models: x,
               },
-              sorting: [{ roleType: m.Brand.Name }]
+              sorting: [{ roleType: m.Brand.Name }],
             }),
             pull.Organisation({
               predicate: { kind: 'Equals', propertyType: m.Organisation.IsManufacturer, value: true },
@@ -205,9 +214,9 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
                 ProductCategoriesWhereProduct: {
                   include: {
                     Products: x,
-                  }
-                }
-              }
+                  },
+                },
+              },
             }),
           ];
 
@@ -216,8 +225,6 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
       )
       .subscribe((loaded) => {
         this.allors.session.reset();
-
-        
 
         this.good = loaded.object<UnifiedGood>(m.UnifiedGood);
         this.originalCategories = loaded.collection<ProductCategory>(m.ProductCategory);
@@ -237,12 +244,12 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
         this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
 
         const supplierRelationships = loaded.collection<SupplierRelationship>(m.SupplierRelationship);
-        const currentsupplierRelationships = supplierRelationships.filter(v => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
-        this.currentSuppliers = new Set(currentsupplierRelationships.map(v => v.Supplier).sort((a, b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0)));
+        const currentsupplierRelationships = supplierRelationships.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
+        this.currentSuppliers = new Set(currentsupplierRelationships.map((v) => v.Supplier).sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0)));
 
         const goodNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
 
-        this.productNumber = this.good.ProductIdentifications.find(v => v.ProductIdentificationType === goodNumberType);
+        this.productNumber = this.good.ProductIdentifications.find((v) => v.ProductIdentificationType === goodNumberType);
 
         this.suppliers = this.good.SuppliedBy as Organisation[];
         this.selectedSuppliers = this.suppliers;
@@ -255,9 +262,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
         }
 
         this.supplierOfferings = loaded.collection<SupplierOffering>(m.SupplierOffering);
-
       });
-
   }
 
   public ngOnDestroy(): void {
@@ -276,43 +281,39 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   }
 
   public modelAdded(model: Model): void {
-    this.selectedBrand.AddModel(model);
-    this.models = this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0));
+    this.selectedBrand.addModel(model);
+    this.models = this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
     this.selectedModel = model;
     this.allors.session.hasChanges = true;
     this.setDirty();
   }
 
   public brandSelected(brand: Brand): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.Brand({
         object: brand,
         include: {
           Models: x,
-        }
-      }
-      )
+        },
+      }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe(() => {
-        this.models = this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0));
-      });
+    this.allors.context.load(new PullRequest({ pulls })).subscribe(() => {
+      this.models = this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
+    });
   }
 
   public save(): void {
-
     this.onSave();
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.panel.toggle();
-      });
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.refreshService.refresh();
+      this.panel.toggle();
+    });
   }
 
   public update(): void {
@@ -320,20 +321,15 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
 
     this.onSave();
 
-    context
-      .save()
-      .subscribe(() => {
-        this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+    context.save().subscribe(() => {
+      this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   private onSave() {
-
     this.selectedCategories.forEach((category: ProductCategory) => {
-      category.AddProduct(this.good);
+      category.addProduct(this.good);
 
       const index = this.originalCategories.indexOf(category);
       if (index > -1) {
@@ -349,7 +345,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
     this.good.Model = this.selectedModel;
 
     if (this.suppliers !== undefined) {
-      const suppliersToDelete = this.suppliers.filter(v => v);
+      const suppliersToDelete = this.suppliers.filter((v) => v);
 
       if (this.selectedSuppliers !== undefined) {
         this.selectedSuppliers.forEach((supplier: Organisation) => {
@@ -358,10 +354,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
             suppliersToDelete.splice(index, 1);
           }
 
-          
-          const supplierOffering = this.supplierOfferings.find((v) =>
-            v.Supplier === supplier &&
-            isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
+          const supplierOffering = this.supplierOfferings.find((v) => v.Supplier === supplier && isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
 
           if (supplierOffering === undefined) {
             this.supplierOfferings.push(this.newSupplierOffering(supplier));
@@ -373,13 +366,10 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
 
       if (suppliersToDelete !== undefined) {
         suppliersToDelete.forEach((supplier: Organisation) => {
-          
-          const supplierOffering = this.supplierOfferings.find((v) =>
-            v.Supplier === supplier &&
-            isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
+          const supplierOffering = this.supplierOfferings.find((v) => v.Supplier === supplier && isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
 
           if (supplierOffering !== undefined) {
-            supplierOffering.ThroughDate = new Date();;
+            supplierOffering.ThroughDate = new Date();
           }
         });
       }
@@ -387,7 +377,6 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   }
 
   private newSupplierOffering(supplier: Organisation): SupplierOffering {
-
     const supplierOffering = this.allors.session.create<SupplierOffering>(m.SupplierOffering);
     supplierOffering.Supplier = supplier;
     supplierOffering.Part = this.good;

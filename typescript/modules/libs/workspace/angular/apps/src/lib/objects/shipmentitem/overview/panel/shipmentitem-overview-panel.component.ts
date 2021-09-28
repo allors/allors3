@@ -1,12 +1,10 @@
 import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { MetaService, NavigationService, PanelService, RefreshService, SessionService } from '@allors/angular/services/core';
-import { ShipmentItem, Shipment } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService, MethodService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData, ObjectService } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { Shipment, ShipmentItem } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: ShipmentItem;
@@ -21,10 +19,9 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'shipmentitem-overview-panel',
   templateUrl: './shipmentitem-overview-panel.component.html',
-  providers: [SessionService, PanelService]
+  providers: [SessionService, PanelService],
 })
 export class ShipmentItemOverviewPanelComponent extends TestScope {
-
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -50,7 +47,7 @@ export class ShipmentItemOverviewPanelComponent extends TestScope {
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public methodService: MethodService,
@@ -80,10 +77,7 @@ export class ShipmentItemOverviewPanelComponent extends TestScope {
         { name: 'picked', sort },
         { name: 'shipped', sort },
       ],
-      actions: [
-        this.edit,
-        this.delete,
-      ],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -93,7 +87,9 @@ export class ShipmentItemOverviewPanelComponent extends TestScope {
     const shipmentPullName = `${panel.name}_${this.m.Shipment.name}`;
 
     panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -106,20 +102,19 @@ export class ShipmentItemOverviewPanelComponent extends TestScope {
               include: {
                 ShipmentItemState: x,
                 Good: x,
-                Part: x
-              }
-            }
-          }
+                Part: x,
+              },
+            },
+          },
         }),
         pull.Shipment({
           name: shipmentPullName,
-          objectId: id
-        }),
+          objectId: id,
+        })
       );
     };
 
     panel.onPulled = (loaded) => {
-
       this.shipmentItems = loaded.collections[pullName] as ShipmentItem[];
       this.shipment = loaded.objects[shipmentPullName] as Shipment;
       this.table.total = loaded.values[`${pullName}_total`] || this.shipmentItems.length;

@@ -2,24 +2,38 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { MetaService, RefreshService, PanelService, SessionService } from '@allors/angular/services/core';
-import { Organisation, PartyContactMechanism, Party, Currency, PostalAddress, Person, Facility, OrganisationContactRelationship, ContactMechanism, VatRegime, VatRate, SupplierRelationship, PurchaseOrder, IrpfRegime } from '@allors/domain/generated';
-import { SaveService } from '@allors/angular/material/services/core';
-import { Meta } from '@allors/meta/generated';
-import { Filters, FetcherService, InternalOrganisationId } from '@allors/angular/base';
-import { PullRequest } from '@allors/protocol/system';
-import { Sort, Equals } from '@allors/data/system';
-import { IObject } from '@allors/domain/system';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import {
+  Person,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  Facility,
+  InternalOrganisation,
+  SupplierRelationship,
+  ContactMechanism,
+  PartyContactMechanism,
+  PostalAddress,
+  Currency,
+  PurchaseOrder,
+  VatRegime,
+  IrpfRegime,
+  VatRate,
+} from '@allors/workspace/domain/default';
+import { PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { FetcherService } from '../../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'purchaseorder-overview-detail',
   templateUrl: './purchaseorder-overview-detail.component.html',
-  providers: [SessionService, PanelService]
+  providers: [SessionService, PanelService],
 })
 export class PurchaseOrderOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   order: PurchaseOrder;
@@ -59,7 +73,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,
@@ -82,11 +96,10 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
         const { pullBuilder: pull } = this.m;
 
         pulls.push(
-
           pull.PurchaseOrder({
             name: purchaseOrderPullName,
-            object: this.panel.manager.id,
-          }),
+            objectId: this.panel.manager.id,
+          })
         );
       }
     };
@@ -99,7 +112,6 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public ngOnInit(): void {
-
     // Expanded
     this.subscription = this.panel.manager.on$
       .pipe(
@@ -107,10 +119,11 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
           return this.panel.isExpanded;
         }),
         switchMap(() => {
-
           this.order = undefined;
 
-          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+          const m = this.allors.workspace.configuration.metaPopulation as M;
+          const { pullBuilder: pull } = m;
+          const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -132,18 +145,18 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
                   Country: x,
                 },
                 DerivedBillToContactMechanism: {
-                  PostalAddress_Country: x
+                  PostalAddress_Country: x,
                 },
                 DerivedVatRegime: {
                   VatRates: x,
-                }
-              }
+                },
+              },
             }),
-            pull.IrpfRegime(),
+            pull.IrpfRegime({}),
             pull.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
             pull.Currency({
               predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
-              sorting: [{ roleType: m.Currency.IsoCode }]
+              sorting: [{ roleType: m.Currency.IsoCode }],
             }),
           ];
 
@@ -157,10 +170,10 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
 
         this.order = loaded.object<PurchaseOrder>(m.PurchaseOrder);
         this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
-        this.showIrpf = this.internalOrganisation.Country.IsoCode === "ES";
+        this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
-        this.facilities  = loaded.collection<Facility>(m.Facility);
+        this.facilities = loaded.collection<Facility>(m.Facility);
         this.currencies = loaded.collection<Currency>(m.Currency);
 
         if (this.order.TakenViaSupplier) {
@@ -173,7 +186,6 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
         }
 
         this.previousSupplier = this.order.TakenViaSupplier;
-
       });
   }
 
@@ -184,15 +196,10 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public save(): void {
-
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.panel.toggle();
-      },
-        this.saveService.errorHandler
-      );
+    this.allors.context.save().subscribe(() => {
+      this.refreshService.refresh();
+      this.panel.toggle();
+    }, this.saveService.errorHandler);
   }
 
   public facilityAdded(facility: Facility): void {
@@ -203,7 +210,6 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public supplierAdded(organisation: Organisation): void {
-
     const supplierRelationship = this.allors.session.create<SupplierRelationship>(m.SupplierRelationship);
     supplierRelationship.Supplier = organisation;
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
@@ -213,7 +219,6 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public takenViaContactPersonAdded(person: Person): void {
-
     const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.takenVia as Organisation;
     organisationContactRelationship.Contact = person;
@@ -223,14 +228,12 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public takenViaContactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
-
     this.takenViaContactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.takenVia.AddPartyContactMechanism(partyContactMechanism);
+    this.takenVia.addPartyContactMechanism(partyContactMechanism);
     this.order.AssignedTakenViaContactMechanism = partyContactMechanism.ContactMechanism;
   }
 
   public billToContactPersonAdded(person: Person): void {
-
     const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
@@ -240,14 +243,12 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public billToContactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
-
     this.billToContactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.order.OrderedBy.AddPartyContactMechanism(partyContactMechanism);
+    this.order.OrderedBy.addPartyContactMechanism(partyContactMechanism);
     this.order.AssignedBillToContactMechanism = partyContactMechanism.ContactMechanism;
   }
 
   public shipToContactPersonAdded(person: Person): void {
-
     const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
@@ -257,9 +258,8 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public shipToAddressAdded(partyContactMechanism: PartyContactMechanism): void {
-
     this.shipToAddresses.push(partyContactMechanism.ContactMechanism);
-    this.order.OrderedBy.AddPartyContactMechanism(partyContactMechanism);
+    this.order.OrderedBy.addPartyContactMechanism(partyContactMechanism);
     this.order.AssignedShipToAddress = partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
@@ -268,84 +268,76 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   private updateSupplier(supplier: Party): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
-      pull.Party(
-        {
-          object: supplier,
-          select: {
-            CurrentPartyContactMechanisms: {
-              include: {
-                ContactMechanism: {
-                  PostalAddress_Country: x
-                }
-              }
-            }
-          }
-        }
-      ),
+      pull.Party({
+        object: supplier,
+        select: {
+          CurrentPartyContactMechanisms: {
+            include: {
+              ContactMechanism: {
+                PostalAddress_Country: x,
+              },
+            },
+          },
+        },
+      }),
       pull.Party({
         object: supplier,
         select: {
           CurrentContacts: x,
-        }
+        },
       }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      if (this.order.TakenViaSupplier !== this.previousSupplier) {
+        this.order.AssignedTakenViaContactMechanism = null;
+        this.order.TakenViaContactPerson = null;
+        this.previousSupplier = this.order.TakenViaSupplier;
+      }
 
-        if (this.order.TakenViaSupplier !== this.previousSupplier) {
-          this.order.AssignedTakenViaContactMechanism = null;
-          this.order.TakenViaContactPerson = null;
-          this.previousSupplier = this.order.TakenViaSupplier;
-        }
-
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-        this.takenViaContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.takenViaContacts = loaded.collection<Person>(m.Person);
-      });
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      this.takenViaContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.takenViaContacts = loaded.collection<Person>(m.Person);
+    });
   }
 
   private updateOrderedBy(organisation: Party): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
-      pull.Party(
-        {
-          object: organisation,
-          select: {
-            CurrentPartyContactMechanisms: {
-              include: {
-                ContactMechanism: {
-                  PostalAddress_Country: x
-                }
-              }
-            }
-          }
-        }
-      ),
+      pull.Party({
+        object: organisation,
+        select: {
+          CurrentPartyContactMechanisms: {
+            include: {
+              ContactMechanism: {
+                PostalAddress_Country: x,
+              },
+            },
+          },
+        },
+      }),
       pull.Party({
         object: organisation,
         select: {
           CurrentContacts: x,
-        }
+        },
       }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
-
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-        this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.billToContacts = loaded.collection<Person>(m.Person);
-        this.shipToContacts = this.billToContacts;
-      });
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.billToContacts = loaded.collection<Person>(m.Person);
+      this.shipToContacts = this.billToContacts;
+    });
   }
 }

@@ -3,13 +3,12 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, NavigationService, MediaService } from '@allors/angular/services/core';
-import { Filter, TestScope, Action } from '@allors/angular/core';
-import { PullRequest } from '@allors/protocol/system';
-import { TableRow, Table, OverviewService, DeleteService, EditService } from '@allors/angular/material/core';
-import { ProductCategory } from '@allors/domain/generated';
-import { And, Equals } from '@allors/data/system';
-import { InternalOrganisationId } from '@allors/angular/base';
+import { M } from '@allors/workspace/meta/default';
+import { ProductCategory } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 interface Row extends TableRow {
   object: ProductCategory;
@@ -37,7 +36,6 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
   constructor(
     @Self() public allors: SessionService,
 
-    
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public editService: EditService,
@@ -76,26 +74,18 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
     this.filter = m.ProductCategory.filter = m.ProductCategory.filter ?? new Filter(m.ProductCategory.filterDefinition);
 
     const internalOrganisationPredicate = new Equals({ propertyType: m.ProductCategory.InternalOrganisation });
-    const predicate = new And([
-      internalOrganisationPredicate,
-      this.filter.definition.predicate
-    ]);
+    const predicate = new And([internalOrganisationPredicate, this.filter.definition.predicate]);
 
-    this.subscription = combineLatest([
-      this.refreshService.refresh$,
-      this.filter.fields$,
-      this.table.sort$,
-      this.table.pager$,
-      this.internalOrganisationId.observable$
-    ])
+    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
-            pageEvent =
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
+          pageEvent =
             previousRefresh !== refresh || filterFields !== previousFilterFields
               ? {
                   ...pageEvent,

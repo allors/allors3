@@ -4,12 +4,11 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { format } from 'date-fns';
 
-import { SessionService, MetaService, RefreshService, NavigationService, MediaService } from '@allors/angular/services/core';
-import { SearchFactory, FilterDefinition, Filter, TestScope, Action } from '@allors/angular/core';
-import { PullRequest } from '@allors/protocol/system';
-import { TableRow, Table, OverviewService, DeleteService, Sorter, EditService } from '@allors/angular/material/core';
-import { PositionType, PositionTypeRate, RateType } from '@allors/domain/generated';
-import { And, Equals, Contains } from '@allors/data/system';
+import { M } from '@allors/workspace/meta/default';
+import { PositionTypeRate, PositionType } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
 
 interface Row extends TableRow {
   object: PositionTypeRate;

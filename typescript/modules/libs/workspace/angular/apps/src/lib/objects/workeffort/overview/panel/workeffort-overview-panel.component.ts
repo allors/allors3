@@ -1,11 +1,8 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
-import { MetaService, NavigationService, PanelService, RefreshService } from '@allors/angular/services/core';
-import { WorkEffort } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, OverviewService, EditService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { WorkEffort } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 
 interface Row extends TableRow {
   object: WorkEffort;
@@ -19,10 +16,9 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'workeffort-overview-panel',
   templateUrl: './workeffort-overview-panel.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class WorkEffortOverviewPanelComponent extends TestScope implements OnInit {
-
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -43,13 +39,13 @@ export class WorkEffortOverviewPanelComponent extends TestScope implements OnIni
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigationService: NavigationService,
 
     public deleteService: DeleteService,
     public editService: EditService,
-    public overviewService: OverviewService,
+    public overviewService: OverviewService
   ) {
     super();
 
@@ -57,7 +53,6 @@ export class WorkEffortOverviewPanelComponent extends TestScope implements OnIni
   }
 
   ngOnInit() {
-
     this.panel.name = 'workeffort';
     // this.panel.title = 'Child Work Orders';
     this.panel.title = 'Child Work Orders';
@@ -75,9 +70,7 @@ export class WorkEffortOverviewPanelComponent extends TestScope implements OnIni
         { name: 'name', sort },
         { name: 'description', sort },
       ],
-      actions: [
-        this.edit,
-      ],
+      actions: [this.edit],
       defaultAction: this.overviewService.overview(),
       autoSort: true,
       autoFilter: true,
@@ -86,8 +79,9 @@ export class WorkEffortOverviewPanelComponent extends TestScope implements OnIni
     const pullName = `${this.panel.name}_${this.m.WorkEffort.name}`;
 
     this.panel.onPull = (pulls) => {
-
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
       const id = this.panel.manager.id;
 
       pulls.push(
@@ -97,10 +91,10 @@ export class WorkEffortOverviewPanelComponent extends TestScope implements OnIni
           select: {
             Children: {
               include: {
-                TakenBy: x
-              }
-            }
-          }
+                TakenBy: x,
+              },
+            },
+          },
         })
       );
     };

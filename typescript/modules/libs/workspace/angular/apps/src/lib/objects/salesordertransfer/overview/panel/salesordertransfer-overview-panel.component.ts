@@ -1,12 +1,9 @@
 import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { MetaService, NavigationService, PanelService, RefreshService } from '@allors/angular/services/core';
-import { SalesTerm, SalesOrder, SalesInvoice } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData, ObjectService } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { SalesOrder, SalesInvoice, SalesTerm } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 
 interface Row extends TableRow {
   object: SalesTerm;
@@ -18,7 +15,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'salesordertransfer-overview-panel',
   templateUrl: './salesordertransfer-overview-panel.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class SalesOrderTransferOverviewPanelComponent extends TestScope {
   container: any;
@@ -54,7 +51,7 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
   constructor(
     @Self() public panel: PanelService,
     public objectService: ObjectService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public editService: EditService,
@@ -80,10 +77,7 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
         { name: 'name', sort },
         { name: 'value', sort },
       ],
-      actions: [
-        this.edit,
-        this.delete,
-      ],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -95,7 +89,9 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
     const salesInvoicePullName = `${panel.name}_${this.m.SalesInvoice.name}`;
 
     panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -107,9 +103,9 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
             SalesTerms: {
               include: {
                 TermType: x,
-              }
-            }
-          }
+              },
+            },
+          },
         }),
         pull.SalesInvoice({
           name: salesInvoiceTermsPullName,
@@ -118,9 +114,9 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
             SalesTerms: {
               include: {
                 TermType: x,
-              }
-            }
-          }
+              },
+            },
+          },
         }),
         pull.SalesOrder({
           name: salesOrderPullName,
@@ -129,14 +125,13 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
         pull.SalesInvoice({
           name: salesInvoicePullName,
           objectId: id,
-        }),
+        })
       );
     };
 
     panel.onPulled = (loaded) => {
-
-      this.container = loaded.objects[salesOrderPullName] as SalesOrder || loaded.objects[salesInvoicePullName] as SalesInvoice;
-      this.objects = loaded.collections[salesOrderTermsPullName] as SalesTerm[] || loaded.collections[salesInvoiceTermsPullName] as SalesTerm[];
+      this.container = (loaded.objects[salesOrderPullName] as SalesOrder) || (loaded.objects[salesInvoicePullName] as SalesInvoice);
+      this.objects = (loaded.collections[salesOrderTermsPullName] as SalesTerm[]) || (loaded.collections[salesInvoiceTermsPullName] as SalesTerm[]);
       this.table.total = loaded.values[`${salesOrderTermsPullName}_total`] || loaded.values[`${salesInvoiceTermsPullName}_total`] || this.objects.length;
       this.table.data = this.objects.map((v) => {
         return {
@@ -146,6 +141,5 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
         } as Row;
       });
     };
-
   }
 }

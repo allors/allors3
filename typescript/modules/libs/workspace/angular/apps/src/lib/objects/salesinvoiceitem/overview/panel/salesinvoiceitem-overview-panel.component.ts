@@ -1,12 +1,10 @@
 import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { MetaService, NavigationService, PanelService, RefreshService, SessionService } from '@allors/angular/services/core';
-import { SalesInvoice, SalesInvoiceItem } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData, ObjectService } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { SalesInvoice, SalesInvoiceItem } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: SalesInvoiceItem;
@@ -22,10 +20,9 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'salesinvoiceitem-overview-panel',
   templateUrl: './salesinvoiceitem-overview-panel.component.html',
-  providers: [SessionService, PanelService]
+  providers: [SessionService, PanelService],
 })
 export class SalesInvoiceItemOverviewPanelComponent extends TestScope {
-
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -51,7 +48,7 @@ export class SalesInvoiceItemOverviewPanelComponent extends TestScope {
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public editService: EditService,
@@ -73,18 +70,8 @@ export class SalesInvoiceItemOverviewPanelComponent extends TestScope {
     const sort = true;
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'item', sort },
-        { name: 'itemId' },
-        { name: 'type', sort },
-        { name: 'state', sort },
-        { name: 'quantity', sort },
-        { name: 'totalExVat', sort },
-      ],
-      actions: [
-        this.edit,
-        this.delete,
-      ],
+      columns: [{ name: 'item', sort }, { name: 'itemId' }, { name: 'type', sort }, { name: 'state', sort }, { name: 'quantity', sort }, { name: 'totalExVat', sort }],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -94,7 +81,9 @@ export class SalesInvoiceItemOverviewPanelComponent extends TestScope {
     const invoicePullName = `${panel.name}_${this.m.SalesInvoice.name}`;
 
     panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -108,19 +97,18 @@ export class SalesInvoiceItemOverviewPanelComponent extends TestScope {
                 SalesInvoiceItemState: x,
                 InvoiceItemType: x,
                 SerialisedItem: x,
-              }
-            }
-          }
+              },
+            },
+          },
         }),
         pull.SalesInvoice({
           name: invoicePullName,
-          objectId: id
-        }),
+          objectId: id,
+        })
       );
     };
 
     panel.onPulled = (loaded) => {
-
       this.salesInvoiceItems = loaded.collections[pullName] as SalesInvoiceItem[];
       this.invoice = loaded.objects[invoicePullName] as SalesInvoice;
       this.table.total = loaded.values[`${pullName}_total`] || this.salesInvoiceItems.length;
@@ -132,7 +120,7 @@ export class SalesInvoiceItemOverviewPanelComponent extends TestScope {
           type: `${v.InvoiceItemType && v.InvoiceItemType.Name}`,
           state: `${v.SalesInvoiceItemState && v.SalesInvoiceItemState.Name}`,
           quantity: v.Quantity,
-          totalExVat: v.TotalExVat
+          totalExVat: v.TotalExVat,
         } as Row;
       });
     };

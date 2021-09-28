@@ -1,22 +1,21 @@
 import { Component, Self, AfterViewInit, OnDestroy, Injector } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { MetaService, RefreshService,  NavigationService, PanelManagerService, SessionService } from '@allors/angular/services/core';
-import { Organisation, SupplierOffering } from '@allors/domain/generated';
-import { ActivatedRoute } from '@angular/router';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { PullRequest } from '@allors/protocol/system';
-import { NavigationActivatedRoute, TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Organisation, SupplierOffering } from '@allors/workspace/domain/default';
+import { NavigationService, RefreshService, TestScope, PanelManagerService, NavigationActivatedRoute } from '@allors/workspace/angular/base';
+import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
 
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './organisation-overview.component.html',
-  providers: [PanelManagerService, SessionService]
+  providers: [PanelManagerService, SessionService],
 })
 export class OrganisationOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
-
   title = 'Organisation';
 
   organisation: Organisation;
@@ -26,13 +25,13 @@ export class OrganisationOverviewComponent extends TestScope implements AfterVie
 
   constructor(
     @Self() public panelManager: PanelManagerService,
-    
+    public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private route: ActivatedRoute,
     private internalOrganisationId: InternalOrganisationId,
     public injector: Injector,
-    titleService: Title,
+    titleService: Title
   ) {
     super();
 
@@ -40,13 +39,13 @@ export class OrganisationOverviewComponent extends TestScope implements AfterVie
   }
 
   public ngAfterViewInit(): void {
+    const m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
-        switchMap(([,,]) => {
-
-          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
-
+        switchMap(([, ,]) => {
           const navRoute = new NavigationActivatedRoute(this.route);
           this.panelManager.objectType = m.Organisation;
           this.panelManager.id = navRoute.id();
@@ -56,24 +55,22 @@ export class OrganisationOverviewComponent extends TestScope implements AfterVie
 
           const pulls = [
             pull.Organisation({
-              object: this.panelManager.id,
+              objectId: this.panelManager.id,
             }),
             pull.Organisation({
-              object: this.panelManager.id,
+              objectId: this.panelManager.id,
               select: {
-                SupplierOfferingsWhereSupplier: x
-              }
-            })
+                SupplierOfferingsWhereSupplier: x,
+              },
+            }),
           ];
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context
-            .load(new PullRequest({ pulls }));
+          return this.panelManager.context.load(new PullRequest({ pulls }));
         })
       )
       .subscribe((loaded) => {
-
         this.panelManager.context.session.reset();
         this.panelManager.onPulled(loaded);
 

@@ -3,25 +3,16 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { format, formatDistance } from 'date-fns';
+import { MatSnackBar } from '@angular/material/snack-bar/snack-bar';
 
-import { SessionService, MetaService, RefreshService, NavigationService, MediaService, UserId } from '@allors/angular/services/core';
-import { Filter, TestScope, Action, ActionTarget } from '@allors/angular/core';
-import { PullRequest } from '@allors/protocol/system';
-import { TableRow, Table, OverviewService, DeleteService, MethodService } from '@allors/angular/material/core';
-import {
-  Person,
-  Organisation,
-  PurchaseInvoice,
-  PaymentApplication,
-  Disbursement,
-  Receipt,
-} from '@allors/domain/generated';
-import { And, Equals } from '@allors/data/system';
-import { InternalOrganisationId, FetcherService, PrintService } from '@allors/angular/base';
+import { M } from '@allors/workspace/meta/default';
+import { Person, Organisation, InternalOrganisation, Receipt, PaymentApplication, PurchaseInvoice } from '@allors/workspace/domain/default';
+import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, ActionTarget, AllorsMaterialDialogService } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
-import { Meta } from '@allors/meta/generated';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { AllorsMaterialDialogService } from '@allors/angular/material/services/core';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { PrintService } from '../../../actions/print/print.service';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 interface Row extends TableRow {
   object: PurchaseInvoice;
@@ -65,7 +56,6 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
   constructor(
     @Self() public allors: SessionService,
 
-    
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public methodService: MethodService,
@@ -114,47 +104,42 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
         const targets = invoices.filter((v) => v.CanExecuteSetPaid);
 
         if (targets.length > 0) {
-          dialogService
-            .prompt({ title: `Set Payment Date`, placeholder: `Payment date`, promptType: `date` })
-            .subscribe((paymentDate: string) => {
-              if (paymentDate) {
-                targets.forEach((purchaseInvoice) => {
-                  const amountToPay = parseFloat(purchaseInvoice.TotalIncVat) - parseFloat(purchaseInvoice.AmountPaid);
+          dialogService.prompt({ title: `Set Payment Date`, placeholder: `Payment date`, promptType: `date` }).subscribe((paymentDate: string) => {
+            if (paymentDate) {
+              targets.forEach((purchaseInvoice) => {
+                const amountToPay = parseFloat(purchaseInvoice.TotalIncVat) - parseFloat(purchaseInvoice.AmountPaid);
 
-                  if (
-                    purchaseInvoice.PurchaseInvoiceType.UniqueId === 'd08f0309-a4cb-4ab7-8f75-3bb11dcf3783' ||
-                    purchaseInvoice.PurchaseInvoiceType.UniqueId === '0187d927-81f5-4d6a-9847-58b674ad3e6a'
-                  ) {
-                    const paymentApplication = this.allors.session.create<PaymentApplication>(m.PaymentApplication);
-                    paymentApplication.Invoice = purchaseInvoice;
-                    paymentApplication.AmountApplied = amountToPay.toString();
+                if (purchaseInvoice.PurchaseInvoiceType.UniqueId === 'd08f0309-a4cb-4ab7-8f75-3bb11dcf3783' || purchaseInvoice.PurchaseInvoiceType.UniqueId === '0187d927-81f5-4d6a-9847-58b674ad3e6a') {
+                  const paymentApplication = this.allors.session.create<PaymentApplication>(m.PaymentApplication);
+                  paymentApplication.Invoice = purchaseInvoice;
+                  paymentApplication.AmountApplied = amountToPay.toString();
 
-                    // purchase invoice
-                    if (purchaseInvoice.PurchaseInvoiceType.UniqueId === 'd08f0309-a4cb-4ab7-8f75-3bb11dcf3783') {
-                      const disbursement = this.allors.session.create<Disbursement>(m.Disbursement);
-                      disbursement.Amount = amountToPay.toString();
-                      disbursement.EffectiveDate = paymentDate;
-                      disbursement.Sender = purchaseInvoice.BilledFrom;
-                      disbursement.AddPaymentApplication(paymentApplication);
-                    }
-
-                    // purchase return
-                    if (purchaseInvoice.PurchaseInvoiceType.UniqueId === '0187d927-81f5-4d6a-9847-58b674ad3e6a') {
-                      const receipt = this.allors.session.create<Receipt>(m.Receipt);
-                      receipt.Amount = amountToPay.toString();
-                      receipt.EffectiveDate = paymentDate;
-                      receipt.Sender = purchaseInvoice.BilledFrom;
-                      receipt.AddPaymentApplication(paymentApplication);
-                    }
+                  // purchase invoice
+                  if (purchaseInvoice.PurchaseInvoiceType.UniqueId === 'd08f0309-a4cb-4ab7-8f75-3bb11dcf3783') {
+                    const disbursement = this.allors.session.create<Disbursement>(m.Disbursement);
+                    disbursement.Amount = amountToPay.toString();
+                    disbursement.EffectiveDate = paymentDate;
+                    disbursement.Sender = purchaseInvoice.BilledFrom;
+                    disbursement.addPaymentApplication(paymentApplication);
                   }
-                });
 
-                this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-                  snackBar.open('Successfully set to fully paid.', 'close', { duration: 5000 });
-                  refreshService.refresh();
-                });
-              }
-            });
+                  // purchase return
+                  if (purchaseInvoice.PurchaseInvoiceType.UniqueId === '0187d927-81f5-4d6a-9847-58b674ad3e6a') {
+                    const receipt = this.allors.session.create<Receipt>(m.Receipt);
+                    receipt.Amount = amountToPay.toString();
+                    receipt.EffectiveDate = paymentDate;
+                    receipt.Sender = purchaseInvoice.BilledFrom;
+                    receipt.addPaymentApplication(paymentApplication);
+                  }
+                }
+              });
+
+              this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+                snackBar.open('Successfully set to fully paid.', 'close', { duration: 5000 });
+                refreshService.refresh();
+              });
+            }
+          });
         }
       },
       result: null,
@@ -183,27 +168,19 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
     this.filter = m.PurchaseInvoice.filter = m.PurchaseInvoice.filter ?? new Filter(m.PurchaseInvoice.filterDefinition);
 
     const internalOrganisationPredicate = new Equals({ propertyType: m.PurchaseInvoice.BilledTo });
 
-    const predicate = new And([
-      internalOrganisationPredicate,
-      this.filter.definition.predicate
-    ]);
+    const predicate = new And([internalOrganisationPredicate, this.filter.definition.predicate]);
 
-    this.subscription = combineLatest([
-      this.refreshService.refresh$,
-      this.filter.fields$,
-      this.table.sort$,
-      this.table.pager$,
-      this.internalOrganisationId.observable$
-    ])
+    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
-            pageEvent =
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
+          pageEvent =
             previousRefresh !== refresh || filterFields !== previousFilterFields
               ? {
                   ...pageEvent,

@@ -1,11 +1,8 @@
 import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 
-import { SessionService, MetaService } from '@allors/angular/services/core';
-import { Person, Enumeration, Locale } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { Equals, Sort } from '@allors/data/system';
-import { PullRequest } from '@allors/protocol/system';
-
+import { M } from '@allors/workspace/meta/default';
+import { Locale, Person, Enumeration } from '@allors/workspace/domain/default';
+import { SessionService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -29,8 +26,7 @@ export class PersonInlineComponent implements OnInit, OnDestroy {
   public salutations: Enumeration[];
 
   constructor(
-    private allors: SessionService,
-    public ) {
+    private allors: SessionService) {
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }

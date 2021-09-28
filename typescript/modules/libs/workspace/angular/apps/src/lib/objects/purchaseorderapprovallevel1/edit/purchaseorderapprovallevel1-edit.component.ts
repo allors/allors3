@@ -3,21 +3,19 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest, Observable } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, Invoked } from '@allors/angular/services/core';
-import { PurchaseOrderApprovalLevel1 } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { PrintService } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { Action, TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { PurchaseOrderApprovalLevel1 } from '@allors/workspace/domain/default';
+import { Action, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { PrintService } from '../../../actions/print/print.service';
 
 @Component({
   templateUrl: './purchaseorderapprovallevel1-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class PurchaseOrderApprovalLevel1EditComponent extends TestScope implements OnInit, OnDestroy {
-
   title: string;
   subTitle: string;
 
@@ -33,10 +31,10 @@ export class PurchaseOrderApprovalLevel1EditComponent extends TestScope implemen
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PurchaseOrderApprovalLevel1EditComponent>,
-    
+
     public printService: PrintService,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private saveService: SaveService
   ) {
     super();
 
@@ -46,28 +44,25 @@ export class PurchaseOrderApprovalLevel1EditComponent extends TestScope implemen
   }
 
   public ngOnInit(): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-
           const pulls = [
             pull.PurchaseOrderApprovalLevel1({
               objectId: this.data.id,
               include: {
                 PurchaseOrder: {
-                  PrintDocument: x
-                }
-              }
+                  PrintDocument: x,
+                },
+              },
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => (loaded))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => loaded));
         })
       )
       .subscribe((loaded) => {
@@ -114,8 +109,6 @@ export class PurchaseOrderApprovalLevel1EditComponent extends TestScope implemen
 
         this.dialogRef.close(data);
         this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      }, this.saveService.errorHandler);
   }
 }

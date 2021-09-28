@@ -3,22 +3,20 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, Saved } from '@allors/angular/services/core';
-import { Currency, ExchangeRate, Organisation } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { IObject } from '@allors/domain/system';
-import { TestScope } from '@allors/angular/core';
-import { Equals, Sort } from '@allors/data/system';
-import { FetcherService, InternalOrganisationId } from '@allors/angular/base';
+import { M } from '@allors/workspace/meta/default';
+import { Organisation, InternalOrganisation, ExchangeRate, Currency } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './exchangerate-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class ExchangeRateEditComponent extends TestScope implements OnInit, OnDestroy {
-
   public title: string;
   public subTitle: string;
 
@@ -34,11 +32,11 @@ export class ExchangeRateEditComponent extends TestScope implements OnInit, OnDe
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<ExchangeRateEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,
-    private internalOrganisationId: InternalOrganisationId,
+    private internalOrganisationId: InternalOrganisationId
   ) {
     super();
 
@@ -46,13 +44,13 @@ export class ExchangeRateEditComponent extends TestScope implements OnInit, OnDe
   }
 
   public ngOnInit(): void {
-
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
         switchMap(([, internalOrganisationId]) => {
-
           const isCreate = this.data.id === undefined;
 
           const pulls = [
@@ -67,18 +65,14 @@ export class ExchangeRateEditComponent extends TestScope implements OnInit, OnDe
             pulls.push(
               pull.ExchangeRate({
                 objectId: this.data.id,
-              }),
+              })
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-
         this.allors.session.reset();
         this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
         this.currencies = loaded.collection<Currency>(m.Currency);
@@ -106,19 +100,14 @@ export class ExchangeRateEditComponent extends TestScope implements OnInit, OnDe
   }
 
   public save(): void {
+    this.allors.context.save().subscribe(() => {
+      const data: IObject = {
+        id: this.exchangeRate.id,
+        objectType: this.exchangeRate.objectType,
+      };
 
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.exchangeRate.id,
-          objectType: this.exchangeRate.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

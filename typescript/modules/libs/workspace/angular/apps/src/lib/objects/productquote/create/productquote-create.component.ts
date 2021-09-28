@@ -3,35 +3,20 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { PullRequest } from '@allors/protocol/system';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import {
-  Organisation,
-  Person,
-  OrganisationContactRelationship,
-  Party,
-  PartyContactMechanism,
-  ContactMechanism,
-  ProductQuote,
-  RequestForQuote,
-  Currency,
-  IrpfRegime,
-  VatRegime,
-  CustomerRelationship,
-} from '@allors/domain/generated';
-import { Sort } from '@allors/data/system';
-import { FetcherService, InternalOrganisationId, Filters } from '@allors/angular/base';
-import { IObject, IObject } from '@allors/domain/system';
-import { Meta } from '@allors/meta/generated';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, Currency, RequestForQuote, ProductQuote, VatRegime, IrpfRegime } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './productquote-create.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class ProductQuoteCreateComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   title = 'Add Quote';
@@ -60,30 +45,25 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
     @Self() public allors: SessionService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<ProductQuoteCreateComponent>,
-    
+
     private saveService: SaveService,
     public refreshService: RefreshService,
     private fetcher: FetcherService,
-    private internalOrganisationId: InternalOrganisationId) {
-
+    private internalOrganisationId: InternalOrganisationId
+  ) {
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
-    const m = this.m; const { pullBuilder: pull } = m;
+    const m = this.m;
+    const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
         switchMap(([, internalOrganisationId]) => {
-
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
-            pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] })
-          ];
+          const pulls = [this.fetcher.internalOrganisation, pull.Currency({ sorting: [{ roleType: m.Currency.Name }] }), pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] })];
 
           this.customersFilter = Filters.customersFilter(m, internalOrganisationId);
 
@@ -91,20 +71,19 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
         })
       )
       .subscribe((loaded) => {
-
         this.allors.session.reset();
 
         this.quote = loaded.object<ProductQuote>(m.ProductQuote);
         this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
-        this.showIrpf = this.internalOrganisation.Country.IsoCode === "ES";
+        this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
         this.currencies = loaded.collection<Currency>(m.Currency);
 
         this.quote = this.allors.session.create<ProductQuote>(m.ProductQuote);
         this.quote.Issuer = this.internalOrganisation;
-        this.quote.IssueDate = new Date();;
-        this.quote.ValidFromDate = new Date();;
+        this.quote.IssueDate = new Date();
+        this.quote.ValidFromDate = new Date();
       });
   }
 
@@ -119,7 +98,6 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
   }
 
   public receiverAdded(party: Party): void {
-
     const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
@@ -128,7 +106,6 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
   }
 
   public personAdded(person: Person): void {
-
     const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.quote.Receiver as Organisation;
     organisationContactRelationship.Contact = person;
@@ -138,9 +115,8 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
   }
 
   public partyContactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
-
     this.contactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.quote.Receiver.AddPartyContactMechanism(partyContactMechanism);
+    this.quote.Receiver.addPartyContactMechanism(partyContactMechanism);
     this.quote.FullfillContactMechanism = partyContactMechanism.ContactMechanism;
   }
 
@@ -151,46 +127,40 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
   }
 
   public save(): void {
+    this.allors.context.save().subscribe(() => {
+      const data: IObject = {
+        id: this.quote.id,
+        objectType: this.quote.objectType,
+      };
 
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.quote.id,
-          objectType: this.quote.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   private update(party: Party) {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
-      pull.Party(
-        {
-          object: party,
-          select: {
-            CurrentPartyContactMechanisms: {
-              include: {
-                ContactMechanism: {
-                  PostalAddress_Country: x
-                }
-              }
-            }
-          }
-        }
-      ),
+      pull.Party({
+        object: party,
+        select: {
+          CurrentPartyContactMechanisms: {
+            include: {
+              ContactMechanism: {
+                PostalAddress_Country: x,
+              },
+            },
+          },
+        },
+      }),
       pull.Party({
         object: party,
         select: {
           CurrentContacts: x,
-        }
+        },
       }),
       pull.Party({
         object: party,
@@ -198,27 +168,24 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
         include: {
           PreferredCurrency: x,
           Locale: x,
-        }
+        },
       }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      if (this.previousReceiver && this.quote.Receiver !== this.previousReceiver) {
+        this.quote.ContactPerson = null;
+        this.quote.FullfillContactMechanism = null;
+      }
 
-        if (this.previousReceiver && this.quote.Receiver !== this.previousReceiver) {
-          this.quote.ContactPerson = null;
-          this.quote.FullfillContactMechanism = null;
-        }
+      this.previousReceiver = this.quote.Receiver;
 
-        this.previousReceiver = this.quote.Receiver;
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.contacts = loaded.collection<Person>(m.Person);
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-        this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.contacts = loaded.collection<Person>(m.Person);
-        
-        const selectedParty = loaded.object<selectedParty>(m.selectedParty);
-        this.currencyInitialRole = selectedParty.PreferredCurrency ?? this.quote.Issuer.PreferredCurrency;
+      const selectedParty = loaded.object<selectedParty>(m.selectedParty);
+      this.currencyInitialRole = selectedParty.PreferredCurrency ?? this.quote.Issuer.PreferredCurrency;
     });
   }
 }

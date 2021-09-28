@@ -2,24 +2,36 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { MetaService, RefreshService, NavigationService, PanelService, SessionService } from '@allors/angular/services/core';
-import { Organisation, PartyContactMechanism, Party, Currency, PostalAddress, Person, Facility, ShipmentMethod, Carrier, OrganisationContactRelationship, PurchaseShipment } from '@allors/domain/generated';
-import { SaveService } from '@allors/angular/material/services/core';
-import { Meta } from '@allors/meta/generated';
-import { Filters, FetcherService, InternalOrganisationId } from '@allors/angular/base';
-import { PullRequest } from '@allors/protocol/system';
-import { Sort, Equals } from '@allors/data/system';
-import { IObject } from '@allors/domain/system';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import {
+  Locale,
+  Person,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  Facility,
+  InternalOrganisation,
+  PartyContactMechanism,
+  PostalAddress,
+  Currency,
+  PurchaseShipment,
+  ShipmentMethod,
+  Carrier,
+} from '@allors/workspace/domain/default';
+import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { FetcherService } from '../../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'purchaseshipment-overview-detail',
   templateUrl: './purchaseshipment-overview-detail.component.html',
-  providers: [PanelService, SessionService]
+  providers: [PanelService, SessionService],
 })
 export class PurchaseShipmentOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   purchaseShipment: PurchaseShipment;
@@ -52,7 +64,7 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
@@ -73,7 +85,6 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
     const pullName = `${this.panel.name}_${this.m.PurchaseShipment.name}`;
 
     panel.onPull = (pulls) => {
-
       this.purchaseShipment = undefined;
 
       if (this.panel.isCollapsed) {
@@ -85,7 +96,7 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
           pull.PurchaseShipment({
             name: pullName,
             objectId: id,
-          }),
+          })
         );
       }
     };
@@ -99,7 +110,6 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
   }
 
   public ngOnInit(): void {
-
     // Maximized
     this.subscription = combineLatest([this.refresh$, this.panel.manager.on$])
       .pipe(
@@ -107,34 +117,33 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
           return this.panel.isExpanded;
         }),
         switchMap(() => {
-
           this.purchaseShipment = undefined;
 
-          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+          const m = this.allors.workspace.configuration.metaPopulation as M;
+          const { pullBuilder: pull } = m;
+          const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
             this.fetcher.locales,
             pull.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
-            pull.InternalOrganisation(
-              {
-                object: this.internalOrganisationId.value,
-                select: {
-                  CurrentPartyContactMechanisms: {
-                    include: {
-                      ContactMechanism: {
-                        PostalAddress_Country: x
-                      }
-                    }
-                  }
-                }
-              }
-            ),
             pull.InternalOrganisation({
-              object: this.internalOrganisationId.value,
+              objectId: this.internalOrganisationId.value,
+              select: {
+                CurrentPartyContactMechanisms: {
+                  include: {
+                    ContactMechanism: {
+                      PostalAddress_Country: x,
+                    },
+                  },
+                },
+              },
+            }),
+            pull.InternalOrganisation({
+              objectId: this.internalOrganisationId.value,
               select: {
                 CurrentContacts: x,
-              }
+              },
             }),
             pull.ShipmentMethod({ sorting: [{ roleType: m.ShipmentMethod.Name }] }),
             pull.Carrier({ sorting: [{ roleType: m.Carrier.Name }] }),
@@ -154,11 +163,11 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
                 ShipFromContactPerson: x,
                 Carrier: x,
                 ShipmentState: x,
-                ElectronicDocuments: x
-              }
+                ElectronicDocuments: x,
+              },
             }),
           ];
-          
+
           this.suppliersFilter = Filters.suppliersFilter(m, this.internalOrganisationId.value);
 
           return this.allors.client.pullReactive(this.allors.session, pulls);
@@ -184,7 +193,6 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
 
         this.previousShipFromParty = this.purchaseShipment.ShipFromParty;
       });
-
   }
 
   public ngOnDestroy(): void {
@@ -194,16 +202,12 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
   }
 
   public save(): void {
-
     this.purchaseShipment.ShipToFacility = this.selectedFacility;
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.panel.toggle();
-      },
-        this.saveService.errorHandler
-      );
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.refreshService.refresh();
+      this.panel.toggle();
+    }, this.saveService.errorHandler);
   }
 
   public facilityAdded(facility: Facility): void {
@@ -214,7 +218,6 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
   }
 
   public shipFromContactPersonAdded(person: Person): void {
-
     const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.purchaseShipment.ShipFromParty as Organisation;
     organisationContactRelationship.Contact = person;
@@ -224,8 +227,7 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
   }
 
   public shipToAddressAdded(partyContactMechanism: PartyContactMechanism): void {
-
-    this.purchaseShipment.ShipToParty.AddPartyContactMechanism(partyContactMechanism);
+    this.purchaseShipment.ShipToParty.addPartyContactMechanism(partyContactMechanism);
 
     const postalAddress = partyContactMechanism.ContactMechanism as PostalAddress;
     this.shipToAddresses.push(postalAddress);
@@ -237,24 +239,22 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
   }
 
   private updateShipFromParty(organisation: Party): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.Party({
         object: organisation,
         select: {
           CurrentContacts: x,
-        }
+        },
       }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
-
-        this.shipFromContacts = loaded.collection<Person>(m.Person);
-      });
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      this.shipFromContacts = loaded.collection<Person>(m.Person);
+    });
   }
 
   public setDirty(): void {

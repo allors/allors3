@@ -4,14 +4,10 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { SessionService, MetaService, RefreshService, NavigationService, MediaService, UserId } from '@allors/angular/services/core';
-import { ObjectService } from '@allors/angular/material/services/core';
-import { FilterDefinition, Filter, TestScope, Action } from '@allors/angular/core';
-
-import { PullRequest } from '@allors/protocol/system';
-import { TableRow, Table, Sorter, EditService } from '@allors/angular/material/core';
-import { TaskAssignment } from '@allors/domain/generated';
-import { And, Equals, ContainedIn, Extent, Like } from '@allors/data/system';
+import { M } from '@allors/workspace/meta/default';
+import { TaskAssignment } from '@allors/workspace/domain/default';
+import { Action, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, UserId } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: TaskAssignment;
@@ -36,7 +32,6 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
   constructor(
     @Self() public allors: SessionService,
 
-    
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public editService: EditService,
@@ -67,7 +62,9 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const predicate = new And([
       new Equals({ propertyType: m.TaskAssignment.User, object: this.userId.value }),
@@ -85,9 +82,8 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$)
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-            pageEvent =
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
+          pageEvent =
             previousRefresh !== refresh || filterFields !== previousFilterFields
               ? {
                   ...pageEvent,

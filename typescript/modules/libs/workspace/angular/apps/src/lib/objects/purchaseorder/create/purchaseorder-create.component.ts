@@ -3,37 +3,35 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { PullRequest } from '@allors/protocol/system';
-import { ObjectData, SaveService } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
 import {
-  Organisation,
-  Facility,
-  SupplierRelationship,
-  VatRegime,
-  Currency,
   Person,
+  Organisation,
   OrganisationContactRelationship,
-  PostalAddress,
   Party,
-  PartyContactMechanism,
+  Facility,
+  InternalOrganisation,
+  SupplierRelationship,
   ContactMechanism,
+  PartyContactMechanism,
+  PostalAddress,
+  Currency,
   PurchaseOrder,
+  VatRegime,
   IrpfRegime,
-} from '@allors/domain/generated';
-import { Equals, Sort } from '@allors/data/system';
-import { FetcherService, InternalOrganisationId, Filters } from '@allors/angular/base';
-import { IObject, IObject } from '@allors/domain/system';
-import { Meta } from '@allors/meta/generated';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+} from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
 
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './purchaseorder-create.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class PurchaseOrderCreateComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   title = 'Add Purchase Order';
@@ -79,36 +77,36 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
     @Self() public allors: SessionService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PurchaseOrderCreateComponent>,
-    
+
     private refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,
-    private internalOrganisationId: InternalOrganisationId) {
+    private internalOrganisationId: InternalOrganisationId
+  ) {
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
-    const m = this.m; const { pullBuilder: pull } = m;
+    const m = this.m;
+    const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
         switchMap(([, internalOrganisationId]) => {
-
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.IrpfRegime(),
             pull.Currency({
               predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
-              sorting: [{ roleType: m.Currency.IsoCode }]
+              sorting: [{ roleType: m.Currency.IsoCode }],
             }),
             pull.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
             pull.Organisation({
               predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
               sorting: [{ roleType: m.Organisation.PartyName }],
-            })
+            }),
           ];
 
           this.suppliersFilter = Filters.suppliersFilter(m, internalOrganisationId);
@@ -117,13 +115,12 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
         })
       )
       .subscribe((loaded) => {
-
         this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
-        this.showIrpf = this.internalOrganisation.Country.IsoCode === "ES";
+        this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
         this.currencies = loaded.collection<Currency>(m.Currency);
-        this.facilities  = loaded.collection<Facility>(m.Facility);
+        this.facilities = loaded.collection<Facility>(m.Facility);
 
         this.order = this.allors.session.create<PurchaseOrder>(m.PurchaseOrder);
         this.order.OrderedBy = this.internalOrganisation;
@@ -146,24 +143,18 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
   }
 
   public save(): void {
+    this.allors.context.save().subscribe(() => {
+      const data: IObject = {
+        id: this.order.id,
+        objectType: this.order.objectType,
+      };
 
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.order.id,
-          objectType: this.order.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   public supplierAdded(supplier: Organisation): void {
-
     const supplierRelationship = this.allors.session.create<SupplierRelationship>(m.SupplierRelationship);
     supplierRelationship.Supplier = supplier;
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
@@ -174,7 +165,6 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
   }
 
   public takenViaContactPersonAdded(person: Person): void {
-
     const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.TakenViaSupplier as Organisation;
     organisationContactRelationship.Contact = person;
@@ -184,14 +174,12 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
   }
 
   public takenViaContactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
-
     this.takenViaContactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.takenVia.AddPartyContactMechanism(partyContactMechanism);
+    this.takenVia.addPartyContactMechanism(partyContactMechanism);
     this.order.AssignedTakenViaContactMechanism = partyContactMechanism.ContactMechanism;
   }
 
   public billToContactPersonAdded(person: Person): void {
-
     const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
@@ -201,14 +189,12 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
   }
 
   public billToContactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
-
     this.billToContactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.order.OrderedBy.AddPartyContactMechanism(partyContactMechanism);
+    this.order.OrderedBy.addPartyContactMechanism(partyContactMechanism);
     this.order.AssignedBillToContactMechanism = partyContactMechanism.ContactMechanism;
   }
 
   public shipToContactPersonAdded(person: Person): void {
-
     const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
@@ -218,9 +204,8 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
   }
 
   public shipToAddressAdded(partyContactMechanism: PartyContactMechanism): void {
-
     this.shipToAddresses.push(partyContactMechanism.ContactMechanism);
-    this.order.OrderedBy.AddPartyContactMechanism(partyContactMechanism);
+    this.order.OrderedBy.addPartyContactMechanism(partyContactMechanism);
     this.order.AssignedShipToAddress = partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
@@ -236,76 +221,71 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
   }
 
   private updateSupplier(supplier: Party): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
-      pull.Organisation(
-        {
-          object: supplier,
-          select: {
-            CurrentPartyContactMechanisms: {
-              include: {
-                ContactMechanism: {
-                  PostalAddress_Country: x
-                }
-              }
-            }
-          }
-        }
-      ),
+      pull.Organisation({
+        object: supplier,
+        select: {
+          CurrentPartyContactMechanisms: {
+            include: {
+              ContactMechanism: {
+                PostalAddress_Country: x,
+              },
+            },
+          },
+        },
+      }),
       pull.Organisation({
         object: supplier,
         select: {
           CurrentContacts: x,
-        }
+        },
       }),
       pull.Organisation({
         object: supplier,
         name: 'selectedSupplier',
         include: {
           OrderAddress: x,
-        }
+        },
       }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      this.takenViaContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.takenViaContacts = loaded.collection<Person>(m.Person);
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-        this.takenViaContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.takenViaContacts = loaded.collection<Person>(m.Person);
-
-        const selectedSupplier = loaded.object<selectedSupplier>(m.selectedSupplier);
-        this.takenViaContactMechanismInitialRole = selectedSupplier.OrderAddress;
-      });
+      const selectedSupplier = loaded.object<selectedSupplier>(m.selectedSupplier);
+      this.takenViaContactMechanismInitialRole = selectedSupplier.OrderAddress;
+    });
   }
 
   private updateOrderedBy(organisation: Party): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
-      pull.Organisation(
-        {
-          object: organisation,
-          select: {
-            CurrentPartyContactMechanisms: {
-              include: {
-                ContactMechanism: {
-                  PostalAddress_Country: x
-                }
-              }
-            }
-          }
-        }
-      ),
+      pull.Organisation({
+        object: organisation,
+        select: {
+          CurrentPartyContactMechanisms: {
+            include: {
+              ContactMechanism: {
+                PostalAddress_Country: x,
+              },
+            },
+          },
+        },
+      }),
       pull.Organisation({
         object: organisation,
         select: {
           CurrentContacts: x,
-        }
+        },
       }),
       pull.Organisation({
         object: organisation,
@@ -315,24 +295,21 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
           ShippingAddress: x,
           BillingAddress: x,
           GeneralCorrespondence: x,
-        }
+        },
       }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.billToContacts = loaded.collection<Person>(m.Person);
+      this.shipToContacts = this.billToContacts;
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-        this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.billToContacts = loaded.collection<Person>(m.Person);
-        this.shipToContacts = this.billToContacts;
-
-        const selectedOrganisation = loaded.object<selectedOrganisation>(m.selectedOrganisation);
-        this.currencyInitialRole = selectedOrganisation.PreferredCurrency;
-        this.shipToAddressInitialRole = selectedOrganisation.ShippingAddress;
-        this.billToContactMechanismInitialRole = selectedOrganisation.BillingAddress ?? selectedOrganisation.GeneralCorrespondence;
-      });
+      const selectedOrganisation = loaded.object<selectedOrganisation>(m.selectedOrganisation);
+      this.currencyInitialRole = selectedOrganisation.PreferredCurrency;
+      this.shipToAddressInitialRole = selectedOrganisation.ShippingAddress;
+      this.billToContactMechanismInitialRole = selectedOrganisation.BillingAddress ?? selectedOrganisation.GeneralCorrespondence;
+    });
   }
 }

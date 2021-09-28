@@ -1,11 +1,8 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
-import { MetaService, NavigationService, PanelService, RefreshService } from '@allors/angular/services/core';
-import { WorkEffort, WorkEffortInventoryAssignment } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { WorkEffort, WorkEffortInventoryAssignment } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 
 interface Row extends TableRow {
   object: WorkEffortInventoryAssignment;
@@ -19,7 +16,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'workeffortinventoryassignment-overview-panel',
   templateUrl: './workeffortinventoryassignment-overview-panel.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class WorkEffortInventoryAssignmentOverviewPanelComponent extends TestScope implements OnInit {
   workEffort: WorkEffort;
@@ -44,12 +41,12 @@ export class WorkEffortInventoryAssignmentOverviewPanelComponent extends TestSco
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
 
     public deleteService: DeleteService,
-    public editService: EditService,
+    public editService: EditService
   ) {
     super();
 
@@ -57,7 +54,6 @@ export class WorkEffortInventoryAssignmentOverviewPanelComponent extends TestSco
   }
 
   ngOnInit() {
-
     this.edit = this.editService.edit();
 
     this.panel.name = 'workeffortinventoryassignment';
@@ -68,15 +64,8 @@ export class WorkEffortInventoryAssignmentOverviewPanelComponent extends TestSco
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'part' },
-        { name: 'facility' },
-        { name: 'quantity' },
-        { name: 'uom' },
-      ],
-      actions: [
-        this.edit,
-      ],
+      columns: [{ name: 'part' }, { name: 'facility' }, { name: 'quantity' }, { name: 'uom' }],
+      actions: [this.edit],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -85,7 +74,9 @@ export class WorkEffortInventoryAssignmentOverviewPanelComponent extends TestSco
     const pullName = `${this.panel.name}_${this.m.WorkEffortInventoryAssignment.name}`;
 
     this.panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -101,15 +92,15 @@ export class WorkEffortInventoryAssignmentOverviewPanelComponent extends TestSco
                   Facility: x,
                   UnitOfMeasure: x,
                   NonSerialisedInventoryItem_NonSerialisedInventoryItemState: x,
-                  SerialisedInventoryItem_SerialisedInventoryItemState: x
-                }
-              }
-            }
-          }
+                  SerialisedInventoryItem_SerialisedInventoryItemState: x,
+                },
+              },
+            },
+          },
         }),
         pull.WorkEffort({
           objectId: id,
-        }),
+        })
       );
     };
 

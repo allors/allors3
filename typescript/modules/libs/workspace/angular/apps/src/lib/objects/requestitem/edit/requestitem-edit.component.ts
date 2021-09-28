@@ -4,31 +4,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import {
-  Part,
-  Request,
-  SerialisedItem,
-  Product,
-  RequestItem,
-  UnitOfMeasure,
-  RequestItemState,
-  RequestState,
-  QuoteItemState,
-  QuoteState,
-  SalesOrderItemState,
-  SalesOrderState,
-  ShipmentItemState,
-  ShipmentState,
-  Good,
-} from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { Filters } from '@allors/angular/base';
-import { IObject, IObject } from '@allors/domain/system';
-import { Equals, Sort } from '@allors/data/system';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Part, UnitOfMeasure, Good, SerialisedItem, UnifiedGood, RequestItemState, RequestState, QuoteItemState, QuoteState, SalesOrderItemState, SalesOrderState, ShipmentItemState, ShipmentState, RequestItem } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './requestitem-edit.component.html',
@@ -142,7 +122,7 @@ export class RequestItemEditComponent extends TestScope implements OnInit, OnDes
           if (isCreate && this.data.associationId) {
             pulls.push(
               pull.Request({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
               })
             );
           }
@@ -228,7 +208,7 @@ export class RequestItemEditComponent extends TestScope implements OnInit, OnDes
           this.request = loaded.object<Request>(m.Request);
           this.requestItem = this.allors.session.create<RequestItem>(m.RequestItem);
           this.requestItem.UnitOfMeasure = piece;
-          this.request.AddRequestItem(this.requestItem);
+          this.request.addRequestItem(this.requestItem);
         } else {
           if (this.requestItem.canWriteQuantity) {
             this.title = 'Edit Request Item';

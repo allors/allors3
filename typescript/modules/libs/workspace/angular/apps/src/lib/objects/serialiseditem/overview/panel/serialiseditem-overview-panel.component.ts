@@ -1,13 +1,8 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 
-import { MetaService, NavigationService, PanelService, RefreshService } from '@allors/angular/services/core';
-import { SerialisedItem } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, OverviewService } from '@allors/angular/material/core';
-import { TestScope, Action, ActionTarget } from '@allors/angular/core';
-import { ObjectData, ObjectService } from '@allors/angular/material/services/core';
-
-
+import { M } from '@allors/workspace/meta/default';
+import { SerialisedItem } from '@allors/workspace/domain/default';
+import { Action, DeleteService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService, ActionTarget } from '@allors/workspace/angular/base';
 
 interface Row extends TableRow {
   object: SerialisedItem;
@@ -23,10 +18,9 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'serialiseditem-overview-panel',
   templateUrl: './serialiseditem-overview-panel.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class SerialisedItemOverviewPanelComponent extends TestScope implements OnInit {
-
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -47,12 +41,12 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     public overviewService: OverviewService,
-    public deleteService: DeleteService,
+    public deleteService: DeleteService
   ) {
     super();
 
@@ -60,7 +54,6 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
   }
 
   ngOnInit() {
-
     this.panel.name = 'serialiseditem';
     this.panel.title = 'Serialised Assets';
     this.panel.icon = 'link';
@@ -70,14 +63,7 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'number' },
-        { name: 'name' },
-        { name: 'availability' },
-        { name: 'onWebsite' },
-        { name: 'ownership' },
-        { name: 'ownedBy' },
-      ],
+      columns: [{ name: 'number' }, { name: 'name' }, { name: 'availability' }, { name: 'onWebsite' }, { name: 'ownership' }, { name: 'ownedBy' }],
       actions: [
         {
           name: 'changeinventory',
@@ -92,7 +78,7 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
               });
             }
           },
-          result: null
+          result: null,
         },
         this.overviewService.overview(),
         this.delete,
@@ -107,7 +93,9 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
     const rentedSerialisedItemsName = `${this.panel.name}_${this.m.SerialisedItem.name}_RentedSerialisedItems`;
 
     this.panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
       const id = this.panel.manager.id;
 
       pulls.push(
@@ -121,9 +109,9 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
                 Ownership: x,
                 SerialisedItemAvailability: x,
                 SerialisedItemState: x,
-              }
-            }
-          }
+              },
+            },
+          },
         }),
         pull.Party({
           objectId: id,
@@ -135,9 +123,9 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
                 Ownership: x,
                 SerialisedItemAvailability: x,
                 SerialisedItemState: x,
-              }
-            }
-          }
+              },
+            },
+          },
         }),
         pull.Party({
           objectId: id,
@@ -149,10 +137,10 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
                 Ownership: x,
                 SerialisedItemAvailability: x,
                 SerialisedItemState: x,
-              }
-            }
-          }
-        }),
+              },
+            },
+          },
+        })
       );
 
       this.panel.onPulled = (loaded) => {

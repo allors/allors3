@@ -1,13 +1,11 @@
 import { Component, Self } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { MetaService, NavigationService, PanelService, RefreshService, Invoked } from '@allors/angular/services/core';
-import { Good, PurchaseOrder, PurchaseInvoice } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { SaveService } from '@allors/angular/material/services/core';
-import { PrintService } from '@allors/angular/base';
-import { Sort } from '@allors/data/system';
-import { Action, ActionTarget } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { PurchaseOrder, PurchaseInvoice } from '@allors/workspace/domain/default';
+import { Action, NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
+
+import { PrintService } from '../../../../actions/print/print.service';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -30,7 +28,7 @@ export class PurchasInvoiceOverviewSummaryComponent {
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public navigation: NavigationService,
     public printService: PrintService,
     private saveService: SaveService,
@@ -48,7 +46,9 @@ export class PurchasInvoiceOverviewSummaryComponent {
     const purchaseOrderPullName = `${panel.name}_${this.m.PurchaseOrder.name}`;
 
     panel.onPull = (pulls) => {
-      const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+      const m = this.allors.workspace.configuration.metaPopulation as M;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const { id } = this.panel.manager;
 
@@ -87,7 +87,7 @@ export class PurchasInvoiceOverviewSummaryComponent {
           select: {
             PurchaseOrders: x,
           },
-        }),
+        })
       );
     };
 
@@ -95,11 +95,7 @@ export class PurchasInvoiceOverviewSummaryComponent {
       this.invoice = loaded.objects[purchaseInvoicePullName] as PurchaseInvoice;
       this.orders = loaded.collections[purchaseOrderPullName] as PurchaseOrder[];
 
-      this.orderTotalExVat = this.orders.reduce(
-        (partialOrderTotal, order) =>
-          partialOrderTotal + order.ValidOrderItems.reduce((partialItemTotal, item) => partialItemTotal + parseFloat(item.TotalExVat), 0),
-        0
-      );
+      this.orderTotalExVat = this.orders.reduce((partialOrderTotal, order) => partialOrderTotal + order.ValidOrderItems.reduce((partialItemTotal, item) => partialItemTotal + parseFloat(item.TotalExVat), 0), 0);
 
       this.hasIrpf = Number(this.invoice.TotalIrpf) !== 0;
     };

@@ -3,15 +3,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { InventoryItem, Part, Facility, SerialisedInventoryItem, SerialisedItem, NonSerialisedInventoryItem, VatRegime, IrpfRegime, InvoiceItemType, SupplierOffering, UnifiedGood, Product, SalesInvoice, SalesInvoiceItem, SalesOrderItem, SerialisedItemAvailability, NonUnifiedPart, Organisation } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { FetcherService, Filters } from '@allors/angular/base';
-import { IObject, IObject } from '@allors/domain/system';
-import { Equals, Sort } from '@allors/data/system';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Organisation, Part, SupplierOffering, Facility, NonUnifiedPart, InternalOrganisation, NonSerialisedInventoryItem, InventoryItem, SerialisedInventoryItem, SerialisedItem, UnifiedGood, SerialisedItemAvailability, SalesOrderItem, SalesInvoice, VatRegime, IrpfRegime, InvoiceItemType, SalesInvoiceItem } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './salesinvoiceitem-edit.component.html',
@@ -86,14 +84,14 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
           const pulls = [
             this.fetcher.internalOrganisation,
             this.fetcher.warehouses,
-            pull.SerialisedItemAvailability(),
+            pull.SerialisedItemAvailability({}),
             pull.InvoiceItemType({
               predicate: { kind: 'Equals', propertyType: m.InvoiceItemType.IsActive, value: true },
               sorting: [{ roleType: m.InvoiceItemType.Name }],
             }),
             pull.IrpfRegime({ 
               sorting: [{ roleType: m.IrpfRegime.Name }] }),
-            pull.SerialisedItemAvailability(),
+            pull.SerialisedItemAvailability({}),
           ];
 
           if (!isCreate) {
@@ -137,7 +135,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
           if (isCreate && this.data.associationId) {
             pulls.push(
               pull.SalesInvoice({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
                 include: {
                   DerivedVatRegime: {
                     VatRates: x,
@@ -181,7 +179,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
           this.title = 'Add sales invoice Item';
           this.invoice = loaded.object<SalesInvoice>(m.SalesInvoice);
           this.invoiceItem = this.allors.session.create<SalesInvoiceItem>(m.SalesInvoiceItem);
-          this.invoice.AddSalesInvoiceItem(this.invoiceItem);
+          this.invoice.addSalesInvoiceItem(this.invoiceItem);
           this.vatRegimeInitialRole = this.invoice.DerivedVatRegime;
           this.irpfRegimeInitialRole = this.invoice.DerivedIrpfRegime;
         } else {

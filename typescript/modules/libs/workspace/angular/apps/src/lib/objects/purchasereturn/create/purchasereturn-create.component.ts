@@ -3,32 +3,20 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { PullRequest } from '@allors/protocol/system';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import {
-  Organisation,
-  Person,
-  OrganisationContactRelationship,
-  Party,
-  PartyContactMechanism,
-  Currency,
-  PurchaseReturn,
-  PostalAddress,
-  Facility,
-} from '@allors/domain/generated';
-import { Sort, Equals } from '@allors/data/system';
-import { FetcherService, InternalOrganisationId, Filters } from '@allors/angular/base';
-import { IObject, IObject } from '@allors/domain/system';
-import { Meta } from '@allors/meta/generated';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Person, Organisation, OrganisationContactRelationship, Party, Facility, InternalOrganisation, PartyContactMechanism, PostalAddress, Currency, PurchaseReturn } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './purchasereturn-create.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class PurchaseReturnCreateComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   title = 'Add Purchase Return';
@@ -53,31 +41,31 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
     @Self() public allors: SessionService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PurchaseReturnCreateComponent>,
-    
+
     private refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,
-    private internalOrganisationId: InternalOrganisationId) {
+    private internalOrganisationId: InternalOrganisationId
+  ) {
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
-    const m = this.m; const { pullBuilder: pull } = m;
+    const m = this.m;
+    const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-
           const pulls = [
             this.fetcher.internalOrganisation,
             this.fetcher.ownWarehouses,
             pull.Organisation({
               predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
               sorting: [{ roleType: m.Organisation.PartyName }],
-            })
+            }),
           ];
 
           this.suppliersFilter = Filters.suppliersFilter(m, this.internalOrganisationId.value);
@@ -86,7 +74,6 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
         })
       )
       .subscribe((loaded) => {
-
         this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
         this.facilities = loaded.collection<Facility>(m.Facility);
 
@@ -104,7 +91,6 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
         if (this.purchaseReturn.ShipFromParty) {
           this.updateShipFromParty(this.purchaseReturn.ShipFromParty);
         }
-
       });
   }
 
@@ -115,24 +101,18 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
   }
 
   public save(): void {
+    this.allors.context.save().subscribe(() => {
+      const data: IObject = {
+        id: this.purchaseReturn.id,
+        objectType: this.purchaseReturn.objectType,
+      };
 
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.purchaseReturn.id,
-          objectType: this.purchaseReturn.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   public shipToContactPersonAdded(person: Person): void {
-
     const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.purchaseReturn.ShipToParty as Organisation;
     organisationContactRelationship.Contact = person;
@@ -142,8 +122,7 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
   }
 
   public shipToAddressAdded(partyContactMechanism: PartyContactMechanism): void {
-
-    this.purchaseReturn.ShipToParty.AddPartyContactMechanism(partyContactMechanism);
+    this.purchaseReturn.ShipToParty.addPartyContactMechanism(partyContactMechanism);
 
     const postalAddress = partyContactMechanism.ContactMechanism as PostalAddress;
     this.shipToAddresses.push(postalAddress);
@@ -155,76 +134,68 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
   }
 
   private updateShipToParty(supplier: Party): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
-      pull.Party(
-        {
-          object: supplier,
-          select: {
-            CurrentPartyContactMechanisms: {
-              include: {
-                ContactMechanism: {
-                  PostalAddress_Country: x
-                }
-              }
-            }
-          }
-        }
-      ),
+      pull.Party({
+        object: supplier,
+        select: {
+          CurrentPartyContactMechanisms: {
+            include: {
+              ContactMechanism: {
+                PostalAddress_Country: x,
+              },
+            },
+          },
+        },
+      }),
       pull.Party({
         object: supplier,
         select: {
           CurrentContacts: x,
-        }
+        },
       }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
-
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-        this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
-        this.shipToContacts = loaded.collection<Person>(m.Person);
-      });
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
+      this.shipToContacts = loaded.collection<Person>(m.Person);
+    });
   }
 
   private updateShipFromParty(organisation: Party): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
-      pull.Party(
-        {
-          object: organisation,
-          select: {
-            CurrentPartyContactMechanisms: {
-              include: {
-                ContactMechanism: {
-                  PostalAddress_Country: x
-                }
-              }
-            }
-          }
-        }
-      ),
+      pull.Party({
+        object: organisation,
+        select: {
+          CurrentPartyContactMechanisms: {
+            include: {
+              ContactMechanism: {
+                PostalAddress_Country: x,
+              },
+            },
+          },
+        },
+      }),
       pull.Party({
         object: organisation,
         select: {
           CurrentContacts: x,
-        }
+        },
       }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
-
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-        this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
-        this.shipToContacts = loaded.collection<Person>(m.Person);
-      });
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
+      this.shipToContacts = loaded.collection<Person>(m.Person);
+    });
   }
 }

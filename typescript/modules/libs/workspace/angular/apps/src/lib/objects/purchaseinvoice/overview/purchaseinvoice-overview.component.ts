@@ -1,22 +1,21 @@
 import { Component, Self, AfterViewInit, OnDestroy, Injector } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { MetaService, RefreshService,  NavigationService, PanelManagerService, SessionService } from '@allors/angular/services/core';
-import { Good, PurchaseOrder, PurchaseInvoice } from '@allors/domain/generated';
-import { ActivatedRoute } from '@angular/router';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { PullRequest } from '@allors/protocol/system';
-import { Sort } from '@allors/data/system';
-import { NavigationActivatedRoute, TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { PurchaseOrder, PurchaseInvoice } from '@allors/workspace/domain/default';
+import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './purchaseinvoice-overview.component.html',
-  providers: [PanelManagerService, SessionService]
+  providers: [PanelManagerService, SessionService],
 })
 export class PurchaseInvoiceOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
-
   title = 'Purchase Invoice';
 
   order: PurchaseOrder;
@@ -26,13 +25,13 @@ export class PurchaseInvoiceOverviewComponent extends TestScope implements After
 
   constructor(
     @Self() public panelManager: PanelManagerService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private route: ActivatedRoute,
     private internalOrganisationId: InternalOrganisationId,
     public injector: Injector,
-    titleService: Title,
+    titleService: Title
   ) {
     super();
 
@@ -40,12 +39,12 @@ export class PurchaseInvoiceOverviewComponent extends TestScope implements After
   }
 
   public ngAfterViewInit(): void {
-
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-
-          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+          const m = this.allors.workspace.configuration.metaPopulation as M;
+          const { pullBuilder: pull } = m;
+          const x = {};
 
           const navRoute = new NavigationActivatedRoute(this.route);
           this.panelManager.id = navRoute.id();
@@ -61,7 +60,7 @@ export class PurchaseInvoiceOverviewComponent extends TestScope implements After
               objectId: id,
               include: {
                 PurchaseInvoiceItems: {
-                  InvoiceItemType: x
+                  InvoiceItemType: x,
                 },
                 BilledFrom: x,
                 BilledFromContactPerson: x,
@@ -74,31 +73,27 @@ export class PurchaseInvoiceOverviewComponent extends TestScope implements After
                 LastModifiedBy: x,
                 PurchaseOrders: x,
                 DerivedBillToEndCustomerContactMechanism: {
-                  PostalAddress_Country: {
-                  }
+                  PostalAddress_Country: {},
                 },
                 DerivedShipToEndCustomerAddress: {
-                  Country: x
-                }
+                  Country: x,
+                },
               },
             }),
           ];
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context
-            .load(new PullRequest({ pulls }));
+          return this.panelManager.context.load(new PullRequest({ pulls }));
         })
       )
       .subscribe((loaded) => {
-
         this.panelManager.context.session.reset();
 
         this.panelManager.onPulled(loaded);
 
         this.order = loaded.object<PurchaseOrder>(m.PurchaseOrder);
         this.invoice = loaded.object<PurchaseInvoice>(m.PurchaseInvoice);
-
       });
   }
 

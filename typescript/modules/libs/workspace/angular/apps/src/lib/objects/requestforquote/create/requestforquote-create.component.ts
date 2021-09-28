@@ -3,32 +3,20 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { PullRequest } from '@allors/protocol/system';
-import { ObjectData, SaveService } from '@allors/angular/material/services/core';
-import {
-  Organisation,
-  CustomerRelationship,
-  Currency,
-  Person,
-  OrganisationContactRelationship,
-  Party,
-  PartyContactMechanism,
-  ContactMechanism,
-  RequestForQuote,
-} from '@allors/domain/generated';
-import { Sort } from '@allors/data/system';
-import { FetcherService, InternalOrganisationId, Filters } from '@allors/angular/base';
-import { IObject, IObject } from '@allors/domain/system';
-import { Meta } from '@allors/meta/generated';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, Currency, RequestForQuote } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './requestforquote-create.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class RequestForQuoteCreateComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   title = 'Add Request for Quote';
@@ -53,7 +41,7 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<RequestForQuoteCreateComponent>,
-    
+
     private refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,
@@ -65,17 +53,13 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
   }
 
   public ngOnInit(): void {
-
-    const m = this.m; const { pullBuilder: pull } = m;
+    const m = this.m;
+    const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
         switchMap(([, internalOrganisationId]) => {
-
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.Currency({ sorting: [{ roleType: m.Currency.Name }] })
-          ];
+          const pulls = [this.fetcher.internalOrganisation, pull.Currency({ sorting: [{ roleType: m.Currency.Name }] })];
 
           this.customersFilter = Filters.customersFilter(m, internalOrganisationId);
 
@@ -83,7 +67,6 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
         })
       )
       .subscribe((loaded) => {
-
         this.allors.session.reset();
 
         this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
@@ -91,8 +74,7 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
 
         this.request = this.allors.session.create<RequestForQuote>(m.RequestForQuote);
         this.request.Recipient = this.internalOrganisation;
-        this.request.RequestDate = new Date();;
-
+        this.request.RequestDate = new Date();
       });
   }
 
@@ -103,20 +85,15 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
   }
 
   public save(): void {
+    this.allors.context.save().subscribe(() => {
+      const data: IObject = {
+        id: this.request.id,
+        objectType: this.request.objectType,
+      };
 
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.request.id,
-          objectType: this.request.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   get originatorIsPerson(): boolean {
@@ -130,7 +107,6 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
   }
 
   public originatorAdded(party: Party): void {
-
     const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
@@ -139,14 +115,12 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
   }
 
   public partyContactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
-
     this.contactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.request.Originator.AddPartyContactMechanism(partyContactMechanism);
+    this.request.Originator.addPartyContactMechanism(partyContactMechanism);
     this.request.FullfillContactMechanism = partyContactMechanism.ContactMechanism;
   }
 
   public personAdded(person: Person): void {
-
     const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.request.Originator as Organisation;
     organisationContactRelationship.Contact = person;
@@ -156,43 +130,41 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
   }
 
   private updateOriginator(party: Party) {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.Party({
-        object: party.id,
+        objectId: party.id,
         select: {
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
-                PostalAddress_Country: x
-              }
-            }
-          }
+                PostalAddress_Country: x,
+              },
+            },
+          },
         },
       }),
       pull.Party({
-        object: party.id,
+        objectId: party.id,
         select: {
-          CurrentContacts: x
-        }
-      })
+          CurrentContacts: x,
+        },
+      }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      if (this.request.Originator !== this.previousOriginator) {
+        this.request.FullfillContactMechanism = null;
+        this.request.ContactPerson = null;
+        this.previousOriginator = this.request.Originator;
+      }
 
-        if (this.request.Originator !== this.previousOriginator) {
-          this.request.FullfillContactMechanism = null;
-          this.request.ContactPerson = null;
-          this.previousOriginator = this.request.Originator;
-        }
-
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-        this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.contacts = loaded.collection<Person>(m.Person);
-      });
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.contacts = loaded.collection<Person>(m.Person);
+    });
   }
 }

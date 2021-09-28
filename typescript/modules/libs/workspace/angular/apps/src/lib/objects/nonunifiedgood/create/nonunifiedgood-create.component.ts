@@ -1,34 +1,21 @@
 import { Component, OnDestroy, OnInit, Self, Optional, Inject } from '@angular/core';
-import { Meta } from '@allors/meta/generated'
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, NavigationService } from '@allors/angular/services/core';
-import { PullRequest } from '@allors/protocol/system';
-import { ObjectData, SaveService } from '@allors/angular/material/services/core';
-import {
-  Organisation,
-  Good,
-  ProductCategory,
-  ProductType,
-  VatRate,
-  Ownership,
-  ProductIdentificationType,
-  ProductNumber,
-  Settings,
-} from '@allors/domain/generated';
-import { Sort } from '@allors/data/system';
-import { FetcherService, Filters } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { NonUnifiedGood, Organisation, ProductIdentificationType, ProductType, Settings, Good, ProductCategory, Ownership, ProductNumber } from '@allors/workspace/domain/default';
+import { NavigationService, ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './nonunifiedgood-create.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
   good: Good;
 
@@ -54,33 +41,25 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
     @Self() public allors: SessionService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<NonUnifiedGoodCreateComponent>,
-    
+
     private refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
     private fetcher: FetcherService
   ) {
-
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
-    const m = this.m; const { pullBuilder: pull } = m;
+    const m = this.m;
+    const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-
-          const pulls = [
-            this.fetcher.locales,
-            this.fetcher.internalOrganisation,
-            this.fetcher.Settings,
-            pull.ProductIdentificationType(),
-            pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] }),
-          ];
+          const pulls = [this.fetcher.locales, this.fetcher.internalOrganisation, this.fetcher.Settings, pull.ProductIdentificationType({}), pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] })];
 
           this.nonUnifiedPartsFilter = Filters.nonUnifiedPartsFilter(m);
 
@@ -88,7 +67,6 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
         })
       )
       .subscribe((loaded) => {
-
         this.allors.session.reset();
 
         this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
@@ -104,7 +82,7 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
           this.productNumber = this.allors.session.create<ProductNumber>(m.ProductNumber);
           this.productNumber.ProductIdentificationType = this.goodNumberType;
 
-          this.good.AddProductIdentification(this.productNumber);
+          this.good.addProductIdentification(this.productNumber);
         }
       });
   }
@@ -116,22 +94,18 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
   }
 
   public save(): void {
-
     this.selectedCategories.forEach((category: ProductCategory) => {
-      category.AddProduct(this.good);
+      category.addProduct(this.good);
     });
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.good.id,
-          objectType: this.good.objectType,
-        };
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      const data: IObject = {
+        id: this.good.id,
+        objectType: this.good.objectType,
+      };
 
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

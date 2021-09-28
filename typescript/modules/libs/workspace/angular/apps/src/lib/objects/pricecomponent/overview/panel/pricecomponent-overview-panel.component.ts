@@ -1,12 +1,11 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { isBefore, isAfter, format, formatDistance } from 'date-fns';
 
-import { MetaService, NavigationService, PanelService, RefreshService } from '@allors/angular/services/core';
-import { PriceComponent } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService, Sorter } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { InternalOrganisation, Locale, Carrier,  Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Party, CustomerShipment, Currency, PostalAddress, Facility, ShipmentMethod, PositionTypeRate, TimeFrequency, RateType, PositionType, PriceComponent } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, SaveService, SearchFactory, Table, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
 
 
 interface Row extends TableRow {

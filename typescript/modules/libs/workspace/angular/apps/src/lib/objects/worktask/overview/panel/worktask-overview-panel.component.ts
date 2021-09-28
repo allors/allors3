@@ -1,12 +1,9 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { formatDistance } from 'date-fns';
 
-import { MetaService, NavigationService, PanelService, RefreshService } from '@allors/angular/services/core';
-import { WorkEffort, SerialisedItem } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, OverviewService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { SerialisedItem, WorkEffort } from '@allors/workspace/domain/default';
+import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 
 interface Row extends TableRow {
   object: WorkEffort;
@@ -47,7 +44,7 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public overviewService: OverviewService,
@@ -88,7 +85,9 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
     const assetPullName = `${this.panel.name}_${this.m.WorkEffort.name}_fixedasset`;
 
     this.panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 

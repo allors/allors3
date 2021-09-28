@@ -1,22 +1,21 @@
 import { Component, Self, AfterViewInit, OnDestroy, Injector } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { MetaService, RefreshService,  NavigationService, PanelManagerService, SessionService } from '@allors/angular/services/core';
-import { WorkTask } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { ActivatedRoute } from '@angular/router';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { PullRequest } from '@allors/protocol/system';
-import { NavigationActivatedRoute, TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { WorkTask } from '@allors/workspace/domain/default';
+import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './worktask-overview.component.html',
-  providers: [PanelManagerService, SessionService]
+  providers: [PanelManagerService, SessionService],
 })
 export class WorkTaskOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
-
   readonly m: M;
   title = 'WorkTask';
 
@@ -26,13 +25,13 @@ export class WorkTaskOverviewComponent extends TestScope implements AfterViewIni
 
   constructor(
     @Self() public panelManager: PanelManagerService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private route: ActivatedRoute,
     public injector: Injector,
     private internalOrganistationId: InternalOrganisationId,
-    titleService: Title,
+    titleService: Title
   ) {
     super();
 
@@ -40,12 +39,11 @@ export class WorkTaskOverviewComponent extends TestScope implements AfterViewIni
   }
 
   public ngAfterViewInit(): void {
-
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganistationId.observable$)
       .pipe(
-        switchMap(([,,]) => {
-
-          const m = this.m; const { pullBuilder: pull } = m;
+        switchMap(([, ,]) => {
+          const m = this.m;
+          const { pullBuilder: pull } = m;
 
           const navRoute = new NavigationActivatedRoute(this.route);
           this.panelManager.objectType = m.WorkTask;
@@ -57,17 +55,15 @@ export class WorkTaskOverviewComponent extends TestScope implements AfterViewIni
           const pulls = [
             pull.WorkTask({
               object: this.panelManager.id,
-            })
+            }),
           ];
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context
-            .load(new PullRequest({ pulls }));
+          return this.panelManager.context.load(new PullRequest({ pulls }));
         })
       )
       .subscribe((loaded) => {
-
         this.panelManager.context.session.reset();
         this.panelManager.onPulled(loaded);
 

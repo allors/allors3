@@ -4,13 +4,9 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { SessionService, MetaService, RefreshService, NavigationService, MediaService, UserId } from '@allors/angular/services/core';
-import { ObjectService } from '@allors/angular/material/services/core';
-import { FilterDefinition, Filter, TestScope, Action } from '@allors/angular/core';
-import { PullRequest } from '@allors/protocol/system';
-import { TableRow, Table, MethodService } from '@allors/angular/material/core';
-import { Notification } from '@allors/domain/generated';
-import { And, Like } from '@allors/data/system';
+import { Notification } from '@allors/workspace/domain/default';
+import { Action, Filter, FilterDefinition, MediaService, MethodService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, UserId } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: Notification;

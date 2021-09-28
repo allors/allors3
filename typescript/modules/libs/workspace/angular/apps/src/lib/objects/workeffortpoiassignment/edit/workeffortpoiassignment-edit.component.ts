@@ -4,23 +4,19 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { PurchaseOrder, PurchaseOrderItem, WorkEffort, WorkEffortPurchaseOrderItemAssignment } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { Sort } from '@allors/data/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { WorkEffort, WorkEffortPurchaseOrderItemAssignment, PurchaseOrder, PurchaseOrderItem } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
 
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './workeffortpoiassignment-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   title: string;
@@ -36,7 +32,7 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<WorkEffortPurchaseOrderItemAssignmentEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId,
@@ -48,13 +44,13 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
   }
 
   public ngOnInit(): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-
           const isCreate = this.data.id === undefined;
 
           let pulls = [
@@ -67,7 +63,7 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
                   PurchaseOrderWherePurchaseOrderItem: x,
                 },
                 WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrder: x,
-              }
+              },
             }),
           ];
 
@@ -77,9 +73,9 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
                 objectId: this.data.id,
                 include: {
                   Assignment: x,
-                  PurchaseOrderItem: x
-                }
-              }),
+                  PurchaseOrderItem: x,
+                },
+              })
             );
           }
 
@@ -87,19 +83,15 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
             pulls = [
               ...pulls,
               pull.WorkEffort({
-                object: this.data.associationId
+                objectId: this.data.associationId,
               }),
             ];
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-
         this.allors.session.reset();
 
         if (isCreate) {
@@ -109,7 +101,6 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
           this.workEffortPurchaseOrderItemAssignment = this.allors.session.create<WorkEffortPurchaseOrderItemAssignment>(m.WorkEffortPurchaseOrderItemAssignment);
           this.workEffortPurchaseOrderItemAssignment.Assignment = this.workEffort;
           this.workEffortPurchaseOrderItemAssignment.Quantity = 1;
-
         } else {
           this.workEffortPurchaseOrderItemAssignment = loaded.object<WorkEffortPurchaseOrderItemAssignment>(m.WorkEffortPurchaseOrderItemAssignment);
           this.selectedPurchaseOrder = this.workEffortPurchaseOrderItemAssignment.PurchaseOrder;
@@ -123,11 +114,9 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
         }
 
         const purchaseOrders = loaded.collection<PurchaseOrder>(m.PurchaseOrder);
-        this.purchaseOrders = purchaseOrders
-          .filter(v => v.PurchaseOrderItems
-                  .find(i => i.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem.length === 0
-                            && !i.Part
-                            && i.PurchaseOrderWherePurchaseOrderItem.OrderedBy === this.workEffort.TakenBy));
+        this.purchaseOrders = purchaseOrders.filter((v) =>
+          v.PurchaseOrderItems.find((i) => i.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem.length === 0 && !i.Part && i.PurchaseOrderWherePurchaseOrderItem.OrderedBy === this.workEffort.TakenBy)
+        );
       });
   }
 
@@ -140,33 +129,25 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
   public update(): void {
     const { context } = this.allors;
 
-    context
-      .save()
-      .subscribe(() => {
-        this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+    context.save().subscribe(() => {
+      this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   public save(): void {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      const data: IObject = {
+        id: this.workEffortPurchaseOrderItemAssignment.id,
+        objectType: this.workEffortPurchaseOrderItemAssignment.objectType,
+      };
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.workEffortPurchaseOrderItemAssignment.id,
-          objectType: this.workEffortPurchaseOrderItemAssignment.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   public purchaseOrderSelected(purchaseOrder: PurchaseOrder): void {
-    this.purchaseOrderItems = purchaseOrder.PurchaseOrderItems.filter(v => v.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem.length === 0);
+    this.purchaseOrderItems = purchaseOrder.PurchaseOrderItems.filter((v) => v.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem.length === 0);
   }
 }

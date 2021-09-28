@@ -2,12 +2,10 @@ import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { formatDistance } from 'date-fns';
 
-import { MetaService, NavigationService, PanelService, RefreshService, SessionService } from '@allors/angular/services/core';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService, MethodService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData, ObjectService } from '@allors/angular/material/services/core';
-import { RequestItem, RequestForQuote } from '@allors/domain/generated';
+import { M } from '@allors/workspace/meta/default';
+import { RequestForQuote, RequestItem } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: RequestItem;
@@ -21,10 +19,9 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'requestitem-overview-panel',
   templateUrl: './requestitem-overview-panel.component.html',
-  providers: [SessionService, PanelService]
+  providers: [SessionService, PanelService],
 })
 export class RequestItemOverviewPanelComponent extends TestScope {
-
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -54,7 +51,7 @@ export class RequestItemOverviewPanelComponent extends TestScope {
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public methodService: MethodService,
@@ -73,9 +70,9 @@ export class RequestItemOverviewPanelComponent extends TestScope {
 
     this.delete = deleteService.delete(panel.manager.context);
     this.edit = this.editService.edit();
-    this.cancel = methodService.create(allors.context, this.m.RequestItem.Cancel, { name: 'Cancel'});
-    this.hold = methodService.create(allors.context, this.m.RequestItem.Hold, { name: 'Hold'});
-    this.submit = methodService.create(allors.context, this.m.RequestItem.Submit, { name: 'Submit'});
+    this.cancel = methodService.create(allors.context, this.m.RequestItem.Cancel, { name: 'Cancel' });
+    this.hold = methodService.create(allors.context, this.m.RequestItem.Hold, { name: 'Hold' });
+    this.submit = methodService.create(allors.context, this.m.RequestItem.Submit, { name: 'Submit' });
 
     const sort = true;
     this.table = new Table({
@@ -86,13 +83,7 @@ export class RequestItemOverviewPanelComponent extends TestScope {
         { name: 'quantity', sort },
         { name: 'lastModifiedDate', sort },
       ],
-      actions: [
-        this.edit,
-        this.delete,
-        this.cancel,
-        this.hold,
-        this.submit
-      ],
+      actions: [this.edit, this.delete, this.cancel, this.hold, this.submit],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -101,7 +92,9 @@ export class RequestItemOverviewPanelComponent extends TestScope {
     const pullName = `${panel.name}_${this.m.RequestItem.name}`;
 
     panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -115,19 +108,18 @@ export class RequestItemOverviewPanelComponent extends TestScope {
                 RequestItemState: x,
                 Product: x,
                 SerialisedItem: x,
-              }
-            }
-          }
+              },
+            },
+          },
         }),
         pull.Request({
           name: 'Request',
-          objectId: id
-        }),
+          objectId: id,
+        })
       );
     };
 
     panel.onPulled = (loaded) => {
-
       this.requestItems = loaded.collections[pullName] as RequestItem[];
       this.request = loaded.object<Request>(m.Request);
       this.table.total = loaded.values[`${pullName}_total`] || this.requestItems.length;
@@ -137,7 +129,7 @@ export class RequestItemOverviewPanelComponent extends TestScope {
           item: (v.Product && v.Product.Name) || (v.SerialisedItem && v.SerialisedItem.Name) || '',
           state: v.RequestItemState ? v.RequestItemState.Name : '',
           quantity: v.Quantity,
-          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date())
+          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
         } as Row;
       });
     };

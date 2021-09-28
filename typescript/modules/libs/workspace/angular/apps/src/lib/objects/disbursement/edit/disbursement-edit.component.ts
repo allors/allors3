@@ -3,13 +3,12 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { Disbursement, PurchaseInvoice, PaymentApplication, Invoice } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { ObjectData, SaveService } from '@allors/angular/material/services/core';
-import { IObject } from '@allors/domain/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Disbursement, Invoice, PaymentApplication } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
 
 @Component({
   templateUrl: './disbursement-edit.component.html',
@@ -64,7 +63,7 @@ export class DisbursementEditComponent extends TestScope implements OnInit, OnDe
           if (isCreate && this.data.associationId) {
             pulls.push(
               pull.Invoice({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
               })
             );
           }
@@ -83,7 +82,7 @@ export class DisbursementEditComponent extends TestScope implements OnInit, OnDe
           this.paymentApplication.Invoice = this.invoice;
 
           this.disbursement = this.allors.session.create<Disbursement>(m.Disbursement);
-          this.disbursement.AddPaymentApplication(this.paymentApplication);
+          this.disbursement.addPaymentApplication(this.paymentApplication);
         } else {
           this.disbursement = loaded.object<Disbursement>(m.Disbursement);
           this.paymentApplication = this.disbursement.PaymentApplications[0];

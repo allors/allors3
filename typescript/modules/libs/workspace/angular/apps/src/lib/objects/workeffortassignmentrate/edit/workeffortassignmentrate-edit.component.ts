@@ -3,22 +3,17 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, Saved } from '@allors/angular/services/core';
-import { TimeFrequency, RateType, WorkEffortAssignmentRate, WorkEffort, WorkEffortPartyAssignment } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { IObject } from '@allors/domain/system';
-import { Sort } from '@allors/data/system';
-import { TestScope } from '@allors/angular/core';
-
+import { M } from '@allors/workspace/meta/default';
+import { WorkEffort, WorkEffortPartyAssignment, WorkEffortAssignmentRate, TimeFrequency, RateType } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './workeffortassignmentrate-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class WorkEffortAssignmentRateEditComponent extends TestScope implements OnInit, OnDestroy {
-
   title: string;
   subTitle: string;
 
@@ -36,9 +31,9 @@ export class WorkEffortAssignmentRateEditComponent extends TestScope implements 
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<WorkEffortAssignmentRateEditComponent>,
-    
+
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private saveService: SaveService
   ) {
     super();
 
@@ -46,19 +41,16 @@ export class WorkEffortAssignmentRateEditComponent extends TestScope implements 
   }
 
   public ngOnInit(): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-
           const isCreate = this.data.id === undefined;
 
-          const pulls = [
-            pull.RateType({ sorting: [{ roleType: this.m.RateType.Name }] }),
-            pull.TimeFrequency({ sorting: [{ roleType: this.m.TimeFrequency.Name }] }),
-          ];
+          const pulls = [pull.RateType({ sorting: [{ roleType: this.m.RateType.Name }] }), pull.TimeFrequency({ sorting: [{ roleType: this.m.TimeFrequency.Name }] })];
 
           if (!isCreate) {
             pulls.push(
@@ -68,39 +60,34 @@ export class WorkEffortAssignmentRateEditComponent extends TestScope implements 
                   RateType: x,
                   Frequency: x,
                   WorkEffortPartyAssignment: x,
-                  WorkEffort: x
-                }
-              }),
+                  WorkEffort: x,
+                },
+              })
             );
           }
 
           if (isCreate && this.data.associationId) {
             pulls.push(
               pull.WorkEffort({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
                 select: {
-                  WorkEffortPartyAssignmentsWhereAssignment:
-                  {
+                  WorkEffortPartyAssignmentsWhereAssignment: {
                     include: {
-                      Party: x
-                    }
-                  }
-                }
+                      Party: x,
+                    },
+                  },
+                },
               }),
               pull.WorkEffort({
-                object: this.data.associationId,
-              }),
+                objectId: this.data.associationId,
+              })
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-
         this.allors.session.reset();
 
         this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
@@ -137,19 +124,14 @@ export class WorkEffortAssignmentRateEditComponent extends TestScope implements 
   }
 
   public save(): void {
+    this.allors.context.save().subscribe(() => {
+      const data: IObject = {
+        id: this.workEffortAssignmentRate.id,
+        objectType: this.workEffortAssignmentRate.objectType,
+      };
 
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.workEffortAssignmentRate.id,
-          objectType: this.workEffortAssignmentRate.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

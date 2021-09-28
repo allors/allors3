@@ -2,22 +2,17 @@ import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, UserId } from '@allors/angular/services/core';
-import { Person } from '@allors/domain/generated';
-import {  EditService } from '@allors/angular/material/core';
-import { PullRequest } from '@allors/protocol/system';
-import { ObjectService } from '@allors/angular/material/services/core';
-import { Action } from '@allors/angular/core';
-
+import { Person } from '@allors/workspace/domain/default';
+import { Action, EditService, ObjectService, RefreshService, UserId } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'userprofile-link',
   templateUrl: './userprofile-link.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class UserProfileLinkComponent implements OnInit, OnDestroy {
-
   edit: Action;
 
   private subscription: Subscription;
@@ -25,32 +20,33 @@ export class UserProfileLinkComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: SessionService,
-    
+
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public editService: EditService,
-    private userId: UserId,
-    ) {
-      this.edit = editService.edit();
+    private userId: UserId
+  ) {
+    this.edit = editService.edit();
   }
 
   ngOnInit(): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = this.refreshService.refresh$
       .pipe(
         switchMap(() => {
-
           const pulls = [
             pull.Person({
               object: this.userId.value,
               include: {
                 UserProfile: {
-                  DefaultInternalOrganization: x
-                }
-              }
-            })];
+                  DefaultInternalOrganization: x,
+                },
+              },
+            }),
+          ];
 
           return this.allors.client.pullReactive(this.allors.session, pulls);
         })

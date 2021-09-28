@@ -2,12 +2,10 @@ import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { formatDistance } from 'date-fns';
 
-import { MetaService, NavigationService, PanelService, RefreshService, SessionService } from '@allors/angular/services/core';
-import { SalesOrder, SalesOrderItem } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService, MethodService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData, ObjectService } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { SalesOrderItem, SalesOrder } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: SalesOrderItem;

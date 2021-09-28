@@ -1,12 +1,10 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { format } from 'date-fns';
 
-import { MetaService, NavigationService, PanelService, RefreshService, SessionService } from '@allors/angular/services/core';
-import { WorkEffort, WorkEffortPartyAssignment } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { WorkEffort, WorkEffortPartyAssignment } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: WorkEffortPartyAssignment;
@@ -22,7 +20,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'workeffortpartyassignment-overview-panel',
   templateUrl: './workeffortpartyassignment-overview-panel.component.html',
-  providers: [PanelService, SessionService]
+  providers: [PanelService, SessionService],
 })
 export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope implements OnInit {
   workEffort: WorkEffort;
@@ -51,12 +49,12 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
 
     public deleteService: DeleteService,
-    public editService: EditService,
+    public editService: EditService
   ) {
     super();
 
@@ -69,7 +67,6 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
   }
 
   ngOnInit() {
-
     this.delete = this.deleteService.delete(this.panel.manager.context);
     this.edit = this.editService.edit();
 
@@ -89,10 +86,7 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
         { name: 'from', sort },
         { name: 'through', sort },
       ],
-      actions: [
-        this.edit,
-        this.delete,
-      ],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -102,7 +96,9 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
     const workeffortpullName = `${this.panel.name}_${this.m.WorkEffortPartyAssignment.name}_workeffort`;
 
     this.panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -117,10 +113,10 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
                 Assignment: {
                   WorkEffortState: x,
                   Priority: x,
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         }),
         pull.WorkEffort({
           name: workeffortpullName,
@@ -132,14 +128,14 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
                 Assignment: {
                   WorkEffortState: x,
                   Priority: x,
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         }),
         pull.WorkEffort({
           objectId: id,
-        }),
+        })
       );
     };
 

@@ -1,15 +1,13 @@
 import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { MetaService, NavigationService, PanelService, RefreshService, SessionService, Invoked } from '@allors/angular/services/core';
-import { Organisation, PurchaseOrder, PurchaseInvoice, InvoiceItemType, OrderItemBilling, PurchaseOrderItem, PurchaseInvoiceItem } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, OverviewService, MethodService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData, ObjectService, SaveService } from '@allors/angular/material/services/core';
-import { And, ContainedIn, Extent } from '@allors/data/system';
-import { PrintService, FetcherService, InternalOrganisationId } from '@allors/angular/base';
+import { M } from '@allors/workspace/meta/default';
+import { Organisation, InternalOrganisation, PurchaseOrder, PurchaseOrderItem, InvoiceItemType, PurchaseInvoice, OrderItemBilling } from '@allors/workspace/domain/default';
+import { Action, DeleteService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, SaveService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
+import { PrintService } from '../../../../actions/print/print.service';
+import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 
 interface Row extends TableRow {
   object: PurchaseOrder;
@@ -26,7 +24,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'purchaseorderinvoice-overview-panel',
   templateUrl: './purchaseorderinvoice-overview-panel.component.html',
-  providers: [SessionService, PanelService]
+  providers: [SessionService, PanelService],
 })
 export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
   internalOrganisation: Organisation;
@@ -60,7 +58,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    
+
     public objectService: ObjectService,
     public factoryService: ObjectService,
     public methodService: MethodService,
@@ -71,7 +69,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
     public printService: PrintService,
     private saveService: SaveService,
     private snackBar: MatSnackBar,
-    private fetcher: FetcherService,
+    private fetcher: FetcherService
   ) {
     super();
 
@@ -96,7 +94,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
           this.addFromPurchaseOrder(target);
         }
       },
-      result: null
+      result: null,
     };
 
     this.removeFromInvoice = {
@@ -111,7 +109,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
           this.removeFromPurchaseOrder(target);
         }
       },
-      result: null
+      result: null,
     };
 
     // this.invoice.result.subscribe((v) => {
@@ -130,12 +128,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
         { name: 'shipmentState', sort },
         { name: 'paymentState', sort },
       ],
-      actions: [
-        this.overviewService.overview(),
-        this.printService.print(),
-        this.addToInvoice,
-        this.removeFromInvoice
-      ],
+      actions: [this.overviewService.overview(), this.printService.print(), this.addToInvoice, this.removeFromInvoice],
       defaultAction: this.overviewService.overview(),
       autoSort: true,
       autoFilter: true,
@@ -170,29 +163,27 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
                     PurchaseOrderItem_SerialisedItem: x,
                   },
                   PrintDocument: {
-                    Media: x
+                    Media: x,
                   },
                 },
-              }
-            }
-          }
-        }),
-        pull.OrderItemBilling(
-          {
-            predicate: new And([
-              new ContainedIn({
-                propertyType: m.OrderItemBilling.InvoiceItem,
-                extent: new Extent({
-                  objectType: m.InvoiceItem,
-                  predicate: new ContainedIn({
-                    propertyType: m.InvoiceItem.InvoiceWhereValidInvoiceItem,
-                    objects: [id]
-                  })
-                })
-              })
-            ]),
+              },
+            },
           },
-        ),
+        }),
+        pull.OrderItemBilling({
+          predicate: new And([
+            new ContainedIn({
+              propertyType: m.OrderItemBilling.InvoiceItem,
+              extent: new Extent({
+                objectType: m.InvoiceItem,
+                predicate: new ContainedIn({
+                  propertyType: m.InvoiceItem.InvoiceWhereValidInvoiceItem,
+                  objects: [id],
+                }),
+              }),
+            }),
+          ]),
+        }),
         pull.PurchaseInvoice({
           name: invoicePullName,
           objectId: id,
@@ -202,9 +193,9 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
               Part: x,
               InvoiceItemType: x,
               SerialisedItem: x,
-            }
-          }
-        }),
+            },
+          },
+        })
       );
     };
 
@@ -218,10 +209,11 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
       this.workItem = invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === 'a4d2e6d0-c6c1-46ec-a1cf-3a64822e7a9e');
 
       const purchaseOrders = loaded.collections[pullName] as PurchaseOrder[];
-      this.objects = purchaseOrders.filter(v => (v.CanExecuteInvoice
-                                                  && (this.purchaseInvoice.PurchaseInvoiceState.UniqueId === '102f4080-1d12-4090-9196-f42c094c38ca'
-                                                      || this.purchaseInvoice.PurchaseInvoiceState.UniqueId === '639ba038-d8f3-4672-80b5-c8eb96e3275d')) 
-                                                  || v.PurchaseInvoicesWherePurchaseOrder.includes(this.purchaseInvoice));
+      this.objects = purchaseOrders.filter(
+        (v) =>
+          (v.CanExecuteInvoice && (this.purchaseInvoice.PurchaseInvoiceState.UniqueId === '102f4080-1d12-4090-9196-f42c094c38ca' || this.purchaseInvoice.PurchaseInvoiceState.UniqueId === '639ba038-d8f3-4672-80b5-c8eb96e3275d')) ||
+          v.PurchaseInvoicesWherePurchaseOrder.includes(this.purchaseInvoice)
+      );
 
       if (this.objects) {
         this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;
@@ -258,7 +250,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
         invoiceItem.Message = purchaseOrderItem.Message;
 
         if (purchaseOrderItem.SerialisedItem) {
-          invoiceItem.SerialisedItem = purchaseOrderItem.SerialisedItem;;
+          invoiceItem.SerialisedItem = purchaseOrderItem.SerialisedItem;
         }
 
         if (invoiceItem.Part) {
@@ -267,7 +259,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
           invoiceItem.InvoiceItemType = this.workItem;
         }
 
-        purchaseInvoice.AddPurchaseInvoiceItem(invoiceItem);
+        purchaseInvoice.addPurchaseInvoiceItem(invoiceItem);
 
         const orderItemBilling = context.create('OrderItemBilling') as OrderItemBilling;
         orderItemBilling.Quantity = purchaseOrderItem.QuantityOrdered;
@@ -277,15 +269,11 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
       }
     });
 
-    context
-      .save()
-      .subscribe(() => {
-        context.reset();
-        this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+    context.save().subscribe(() => {
+      context.reset();
+      this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   public removeFromPurchaseOrder(panelPurchaseOrder: PurchaseOrder): void {
@@ -294,22 +282,19 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
     const purchaseOrder = context.get(panelPurchaseOrder.id) as PurchaseOrder;
 
     purchaseOrder.ValidOrderItems.forEach((purchaseOrderItem: PurchaseOrderItem) => {
-      const orderItemBilling = this.orderItemBillings.find(v => v.OrderItem.id === purchaseOrderItem.id);
+      const orderItemBilling = this.orderItemBillings.find((v) => v.OrderItem.id === purchaseOrderItem.id);
       if (orderItemBilling) {
-        context.invoke(orderItemBilling.InvoiceItem.Delete)
-          .subscribe(() => {
-            context.reset();
-            this.refreshService.refresh();
-            this.snackBar.open('Successfully removed from invoice.', 'close', { duration: 5000 });
-          },
-          this.saveService.errorHandler);
+        context.invoke(orderItemBilling.InvoiceItem.Delete).subscribe(() => {
+          context.reset();
+          this.refreshService.refresh();
+          this.snackBar.open('Successfully removed from invoice.', 'close', { duration: 5000 });
+        }, this.saveService.errorHandler);
       }
     });
   }
 
   public addFromPurchaseOrders(purchaseOrders: PurchaseOrder[]): void {
-
-    purchaseOrders.forEach(element => {
+    purchaseOrders.forEach((element) => {
       this.addFromPurchaseOrder(element);
     });
   }

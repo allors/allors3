@@ -4,17 +4,22 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
+import { M } from '@allors/workspace/meta/default';
 import {
-  InventoryItem,
   Part,
+  SupplierOffering,
   Facility,
+  NonSerialisedInventoryItem,
+  Good,
+  InventoryItem,
   SerialisedInventoryItem,
   SerialisedItem,
-  NonSerialisedInventoryItem,
   PurchaseOrderItem,
-  SupplierOffering,
-  Product,
+  Shipment,
+  ShipmentItem,
+  SerialisedItemAvailability,
+  OrderShipment,
+  SalesOrderItem,
   RequestItemState,
   RequestState,
   QuoteItemState,
@@ -23,21 +28,10 @@ import {
   SalesOrderState,
   ShipmentItemState,
   ShipmentState,
-  SalesOrderItem,
-  SerialisedItemAvailability,
-  Shipment,
-  ShipmentItem,
-  OrderShipment,
-  PurchaseOrderState,
-  Good,
-} from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { Filters } from '@allors/angular/base';
-import { IObject, IObject } from '@allors/domain/system';
-import { Equals, Sort, And, ContainedIn, Extent } from '@allors/data/system';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+} from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './shipmentitem-edit.component.html',
@@ -118,7 +112,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<ShipmentItemEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     public snackBar: MatSnackBar
@@ -181,20 +175,20 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
                     },
                   },
                 },
-              }),
+              })
             );
           }
 
           if (isCreate && this.data.associationId) {
             pulls.push(
               pull.Shipment({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
                 include: {
                   ShipToAddress: x,
                 },
               }),
               pull.Shipment({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
                 select: {
                   ShipToAddress: {
                     SalesOrderItemsWhereDerivedShipToAddress: {
@@ -210,7 +204,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
                 },
               }),
               pull.Shipment({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
                 select: {
                   ShipFromParty: {
                     PurchaseOrdersWhereTakenViaSupplier: {
@@ -227,7 +221,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
                     },
                   },
                 },
-              }),
+              })
             );
           }
 
@@ -240,15 +234,13 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
         this.allors.session.reset();
 
         this.shipmentItem = loaded.object<ShipmentItem>(m.ShipmentItem);
-        this.shipment = (loaded.object<Shipment>(m.Shipment)) || this.shipmentItem.SyncedShipment;
+        this.shipment = loaded.object<Shipment>(m.Shipment) || this.shipmentItem.SyncedShipment;
         this.isCustomerShipment = this.shipment.objectType === this.metaService.m.CustomerShipment;
         this.isPurchaseShipment = this.shipment.objectType === this.metaService.m.PurchaseShipment;
 
         this.facilities = loaded.collection<Facility>(m.Facility);
         this.serialisedItemAvailabilities = loaded.collection<SerialisedItemAvailability>(m.SerialisedItemAvailability);
-        this.sold = this.serialisedItemAvailabilities.find(
-          (v: SerialisedItemAvailability) => v.UniqueId === '9bdc0a55-4e3c-4604-b054-2441a551aa1c'
-        );
+        this.sold = this.serialisedItemAvailabilities.find((v: SerialisedItemAvailability) => v.UniqueId === '9bdc0a55-4e3c-4604-b054-2441a551aa1c');
 
         const salesOrderStates = loaded.collection<SalesOrderState>(m.SalesOrderState);
         const inProcess = salesOrderStates.find((v) => v.UniqueId === 'ddbb678e-9a66-4842-87fd-4e628cff0a75');
@@ -261,21 +253,11 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
         this.onHoldOrder = salesOrderStates.find((v: SalesOrderState) => v.UniqueId === 'f625fb7e-893e-4f68-ab7b-2bc29a644e5b');
 
         const salesOrderItemStates = loaded.collection<SalesOrderItemState>(m.SalesOrderItemState);
-        this.provisionalOrderItem = salesOrderItemStates.find(
-          (v: SalesOrderItemState) => v.UniqueId === '5b0993b5-5784-4e8d-b1ad-93affac9a913'
-        );
-        this.readyForPostingOrderItem = salesOrderItemStates.find(
-          (v: SalesOrderItemState) => v.UniqueId === '6e4f9535-a7ce-483f-9fbd-c9fd331d355e'
-        );
-        this.requestsApprovalOrderItem = salesOrderItemStates.find(
-          (v: SalesOrderItemState) => v.UniqueId === '8d3a4a0a-ed27-4478-baff-ece591068712'
-        );
-        this.awaitingAcceptanceOrderItem = salesOrderItemStates.find(
-          (v: SalesOrderItemState) => v.UniqueId === 'd3965e9b-764d-4787-87b4-82cb2acb0878'
-        );
-        this.inProcessOrderItem = salesOrderItemStates.find(
-          (v: SalesOrderItemState) => v.UniqueId === 'e08401f7-1deb-4b27-b0c5-8f034bffedb5'
-        );
+        this.provisionalOrderItem = salesOrderItemStates.find((v: SalesOrderItemState) => v.UniqueId === '5b0993b5-5784-4e8d-b1ad-93affac9a913');
+        this.readyForPostingOrderItem = salesOrderItemStates.find((v: SalesOrderItemState) => v.UniqueId === '6e4f9535-a7ce-483f-9fbd-c9fd331d355e');
+        this.requestsApprovalOrderItem = salesOrderItemStates.find((v: SalesOrderItemState) => v.UniqueId === '8d3a4a0a-ed27-4478-baff-ece591068712');
+        this.awaitingAcceptanceOrderItem = salesOrderItemStates.find((v: SalesOrderItemState) => v.UniqueId === 'd3965e9b-764d-4787-87b4-82cb2acb0878');
+        this.inProcessOrderItem = salesOrderItemStates.find((v: SalesOrderItemState) => v.UniqueId === 'e08401f7-1deb-4b27-b0c5-8f034bffedb5');
         this.onHoldOrderItem = salesOrderItemStates.find((v: SalesOrderItemState) => v.UniqueId === '3b185d51-af4a-441e-be0d-f91cfcbdb5d8');
 
         const requestItemStates = loaded.collection<RequestItemState>(m.RequestItemState);
@@ -292,9 +274,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
         this.submittedQuoteItem = quoteItemStates.find((v: QuoteItemState) => v.UniqueId === 'e511ea2d-6eb9-428d-a982-b097938a8ff8');
         this.approvedQuoteItem = quoteItemStates.find((v: QuoteItemState) => v.UniqueId === '3335810c-9e26-4604-b272-d18b831e79e0');
         this.awaitingApprovalQuoteItem = quoteItemStates.find((v: QuoteItemState) => v.UniqueId === '76155bb7-53a3-4175-b026-74274a337820');
-        this.awaitingAcceptanceQuoteItem = quoteItemStates.find(
-          (v: QuoteItemState) => v.UniqueId === 'e0982b61-deb1-47cb-851b-c182f03326a1'
-        );
+        this.awaitingAcceptanceQuoteItem = quoteItemStates.find((v: QuoteItemState) => v.UniqueId === 'e0982b61-deb1-47cb-851b-c182f03326a1');
         this.acceptedQuoteItem = quoteItemStates.find((v: QuoteItemState) => v.UniqueId === '6e56c9f1-7bea-4ced-a724-67e4221a5993');
 
         const quoteStates = loaded.collection<QuoteState>(m.QuoteState);
@@ -321,16 +301,12 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
 
         const salesOrderItems = loaded.collection<SalesOrderItem>(m.SalesOrderItem);
         if (salesOrderItems) {
-          this.salesOrderItems = salesOrderItems.filter(
-            (v) => v.SalesOrderWhereSalesOrderItem.SalesOrderState === inProcess && parseFloat(v.QuantityRequestsShipping) > 0
-          );
+          this.salesOrderItems = salesOrderItems.filter((v) => v.SalesOrderWhereSalesOrderItem.SalesOrderState === inProcess && parseFloat(v.QuantityRequestsShipping) > 0);
         }
 
         const purchaseOrderItems = loaded.collection<PurchaseOrderItem>(m.PurchaseOrderItem);
         if (purchaseOrderItems) {
-          this.purchaseOrderItems = purchaseOrderItems.filter(
-            (v) => v.PurchaseOrderWherePurchaseOrderItem.PurchaseOrderState === purchaseOrderinProcess
-          );
+          this.purchaseOrderItems = purchaseOrderItems.filter((v) => v.PurchaseOrderWherePurchaseOrderItem.PurchaseOrderState === purchaseOrderinProcess);
         }
 
         if (this.isPurchaseShipment) {
@@ -356,7 +332,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
           this.shipmentItem = this.allors.session.create<ShipmentItem>(m.ShipmentItem);
           this.selectedFacility = this.shipment.ShipToFacility;
 
-          this.shipment.AddShipmentItem(this.shipmentItem);
+          this.shipment.addShipmentItem(this.shipmentItem);
         } else {
           // This UI does not allow shipmentitem to be combination from multiple order items
           const orderShipments = loaded.collection<OrderShipment>(m.OrderShipment);
@@ -463,9 +439,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
       const onRequestItem = serialisedItem.RequestItemsWhereSerialisedItem.find(
         (v) =>
           (v.RequestItemState === this.draftRequestItem || v.RequestItemState === this.submittedRequestItem) &&
-          (v.RequestWhereRequestItem.RequestState === this.anonymousRequest ||
-            v.RequestWhereRequestItem.RequestState === this.submittedRequest ||
-            v.RequestWhereRequestItem.RequestState === this.pendingCustomerRequest)
+          (v.RequestWhereRequestItem.RequestState === this.anonymousRequest || v.RequestWhereRequestItem.RequestState === this.submittedRequest || v.RequestWhereRequestItem.RequestState === this.pendingCustomerRequest)
       );
 
       const onQuoteItem = serialisedItem.QuoteItemsWhereSerialisedItem.find(
@@ -500,10 +474,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
 
       const onOtherShipmentItem = serialisedItem.ShipmentItemsWhereSerialisedItem.find(
         (v) =>
-          (v.ShipmentItemState === this.createdShipmentItem ||
-            v.ShipmentItemState === this.pickingShipmentItem ||
-            v.ShipmentItemState === this.pickedShipmentItem ||
-            v.ShipmentItemState === this.packedShipmentItem) &&
+          (v.ShipmentItemState === this.createdShipmentItem || v.ShipmentItemState === this.pickingShipmentItem || v.ShipmentItemState === this.pickedShipmentItem || v.ShipmentItemState === this.packedShipmentItem) &&
           (v.ShipmentWhereShipmentItem?.ShipmentState === this.createdShipment ||
             v.ShipmentWhereShipmentItem?.ShipmentState === this.pickingShipment ||
             v.ShipmentWhereShipmentItem?.ShipmentState === this.pickingShipment ||
@@ -539,7 +510,9 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
   }
 
   private loadProduct(product: Product): void {
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.NonUnifiedGood({
@@ -632,7 +605,9 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
   }
 
   private loadPart(part: Part): void {
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.NonUnifiedPart({

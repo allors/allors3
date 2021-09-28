@@ -1,23 +1,18 @@
 import { Component, Self } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Action, ActionTarget } from '@allors/angular/core';
 
-import { MetaService, NavigationService, PanelService, RefreshService,  Invoked } from '@allors/angular/services/core';
-import { SalesInvoice, SalesOrder, ProductQuote, SalesOrderItem, Good, Shipment, BillingProcess, SerialisedInventoryItemState } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { SaveService } from '@allors/angular/material/services/core';
-import { PrintService } from '@allors/angular/base';
-import { Sort, Equals } from '@allors/data/system';
-
+import { M } from '@allors/workspace/meta/default';
+import { SerialisedInventoryItemState, Shipment, SalesOrderItem, ProductQuote, SalesOrder, SalesInvoice, BillingProcess } from '@allors/workspace/domain/default';
+import { Action, NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { PrintService } from '../../../../actions/print/print.service';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'salesorder-overview-summary',
   templateUrl: './salesorder-overview-summary.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class SalesOrderOverviewSummaryComponent {
-
   m: M;
 
   order: SalesOrder;
@@ -34,13 +29,13 @@ export class SalesOrderOverviewSummaryComponent {
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public navigation: NavigationService,
     public printService: PrintService,
     public refreshService: RefreshService,
     private saveService: SaveService,
-    public snackBar: MatSnackBar) {
-
+    public snackBar: MatSnackBar
+  ) {
     this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.print = printService.print();
@@ -55,13 +50,14 @@ export class SalesOrderOverviewSummaryComponent {
     const serialisedInventoryItemStatePullName = `${panel.name}_${this.m.SerialisedInventoryItemState.name}`;
 
     panel.onPull = (pulls) => {
-      const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+      const m = this.allors.workspace.configuration.metaPopulation as M;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       pulls.push(
-
         pull.SalesOrder({
           name: salesOrderPullName,
-          object: this.panel.manager.id,
+          objectId: this.panel.manager.id,
           include: {
             SalesOrderItems: {
               Product: x,
@@ -90,39 +86,39 @@ export class SalesOrderOverviewSummaryComponent {
             LastModifiedBy: x,
             Quote: x,
             PrintDocument: {
-              Media: x
+              Media: x,
             },
             DerivedShipToAddress: {
               Country: x,
             },
             DerivedBillToEndCustomerContactMechanism: {
-              PostalAddress_Country: x
+              PostalAddress_Country: x,
             },
             DerivedShipToEndCustomerAddress: {
-              Country: x
+              Country: x,
             },
             DerivedBillToContactMechanism: {
-              PostalAddress_Country: x
-            }
-          }
+              PostalAddress_Country: x,
+            },
+          },
         }),
         pull.SalesOrder({
           name: salesInvoicePullName,
-          object: this.panel.manager.id,
-          select: { SalesInvoicesWhereSalesOrder: x }
+          objectId: this.panel.manager.id,
+          select: { SalesInvoicesWhereSalesOrder: x },
         }),
         pull.SalesOrder({
           name: shipmentPullName,
-          object: this.panel.manager.id,
+          objectId: this.panel.manager.id,
           select: {
             SalesOrderItems: {
               OrderShipmentsWhereOrderItem: {
                 ShipmentItem: {
-                  ShipmentWhereShipmentItem: x
-                }
-              }
-            }
-          }
+                  ShipmentWhereShipmentItem: x,
+                },
+              },
+            },
+          },
         }),
         pull.BillingProcess({
           name: billingProcessPullName,
@@ -131,8 +127,8 @@ export class SalesOrderOverviewSummaryComponent {
         pull.SerialisedInventoryItemState({
           name: serialisedInventoryItemStatePullName,
           predicate: { kind: 'Equals', propertyType: m.SerialisedInventoryItemState.IsActive, value: true },
-          sorting: [{ roleType: m.SerialisedInventoryItemState.Name }]
-        }),
+          sorting: [{ roleType: m.SerialisedInventoryItemState.Name }],
+        })
       );
     };
 
@@ -149,134 +145,95 @@ export class SalesOrderOverviewSummaryComponent {
   }
 
   public approve(): void {
-
-    this.panel.manager.context.invoke(this.order.Approve)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully approved.', 'close', { duration: 5000 });
-      },
-      this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.order.Approve).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully approved.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public setReadyForPosting() {
-
-    this.panel.manager.context.invoke(this.order.SetReadyForPosting)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully set ready for posting.', 'close', { duration: 5000 });
-      },
-      this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.order.SetReadyForPosting).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully set ready for posting.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public reopen() {
-
-    this.panel.manager.context.invoke(this.order.Reopen)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully reopened.', 'close', { duration: 5000 });
-      },
-      this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.order.Reopen).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully reopened.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public post() {
-
-    this.panel.manager.context.invoke(this.order.Post)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully posted.', 'close', { duration: 5000 });
-      },
-      this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.order.Post).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully posted.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public accept() {
-
-    this.panel.manager.context.invoke(this.order.Accept)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully accepted.', 'close', { duration: 5000 });
-      },
-      this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.order.Accept).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully accepted.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public revise(): void {
-
-    this.panel.manager.context.invoke(this.order.Revise)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully revised.', 'close', { duration: 5000 });
-      },
-        this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.order.Revise).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully revised.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public cancel(): void {
-
-    this.panel.manager.context.invoke(this.order.Cancel)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
-      },
-      this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.order.Cancel).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public reject(): void {
-
-    this.panel.manager.context.invoke(this.order.Reject)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully rejected.', 'close', { duration: 5000 });
-      },
-      this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.order.Reject).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully rejected.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public hold(): void {
-
-    this.panel.manager.context.invoke(this.order.Hold)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully put on hold.', 'close', { duration: 5000 });
-      },
-      this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.order.Hold).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully put on hold.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public continue(): void {
-
-    this.panel.manager.context.invoke(this.order.Continue)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully removed from hold.', 'close', { duration: 5000 });
-      },
-      this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.order.Continue).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully removed from hold.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public finish(): void {
-
-    this.panel.manager.context.invoke(this.order.Continue)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully finished.', 'close', { duration: 5000 });
-      },
-      this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.order.Continue).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully finished.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public ship(): void {
-
-    this.panel.manager.context.invoke(this.order.Ship)
-      .subscribe(() => {
-        this.panel.toggle();
-        this.snackBar.open('Customer shipment successfully created.', 'close', { duration: 5000 });
-        this.refreshService.refresh();
-      },
-      this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.order.Ship).subscribe(() => {
+      this.panel.toggle();
+      this.snackBar.open('Customer shipment successfully created.', 'close', { duration: 5000 });
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   public invoice(): void {
-
-    this.panel.manager.context.invoke(this.order.Invoice)
-      .subscribe(() => {
-        this.panel.toggle();
-        this.snackBar.open('Sales invoice successfully created.', 'close', { duration: 5000 });
-        this.refreshService.refresh();
-      },
-      this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.order.Invoice).subscribe(() => {
+      this.panel.toggle();
+      this.snackBar.open('Sales invoice successfully created.', 'close', { duration: 5000 });
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

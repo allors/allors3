@@ -1,8 +1,7 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 
-import { SessionService } from '@allors/angular/services/core';
-import { Party } from '@allors/domain/generated';
-
+import { Party } from '@allors/workspace/domain/default';
+import { SessionService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector

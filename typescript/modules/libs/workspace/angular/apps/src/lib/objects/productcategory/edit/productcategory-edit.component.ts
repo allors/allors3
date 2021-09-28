@@ -3,22 +3,20 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, Saved } from '@allors/angular/services/core';
-import { Organisation, InternalOrganisation, ProductCategory, Scope, Locale } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { InternalOrganisationId, FetcherService } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { Sort } from '@allors/data/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Locale, InternalOrganisation, ProductCategory, Scope } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './productcategory-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class ProductCategoryEditComponent extends TestScope implements OnInit, OnDestroy {
-
   public m: M;
   public title: string;
 
@@ -34,11 +32,11 @@ export class ProductCategoryEditComponent extends TestScope implements OnInit, O
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<ProductCategoryEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,
-    private internalOrganisationId: InternalOrganisationId,
+    private internalOrganisationId: InternalOrganisationId
   ) {
     super();
 
@@ -46,19 +44,19 @@ export class ProductCategoryEditComponent extends TestScope implements OnInit, O
   }
 
   public ngOnInit(): void {
-
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-
           const isCreate = this.data.id === undefined;
 
           const pulls = [
             this.fetcher.locales,
             this.fetcher.internalOrganisation,
-            pull.Scope(),
+            pull.Scope({}),
             pull.ProductCategory({
               sorting: [{ roleType: m.ProductCategory.Name }],
             }),
@@ -66,31 +64,25 @@ export class ProductCategoryEditComponent extends TestScope implements OnInit, O
 
           if (!isCreate) {
             pulls.push(
-              pull.ProductCategory(
-                {
-                  objectId: this.data.id,
-                  include: {
-                    Children: x,
-                    LocalisedNames: {
-                      Locale: x,
-                    },
-                    LocalisedDescriptions: {
-                      Locale: x,
-                    }
-                  }
-                }
-              ),
+              pull.ProductCategory({
+                objectId: this.data.id,
+                include: {
+                  Children: x,
+                  LocalisedNames: {
+                    Locale: x,
+                  },
+                  LocalisedDescriptions: {
+                    Locale: x,
+                  },
+                },
+              })
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-
         this.allors.session.reset();
 
         this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
@@ -110,7 +102,6 @@ export class ProductCategoryEditComponent extends TestScope implements OnInit, O
             this.title = 'View Category';
           }
         }
-
       });
   }
 
@@ -121,19 +112,14 @@ export class ProductCategoryEditComponent extends TestScope implements OnInit, O
   }
 
   public save(): void {
+    this.allors.context.save().subscribe(() => {
+      const data: IObject = {
+        id: this.category.id,
+        objectType: this.category.objectType,
+      };
 
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.category.id,
-          objectType: this.category.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

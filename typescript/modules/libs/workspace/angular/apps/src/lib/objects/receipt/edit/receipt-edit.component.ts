@@ -3,13 +3,11 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { Receipt, SalesInvoice, PaymentApplication, Invoice } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { IObject } from '@allors/domain/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Receipt, Invoice, PaymentApplication } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './receipt-edit.component.html',
@@ -30,7 +28,7 @@ export class ReceiptEditComponent extends TestScope implements OnInit, OnDestroy
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<ReceiptEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService
   ) {
@@ -40,15 +38,16 @@ export class ReceiptEditComponent extends TestScope implements OnInit, OnDestroy
   }
 
   public ngOnInit(): void {
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id === undefined;
 
-          const pulls = [
-          ];
+          const pulls = [];
 
           if (!isCreate) {
             pulls.push(
@@ -57,14 +56,14 @@ export class ReceiptEditComponent extends TestScope implements OnInit, OnDestroy
                 include: {
                   PaymentApplications: x,
                 },
-              }),
+              })
             );
           }
 
           if (isCreate && this.data.associationId) {
             pulls.push(
               pull.Invoice({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
               })
             );
           }
@@ -83,7 +82,7 @@ export class ReceiptEditComponent extends TestScope implements OnInit, OnDestroy
           this.paymentApplication.Invoice = this.invoice;
 
           this.receipt = this.allors.session.create<Receipt>(m.Receipt);
-          this.receipt.AddPaymentApplication(this.paymentApplication);
+          this.receipt.addPaymentApplication(this.paymentApplication);
         } else {
           this.receipt = loaded.object<Receipt>(m.Receipt);
           this.paymentApplication = this.receipt.PaymentApplications[0];

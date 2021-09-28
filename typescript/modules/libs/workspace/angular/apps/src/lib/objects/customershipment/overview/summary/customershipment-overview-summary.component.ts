@@ -1,11 +1,11 @@
 import { Component, Self } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { MetaService, NavigationService, PanelService, RefreshService, Invoked } from '@allors/angular/services/core';
-import { SalesOrder, CustomerShipment } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { SaveService } from '@allors/angular/material/services/core';
-import { PrintService } from '@allors/angular/base';
+import { M } from '@allors/workspace/meta/default';
+import { CustomerShipment, SalesOrder } from '@allors/workspace/domain/default';
+import { NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
+
+import { PrintService } from '../../../../actions/print/print.service';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -42,7 +42,7 @@ export class CustomerShipmentOverviewSummaryComponent {
 
         pull.Shipment({
           name: shipmentPullName,
-          object: this.panel.manager.id,
+          objectId: this.panel.manager.id,
           include: {
             ShipmentItems: {
               Good: x,
@@ -61,7 +61,7 @@ export class CustomerShipmentOverviewSummaryComponent {
           }
         }),
         pull.Shipment({
-          object: this.panel.manager.id,
+          objectId: this.panel.manager.id,
           select: {
             ShipmentItems: {
               OrderShipmentsWhereShipmentItem: {

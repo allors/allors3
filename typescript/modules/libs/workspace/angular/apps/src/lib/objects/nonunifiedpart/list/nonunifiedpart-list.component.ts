@@ -4,38 +4,45 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
+import { M } from '@allors/workspace/meta/default';
 import {
-  Brand,
-  Part,
-  ProductIdentificationType,
-  NonUnifiedPart,
-  NonUnifiedPartBarcodePrint,
-  Facility,
   Person,
   Organisation,
-  Model,
+  Part,
+  ProductIdentificationType,
+  Facility,
   InventoryItemKind,
   ProductType,
+  Brand,
+  Model,
   PartCategory,
-  ProductIdentification,
+  NonUnifiedPart,
+  NonUnifiedPartBarcodePrint,
+  InternalOrganisation,
   NonSerialisedInventoryItem,
-} from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
+} from '@allors/workspace/domain/default';
 import {
-  SessionService,
-  MetaService,
-  RefreshService,
-  NavigationService,
+  Action,
+  DeleteService,
+  Filter,
+  FilterDefinition,
   MediaService,
+  NavigationService,
+  ObjectService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+  Table,
+  TableRow,
   UserId,
+  OverviewService,
   SingletonId,
-} from '@allors/angular/services/core';
-import { ObjectService, SaveService } from '@allors/angular/material/services/core';
-import { SearchFactory, FilterDefinition, Filter, Action } from '@allors/angular/core';
-import { PrintService, Filters } from '@allors/angular/base';
-import { TableRow, Table, OverviewService, DeleteService, Sorter } from '@allors/angular/material/core';
-import { And, Like, Or, ContainedIn, Extent, Contains, Equals } from '@allors/data/system';
-import { FetcherService, InternalOrganisationId } from '@allors/angular/base';
+} from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { PrintService } from '../../../actions/print/print.service';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 interface Row extends TableRow {
   object: Part;
@@ -75,7 +82,6 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: SessionService,
 
-    
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
@@ -120,7 +126,9 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const predicate = new And([
       new Or([
@@ -240,17 +248,10 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
       lastModifiedDate: m.UnifiedProduct.LastModifiedDate,
     });
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.filter.fields$,
-      this.table.sort$,
-      this.table.pager$,
-      this.internalOrganisationId.observable$
-    )
+    this.subscription = combineLatest(this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$)
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
-            pageEvent =
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
+          pageEvent =
             previousRefresh !== refresh || filterFields !== previousFilterFields
               ? {
                   ...pageEvent,
@@ -311,10 +312,10 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
                 },
               },
             }),
-            pull.ProductIdentificationType(),
-            pull.BasePrice(),
+            pull.ProductIdentificationType({}),
+            pull.BasePrice({}),
             pull.Person({
-              object: this.userId.value,
+              objectId: this.userId.value,
               include: { Locale: x },
             }),
           ];
@@ -336,11 +337,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
         let facilitySearchId = inStockSearch?.value;
         if (inStockSearch !== undefined) {
           this.parts = this.parts.filter((v) => {
-            return (
-              v.InventoryItemsWherePart.filter(
-                (i: NonSerialisedInventoryItem) => i.Facility.id === inStockSearch.value && Number(i.QuantityOnHand) > 0
-              ).length > 0
-            );
+            return v.InventoryItemsWherePart.filter((i: NonSerialisedInventoryItem) => i.Facility.id === inStockSearch.value && Number(i.QuantityOnHand) > 0).length > 0;
           });
         }
 
@@ -351,17 +348,12 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
 
         if (outOStockSearch !== undefined) {
           this.parts = this.parts.filter((v) => {
-            return (
-              v.InventoryItemsWherePart.filter(
-                (i: NonSerialisedInventoryItem) => i.Facility.id === outOStockSearch.value && Number(i.QuantityOnHand) === 0
-              ).length > 0
-            );
+            return v.InventoryItemsWherePart.filter((i: NonSerialisedInventoryItem) => i.Facility.id === outOStockSearch.value && Number(i.QuantityOnHand) === 0).length > 0;
           });
         }
 
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
         const partCategories = loaded.collection<PartCategory>(m.PartCategory);
-        const partNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
 
         this.table.total = loaded.value('NonUnifiedParts_total') as number;
 
@@ -371,9 +363,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
             name: v.Name,
             partNo: v.ProductNumber,
             qoh: v.QuantityOnHand,
-            localQoh:
-              facilitySearchId &&
-              (v.InventoryItemsWherePart as NonSerialisedInventoryItem[]).find((i) => i.Facility.id === facilitySearchId).QuantityOnHand,
+            localQoh: facilitySearchId && (v.InventoryItemsWherePart as NonSerialisedInventoryItem[]).find((i) => i.Facility.id === facilitySearchId).QuantityOnHand,
             categories: partCategories
               .filter((w) => w.Parts.includes(v))
               .map((w) => w.displayName)
@@ -401,7 +391,9 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
     this.nonUnifiedPartBarcodePrint.Locale = this.user.Locale;
 
     context.save().subscribe(() => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const pulls = [
         pull.Singleton({

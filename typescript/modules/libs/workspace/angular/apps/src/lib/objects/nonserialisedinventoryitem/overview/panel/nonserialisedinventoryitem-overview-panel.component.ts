@@ -1,11 +1,8 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
-import { MetaService, NavigationService, PanelService, RefreshService } from '@allors/angular/services/core';
-import { InventoryItem, NonSerialisedInventoryItem } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, OverviewService, EditService } from '@allors/angular/material/core';
-import { TestScope, Action, ActionTarget } from '@allors/angular/core';
-import { ObjectData, ObjectService } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { NonSerialisedInventoryItem, InventoryItem } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService, ActionTarget } from '@allors/workspace/angular/base';
 
 
 interface Row extends TableRow {

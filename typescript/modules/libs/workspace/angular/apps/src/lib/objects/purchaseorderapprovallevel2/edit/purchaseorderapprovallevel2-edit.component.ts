@@ -3,14 +3,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest, Observable } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, Invoked } from '@allors/angular/services/core';
-import { PurchaseOrderApprovalLevel2 } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { PrintService } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { TestScope, Action } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { PurchaseOrderApprovalLevel2 } from '@allors/workspace/domain/default';
+import { Action, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { PrintService } from '../../../actions/print/print.service';
 
 @Component({
   templateUrl: './purchaseorderapprovallevel2-edit.component.html',

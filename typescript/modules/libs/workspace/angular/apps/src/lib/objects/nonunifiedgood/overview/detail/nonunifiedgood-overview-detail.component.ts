@@ -215,7 +215,7 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
 
   public save(): void {
     this.selectedCategories.forEach((category: ProductCategory) => {
-      category.AddProduct(this.good);
+      category.addProduct(this.good);
 
       const index = this.originalCategories.indexOf(category);
       if (index > -1) {

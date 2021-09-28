@@ -1,11 +1,9 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 
-import { MetaService, NavigationService, PanelService, RefreshService } from '@allors/angular/services/core';
-import { InventoryItem, SerialisedInventoryItem, SerialisedItem } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, OverviewService, EditService } from '@allors/angular/material/core';
-import { TestScope, Action, ActionTarget } from '@allors/angular/core';
-import { ObjectData, ObjectService } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { InventoryItem, SerialisedInventoryItem, SerialisedItem } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService, ActionTarget } from '@allors/workspace/angular/base';
+
 interface Row extends TableRow {
   object: InventoryItem;
   facility: string;
@@ -18,7 +16,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'serialisedinventoryitem-overview-panel',
   templateUrl: './serialisedinventoryitem-overview-panel.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class SerialisedInventoryItemComponent extends TestScope implements OnInit {
   serialisedItem: SerialisedItem;
@@ -45,7 +43,7 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public objectService: ObjectService,
     public factoryService: ObjectService,
     public refreshService: RefreshService,
@@ -60,8 +58,9 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
   }
 
   ngOnInit() {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.panel.name = 'serialised Inventory item';
     this.panel.title = 'Serialised Inventory items';
@@ -82,7 +81,7 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
           });
         }
       },
-      result: null
+      result: null,
     };
 
     this.table = new Table({
@@ -98,7 +97,7 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
 
     const inventoryPullName = `${this.panel.name}_${this.m.SerialisedInventoryItem.name}`;
     const serialiseditemPullName = `${this.panel.name}_${this.m.SerialisedItem.name}`;
- 
+
     this.panel.onPull = (pulls) => {
       const id = this.panel.manager.id;
 
@@ -111,9 +110,9 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
               include: {
                 SerialisedInventoryItem_SerialisedInventoryItemState: x,
                 Facility: x,
-                UnitOfMeasure: x
-              }
-            }
+                UnitOfMeasure: x,
+              },
+            },
           },
         }),
         pull.SerialisedItem({
@@ -125,26 +124,25 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
                 Part: x,
                 SerialisedInventoryItemState: x,
                 Facility: x,
-                UnitOfMeasure: x
-              }
-            }
+                UnitOfMeasure: x,
+              },
+            },
           },
         }),
         pull.SerialisedItem({
           objectId: id,
           include: {
-            PartWhereSerialisedItem: x
-          }
+            PartWhereSerialisedItem: x,
+          },
         })
       );
 
       this.panel.onPulled = (loaded) => {
-
         this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
-        const inventoryObjects = loaded.collections[inventoryPullName] as SerialisedInventoryItem[] ?? [];
+        const inventoryObjects = (loaded.collections[inventoryPullName] as SerialisedInventoryItem[]) ?? [];
 
-        const serialisedItemobjects = loaded.collections[serialiseditemPullName] as SerialisedInventoryItem[] ?? [];
-        const serialisedItemobjectsforPart = serialisedItemobjects.filter(v => v.Part === this.serialisedItem?.PartWhereSerialisedItem)
+        const serialisedItemobjects = (loaded.collections[serialiseditemPullName] as SerialisedInventoryItem[]) ?? [];
+        const serialisedItemobjectsforPart = serialisedItemobjects.filter((v) => v.Part === this.serialisedItem?.PartWhereSerialisedItem);
 
         this.objects = inventoryObjects.concat(serialisedItemobjectsforPart);
 
@@ -156,7 +154,7 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
               facility: v.Facility.Name,
               item: v.SerialisedItem?.displayName,
               quantity: v.Quantity,
-              state: v.SerialisedInventoryItemState ? v.SerialisedInventoryItemState.Name : ''
+              state: v.SerialisedInventoryItemState ? v.SerialisedInventoryItemState.Name : '',
             } as Row;
           });
         }

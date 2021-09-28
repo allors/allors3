@@ -3,23 +3,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, NavigationService } from '@allors/angular/services/core';
-import { PullRequest } from '@allors/protocol/system';
-import { ObjectData, SaveService } from '@allors/angular/material/services/core';
-import {
-  ProductType,
-  ProductIdentificationType,
-  Settings,
-  InventoryItemKind,
-  Good,
-  ProductNumber,
-  UnifiedGood,
-} from '@allors/domain/generated';
-import { Sort } from '@allors/data/system';
-import { FetcherService } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { Meta } from '@allors/meta/generated';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { ProductIdentificationType, InventoryItemKind, ProductType, Settings, Good, ProductNumber, UnifiedGood } from '@allors/workspace/domain/default';
+import { NavigationService, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './unifiedgood-create.component.html',
@@ -44,7 +34,7 @@ export class UnifiedGoodCreateComponent extends TestScope implements OnInit, OnD
     @Self() public allors: SessionService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<UnifiedGoodCreateComponent>,
-    
+
     private refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
@@ -56,17 +46,13 @@ export class UnifiedGoodCreateComponent extends TestScope implements OnInit, OnD
   }
 
   public ngOnInit(): void {
-    const m = this.m; const { pullBuilder: pull } = m;
+    const m = this.m;
+    const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-          const pulls = [
-            this.fetcher.Settings,
-            pull.InventoryItemKind(),
-            pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
-            pull.ProductIdentificationType(),
-          ];
+          const pulls = [this.fetcher.Settings, pull.InventoryItemKind({}), pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }), pull.ProductIdentificationType({})];
 
           return this.allors.client.pullReactive(this.allors.session, pulls);
         })
@@ -87,7 +73,7 @@ export class UnifiedGoodCreateComponent extends TestScope implements OnInit, OnD
           this.productNumber = this.allors.session.create<ProductNumber>(m.ProductNumber);
           this.productNumber.ProductIdentificationType = this.goodNumberType;
 
-          this.good.AddProductIdentification(this.productNumber);
+          this.good.addProductIdentification(this.productNumber);
         }
       });
   }

@@ -1,9 +1,8 @@
 import { Component, Self } from '@angular/core';
 
-import { MetaService, NavigationService, PanelService } from '@allors/angular/services/core';
-import { Part, SalesInvoice, SalesOrder, SerialisedItem, RequestForQuote, ProductQuote, CustomerShipment } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-
+import { M } from '@allors/workspace/meta/default';
+import { Part, SerialisedItem, RequestForQuote, ProductQuote, SalesOrder, CustomerShipment, SalesInvoice } from '@allors/workspace/domain/default';
+import { NavigationService, PanelService } from '@allors/workspace/angular/base';
 
 @Component({
   // tslint:disable-next-line:component-selector

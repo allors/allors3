@@ -1,12 +1,9 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { format } from 'date-fns';
 
-import { MetaService, NavigationService, PanelService, RefreshService } from '@allors/angular/services/core';
-import { WorkEffort, WorkEffortFixedAssetAssignment } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { WorkEffort, WorkEffortFixedAssetAssignment } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 
 interface Row extends TableRow {
   object: WorkEffortFixedAssetAssignment;
@@ -22,7 +19,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'workeffortfixedassetassignment-overview-panel',
   templateUrl: './workeffortfixedassetassignment-overview-panel.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope implements OnInit {
   workEffort: WorkEffort;
@@ -48,12 +45,12 @@ export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope impl
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
 
     public deleteService: DeleteService,
-    public editService: EditService,
+    public editService: EditService
   ) {
     super();
 
@@ -61,7 +58,6 @@ export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope impl
   }
 
   ngOnInit() {
-
     this.delete = this.deleteService.delete(this.panel.manager.context);
     this.edit = this.editService.edit();
 
@@ -82,10 +78,7 @@ export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope impl
         { name: 'from', sort },
         { name: 'through', sort },
       ],
-      actions: [
-        this.edit,
-        this.delete,
-      ],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -94,7 +87,9 @@ export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope impl
     const workeffortpullName = `${this.panel.name}_${this.m.WorkEffortFixedAssetAssignment.name}_workeffort`;
 
     this.panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -109,14 +104,14 @@ export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope impl
                 Assignment: {
                   WorkEffortState: x,
                   Priority: x,
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         }),
         pull.WorkEffort({
           objectId: id,
-        }),
+        })
       );
     };
 

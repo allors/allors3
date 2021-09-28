@@ -3,23 +3,19 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { ElectronicAddress, Enumeration } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService } from '@allors/angular/material/services/core';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { ContactMechanism, Enumeration, ElectronicAddress } from '@allors/workspace/domain/default';
+import { RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
 
-
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './webaddress-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class WebAddressEditComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   contactMechanism: ElectronicAddress;
@@ -32,7 +28,7 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: IObject,
     public dialogRef: MatDialogRef<WebAddressEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId
@@ -43,14 +39,11 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
   }
 
   public ngOnInit(): void {
-
     const { pullBuilder: pull } = this.m;
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-
-
           const pulls = [
             pull.ContactMechanism({
               objectId: this.data.id,
@@ -61,7 +54,6 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
         })
       )
       .subscribe((loaded) => {
-
         this.allors.session.reset();
 
         this.contactMechanismTypes = loaded.collection<Enumeration>(m.Enumeration);
@@ -83,18 +75,14 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
   }
 
   public save(): void {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      const data: IObject = {
+        id: this.contactMechanism.id,
+        objectType: this.contactMechanism.objectType,
+      };
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.contactMechanism.id,
-          objectType: this.contactMechanism.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

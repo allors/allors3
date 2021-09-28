@@ -2,12 +2,10 @@ import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { format } from 'date-fns';
 
-import { MetaService, NavigationService, PanelService, RefreshService, SessionService } from '@allors/angular/services/core';
-import { Organisation, RepeatingPurchaseInvoice } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService, MethodService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData, ObjectService } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { Organisation, InternalOrganisation, RepeatingPurchaseInvoice } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: RepeatingPurchaseInvoice;
@@ -49,7 +47,7 @@ export class RepeatingPurchaseInvoiceOverviewPanelComponent extends TestScope {
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public methodService: MethodService,
@@ -72,14 +70,7 @@ export class RepeatingPurchaseInvoiceOverviewPanelComponent extends TestScope {
     const sort = true;
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'internalOrganisation' },
-        { name: 'frequency', sort },
-        { name: 'dayOfWeek', sort },
-        { name: 'previousExecutionDate', sort },
-        { name: 'nextExecutionDate', sort },
-        { name: 'finalExecutionDate', sort },
-      ],
+      columns: [{ name: 'internalOrganisation' }, { name: 'frequency', sort }, { name: 'dayOfWeek', sort }, { name: 'previousExecutionDate', sort }, { name: 'nextExecutionDate', sort }, { name: 'finalExecutionDate', sort }],
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
@@ -89,7 +80,9 @@ export class RepeatingPurchaseInvoiceOverviewPanelComponent extends TestScope {
     const pullName = `${panel.name}_${this.m.RepeatingPurchaseInvoice.name}`;
 
     panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 

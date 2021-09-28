@@ -4,14 +4,13 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { SessionService, MetaService, RefreshService, NavigationService, MediaService } from '@allors/angular/services/core';
-import { SearchFactory, FilterDefinition, Filter, TestScope, Action } from '@allors/angular/core';
-import { PullRequest } from '@allors/protocol/system';
-import { TableRow, Table, OverviewService, DeleteService, Sorter, MethodService } from '@allors/angular/material/core';
-import { Party, Shipment, ShipmentState } from '@allors/domain/generated';
-import { And, Equals, ContainedIn, Extent, Or } from '@allors/data/system';
-import { InternalOrganisationId, PrintService } from '@allors/angular/base';
-import { Meta } from '@allors/meta/generated';
+import { M } from '@allors/workspace/meta/default';
+import { Shipment } from '@allors/workspace/domain/default';
+import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService, Sorter } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { PrintService } from '../../../actions/print/print.service';
 
 interface Row extends TableRow {
   object: Shipment;
@@ -41,7 +40,6 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
   constructor(
     @Self() public allors: SessionService,
 
-    
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public printService: PrintService,
@@ -82,32 +80,22 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
     this.filter = m.Shipment.filter = m.Shipment.filter ?? new Filter(m.Shipment.filterDefinition);
 
     const fromInternalOrganisationPredicate = new Equals({ propertyType: m.Shipment.ShipFromParty });
     const toInternalOrganisationPredicate = new Equals({ propertyType: m.Shipment.ShipToParty });
 
-    const predicate = new And([
-      new Or([fromInternalOrganisationPredicate, toInternalOrganisationPredicate]),
-      this.filter.definition.predicate
-    ]);
+    const predicate = new And([new Or([fromInternalOrganisationPredicate, toInternalOrganisationPredicate]), this.filter.definition.predicate]);
 
+    const sorter = new Sorter({});
 
-    const sorter = new Sorter({
-    });
-
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.filter.fields$,
-      this.table.sort$,
-      this.table.pager$,
-      this.internalOrganisationId.observable$
-    )
+    this.subscription = combineLatest(this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$)
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
-            pageEvent =
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
+          pageEvent =
             previousRefresh !== refresh || filterFields !== previousFilterFields
               ? {
                   ...pageEvent,

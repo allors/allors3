@@ -3,15 +3,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, NavigationService } from '@allors/angular/services/core';
-import { Person, Party, Organisation, CommunicationEventPurpose, CommunicationEventState, OrganisationContactRelationship, ContactMechanism, LetterCorrespondence, PartyContactMechanism, PostalAddress } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { IObject, IObject } from '@allors/domain/system';
-import { Equals, Sort } from '@allors/data/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, CommunicationEventPurpose, ContactMechanism, LetterCorrespondence, CommunicationEventState, PartyContactMechanism, PostalAddress } from '@allors/workspace/domain/default';
+import { NavigationService, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './lettercorrespondence-edit.component.html',
@@ -125,7 +123,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
             pulls = [
               ...pulls,
               pull.Organisation({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
                 include: {
                   CurrentContacts: x,
                   CurrentPartyContactMechanisms: {
@@ -136,10 +134,10 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
                 }
               }),
               pull.Person({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
               }),
               pull.Person({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
                 select: {
                   OrganisationContactRelationshipsWhereContact: {
                     Organisation: {
@@ -231,7 +229,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
   public fromAddressAdded(partyContactMechanism: PartyContactMechanism): void {
 
     if (!!this.communicationEvent.FromParty) {
-      this.communicationEvent.FromParty.AddPartyContactMechanism(partyContactMechanism);
+      this.communicationEvent.FromParty.addPartyContactMechanism(partyContactMechanism);
     }
 
     const address = partyContactMechanism.ContactMechanism as PostalAddress;
@@ -243,7 +241,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
   public toAddressAdded(partyContactMechanism: PartyContactMechanism): void {
 
     if (!!this.communicationEvent.ToParty) {
-      this.communicationEvent.ToParty.AddPartyContactMechanism(partyContactMechanism);
+      this.communicationEvent.ToParty.addPartyContactMechanism(partyContactMechanism);
     }
 
     const address = partyContactMechanism.ContactMechanism as PostalAddress;
@@ -289,7 +287,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
 
     const pulls = [
       pull.Party({
-        object: party.id,
+        objectId: party.id,
         select: {
           PartyContactMechanisms: {
             include: {
@@ -323,7 +321,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
 
     const pulls = [
       pull.Party({
-        object: party.id,
+        objectId: party.id,
         select: {
           PartyContactMechanisms: {
             include: {
@@ -346,7 +344,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
   }
   public addressAdded(partyContactMechanism: PartyContactMechanism): void {
 
-    this.party.AddPartyContactMechanism(partyContactMechanism);
+    this.party.addPartyContactMechanism(partyContactMechanism);
 
     const postalAddress = partyContactMechanism.ContactMechanism as PostalAddress;
     this.fromPostalAddresses.push(postalAddress);

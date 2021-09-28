@@ -3,22 +3,19 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { Person, Party, Organisation, CommunicationEventPurpose, FaceToFaceCommunication, CommunicationEventState, OrganisationContactRelationship } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { Equals, Sort } from '@allors/data/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, CommunicationEventPurpose, CommunicationEventState, FaceToFaceCommunication } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './facetofacecommunication-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class FaceToFaceCommunicationEditComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   addFromParty = false;
@@ -40,45 +37,44 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<FaceToFaceCommunicationEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
-    private internalOrganisationId: InternalOrganisationId,
+    private internalOrganisationId: InternalOrganisationId
   ) {
-
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-
           const isCreate = this.data.id === undefined;
 
           let pulls = [
             pull.Organisation({
-              object: this.internalOrganisationId.value,
+              objectId: this.internalOrganisationId.value,
               name: 'InternalOrganisation',
               include: {
                 ActiveEmployees: {
                   CurrentPartyContactMechanisms: {
                     ContactMechanism: x,
-                  }
-                }
-              }
+                  },
+                },
+              },
             }),
             pull.CommunicationEventPurpose({
               predicate: { kind: 'Equals', propertyType: m.CommunicationEventPurpose.IsActive, value: true },
-              sorting: [{ roleType: m.CommunicationEventPurpose.Name }]
+              sorting: [{ roleType: m.CommunicationEventPurpose.Name }],
             }),
             pull.CommunicationEventState({
-              sorting: [{ roleType: m.CommunicationEventState.Name }]
+              sorting: [{ roleType: m.CommunicationEventState.Name }],
             }),
           ];
 
@@ -90,27 +86,27 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
                 include: {
                   FromParty: {
                     CurrentPartyContactMechanisms: {
-                      ContactMechanism: x
-                    }
+                      ContactMechanism: x,
+                    },
                   },
                   ToParty: {
                     CurrentPartyContactMechanisms: {
-                      ContactMechanism: x
-                    }
+                      ContactMechanism: x,
+                    },
                   },
                   EventPurposes: x,
-                  CommunicationEventState: x
-                }
+                  CommunicationEventState: x,
+                },
               }),
               pull.CommunicationEvent({
                 objectId: this.data.id,
                 select: {
                   InvolvedParties: {
                     include: {
-                      CurrentContacts: x
-                    }
-                  }
-                }
+                      CurrentContacts: x,
+                    },
+                  },
+                },
               }),
             ];
           }
@@ -119,19 +115,19 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
             pulls = [
               ...pulls,
               pull.Organisation({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
                 include: {
                   CurrentContacts: x,
                   CurrentPartyContactMechanisms: {
                     ContactMechanism: x,
-                  }
-                }
+                  },
+                },
               }),
               pull.Person({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
               }),
               pull.Person({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
                 select: {
                   OrganisationContactRelationshipsWhereContact: {
                     Organisation: {
@@ -139,23 +135,19 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
                         CurrentContacts: x,
                         CurrentPartyContactMechanisms: {
                           ContactMechanism: x,
-                        }
-                      }
-                    }
-                  }
-                }
-              })
+                        },
+                      },
+                    },
+                  },
+                },
+              }),
             ];
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-
         this.allors.session.reset();
 
         this.purposes = loaded.collection<CommunicationEventPurpose>(m.CommunicationEventPurpose);
@@ -183,7 +175,7 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
 
         const contacts = new Set<Party>();
 
-        if (!!this.organisation) {
+        if (this.organisation) {
           contacts.add(this.organisation);
         }
 
@@ -191,21 +183,21 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
           internalOrganisation.ActiveEmployees.reduce((c, e) => c.add(e), contacts);
         }
 
-        if (!!this.organisation && this.organisation.CurrentContacts !== undefined) {
+        if (this.organisation && this.organisation.CurrentContacts !== undefined) {
           this.organisation.CurrentContacts.reduce((c, e) => c.add(e), contacts);
         }
 
-        if (!!this.person) {
+        if (this.person) {
           contacts.add(this.person);
         }
 
-        if (!!this.parties) {
+        if (this.parties) {
           this.parties.reduce((c, e) => c.add(e), contacts);
         }
 
         this.contacts.push(...contacts);
         this.sortContacts();
-    });
+      });
   }
 
   public ngOnDestroy(): void {
@@ -229,23 +221,19 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
   }
 
   private sortContacts(): void {
-    this.contacts.sort((a, b) => (a.displayName > b.displayName) ? 1 : ((b.displayName > a.displayName) ? -1 : 0));
+    this.contacts.sort((a, b) => (a.displayName > b.displayName ? 1 : b.displayName > a.displayName ? -1 : 0));
   }
 
   public save(): void {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      const data: IObject = {
+        id: this.communicationEvent.id,
+        objectType: this.communicationEvent.objectType,
+      };
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.communicationEvent.id,
-          objectType: this.communicationEvent.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   private addContactRelationship(party: Person): void {

@@ -1,22 +1,19 @@
 import { Component, Self } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { MetaService, NavigationService, PanelService, RefreshService,  Invoked } from '@allors/angular/services/core';
-import { WorkTask, SalesInvoice, FixedAsset, Printable } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { SaveService } from '@allors/angular/material/services/core';
-import { PrintService } from '@allors/angular/base';
-import { ContainedIn, Extent, Equals } from '@allors/data/system';
-import { Action, ActionTarget } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { WorkTask, SalesInvoice, FixedAsset, Printable } from '@allors/workspace/domain/default';
+import { Action, NavigationService, PanelService, RefreshService, SaveService, ActionTarget } from '@allors/workspace/angular/base';
+
+import { PrintService } from '../../../../actions/print/print.service';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'worktask-overview-summary',
   templateUrl: './worktask-overview-summary.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class WorkTaskOverviewSummaryComponent {
-
   m: M;
 
   workTask: WorkTask;
@@ -29,13 +26,13 @@ export class WorkTaskOverviewSummaryComponent {
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public navigation: NavigationService,
     public refreshService: RefreshService,
     public printService: PrintService,
     private saveService: SaveService,
-    public snackBar: MatSnackBar) {
-
+    public snackBar: MatSnackBar
+  ) {
     this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.print = printService.print();
@@ -45,7 +42,6 @@ export class WorkTaskOverviewSummaryComponent {
       description: () => 'printforworker',
       disabled: () => false,
       execute: (target: ActionTarget) => {
-
         const printable = target as Printable;
 
         const url = `${this.printService.config.url}printforworker/${printable.id}`;
@@ -63,7 +59,9 @@ export class WorkTaskOverviewSummaryComponent {
     const parentPullName = `${panel.name}_${this.m.WorkTask.name}_parent`;
 
     panel.onPull = (pulls) => {
-      const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+      const m = this.allors.workspace.configuration.metaPopulation as M;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -76,16 +74,16 @@ export class WorkTaskOverviewSummaryComponent {
             WorkEffortState: x,
             LastModifiedBy: x,
             PrintDocument: {
-              Media: x
-            }
-          }
+              Media: x,
+            },
+          },
         }),
         pull.WorkTask({
           name: parentPullName,
           objectId: id,
           select: {
-            WorkEffortWhereChild: x
-          }
+            WorkEffortWhereChild: x,
+          },
         }),
         pull.WorkEffort({
           name: workEffortBillingPullName,
@@ -93,10 +91,10 @@ export class WorkTaskOverviewSummaryComponent {
           select: {
             WorkEffortBillingsWhereWorkEffort: {
               InvoiceItem: {
-                SalesInvoiceItem_SalesInvoiceWhereSalesInvoiceItem: x
-              }
-            }
-          }
+                SalesInvoiceItem_SalesInvoiceWhereSalesInvoiceItem: x,
+              },
+            },
+          },
         }),
         pull.WorkEffort({
           name: fixedAssetPullName,
@@ -104,27 +102,27 @@ export class WorkTaskOverviewSummaryComponent {
           select: {
             WorkEffortFixedAssetAssignmentsWhereAssignment: {
               FixedAsset: x,
-            }
-          }
+            },
+          },
         }),
         pull.TimeEntryBilling({
           name: serviceEntryPullName,
-          predicate:
-            new ContainedIn({
-              propertyType: m.TimeEntryBilling.TimeEntry,
-              extent: new Extent({
-                objectType: m.ServiceEntry,
-                predicate: new Equals({
-                  propertyType: m.ServiceEntry.WorkEffort, objectId: id
-                })
-              })
+          predicate: new ContainedIn({
+            propertyType: m.TimeEntryBilling.TimeEntry,
+            extent: new Extent({
+              objectType: m.ServiceEntry,
+              predicate: new Equals({
+                propertyType: m.ServiceEntry.WorkEffort,
+                objectId: id,
+              }),
             }),
+          }),
           select: {
             InvoiceItem: {
-              SalesInvoiceItem_SalesInvoiceWhereSalesInvoiceItem: x
-            }
-          }
-        }),
+              SalesInvoiceItem_SalesInvoiceWhereSalesInvoiceItem: x,
+            },
+          },
+        })
       );
     };
 
@@ -141,52 +139,37 @@ export class WorkTaskOverviewSummaryComponent {
   }
 
   public cancel(): void {
-
-    this.panel.manager.context.invoke(this.workTask.Cancel)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
-      },
-        this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.workTask.Cancel).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public reopen(): void {
-
-    this.panel.manager.context.invoke(this.workTask.Reopen)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully reopened.', 'close', { duration: 5000 });
-      },
-        this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.workTask.Reopen).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully reopened.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public revise(): void {
-
-    this.panel.manager.context.invoke(this.workTask.Revise)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Revise successfully executed.', 'close', { duration: 5000 });
-      },
-        this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.workTask.Revise).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Revise successfully executed.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public complete(): void {
-
-    this.panel.manager.context.invoke(this.workTask.Complete)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully completed.', 'close', { duration: 5000 });
-      },
-        this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.workTask.Complete).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully completed.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public invoice(): void {
-
-    this.panel.manager.context.invoke(this.workTask.Invoice)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully invoiced.', 'close', { duration: 5000 });
-      },
-        this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.workTask.Invoice).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully invoiced.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 }

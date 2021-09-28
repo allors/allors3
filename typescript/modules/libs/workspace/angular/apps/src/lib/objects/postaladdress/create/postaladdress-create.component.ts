@@ -3,21 +3,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { PullRequest } from '@allors/protocol/system';
-import { ObjectData, SaveService } from '@allors/angular/material/services/core';
-import {
-  Enumeration,
-  PostalAddress,
-  Country,
-  Party,
-  PartyContactMechanism,
-} from '@allors/domain/generated';
-import { Equals, Sort } from '@allors/data/system';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { Meta } from '@allors/meta/generated';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { PartyContactMechanism, Party, PostalAddress, Country, Enumeration } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+
 
 @Component({
   templateUrl: './postaladdress-create.component.html',
@@ -62,7 +55,7 @@ export class PostalAddressCreateComponent extends TestScope implements OnInit, O
 
           const pulls = [
             pull.Party({
-              object: this.data.associationId,
+              objectId: this.data.associationId,
             }),
             pull.Country({
               sorting: [{ roleType: m.Country.Name }]
@@ -90,7 +83,7 @@ export class PostalAddressCreateComponent extends TestScope implements OnInit, O
         this.partyContactMechanism.UseAsDefault = true;
         this.partyContactMechanism.ContactMechanism = this.contactMechanism;
 
-        this.party.AddPartyContactMechanism(this.partyContactMechanism);
+        this.party.addPartyContactMechanism(this.partyContactMechanism);
       });
   }
 

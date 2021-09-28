@@ -1,13 +1,10 @@
 import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { MetaService, NavigationService, PanelService, RefreshService } from '@allors/angular/services/core';
-import { OrderAdjustment, Quote, Order, Invoice } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData, ObjectService } from '@allors/angular/material/services/core';
-
+import { M } from '@allors/workspace/meta/default';
+import { OrderAdjustment } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: OrderAdjustment;
@@ -60,8 +57,8 @@ export class OrderAdjustmentOverviewPanelComponent extends TestScope {
 
   constructor(
     @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
     public objectService: ObjectService,
-    
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public editService: EditService,

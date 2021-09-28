@@ -1,22 +1,20 @@
 import { Component, Self, AfterViewInit, OnDestroy, Injector } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { TestScope,  NavigationActivatedRoute } from '@allors/angular/core';
-import { Good } from '@allors/domain/generated';
-import { ActivatedRoute } from '@angular/router';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { PullRequest } from '@allors/protocol/system';
-import { UnifiedGood } from 'libs/domain/generated/src/UnifiedGood.g';
-import { PanelManagerService, SessionService, RefreshService, NavigationService, MetaService } from '@allors/angular/services/core';
+import { Good, UnifiedGood } from '@allors/workspace/domain/default';
+import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './unifiedgood-overview.component.html',
-  providers: [PanelManagerService, SessionService]
+  providers: [PanelManagerService, SessionService],
 })
 export class UnifiedGoodOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
-
   title = 'Good';
 
   good: Good;
@@ -26,13 +24,13 @@ export class UnifiedGoodOverviewComponent extends TestScope implements AfterView
 
   constructor(
     @Self() public panelManager: PanelManagerService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private route: ActivatedRoute,
     private internalOrganisationId: InternalOrganisationId,
     public injector: Injector,
-    titleService: Title,
+    titleService: Title
   ) {
     super();
 
@@ -40,11 +38,9 @@ export class UnifiedGoodOverviewComponent extends TestScope implements AfterView
   }
 
   public ngAfterViewInit(): void {
-
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-
           const { pull, x, m } = this.metaService;
 
           const navRoute = new NavigationActivatedRoute(this.route);
@@ -58,19 +54,17 @@ export class UnifiedGoodOverviewComponent extends TestScope implements AfterView
             pull.UnifiedGood({
               object: this.panelManager.id,
               include: {
-                InventoryItemKind: x
-              }
+                InventoryItemKind: x,
+              },
             }),
           ];
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context
-            .load(new PullRequest({ pulls }));
+          return this.panelManager.context.load(new PullRequest({ pulls }));
         })
       )
       .subscribe((loaded) => {
-
         this.panelManager.context.session.reset();
 
         this.panelManager.onPulled(loaded);

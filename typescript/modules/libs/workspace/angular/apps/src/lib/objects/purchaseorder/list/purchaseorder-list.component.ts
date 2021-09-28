@@ -4,15 +4,14 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { SessionService, MetaService, RefreshService, NavigationService, MediaService, UserId } from '@allors/angular/services/core';
-import { SearchFactory, FilterDefinition, Filter, TestScope, Action } from '@allors/angular/core';
-import { PullRequest } from '@allors/protocol/system';
-import { TableRow, Table, OverviewService, DeleteService, Sorter, MethodService } from '@allors/angular/material/core';
-import { Person, Organisation, Party, Part, SerialisedItem, PurchaseOrder, PurchaseOrderState } from '@allors/domain/generated';
-import { And, ContainedIn, Extent, Equals } from '@allors/data/system';
-import { InternalOrganisationId, FetcherService, PrintService } from '@allors/angular/base';
+import { M } from '@allors/workspace/meta/default';
+import { Person, Organisation, InternalOrganisation, PurchaseOrder } from '@allors/workspace/domain/default';
+import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
-import { Meta } from '@allors/meta/generated';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { PrintService } from '../../../actions/print/print.service';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 interface Row extends TableRow {
   object: PurchaseOrder;
@@ -54,7 +53,6 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
   constructor(
     @Self() public allors: SessionService,
 
-    
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public printService: PrintService,
@@ -102,20 +100,16 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
     this.filter = m.PurchaseOrder.filter = m.PurchaseOrder.filter ?? new Filter(m.PurchaseOrder.filterDefinition);
 
     const internalOrganisationPredicate = new Equals({ propertyType: m.PurchaseOrder.OrderedBy });
 
     const predicate = new And([internalOrganisationPredicate, this.filter.definition.predicate]);
 
-    this.subscription = combineLatest([
-      this.refreshService.refresh$,
-      this.filter.fields$,
-      this.table.sort$,
-      this.table.pager$,
-      this.internalOrganisationId.observable$,
-    ])
+    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
       .pipe(
         scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
           pageEvent =

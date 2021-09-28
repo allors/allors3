@@ -1,16 +1,10 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, filter } from 'rxjs/operators';
 import { format } from 'date-fns';
 
-import { MetaService, NavigationService, PanelService, RefreshService, SessionService } from '@allors/angular/services/core';
-import { WorkEffort, TimeEntry } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService, Sorter } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData } from '@allors/angular/material/services/core';
-import { Equals } from '@allors/data/system';
-import { PullRequest } from '@allors/protocol/system';
+import { M } from '@allors/workspace/meta/default';
+import { WorkEffort, TimeEntry } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: TimeEntry;
@@ -24,11 +18,11 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'timeentry-overview-panel',
   templateUrl: './timeentry-overview-panel.component.html',
-  providers: [PanelService, SessionService]
+  providers: [PanelService, SessionService],
 })
 export class TimeEntryOverviewPanelComponent extends TestScope implements OnInit {
   workEffort: WorkEffort;
-@HostBinding('class.expanded-panel') get expandedPanelClass() {
+  @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
 
@@ -50,7 +44,7 @@ export class TimeEntryOverviewPanelComponent extends TestScope implements OnInit
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     public deleteService: DeleteService,
@@ -70,24 +64,17 @@ export class TimeEntryOverviewPanelComponent extends TestScope implements OnInit
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'person' },
-        { name: 'from', sort: true },
-        { name: 'through', sort: true },
-        { name: 'time', sort: true },
-      ],
-      actions: [
-        this.edit,
-        this.delete,
-      ],
+      columns: [{ name: 'person' }, { name: 'from', sort: true }, { name: 'through', sort: true }, { name: 'time', sort: true }],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
     });
 
     this.panel.onPull = (pulls) => {
-
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
       const id = this.panel.manager.id;
 
       pulls.push(
@@ -96,14 +83,14 @@ export class TimeEntryOverviewPanelComponent extends TestScope implements OnInit
           select: {
             ServiceEntriesWhereWorkEffort: {
               include: {
-                TimeEntry_Worker: x
-              }
-            }
-          }
+                TimeEntry_Worker: x,
+              },
+            },
+          },
         }),
         pull.WorkEffort({
           objectId: id,
-        }),
+        })
       );
     };
 
@@ -123,10 +110,8 @@ export class TimeEntryOverviewPanelComponent extends TestScope implements OnInit
           } as Row;
         });
       }
-  };
+    };
   }
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 }

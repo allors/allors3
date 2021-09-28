@@ -3,15 +3,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { Person, Party, Organisation, OrganisationContactRelationship, OrganisationContactKind } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { InternalOrganisationId, Filters } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { Sort } from '@allors/data/system';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Person, Organisation, OrganisationContactRelationship, Party, OrganisationContactKind } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './organisationcontactrelationship-edit.component.html',
@@ -81,7 +79,7 @@ export class OrganisationContactRelationshipEditComponent extends TestScope impl
           if (isCreate && this.data.associationId) {
             pulls.push(
               pull.Party({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
               }),
             );
           }
@@ -104,7 +102,7 @@ export class OrganisationContactRelationshipEditComponent extends TestScope impl
 
           this.partyRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
           this.partyRelationship.FromDate = new Date();;
-          this.partyRelationship.AddContactKind(this.generalContact);
+          this.partyRelationship.addContactKind(this.generalContact);
 
           this.party = loaded.object<Party>(m.Party);
 

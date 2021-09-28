@@ -2,13 +2,10 @@ import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { formatDistance } from 'date-fns';
 
-import { MetaService, NavigationService, PanelService, RefreshService, SessionService } from '@allors/angular/services/core';
-import { QuoteItem, ProductQuote } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService, MethodService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData, ObjectService } from '@allors/angular/material/services/core';
-
+import { M } from '@allors/workspace/meta/default';
+import { ProductQuote, QuoteItem } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: QuoteItem;
@@ -26,10 +23,9 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'quoteitem-overview-panel',
   templateUrl: './quoteitem-overview-panel.component.html',
-  providers: [SessionService, PanelService]
+  providers: [SessionService, PanelService],
 })
 export class QuoteItemOverviewPanelComponent extends TestScope {
-
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -59,7 +55,7 @@ export class QuoteItemOverviewPanelComponent extends TestScope {
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public methodService: MethodService,
@@ -85,23 +81,8 @@ export class QuoteItemOverviewPanelComponent extends TestScope {
     const sort = true;
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'itemType' },
-        { name: 'item' },
-        { name: 'itemId' },
-        { name: 'state' },
-        { name: 'quantity'},
-        { name: 'price'},
-        { name: 'totalAmount'},
-        { name: 'lastModifiedDate', sort },
-      ],
-      actions: [
-        this.edit,
-        this.delete,
-        this.cancel,
-        this.reject,
-        this.submit
-      ],
+      columns: [{ name: 'itemType' }, { name: 'item' }, { name: 'itemId' }, { name: 'state' }, { name: 'quantity' }, { name: 'price' }, { name: 'totalAmount' }, { name: 'lastModifiedDate', sort }],
+      actions: [this.edit, this.delete, this.cancel, this.reject, this.submit],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -111,7 +92,9 @@ export class QuoteItemOverviewPanelComponent extends TestScope {
     const quotePullName = `${panel.name}_${this.m.ProductQuote.name}`;
 
     panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -125,19 +108,18 @@ export class QuoteItemOverviewPanelComponent extends TestScope {
                 Product: x,
                 SerialisedItem: x,
                 InvoiceItemType: x,
-              }
-            }
-          }
+              },
+            },
+          },
         }),
         pull.Quote({
           name: quotePullName,
-          objectId: id
-        }),
+          objectId: id,
+        })
       );
     };
 
     panel.onPulled = (loaded) => {
-
       this.quoteItems = loaded.collections[pullName] as QuoteItem[];
       this.quote = loaded.objects[quotePullName] as ProductQuote;
       this.table.total = loaded.values[`${pullName}_total`] || this.quoteItems.length;
@@ -151,7 +133,7 @@ export class QuoteItemOverviewPanelComponent extends TestScope {
           quantity: v.Quantity,
           price: v.UnitPrice,
           totalAmount: v.TotalExVat,
-          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date())
+          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
         } as Row;
       });
     };

@@ -3,31 +3,20 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { PullRequest } from '@allors/protocol/system';
-import { ObjectData, SaveService } from '@allors/angular/material/services/core';
-import {
-  Organisation,
-  Part,
-  Enumeration,
-  Party,
-  SerialisedItem,
-  Ownership,
-  SerialisedItemState,
-} from '@allors/domain/generated';
-import { Equals, Sort } from '@allors/data/system';
-import { FetcherService, InternalOrganisationId, Filters } from '@allors/angular/base';
-import { IObject, IObject } from '@allors/domain/system';
-import { Meta } from '@allors/meta/generated';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Locale, Organisation, Party, Part, InternalOrganisation, Ownership, SerialisedItem, Enumeration, SerialisedItemState } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
 
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './serialiseditem-create.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class SerialisedItemCreateComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
   serialisedItem: SerialisedItem;
 
@@ -52,11 +41,11 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
     @Self() public allors: SessionService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<SerialisedItemCreateComponent>,
-    
+
     private refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,
-    private internalOrganisationId: InternalOrganisationId,
+    private internalOrganisationId: InternalOrganisationId
   ) {
     super();
 
@@ -64,24 +53,24 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
   }
 
   public ngOnInit(): void {
-
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
         switchMap(() => {
-
           const pulls = [
             this.fetcher.internalOrganisation,
             this.fetcher.locales,
-            pull.Party({ object: this.data.associationId }),
+            pull.Party({ objectId: this.data.associationId }),
             pull.Ownership({ sorting: [{ roleType: m.Ownership.Name }] }),
             pull.Part({
               name: 'forPart',
-              object: this.data.associationId,
+              objectId: this.data.associationId,
               include: {
-                SerialisedItems: x
-              }
+                SerialisedItems: x,
+              },
             }),
             pull.SerialisedItemState({
               predicate: { kind: 'Equals', propertyType: m.SerialisedItemState.IsActive, value: true },
@@ -100,7 +89,6 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
         })
       )
       .subscribe((loaded) => {
-
         this.allors.session.reset();
 
         const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
@@ -136,47 +124,39 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
       this.selectedPart = part;
       this.serialisedItem.Name = part.Name;
 
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const pulls = [
-        pull.Part(
-          {
-            object: part,
-            include: {
-              SerialisedItems: x
-            }
-          }
-        ),
+        pull.Part({
+          object: part,
+          include: {
+            SerialisedItems: x,
+          },
+        }),
       ];
 
-      this.allors.context
-        .load(new PullRequest({ pulls }))
-        .subscribe((loaded) => {
-          this.selectedPart = loaded.object<Part>(m.Part);
-          this.serialisedItem.Name = this.selectedPart.Name;
-        });
-
+      this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+        this.selectedPart = loaded.object<Part>(m.Part);
+        this.serialisedItem.Name = this.selectedPart.Name;
+      });
     } else {
       this.selectedPart = undefined;
     }
   }
 
   public save(): void {
+    this.selectedPart.addSerialisedItem(this.serialisedItem);
 
-    this.selectedPart.AddSerialisedItem(this.serialisedItem);
+    this.allors.context.save().subscribe(() => {
+      const data: IObject = {
+        id: this.serialisedItem.id,
+        objectType: this.serialisedItem.objectType,
+      };
 
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.serialisedItem.id,
-          objectType: this.serialisedItem.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

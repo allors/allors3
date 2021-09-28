@@ -4,22 +4,42 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { InventoryItem, Part, SerialisedInventoryItem, SerialisedItem, NonSerialisedInventoryItem, VatRegime, IrpfRegime, InvoiceItemType, Product, QuoteItem, RequestItemState, RequestState, QuoteItemState, QuoteState, SalesOrderItemState, SalesOrderState, ShipmentItemState, ShipmentState, SalesOrderItem, SerialisedItemAvailability, SalesOrder, Organisation } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { FetcherService, Filters } from '@allors/angular/base';
-import { IObject, IObject } from '@allors/domain/system';
-import { Equals, Sort } from '@allors/data/system';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import {
+  Organisation,
+  Part,
+  InternalOrganisation,
+  NonSerialisedInventoryItem,
+  InventoryItem,
+  SerialisedInventoryItem,
+  SerialisedItem,
+  SerialisedItemAvailability,
+  SalesOrderItem,
+  RequestItemState,
+  RequestState,
+  QuoteItemState,
+  QuoteState,
+  SalesOrderItemState,
+  SalesOrderState,
+  ShipmentItemState,
+  ShipmentState,
+  SalesOrder,
+  QuoteItem,
+  VatRegime,
+  IrpfRegime,
+  InvoiceItemType,
+} from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './salesorderitem-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class SalesOrderItemEditComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   title: string;
@@ -87,12 +107,12 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
   showIrpf: boolean;
   vatRegimeInitialRole: VatRegime;
   irpfRegimeInitialRole: IrpfRegime;
-  
+
   constructor(
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<SalesOrderItemEditComponent>,
-    
+
     public refreshService: RefreshService,
     private fetcher: FetcherService,
     private saveService: SaveService,
@@ -104,38 +124,37 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
   }
 
   public ngOnInit(): void {
-
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-
           const isCreate = this.data.id === undefined;
 
           const pulls = [
             this.fetcher.internalOrganisation,
-            pull.IrpfRegime({ 
-              sorting: [{ roleType: m.IrpfRegime.Name }] }),
-            pull.SerialisedItemAvailability(),
+            pull.IrpfRegime({
+              sorting: [{ roleType: m.IrpfRegime.Name }],
+            }),
+            pull.SerialisedItemAvailability({}),
             pull.InvoiceItemType({
               predicate: { kind: 'Equals', propertyType: m.InvoiceItemType.IsActive, value: true },
               sorting: [{ roleType: m.InvoiceItemType.Name }],
             }),
-            pull.SerialisedInventoryItemState(
-              {
-                predicate: { kind: 'Equals', propertyType: m.SerialisedInventoryItemState.IsActive, value: true },
-                sorting: [{ roleType: m.SerialisedInventoryItemState.Name }],
-              }
-            ),
-            pull.RequestItemState(),
-            pull.RequestState(),
-            pull.QuoteItemState(),
-            pull.QuoteState(),
-            pull.SalesOrderItemState(),
-            pull.SalesOrderState(),
-            pull.ShipmentItemState(),
-            pull.ShipmentState(),
+            pull.SerialisedInventoryItemState({
+              predicate: { kind: 'Equals', propertyType: m.SerialisedInventoryItemState.IsActive, value: true },
+              sorting: [{ roleType: m.SerialisedInventoryItemState.Name }],
+            }),
+            pull.RequestItemState({}),
+            pull.RequestState({}),
+            pull.QuoteItemState({}),
+            pull.QuoteState({}),
+            pull.SalesOrderItemState({}),
+            pull.SalesOrderState({}),
+            pull.ShipmentItemState({}),
+            pull.ShipmentState({}),
           ];
 
           if (!isCreate) {
@@ -158,8 +177,8 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
                   },
                   DerivedIrpfRegime: {
                     IrpfRates: x,
-                  }
-              }
+                  },
+                },
               }),
               pull.SalesOrderItem({
                 objectId: this.data.id,
@@ -171,43 +190,40 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
                       },
                       DerivedIrpfRegime: {
                         IrpfRates: x,
-                      }
-                    }
-                  }
-                }
-              }),
+                      },
+                    },
+                  },
+                },
+              })
             );
           }
 
           if (isCreate && this.data.associationId) {
             pulls.push(
               pull.SalesOrder({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
                 include: {
                   DerivedVatRegime: {
                     VatRates: x,
                   },
                   DerivedIrpfRegime: {
                     IrpfRates: x,
-                  }
-                }
+                  },
+                },
               })
             );
           }
 
           this.goodsFilter = Filters.goodsFilter(m);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.session.reset();
 
         this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
-        this.showIrpf = this.internalOrganisation.Country.IsoCode === "ES";
+        this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.quoteItem = loaded.object<QuoteItem>(m.QuoteItem);
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
@@ -276,7 +292,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
           this.title = 'Add Order Item';
           this.order = loaded.object<SalesOrder>(m.SalesOrder);
           this.orderItem = this.allors.session.create<SalesOrderItem>(m.SalesOrderItem);
-          this.order.AddSalesOrderItem(this.orderItem);
+          this.order.addSalesOrderItem(this.orderItem);
           this.vatRegimeInitialRole = this.order.DerivedVatRegime;
           this.irpfRegimeInitialRole = this.order.DerivedIrpfRegime;
         } else {
@@ -309,21 +325,17 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
   }
 
   public save(): void {
-
     this.onSave();
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.orderItem.id,
-          objectType: this.orderItem.objectType,
-        };
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      const data: IObject = {
+        id: this.orderItem.id,
+        objectType: this.orderItem.objectType,
+      };
 
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   public goodSelected(product: IObject): void {
@@ -335,49 +347,69 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
   public serialisedItemSelected(obj: IObject): void {
     if (obj) {
       const serialisedItem = obj as SerialisedItem;
-      const onRequestItem = serialisedItem.RequestItemsWhereSerialisedItem
-      .find(v => (v.RequestItemState === this.draftRequestItem || v.RequestItemState === this.submittedRequestItem)
-        && (v.RequestWhereRequestItem.RequestState === this.anonymousRequest || v.RequestWhereRequestItem.RequestState === this.submittedRequest || v.RequestWhereRequestItem.RequestState === this.pendingCustomerRequest));
+      const onRequestItem = serialisedItem.RequestItemsWhereSerialisedItem.find(
+        (v) =>
+          (v.RequestItemState === this.draftRequestItem || v.RequestItemState === this.submittedRequestItem) &&
+          (v.RequestWhereRequestItem.RequestState === this.anonymousRequest || v.RequestWhereRequestItem.RequestState === this.submittedRequest || v.RequestWhereRequestItem.RequestState === this.pendingCustomerRequest)
+      );
 
-      const onQuoteItem = serialisedItem.QuoteItemsWhereSerialisedItem
-    .find(v =>
-      (v.QuoteItemState === this.draftQuoteItem || v.QuoteItemState === this.submittedQuoteItem || v.QuoteItemState === this.approvedQuoteItem
-        || v.QuoteItemState === this.awaitingApprovalQuoteItem || v.QuoteItemState === this.awaitingAcceptanceQuoteItem || v.QuoteItemState === this.acceptedQuoteItem)
-      && (v.QuoteWhereQuoteItem.QuoteState === this.createdQuote || v.QuoteWhereQuoteItem.QuoteState === this.approvedQuote
-          || v.QuoteWhereQuoteItem.QuoteState === this.awaitingAcceptanceQuote || v.QuoteWhereQuoteItem.QuoteState === this.acceptedQuote));
+      const onQuoteItem = serialisedItem.QuoteItemsWhereSerialisedItem.find(
+        (v) =>
+          (v.QuoteItemState === this.draftQuoteItem ||
+            v.QuoteItemState === this.submittedQuoteItem ||
+            v.QuoteItemState === this.approvedQuoteItem ||
+            v.QuoteItemState === this.awaitingApprovalQuoteItem ||
+            v.QuoteItemState === this.awaitingAcceptanceQuoteItem ||
+            v.QuoteItemState === this.acceptedQuoteItem) &&
+          (v.QuoteWhereQuoteItem.QuoteState === this.createdQuote ||
+            v.QuoteWhereQuoteItem.QuoteState === this.approvedQuote ||
+            v.QuoteWhereQuoteItem.QuoteState === this.awaitingAcceptanceQuote ||
+            v.QuoteWhereQuoteItem.QuoteState === this.acceptedQuote)
+      );
 
-      const onOtherOrderItem = serialisedItem.SalesOrderItemsWhereSerialisedItem
-    .find(v =>
-      (v.SalesOrderItemState === this.provisionalOrderItem || v.SalesOrderItemState === this.readyForPostingOrderItem
-        || v.SalesOrderItemState === this.requestsApprovalOrderItem || v.SalesOrderItemState === this.awaitingAcceptanceOrderItem
-        || v.SalesOrderItemState === this.onHoldOrderItem || v.SalesOrderItemState === this.inProcessOrderItem)
-      && (v.SalesOrderWhereSalesOrderItem?.SalesOrderState === this.provisionalOrder || v.SalesOrderWhereSalesOrderItem?.SalesOrderState === this.readyForPostingOrder
-          || v.SalesOrderWhereSalesOrderItem?.SalesOrderState === this.requestsApprovalOrder || v.SalesOrderWhereSalesOrderItem?.SalesOrderState === this.awaitingAcceptanceOrder
-          || v.SalesOrderWhereSalesOrderItem?.SalesOrderState === this.onHoldOrder || v.SalesOrderWhereSalesOrderItem?.SalesOrderState === this.inProcessOrder));
+      const onOtherOrderItem = serialisedItem.SalesOrderItemsWhereSerialisedItem.find(
+        (v) =>
+          (v.SalesOrderItemState === this.provisionalOrderItem ||
+            v.SalesOrderItemState === this.readyForPostingOrderItem ||
+            v.SalesOrderItemState === this.requestsApprovalOrderItem ||
+            v.SalesOrderItemState === this.awaitingAcceptanceOrderItem ||
+            v.SalesOrderItemState === this.onHoldOrderItem ||
+            v.SalesOrderItemState === this.inProcessOrderItem) &&
+          (v.SalesOrderWhereSalesOrderItem?.SalesOrderState === this.provisionalOrder ||
+            v.SalesOrderWhereSalesOrderItem?.SalesOrderState === this.readyForPostingOrder ||
+            v.SalesOrderWhereSalesOrderItem?.SalesOrderState === this.requestsApprovalOrder ||
+            v.SalesOrderWhereSalesOrderItem?.SalesOrderState === this.awaitingAcceptanceOrder ||
+            v.SalesOrderWhereSalesOrderItem?.SalesOrderState === this.onHoldOrder ||
+            v.SalesOrderWhereSalesOrderItem?.SalesOrderState === this.inProcessOrder)
+      );
 
-      const onShipmentItem = serialisedItem.ShipmentItemsWhereSerialisedItem
-      .find(v => (v.ShipmentItemState === this.createdShipmentItem || v.ShipmentItemState === this.pickingShipmentItem || v.ShipmentItemState === this.pickedShipmentItem || v.ShipmentItemState === this.packedShipmentItem)
-        && (v.ShipmentWhereShipmentItem.ShipmentState === this.createdShipment || v.ShipmentWhereShipmentItem.ShipmentState === this.pickingShipment
-        || v.ShipmentWhereShipmentItem.ShipmentState === this.pickingShipment || v.ShipmentWhereShipmentItem.ShipmentState === this.packedShipment
-        || v.ShipmentWhereShipmentItem.ShipmentState === this.onholdShipment));
+      const onShipmentItem = serialisedItem.ShipmentItemsWhereSerialisedItem.find(
+        (v) =>
+          (v.ShipmentItemState === this.createdShipmentItem || v.ShipmentItemState === this.pickingShipmentItem || v.ShipmentItemState === this.pickedShipmentItem || v.ShipmentItemState === this.packedShipmentItem) &&
+          (v.ShipmentWhereShipmentItem.ShipmentState === this.createdShipment ||
+            v.ShipmentWhereShipmentItem.ShipmentState === this.pickingShipment ||
+            v.ShipmentWhereShipmentItem.ShipmentState === this.pickingShipment ||
+            v.ShipmentWhereShipmentItem.ShipmentState === this.packedShipment ||
+            v.ShipmentWhereShipmentItem.ShipmentState === this.onholdShipment)
+      );
 
       if (onRequestItem) {
-      this.snackBar.open(`Item already requested with ${onRequestItem.RequestWhereRequestItem.RequestNumber}`, 'close');
-    }
+        this.snackBar.open(`Item already requested with ${onRequestItem.RequestWhereRequestItem.RequestNumber}`, 'close');
+      }
 
       if (onQuoteItem) {
-      this.snackBar.open(`Item already quoted with ${onQuoteItem.QuoteWhereQuoteItem.QuoteNumber}`, 'close');
-    }
+        this.snackBar.open(`Item already quoted with ${onQuoteItem.QuoteWhereQuoteItem.QuoteNumber}`, 'close');
+      }
 
       if (onOtherOrderItem) {
-      this.snackBar.open(`Item already ordered with ${onOtherOrderItem.SalesOrderWhereSalesOrderItem.OrderNumber}`, 'close');
-    }
+        this.snackBar.open(`Item already ordered with ${onOtherOrderItem.SalesOrderWhereSalesOrderItem.OrderNumber}`, 'close');
+      }
 
       if (onShipmentItem) {
-      this.snackBar.open(`Item already shipped with ${onShipmentItem.ShipmentWhereShipmentItem.ShipmentNumber}`, 'close');
-    }
+        this.snackBar.open(`Item already shipped with ${onShipmentItem.ShipmentWhereShipmentItem.ShipmentNumber}`, 'close');
+      }
 
-      this.serialisedItem = this.part.SerialisedItems.find(v => v === serialisedItem);
+      this.serialisedItem = this.part.SerialisedItems.find((v) => v === serialisedItem);
       this.orderItem.AssignedUnitPrice = this.serialisedItem.ExpectedSalesPrice;
       this.orderItem.QuantityOrdered = '1';
       this.orderItem.NextSerialisedItemAvailability = this.sold;
@@ -387,26 +419,22 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
   public update(): void {
     const { context } = this.allors;
 
-    context
-      .save()
-      .subscribe(() => {
-        this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+    context.save().subscribe(() => {
+      this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   private onSave() {
-
     if (this.orderItem.InvoiceItemType !== this.productItemType || this.orderItem.InvoiceItemType !== this.partItemType) {
       this.orderItem.QuantityOrdered = '1';
     }
   }
 
   private refreshSerialisedItems(product: Product): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.NonUnifiedGood({
@@ -419,31 +447,31 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
                 RequestItemsWhereSerialisedItem: {
                   RequestItemState: x,
                   RequestWhereRequestItem: {
-                    RequestState: x
-                  }
+                    RequestState: x,
+                  },
                 },
                 QuoteItemsWhereSerialisedItem: {
                   QuoteItemState: x,
                   QuoteWhereQuoteItem: {
-                    QuoteState: x
-                  }
+                    QuoteState: x,
+                  },
                 },
                 SalesOrderItemsWhereSerialisedItem: {
                   SalesOrderItemState: x,
                   SalesOrderWhereSalesOrderItem: {
-                    SalesOrderState: x
-                  }
+                    SalesOrderState: x,
+                  },
                 },
                 ShipmentItemsWhereSerialisedItem: {
                   ShipmentItemState: x,
                   ShipmentWhereShipmentItem: {
-                    ShipmentState: x
-                  }
-                }
-              }
-            }
-          }
-        }
+                    ShipmentState: x,
+                  },
+                },
+              },
+            },
+          },
+        },
       }),
       pull.UnifiedGood({
         object: product.id,
@@ -453,45 +481,41 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
             RequestItemsWhereSerialisedItem: {
               RequestItemState: x,
               RequestWhereRequestItem: {
-                RequestState: x
-              }
+                RequestState: x,
+              },
             },
             QuoteItemsWhereSerialisedItem: {
               QuoteItemState: x,
               QuoteWhereQuoteItem: {
-                QuoteState: x
-              }
+                QuoteState: x,
+              },
             },
             SalesOrderItemsWhereSerialisedItem: {
               SalesOrderItemState: x,
               SalesOrderWhereSalesOrderItem: {
-                SalesOrderState: x
-              }
+                SalesOrderState: x,
+              },
             },
             ShipmentItemsWhereSerialisedItem: {
               ShipmentItemState: x,
               ShipmentWhereShipmentItem: {
-                ShipmentState: x
-              }
-            }
-          }
-        }
-      })
+                ShipmentState: x,
+              },
+            },
+          },
+        },
+      }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      this.part = (loaded.objects.UnifiedGood || loaded.objects.Part) as Part;
+      this.serialisedItems = this.part.SerialisedItems;
 
-        this.part = (loaded.objects.UnifiedGood || loaded.objects.Part) as Part;
-        this.serialisedItems = this.part.SerialisedItems;
-
-        if (this.orderItem.Product !== this.previousProduct) {
-          this.orderItem.SerialisedItem = null;
-          this.serialisedItem = null;
-          this.previousProduct = this.orderItem.Product;
-        }
-
-      });
+      if (this.orderItem.Product !== this.previousProduct) {
+        this.orderItem.SerialisedItem = null;
+        this.serialisedItem = null;
+        this.previousProduct = this.orderItem.Product;
+      }
+    });
   }
 }

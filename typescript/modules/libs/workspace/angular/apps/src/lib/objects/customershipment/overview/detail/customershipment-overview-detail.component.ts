@@ -2,15 +2,11 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { MetaService, RefreshService, NavigationService, PanelService, SessionService } from '@allors/angular/services/core';
-import { CustomerShipment, Organisation, PartyContactMechanism, Party, Currency, PostalAddress, Person, Facility, ShipmentMethod, Carrier, OrganisationContactRelationship } from '@allors/domain/generated';
-import { SaveService } from '@allors/angular/material/services/core';
-import { Meta } from '@allors/meta/generated';
-import { FetcherService, Filters, InternalOrganisationId } from '@allors/angular/base';
-import { PullRequest } from '@allors/protocol/system';
-import { Sort, Equals } from '@allors/data/system';
-import { IObject } from '@allors/domain/system';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { InternalOrganisation, Locale, Carrier,  Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Party, CustomerShipment, Currency, PostalAddress, Facility, ShipmentMethod } from '@allors/workspace/domain/default';
+import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -197,7 +193,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
 
   public shipToAddressAdded(partyContactMechanism: PartyContactMechanism): void {
 
-    this.customerShipment.ShipToParty.AddPartyContactMechanism(partyContactMechanism);
+    this.customerShipment.ShipToParty.addPartyContactMechanism(partyContactMechanism);
 
     const postalAddress = partyContactMechanism.ContactMechanism as PostalAddress;
     this.shipToAddresses.push(postalAddress);
@@ -207,7 +203,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
   public shipFromAddressAdded(partyContactMechanism: PartyContactMechanism): void {
 
     this.shipFromAddresses.push(partyContactMechanism.ContactMechanism as PostalAddress);
-    this.customerShipment.ShipFromParty.AddPartyContactMechanism(partyContactMechanism);
+    this.customerShipment.ShipFromParty.addPartyContactMechanism(partyContactMechanism);
     this.customerShipment.ShipFromAddress = partyContactMechanism.ContactMechanism as PostalAddress;
   }
 

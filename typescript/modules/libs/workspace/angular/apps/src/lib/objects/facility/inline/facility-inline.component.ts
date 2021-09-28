@@ -1,11 +1,10 @@
 import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 
-import { SessionService, MetaService } from '@allors/angular/services/core';
-import { Facility, FacilityType, Organisation } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { Sort } from '@allors/data/system';
-import { PullRequest } from '@allors/protocol/system';
-import { FetcherService } from '@allors/angular/base';
+import { M } from '@allors/workspace/meta/default';
+import { Organisation, Facility, InternalOrganisation, FacilityType } from '@allors/workspace/domain/default';
+import { SessionService } from '@allors/workspace/angular/core';
+
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -40,7 +39,7 @@ export class FacilityInlineComponent implements OnInit, OnDestroy {
 
     const pulls = [
       this.fetcher.internalOrganisation,
-      pull.Facility(),
+      pull.Facility({}),
       pull.FacilityType({
         sorting: [{ roleType: this.m.FacilityType.Name }]
       })
@@ -61,7 +60,7 @@ export class FacilityInlineComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    if (!!this.facility) {
+    if (this.facility) {
       this.allors.client.invokeReactive(this.allors.session, this.facility.Delete);
     }
   }

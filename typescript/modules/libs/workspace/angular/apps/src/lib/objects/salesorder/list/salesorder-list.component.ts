@@ -4,14 +4,15 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { SessionService, MetaService, RefreshService, NavigationService, MediaService, UserId } from '@allors/angular/services/core';
-import { SearchFactory, FilterDefinition, Filter, TestScope, Action } from '@allors/angular/core';
-import { PullRequest } from '@allors/protocol/system';
-import { TableRow, Table, OverviewService, DeleteService, Sorter, MethodService } from '@allors/angular/material/core';
-import { Person, Organisation, Party, Product, SerialisedItem, SalesOrder, SalesOrderState, SalesInvoiceState, ShipmentState } from '@allors/domain/generated';
-import { And, Equals, ContainedIn, Extent } from '@allors/data/system';
-import { InternalOrganisationId, FetcherService, PrintService } from '@allors/angular/base';
-import { Meta } from '@allors/meta/generated';
+import { M } from '@allors/workspace/meta/default';
+import { Person, Organisation, InternalOrganisation, SalesOrder } from '@allors/workspace/domain/default';
+import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { PrintService } from '../../../actions/print/print.service';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+
 interface Row extends TableRow {
   object: SalesOrder;
   number: string;
@@ -47,7 +48,6 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
   constructor(
     @Self() public allors: SessionService,
 
-    
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public printService: PrintService,
@@ -77,14 +77,7 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'number', sort: true },
-        { name: 'shipToCustomer' },
-        { name: 'state' },
-        { name: 'invoice' },
-        { name: 'customerReference', sort: true },
-        { name: 'lastModifiedDate', sort: true },
-      ],
+      columns: [{ name: 'number', sort: true }, { name: 'shipToCustomer' }, { name: 'state' }, { name: 'invoice' }, { name: 'customerReference', sort: true }, { name: 'lastModifiedDate', sort: true }],
       actions: [overviewService.overview(), this.print, this.delete, this.ship, this.invoice],
       defaultAction: overviewService.overview(),
       pageSize: 50,
@@ -94,26 +87,18 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
     this.filter = m.SalesOrder.filter = m.SalesOrder.filter ?? new Filter(m.SalesOrder.filterDefinition);
 
     const internalOrganisationPredicate = new Equals({ propertyType: m.SalesOrder.TakenBy });
-    const predicate = new And([
-      internalOrganisationPredicate,
-      this.filter.definition.predicate
-    ]);
+    const predicate = new And([internalOrganisationPredicate, this.filter.definition.predicate]);
 
-    this.subscription = combineLatest([
-      this.refreshService.refresh$,
-      this.filter.fields$,
-      this.table.sort$,
-      this.table.pager$,
-      this.internalOrganisationId.observable$
-    ])
+    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
-            pageEvent =
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
+          pageEvent =
             previousRefresh !== refresh || filterFields !== previousFilterFields
               ? {
                   ...pageEvent,

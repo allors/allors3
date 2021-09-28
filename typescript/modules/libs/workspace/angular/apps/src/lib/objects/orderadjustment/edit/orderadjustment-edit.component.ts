@@ -3,20 +3,17 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, Saved } from '@allors/angular/services/core';
-import { OrderAdjustment } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { IObject, IObject } from '@allors/domain/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { OrderAdjustment } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './orderadjustment-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class OrderAdjustmentEditComponent extends TestScope implements OnInit, OnDestroy {
-
   public m: M;
 
   public title: string;
@@ -30,9 +27,9 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<OrderAdjustmentEditComponent>,
-    
+
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private saveService: SaveService
   ) {
     super();
 
@@ -40,40 +37,29 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
   }
 
   public ngOnInit(): void {
-
     const { pullBuilder: pull } = this.m;
 
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
         switchMap(() => {
-
           const isCreate = (this.data as IObject).id === undefined;
           const { objectType, associationRoleType } = this.data;
 
-          const pulls = [
-          ];
+          const pulls = [];
 
           if (!isCreate) {
             pulls.push(
-              pull.OrderAdjustment(
-                {
-                  objectId: this.data.id,
-                }),
-              );
+              pull.OrderAdjustment({
+                objectId: this.data.id,
+              })
+            );
           }
 
           if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.Quote({ object: this.data.associationId }),
-              pull.Order({ object: this.data.associationId }),
-              pull.Invoice({ object: this.data.associationId }),
-            );
+            pulls.push(pull.Quote({ objectId: this.data.associationId }), pull.Order({ objectId: this.data.associationId }), pull.Invoice({ objectId: this.data.associationId }));
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, create: isCreate, objectType, associationRoleType }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, create: isCreate, objectType, associationRoleType })));
         })
       )
       .subscribe(({ loaded, create, objectType, associationRoleType }) => {
@@ -83,13 +69,12 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
         this.object = loaded.object<OrderAdjustment>(m.OrderAdjustment);
 
         if (create) {
-          this.title = `Add ${ objectType.name }`;
+          this.title = `Add ${objectType.name}`;
           this.object = this.allors.context.create(objectType.name) as OrderAdjustment;
           this.container.add(associationRoleType, this.object);
         } else {
-          this.title = `Edit ${ objectType.name }`;
+          this.title = `Edit ${objectType.name}`;
         }
-
       });
   }
 
@@ -100,18 +85,9 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
   }
 
   public save(): void {
-
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.object.id,
-          objectType: this.object.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.object);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

@@ -1,10 +1,10 @@
 import { Component, Output, EventEmitter, OnInit, OnDestroy, Input } from '@angular/core';
 
-import { SessionService, MetaService } from '@allors/angular/services/core';
-import { PartyContactMechanism, ContactMechanismPurpose, EmailAddress } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { Equals, Sort } from '@allors/data/system';
-import { PullRequest } from '@allors/protocol/system';
+import { M } from '@allors/workspace/meta/default';
+import { PartyContactMechanism, ContactMechanismPurpose, EmailAddress } from '@allors/workspace/domain/default';
+import { SessionService } from '@allors/workspace/angular/core';
+
+
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -25,7 +25,7 @@ export class PartyContactMechanismEmailAddressInlineComponent implements OnInit,
 
   public m: M;
 
-  constructor(private allors: SessionService, public ) {
+  constructor(private allors: SessionService) {
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 

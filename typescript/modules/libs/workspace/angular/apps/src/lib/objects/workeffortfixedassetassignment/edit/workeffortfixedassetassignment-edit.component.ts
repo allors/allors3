@@ -3,23 +3,19 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { Enumeration, Party, Organisation, SerialisedItem, WorkEffortFixedAssetAssignment, WorkEffort } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { InternalOrganisationId, Filters } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { Equals, Sort } from '@allors/data/system';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Organisation, Party, SerialisedItem, WorkEffort, WorkEffortFixedAssetAssignment, Enumeration } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
 
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './workeffortfixedassetassignment-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   workEffortFixedAssetAssignment: WorkEffortFixedAssetAssignment;
@@ -40,38 +36,37 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<WorkEffortFixedAssetAssignmentEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
-    private internalOrganisationId: InternalOrganisationId,
+    private internalOrganisationId: InternalOrganisationId
   ) {
-
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-
           const isCreate = this.data.id === undefined;
 
           const pulls = [
             pull.WorkEffort({
-              sorting: [{ roleType: m.WorkEffort.Name }]
+              sorting: [{ roleType: m.WorkEffort.Name }],
             }),
             pull.SerialisedItem({
-              object: this.data.associationId,
-              sorting: [{ roleType: m.SerialisedItem.Name }]
+              objectId: this.data.associationId,
+              sorting: [{ roleType: m.SerialisedItem.Name }],
             }),
             pull.AssetAssignmentStatus({
               predicate: { kind: 'Equals', propertyType: m.AssetAssignmentStatus.IsActive, value: true },
-              sorting: [{ roleType: m.AssetAssignmentStatus.Name }]
+              sorting: [{ roleType: m.AssetAssignmentStatus.Name }],
             }),
           ];
 
@@ -82,30 +77,26 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
                 include: {
                   Assignment: x,
                   FixedAsset: x,
-                  AssetAssignmentStatus: x
-                }
-              }),
+                  AssetAssignmentStatus: x,
+                },
+              })
             );
           }
 
           if (isCreate && this.data.associationId) {
             pulls.push(
               pull.WorkEffort({
-                object: this.data.associationId,
-              }),
+                objectId: this.data.associationId,
+              })
             );
           }
 
           this.serialisedItemsFilter = Filters.serialisedItemsFilter(m);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-
         this.allors.session.reset();
 
         this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
@@ -116,7 +107,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
         if (this.serialisedItem === undefined) {
           const b2bCustomer = this.workEffort.Customer as Organisation;
           this.externalCustomer = b2bCustomer === null || !b2bCustomer.IsInternalOrganisation;
-  
+
           if (this.externalCustomer) {
             this.updateSerialisedItems(this.workEffort.Customer);
           }
@@ -135,7 +126,6 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
             this.assignment = this.workEffort as WorkEffort;
             this.workEffortFixedAssetAssignment.Assignment = this.assignment;
           }
-
         } else {
           this.workEffortFixedAssetAssignment = loaded.object<WorkEffortFixedAssetAssignment>(m.WorkEffortFixedAssetAssignment);
 
@@ -155,41 +145,33 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
   }
 
   public save(): void {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      const data: IObject = {
+        id: this.workEffortFixedAssetAssignment.id,
+        objectType: this.workEffortFixedAssetAssignment.objectType,
+      };
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.workEffortFixedAssetAssignment.id,
-          objectType: this.workEffortFixedAssetAssignment.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   private updateSerialisedItems(customer: Party) {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
-      pull.Party(
-        {
-          object: customer,
-          select: {
-            SerialisedItemsWhereOwnedBy: x,
-          },
-        }
-      ),
+      pull.Party({
+        object: customer,
+        select: {
+          SerialisedItemsWhereOwnedBy: x,
+        },
+      }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
-
-        this.serialisedItems = loaded.collection<SerialisedItem>(m.SerialisedItem);
-      });
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      this.serialisedItems = loaded.collection<SerialisedItem>(m.SerialisedItem);
+    });
   }
 }

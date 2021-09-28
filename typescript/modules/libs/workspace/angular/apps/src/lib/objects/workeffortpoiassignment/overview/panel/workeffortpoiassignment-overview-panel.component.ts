@@ -1,11 +1,8 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
-import { MetaService, NavigationService, PanelService, RefreshService } from '@allors/angular/services/core';
-import { WorkEffort, WorkEffortPurchaseOrderItemAssignment } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { WorkEffort, WorkEffortPurchaseOrderItemAssignment } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 
 interface Row extends TableRow {
   object: WorkEffortPurchaseOrderItemAssignment;
@@ -19,7 +16,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'workeffortpurchaseorderitemassignment-overview-panel',
   templateUrl: './workeffortpoiassignment-overview-panel.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope implements OnInit {
   workEffort: WorkEffort;
@@ -45,12 +42,12 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope imp
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
 
     public deleteService: DeleteService,
-    public editService: EditService,
+    public editService: EditService
   ) {
     super();
 
@@ -58,7 +55,6 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope imp
   }
 
   ngOnInit() {
-
     this.panel.name = 'workeffortpurchaseorderitemassignment';
     // this.panel.title = 'PurchaseOrder Item Assignment';
     this.panel.title = 'Subcontracted Work';
@@ -70,16 +66,8 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope imp
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'supplier' },
-        { name: 'orderNumber' },
-        { name: 'description' },
-        { name: 'quantity' },
-      ],
-      actions: [
-        this.edit,
-        this.delete
-      ],
+      columns: [{ name: 'supplier' }, { name: 'orderNumber' }, { name: 'description' }, { name: 'quantity' }],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -88,7 +76,9 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope imp
     const pullName = `${this.panel.name}_${this.m.WorkEffortPurchaseOrderItemAssignment.name}`;
 
     this.panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -103,14 +93,14 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope imp
                   TakenViaSupplier: x,
                   TakenViaSubcontractor: x,
                 },
-                PurchaseOrderItem: x
-              }
-            }
-          }
+                PurchaseOrderItem: x,
+              },
+            },
+          },
         }),
         pull.WorkEffort({
           objectId: id,
-        }),
+        })
       );
     };
 

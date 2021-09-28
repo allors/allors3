@@ -1,11 +1,8 @@
-import { Component, Output, EventEmitter, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 
-import { SessionService, MetaService } from '@allors/angular/services/core';
-import { PartyContactMechanism, ContactMechanismPurpose, EmailAddress, Facility, FacilityType, Organisation, Enumeration, ContactMechanismType, TelecommunicationsNumber, WebAddress } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { Equals, Sort } from '@allors/data/system';
-import { PullRequest } from '@allors/protocol/system';
-import { FetcherService } from '@allors/angular/base';
+import { M } from '@allors/workspace/meta/default';
+import { PartyContactMechanism, ContactMechanismPurpose, WebAddress } from '@allors/workspace/domain/default';
+import { SessionService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -24,23 +21,20 @@ export class InlineWebAddressComponent implements OnInit, OnDestroy {
 
   public m: M;
 
-  constructor(
-    private allors: SessionService,
-    
-
-  ) {
+  constructor(private allors: SessionService) {
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.ContactMechanismPurpose({
         predicate: { kind: 'Equals', propertyType: this.m.ContactMechanismPurpose.IsActive, value: true },
-        sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }]
-      })
+        sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }],
+      }),
     ];
 
     this.allors.client.pullReactive(this.allors.session, pulls).subscribe(
@@ -52,12 +46,11 @@ export class InlineWebAddressComponent implements OnInit, OnDestroy {
       },
       (error: any) => {
         this.cancelled.emit();
-      },
+      }
     );
   }
 
   public ngOnDestroy(): void {
-
     if (!!this.partyContactMechanism) {
       this.allors.client.invokeReactive(this.allors.session, this.partyContactMechanism.Delete);
       this.allors.client.invokeReactive(this.allors.session, this.webAddress.Delete);

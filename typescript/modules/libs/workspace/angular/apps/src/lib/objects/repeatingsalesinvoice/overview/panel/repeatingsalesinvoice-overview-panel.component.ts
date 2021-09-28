@@ -2,12 +2,10 @@ import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { format } from 'date-fns';
 
-import { MetaService, NavigationService, PanelService, RefreshService, SessionService } from '@allors/angular/services/core';
-import { SalesInvoice, RepeatingSalesInvoice } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService, MethodService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData, ObjectService } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { SalesInvoice, RepeatingSalesInvoice } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: RepeatingSalesInvoice;
@@ -22,7 +20,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'repeatingsalesinvoice-overview-panel',
   templateUrl: './repeatingsalesinvoice-overview-panel.component.html',
-  providers: [SessionService, PanelService]
+  providers: [SessionService, PanelService],
 })
 export class RepeatingSalesInvoiceOverviewPanelComponent extends TestScope {
   repeatingInvoice: RepeatingSalesInvoice;
@@ -51,7 +49,7 @@ export class RepeatingSalesInvoiceOverviewPanelComponent extends TestScope {
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public methodService: MethodService,
@@ -81,10 +79,7 @@ export class RepeatingSalesInvoiceOverviewPanelComponent extends TestScope {
         { name: 'nextExecutionDate', sort },
         { name: 'finalExecutionDate', sort },
       ],
-      actions: [
-        this.edit,
-        this.delete,
-      ],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -94,7 +89,9 @@ export class RepeatingSalesInvoiceOverviewPanelComponent extends TestScope {
     const invoicePullName = `${panel.name}_${this.m.SalesInvoice.name}`;
 
     panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -106,20 +103,19 @@ export class RepeatingSalesInvoiceOverviewPanelComponent extends TestScope {
             RepeatingSalesInvoiceWhereSource: {
               include: {
                 Frequency: x,
-                DayOfWeek: x
-              }
-            }
-          }
+                DayOfWeek: x,
+              },
+            },
+          },
         }),
         pull.SalesInvoice({
           name: invoicePullName,
-          objectId: id
-        }),
+          objectId: id,
+        })
       );
     };
 
     panel.onPulled = (loaded) => {
-
       this.repeatingInvoice = loaded.objects[pullName] as RepeatingSalesInvoice;
       this.invoice = loaded.objects[invoicePullName] as SalesInvoice;
 

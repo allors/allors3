@@ -4,22 +4,29 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { Organisation, InventoryItem, Part, Facility, SerialisedInventoryItem, NonSerialisedInventoryItemState, SerialisedInventoryItemState, NonSerialisedInventoryItem, WorkEffort, WorkEffortInventoryAssignment } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { IObject, IObject } from '@allors/domain/system';
-import { Sort } from '@allors/data/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import {
+  Part,
+  Facility,
+  InternalOrganisation,
+  NonSerialisedInventoryItem,
+  InventoryItem,
+  SerialisedInventoryItem,
+  NonSerialisedInventoryItemState,
+  SerialisedInventoryItemState,
+  WorkEffort,
+  WorkEffortInventoryAssignment,
+} from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './workeffortinventoryassignment-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class WorkEffortInventoryAssignmentEditComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   title: string;
@@ -37,7 +44,7 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<WorkEffortInventoryAssignmentEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId,
@@ -49,13 +56,13 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
   }
 
   public ngOnInit(): void {
-
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-
           const isCreate = this.data.id === undefined;
 
           let pulls = [
@@ -63,19 +70,19 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
               sorting: [{ roleType: m.InventoryItem.Name }],
               include: {
                 Part: {
-                  InventoryItemKind: x
+                  InventoryItemKind: x,
                 },
                 Facility: x,
                 SerialisedInventoryItem_SerialisedInventoryItemState: x,
-                NonSerialisedInventoryItem_NonSerialisedInventoryItemState: x
-              }
+                NonSerialisedInventoryItem_NonSerialisedInventoryItemState: x,
+              },
             }),
             pull.Organisation({
               object: this.internalOrganisationId.value,
               name: 'InternalOrganisation',
               include: {
                 FacilitiesWhereOwner: x,
-              }
+              },
             }),
           ];
 
@@ -87,11 +94,11 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
                   Assignment: x,
                   InventoryItem: {
                     Part: {
-                      InventoryItemKind: x
+                      InventoryItemKind: x,
                     },
-                  }
-                }
-              }),
+                  },
+                },
+              })
             );
           }
 
@@ -99,25 +106,21 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
             pulls = [
               ...pulls,
               pull.WorkEffort({
-                object: this.data.associationId
+                objectId: this.data.associationId,
               }),
             ];
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-
         this.allors.session.reset();
 
         const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
         const inventoryItems = loaded.collection<InventoryItem>(m.InventoryItem);
-        this.inventoryItems = inventoryItems.filter(v => internalOrganisation.FacilitiesWhereOwner.includes(v.Facility));
+        this.inventoryItems = inventoryItems.filter((v) => internalOrganisation.FacilitiesWhereOwner.includes(v.Facility));
 
         if (isCreate) {
           this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
@@ -126,7 +129,6 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
 
           this.workEffortInventoryAssignment = this.allors.session.create<WorkEffortInventoryAssignment>(m.WorkEffortInventoryAssignment);
           this.workEffortInventoryAssignment.Assignment = this.workEffort;
-
         } else {
           this.workEffortInventoryAssignment = loaded.object<WorkEffortInventoryAssignment>(m.WorkEffortInventoryAssignment);
           this.workEffort = this.workEffortInventoryAssignment.Assignment;
@@ -150,30 +152,22 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
   public update(): void {
     const { context } = this.allors;
 
-    context
-      .save()
-      .subscribe(() => {
-        this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+    context.save().subscribe(() => {
+      this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   public save(): void {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      const data: IObject = {
+        id: this.workEffortInventoryAssignment.id,
+        objectType: this.workEffortInventoryAssignment.objectType,
+      };
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.workEffortInventoryAssignment.id,
-          objectType: this.workEffortInventoryAssignment.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   public inventoryItemSelected(inventoryItem: IObject): void {

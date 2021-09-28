@@ -1,4 +1,5 @@
 {
   "singleQuote": true,
-  "printWidth": 240
+  "printWidth": 240,
+  "importFormatting": "oneline"
 }

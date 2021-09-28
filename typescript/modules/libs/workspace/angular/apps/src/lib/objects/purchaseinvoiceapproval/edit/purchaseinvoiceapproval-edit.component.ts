@@ -3,21 +3,18 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest, Observable } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, Invoked } from '@allors/angular/services/core';
-import { PurchaseInvoiceApproval } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { PrintService } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { TestScope, Action } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Action, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { PrintService } from '../../../actions/print/print.service';
 
 @Component({
   templateUrl: './purchaseinvoiceapproval-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class PurchaseInvoiceApprovalEditComponent extends TestScope implements OnInit, OnDestroy {
-
   title: string;
   subTitle: string;
 
@@ -33,10 +30,10 @@ export class PurchaseInvoiceApprovalEditComponent extends TestScope implements O
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PurchaseInvoiceApprovalEditComponent>,
-    
+
     public printService: PrintService,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private saveService: SaveService
   ) {
     super();
 
@@ -46,28 +43,25 @@ export class PurchaseInvoiceApprovalEditComponent extends TestScope implements O
   }
 
   public ngOnInit(): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-
           const pulls = [
             pull.PurchaseInvoiceApproval({
               objectId: this.data.id,
               include: {
                 PurchaseInvoice: {
-                  PrintDocument: x
-                }
-              }
+                  PrintDocument: x,
+                },
+              },
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => (loaded))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => loaded));
         })
       )
       .subscribe((loaded) => {
@@ -114,9 +108,6 @@ export class PurchaseInvoiceApprovalEditComponent extends TestScope implements O
 
         this.dialogRef.close(data);
         this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      }, this.saveService.errorHandler);
   }
-
 }

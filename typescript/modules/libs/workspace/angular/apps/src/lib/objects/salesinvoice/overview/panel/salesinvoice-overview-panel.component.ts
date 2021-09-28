@@ -1,13 +1,9 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { formatDistance } from 'date-fns';
 
-import { MetaService, NavigationService, PanelService, RefreshService } from '@allors/angular/services/core';
-import { SalesInvoice } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, OverviewService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData } from '@allors/angular/material/services/core';
-
+import { M } from '@allors/workspace/meta/default';
+import { SalesInvoice } from '@allors/workspace/domain/default';
+import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 
 interface Row extends TableRow {
   object: SalesInvoice;
@@ -22,10 +18,9 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'salesinvoice-overview-panel',
   templateUrl: './salesinvoice-overview-panel.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnInit {
-
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -46,11 +41,11 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public overviewService: OverviewService,
-    public deleteService: DeleteService,
+    public deleteService: DeleteService
   ) {
     super();
 
@@ -58,7 +53,6 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
   }
 
   ngOnInit() {
-
     this.delete = this.deleteService.delete(this.panel.manager.context);
 
     this.panel.name = 'salesinvoice';
@@ -76,10 +70,7 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
         { name: 'customer', sort },
         { name: 'lastModifiedDate', sort },
       ],
-      actions: [
-        this.overviewService.overview(),
-        this.delete,
-      ],
+      actions: [this.overviewService.overview(), this.delete],
       defaultAction: this.overviewService.overview(),
       autoSort: true,
       autoFilter: true,
@@ -89,7 +80,9 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
     const customerPullName = `${this.panel.name}_${this.m.SalesInvoice.name}_customer`;
 
     this.panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -103,10 +96,10 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
                 include: {
                   SalesInvoiceState: x,
                   BillToCustomer: x,
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         }),
         pull.Party({
           name: customerPullName,
@@ -116,15 +109,14 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
               include: {
                 SalesInvoiceState: x,
                 BillToCustomer: x,
-              }
-            }
-          }
-        }),
+              },
+            },
+          },
+        })
       );
     };
 
     this.panel.onPulled = (loaded) => {
-
       const fromAsset = loaded.collections[assetPullName] as SalesInvoice[];
       const fromParty = loaded.collections[customerPullName] as SalesInvoice[];
 
@@ -145,7 +137,7 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
             customer: v.BillToCustomer.displayName,
             totalExVat: v.TotalExVat,
             state: v.SalesInvoiceState ? v.SalesInvoiceState.Name : '',
-            lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date())
+            lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
           } as Row;
         });
       }

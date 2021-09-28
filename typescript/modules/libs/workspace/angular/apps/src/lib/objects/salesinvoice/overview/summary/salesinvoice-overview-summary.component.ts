@@ -1,13 +1,11 @@
 import { Component, Self } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { MetaService, NavigationService, PanelService, RefreshService } from '@allors/angular/services/core';
-import { SalesInvoice, SalesOrder, RepeatingSalesInvoice, Good, WorkEffort } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { SaveService } from '@allors/angular/material/services/core';
-import { PrintService } from '@allors/angular/base';
-import { Sort, Equals } from '@allors/data/system';
-import { Action, ActionTarget } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { WorkEffort, SalesOrder, SalesInvoice, RepeatingSalesInvoice } from '@allors/workspace/domain/default';
+import { Action, NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
+
+import { PrintService } from '../../../../actions/print/print.service';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -28,12 +26,12 @@ export class SalesInvoiceOverviewSummaryComponent {
   creditNote: SalesInvoice;
 
   get totalIrpfIsPositive(): boolean {
-    return +(this.invoice.TotalIrpf) > 0;
+    return +this.invoice.TotalIrpf > 0;
   }
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public navigation: NavigationService,
     public printService: PrintService,
     public refreshService: RefreshService,
@@ -53,7 +51,9 @@ export class SalesInvoiceOverviewSummaryComponent {
     const creditNotePullName = `${panel.name}_${this.m.SalesInvoice.name}`;
 
     panel.onPull = (pulls) => {
-      const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+      const m = this.allors.workspace.configuration.metaPopulation as M;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const { id } = this.panel.manager;
 

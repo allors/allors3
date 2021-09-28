@@ -1,9 +1,8 @@
 import { Component, Self } from '@angular/core';
 
-import { MetaService, NavigationService, PanelService } from '@allors/angular/services/core';
-import { Organisation } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { ActionTarget, TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Organisation } from '@allors/workspace/domain/default';
+import { NavigationService, PanelService, TestScope } from '@allors/workspace/angular/base';
 
 
 @Component({

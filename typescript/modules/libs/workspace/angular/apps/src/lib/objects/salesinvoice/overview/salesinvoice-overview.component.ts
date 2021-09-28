@@ -2,21 +2,20 @@ import { Component, Self, AfterViewInit, OnDestroy, Injector } from '@angular/co
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-
-import { MetaService, RefreshService,  NavigationService, PanelManagerService, SessionService } from '@allors/angular/services/core';
-import { Good, SalesInvoice, RepeatingSalesInvoice } from '@allors/domain/generated';
 import { ActivatedRoute } from '@angular/router';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { PullRequest } from '@allors/protocol/system';
-import { Sort, Equals } from '@allors/data/system';
-import { NavigationActivatedRoute, TestScope } from '@allors/angular/core';
+
+import { M } from '@allors/workspace/meta/default';
+import { SalesInvoice, RepeatingSalesInvoice } from '@allors/workspace/domain/default';
+import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './salesinvoice-overview.component.html',
-  providers: [PanelManagerService, SessionService]
+  providers: [PanelManagerService, SessionService],
 })
 export class SalesInvoiceOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
-
   title = 'Sales Invoice';
 
   public invoice: SalesInvoice;
@@ -27,13 +26,13 @@ export class SalesInvoiceOverviewComponent extends TestScope implements AfterVie
 
   constructor(
     @Self() public panelManager: PanelManagerService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private route: ActivatedRoute,
     public injector: Injector,
     private internalOrganisationId: InternalOrganisationId,
-    titleService: Title,
+    titleService: Title
   ) {
     super();
 
@@ -41,12 +40,12 @@ export class SalesInvoiceOverviewComponent extends TestScope implements AfterVie
   }
 
   public ngAfterViewInit(): void {
-
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-
-          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+          const m = this.allors.workspace.configuration.metaPopulation as M;
+          const { pullBuilder: pull } = m;
+          const x = {};
 
           const navRoute = new NavigationActivatedRoute(this.route);
           this.panelManager.id = navRoute.id();
@@ -78,37 +77,34 @@ export class SalesInvoiceOverviewComponent extends TestScope implements AfterVie
                 CreatedBy: x,
                 LastModifiedBy: x,
                 DerivedBillToContactMechanism: {
-                  PostalAddress_Country: x
+                  PostalAddress_Country: x,
                 },
                 DerivedShipToAddress: {
-                  Country: x
+                  Country: x,
                 },
                 DerivedBillToEndCustomerContactMechanism: {
-                  PostalAddress_Country: x
+                  PostalAddress_Country: x,
                 },
                 DerivedShipToEndCustomerAddress: {
-                  Country: x
-                }
-              }
+                  Country: x,
+                },
+              },
             }),
-            pull.RepeatingSalesInvoice(
-              {
-                predicate: { kind: 'Equals', propertyType: m.RepeatingSalesInvoice.Source, objectId: id },
-                include: {
-                  Frequency: x,
-                  DayOfWeek: x
-                }
-              }),
+            pull.RepeatingSalesInvoice({
+              predicate: { kind: 'Equals', propertyType: m.RepeatingSalesInvoice.Source, objectId: id },
+              include: {
+                Frequency: x,
+                DayOfWeek: x,
+              },
+            }),
           ];
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context
-            .load(new PullRequest({ pulls }));
+          return this.panelManager.context.load(new PullRequest({ pulls }));
         })
       )
       .subscribe((loaded) => {
-
         this.panelManager.context.session.reset();
 
         this.panelManager.onPulled(loaded);
@@ -120,7 +116,6 @@ export class SalesInvoiceOverviewComponent extends TestScope implements AfterVie
         } else {
           this.repeatingInvoice = undefined;
         }
-
       });
   }
 

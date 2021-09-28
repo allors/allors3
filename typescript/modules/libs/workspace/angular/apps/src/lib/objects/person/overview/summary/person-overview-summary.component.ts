@@ -1,9 +1,9 @@
 import { Component, Self } from '@angular/core';
 
-import { MetaService, NavigationService, PanelService, MediaService } from '@allors/angular/services/core';
-import { Organisation, Person, OrganisationContactRelationship, OrganisationContactKind } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Person, Organisation, OrganisationContactRelationship } from '@allors/workspace/domain/default';
+import { MediaService, NavigationService, PanelService, TestScope } from '@allors/workspace/angular/base';
+
 
 @Component({
   // tslint:disable-next-line:component-selector

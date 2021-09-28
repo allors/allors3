@@ -1,12 +1,9 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { isBefore, isAfter } from 'date-fns';
 
-import { MetaService, NavigationService, PanelService, RefreshService } from '@allors/angular/services/core';
-import { WorkEffort, WorkEffortAssignmentRate } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { WorkEffort, WorkEffortAssignmentRate } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 
 interface Row extends TableRow {
   object: WorkEffortAssignmentRate;
@@ -22,7 +19,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'workeffortassignmentrate-overview-panel',
   templateUrl: './workeffortassignmentrate-overview-panel.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope implements OnInit {
   workEffort: WorkEffort;
@@ -53,7 +50,7 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigationService: NavigationService,
 
@@ -66,7 +63,6 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
   }
 
   ngOnInit() {
-
     this.panel.name = 'workeffortrate';
     this.panel.title = 'Rates';
     this.panel.icon = 'contacts';
@@ -86,10 +82,7 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
         { name: 'rate', sort },
         { name: 'frequency' },
       ],
-      actions: [
-        this.edit,
-        this.delete,
-      ],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -98,8 +91,9 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
     const pullName = `${this.panel.name}_${this.m.WorkEffortAssignmentRate.name}`;
 
     this.panel.onPull = (pulls) => {
-
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
       const id = this.panel.manager.id;
 
       pulls.push(
@@ -112,15 +106,15 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
                 RateType: x,
                 Frequency: x,
                 WorkEffortPartyAssignment: {
-                  Party: x
-                }
-              }
-            }
-          }
+                  Party: x,
+                },
+              },
+            },
+          },
         }),
         pull.WorkEffort({
           objectId: id,
-        }),
+        })
       );
     };
 
@@ -150,12 +144,11 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
   }
 
   get workEffortAssignmentRates(): any {
-
     switch (this.collection) {
       case 'Current':
-        return this.objects && this.objects.filter(v => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
+        return this.objects && this.objects.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
       case 'Inactive':
-        return this.objects && this.objects.filter(v => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date())));
+        return this.objects && this.objects.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date())));
       case 'All':
       default:
         return this.objects;

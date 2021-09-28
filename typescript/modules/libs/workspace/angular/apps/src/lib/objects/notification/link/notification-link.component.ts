@@ -2,11 +2,9 @@ import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, UserId, NavigationService } from '@allors/angular/services/core';
-import { Person, Notification } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { ObjectService } from '@allors/angular/material/services/core';
-
+import { Notification, Person } from '@allors/workspace/domain/default';
+import { NavigationService, ObjectService, RefreshService, UserId } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector

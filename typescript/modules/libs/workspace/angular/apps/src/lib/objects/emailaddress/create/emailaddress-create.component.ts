@@ -1,29 +1,21 @@
 import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { Meta } from '@allors/meta/generated'
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { PullRequest } from '@allors/protocol/system';
-import { ObjectData, SaveService } from '@allors/angular/material/services/core';
-import {
-  Party,
-  PartyContactMechanism,
-  ElectronicAddress,
-  Enumeration,
-} from '@allors/domain/generated';
-import { Equals, Sort } from '@allors/data/system';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { WorkTask, PartyContactMechanism, Party, EmailAddress, ElectronicAddress, Enumeration } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './emailaddress-create.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class EmailAddressCreateComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   contactMechanism: ElectronicAddress;
@@ -36,44 +28,41 @@ export class EmailAddressCreateComponent extends TestScope implements OnInit, On
   party: Party;
   contactMechanismPurposes: Enumeration[];
 
-
   constructor(
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<EmailAddressCreateComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
-    private internalOrganisationId: InternalOrganisationId) {
-
+    private internalOrganisationId: InternalOrganisationId
+  ) {
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
-    const m = this.m; const { pullBuilder: pull } = m;
+    const m = this.m;
+    const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-
           const pulls = [
             pull.Party({
-              object: this.data.associationId,
+              objectId: this.data.associationId,
             }),
             pull.ContactMechanismPurpose({
               predicate: { kind: 'Equals', propertyType: m.ContactMechanismPurpose.IsActive, value: true },
-              sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }]
-            })
+              sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }],
+            }),
           ];
 
           return this.allors.client.pullReactive(this.allors.session, pulls);
         })
       )
       .subscribe((loaded) => {
-
         this.allors.session.reset();
 
         this.party = loaded.object<Party>(m.Party);
@@ -85,7 +74,7 @@ export class EmailAddressCreateComponent extends TestScope implements OnInit, On
         this.partyContactMechanism.UseAsDefault = true;
         this.partyContactMechanism.ContactMechanism = this.contactMechanism;
 
-        this.party.AddPartyContactMechanism(this.partyContactMechanism);
+        this.party.addPartyContactMechanism(this.partyContactMechanism);
       });
   }
 
@@ -96,18 +85,14 @@ export class EmailAddressCreateComponent extends TestScope implements OnInit, On
   }
 
   public save(): void {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      const data: IObject = {
+        id: this.contactMechanism.id,
+        objectType: this.contactMechanism.objectType,
+      };
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.contactMechanism.id,
-          objectType: this.contactMechanism.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

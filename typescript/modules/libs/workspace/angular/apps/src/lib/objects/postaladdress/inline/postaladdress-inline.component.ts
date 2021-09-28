@@ -1,10 +1,10 @@
 import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 
-import { SessionService, MetaService } from '@allors/angular/services/core';
-import { PartyContactMechanism, ContactMechanismPurpose, Country, PostalAddress } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { Equals, Sort } from '@allors/data/system';
-import { PullRequest } from '@allors/protocol/system';
+import { M } from '@allors/workspace/meta/default';
+import { InternalOrganisation, Locale, Carrier,  Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Party, CustomerShipment, Currency, PostalAddress, Facility, ShipmentMethod, PositionTypeRate, TimeFrequency, RateType, PositionType, PriceComponent, Country, ContactMechanismPurpose } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, SaveService, SearchFactory, Table, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
 
 
 @Component({
@@ -29,8 +29,7 @@ export class PartyContactMechanismPostalAddressInlineComponent implements OnInit
   public m: M;
 
   constructor(
-    private allors: SessionService,
-    public ) {
+    private allors: SessionService) {
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
@@ -63,7 +62,7 @@ export class PartyContactMechanismPostalAddressInlineComponent implements OnInit
 
   public ngOnDestroy(): void {
 
-    if (!!this.partyContactMechanism) {
+    if (this.partyContactMechanism) {
       this.allors.client.invokeReactive(this.allors.session, this.partyContactMechanism.Delete);
       this.allors.client.invokeReactive(this.allors.session, this.postalAddress.Delete);
     }

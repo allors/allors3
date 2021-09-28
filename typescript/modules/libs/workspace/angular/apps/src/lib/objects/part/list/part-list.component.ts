@@ -3,15 +3,11 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, NavigationService, MediaService } from '@allors/angular/services/core';
-import { ObjectService } from '@allors/angular/material/services/core';
-import { Filter, TestScope, Action } from '@allors/angular/core';
-import { PullRequest } from '@allors/protocol/system';
-import { TableRow, Table, OverviewService, DeleteService } from '@allors/angular/material/core';
-import {
-  Part,
-  ProductIdentificationType,
-} from '@allors/domain/generated';
+import { M } from '@allors/workspace/meta/default';
+import { ProductIdentificationType } from '@allors/workspace/domain/default';
+import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
 
 interface Row extends TableRow {
   object: Part;
@@ -119,8 +115,8 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
-            pull.ProductIdentificationType(),
-            pull.BasePrice(),
+            pull.ProductIdentificationType({}),
+            pull.BasePrice({}),
           ];
 
           return this.allors.client.pullReactive(this.allors.session, pulls);

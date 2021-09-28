@@ -1,12 +1,9 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { format, isBefore, isAfter } from 'date-fns';
 
-import { MetaService, RefreshService, NavigationService, PanelService } from '@allors/angular/services/core';
-import { SupplierOffering } from '@allors/domain/generated';
-import { TableRow, Table, EditService, DeleteService } from '@allors/angular/material/core';
-import { Meta } from '@allors/meta/generated';
-import { Action, TestScope } from '@allors/angular/core';
-import { ObjectData } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { SupplierOffering } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 
 interface Row extends TableRow {
   object: SupplierOffering;
@@ -21,7 +18,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'supplieroffering-overview-panel',
   templateUrl: './supplieroffering-overview-panel.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class SupplierOfferingOverviewPanelComponent extends TestScope implements OnInit {
   currentObjects: SupplierOffering[];
@@ -49,7 +46,7 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     public deleteService: DeleteService,
@@ -61,7 +58,6 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
   }
 
   ngOnInit() {
-
     this.panel.name = 'supplieroffering';
     this.panel.title = 'Supplier Offerings';
     this.panel.icon = 'business';
@@ -80,10 +76,7 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
         { name: 'from', sort },
         { name: 'through', sort },
       ],
-      actions: [
-        this.edit,
-        this.delete,
-      ],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -92,8 +85,9 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
     const pullName = `${this.panel.name}_${this.m.SupplierOffering.name}`;
 
     this.panel.onPull = (pulls) => {
-
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
       const id = this.panel.manager.id;
 
       pulls.push(
@@ -104,16 +98,17 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
             SupplierOfferingsWherePart: {
               include: {
                 Currency: x,
-                UnitOfMeasure: x
-              }
-            }
-          }
-        }));
+                UnitOfMeasure: x,
+              },
+            },
+          },
+        })
+      );
     };
 
     this.panel.onPulled = (loaded) => {
       this.objects = loaded.collections[pullName] as SupplierOffering[];
-      this.currentObjects = this.objects.filter(v => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
+      this.currentObjects = this.objects.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
 
       if (this.objects) {
         this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;
@@ -130,18 +125,17 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
         price: v.Currency.IsoCode + ' ' + v.Price,
         uom: v.UnitOfMeasure.Abbreviation || v.UnitOfMeasure.Name,
         from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-        through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : ''
+        through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
       } as Row;
     });
   }
 
   get suplierOfferings(): SupplierOffering[] {
-
     switch (this.collection) {
       case 'Current':
-        return this.objects.filter(v => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
+        return this.objects.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
       case 'Inactive':
-        return this.objects.filter(v => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date())));
+        return this.objects.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date())));
       case 'All':
       default:
         return this.objects;

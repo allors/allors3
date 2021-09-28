@@ -1,13 +1,9 @@
 import { Component, OnInit, Self, HostBinding, Input } from '@angular/core';
 
-import { MetaService, PanelService, RefreshService } from '@allors/angular/services/core';
-import { ProductIdentification } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData, ObjectService } from '@allors/angular/material/services/core';
-import { Pull, Fetch, Step } from '@allors/data/system';
-import { RoleType } from '@allors/meta/system';
+import { M } from '@allors/workspace/meta/default';
+import { ProductIdentification } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { RoleType } from '@allors/workspace/meta/system';
 
 interface Row extends TableRow {
   object: ProductIdentification;
@@ -19,7 +15,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'productidentification-panel',
   templateUrl: './productIdentification-panel.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class ProductIdentificationsPanelComponent extends TestScope implements OnInit {
   @Input() roleType: RoleType;
@@ -45,11 +41,11 @@ export class ProductIdentificationsPanelComponent extends TestScope implements O
   }
   constructor(
     @Self() public panel: PanelService,
-    
+
     public objectService: ObjectService,
     public refreshService: RefreshService,
     public editService: EditService,
-    public deleteService: DeleteService,
+    public deleteService: DeleteService
   ) {
     super();
 
@@ -57,7 +53,6 @@ export class ProductIdentificationsPanelComponent extends TestScope implements O
   }
 
   ngOnInit() {
-
     this.panel.name = 'productidentification';
     this.panel.title = 'Product Identification';
     this.panel.icon = 'fingerprint';
@@ -73,10 +68,7 @@ export class ProductIdentificationsPanelComponent extends TestScope implements O
         { name: 'type', sort },
         { name: 'identification', sort },
       ],
-      actions: [
-        this.edit,
-        this.delete,
-      ],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -97,9 +89,9 @@ export class ProductIdentificationsPanelComponent extends TestScope implements O
               propertyType: this.roleType,
               include: tree.ProductIdentification({
                 ProductIdentificationType: x,
-              })
-            })
-          })
+              }),
+            }),
+          }),
         })
       );
 

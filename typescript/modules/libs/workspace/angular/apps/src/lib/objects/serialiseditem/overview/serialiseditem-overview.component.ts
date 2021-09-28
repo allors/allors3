@@ -2,21 +2,20 @@ import { Component, Self, AfterViewInit, OnDestroy, Injector } from '@angular/co
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-
-import { MetaService, RefreshService,  NavigationService, PanelManagerService, SessionService } from '@allors/angular/services/core';
-import { Part, SerialisedItem, Party } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
 import { ActivatedRoute } from '@angular/router';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { PullRequest } from '@allors/protocol/system';
-import { TestScope, NavigationActivatedRoute } from '@allors/angular/core';
+
+import { M } from '@allors/workspace/meta/default';
+import { Party, Part, SerialisedItem } from '@allors/workspace/domain/default';
+import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './serialiseditem-overview.component.html',
-  providers: [PanelManagerService, SessionService]
+  providers: [PanelManagerService, SessionService],
 })
 export class SerialisedItemOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
-
   readonly m: M;
   title = 'Asset';
 
@@ -28,13 +27,13 @@ export class SerialisedItemOverviewComponent extends TestScope implements AfterV
 
   constructor(
     @Self() public panelManager: PanelManagerService,
-    
+
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private route: ActivatedRoute,
     public injector: Injector,
     private internalOrganisationId: InternalOrganisationId,
-    titleService: Title,
+    titleService: Title
   ) {
     super();
 
@@ -43,12 +42,12 @@ export class SerialisedItemOverviewComponent extends TestScope implements AfterV
   }
 
   public ngAfterViewInit(): void {
-
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-
-          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+          const m = this.allors.workspace.configuration.metaPopulation as M;
+          const { pullBuilder: pull } = m;
+          const x = {};
 
           const navRoute = new NavigationActivatedRoute(this.route);
           this.panelManager.objectType = m.SerialisedItem;
@@ -62,18 +61,16 @@ export class SerialisedItemOverviewComponent extends TestScope implements AfterV
               object: this.panelManager.id,
               include: {
                 OwnedBy: x,
-              }
+              },
             }),
           ];
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context
-            .load(new PullRequest({ pulls }));
+          return this.panelManager.context.load(new PullRequest({ pulls }));
         })
       )
       .subscribe((loaded) => {
-
         this.panelManager.context.session.reset();
         this.panelManager.onPulled(loaded);
 

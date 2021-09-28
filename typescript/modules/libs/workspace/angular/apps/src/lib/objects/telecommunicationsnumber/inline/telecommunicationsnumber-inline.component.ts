@@ -1,11 +1,8 @@
 import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 
-import { SessionService, MetaService } from '@allors/angular/services/core';
-import { PartyContactMechanism, ContactMechanismPurpose, Enumeration, ContactMechanismType, TelecommunicationsNumber } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { Equals, Sort } from '@allors/data/system';
-import { PullRequest } from '@allors/protocol/system';
-
+import { M } from '@allors/workspace/meta/default';
+import { PartyContactMechanism, Enumeration, ContactMechanismPurpose, ContactMechanismType, TelecommunicationsNumber } from '@allors/workspace/domain/default';
+import { SessionService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -13,7 +10,6 @@ import { PullRequest } from '@allors/protocol/system';
   templateUrl: './telecommunicationsnumber-inline.component.html',
 })
 export class PartyContactMechanismTelecommunicationsNumberInlineComponent implements OnInit, OnDestroy {
-
   @Output()
   public saved: EventEmitter<PartyContactMechanism> = new EventEmitter<PartyContactMechanism>();
 
@@ -28,15 +24,11 @@ export class PartyContactMechanismTelecommunicationsNumberInlineComponent implem
 
   public m: M;
 
-  constructor(
-    private allors: SessionService,
-    public ) {
-
+  constructor(private allors: SessionService) {
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
     const { pullBuilder: pull } = this.m;
 
     const pulls = [
@@ -47,24 +39,21 @@ export class PartyContactMechanismTelecommunicationsNumberInlineComponent implem
       pull.ContactMechanismType({
         predicate: { kind: 'Equals', propertyType: this.m.ContactMechanismType.IsActive, value: true },
         sorting: [{ roleType: this.m.ContactMechanismType.Name }],
-      })
+      }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
-        this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
-        this.contactMechanismTypes = loaded.collection<ContactMechanismType>(m.ContactMechanismType);
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
+      this.contactMechanismTypes = loaded.collection<ContactMechanismType>(m.ContactMechanismType);
 
-        this.partyContactMechanism = this.allors.session.create<PartyContactMechanism>(m.PartyContactMechanism);
-        this.telecommunicationsNumber = this.allors.session.create<TelecommunicationsNumber>(m.TelecommunicationsNumber);
-        this.partyContactMechanism.ContactMechanism = this.telecommunicationsNumber;
-      });
+      this.partyContactMechanism = this.allors.session.create<PartyContactMechanism>(m.PartyContactMechanism);
+      this.telecommunicationsNumber = this.allors.session.create<TelecommunicationsNumber>(m.TelecommunicationsNumber);
+      this.partyContactMechanism.ContactMechanism = this.telecommunicationsNumber;
+    });
   }
 
   public ngOnDestroy(): void {
-
-    if (!!this.partyContactMechanism) {
+    if (this.partyContactMechanism) {
       this.allors.client.invokeReactive(this.allors.session, this.partyContactMechanism.Delete);
       this.allors.client.invokeReactive(this.allors.session, this.telecommunicationsNumber.Delete);
     }

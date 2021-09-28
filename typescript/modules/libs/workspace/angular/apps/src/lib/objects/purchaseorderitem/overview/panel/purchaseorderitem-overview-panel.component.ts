@@ -2,17 +2,16 @@ import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { formatDistance } from 'date-fns';
 
-import { MetaService, NavigationService, PanelService, RefreshService, SessionService } from '@allors/angular/services/core';
-import { PurchaseOrderItem, PurchaseOrder } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, EditService, MethodService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData, ObjectService } from '@allors/angular/material/services/core';
+import { M } from '@allors/workspace/meta/default';
+import { PurchaseOrder, PurchaseOrderItem } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: PurchaseOrderItem;
   item: string;
-  itemId; string;
+  itemId;
+  string;
   type: string;
   state: string;
   ordered: string;
@@ -24,10 +23,9 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'purchaseorderitem-overview-panel',
   templateUrl: './purchaseorderitem-overview-panel.component.html',
-  providers: [SessionService, PanelService]
+  providers: [SessionService, PanelService],
 })
 export class PurchaseOrderItemOverviewPanelComponent extends TestScope {
-
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -57,7 +55,7 @@ export class PurchaseOrderItemOverviewPanelComponent extends TestScope {
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
 
@@ -85,23 +83,8 @@ export class PurchaseOrderItemOverviewPanelComponent extends TestScope {
     const sort = true;
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'item', sort },
-        { name: 'itemId' },
-        { name: 'type', sort },
-        { name: 'state', sort },
-        { name: 'ordered', sort },
-        { name: 'received', sort },
-        { name: 'lastModifiedDate', sort },
-      ],
-      actions: [
-        this.edit,
-        this.delete,
-        this.cancel,
-        this.reject,
-        this.reopen,
-        this.quickReceive
-      ],
+      columns: [{ name: 'item', sort }, { name: 'itemId' }, { name: 'type', sort }, { name: 'state', sort }, { name: 'ordered', sort }, { name: 'received', sort }, { name: 'lastModifiedDate', sort }],
+      actions: [this.edit, this.delete, this.cancel, this.reject, this.reopen, this.quickReceive],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -111,7 +94,9 @@ export class PurchaseOrderItemOverviewPanelComponent extends TestScope {
     const orderPullName = `${panel.name}_${this.m.PurchaseOrder.name}`;
 
     panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -126,19 +111,18 @@ export class PurchaseOrderItemOverviewPanelComponent extends TestScope {
                 PurchaseOrderItemState: x,
                 Part: x,
                 SerialisedItem: x,
-              }
-            }
-          }
+              },
+            },
+          },
         }),
         pull.PurchaseOrder({
           name: orderPullName,
-          objectId: id
-        }),
+          objectId: id,
+        })
       );
     };
 
     panel.onPulled = (loaded) => {
-
       this.objects = loaded.collections[pullName] as PurchaseOrderItem[];
       this.order = loaded.objects[orderPullName] as PurchaseOrder;
       this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;
@@ -151,7 +135,7 @@ export class PurchaseOrderItemOverviewPanelComponent extends TestScope {
           state: `${v.PurchaseOrderItemState && v.PurchaseOrderItemState.Name}`,
           ordered: v.QuantityOrdered,
           received: v.QuantityReceived,
-          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date())
+          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
         } as Row;
       });
     };

@@ -4,11 +4,10 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { format } from 'date-fns';
 
-import { SessionService, MetaService, RefreshService, NavigationService, MediaService } from '@allors/angular/services/core';
-import { Filter, TestScope, Action } from '@allors/angular/core';
-import { PullRequest } from '@allors/protocol/system';
-import { TableRow, Table, OverviewService, DeleteService, EditService } from '@allors/angular/material/core';
-import { ExchangeRate } from '@allors/domain/generated';
+import { M } from '@allors/workspace/meta/default';
+import { ExchangeRate } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: ExchangeRate;
@@ -36,7 +35,6 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
   constructor(
     @Self() public allors: SessionService,
 
-    
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public editService: EditService,
@@ -61,12 +59,7 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'validFrom', sort: true }, 
-        { name: 'from', sort: true }, 
-        { name: 'to', sort: true }, 
-        { name: 'rate' }, 
-      ],
+      columns: [{ name: 'validFrom', sort: true }, { name: 'from', sort: true }, { name: 'to', sort: true }, { name: 'rate' }],
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       pageSize: 50,
@@ -76,14 +69,15 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
     this.filter = m.ExchangeRate.filter = m.ExchangeRate.filter ?? new Filter(m.ExchangeRate.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-            pageEvent =
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
+          pageEvent =
             previousRefresh !== refresh || filterFields !== previousFilterFields
               ? {
                   ...pageEvent,

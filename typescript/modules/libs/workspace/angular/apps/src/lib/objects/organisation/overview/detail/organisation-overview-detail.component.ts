@@ -1,16 +1,13 @@
 import { Component, OnInit, Self, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { MetaService, RefreshService, PanelService, SessionService, SingletonId } from '@allors/angular/services/core';
-import { Organisation, Currency, InternalOrganisation, CustomOrganisationClassification, IndustryClassification, LegalForm, Locale } from '@allors/domain/generated';
-import { SaveService } from '@allors/angular/material/services/core';
-import { Meta } from '@allors/meta/generated';
-import { FetcherService } from '@allors/angular/base';
-import { PullRequest } from '@allors/protocol/system';
-import { Sort, Equals } from '@allors/data/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { InternalOrganisation, Locale, Organisation, Currency, CustomOrganisationClassification, IndustryClassification, LegalForm } from '@allors/workspace/domain/default';
+import { PanelService, RefreshService, SaveService, TestScope, SingletonId } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
+import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 
 @Component({
   // tslint:disable-next-line:component-selector

@@ -3,15 +3,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { Employment, Person, Party, WorkEffort, WorkEffortPartyAssignment } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { Sort } from '@allors/data/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Person, Party, WorkEffort, WorkEffortPartyAssignment } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './workeffortpartyassignment-edit.component.html',
@@ -36,7 +34,7 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<WorkEffortPartyAssignmentEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId
@@ -47,7 +45,9 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -56,7 +56,7 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
 
           let pulls = [
             pull.Organisation({
-              object: internalOrganisationId,
+              objectId: internalOrganisationId,
               select: {
                 EmploymentsWhereEmployer: {
                   include: {
@@ -76,7 +76,7 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
                   Assignment: x,
                   Party: x,
                 },
-              }),
+              })
             );
           }
 
@@ -84,10 +84,10 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
             pulls = [
               ...pulls,
               pull.Party({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
               }),
               pull.WorkEffort({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
               }),
             ];
           }
@@ -131,12 +131,7 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
         // TODO: Martien
         const employments = loaded.collection<Employment>(m.Employment);
         if (this.workEffort && this.workEffort.ScheduledStart) {
-          this.employees = employments
-            .filter(
-              (v) =>
-                v.FromDate <= this.workEffort.ScheduledStart && (v.ThroughDate === null || v.ThroughDate >= this.workEffort.ScheduledStart)
-            )
-            .map((v) => v.Employee);
+          this.employees = employments.filter((v) => v.FromDate <= this.workEffort.ScheduledStart && (v.ThroughDate === null || v.ThroughDate >= this.workEffort.ScheduledStart)).map((v) => v.Employee);
         } else {
           this.employees = [this.person];
         }

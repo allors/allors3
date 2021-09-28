@@ -4,23 +4,35 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { isBefore, isAfter } from 'date-fns';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { InventoryItem, Part, Facility, SerialisedInventoryItem, SerialisedItem, NonSerialisedInventoryItem, PurchaseOrder, PurchaseOrderItem, VatRegime, IrpfRegime, InvoiceItemType, SupplierOffering, UnifiedGood, Product, Organisation } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta, TreeFactory } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { FetcherService, Filters } from '@allors/angular/base';
-import { IObject, IObject } from '@allors/domain/system';
-import { Equals, Sort, And, ContainedIn, Extent, LessThan, Or, Not, Exists, GreaterThan } from '@allors/data/system';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import {
+  Organisation,
+  Part,
+  SupplierOffering,
+  Facility,
+  InternalOrganisation,
+  NonSerialisedInventoryItem,
+  InventoryItem,
+  SerialisedInventoryItem,
+  SerialisedItem,
+  PurchaseOrder,
+  PurchaseOrderItem,
+  UnifiedGood,
+  VatRegime,
+  IrpfRegime,
+  InvoiceItemType,
+} from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
 
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './purchaseorderitem-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class PurchaseOrderItemEditComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   title: string;
@@ -52,7 +64,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
 
   private subscription: Subscription;
   partsFilter: SearchFactory;
-  
+
   unifiedGoodsFilter: SearchFactory;
   internalOrganisation: Organisation;
 
@@ -60,10 +72,10 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PurchaseOrderItemEditComponent>,
-    
+
     private fetcher: FetcherService,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private saveService: SaveService
   ) {
     super();
 
@@ -71,13 +83,13 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
   }
 
   public ngOnInit(): void {
-
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
         switchMap(() => {
-
           const isCreate = this.data.id === undefined;
           const { id } = this.data;
 
@@ -85,13 +97,13 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
             this.fetcher.internalOrganisation,
             pull.InvoiceItemType({
               predicate: { kind: 'Equals', propertyType: m.InvoiceItemType.IsActive, value: true },
-              sorting: [{ roleType: m.InvoiceItemType.Name }]
+              sorting: [{ roleType: m.InvoiceItemType.Name }],
             }),
             pull.IrpfRegime({
-              sorting: [{ roleType: m.IrpfRegime.Name }]
+              sorting: [{ roleType: m.IrpfRegime.Name }],
             }),
             pull.Facility({
-              sorting: [{ roleType: m.Facility.Name }]
+              sorting: [{ roleType: m.Facility.Name }],
             }),
           ];
 
@@ -99,8 +111,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
             pulls.push(
               pull.PurchaseOrderItem({
                 objectId: id,
-                include:
-                {
+                include: {
                   InvoiceItemType: x,
                   PurchaseOrderItemState: x,
                   PurchaseOrderItemShipmentState: x,
@@ -113,8 +124,8 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
                   },
                   DerivedIrpfRegime: {
                     IrpfRates: x,
-                  }
-                }
+                  },
+                },
               }),
               pull.PurchaseOrderItem({
                 objectId: id,
@@ -126,40 +137,37 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
                       },
                       DerivedIrpfRegime: {
                         IrpfRates: x,
-                      }
-                    }
-                  }
-                }
-              }),
+                      },
+                    },
+                  },
+                },
+              })
             );
           }
 
           if (isCreate && this.data.associationId) {
             pulls.push(
               pull.PurchaseOrder({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
                 include: {
                   DerivedVatRegime: x,
                   DerivedIrpfRegime: x,
-                  TakenViaSupplier: x
-                }
+                  TakenViaSupplier: x,
+                },
               })
             );
           }
 
           this.unifiedGoodsFilter = Filters.unifiedGoodsFilter(m, this.metaService.tree);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.session.reset();
 
         this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
-        this.showIrpf = this.internalOrganisation.Country.IsoCode === "ES";
+        this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.orderItem = loaded.object<PurchaseOrderItem>(m.PurchaseOrderItem);
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
@@ -175,20 +183,19 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
           objectType: this.m.NonUnifiedPart,
           roleTypes: [this.m.NonUnifiedPart.Name, this.m.NonUnifiedPart.SearchString],
           post: (predicate: And) => {
-            predicate.operands.push(new ContainedIn({
-              propertyType: this.m.NonUnifiedPart.SupplierOfferingsWherePart,
-              extent: new Extent({
-                objectType: this.m.SupplierOffering,
-                predicate: new And([
-                  new Equals({ propertyType: m.SupplierOffering.Supplier, object: this.order.TakenViaSupplier }),
-                  new LessThan({ roleType: m.SupplierOffering.FromDate, value: this.order.OrderDate }),
-                  new Or([
-                    new Not({ operand: new Exists({ propertyType: m.SupplierOffering.ThroughDate }) }),
-                    new GreaterThan({ roleType: m.SupplierOffering.ThroughDate, value: this.order.OrderDate }),
-                  ])
-                ])
+            predicate.operands.push(
+              new ContainedIn({
+                propertyType: this.m.NonUnifiedPart.SupplierOfferingsWherePart,
+                extent: new Extent({
+                  objectType: this.m.SupplierOffering,
+                  predicate: new And([
+                    new Equals({ propertyType: m.SupplierOffering.Supplier, object: this.order.TakenViaSupplier }),
+                    new LessThan({ roleType: m.SupplierOffering.FromDate, value: this.order.OrderDate }),
+                    new Or([new Not({ operand: new Exists({ propertyType: m.SupplierOffering.ThroughDate }) }), new GreaterThan({ roleType: m.SupplierOffering.ThroughDate, value: this.order.OrderDate })]),
+                  ]),
+                }),
               })
-            }));
+            );
           },
         });
 
@@ -197,7 +204,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
           this.order = loaded.object<PurchaseOrder>(m.PurchaseOrder);
           this.orderItem = this.allors.session.create<PurchaseOrderItem>(m.PurchaseOrderItem);
           this.selectedFacility = this.order.StoredInFacility;
-          this.order.AddPurchaseOrderItem(this.orderItem);
+          this.order.addPurchaseOrderItem(this.orderItem);
           this.vatRegimeInitialRole = this.order.DerivedVatRegime;
           this.irpfRegimeInitialRole = this.order.DerivedIrpfRegime;
         } else {
@@ -233,10 +240,9 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
   }
 
   public serialisedItemSelected(serialisedItem: IObject): void {
-
-    if(serialisedItem) {
-    this.serialisedItem = this.part.SerialisedItems.find(v => v === serialisedItem);
-    this.orderItem.QuantityOrdered = '1';
+    if (serialisedItem) {
+      this.serialisedItem = this.part.SerialisedItems.find((v) => v === serialisedItem);
+      this.orderItem.QuantityOrdered = '1';
     }
   }
 
@@ -257,26 +263,23 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
   }
 
   public save(): void {
-
     this.onSave();
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.orderItem.id,
-          objectType: this.orderItem.objectType,
-        };
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      const data: IObject = {
+        id: this.orderItem.id,
+        objectType: this.orderItem.objectType,
+      };
 
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   private refreshSerialisedItems(product: Product): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.NonUnifiedGood({
@@ -286,90 +289,76 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
             include: {
               SerialisedItems: x,
               InventoryItemKind: x,
-            }
-          }
-        }
+            },
+          },
+        },
       }),
       pull.UnifiedGood({
         object: product.id,
         include: {
           InventoryItemKind: x,
           SerialisedItems: x,
-        }
-      })
+        },
+      }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe(() => {
-
-        this.serialisedItems = this.part.SerialisedItems;
-        this.serialised = this.part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
-      });
+    this.allors.context.load(new PullRequest({ pulls })).subscribe(() => {
+      this.serialisedItems = this.part.SerialisedItems;
+      this.serialised = this.part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+    });
   }
 
   private updateFromPart(part: Part) {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
-      pull.Part(
-        {
-          object: part,
-          select: {
-            SerialisedItems: {
-              include: {
-                OwnedBy: x
-              }
-            }
-          }
-        }
-      ),
-      pull.Part(
-        {
-          object: part,
-          select: {
-            SupplierOfferingsWherePart: {
-              include: {
-                Supplier: x
-              }
-            }
-          }
-        }
-      ),
-      pull.Part(
-        {
-          object: part,
-          include: {
-            InventoryItemKind: x,
-          }
-        }
-      ),
+      pull.Part({
+        object: part,
+        select: {
+          SerialisedItems: {
+            include: {
+              OwnedBy: x,
+            },
+          },
+        },
+      }),
+      pull.Part({
+        object: part,
+        select: {
+          SupplierOfferingsWherePart: {
+            include: {
+              Supplier: x,
+            },
+          },
+        },
+      }),
+      pull.Part({
+        object: part,
+        include: {
+          InventoryItemKind: x,
+        },
+      }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
-        this.part = (loaded.objects.UnifiedGood || loaded.objects.Part) as Part;
-        this.serialised = part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      this.part = (loaded.objects.UnifiedGood || loaded.objects.Part) as Part;
+      this.serialised = part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 
-        const supplierOfferings = loaded.collection<SupplierOffering>(m.SupplierOffering);
-        this.supplierOffering = supplierOfferings.find(v => isBefore(new Date(v.FromDate), new Date())
-          && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date()))
-          && v.Supplier === this.order.TakenViaSupplier);
+      const supplierOfferings = loaded.collection<SupplierOffering>(m.SupplierOffering);
+      this.supplierOffering = supplierOfferings.find((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())) && v.Supplier === this.order.TakenViaSupplier);
 
-        this.serialisedItems = loaded.collection<SerialisedItem>(m.SerialisedItem);
+      this.serialisedItems = loaded.collection<SerialisedItem>(m.SerialisedItem);
 
-        if (this.orderItem.SerialisedItem) {
-          this.serialisedItems.push(this.orderItem.SerialisedItem);
-        }
-      });
+      if (this.orderItem.SerialisedItem) {
+        this.serialisedItems.push(this.orderItem.SerialisedItem);
+      }
+    });
   }
 
   private onSave() {
-
-    if (this.orderItem.InvoiceItemType !== this.partItemType &&
-      this.orderItem.InvoiceItemType !== this.partItemType) {
+    if (this.orderItem.InvoiceItemType !== this.partItemType && this.orderItem.InvoiceItemType !== this.partItemType) {
       this.orderItem.QuantityOrdered = '1';
     }
   }

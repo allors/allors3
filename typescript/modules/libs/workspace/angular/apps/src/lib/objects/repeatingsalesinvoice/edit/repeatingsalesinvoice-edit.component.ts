@@ -3,14 +3,11 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { TimeFrequency, SalesInvoice, DayOfWeek, RepeatingSalesInvoice } from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { IObject } from '@allors/domain/system';
-import { Equals, Sort } from '@allors/data/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { TimeFrequency, SalesInvoice, RepeatingSalesInvoice, DayOfWeek } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './repeatingsalesinvoice-edit.component.html',
@@ -31,7 +28,7 @@ export class RepeatingSalesInvoiceEditComponent extends TestScope implements OnI
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<RepeatingSalesInvoiceEditComponent>,
-    
+
     private saveService: SaveService,
     public refreshService: RefreshService
   ) {
@@ -41,7 +38,9 @@ export class RepeatingSalesInvoiceEditComponent extends TestScope implements OnI
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
@@ -65,14 +64,12 @@ export class RepeatingSalesInvoiceEditComponent extends TestScope implements OnI
                   Frequency: x,
                   DayOfWeek: x,
                 },
-              }),
+              })
             );
           }
 
           if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.SalesInvoice({ object: this.data.associationId }),
-            );
+            pulls.push(pull.SalesInvoice({ objectId: this.data.associationId }));
           }
 
           return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));

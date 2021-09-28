@@ -2,24 +2,21 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { MetaService, RefreshService, PanelService, SessionService } from '@allors/angular/services/core';
-import { Organisation, PartyContactMechanism, Party, Currency, Person, OrganisationContactRelationship, ContactMechanism, CustomerRelationship, RequestForQuote, Quote } from '@allors/domain/generated';
-import { SaveService } from '@allors/angular/material/services/core';
-import { Meta } from '@allors/meta/generated';
-import { Filters, FetcherService, InternalOrganisationId } from '@allors/angular/base';
-import { PullRequest } from '@allors/protocol/system';
-import { Sort } from '@allors/data/system';
-import { IObject } from '@allors/domain/system';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, Currency, RequestForQuote, Quote } from '@allors/workspace/domain/default';
+import { PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+import { FetcherService } from '../../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'requestforquote-overview-detail',
   templateUrl: './requestforquote-overview-detail.component.html',
-  providers: [SessionService, PanelService]
+  providers: [SessionService, PanelService],
 })
 export class RequestForQuoteOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   request: RequestForQuote;
@@ -41,7 +38,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,
@@ -62,37 +59,36 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {
-        const m = this.m; const { pullBuilder: pull } = m; const x = {};
+        const m = this.m;
+        const { pullBuilder: pull } = m;
+        const x = {};
 
         pulls.push(
-          pull.RequestForQuote(
-            {
-              name: requestForQuotePullName,
-              object: this.panel.manager.id,
-              include: {
-                FullfillContactMechanism: {
-                  PostalAddress_Country: x
-                },
-                RequestItems: {
-                  Product: x,
-                },
-                Originator: x,
-                ContactPerson: x,
-                RequestState: x,
-                Currency: x,
-                CreatedBy: x,
-                LastModifiedBy: x,
-              }
-            }),
-          pull.RequestForQuote(
-            {
-              name: productQuotePullName,
-              object: this.panel.manager.id,
-              select: {
-                QuoteWhereRequest: x
-              }
-            }
-          )
+          pull.RequestForQuote({
+            name: requestForQuotePullName,
+            objectId: this.panel.manager.id,
+            include: {
+              FullfillContactMechanism: {
+                PostalAddress_Country: x,
+              },
+              RequestItems: {
+                Product: x,
+              },
+              Originator: x,
+              ContactPerson: x,
+              RequestState: x,
+              Currency: x,
+              CreatedBy: x,
+              LastModifiedBy: x,
+            },
+          }),
+          pull.RequestForQuote({
+            name: productQuotePullName,
+            objectId: this.panel.manager.id,
+            select: {
+              QuoteWhereRequest: x,
+            },
+          })
         );
       }
     };
@@ -106,7 +102,6 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
   }
 
   public ngOnInit(): void {
-
     // Maximized
     this.subscription = this.panel.manager.on$
       .pipe(
@@ -114,29 +109,28 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
           return this.panel.isExpanded;
         }),
         switchMap(() => {
-
           this.request = undefined;
 
-          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+          const m = this.allors.workspace.configuration.metaPopulation as M;
+          const { pullBuilder: pull } = m;
+          const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
-            pull.RequestForQuote(
-              {
-                objectId: id,
-                include: {
-                  Currency: x,
-                  Originator: x,
-                  ContactPerson: x,
-                  RequestState: x,
-                  FullfillContactMechanism: {
-                    PostalAddress_Country: x
-                  }
-                }
-              }
-            )
+            pull.RequestForQuote({
+              objectId: id,
+              include: {
+                Currency: x,
+                Originator: x,
+                ContactPerson: x,
+                RequestState: x,
+                FullfillContactMechanism: {
+                  PostalAddress_Country: x,
+                },
+              },
+            }),
           ];
 
           this.customersFilter = Filters.customersFilter(m, this.internalOrganisationId.value);
@@ -165,14 +159,10 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
   }
 
   public save(): void {
-
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.panel.toggle();
-      },
-        this.saveService.errorHandler
-      );
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.refreshService.refresh();
+      this.panel.toggle();
+    }, this.saveService.errorHandler);
   }
 
   get originatorIsPerson(): boolean {
@@ -186,14 +176,12 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
   }
 
   public partyContactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
-
     this.contactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.request.Originator.AddPartyContactMechanism(partyContactMechanism);
+    this.request.Originator.addPartyContactMechanism(partyContactMechanism);
     this.request.FullfillContactMechanism = partyContactMechanism.ContactMechanism;
   }
 
   public personAdded(person: Person): void {
-
     const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.request.Originator as Organisation;
     organisationContactRelationship.Contact = person;
@@ -203,7 +191,6 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
   }
 
   public originatorAdded(party: Party): void {
-
     const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
@@ -212,43 +199,41 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
   }
 
   private update(party: Party) {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.Party({
-        object: party.id,
+        objectId: party.id,
         select: {
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
-                PostalAddress_Country: x
-              }
-            }
-          }
+                PostalAddress_Country: x,
+              },
+            },
+          },
         },
       }),
       pull.Party({
-        object: party.id,
+        objectId: party.id,
         select: {
-          CurrentContacts: x
-        }
-      })
+          CurrentContacts: x,
+        },
+      }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      if (this.request.Originator !== this.previousOriginator) {
+        this.request.FullfillContactMechanism = null;
+        this.request.ContactPerson = null;
+        this.previousOriginator = this.request.Originator;
+      }
 
-        if (this.request.Originator !== this.previousOriginator) {
-          this.request.FullfillContactMechanism = null;
-          this.request.ContactPerson = null;
-          this.previousOriginator = this.request.Originator;
-        }
-
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-        this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-        this.contacts = loaded.collection<Person>(m.Person);
-      });
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.contacts = loaded.collection<Person>(m.Person);
+    });
   }
 }

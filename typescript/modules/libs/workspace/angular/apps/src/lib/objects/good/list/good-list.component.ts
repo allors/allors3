@@ -3,13 +3,11 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, NavigationService, MediaService } from '@allors/angular/services/core';
-import { ObjectService } from '@allors/angular/material/services/core';
-import { SearchFactory, FilterDefinition, Filter, TestScope, Action } from '@allors/angular/core';
-import { PullRequest } from '@allors/protocol/system';
-import { TableRow, Table, OverviewService, DeleteService, Sorter } from '@allors/angular/material/core';
-import { Good, ProductCategory, ProductIdentification, Brand, Model, NonUnifiedGood, UnifiedGood } from '@allors/domain/generated';
-import { And, Like, Contains, Exists } from '@allors/data/system';
+import { M } from '@allors/workspace/meta/default';
+import { NonUnifiedGood, Good, ProductCategory } from '@allors/workspace/domain/default';
+import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
 
 interface Row extends TableRow {
   object: Good;

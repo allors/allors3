@@ -1,13 +1,12 @@
 import { Component, Self, HostBinding } from '@angular/core';
 
-import { MetaService, NavigationService, PanelService, RefreshService, SessionService } from '@allors/angular/services/core';
-import { Organisation, PurchaseOrder } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TableRow, Table, DeleteService, OverviewService, MethodService } from '@allors/angular/material/core';
-import { TestScope, Action } from '@allors/angular/core';
-import { ObjectData, ObjectService } from '@allors/angular/material/services/core';
-import { PrintService, FetcherService } from '@allors/angular/base';
+import { M } from '@allors/workspace/meta/default';
+import { Organisation, InternalOrganisation, PurchaseOrder } from '@allors/workspace/domain/default';
+import { Action, DeleteService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
+import { PrintService } from '../../../../actions/print/print.service';
+import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 
 interface Row extends TableRow {
   object: PurchaseOrder;
@@ -24,7 +23,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'purchaseorder-overview-panel',
   templateUrl: './purchaseorder-overview-panel.component.html',
-  providers: [SessionService, PanelService]
+  providers: [SessionService, PanelService],
 })
 export class PurchaseOrderOverviewPanelComponent extends TestScope {
   internalOrganisation: Organisation;
@@ -52,7 +51,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    
+
     public objectService: ObjectService,
     public methodService: MethodService,
     public refreshService: RefreshService,
@@ -60,7 +59,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
     public overviewService: OverviewService,
     public deleteService: DeleteService,
     public printService: PrintService,
-    private fetcher: FetcherService,
+    private fetcher: FetcherService
   ) {
     super();
 
@@ -86,11 +85,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
         { name: 'shipmentState', sort },
         { name: 'paymentState', sort },
       ],
-      actions: [
-        this.overviewService.overview(),
-        this.printService.print(),
-        this.invoice
-      ],
+      actions: [this.overviewService.overview(), this.printService.print(), this.invoice],
       defaultAction: this.overviewService.overview(),
       autoSort: true,
       autoFilter: true,
@@ -118,20 +113,21 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
                 PurchaseOrderShipmentState: x,
                 PurchaseOrderPaymentState: x,
                 PrintDocument: {
-                  Media: x
+                  Media: x,
                 },
               },
-            }
-          }
-        }));
-  };
+            },
+          },
+        })
+      );
+    };
 
     this.panel.onPulled = (loaded) => {
       this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
       const purchaseOrders = loaded.collections[pullName] as PurchaseOrder[];
-      this.objects = purchaseOrders.filter(v => v.OrderedBy === this.internalOrganisation);
-      this.objects.sort((a, b) => (a.OrderNumber > b.OrderNumber) ? 1 : ((b.OrderNumber > a.OrderNumber) ? -1 : 0));
+      this.objects = purchaseOrders.filter((v) => v.OrderedBy === this.internalOrganisation);
+      this.objects.sort((a, b) => (a.OrderNumber > b.OrderNumber ? 1 : b.OrderNumber > a.OrderNumber ? -1 : 0));
 
       if (this.objects) {
         this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;

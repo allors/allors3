@@ -1,21 +1,17 @@
 import { Component, Self } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { MetaService, NavigationService, PanelService, RefreshService,  Invoked } from '@allors/angular/services/core';
-import { RequestForQuote, Quote } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { SaveService } from '@allors/angular/material/services/core';
-import { ActionTarget } from '@allors/angular/core';
-
+import { M } from '@allors/workspace/meta/default';
+import { RequestForQuote, Quote } from '@allors/workspace/domain/default';
+import { NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'requestforquote-overview-summary',
   templateUrl: './requestforquote-overview-summary.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class RequestForQuoteOverviewSummaryComponent {
-
   m: M;
 
   requestForQuote: RequestForQuote;
@@ -23,12 +19,12 @@ export class RequestForQuoteOverviewSummaryComponent {
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     public snackBar: MatSnackBar,
-    public navigation: NavigationService) {
-
+    public navigation: NavigationService
+  ) {
     this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     panel.name = 'summary';
@@ -37,38 +33,36 @@ export class RequestForQuoteOverviewSummaryComponent {
     const productQuotePullName = `${panel.name}_${this.m.ProductQuote.name}`;
 
     panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       pulls.push(
-        pull.RequestForQuote(
-          {
-            name: requestForQuotePullName,
-            object: this.panel.manager.id,
-            include: {
-              FullfillContactMechanism: {
-                                  PostalAddress_Country: x
-
-              },
-              RequestItems: {
-                Product: x,
-              },
-              Originator: x,
-              ContactPerson: x,
-              RequestState: x,
-              Currency: x,
-              CreatedBy: x,
-              LastModifiedBy: x,
-            }
-          }),
-        pull.RequestForQuote(
-          {
-            name: productQuotePullName,
-            object: this.panel.manager.id,
-            select: {
-              QuoteWhereRequest: x
-            }
-          }
-        )
+        pull.RequestForQuote({
+          name: requestForQuotePullName,
+          object: this.panel.manager.id,
+          include: {
+            FullfillContactMechanism: {
+              PostalAddress_Country: x,
+            },
+            RequestItems: {
+              Product: x,
+            },
+            Originator: x,
+            ContactPerson: x,
+            RequestState: x,
+            Currency: x,
+            CreatedBy: x,
+            LastModifiedBy: x,
+          },
+        }),
+        pull.RequestForQuote({
+          name: productQuotePullName,
+          object: this.panel.manager.id,
+          select: {
+            QuoteWhereRequest: x,
+          },
+        })
       );
     };
 
@@ -79,53 +73,37 @@ export class RequestForQuoteOverviewSummaryComponent {
   }
 
   public cancel(): void {
-
-    this.panel.manager.context.invoke(this.requestForQuote.Cancel)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
-      },
-      this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.requestForQuote.Cancel).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public reject(): void {
-
-    this.panel.manager.context.invoke(this.requestForQuote.Reject)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully rejected.', 'close', { duration: 5000 });
-      },
-      this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.requestForQuote.Reject).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully rejected.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public submit(): void {
-
-    this.panel.manager.context.invoke(this.requestForQuote.Submit)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully submitted.', 'close', { duration: 5000 });
-      },
-      this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.requestForQuote.Submit).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully submitted.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public hold(): void {
-
-    this.panel.manager.context.invoke(this.requestForQuote.Hold)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully held.', 'close', { duration: 5000 });
-      },
-      this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.requestForQuote.Hold).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully held.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   public createQuote(): void {
-
-    this.panel.manager.context.invoke(this.requestForQuote.CreateQuote)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.snackBar.open('Successfully created a quote.', 'close', { duration: 5000 });
-      },
-      this.saveService.errorHandler);
+    this.panel.manager.context.invoke(this.requestForQuote.CreateQuote).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully created a quote.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 }
-

@@ -1,11 +1,9 @@
 import { Component, Self } from '@angular/core';
 import { isBefore, isAfter } from 'date-fns';
 
-import { MetaService, NavigationService, PanelService } from '@allors/angular/services/core';
-import { SupplierOffering, Part, BasePrice, PriceComponent, ProductIdentificationType } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { Sort, Equals } from '@allors/data/system';
-import { ActionTarget } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Part, BasePrice, PriceComponent, SupplierOffering, ProductIdentificationType } from '@allors/workspace/domain/default';
+import { NavigationService, PanelService } from '@allors/workspace/angular/base';
 
 @Component({
   // tslint:disable-next-line:component-selector

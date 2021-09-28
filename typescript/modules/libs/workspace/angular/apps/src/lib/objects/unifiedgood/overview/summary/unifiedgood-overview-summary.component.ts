@@ -1,18 +1,16 @@
 import { Component, Self } from '@angular/core';
 
-import { MetaService, NavigationService, PanelService } from '@allors/angular/services/core';
-import { UnifiedGood } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-
+import { M } from '@allors/workspace/meta/default';
+import { UnifiedGood } from '@allors/workspace/domain/default';
+import { NavigationService, PanelService } from '@allors/workspace/angular/base';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'unifiedgood-overview-summary',
   templateUrl: './unifiedgood-overview-summary.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class UnifiedGoodOverviewSummaryComponent {
-
   m: M;
 
   good: UnifiedGood;
@@ -20,9 +18,9 @@ export class UnifiedGoodOverviewSummaryComponent {
 
   constructor(
     @Self() public panel: PanelService,
-    
-    public navigation: NavigationService) {
 
+    public navigation: NavigationService
+  ) {
     this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     panel.name = 'summary';
@@ -30,7 +28,9 @@ export class UnifiedGoodOverviewSummaryComponent {
     const pullName = `${panel.name}_${this.m.UnifiedGood.name}`;
 
     panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -43,8 +43,8 @@ export class UnifiedGoodOverviewSummaryComponent {
             Brand: x,
             Model: x,
             SuppliedBy: x,
-            ManufacturedBy: x
-          }
+            ManufacturedBy: x,
+          },
         })
       );
     };
@@ -53,9 +53,7 @@ export class UnifiedGoodOverviewSummaryComponent {
       this.good = loaded.objects[pullName] as UnifiedGood;
 
       if (this.good.SuppliedBy.length > 0) {
-        this.suppliers = this.good.SuppliedBy
-          .map(v => v.displayName)
-          .reduce((acc: string, cur: string) => acc + ', ' + cur);
+        this.suppliers = this.good.SuppliedBy.map((v) => v.displayName).reduce((acc: string, cur: string) => acc + ', ' + cur);
       }
     };
   }

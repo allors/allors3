@@ -3,29 +3,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { MetaService, RefreshService, NavigationService, PanelService, SessionService } from '@allors/angular/services/core';
-import {
-  Organisation,
-  Facility,
-  InventoryItemKind,
-  ProductType,
-  Brand,
-  Model,
-  ProductIdentificationType,
-  UnitOfMeasure,
-  PriceComponent,
-  Settings,
-  Part,
-  PartNumber,
-  PartCategory,
-  Locale,
-} from '@allors/domain/generated';
-import { SaveService } from '@allors/angular/material/services/core';
-import { Meta } from '@allors/meta/generated';
-import { FetcherService } from '@allors/angular/base';
-import { PullRequest } from '@allors/protocol/system';
-import { Sort, Equals } from '@allors/data/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Organisation, Part, PriceComponent, ProductIdentificationType, Facility, InventoryItemKind, ProductType, Brand, Model, PartNumber, UnitOfMeasure, Settings, PartCategory } from '@allors/workspace/domain/default';
+import { NavigationService, PanelService, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -169,9 +151,9 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
                 PriceComponentsWherePart: x,
               },
             }),
-            pull.UnitOfMeasure(),
-            pull.InventoryItemKind(),
-            pull.ProductIdentificationType(),
+            pull.UnitOfMeasure({}),
+            pull.InventoryItemKind({}),
+            pull.ProductIdentificationType({}),
             pull.Ownership({ sorting: [{ roleType: m.Ownership.Name }] }),
             pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
             pull.PartCategory({ sorting: [{ roleType: m.PartCategory.Name }] }),
@@ -248,7 +230,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
   }
 
   public modelAdded(model: Model): void {
-    this.selectedBrand.AddModel(model);
+    this.selectedBrand.addModel(model);
     this.models = this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
     this.selectedModel = model;
     this.allors.session.hasChanges = true;
@@ -295,7 +277,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
 
   private onSave() {
     this.selectedCategories.forEach((category: PartCategory) => {
-      category.AddPart(this.part);
+      category.addPart(this.part);
 
       const index = this.originalCategories.indexOf(category);
       if (index > -1) {

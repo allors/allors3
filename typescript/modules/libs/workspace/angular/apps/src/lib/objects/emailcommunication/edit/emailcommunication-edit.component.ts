@@ -3,27 +3,25 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, NavigationService } from '@allors/angular/services/core';
+import { M } from '@allors/workspace/meta/default';
 import {
-  EmailCommunication,
-  Party,
   Person,
   Organisation,
+  OrganisationContactRelationship,
+  Party,
+  InternalOrganisation,
   CommunicationEventPurpose,
   ContactMechanism,
-  EmailTemplate,
   CommunicationEventState,
   PartyContactMechanism,
-  EmailAddress,
-  OrganisationContactRelationship,
-} from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { InternalOrganisationId } from '@allors/angular/base';
-import { IObject, IObject } from '@allors/domain/system';
-import { Equals, Sort } from '@allors/data/system';
-import { TestScope } from '@allors/angular/core';
+  EmailCommunication,
+  EmailTemplate,
+} from '@allors/workspace/domain/default';
+import { NavigationService, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './emailcommunication-edit.component.html',
@@ -69,7 +67,9 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -78,7 +78,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
 
           let pulls = [
             pull.Organisation({
-              object: this.internalOrganisationId.value,
+              objectId: this.internalOrganisationId.value,
               name: 'InternalOrganisation',
               include: {
                 ActiveEmployees: {
@@ -132,7 +132,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
             pulls = [
               ...pulls,
               pull.Organisation({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
                 include: {
                   CurrentContacts: x,
                   CurrentPartyContactMechanisms: {
@@ -141,10 +141,10 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
                 },
               }),
               pull.Person({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
               }),
               pull.Person({
-                object: this.data.associationId,
+                objectId: this.data.associationId,
                 select: {
                   OrganisationContactRelationshipsWhereContact: {
                     Organisation: {
@@ -203,7 +203,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
 
         const contacts = new Set<Party>();
 
-        if (!!this.organisation) {
+        if (this.organisation) {
           contacts.add(this.organisation);
         }
 
@@ -211,15 +211,15 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
           internalOrganisation.ActiveEmployees.reduce((c, e) => c.add(e), contacts);
         }
 
-        if (!!this.organisation && this.organisation.CurrentContacts !== undefined) {
+        if (this.organisation && this.organisation.CurrentContacts !== undefined) {
           this.organisation.CurrentContacts.reduce((c, e) => c.add(e), contacts);
         }
 
-        if (!!this.person) {
+        if (this.person) {
           contacts.add(this.person);
         }
 
-        if (!!this.parties) {
+        if (this.parties) {
           this.parties.reduce((c, e) => c.add(e), contacts);
         }
 
@@ -235,8 +235,8 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
   }
 
   public fromEmailAdded(partyContactMechanism: PartyContactMechanism): void {
-    if (!!this.communicationEvent.FromParty) {
-      this.communicationEvent.FromParty.AddPartyContactMechanism(partyContactMechanism);
+    if (this.communicationEvent.FromParty) {
+      this.communicationEvent.FromParty.addPartyContactMechanism(partyContactMechanism);
     }
 
     const emailAddress = partyContactMechanism.ContactMechanism as EmailAddress;
@@ -246,8 +246,8 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
   }
 
   public toEmailAdded(partyContactMechanism: PartyContactMechanism): void {
-    if (!!this.communicationEvent.ToParty) {
-      this.communicationEvent.ToParty.AddPartyContactMechanism(partyContactMechanism);
+    if (this.communicationEvent.ToParty) {
+      this.communicationEvent.ToParty.addPartyContactMechanism(partyContactMechanism);
     }
 
     const emailAddress = partyContactMechanism.ContactMechanism as EmailAddress;
@@ -295,7 +295,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
 
     const pulls = [
       pull.Party({
-        object: party.id,
+        objectId: party.id,
         select: {
           PartyContactMechanisms: {
             include: {
@@ -327,7 +327,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
 
     const pulls = [
       pull.Party({
-        object: party.id,
+        objectId: party.id,
         select: {
           PartyContactMechanisms: {
             include: {

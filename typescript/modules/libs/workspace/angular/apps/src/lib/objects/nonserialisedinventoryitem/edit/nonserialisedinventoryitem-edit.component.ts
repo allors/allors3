@@ -1,43 +1,16 @@
 import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, Context, Saved, NavigationService } from '@allors/angular/services/core';
-import {
-  ElectronicAddress,
-  Enumeration,
-  Employment,
-  Person,
-  Party,
-  Organisation,
-  CommunicationEventPurpose,
-  FaceToFaceCommunication,
-  CommunicationEventState,
-  OrganisationContactRelationship,
-  InventoryItem,
-  InternalOrganisation,
-  InventoryItemTransaction,
-  InventoryTransactionReason,
-  Part,
-  Facility,
-  Lot,
-  SerialisedInventoryItem,
-  SerialisedItem,
-  NonSerialisedInventoryItemState,
-  SerialisedInventoryItemState,
-  NonSerialisedInventoryItem,
-  ContactMechanism,
-  LetterCorrespondence,
-  PartyContactMechanism,
-  PostalAddress,
-} from '@allors/domain/generated';
-import { PullRequest } from '@allors/protocol/system';
-import { Meta, ids } from '@allors/meta/generated';
-import { SaveService, ObjectData } from '@allors/angular/material/services/core';
-import { InternalOrganisationId, FetcherService } from '@allors/angular/base';
-import { IObject, IObject } from '@allors/domain/system';
-import { TestScope, Action, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { NonSerialisedInventoryItem } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './nonserialisedinventoryitem-edit.component.html',
@@ -55,7 +28,7 @@ export class NonSerialisedInventoryItemEditComponent extends TestScope implement
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<NonSerialisedInventoryItemEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,
@@ -67,22 +40,22 @@ export class NonSerialisedInventoryItemEditComponent extends TestScope implement
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id === undefined;
 
-          const pulls = [
-            this.fetcher.locales,
-          ];
+          const pulls = [this.fetcher.locales];
 
           if (!isCreate) {
             pulls.push(
               pull.NonSerialisedInventoryItem({
                 objectId: this.data.id,
-              }),
+              })
             );
           }
 

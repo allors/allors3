@@ -3,23 +3,21 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { MetaService, RefreshService, NavigationService, PanelService, SessionService } from '@allors/angular/services/core';
-import { Organisation, Facility, InternalOrganisation, Enumeration, Part, SerialisedItem, SerialisedInventoryItem, Locale } from '@allors/domain/generated';
-import { SaveService } from '@allors/angular/material/services/core';
-import { Meta } from '@allors/meta/generated';
-import { Filters, FetcherService, InternalOrganisationId } from '@allors/angular/base';
-import { PullRequest } from '@allors/protocol/system';
-import { Sort, Equals } from '@allors/data/system';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Locale, Organisation, Part, Facility, InternalOrganisation, SerialisedInventoryItem, SerialisedItem, Enumeration } from '@allors/workspace/domain/default';
+import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+
+import { FetcherService } from '../../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'serialiseditem-overview-detail',
   templateUrl: './serialiseditem-overview-detail.component.html',
-  providers: [PanelService, SessionService]
+  providers: [PanelService, SessionService],
 })
 export class SerialisedItemOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   serialisedItem: SerialisedItem;
@@ -40,7 +38,7 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
@@ -61,7 +59,6 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
     const pullName = `${this.panel.name}_${this.m.SerialisedItem.name}`;
 
     panel.onPull = (pulls) => {
-
       this.serialisedItem = undefined;
 
       if (this.panel.isCollapsed) {
@@ -85,7 +82,6 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
   }
 
   public ngOnInit(): void {
-
     // Maximized
     this.subscription = this.panel.manager.on$
       .pipe(
@@ -93,10 +89,11 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
           return this.panel.isExpanded;
         }),
         switchMap(() => {
-
           this.serialisedItem = undefined;
 
-          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+          const m = this.allors.workspace.configuration.metaPopulation as M;
+          const { pullBuilder: pull } = m;
+          const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -106,8 +103,8 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
                 SerialisedItemState: x,
                 SerialisedItemCharacteristics: {
                   SerialisedItemCharacteristicType: {
-                    UnitOfMeasure: x
-                  }
+                    UnitOfMeasure: x,
+                  },
                 },
                 LocalisedNames: {
                   Locale: x,
@@ -138,31 +135,31 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
                 PurchaseOrder: x,
                 SuppliedBy: x,
                 AssignedSuppliedBy: x,
-              }
+              },
             }),
             this.fetcher.internalOrganisation,
             this.fetcher.locales,
             pull.SerialisedItem({
               objectId: id,
               select: {
-                PartWhereSerialisedItem: x
-              }
+                PartWhereSerialisedItem: x,
+              },
             }),
             pull.SerialisedItem({
               objectId: id,
               select: {
                 SerialisedInventoryItemsWhereSerialisedItem: {
                   include: {
-                    Facility: x
-                  }
-                }
-              }
+                    Facility: x,
+                  },
+                },
+              },
             }),
             pull.InternalOrganisation({
               object: this.internalOrganisationId.value,
               select: {
-                CurrentSuppliers: x
-              }
+                CurrentSuppliers: x,
+              },
             }),
             pull.SerialisedItemState({
               predicate: { kind: 'Equals', propertyType: m.SerialisedItemState.IsActive, value: true },
@@ -185,7 +182,6 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
         })
       )
       .subscribe((loaded) => {
-
         this.allors.session.reset();
 
         this.currentSuppliers = loaded.collection<Organisation>(m.Organisation);
@@ -198,12 +194,11 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
         this.part = loaded.object<Part>(m.Part);
 
         const serialisedInventoryItems = loaded.collection<SerialisedInventoryItem>(m.SerialisedInventoryItem);
-        const inventoryItem = serialisedInventoryItems.find(v => v.Quantity === 1);
+        const inventoryItem = serialisedInventoryItems.find((v) => v.Quantity === 1);
         if (inventoryItem) {
           this.currentFacility = inventoryItem.Facility;
         }
       });
-
   }
 
   public ngOnDestroy(): void {
@@ -219,16 +214,12 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
   }
 
   public save(): void {
-
     // this.onSave();
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        this.refreshService.refresh();
-        this.panel.toggle();
-      },
-        this.saveService.errorHandler
-      );
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.refreshService.refresh();
+      this.panel.toggle();
+    }, this.saveService.errorHandler);
   }
 
   public update(): void {
@@ -236,17 +227,13 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
 
     this.onSave();
 
-    context
-      .save()
-      .subscribe(() => {
-        this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+    context.save().subscribe(() => {
+      this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   private onSave() {
-    this.part.AddSerialisedItem(this.serialisedItem);
+    this.part.addSerialisedItem(this.serialisedItem);
   }
 }

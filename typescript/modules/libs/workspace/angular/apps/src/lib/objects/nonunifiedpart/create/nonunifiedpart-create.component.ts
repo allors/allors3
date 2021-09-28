@@ -1,36 +1,17 @@
 import { Component, OnDestroy, OnInit, Self, Optional, Inject } from '@angular/core';
-import { Meta } from '@allors/meta/generated'
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { isBefore, isAfter } from 'date-fns';
 
-import { SessionService, MetaService, RefreshService } from '@allors/angular/services/core';
-import { PullRequest } from '@allors/protocol/system';
-import { ObjectData, SaveService } from '@allors/angular/material/services/core';
-import {
-  Organisation,
-  Facility,
-  ProductType,
-  ProductIdentificationType,
-  Settings,
-  Part,
-  SupplierRelationship,
-  InventoryItemKind,
-  SupplierOffering,
-  Brand,
-  Model,
-  PartNumber,
-  UnitOfMeasure,
-  PartCategory,
-  NonUnifiedPart,
-  Locale,
-} from '@allors/domain/generated';
-import { Equals, Sort } from '@allors/data/system';
-import { FetcherService } from '@allors/angular/base';
-import { IObject } from '@allors/domain/system';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { Organisation, Part, SupplierOffering, ProductIdentificationType, Facility, InventoryItemKind, ProductType, Brand, Model, PartNumber, UnitOfMeasure, Settings, PartCategory, NonUnifiedPart, SupplierRelationship } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
+
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './nonunifiedpart-create.component.html',
@@ -98,9 +79,9 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
             this.fetcher.locales,
             this.fetcher.Settings,
             this.fetcher.warehouses,
-            pull.UnitOfMeasure(),
-            pull.InventoryItemKind(),
-            pull.ProductIdentificationType(),
+            pull.UnitOfMeasure({}),
+            pull.InventoryItemKind({}),
+            pull.ProductIdentificationType({}),
             pull.Ownership({ sorting: [{ roleType: m.Ownership.Name }] }),
             pull.PartCategory({ sorting: [{ roleType: m.PartCategory.Name }] }),
             pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
@@ -158,7 +139,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
           this.partNumber = this.allors.session.create<PartNumber>(m.PartNumber);
           this.partNumber.ProductIdentificationType = partNumberType;
 
-          this.part.AddProductIdentification(this.partNumber);
+          this.part.addProductIdentification(this.partNumber);
         }
       });
   }
@@ -171,7 +152,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
   }
 
   public modelAdded(model: Model): void {
-    this.selectedBrand.AddModel(model);
+    this.selectedBrand.addModel(model);
     this.models = this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0));
     this.selectedModel = model;
   }
@@ -239,7 +220,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
 
   private onSave() {
     this.selectedCategories.forEach((category: PartCategory) => {
-      category.AddPart(this.part);
+      category.addPart(this.part);
     });
 
     this.part.Brand = this.selectedBrand;
