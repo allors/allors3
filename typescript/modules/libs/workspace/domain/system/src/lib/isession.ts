@@ -4,8 +4,8 @@ import { ISessionServices } from './services/isession-services';
 
 import { IObject } from './iobject';
 import { IWorkspace } from './iworkspace';
-import { IChangeSet } from './ichangeSet';
-import { IWorkspaceResult } from './iworkspaceResult';
+import { IChangeSet } from './ichange-set';
+import { IWorkspaceResult } from './iworkspace-result';
 
 export interface ISession {
   workspace: IWorkspace;

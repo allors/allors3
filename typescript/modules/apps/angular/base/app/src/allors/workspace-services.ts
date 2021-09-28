@@ -1,8 +1,9 @@
 import { IDerivationService, IRule, IWorkspace, IWorkspaceServices } from '@allors/workspace/domain/system';
 import { DerivationService, Engine } from '@allors/workspace/configuration/core';
-import { SessionServices } from './SessionServices';
 import { IAngularMetaService } from '@allors/workspace/angular/base';
 import { AngularMetaService } from '@allors/workspace/configuration/base';
+
+import { SessionServices } from './session-services';
 
 export class WorkspaceServices implements IWorkspaceServices {
   workspace: IWorkspace;

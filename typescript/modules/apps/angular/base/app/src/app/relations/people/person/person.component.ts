@@ -1,13 +1,14 @@
-import { TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
-import { Person, Locale } from '@allors/workspace/domain/default';
-import { IPullResult, Pull } from '@allors/workspace/domain/system';
-import { M } from '@allors/workspace/meta/default';
 import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+
+import { TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { Person, Locale } from '@allors/workspace/domain/default';
+import { IPullResult, Pull } from '@allors/workspace/domain/system';
+import { M } from '@allors/workspace/meta/default';
 
 @Component({
   templateUrl: './person.component.html',

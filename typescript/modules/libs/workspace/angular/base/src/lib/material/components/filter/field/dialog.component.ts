@@ -6,11 +6,11 @@ import { MatStepper } from '@angular/material/stepper';
 import { timer } from 'rxjs';
 
 import { assert, UnitTags } from '@allors/workspace/meta/system';
-
-import { Filter } from '../../../../components/filter/Filter';
-import { FilterFieldDefinition } from '../../../../components/filter/FilterFieldDefinition';
-import { FilterField } from '../../../../components/filter/FilterField';
 import { parameterizablePredicateObjectType } from '@allors/workspace/domain/system';
+
+import { Filter } from '../../../../components/filter/filter';
+import { FilterFieldDefinition } from '../../../../components/filter/filter-field-definition';
+import { FilterField } from '../../../../components/filter/filter-field';
 
 @Component({
   templateUrl: 'dialog.component.html',

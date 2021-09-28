@@ -1,6 +1,6 @@
-import { Composite } from './Composite';
-import { MetaObject } from './MetaObject';
-import { OperandType } from './OperandType';
+import { Composite } from './composite';
+import { MetaObject } from './meta-object';
+import { OperandType } from './operand-type';
 
 export interface MethodType extends MetaObject, OperandType {
   kind: 'MethodType';

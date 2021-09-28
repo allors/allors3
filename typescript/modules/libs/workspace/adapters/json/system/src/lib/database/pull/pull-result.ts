@@ -1,6 +1,6 @@
 import { IObject, IPullResult, ISession, IWorkspace, IUnit } from '@allors/workspace/domain/system';
 import { PullResponse } from '@allors/protocol/json/system';
-import { Result } from '../Result';
+import { Result } from '../result';
 import { AssociationType, Class, Interface, RoleType } from '@allors/workspace/meta/system';
 import { frozenEmptyMap } from '@allors/workspace/adapters/system';
 

@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
-import { IPullResult, Pull, Or } from '@allors/workspace/domain/system';
+import { IPullResult, Pull } from '@allors/workspace/domain/system';
 import { Organisation } from '@allors/workspace/domain/default';
 import { M } from '@allors/workspace/meta/default';
 

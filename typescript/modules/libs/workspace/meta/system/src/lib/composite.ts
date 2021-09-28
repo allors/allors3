@@ -1,10 +1,10 @@
-import { AssociationType } from './AssociationType';
-import { Class } from './Class';
-import { Interface } from './Interface';
-import { MethodType } from './MethodType';
-import { ObjectType } from './ObjectType';
-import { PropertyType } from './PropertyType';
-import { RoleType } from './RoleType';
+import { AssociationType } from './association-type';
+import { Class } from './class';
+import { Interface } from './interface';
+import { MethodType } from './method-type';
+import { ObjectType } from './object-type';
+import { PropertyType } from './property-type';
+import { RoleType } from './role-type';
 
 export interface Composite extends ObjectType {
   directSupertypes: Set<Interface>;

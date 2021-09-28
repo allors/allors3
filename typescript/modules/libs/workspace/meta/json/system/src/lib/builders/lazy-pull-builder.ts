@@ -2,7 +2,7 @@ import { MetaPopulation } from '@allors/workspace/meta/system';
 import { Filter, FlatPull, Pull, Result } from '@allors/workspace/domain/system';
 import { LazySelectBuilder } from './lazy-select-builder';
 import { LazyTreeBuilder } from './lazy-tree-builder';
-import { LazyResultBuilder } from './lazy-result-Builder';
+import { LazyResultBuilder } from './lazy-result-builder';
 
 export class LazyPullBuilder {
   constructor(metaPopulation: MetaPopulation) {

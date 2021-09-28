@@ -1,7 +1,7 @@
 import { ISession } from '../isession';
 import { Method } from '../method';
 
-import { IInvokeResult } from './pull/iinvoke-Result';
+import { IInvokeResult } from './pull/iinvoke-result';
 import { InvokeOptions } from './pull/invoke-options';
 import { IPullResult } from './pull/ipull-result';
 import { Procedure } from './pull/procedure';

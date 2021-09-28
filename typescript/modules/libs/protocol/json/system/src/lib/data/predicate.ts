@@ -1,6 +1,6 @@
-import { IUnit } from "@allors/workspace/domain/system";
-import { Extent } from "./Extent";
-import { PredicateKind } from "./predicate-kind";
+import { IUnit } from '@allors/workspace/domain/system';
+import { Extent } from './extent';
+import { PredicateKind } from './predicate-kind';
 
 export interface Predicate {
   /** kind */

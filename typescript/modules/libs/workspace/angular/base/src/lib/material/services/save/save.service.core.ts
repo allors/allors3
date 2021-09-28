@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 
-import { AllorsMaterialErrorDialogComponent } from './error/errordialog.component';
+import { AllorsMaterialErrorDialogComponent } from './error/error-dialog.component';
 
 import { SaveService } from './save.service';
 

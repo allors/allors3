@@ -6,7 +6,7 @@ import { IObject } from '@allors/workspace/domain/system';
 import { ObjectData } from '../../services/object/object.data';
 import { ObjectService } from '../../services/object/object.service';
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { IAngularMetaService } from '../../../meta/IAngularMetaService';
+import { IAngularMetaService } from '../../../meta/iangular-meta-service';
 
 @Component({
   // tslint:disable-next-line:component-selector

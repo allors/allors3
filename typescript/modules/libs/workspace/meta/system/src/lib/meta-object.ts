@@ -1,5 +1,5 @@
-import { Origin } from './Origin';
-import { MetaPopulation } from './MetaPopulation';
+import { Origin } from './origin';
+import { MetaPopulation } from './meta-population';
 
 export interface MetaObject {
   metaPopulation: MetaPopulation;

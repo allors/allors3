@@ -1,5 +1,5 @@
 import { Composite } from '@allors/workspace/meta/system';
-import { Node } from '../../data/Node';
+import { Node } from '../../data/node';
 import { IAssociationPattern } from './iassociation-pattern';
 import { IRolePattern } from './irole-pattern';
 

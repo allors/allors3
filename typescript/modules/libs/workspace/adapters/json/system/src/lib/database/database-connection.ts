@@ -3,8 +3,8 @@ import { Grant, Configuration, DatabaseConnection as SystemDatabaseConnection, I
 import { IWorkspace, Operations } from '@allors/workspace/domain/system';
 import { Class, MethodType, OperandType, RelationType } from '@allors/workspace/meta/system';
 import { DatabaseRecord } from './database-record';
-import { ResponseContext } from './Security/response-context';
-import { Workspace } from '../workspace/Workspace';
+import { ResponseContext } from './security/response-context';
+import { Workspace } from '../workspace/workspace';
 
 export class DatabaseConnection extends SystemDatabaseConnection {
   private recordsById: Map<number, DatabaseRecord>;

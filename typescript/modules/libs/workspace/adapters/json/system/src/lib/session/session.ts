@@ -3,8 +3,8 @@ import { IObject, ISessionServices } from '@allors/workspace/domain/system';
 import { Class, Origin } from '@allors/workspace/meta/system';
 import { DatabaseConnection } from '../database/database-connection';
 import { DatabaseRecord } from '../database/database-record';
-import { Workspace } from '../workspace/Workspace';
-import { Strategy } from './Strategy';
+import { Workspace } from '../workspace/workspace';
+import { Strategy } from './strategy';
 
 export class Session extends SystemSession {
   database: DatabaseConnection;

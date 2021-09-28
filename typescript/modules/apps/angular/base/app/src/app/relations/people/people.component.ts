@@ -7,7 +7,8 @@ import { Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
-import { switchMap, scan, filter } from 'rxjs/operators';
+import { switchMap, scan } from 'rxjs/operators';
+
 import { AllorsMaterialDialogService, Filter, MediaService, NavigationService, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { Person } from '@allors/workspace/domain/default';
 import { SessionService } from '@allors/workspace/angular/core';

@@ -10,7 +10,6 @@ import { RadioGroupOption, SaveService, SearchFactory, TestScope } from '@allors
 import { M } from '@allors/workspace/meta/default';
 import { Data, Organisation, Person, Locale } from '@allors/workspace/domain/default';
 import { IPullResult } from '@allors/workspace/domain/system';
-import { LocalisedTextText } from '../../../../../../../../libs/workspace/meta/base/src/lib/generated/m.g';
 
 @Component({
   templateUrl: './form.component.html',

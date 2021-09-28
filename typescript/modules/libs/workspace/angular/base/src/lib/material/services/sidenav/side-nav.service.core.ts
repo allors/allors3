@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
-import { AllorsMaterialSideNavService } from './sidenav.service';
+import { AllorsMaterialSideNavService } from './side-nav.service';
 
 @Injectable()
 export class AllorsMaterialSideNavServiceCore extends AllorsMaterialSideNavService {

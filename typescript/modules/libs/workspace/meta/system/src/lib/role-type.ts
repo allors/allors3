@@ -1,6 +1,6 @@
-import { AssociationType } from './AssociationType';
-import { PropertyType } from './PropertyType';
-import { RelationType } from './RelationType';
+import { AssociationType } from './association-type';
+import { PropertyType } from './property-type';
+import { RelationType } from './relation-type';
 
 export interface RoleType extends PropertyType {
   readonly kind: 'RoleType';

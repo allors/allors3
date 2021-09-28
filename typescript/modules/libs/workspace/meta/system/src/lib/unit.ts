@@ -1,4 +1,4 @@
-import { ObjectType } from './ObjectType';
+import { ObjectType } from './object-type';
 
 export interface Unit extends ObjectType {
   readonly kind: 'Unit';

@@ -1,6 +1,6 @@
-import { Origin } from './Origin';
-import { ObjectType } from './ObjectType';
-import { OperandType } from './OperandType';
+import { Origin } from './origin';
+import { ObjectType } from './object-type';
+import { OperandType } from './operand-type';
 
 export interface PropertyType extends OperandType {
   isRoleType: boolean;

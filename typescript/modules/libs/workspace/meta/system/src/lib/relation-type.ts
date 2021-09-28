@@ -1,7 +1,7 @@
-import { Multiplicity } from './Multiplicity';
-import { AssociationType } from './AssociationType';
-import { MetaObject } from './MetaObject';
-import { RoleType } from './RoleType';
+import { Multiplicity } from './multiplicity';
+import { AssociationType } from './association-type';
+import { MetaObject } from './meta-object';
+import { RoleType } from './role-type';
 
 export interface RelationType extends MetaObject {
   readonly kind: 'RelationType';

@@ -1,4 +1,4 @@
-import { Composite } from './Composite';
+import { Composite } from './composite';
 
 export interface Interface extends Composite {
   readonly kind: 'Interface';

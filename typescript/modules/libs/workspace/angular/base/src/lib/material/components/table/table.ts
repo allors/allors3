@@ -6,7 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 
 import { IObject } from '@allors/workspace/domain/system';
 
-import { Action } from '../../../components/actions/Action';
+import { Action } from '../../../components/actions/action';
 
 import { BaseTable } from './base-table';
 import { TableConfig } from './table-config';

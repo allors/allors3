@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 
-import { AllorsMaterialSideNavService } from '../../services/sidenav/sidenav.service';
+import { AllorsMaterialSideNavService } from '../../services/sidenav/side-nav.service';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'a-mat-sidenavtoggle',
-  templateUrl: './sidenavtoggle.component.html',
+  templateUrl: './side-nav-toggle.component.html',
 })
 export class AllorsMaterialSideNavToggleComponent {
 

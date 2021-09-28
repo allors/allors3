@@ -8,7 +8,7 @@ export { AllorsFocusService } from './lib/services/focus/focus.service';
 export { MediaService } from './lib/services/media/media.service';
 export { NavigationService } from './lib/services/navigation/navigation.service';
 export { PanelService } from './lib/services/panel/panel.service';
-export { PanelManagerService } from './lib/services/panel/panelmanager.service';
+export { PanelManagerService } from './lib/services/panel/panel-manager.service';
 export { RefreshService } from './lib/services/refresh/refresh.service';
 export { SessionState } from './lib/services/state/session-state';
 export { SingletonId } from './lib/services/state/singleton-id';
@@ -67,7 +67,7 @@ export { OBJECT_CREATE_TOKEN, OBJECT_EDIT_TOKEN } from './lib/material/services/
 
 export { SaveService } from './lib/material/services/save/save.service';
 
-export { AllorsMaterialSideNavService } from './lib/material/services/sidenav/sidenav.service';
+export { AllorsMaterialSideNavService } from './lib/material/services/sidenav/side-nav.service';
 
 export { AllorsMaterialAssociationAutoCompleteComponent } from './lib/material/components/association/autocomplete/autocomplete.component';
 

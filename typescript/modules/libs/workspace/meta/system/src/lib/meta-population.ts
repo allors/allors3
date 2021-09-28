@@ -1,10 +1,10 @@
-import { Class } from './Class';
-import { Interface } from './Interface';
-import { MetaObject } from './MetaObject';
-import { MethodType } from './MethodType';
-import { Unit } from './Unit';
-import { RelationType } from './RelationType';
-import { Composite } from './Composite';
+import { Class } from './class';
+import { Interface } from './interface';
+import { MetaObject } from './meta-object';
+import { MethodType } from './method-type';
+import { Unit } from './unit';
+import { RelationType } from './relation-type';
+import { Composite } from './composite';
 
 export interface MetaPopulation {
   readonly kind: 'MetaPopulation';

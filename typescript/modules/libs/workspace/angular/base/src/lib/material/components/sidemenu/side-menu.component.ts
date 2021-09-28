@@ -1,6 +1,7 @@
 import { Input, Component } from '@angular/core';
-import { SideMenuItem } from './sidemenuitem';
 import { Router } from '@angular/router';
+
+import { SideMenuItem } from './side-menu-item';
 
 @Component({
   selector: 'a-mat-sidemenu',

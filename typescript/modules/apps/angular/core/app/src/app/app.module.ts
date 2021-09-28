@@ -8,17 +8,18 @@ import { Configuration, IdGenerator, PrototypeObjectFactory, ServicesBuilder } f
 import { DatabaseConnection, ReactiveDatabaseClient } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { M } from '@allors/workspace/meta/default';
+import { ruleBuilder } from '@allors/workspace/derivations/core-custom';
+
+import { AngularClient } from '../allors/angular-client';
+import { WorkspaceServices } from '../allors/workspace-services';
+import { environment } from '../environments/environment';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { QueryComponent } from './query/query.component';
 import { FetchComponent } from './fetch/fetch.component';
-import { environment } from '../environments/environment';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { AngularClient } from '../allors/AngularClient';
-import { WorkspaceServices } from '../allors/WorkspaceServices';
-import { M } from '@allors/workspace/meta/default';
-import { ruleBuilder } from '@allors/workspace/derivations/core-custom';
 
 export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
   return async () => {

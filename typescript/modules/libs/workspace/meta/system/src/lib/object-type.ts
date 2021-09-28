@@ -1,4 +1,4 @@
-import { MetaObject } from './MetaObject';
+import { MetaObject } from './meta-object';
 
 export interface ObjectType extends MetaObject {
   singularName: string;

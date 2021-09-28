@@ -1,13 +1,14 @@
-import { SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
-import { Organisation, Person } from '@allors/workspace/domain/default';
-import { IObject, IPullResult } from '@allors/workspace/domain/system';
-import { M } from '@allors/workspace/meta/default';
 import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+
+import { SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { Organisation, Person } from '@allors/workspace/domain/default';
+import { IObject, IPullResult } from '@allors/workspace/domain/system';
+import { M } from '@allors/workspace/meta/default';
 
 @Component({
   templateUrl: './organisation.component.html',

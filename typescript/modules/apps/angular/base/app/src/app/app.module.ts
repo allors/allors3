@@ -13,14 +13,8 @@ import { Configuration, IdGenerator, PrototypeObjectFactory, ServicesBuilder } f
 import { DatabaseConnection, ReactiveDatabaseClient } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
-import { WorkspaceServices } from '../allors/WorkspaceServices';
 import { M } from '@allors/workspace/meta/default';
 import { ruleBuilder } from '@allors/workspace/derivations/base-custom';
-
-import { AuthorizationService } from './auth/authorization.service';
-import { AngularClient } from '../allors/AngularClient';
-import { AppComponent } from './app.component';
-import { environment } from '../environments/environment';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -46,6 +40,12 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
+
+import { WorkspaceServices } from '../allors/workspace-services';
+import { AngularClient } from '../allors/angular-client';
+import { AuthorizationService } from './auth/authorization.service';
+import { AppComponent } from './app.component';
+import { environment } from '../environments/environment';
 
 import {
   DateConfig,
@@ -123,6 +123,7 @@ import { PersonOverviewComponent } from './relations/people/person/person-overvi
 import { PersonComponent } from './relations/people/person/person.component';
 import { PeopleComponent } from './relations/people/people.component';
 import { FormComponent } from './tests/form/form.component';
+
 import { configure } from './configure';
 
 export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {

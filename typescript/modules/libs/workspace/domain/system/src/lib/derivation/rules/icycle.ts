@@ -1,4 +1,4 @@
-import { IChangeSet } from "../../ichangeSet";
+import { IChangeSet } from "../../ichange-set";
 import { ISession } from "../../isession";
 import { IValidation } from "../ivalidation";
 

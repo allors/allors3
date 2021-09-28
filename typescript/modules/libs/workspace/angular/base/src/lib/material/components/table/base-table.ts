@@ -8,9 +8,9 @@ import { BehaviorSubject } from 'rxjs';
 
 import { IObject } from '@allors/workspace/domain/system';
 
-import { Action } from '../../../components/actions/Action';
+import { Action } from '../../../components/actions/action';
 import { Column } from './column';
-import { TableRow } from './TableRow';
+import { TableRow } from './table-row';
 
 export interface BaseTable {
   columns: Column[];
