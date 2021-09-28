@@ -146,7 +146,7 @@ export class OrderAdjustmentOverviewPanelComponent extends TestScope {
       this.table.data = this.objects.map((v) => {
         return {
           object: v,
-          adjustment: v.objectType.name,
+          adjustment: v.strategy.cls.singularName,
           amount: v.Amount,
           percentage: v.Percentage,
         } as Row;

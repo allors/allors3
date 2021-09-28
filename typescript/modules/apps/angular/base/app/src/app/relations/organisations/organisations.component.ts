@@ -52,10 +52,10 @@ export class OrganisationsComponent extends TestScope implements OnInit, OnDestr
   public ngOnInit(): void {
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: p } = m;
+
     const angularMeta = this.allors.workspace.services.angularMetaService;
     const angularOrganisation = angularMeta.for(m.Organisation);
-
-    this.filter = angularOrganisation.filter ?? new Filter(angularOrganisation.filterDefinition);
+    this.filter = angularOrganisation.filter ??= new Filter(angularOrganisation.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(

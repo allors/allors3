@@ -186,7 +186,7 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
         this.locales = loaded.collection<Locale>(m.Locale);
         this.productFeatureApplicabilities = loaded.collection<ProductFeatureApplicability>(m.ProductFeatureApplicability);
-        this.productDimensions = this.productFeatureApplicabilities.map((v) => v.ProductFeature).filter((v) => v.objectType.name === this.m.ProductDimension.name) as ProductDimension[];
+        this.productDimensions = this.productFeatureApplicabilities.map((v) => v.ProductFeature).filter((v) => v.strategy.cls.singularName === this.m.ProductDimension.name) as ProductDimension[];
 
         const goodNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
 

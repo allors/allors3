@@ -143,7 +143,7 @@ export class PriceComponentOverviewPanelComponent extends TestScope implements O
     this.table.data = this.priceComponents.map((v) => {
       return {
         object: v,
-        type: v.objectType.name,
+        type: v.strategy.cls.singularName,
         price: v.Currency.IsoCode + ' ' + v.Price,
         from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
         through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',

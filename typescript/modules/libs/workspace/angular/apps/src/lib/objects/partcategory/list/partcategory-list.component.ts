@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { PartCategory } from '@allors/workspace/domain/default';
+import { displayName, PartCategory } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -137,8 +137,8 @@ export class PartCategoryListComponent extends TestScope implements OnInit, OnDe
           return {
             object: v,
             name: v.Name,
-            primaryParent: v.PrimaryParent && v.PrimaryParent.displayName,
-            secondaryParents: v.SecondaryParents.map((w) => w.displayName).join(', '),
+            primaryParent: v.PrimaryParent && displayName(v.PrimaryParent),
+            secondaryParents: v.SecondaryParents.map((w) => displayName(w)).join(', '),
           } as Row;
         });
       });

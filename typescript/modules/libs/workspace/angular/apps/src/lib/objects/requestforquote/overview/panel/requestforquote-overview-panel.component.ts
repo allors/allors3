@@ -132,7 +132,7 @@ export class RequestForQuoteOverviewPanelComponent extends TestScope implements 
           return {
             object: v,
             number: v.RequestNumber,
-            customer: v.Originator && v.Originator.displayName,
+            customer: v.Originator && displayName(v.Originator),
             state: v.RequestState ? v.RequestState.Name : '',
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
           } as Row;

@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { InternalOrganisation, Organisation } from '@allors/workspace/domain/default';
+import { displayAddress, displayAddress2, displayAddress3, displayName, displayPhone, InternalOrganisation, Organisation } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -121,18 +121,18 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
       .subscribe((loaded) => {
         this.allors.session.reset();
 
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         const organisations = loaded.collection<Organisation>(m.Organisation);
 
         this.table.total = loaded.value('Organisations_total') as number;
         this.table.data = organisations.map((v) => {
           return {
             object: v,
-            name: v.displayName,
-            street: v.displayAddress,
-            locality: v.displayAddress2,
-            country: v.displayAddress3,
-            phone: v.displayPhone,
+            name: displayName(v),
+            street: displayAddress(v),
+            locality: displayAddress2(v),
+            country: displayAddress3(v),
+            phone: displayPhone(v),
             isCustomer: v.CustomerRelationshipsWhereCustomer.length > 0 ? 'Yes' : 'No',
             isSupplier: v.SupplierRelationshipsWhereSupplier.length > 0 ? 'Yes' : 'No',
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),

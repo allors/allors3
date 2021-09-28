@@ -115,7 +115,7 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
         this.table.data = people.map((v) => {
           return {
             object: v,
-            name: v.displayName,
+            name: displayName(v),
             email: v.displayEmail,
             phone: v.displayPhone,
             isCustomer: v.CustomerRelationshipsWhereCustomer.length > 0 ? 'Yes' : 'No',

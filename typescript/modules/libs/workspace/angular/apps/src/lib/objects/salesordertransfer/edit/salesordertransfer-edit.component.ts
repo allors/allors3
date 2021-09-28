@@ -85,7 +85,7 @@ export class SalesOrderTransferEditComponent extends TestScope implements OnInit
         this.container = loaded.objects.SalesInvoice || loaded.objects.SalesOrder;
         this.object = loaded.object<SalesTerm>(m.SalesTerm);
         this.termTypes = loaded.collection<TermType>(m.TermType);
-        this.termTypes = this.termTypes.filter((v) => v.objectType.name === `${objectType.name}Type`);
+        this.termTypes = this.termTypes.filter((v) => v.strategy.cls.singularName === `${objectType.name}Type`);
 
         if (create) {
           this.title = 'Add Sales Term';

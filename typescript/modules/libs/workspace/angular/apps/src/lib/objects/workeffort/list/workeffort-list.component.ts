@@ -150,7 +150,7 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
               object: v,
               number: v.WorkEffortNumber,
               name: v.Name,
-              type: v.objectType.name,
+              type: v.strategy.cls.singularName,
               state: v.WorkEffortState ? v.WorkEffortState.Name : '',
               customer: v.Customer ? v.Customer.displayName : '',
               executedBy: v.ExecutedBy ? v.ExecutedBy.displayName : '',

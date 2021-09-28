@@ -139,7 +139,7 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
             return {
               object: v,
               number: `${v.RequestNumber}`,
-              from: v.Originator && v.Originator.displayName,
+              from: v.Originator && displayName(v.Originator),
               state: `${v.RequestState && v.RequestState.Name}`,
               description: `${v.Description || ''}`,
               responseRequired: v.RequiredResponseDate && format(new Date(v.RequiredResponseDate), 'dd-MM-yyyy'),

@@ -11,6 +11,7 @@ npm install -D @nrwl/angular
 npm install @angular/cdk
 npm install @angular/material
 npm install bootstrap@4.6.0
+npm install common-tags
 npm install date-fns
 npm install easymde
 npm install jsnlog

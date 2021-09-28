@@ -53,7 +53,7 @@ export class UnifiedGoodOverviewSummaryComponent {
       this.good = loaded.objects[pullName] as UnifiedGood;
 
       if (this.good.SuppliedBy.length > 0) {
-        this.suppliers = this.good.SuppliedBy.map((v) => v.displayName).reduce((acc: string, cur: string) => acc + ', ' + cur);
+        this.suppliers = this.good.SuppliedBy.map((v) => displayName(v)).reduce((acc: string, cur: string) => acc + ', ' + cur);
       }
     };
   }

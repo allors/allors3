@@ -63,10 +63,10 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
   public ngOnInit(): void {
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: p } = m;
+
     const angularMeta = this.allors.workspace.services.angularMetaService;
     const angularPerson = angularMeta.for(m.Person);
-
-    this.filter = angularPerson.filter = angularPerson.filter ?? new Filter(angularPerson.filterDefinition);
+    this.filter = angularPerson.filter = angularPerson.filter ??= new Filter(angularPerson.filterDefinition);
 
     this.subscription = combineLatest([this.refresh$, this.filter.fields$, this.sort$, this.pager$])
       .pipe(

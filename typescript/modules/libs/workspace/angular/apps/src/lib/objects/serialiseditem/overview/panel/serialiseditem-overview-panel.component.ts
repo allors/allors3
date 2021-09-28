@@ -168,7 +168,7 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
             return {
               object: v,
               number: v.ItemNumber,
-              name: v.displayName,
+              name: displayName(v),
               availability: v.SerialisedItemAvailability ? v.SerialisedItemAvailability.Name : '',
               onWebsite: v.AvailableForSale ? 'Yes' : 'No',
               ownership: v.Ownership ? v.Ownership.Name : '',

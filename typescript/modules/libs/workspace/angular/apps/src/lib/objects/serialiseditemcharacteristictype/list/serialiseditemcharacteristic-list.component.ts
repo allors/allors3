@@ -71,7 +71,10 @@ export class SerialisedItemCharacteristicListComponent extends TestScope impleme
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.SerialisedItemCharacteristic.filter = m.SerialisedItemCharacteristic.filter ?? new Filter(m.SerialisedItemCharacteristic.filterDefinition);
+
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularSerialisedItemCharacteristic = angularMeta.for(m.SerialisedItemCharacteristic);
+    this.filter = angularSerialisedItemCharacteristic.filter ??= new Filter(angularSerialisedItemCharacteristic.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(

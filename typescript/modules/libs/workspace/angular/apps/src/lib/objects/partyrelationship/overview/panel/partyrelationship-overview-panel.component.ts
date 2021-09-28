@@ -2,7 +2,7 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { format } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { PartyRelationship } from '@allors/workspace/domain/default';
+import { displayName, PartyRelationship } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 
 interface Row extends TableRow {
@@ -132,10 +132,10 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
       this.objects = loaded.collection<PartyRelationship>(pullName);
 
       this.currentPartyRelationships = loaded.collection<PartyRelationship>(active);
-      this.currentPartyRelationships = this.currentPartyRelationships.filter((v) => v.objectType.name !== this.m.PartyFinancialRelationship.name);
+      this.currentPartyRelationships = this.currentPartyRelationships.filter((v) => v.strategy.cls.singularName !== this.m.PartyFinancialRelationship.name);
 
       this.inactivePartyRelationships = loaded.collection<PartyRelationship>(inactive);
-      this.inactivePartyRelationships = this.inactivePartyRelationships.filter((v) => v.objectType.name !== this.m.PartyFinancialRelationship.name);
+      this.inactivePartyRelationships = this.inactivePartyRelationships.filter((v) => v.strategy.cls.singularName !== this.m.PartyFinancialRelationship.name);
 
       this.allPartyRelationships = [];
 
@@ -158,8 +158,8 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
     this.table.data = this.partyRelationships.map((v: PartyRelationship) => {
       return {
         object: v,
-        type: v.objectType.name,
-        parties: v.Parties.map((w) => w.displayName).join(', '),
+        type: v.strategy.cls.singularName,
+        parties: v.Parties.map((w) => displayName(w)).join(', '),
         from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
         through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
       } as Row;

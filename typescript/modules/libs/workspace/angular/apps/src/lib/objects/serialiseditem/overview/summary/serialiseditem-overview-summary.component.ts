@@ -3,6 +3,7 @@ import { Component, Self } from '@angular/core';
 import { M } from '@allors/workspace/meta/default';
 import { Part, SerialisedItem, RequestForQuote, ProductQuote, SalesOrder, CustomerShipment, SalesInvoice } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -21,12 +22,11 @@ export class SerialisedItemOverviewSummaryComponent {
   shipment: CustomerShipment;
   invoice: SalesInvoice;
 
-  constructor(
-    @Self() public panel: PanelService,
-
-    public navigation: NavigationService
-  ) {
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+  constructor(@Self() public panel: PanelService, public workspaceService: WorkspaceService, public navigation: NavigationService) {
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     panel.name = 'summary';
 
@@ -34,10 +34,6 @@ export class SerialisedItemOverviewSummaryComponent {
     const partPullName = `${panel.name}_${this.m.Part.tag}`;
 
     panel.onPull = (pulls) => {
-      const m = this.m;
-      const { pullBuilder: pull } = m;
-      const x = {};
-
       const id = this.panel.manager.id;
 
       pulls.push(

@@ -30,6 +30,7 @@ import {
   ShipmentState,
   PurchaseOrderState,
   Product,
+  UnifiedGood,
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
@@ -125,7 +126,9 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
   }
 
   public ngOnInit(): void {
-    const m = this.m;  const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
@@ -582,7 +585,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
     ];
 
     this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
-      const part = (loaded.objects.UnifiedGood || loaded.objects.Part) as Part;
+      const part = loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.Part);
 
       this.isSerialized = part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 
@@ -637,7 +640,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
   private onSave() {
     if (this.selectedSalesOrderItem) {
       if (this.orderShipment === undefined) {
-        this.orderShipment = this.allors.session.create<OrderShipment>(m.OrderShipment);
+        this.orderShipment = this.allors.session.create<OrderShipment>(this.m.OrderShipment);
       }
 
       this.orderShipment.OrderItem = this.selectedSalesOrderItem;

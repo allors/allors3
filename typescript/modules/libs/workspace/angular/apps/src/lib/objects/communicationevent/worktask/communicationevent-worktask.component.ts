@@ -5,58 +5,10 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import {
-  WorkTask,
-  Good,
-  InternalOrganisation,
-  NonUnifiedGood,
-  Part,
-  PriceComponent,
-  Brand,
-  Model,
-  Locale,
-  Carrier,
-  SerialisedItemCharacteristicType,
-  WorkTask,
-  ContactMechanism,
-  Person,
-  Organisation,
-  PartyContactMechanism,
-  OrganisationContactRelationship,
-  Catalogue,
-  Singleton,
-  ProductCategory,
-  Scope,
-  CommunicationEvent,
-  WorkEffortState,
-  Priority,
-  WorkEffortPurpose,
-  WorkEffortPartyAssignment,
-} from '@allors/workspace/domain/default';
-import {
-  Action,
-  DeleteService,
-  EditService,
-  Filter,
-  FilterDefinition,
-  MediaService,
-  NavigationService,
-  ObjectData,
-  ObjectService,
-  OverviewService,
-  PanelService,
-  RefreshService,
-  SaveService,
-  SearchFactory,
-  Sorter,
-  Table,
-  TableRow,
-  TestScope,
-} from '@allors/workspace/angular/base';
-import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
-import { And } from '@allors/workspace/domain/system';
+import { InternalOrganisation, WorkTask, Person, CommunicationEvent, WorkEffortState, Priority, WorkEffortPurpose, WorkEffortPartyAssignment } from '@allors/workspace/domain/default';
+import { RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
 
-import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
@@ -136,7 +88,7 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
       )
       .subscribe((loaded) => {
         this.subTitle = 'edit work task';
-        this.workTask = loaded.object<Worktask>(m.Worktask);
+        this.workTask = loaded.object<WorkTask>(m.WorkTask);
         const communicationEvent: CommunicationEvent = loaded.object<CommunicationEvent>(m.CommunicationEvent);
 
         if (!this.workTask) {

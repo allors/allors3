@@ -105,7 +105,7 @@ export class ContactMechanismOverviewPanelComponent extends TestScope implements
         this.table.data = this.objects.map((v) => {
           return {
             object: v,
-            contact: v.displayName,
+            contact: displayName(v),
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
           } as Row;
         });

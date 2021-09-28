@@ -5,52 +5,9 @@ import { switchMap, scan } from 'rxjs/operators';
 import { format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import {
-  Good,
-  InternalOrganisation,
-  NonUnifiedGood,
-  Part,
-  PriceComponent,
-  Brand,
-  Model,
-  Locale,
-  Carrier,
-  SerialisedItemCharacteristicType,
-  WorkTask,
-  ContactMechanism,
-  Person,
-  Organisation,
-  PartyContactMechanism,
-  OrganisationContactRelationship,
-  Catalogue,
-  Singleton,
-  ProductCategory,
-  Scope,
-  CommunicationEvent,
-} from '@allors/workspace/domain/default';
-import {
-  Action,
-  DeleteService,
-  EditService,
-  Filter,
-  FilterDefinition,
-  MediaService,
-  NavigationService,
-  ObjectData,
-  OverviewService,
-  RefreshService,
-  SaveService,
-  SearchFactory,
-  Sorter,
-  Table,
-  TableRow,
-  TestScope,
-} from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
-import { And } from '@allors/workspace/domain/system';
-
-import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { CommunicationEvent, displayName } from '@allors/workspace/domain/default';
 
 interface Row extends TableRow {
   object: CommunicationEvent;
@@ -158,10 +115,10 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
         this.table.data = communicationEvents.map((v) => {
           return {
             object: v,
-            type: v.objectType.name,
+            type: v.strategy.cls.singularName,
             state: v.CommunicationEventState && v.CommunicationEventState.Name,
             subject: v.Subject,
-            involved: v.InvolvedParties.map((w) => w.displayName).join(', '),
+            involved: v.InvolvedParties.map((w) => displayName(w)).join(', '),
             started: v.ActualStart && format(new Date(v.ActualStart), 'dd-MM-yyyy'),
             ended: v.ActualEnd && format(new Date(v.ActualEnd), 'dd-MM-yyyy'),
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),

@@ -95,7 +95,7 @@ export class SerialisedItemCharacteristicEditComponent extends TestScope impleme
       .subscribe(({ loaded, isCreate }) => {
         this.allors.session.reset();
 
-        this.singleton = loaded.collections.Singletons[0] as Singleton;
+        this.singleton = loaded.collection<Singleton>(m.Singleton)[0];
         this.uoms = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
         this.timeFrequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
         this.allUoms = this.uoms.concat(this.timeFrequencies).sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
