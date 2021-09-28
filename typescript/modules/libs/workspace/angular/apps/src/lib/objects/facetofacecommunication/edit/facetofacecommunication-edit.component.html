@@ -1,28 +1,23 @@
 <form *ngIf="communicationEvent" #form="ngForm" (submit)="save()" novalidate>
   <h1></h1>
 
-  <h3 mat-dialog-title>{{title}}</h3>
+  <h3 mat-dialog-title>{{ title }}</h3>
 
   <mat-dialog-content>
     <div class="container-fluid">
-
       <div class="row">
-        <a-mat-select class="col-md" [object]="communicationEvent" [roleType]="m.CommunicationEvent.CommunicationEventState"
-          [options]="eventStates" display="Name"></a-mat-select>
-          <a-mat-select class="col-md" [object]="communicationEvent" [roleType]="m.CommunicationEvent.EventPurposes"
-          [options]="purposes" display="Name"></a-mat-select>
+        <a-mat-select class="col-md" [object]="communicationEvent" [roleType]="m.CommunicationEvent.CommunicationEventState" [options]="eventStates" display="Name"></a-mat-select>
+        <a-mat-select class="col-md" [object]="communicationEvent" [roleType]="m.CommunicationEvent.EventPurposes" [options]="purposes" display="Name"></a-mat-select>
       </div>
 
       <div class="row">
-        <a-mat-input class="col-md" [object]="communicationEvent" [roleType]="m.CommunicationEvent.Subject"
-          class="col-md"></a-mat-input>
+        <a-mat-input class="col-md" [object]="communicationEvent" [roleType]="m.CommunicationEvent.Subject" class="col-md"></a-mat-input>
       </div>
 
       <div class="row">
         <div class="col-md">
           <div class="row">
-            <a-mat-select class="col" [object]="communicationEvent" [roleType]="m.CommunicationEvent.FromParty"
-              [options]="contacts" display="displayName" label="Participant"></a-mat-select>
+            <a-mat-select class="col" [object]="communicationEvent" [roleType]="m.CommunicationEvent.FromParty" [options]="contacts" display="displayName" label="Participant"></a-mat-select>
             <button mat-mini-fab color="accent" [disabled]="person != null" type="button" (click)="addFromParty = !addFromParty">
               <mat-icon *ngIf="!addFromParty">add</mat-icon>
               <mat-icon *ngIf="addFromParty">close</mat-icon>
@@ -33,16 +28,14 @@
           <mat-card>
             <mat-card-header>Add a new person</mat-card-header>
             <mat-card-content>
-              <person-inline (cancelled)="addFromParty = false" (saved)="fromPartyAdded($event); addFromParty = false">
-              </person-inline>
+              <person-inline (cancelled)="addFromParty = false" (saved)="fromPartyAdded($event); addFromParty = false"> </person-inline>
             </mat-card-content>
           </mat-card>
         </div>
 
         <div class="col-md">
           <div class="row">
-            <a-mat-select class="col" [object]="communicationEvent" [roleType]="m.CommunicationEvent.ToParty" [options]="contacts"
-              display="displayName" label="Participant"></a-mat-select>
+            <a-mat-select class="col" [object]="communicationEvent" [roleType]="m.CommunicationEvent.ToParty" [options]="contacts" display="displayName" label="Participant"></a-mat-select>
             <button mat-mini-fab color="accent" [disabled]="person != null" type="button" (click)="addToParty = !addToParty">
               <mat-icon *ngIf="!addToParty">add</mat-icon>
               <mat-icon *ngIf="addToParty">close</mat-icon>
@@ -53,8 +46,7 @@
           <mat-card>
             <mat-card-header>Add a new person</mat-card-header>
             <mat-card-content>
-              <person-inline (cancelled)="addToParty = false" (saved)="toPartyAdded($event); addToParty = false">
-              </person-inline>
+              <person-inline (cancelled)="addToParty = false" (saved)="toPartyAdded($event); addToParty = false"> </person-inline>
             </mat-card-content>
           </mat-card>
         </div>
@@ -77,7 +69,6 @@
       <div class="row">
         <a-mat-textarea class="col-md" [object]="communicationEvent" [roleType]="m.CommunicationEvent.Comment"></a-mat-textarea>
       </div>
-
     </div>
   </mat-dialog-content>
 
@@ -85,5 +76,4 @@
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
     <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
   </div>
-
 </form>

@@ -4,14 +4,12 @@ import { M } from '@allors/workspace/meta/default';
 import { Organisation } from '@allors/workspace/domain/default';
 import { SessionService } from '@allors/workspace/angular/core';
 
-
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'organisation-inline',
   templateUrl: './organisation-inline.component.html',
 })
 export class OrganisationInlineComponent implements OnInit, OnDestroy {
-
   @Output()
   public saved: EventEmitter<Organisation> = new EventEmitter<Organisation>();
 
@@ -22,19 +20,14 @@ export class OrganisationInlineComponent implements OnInit, OnDestroy {
 
   public m: M;
 
-  constructor(
-    private allors: SessionService ) {
-
+  constructor(private allors: SessionService) {
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
-    this.allors.context
-      .load(new PullRequest({}))
-      .subscribe(() => {
-        this.organisation = this.allors.session.create<Organisation>(m.Organisation);
-      });
+    this.allors.context.load(new PullRequest({})).subscribe(() => {
+      this.organisation = this.allors.session.create<Organisation>(m.Organisation);
+    });
   }
 
   public ngOnDestroy(): void {
@@ -48,7 +41,7 @@ export class OrganisationInlineComponent implements OnInit, OnDestroy {
   }
 
   public save(): void {
-      this.saved.emit(this.organisation);
-      this.organisation = undefined;
+    this.saved.emit(this.organisation);
+    this.organisation = undefined;
   }
 }

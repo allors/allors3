@@ -3,20 +3,7 @@ import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
 import { MetaService, RefreshService, NavigationService, PanelService, SessionService } from '@allors/angular/services/core';
-import {
-  Organisation,
-  ProductType,
-  ProductCategory,
-  Brand,
-  Model,
-  ProductIdentificationType,
-  ProductNumber,
-  NonUnifiedGood,
-  Ownership,
-  ProductFeatureApplicability,
-  ProductDimension,
-  Locale,
-} from '@allors/domain/generated';
+import { Organisation, ProductType, ProductCategory, Brand, Model, ProductIdentificationType, ProductNumber, NonUnifiedGood, Ownership, ProductFeatureApplicability, ProductDimension, Locale } from '@allors/domain/generated';
 import { SaveService } from '@allors/angular/material/services/core';
 import { Meta } from '@allors/meta/generated';
 import { FetcherService, Filters } from '@allors/angular/base';
@@ -62,7 +49,7 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
@@ -124,13 +111,15 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
         switchMap(() => {
           this.good = undefined;
 
-          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+          const m = this.allors.workspace.configuration.metaPopulation as M;
+          const { pullBuilder: pull } = m;
+          const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
             this.fetcher.locales,
             this.fetcher.internalOrganisation,
-            pull.ProductIdentificationType(),
+            pull.ProductIdentificationType({}),
             pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] }),
             pull.NonUnifiedGood({
               objectId: id,
@@ -197,9 +186,7 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
         this.locales = loaded.collection<Locale>(m.Locale);
         this.productFeatureApplicabilities = loaded.collection<ProductFeatureApplicability>(m.ProductFeatureApplicability);
-        this.productDimensions = this.productFeatureApplicabilities
-          .map((v) => v.ProductFeature)
-          .filter((v) => v.objectType.name === this.m.ProductDimension.name) as ProductDimension[];
+        this.productDimensions = this.productFeatureApplicabilities.map((v) => v.ProductFeature).filter((v) => v.objectType.name === this.m.ProductDimension.name) as ProductDimension[];
 
         const goodNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
 

@@ -6,8 +6,7 @@ export class LazySelectBuilder {
   constructor(metaPopulation: MetaPopulation) {
     for (const composite of metaPopulation.composites) {
       this[composite.singularName] = (obj, previous: Select) => {
-
-        if(obj['propertyType']){
+        if (obj['propertyType']) {
           return obj;
         }
 

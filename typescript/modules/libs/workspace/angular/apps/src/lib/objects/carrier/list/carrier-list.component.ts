@@ -17,10 +17,9 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './carrier-list.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class CarrierListComponent extends TestScope implements OnInit, OnDestroy {
-
   public title = 'Carriers';
 
   table: Table<Row>;
@@ -33,15 +32,14 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
 
   constructor(
     @Self() public allors: SessionService,
-    
-    
+
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public editService: EditService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
-    titleService: Title,
+    titleService: Title
   ) {
     super();
 
@@ -59,21 +57,16 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'name', sort: true },
-      ],
-      actions: [
-        this.edit,
-        this.delete
-      ],
+      columns: [{ name: 'name', sort: true }],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       pageSize: 50,
     });
   }
 
   ngOnInit(): void {
-
-    const m = this.m; const { pullBuilder: pull } = m;
+    const m = this.m;
+    const { pullBuilder: pull } = m;
     this.filter = m.Carrier.filter = m.Carrier.filter ?? new Filter(m.Carrier.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
@@ -94,7 +87,6 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
           return [refresh, filterFields, sort, pageEvent];
         }),
         switchMap(([, filterFields, sort, pageEvent]) => {
-
           const pulls = [
             pull.Carrier({
               predicate: this.filter.definition.predicate,
@@ -102,7 +94,8 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
               arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
-            })];
+            }),
+          ];
 
           return this.allors.client.pullReactive(this.allors.session, pulls);
         })
@@ -115,7 +108,7 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
         this.table.data = objects.map((v) => {
           return {
             object: v,
-            name: `${v.Name}`
+            name: `${v.Name}`,
           } as Row;
         });
       });

@@ -1,4 +1,4 @@
-export type PromptType =  'string' | 'date';
+export type PromptType = 'string' | 'date';
 
 export interface DialogConfig {
   title?: string;

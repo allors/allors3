@@ -9,11 +9,10 @@ import { SideMenuItem } from './side-menu-item';
   templateUrl: './side-menu.component.html',
 })
 export class AllorsMaterialSideMenuComponent {
-
   @Input()
   public items: SideMenuItem[];
 
-  constructor(public router: Router) { }
+  constructor(public router: Router) {}
 
   public hasChildren(item: SideMenuItem): boolean {
     if (item.children) {

@@ -13,10 +13,9 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
   // tslint:disable-next-line:component-selector
   selector: 'organisation-overview-detail',
   templateUrl: './organisation-overview-detail.component.html',
-  providers: [SessionService, PanelService]
+  providers: [SessionService, PanelService],
 })
 export class OrganisationOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   organisation: Organisation;
@@ -32,7 +31,7 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    
+
     public saveService: SaveService,
     public refreshService: RefreshService,
     private singletonId: SingletonId,
@@ -72,7 +71,6 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
   }
 
   public ngOnInit(): void {
-
     // Expanded
     this.subscription = this.panel.manager.on$
       .pipe(
@@ -94,29 +92,29 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
                 Locales: {
                   include: {
                     Language: x,
-                    Country: x
-                  }
-                }
-              }
+                    Country: x,
+                  },
+                },
+              },
             }),
-            pull.Organisation({ 
+            pull.Organisation({
               objectId: id,
               include: {
-                LogoImage: x
-              }
+                LogoImage: x,
+              },
             }),
             pull.Currency({
               predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
               sorting: [{ roleType: m.Currency.Name }],
             }),
             pull.CustomOrganisationClassification({
-              sorting: [{ roleType: m.CustomOrganisationClassification.Name }]
+              sorting: [{ roleType: m.CustomOrganisationClassification.Name }],
             }),
             pull.IndustryClassification({
-              sorting: [{ roleType: m.IndustryClassification.Name }]
+              sorting: [{ roleType: m.IndustryClassification.Name }],
             }),
             pull.LegalForm({
-              sorting: [{ roleType: m.LegalForm.Description }]
+              sorting: [{ roleType: m.LegalForm.Description }],
             }),
           ];
 
@@ -124,7 +122,6 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
         })
       )
       .subscribe((loaded) => {
-
         this.organisation = loaded.object<Organisation>(m.Organisation);
         this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
         this.currencies = loaded.collection<Currency>(m.Currency);
@@ -142,14 +139,9 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
   }
 
   public save(): void {
-
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        this.refreshService.refresh();
-        window.history.back();
-      },
-        this.saveService.errorHandler
-      );
+    this.allors.context.save().subscribe(() => {
+      this.refreshService.refresh();
+      window.history.back();
+    }, this.saveService.errorHandler);
   }
 }

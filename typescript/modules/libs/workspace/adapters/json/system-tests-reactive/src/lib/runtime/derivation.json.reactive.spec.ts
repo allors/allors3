@@ -1,7 +1,4 @@
-import {
-  initDerivation,
-  sessionFullName,
-} from '@allors/workspace/adapters/system-tests';
+import { initDerivation, sessionFullName } from '@allors/workspace/adapters/system-tests';
 import { Fixture } from '../fixture';
 
 let fixture: Fixture;

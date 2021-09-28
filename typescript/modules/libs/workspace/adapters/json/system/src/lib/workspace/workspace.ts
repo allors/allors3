@@ -4,10 +4,9 @@ import { DatabaseConnection } from '../database/database-connection';
 import { Session } from '../session/session';
 
 export class Workspace extends SystemWorkspace {
-
   constructor(database: DatabaseConnection, services: IWorkspaceServices) {
     super(database, services);
-    
+
     this.services.onInit(this);
   }
 

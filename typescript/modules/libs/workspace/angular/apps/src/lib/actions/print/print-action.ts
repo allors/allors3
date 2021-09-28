@@ -1,18 +1,15 @@
 import { Subject } from 'rxjs';
 
-
 import { PrintConfig } from './print.service';
 import { Action, ActionTarget } from '@allors/workspace/angular/base';
 import { RoleType } from '@allors/workspace/meta/system';
 import { Printable } from '@allors/workspace/domain/default';
 
 export class PrintAction implements Action {
-
   name = 'print';
 
   constructor(config: PrintConfig, roleType?: RoleType) {
     this.execute = (target: ActionTarget) => {
-
       let printable = target as Printable;
 
       if (roleType) {
@@ -36,5 +33,5 @@ export class PrintAction implements Action {
     } else {
       return !(target as Printable).CanReadPrintDocument || !(target as Printable).PrintDocument;
     }
-  }
+  };
 }

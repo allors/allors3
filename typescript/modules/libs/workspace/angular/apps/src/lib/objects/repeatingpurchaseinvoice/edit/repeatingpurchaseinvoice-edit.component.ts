@@ -61,7 +61,7 @@ export class RepeatingPurchaseInvoiceEditComponent extends TestScope implements 
               predicate: { kind: 'Equals', propertyType: m.TimeFrequency.IsActive, value: true },
               sorting: [{ roleType: m.TimeFrequency.Name }],
             }),
-            pull.DayOfWeek(),
+            pull.DayOfWeek({}),
           ];
 
           if (!isCreate) {

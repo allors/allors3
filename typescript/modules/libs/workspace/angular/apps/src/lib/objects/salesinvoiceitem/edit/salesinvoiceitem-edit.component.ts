@@ -4,7 +4,26 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Organisation, Part, SupplierOffering, Facility, NonUnifiedPart, InternalOrganisation, NonSerialisedInventoryItem, InventoryItem, SerialisedInventoryItem, SerialisedItem, UnifiedGood, SerialisedItemAvailability, SalesOrderItem, SalesInvoice, VatRegime, IrpfRegime, InvoiceItemType, SalesInvoiceItem } from '@allors/workspace/domain/default';
+import {
+  Organisation,
+  Part,
+  SupplierOffering,
+  Facility,
+  NonUnifiedPart,
+  InternalOrganisation,
+  NonSerialisedInventoryItem,
+  InventoryItem,
+  SerialisedInventoryItem,
+  SerialisedItem,
+  UnifiedGood,
+  SerialisedItemAvailability,
+  SalesOrderItem,
+  SalesInvoice,
+  VatRegime,
+  IrpfRegime,
+  InvoiceItemType,
+  SalesInvoiceItem,
+} from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -13,11 +32,9 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './salesinvoiceitem-edit.component.html',
-  providers: [SessionService]
-
+  providers: [SessionService],
 })
 export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   title: string;
@@ -50,15 +67,15 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
   showIrpf: boolean;
   vatRegimeInitialRole: VatRegime;
   irpfRegimeInitialRole: IrpfRegime;
-  
+
   constructor(
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<SalesInvoiceItemEditComponent>,
     public refreshService: RefreshService,
-    
+
     private fetcher: FetcherService,
-    private saveService: SaveService,
+    private saveService: SaveService
   ) {
     super();
 
@@ -71,13 +88,13 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
   }
 
   public ngOnInit(): void {
-
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
         switchMap(() => {
-
           const isCreate = this.data.id === undefined;
           const { id } = this.data;
 
@@ -89,8 +106,9 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
               predicate: { kind: 'Equals', propertyType: m.InvoiceItemType.IsActive, value: true },
               sorting: [{ roleType: m.InvoiceItemType.Name }],
             }),
-            pull.IrpfRegime({ 
-              sorting: [{ roleType: m.IrpfRegime.Name }] }),
+            pull.IrpfRegime({
+              sorting: [{ roleType: m.IrpfRegime.Name }],
+            }),
             pull.SerialisedItemAvailability({}),
           ];
 
@@ -98,8 +116,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
             pulls.push(
               pull.SalesInvoiceItem({
                 objectId: id,
-                include:
-                {
+                include: {
                   SalesInvoiceItemState: x,
                   SerialisedItem: x,
                   NextSerialisedItemAvailability: x,
@@ -111,8 +128,8 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
                   },
                   DerivedIrpfRegime: {
                     IrpfRates: x,
-                  }
-                }
+                  },
+                },
               }),
               pull.SalesInvoiceItem({
                 objectId: id,
@@ -124,11 +141,11 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
                       },
                       DerivedIrpfRegime: {
                         IrpfRates: x,
-                      }
-                    }
-                  }
-                }
-              }),
+                      },
+                    },
+                  },
+                },
+              })
             );
           }
 
@@ -142,25 +159,22 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
                   },
                   DerivedIrpfRegime: {
                     IrpfRates: x,
-                  }
-                }
+                  },
+                },
               })
             );
           }
 
           this.goodsFilter = Filters.goodsFilter(m);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.session.reset();
 
         this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
-        this.showIrpf = this.internalOrganisation.Country.IsoCode === "ES";
+        this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.invoiceItem = loaded.object<SalesInvoiceItem>(m.SalesInvoiceItem);
         this.orderItem = loaded.object<SalesOrderItem>(m.SalesOrderItem);
@@ -209,19 +223,15 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
   }
 
   public save(): void {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      const data: IObject = {
+        id: this.invoiceItem.id,
+        objectType: this.invoiceItem.objectType,
+      };
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.invoiceItem.id,
-          objectType: this.invoiceItem.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   public goodSelected(object: any) {
@@ -235,11 +245,12 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
     this.serialisedItem = unifiedGood.SerialisedItems.find((v) => v === serialisedItem);
     this.invoiceItem.AssignedUnitPrice = this.serialisedItem.ExpectedSalesPrice;
     this.invoiceItem.Quantity = '1';
-}
+  }
 
   private refreshSerialisedItems(good: Product): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const unifiedGoodPullName = `${this.m.UnifiedGood.name}_items`;
     const nonUnifiedGoodPullName = `${this.m.NonUnifiedGood.name}_items`;
@@ -254,10 +265,10 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
               include: {
                 SerialisedItemAvailability: x,
                 PartWhereSerialisedItem: x,
-              }
-            }
-          }
-        }
+              },
+            },
+          },
+        },
       }),
       pull.UnifiedGood({
         name: unifiedGoodPullName,
@@ -267,27 +278,24 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
             include: {
               SerialisedItemAvailability: x,
               PartWhereSerialisedItem: x,
-            }
-          }
-        }
-      })
+            },
+          },
+        },
+      }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
-        const serialisedItems1 = loaded.collections[unifiedGoodPullName] as SerialisedItem[];
-        const serialisedItems2 = loaded.collections[nonUnifiedGoodPullName] as SerialisedItem[];
-        const items = serialisedItems1 || serialisedItems2;
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      const serialisedItems1 = loaded.collections[unifiedGoodPullName] as SerialisedItem[];
+      const serialisedItems2 = loaded.collections[nonUnifiedGoodPullName] as SerialisedItem[];
+      const items = serialisedItems1 || serialisedItems2;
 
-        this.serialisedItems = items.filter(v => v.AvailableForSale === true || v.SerialisedItemAvailability === this.inRent);
+      this.serialisedItems = items.filter((v) => v.AvailableForSale === true || v.SerialisedItemAvailability === this.inRent);
 
-        if (this.invoiceItem.Product !== this.previousProduct) {
-          this.invoiceItem.SerialisedItem = null;
-          this.serialisedItem = null;
-          this.previousProduct = this.invoiceItem.Product;
-        }
-
-      });
+      if (this.invoiceItem.Product !== this.previousProduct) {
+        this.invoiceItem.SerialisedItem = null;
+        this.serialisedItem = null;
+        this.previousProduct = this.invoiceItem.Product;
+      }
+    });
   }
 }

@@ -9,7 +9,6 @@ import { PositionTypeRate, PositionType } from '@allors/workspace/domain/default
 import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
-
 interface Row extends TableRow {
   object: PositionTypeRate;
   positionType: string;
@@ -39,7 +38,6 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
   constructor(
     @Self() public allors: SessionService,
 
-    
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public editService: EditService,
@@ -65,14 +63,7 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
     const sort = true;
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'positionType' },
-        { name: 'rateType' },
-        { name: 'from', sort },
-        { name: 'through', sort },
-        { name: 'rate', sort },
-        { name: 'frequency' },
-      ],
+      columns: [{ name: 'positionType' }, { name: 'rateType' }, { name: 'from', sort }, { name: 'through', sort }, { name: 'rate', sort }, { name: 'frequency' }],
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       pageSize: 50,
@@ -80,14 +71,15 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
     this.filter = m.PositionTypeRate.filter = m.PositionTypeRate.filter ?? new Filter(m.PositionTypeRate.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-            pageEvent =
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
+          pageEvent =
             previousRefresh !== refresh || filterFields !== previousFilterFields
               ? {
                   ...pageEvent,

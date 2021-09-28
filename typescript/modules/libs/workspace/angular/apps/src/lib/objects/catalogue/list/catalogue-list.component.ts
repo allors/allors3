@@ -4,8 +4,46 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale, Carrier, SerialisedItemCharacteristicType, WorkTask, ContactMechanism, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Catalogue, Singleton, ProductCategory, Scope } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectData, OverviewService, RefreshService, SaveService, SearchFactory, Sorter, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import {
+  Good,
+  InternalOrganisation,
+  NonUnifiedGood,
+  Part,
+  PriceComponent,
+  Brand,
+  Model,
+  Locale,
+  Carrier,
+  SerialisedItemCharacteristicType,
+  WorkTask,
+  ContactMechanism,
+  Person,
+  Organisation,
+  PartyContactMechanism,
+  OrganisationContactRelationship,
+  Catalogue,
+  Singleton,
+  ProductCategory,
+  Scope,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  Filter,
+  FilterDefinition,
+  MediaService,
+  NavigationService,
+  ObjectData,
+  OverviewService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+  Sorter,
+  Table,
+  TableRow,
+  TestScope,
+} from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { And } from '@allors/workspace/domain/system';
 
@@ -21,10 +59,9 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './catalogue-list.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class CataloguesListComponent extends TestScope implements OnInit, OnDestroy {
-
   public title = 'Catalogues';
 
   table: Table<Row>;
@@ -37,8 +74,7 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
 
   constructor(
     @Self() public allors: SessionService,
-    
-    
+
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public editService: EditService,
@@ -67,27 +103,22 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
       columns: [
         { name: 'name', sort: true },
         { name: 'description', sort: true },
-        { name: 'scope', sort: true }
+        { name: 'scope', sort: true },
       ],
-      actions: [
-        this.edit,
-        this.delete
-      ],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       pageSize: 50,
     });
   }
 
   ngOnInit(): void {
-
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
     this.filter = m.Catalogue.filter = m.Catalogue.filter ?? new Filter(m.Catalogue.filterDefinition);
 
     const internalOrganisationPredicate = new Equals({ propertyType: m.Catalogue.InternalOrganisation });
-    const predicate = new And([
-      internalOrganisationPredicate,
-      this.filter.definition.predicate
-    ]);
+    const predicate = new And([internalOrganisationPredicate, this.filter.definition.predicate]);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
       .pipe(
@@ -107,7 +138,6 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
         switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
-
           internalOrganisationPredicate.object = internalOrganisationId;
 
           const pulls = [
@@ -117,12 +147,13 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
               include: {
                 CatalogueImage: x,
                 ProductCategories: x,
-                CatScope: x
+                CatScope: x,
               },
               arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
-            })];
+            }),
+          ];
 
           return this.allors.client.pullReactive(this.allors.session, pulls);
         })
@@ -137,7 +168,7 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
             object: v,
             name: `${v.Name}`,
             description: `${v.Description || ''}`,
-            scope: v.CatScope.Name
+            scope: v.CatScope.Name,
           } as Row;
         });
       });

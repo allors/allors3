@@ -5,8 +5,47 @@ import { switchMap, scan } from 'rxjs/operators';
 import { format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale, Carrier, SerialisedItemCharacteristicType, WorkTask, ContactMechanism, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Catalogue, Singleton, ProductCategory, Scope, CommunicationEvent } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectData, OverviewService, RefreshService, SaveService, SearchFactory, Sorter, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import {
+  Good,
+  InternalOrganisation,
+  NonUnifiedGood,
+  Part,
+  PriceComponent,
+  Brand,
+  Model,
+  Locale,
+  Carrier,
+  SerialisedItemCharacteristicType,
+  WorkTask,
+  ContactMechanism,
+  Person,
+  Organisation,
+  PartyContactMechanism,
+  OrganisationContactRelationship,
+  Catalogue,
+  Singleton,
+  ProductCategory,
+  Scope,
+  CommunicationEvent,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  Filter,
+  FilterDefinition,
+  MediaService,
+  NavigationService,
+  ObjectData,
+  OverviewService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+  Sorter,
+  Table,
+  TableRow,
+  TestScope,
+} from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { And } from '@allors/workspace/domain/system';
 
@@ -43,7 +82,6 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
   constructor(
     @Self() public allors: SessionService,
 
-    
     public refreshService: RefreshService,
     public deleteService: DeleteService,
     public editService: EditService,
@@ -64,15 +102,7 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'type' },
-        { name: 'state' },
-        { name: 'subject', sort: true },
-        { name: 'involved' },
-        { name: 'started' },
-        { name: 'ended' },
-        { name: 'lastModifiedDate', sort: true },
-      ],
+      columns: [{ name: 'type' }, { name: 'state' }, { name: 'subject', sort: true }, { name: 'involved' }, { name: 'started' }, { name: 'ended' }, { name: 'lastModifiedDate', sort: true }],
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       pageSize: 50,
@@ -80,15 +110,16 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.filter = m.CommunicationEvent.filter = m.CommunicationEvent.filter ?? new Filter(m.CommunicationEvent.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-            pageEvent =
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
+          pageEvent =
             previousRefresh !== refresh || filterFields !== previousFilterFields
               ? {
                   ...pageEvent,

@@ -9,8 +9,5 @@ import { SessionService } from '@allors/workspace/angular/core';
   templateUrl: './save-cancel.component.html',
 })
 export class AllorsMaterialFooterSaveCancelComponent {
-
-  constructor(public form: NgForm, public allors: SessionService, public location: Location) {
-  }
-
+  constructor(public form: NgForm, public allors: SessionService, public location: Location) {}
 }

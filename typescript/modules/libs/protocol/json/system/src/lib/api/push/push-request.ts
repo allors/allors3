@@ -1,5 +1,5 @@
-import { PushRequestNewObject } from "./push-request-new-object";
-import { PushRequestObject } from "./push-request-object";
+import { PushRequestNewObject } from './push-request-new-object';
+import { PushRequestObject } from './push-request-object';
 
 export interface PushRequest {
   /** NewObjects*/

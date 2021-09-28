@@ -97,7 +97,7 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
         switchMap(([, internalOrganisationId]) => {
           const pulls = [
             this.fetcher.internalOrganisation,
-            pull.IrpfRegime(),
+            pull.IrpfRegime({}),
             pull.Currency({
               predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
               sorting: [{ roleType: m.Currency.IsoCode }],

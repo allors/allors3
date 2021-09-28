@@ -4,8 +4,46 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale, Carrier, SerialisedItemCharacteristicType, WorkTask, ContactMechanism, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Catalogue, Singleton, ProductCategory, Scope } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectData, OverviewService, RefreshService, SaveService, SearchFactory, Sorter, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import {
+  Good,
+  InternalOrganisation,
+  NonUnifiedGood,
+  Part,
+  PriceComponent,
+  Brand,
+  Model,
+  Locale,
+  Carrier,
+  SerialisedItemCharacteristicType,
+  WorkTask,
+  ContactMechanism,
+  Person,
+  Organisation,
+  PartyContactMechanism,
+  OrganisationContactRelationship,
+  Catalogue,
+  Singleton,
+  ProductCategory,
+  Scope,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  Filter,
+  FilterDefinition,
+  MediaService,
+  NavigationService,
+  ObjectData,
+  OverviewService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+  Sorter,
+  Table,
+  TableRow,
+  TestScope,
+} from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { And } from '@allors/workspace/domain/system';
 
@@ -14,10 +52,9 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 
 @Component({
   templateUrl: './catalogue-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class CatalogueEditComponent extends TestScope implements OnInit, OnDestroy {
-
   public m: M;
 
   public catalogue: Catalogue;
@@ -37,33 +74,28 @@ export class CatalogueEditComponent extends TestScope implements OnInit, OnDestr
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<CatalogueEditComponent>,
-    
+
     private refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId,
-    private fetcher: FetcherService) {
-
+    private fetcher: FetcherService
+  ) {
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
         switchMap(() => {
-
           const isCreate = this.data.id === undefined;
 
-          const pulls = [
-            this.fetcher.categories,
-            this.fetcher.locales,
-            this.fetcher.internalOrganisation,
-            pull.Scope({})
-          ];
+          const pulls = [this.fetcher.categories, this.fetcher.locales, this.fetcher.internalOrganisation, pull.Scope({})];
 
           if (!isCreate) {
             pulls.push(
@@ -78,18 +110,14 @@ export class CatalogueEditComponent extends TestScope implements OnInit, OnDestr
                     Locale: x,
                   },
                 },
-              }),
+              })
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, create: isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, create: isCreate })));
         })
       )
       .subscribe(({ loaded, create }) => {
-
         this.allors.session.reset();
 
         this.catalogue = loaded.object<Catalogue>(m.Catalogue);
@@ -119,18 +147,14 @@ export class CatalogueEditComponent extends TestScope implements OnInit, OnDestr
   }
 
   public save(): void {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      const data: IObject = {
+        id: this.catalogue.id,
+        objectType: this.catalogue.objectType,
+      };
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.catalogue.id,
-          objectType: this.catalogue.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

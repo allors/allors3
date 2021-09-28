@@ -8,7 +8,7 @@ export class FilterField {
   display: string;
 
   get argument() {
-    let value = (this.value2 !== undefined && this.value2 !== null) ? [this.value, this.value2] : this.value;
+    let value = this.value2 !== undefined && this.value2 !== null ? [this.value, this.value2] : this.value;
 
     if (this.definition.isLike) {
       value = value + '%';
@@ -21,4 +21,3 @@ export class FilterField {
     Object.assign(this, fields);
   }
 }
-

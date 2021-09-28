@@ -32,7 +32,6 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
   constructor(
     @Self() public allors: SessionService,
 
-    
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public methodService: MethodService,
@@ -65,12 +64,11 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
 
     const filterDefinition = new FilterDefinition(predicate);
     this.filter = new Filter(filterDefinition);
-    
+
     this.subscription = combineLatest(this.refreshService.refresh$, this.table.sort$, this.table.pager$)
       .pipe(
-        scan(
-          ([previousRefresh], [refresh, sort, pageEvent]) => {
-            pageEvent =
+        scan(([previousRefresh], [refresh, sort, pageEvent]) => {
+          pageEvent =
             previousRefresh !== refresh
               ? {
                   ...pageEvent,

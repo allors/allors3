@@ -13,16 +13,11 @@ export const menu: MenuItem[] = [
   {
     title: 'Contacts',
     icon: 'business',
-    children: [
-      { tag: tags.Person },
-      { tag: tags.Organisation },
-    ]
+    children: [{ tag: tags.Person }, { tag: tags.Organisation }],
   },
   {
     title: 'Tests',
     icon: 'build',
-    children: [
-      { title: 'Form', icon: 'share', link: '/tests/form' },
-    ]
-  }
+    children: [{ title: 'Form', icon: 'share', link: '/tests/form' }],
+  },
 ];

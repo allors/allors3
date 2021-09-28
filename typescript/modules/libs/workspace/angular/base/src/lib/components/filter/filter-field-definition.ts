@@ -23,11 +23,11 @@ export class FilterFieldDefinition {
     return this.objectType?.tag === UnitTags.Boolean;
   }
 
-  get isDateTime(): boolean{
+  get isDateTime(): boolean {
     return this.objectType?.tag === UnitTags.DateTime;
   }
 
-  get isBinary(): boolean{
+  get isBinary(): boolean {
     return this.objectType?.tag === UnitTags.Binary;
   }
 

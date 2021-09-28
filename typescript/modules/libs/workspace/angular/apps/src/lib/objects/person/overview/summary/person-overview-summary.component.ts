@@ -4,15 +4,13 @@ import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, OrganisationContactRelationship } from '@allors/workspace/domain/default';
 import { MediaService, NavigationService, PanelService, TestScope } from '@allors/workspace/angular/base';
 
-
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'person-overview-summary',
   templateUrl: './person-overview-summary.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class PersonOverviewSummaryComponent extends TestScope {
-
   m: M;
 
   person: Person;
@@ -22,7 +20,7 @@ export class PersonOverviewSummaryComponent extends TestScope {
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public navigation: NavigationService,
     private mediaService: MediaService
   ) {
@@ -43,7 +41,7 @@ export class PersonOverviewSummaryComponent extends TestScope {
       const partyContactMechanismTree = tree.PartyContactMechanism({
         ContactPurposes: x,
         ContactMechanism: {
-          PostalAddress_Country: x
+          PostalAddress_Country: x,
         },
       });
 
@@ -59,9 +57,10 @@ export class PersonOverviewSummaryComponent extends TestScope {
             PartyContactMechanisms: partyContactMechanismTree,
             CurrentPartyContactMechanisms: partyContactMechanismTree,
             InactivePartyContactMechanisms: partyContactMechanismTree,
-            GeneralCorrespondence: x
-          }
-        }));
+            GeneralCorrespondence: x,
+          },
+        })
+      );
 
       pulls.push(
         pull.Person({
@@ -72,9 +71,9 @@ export class PersonOverviewSummaryComponent extends TestScope {
               include: {
                 Organisation: x,
                 ContactKinds: x,
-              }
-            }
-          }
+              },
+            },
+          },
         })
       );
     };
@@ -89,9 +88,7 @@ export class PersonOverviewSummaryComponent extends TestScope {
         this.organisation = organisationContactRelationship.Organisation as Organisation;
 
         if (organisationContactRelationship.ContactKinds.length > 0) {
-          this.contactKindsText = organisationContactRelationship.ContactKinds
-            .map((v: OrganisationContactKind) => v.Description)
-            .reduce((acc: string, cur: string) => acc + ', ' + cur);
+          this.contactKindsText = organisationContactRelationship.ContactKinds.map((v: OrganisationContactKind) => v.Description).reduce((acc: string, cur: string) => acc + ', ' + cur);
         }
       }
     };

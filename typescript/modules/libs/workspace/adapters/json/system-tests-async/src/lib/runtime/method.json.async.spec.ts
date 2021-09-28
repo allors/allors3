@@ -1,9 +1,4 @@
-import {
-  callMultiple,
-  callMultipleIsolated,
-  callSingle,
-  initMethod,
-} from '@allors/workspace/adapters/system-tests';
+import { callMultiple, callMultipleIsolated, callSingle, initMethod } from '@allors/workspace/adapters/system-tests';
 import { Fixture } from '../fixture';
 
 let fixture: Fixture;

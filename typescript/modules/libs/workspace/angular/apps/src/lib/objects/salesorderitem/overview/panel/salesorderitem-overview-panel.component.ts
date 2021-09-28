@@ -25,10 +25,9 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'salesorderitem-overview-panel',
   templateUrl: './salesorderitem-overview-panel.component.html',
-  providers: [SessionService, PanelService]
+  providers: [SessionService, PanelService],
 })
 export class SalesOrderItemOverviewPanelComponent extends TestScope {
-
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -57,7 +56,7 @@ export class SalesOrderItemOverviewPanelComponent extends TestScope {
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public methodService: MethodService,
@@ -95,13 +94,7 @@ export class SalesOrderItemOverviewPanelComponent extends TestScope {
         { name: 'returned', sort },
         { name: 'lastModifiedDate', sort },
       ],
-      actions: [
-        this.edit,
-        this.delete,
-        this.cancel,
-        this.reject,
-        this.reopen,
-      ],
+      actions: [this.edit, this.delete, this.cancel, this.reject, this.reopen],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -111,7 +104,9 @@ export class SalesOrderItemOverviewPanelComponent extends TestScope {
     const orderPullName = `${panel.name}_${this.m.SalesOrder.tag}`;
 
     panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -126,19 +121,18 @@ export class SalesOrderItemOverviewPanelComponent extends TestScope {
                 SalesOrderItemState: x,
                 Product: x,
                 SerialisedItem: x,
-              }
-            }
-          }
+              },
+            },
+          },
         }),
         pull.SalesOrder({
           name: orderPullName,
           objectId: id,
-        }),
+        })
       );
     };
 
     panel.onPulled = (loaded) => {
-
       this.salesOrderItems = loaded.collections[pullName] as SalesOrderItem[];
       this.order = loaded.objects[orderPullName] as SalesOrder;
       this.table.total = loaded.values[`${pullName}_total`] || this.salesOrderItems.length;
@@ -154,7 +148,7 @@ export class SalesOrderItemOverviewPanelComponent extends TestScope {
           reserved: v.QuantityReserved,
           short: v.QuantityShortFalled,
           returned: v.QuantityReturned,
-          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date())
+          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
         } as Row;
       });
     };

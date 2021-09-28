@@ -1,5 +1,5 @@
 import { initDatabaseOneToMany, databaseOneToManySetRole, databaseOneToManySetRoleToNull, databaseOneToManyRemoveRole, databaseOneToManyRemoveNullRole } from '@allors/workspace/adapters/system-tests';
-import { Fixture } from '../../../../fixture'
+import { Fixture } from '../../../../fixture';
 
 let fixture: Fixture;
 
@@ -31,5 +31,3 @@ test('databaseOneToManyRemoveRole', async () => {
 test('databaseOneToManyRemoveNullRole', async () => {
   await databaseOneToManyRemoveNullRole();
 });
-
-

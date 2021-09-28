@@ -4,15 +4,13 @@ import { M } from '@allors/workspace/meta/default';
 import { Organisation } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, TestScope } from '@allors/workspace/angular/base';
 
-
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'organisation-overview-summary',
   templateUrl: './organisation-overview-summary.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class OrganisationOverviewSummaryComponent extends TestScope {
-
   m: M;
 
   organisation: Organisation;
@@ -20,7 +18,7 @@ export class OrganisationOverviewSummaryComponent extends TestScope {
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public navigation: NavigationService
   ) {
     super();
@@ -32,7 +30,9 @@ export class OrganisationOverviewSummaryComponent extends TestScope {
     const organisationPullName = `${panel.name}_${this.m.Organisation.tag}`;
 
     panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -43,8 +43,9 @@ export class OrganisationOverviewSummaryComponent extends TestScope {
           include: {
             Locale: x,
             LastModifiedBy: x,
-          }
-        }));
+          },
+        })
+      );
     };
 
     panel.onPulled = (loaded) => {

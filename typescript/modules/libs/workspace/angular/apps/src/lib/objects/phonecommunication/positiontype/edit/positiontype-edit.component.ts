@@ -13,10 +13,9 @@ import { TestScope } from '@allors/angular/core';
 
 @Component({
   templateUrl: './positiontype-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class PositionTypeEditComponent extends TestScope implements OnInit, OnDestroy {
-
   public title: string;
   public subTitle: string;
 
@@ -30,9 +29,9 @@ export class PositionTypeEditComponent extends TestScope implements OnInit, OnDe
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PositionTypeEditComponent>,
-    
+
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private saveService: SaveService
   ) {
     super();
 
@@ -40,34 +39,27 @@ export class PositionTypeEditComponent extends TestScope implements OnInit, OnDe
   }
 
   public ngOnInit(): void {
-
     const { pullBuilder: pull } = this.m;
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-
           const isCreate = this.data.id === undefined;
 
-          const pulls = [
-          ];
+          const pulls = [];
 
           if (!isCreate) {
             pulls.push(
               pull.PositionType({
                 objectId: this.data.id,
-              }),
+              })
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-
         this.allors.session.reset();
 
         if (isCreate) {
@@ -92,19 +84,14 @@ export class PositionTypeEditComponent extends TestScope implements OnInit, OnDe
   }
 
   public save(): void {
+    this.allors.context.save().subscribe(() => {
+      const data: IObject = {
+        id: this.positionType.id,
+        objectType: this.positionType.objectType,
+      };
 
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.positionType.id,
-          objectType: this.positionType.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

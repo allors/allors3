@@ -11,14 +11,9 @@ import { EditAction } from './edit-action';
   providedIn: 'root',
 })
 export class EditService {
-
-  constructor(
-    private objectService: ObjectService,
-    private refreshService: RefreshService,
-    ) {}
+  constructor(private objectService: ObjectService, private refreshService: RefreshService) {}
 
   edit(roleType?: RoleType) {
     return new EditAction(this.objectService, this.refreshService, roleType);
   }
-
 }

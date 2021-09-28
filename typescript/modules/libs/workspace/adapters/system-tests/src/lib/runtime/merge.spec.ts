@@ -39,8 +39,8 @@ export async function databaseMergeError() {
   result = await client.pullAsync(session2, [pull]);
   const c1a_2 = result.collection<C1>('C1s')[0];
 
-  c1a_1.C1AllorsString = "X";
-  c1a_2.C1AllorsString = "Y";
+  c1a_1.C1AllorsString = 'X';
+  c1a_2.C1AllorsString = 'Y';
 
   await client.pushAsync(session2);
 

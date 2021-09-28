@@ -14,7 +14,6 @@ import { TableRow } from './table-row';
 import { Column } from './column';
 
 export class Table<Row extends TableRow> implements BaseTable {
-
   dataSource: MatTableDataSource<Row>;
   selection: SelectionModel<Row>;
 
@@ -36,11 +35,9 @@ export class Table<Row extends TableRow> implements BaseTable {
   private autoSort = false;
 
   constructor(config?: TableConfig) {
-
     let sort: Sort | null = null;
 
     if (config) {
-
       this.defaultAction = config.defaultAction;
       this.columns = config.columns?.map((v) => new Column(v)) ?? [];
 
@@ -52,12 +49,12 @@ export class Table<Row extends TableRow> implements BaseTable {
         if (typeof config.initialSort === 'string') {
           sort = {
             active: config.initialSort,
-            direction: config.initialSortDirection || 'asc'
+            direction: config.initialSortDirection || 'asc',
           };
         } else if (config.initialSort.active) {
           sort = {
             active: config.initialSort.active,
-            direction: config.initialSort.direction || 'asc'
+            direction: config.initialSort.direction || 'asc',
           };
         }
       }
@@ -116,13 +113,11 @@ export class Table<Row extends TableRow> implements BaseTable {
   }
 
   get selected(): IObject[] {
-    return this.selection.selected.map((v => v.object));
+    return this.selection.selected.map((v) => v.object);
   }
 
   masterToggle() {
-    this.allSelected ?
-      this.selection.clear() :
-      this.dataSource.data.forEach(row => this.selection.select(row));
+    this.allSelected ? this.selection.clear() : this.dataSource.data.forEach((row) => this.selection.select(row));
   }
 
   page(event: PageEvent): void {

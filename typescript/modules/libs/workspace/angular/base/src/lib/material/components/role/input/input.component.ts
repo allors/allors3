@@ -9,7 +9,6 @@ import { RoleField } from '../../../../components/forms/role-field';
   templateUrl: './input.component.html',
 })
 export class AllorsMaterialInputComponent extends RoleField {
-
   constructor(@Optional() parentForm: NgForm) {
     super(parentForm);
   }

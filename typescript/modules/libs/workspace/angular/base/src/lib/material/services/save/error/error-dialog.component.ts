@@ -2,12 +2,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Inject } from '@angular/core';
 import { IResult, ResultError } from '@allors/workspace/domain/system';
 
-
 @Component({
   templateUrl: 'error-dialog.component.html',
 })
 export class AllorsMaterialErrorDialogComponent {
-
   error: ResultError;
   response: IResult;
 
@@ -20,7 +18,6 @@ export class AllorsMaterialErrorDialogComponent {
   title: string;
 
   constructor(public dialogRef: MatDialogRef<AllorsMaterialErrorDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
-
     this.error = data.error;
     this.response = this.error.result;
 
@@ -47,4 +44,3 @@ export class AllorsMaterialErrorDialogComponent {
     this.dialogRef.close();
   }
 }
-

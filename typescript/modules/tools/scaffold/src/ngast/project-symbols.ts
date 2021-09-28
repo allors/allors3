@@ -30,7 +30,7 @@ import {
   TemplateParser,
   Lexer,
   Parser,
-  CompileProviderMetadata
+  CompileProviderMetadata,
 } from '@angular/compiler';
 
 import { MetadataCollector, readConfiguration, CompilerOptions, CompilerHost } from '@angular/compiler-cli';
@@ -77,11 +77,7 @@ export class ProjectSymbols {
    *
    * @memberOf ProjectSymbols
    */
-  constructor(
-    private tsconfigPath: string,
-    private resourceResolver: ResourceResolver,
-    private errorReporter: ErrorReporter
-  ) {
+  constructor(private tsconfigPath: string, private resourceResolver: ResourceResolver, private errorReporter: ErrorReporter) {
     const config = readConfiguration(this.tsconfigPath);
     this.options = config.options;
     this.init(this.options, config.rootNames);
@@ -100,21 +96,7 @@ export class ProjectSymbols {
       resultMap.set(m.type.reference, m);
     });
     const result: ModuleSymbol[] = [];
-    resultMap.forEach(v =>
-      result.push(
-        new ModuleSymbol(
-          this.program,
-          v.type.reference,
-          this.metadataResolver,
-          this.directiveNormalizer,
-          this.directiveResolver,
-          this.pipeResolver,
-          this.reflector,
-          this.resourceResolver,
-          this
-        )
-      )
-    );
+    resultMap.forEach((v) => result.push(new ModuleSymbol(this.program, v.type.reference, this.metadataResolver, this.directiveNormalizer, this.directiveResolver, this.pipeResolver, this.reflector, this.resourceResolver, this)));
     return result;
   }
 
@@ -127,19 +109,8 @@ export class ProjectSymbols {
    */
   getDirectives(): DirectiveSymbol[] {
     return this.extractProgramSymbols()
-      .filter(symbol => this.metadataResolver.isDirective(symbol))
-      .map(
-        symbol =>
-          new DirectiveSymbol(
-            this.program,
-            symbol,
-            this.metadataResolver,
-            this.directiveNormalizer,
-            this.reflector,
-            this.resourceResolver,
-            this
-          )
-      );
+      .filter((symbol) => this.metadataResolver.isDirective(symbol))
+      .map((symbol) => new DirectiveSymbol(this.program, symbol, this.metadataResolver, this.directiveNormalizer, this.reflector, this.resourceResolver, this));
   }
 
   /**
@@ -151,8 +122,8 @@ export class ProjectSymbols {
    */
   getPipes(): PipeSymbol[] {
     return this.extractProgramSymbols()
-      .filter(v => this.metadataResolver.isPipe(v))
-      .map(p => new PipeSymbol(this.program, p, this.pipeResolver, this.metadataResolver, this));
+      .filter((v) => this.metadataResolver.isPipe(v))
+      .map((p) => new PipeSymbol(this.program, p, this.pipeResolver, this.metadataResolver, this));
   }
 
   /**
@@ -164,15 +135,15 @@ export class ProjectSymbols {
    */
   getProviders(): ProviderSymbol[] {
     const resultSet = new Map<CompileProviderMetadata, ProviderSymbol>();
-    this.getModules().forEach(m => {
-      m.getProviders().forEach(p => resultSet.set(p.getMetadata(), p));
+    this.getModules().forEach((m) => {
+      m.getProviders().forEach((p) => resultSet.set(p.getMetadata(), p));
     });
-    this.getDirectives().forEach(d => {
-      d.getProviders().forEach(p => resultSet.set(p.getMetadata(), p));
-      d.getViewProviders().forEach(p => resultSet.set(p.getMetadata(), p));
+    this.getDirectives().forEach((d) => {
+      d.getProviders().forEach((p) => resultSet.set(p.getMetadata(), p));
+      d.getViewProviders().forEach((p) => resultSet.set(p.getMetadata(), p));
     });
     const finalResult: ProviderSymbol[] = [];
-    resultSet.forEach(v => finalResult.push(v));
+    resultSet.forEach((v) => finalResult.push(v));
     return finalResult;
   }
 
@@ -191,15 +162,7 @@ export class ProjectSymbols {
     }
     const identifier = declaration.name;
     if (identifier) {
-      return new DirectiveSymbol(
-        this.program,
-        this.reflector.getStaticSymbol(sourceFile.fileName, identifier.text),
-        this.metadataResolver,
-        this.directiveNormalizer,
-        this.reflector,
-        this.resourceResolver,
-        this
-      );
+      return new DirectiveSymbol(this.program, this.reflector.getStaticSymbol(sourceFile.fileName, identifier.text), this.metadataResolver, this.directiveNormalizer, this.reflector, this.resourceResolver, this);
     } else {
       return null;
     }
@@ -212,17 +175,12 @@ export class ProjectSymbols {
       const analyzeHost = {
         isSourceFile(filePath: string) {
           return true;
-        }
+        },
       };
 
       // The root filenames may not contain a module itself, but only reference one (f.e. main.ts)
-      const filenames = this.program.getSourceFiles().map(sf => sf.fileName);
-      analyzedModules = this.analyzedModules = analyzeNgModules(
-        filenames,
-        analyzeHost,
-        this.staticSymbolResolver,
-        this.metadataResolver
-      );
+      const filenames = this.program.getSourceFiles().map((sf) => sf.fileName);
+      analyzedModules = this.analyzedModules = analyzeNgModules(filenames, analyzeHost, this.staticSymbolResolver, this.metadataResolver);
     }
     return analyzedModules;
   }
@@ -232,8 +190,8 @@ export class ProjectSymbols {
       [],
       this.program
         .getSourceFiles()
-        .filter(f => this.staticSymbolResolver.hasDecorators(f.fileName))
-        .map(f => this.staticSymbolResolver.getSymbolsOf(f.fileName))
+        .filter((f) => this.staticSymbolResolver.hasDecorators(f.fileName))
+        .map((f) => this.staticSymbolResolver.getSymbolsOf(f.fileName))
     );
   }
 
@@ -246,22 +204,16 @@ export class ProjectSymbols {
     this.compilerHost = ts.createCompilerHost(this.options, true);
     // Replace all `\` with a forward slash to align with typescript's `normalizePath`.
     // On Windows, different slashes cause errors while trying to compare module symbols
-    rootNames = rootNames.map(rootName => rootName.replace(/\\/g, '/'));
+    rootNames = rootNames.map((rootName) => rootName.replace(/\\/g, '/'));
 
-    this.staticResolverHost = new TsCompilerAotCompilerTypeCheckHostAdapter(
-      rootNames,
-      this.options,
-      this.compilerHost,
-      new MetadataCollector(),
-      {
-        generateFile: (genFileName, baseFileName) => {
-          return this.compiler.emitBasicStub(genFileName, baseFileName);
-        },
-        findGeneratedFileNames: fileName => {
-          return this.compiler.findGeneratedFileNames(fileName);
-        }
-      }
-    );
+    this.staticResolverHost = new TsCompilerAotCompilerTypeCheckHostAdapter(rootNames, this.options, this.compilerHost, new MetadataCollector(), {
+      generateFile: (genFileName, baseFileName) => {
+        return this.compiler.emitBasicStub(genFileName, baseFileName);
+      },
+      findGeneratedFileNames: (fileName) => {
+        return this.compiler.findGeneratedFileNames(fileName);
+      },
+    });
 
     this.urlResolver = createOfflineCompileUrlResolver();
     const symbolCache = new StaticSymbolCache();
@@ -271,7 +223,7 @@ export class ProjectSymbols {
     const htmlParser = new HtmlParser();
     const config = new CompilerConfig({
       defaultEncapsulation: ViewEncapsulation.Emulated,
-      useJit: false
+      useJit: false,
     });
     this.pipeResolver = new PipeResolver(this.reflector);
     this.directiveResolver = new DirectiveResolver(this.reflector);
@@ -279,7 +231,7 @@ export class ProjectSymbols {
       {
         get: (url) => {
           return this.staticResolverHost.loadResource(url);
-        }
+        },
       },
       this.urlResolver,
       htmlParser,

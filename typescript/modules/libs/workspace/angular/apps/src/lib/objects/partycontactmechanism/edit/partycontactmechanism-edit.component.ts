@@ -32,7 +32,7 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PartyContactmechanismEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId
@@ -43,7 +43,9 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -77,11 +79,11 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
                         ContactMechanism: {
                           PostalAddress_Country: x,
                         },
-                      }
+                      },
                     },
                   },
                 },
-              }),
+              })
             );
           }
 
@@ -110,11 +112,11 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
                         ContactMechanism: {
                           PostalAddress_Country: x,
                         },
-                      }
+                      },
                     },
                   },
                 },
-              }),
+              })
             );
           }
 
@@ -145,7 +147,7 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
           this.title = 'Add Party ContactMechanism';
 
           this.partyContactMechanism = this.allors.session.create<PartyContactMechanism>(m.PartyContactMechanism);
-          this.partyContactMechanism.FromDate = new Date();;
+          this.partyContactMechanism.FromDate = new Date();
           this.partyContactMechanism.UseAsDefault = true;
 
           this.party = loaded.object<Party>(m.Party);

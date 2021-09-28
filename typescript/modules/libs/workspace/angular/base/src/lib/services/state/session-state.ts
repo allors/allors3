@@ -1,7 +1,6 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export abstract class SessionState {
-
   public observable$: Observable<string | null>;
 
   private subject: BehaviorSubject<string | null>;

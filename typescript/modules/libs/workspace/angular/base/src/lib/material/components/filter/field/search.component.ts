@@ -51,7 +51,7 @@ export class AllorsMaterialFilterFieldSearchComponent implements OnInit {
         } else {
           return this.filterFieldDefinition.options.search().create(this.allors)(value);
         }
-      }),
+      })
     );
   }
 }

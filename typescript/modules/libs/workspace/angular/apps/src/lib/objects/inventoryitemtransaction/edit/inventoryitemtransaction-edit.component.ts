@@ -4,7 +4,20 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Part, Facility, InternalOrganisation, NonSerialisedInventoryItem, InventoryItem, InventoryItemTransaction, InventoryTransactionReason, Lot, SerialisedInventoryItem, SerialisedItem, NonSerialisedInventoryItemState, SerialisedInventoryItemState } from '@allors/workspace/domain/default';
+import {
+  Part,
+  Facility,
+  InternalOrganisation,
+  NonSerialisedInventoryItem,
+  InventoryItem,
+  InventoryItemTransaction,
+  InventoryTransactionReason,
+  Lot,
+  SerialisedInventoryItem,
+  SerialisedItem,
+  NonSerialisedInventoryItemState,
+  SerialisedInventoryItemState,
+} from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -13,10 +26,9 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './inventoryitemtransaction-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class InventoryItemTransactionEditComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   title = 'Add Inventory Item Transaction';
@@ -45,25 +57,24 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<InventoryItemTransactionEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
-    private fetcher: FetcherService,
+    private fetcher: FetcherService
   ) {
-
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
@@ -81,14 +92,14 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
                 Part: {
                   InventoryItemKind: x,
                   PartWeightedAverage: x,
-                }
-              }
+                },
+              },
             }),
             pull.Part({
               objectId: this.data.associationId,
               include: {
                 PartWeightedAverage: x,
-              }
+              },
             }),
             pull.SerialisedItem({
               objectId: this.data.associationId,
@@ -99,20 +110,16 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
                 PartWhereSerialisedItem: {
                   include: {
                     PartWeightedAverage: x,
-                  }
-                }
-              }
-            })
+                  },
+                },
+              },
+            }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded })));
         })
       )
       .subscribe(({ loaded }) => {
-
         this.allors.session.reset();
 
         this.inventoryTransactionReasons = loaded.collection<InventoryTransactionReason>(m.InventoryTransactionReason);
@@ -138,7 +145,7 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
         }
 
         this.inventoryItemTransaction = this.allors.session.create<InventoryItemTransaction>(m.InventoryItemTransaction);
-        this.inventoryItemTransaction.TransactionDate = new Date();;
+        this.inventoryItemTransaction.TransactionDate = new Date();
         this.inventoryItemTransaction.Part = this.part;
         this.inventoryItemTransaction.Cost = this.part.PartWeightedAverage?.AverageCost;
 
@@ -169,21 +176,17 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
   }
 
   public save(): void {
-
     this.inventoryItemTransaction.Facility = this.selectedFacility;
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.inventoryItemTransaction.id,
-          objectType: this.inventoryItemTransaction.objectType,
-        };
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      const data: IObject = {
+        id: this.inventoryItemTransaction.id,
+        objectType: this.inventoryItemTransaction.objectType,
+      };
 
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   public facilityAdded(facility: Facility): void {

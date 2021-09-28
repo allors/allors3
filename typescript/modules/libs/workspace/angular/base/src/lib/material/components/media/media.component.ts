@@ -17,17 +17,11 @@ import { isImage } from './media';
   styleUrls: ['./media.component.scss'],
 })
 export class AllorsMaterialMediaComponent {
-
   @Input() media: Media;
 
   @Output() public delete: EventEmitter<IObject> = new EventEmitter();
 
-  constructor(
-    @Optional() parentForm: NgForm,
-    private dialog: MatDialog,
-    private mediaService: MediaService,
-  ) {
-  }
+  constructor(@Optional() parentForm: NgForm, private dialog: MatDialog, private mediaService: MediaService) {}
 
   get src(): string | null {
     if (this.media.InDataUri) {
@@ -52,15 +46,13 @@ export class AllorsMaterialMediaComponent {
     const dialogRef = this.dialog.open(AllorMediaPreviewComponent, {
       maxHeight: '80vh',
       maxWidth: '60vw',
-      data: { media: this.media }
+      data: { media: this.media },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-    });
+    dialogRef.afterClosed().subscribe((result) => {});
   }
 
   public download(): void {
-
     if (this.media.InDataUri) {
       const link = document.createElement('a');
       if (this.media.FileName) {
@@ -71,15 +63,13 @@ export class AllorsMaterialMediaComponent {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
     } else if (this.media.UniqueId) {
       const url = this.mediaService.url(this.media);
       window.open(url);
-
     }
   }
 
-  get isImage(): boolean{
+  get isImage(): boolean {
     return isImage(this.media);
   }
 }

@@ -7,10 +7,7 @@ import { AuthenticationService } from '@allors/workspace/angular/base';
   providedIn: 'root',
 })
 export class AuthorizationService implements CanActivate {
-  constructor(
-    private authenticationService: AuthenticationService,
-    private router: Router,
-  ) {}
+  constructor(private authenticationService: AuthenticationService, private router: Router) {}
 
   public canActivate() {
     if (this.authenticationService.token) {

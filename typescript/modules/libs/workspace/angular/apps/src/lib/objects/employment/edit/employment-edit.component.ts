@@ -64,7 +64,7 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
         switchMap(() => {
           const isCreate = this.data.id === undefined;
 
-          const pulls = [this.fetcher.internalOrganisation, pull.Person()];
+          const pulls = [this.fetcher.internalOrganisation, pull.Person({})];
 
           if (!isCreate) {
             pulls.push(

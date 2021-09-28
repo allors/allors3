@@ -1,5 +1,5 @@
 import { initDatabaseManyToMany, databaseManyToManySetRole } from '@allors/workspace/adapters/system-tests';
-import { Fixture } from '../../fixture'
+import { Fixture } from '../../fixture';
 
 let fixture: Fixture;
 

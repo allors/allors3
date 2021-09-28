@@ -1,4 +1,4 @@
-import { PermissionResponsePermission } from "./permission-response-permission";
+import { PermissionResponsePermission } from './permission-response-permission';
 
 export interface PermissionResponse {
   /** AccessControls */

@@ -1,4 +1,4 @@
-import { Select } from "../../data/select";
+import { Select } from '../../data/select';
 
 export interface FlatResult {
   selectRef?: string;

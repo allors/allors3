@@ -6,7 +6,6 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-
 import * as chars from './chars';
 
 export enum CssTokenType {
@@ -19,7 +18,7 @@ export enum CssTokenType {
   AtKeyword,
   Character,
   Whitespace,
-  Invalid
+  Invalid,
 }
 
 export enum CssLexerMode {
@@ -36,22 +35,18 @@ export enum CssLexerMode {
   STYLE_BLOCK,
   STYLE_VALUE,
   STYLE_VALUE_FUNCTION,
-  STYLE_CALC_FUNCTION
+  STYLE_CALC_FUNCTION,
 }
 
 export class LexedCssResult {
-  constructor(public error: Error|null, public token: CssToken) {}
+  constructor(public error: Error | null, public token: CssToken) {}
 }
 
-export function generateErrorMessage(
-    input: string, message: string, errorValue: string, index: number, row: number,
-    column: number): string {
-  return `${message} at column ${row}:${column} in expression [` +
-      findProblemCode(input, errorValue, index, column) + ']';
+export function generateErrorMessage(input: string, message: string, errorValue: string, index: number, row: number, column: number): string {
+  return `${message} at column ${row}:${column} in expression [` + findProblemCode(input, errorValue, index, column) + ']';
 }
 
-export function findProblemCode(
-    input: string, errorValue: string, index: number, column: number): string {
+export function findProblemCode(input: string, errorValue: string, index: number, column: number): string {
   let endOfProblemLine = index;
   let current = charCode(input, index);
   while (current > 0 && !isNewline(current)) {
@@ -71,9 +66,7 @@ export function findProblemCode(
 
 export class CssToken {
   numValue: number;
-  constructor(
-      public index: number, public column: number, public line: number, public type: CssTokenType,
-      public strValue: string) {
+  constructor(public index: number, public column: number, public line: number, public type: CssTokenType, public strValue: string) {
     this.numValue = charCode(strValue, 0);
   }
 }
@@ -126,7 +119,7 @@ export class CssScanner {
   /** @internal */
   _currentMode: CssLexerMode = CssLexerMode.BLOCK;
   /** @internal */
-  _currentError: Error|null = null;
+  _currentError: Error | null = null;
 
   constructor(public input: string, private _trackComments: boolean = false) {
     this.length = this.input.length;
@@ -134,7 +127,9 @@ export class CssScanner {
     this.advance();
   }
 
-  getMode(): CssLexerMode { return this._currentMode; }
+  getMode(): CssLexerMode {
+    return this._currentMode;
+  }
 
   setMode(mode: CssLexerMode) {
     if (this._currentMode != mode) {
@@ -174,21 +169,21 @@ export class CssScanner {
     while (chars.isWhitespace(this.peek) || isNewline(this.peek)) {
       this.advance();
       if (!this._trackComments && isCommentStart(this.peek, this.peekPeek)) {
-        this.advance();  // /
-        this.advance();  // *
+        this.advance(); // /
+        this.advance(); // *
         while (!isCommentEnd(this.peek, this.peekPeek)) {
           if (this.peek == chars.$EOF) {
             this.error('Unterminated comment');
           }
           this.advance();
         }
-        this.advance();  // *
-        this.advance();  // /
+        this.advance(); // *
+        this.advance(); // /
       }
     }
   }
 
-  consume(type: CssTokenType, value: string|null = null): LexedCssResult {
+  consume(type: CssTokenType, value: string | null = null): LexedCssResult {
     const mode = this._currentMode;
 
     this.setMode(_trackWhitespace(mode) ? CssLexerMode.ALL_TRACK_WS : CssLexerMode.ALL);
@@ -197,7 +192,7 @@ export class CssScanner {
     const previousLine = this.line;
     const previousColumn = this.column;
 
-    let next: CssToken = undefined !;
+    let next: CssToken = undefined!;
     const output = this.scan();
     if (output != null) {
       // just incase the inner scan method returned an error
@@ -225,35 +220,31 @@ export class CssScanner {
     // mode so that the parser can recover...
     this.setMode(mode);
 
-    let error: Error|null = null;
+    let error: Error | null = null;
     if (!isMatchingType || (value != null && value != next.strValue)) {
-      let errorMessage =
-          CssTokenType[next.type] + ' does not match expected ' + CssTokenType[type] + ' value';
+      let errorMessage = CssTokenType[next.type] + ' does not match expected ' + CssTokenType[type] + ' value';
 
       if (value != null) {
         errorMessage += ' ("' + next.strValue + '" should match "' + value + '")';
       }
 
-      error = cssScannerError(
-          next, generateErrorMessage(
-                    this.input, errorMessage, next.strValue, previousIndex, previousLine,
-                    previousColumn));
+      error = cssScannerError(next, generateErrorMessage(this.input, errorMessage, next.strValue, previousIndex, previousLine, previousColumn));
     }
 
     return new LexedCssResult(error, next);
   }
 
-
-  scan(): LexedCssResult|null {
+  scan(): LexedCssResult | null {
     const trackWS = _trackWhitespace(this._currentMode);
-    if (this.index == 0 && !trackWS) {  // first scan
+    if (this.index == 0 && !trackWS) {
+      // first scan
       this.consumeWhitespace();
     }
 
     const token = this._scan();
     if (token == null) return null;
 
-    const error = this._currentError !;
+    const error = this._currentError!;
     this._currentError = null;
 
     if (!trackWS) {
@@ -263,7 +254,7 @@ export class CssScanner {
   }
 
   /** @internal */
-  _scan(): CssToken|null {
+  _scan(): CssToken | null {
     let peek = this.peek;
     let peekPeek = this.peekPeek;
     if (peek == chars.$EOF) return null;
@@ -297,8 +288,7 @@ export class CssScanner {
     const isModifier = peek == chars.$PLUS || peek == chars.$MINUS;
     const digitA = isModifier ? false : chars.isDigit(peek);
     const digitB = chars.isDigit(peekPeek);
-    if (digitA || (isModifier && (peekPeek == chars.$PERIOD || digitB)) ||
-        (peek == chars.$PERIOD && digitB)) {
+    if (digitA || (isModifier && (peekPeek == chars.$PERIOD || digitB)) || (peek == chars.$PERIOD && digitB)) {
       return this.scanNumber();
     }
 
@@ -317,9 +307,8 @@ export class CssScanner {
     return this.error(`Unexpected character [${String.fromCharCode(peek)}]`);
   }
 
-  scanComment(): CssToken|null {
-    if (this.assertCondition(
-            isCommentStart(this.peek, this.peekPeek), 'Expected comment start value')) {
+  scanComment(): CssToken | null {
+    if (this.assertCondition(isCommentStart(this.peek, this.peekPeek), 'Expected comment start value')) {
       return null;
     }
 
@@ -327,8 +316,8 @@ export class CssScanner {
     const startingColumn = this.column;
     const startingLine = this.line;
 
-    this.advance();  // /
-    this.advance();  // *
+    this.advance(); // /
+    this.advance(); // *
 
     while (!isCommentEnd(this.peek, this.peekPeek)) {
       if (this.peek == chars.$EOF) {
@@ -337,8 +326,8 @@ export class CssScanner {
       this.advance();
     }
 
-    this.advance();  // *
-    this.advance();  // /
+    this.advance(); // *
+    this.advance(); // /
 
     const str = this.input.substring(start, this.index);
     return new CssToken(start, startingColumn, startingLine, CssTokenType.Comment, str);
@@ -355,9 +344,8 @@ export class CssScanner {
     return new CssToken(start, startingColumn, startingLine, CssTokenType.Whitespace, str);
   }
 
-  scanString(): CssToken|null {
-    if (this.assertCondition(
-            isStringStart(this.peek, this.peekPeek), 'Unexpected non-string starting value')) {
+  scanString(): CssToken | null {
+    if (this.assertCondition(isStringStart(this.peek, this.peekPeek), 'Unexpected non-string starting value')) {
       return null;
     }
 
@@ -405,9 +393,8 @@ export class CssScanner {
     return new CssToken(start, startingColumn, this.line, CssTokenType.Number, strValue);
   }
 
-  scanIdentifier(): CssToken|null {
-    if (this.assertCondition(
-            isIdentifierStart(this.peek, this.peekPeek), 'Expected identifier starting value')) {
+  scanIdentifier(): CssToken | null {
+    if (this.assertCondition(isIdentifierStart(this.peek, this.peekPeek), 'Expected identifier starting value')) {
       return null;
     }
 
@@ -436,12 +423,10 @@ export class CssScanner {
     return new CssToken(start, startingColumn, this.line, CssTokenType.Identifier, strValue);
   }
 
-  scanCharacter(): CssToken|null {
+  scanCharacter(): CssToken | null {
     const start = this.index;
     const startingColumn = this.column;
-    if (this.assertCondition(
-            isValidCssCharacter(this.peek, this._currentMode),
-            charStr(this.peek) + ' is not a valid CSS character')) {
+    if (this.assertCondition(isValidCssCharacter(this.peek, this._currentMode), charStr(this.peek) + ' is not a valid CSS character')) {
       return null;
     }
 
@@ -451,7 +436,7 @@ export class CssScanner {
     return new CssToken(start, startingColumn, this.line, CssTokenType.Character, c);
   }
 
-  scanAtExpression(): CssToken|null {
+  scanAtExpression(): CssToken | null {
     if (this.assertCondition(this.peek == chars.$AT, 'Expected @ value')) {
       return null;
     }
@@ -460,7 +445,7 @@ export class CssScanner {
     const startingColumn = this.column;
     this.advance();
     if (isIdentifierStart(this.peek, this.peekPeek)) {
-      const ident = this.scanIdentifier() !;
+      const ident = this.scanIdentifier()!;
       const strValue = '@' + ident.strValue;
       return new CssToken(start, startingColumn, this.line, CssTokenType.AtKeyword, strValue);
     } else {
@@ -476,15 +461,13 @@ export class CssScanner {
     return false;
   }
 
-  error(message: string, errorTokenValue: string|null = null, doNotAdvance: boolean = false):
-      CssToken {
+  error(message: string, errorTokenValue: string | null = null, doNotAdvance: boolean = false): CssToken {
     const index: number = this.index;
     const column: number = this.column;
     const line: number = this.line;
     errorTokenValue = errorTokenValue || String.fromCharCode(this.peek);
     const invalidToken = new CssToken(index, column, line, CssTokenType.Invalid, errorTokenValue);
-    const errorMessage =
-        generateErrorMessage(this.input, message, errorTokenValue, index, line, column);
+    const errorMessage = generateErrorMessage(this.input, message, errorTokenValue, index, line, column);
     if (!doNotAdvance) {
       this.advance();
     }
@@ -519,13 +502,11 @@ function isIdentifierStart(code: number, next: number): boolean {
     target = next;
   }
 
-  return chars.isAsciiLetter(target) || target == chars.$BACKSLASH || target == chars.$MINUS ||
-      target == chars.$_;
+  return chars.isAsciiLetter(target) || target == chars.$BACKSLASH || target == chars.$MINUS || target == chars.$_;
 }
 
 function isIdentifierPart(target: number): boolean {
-  return chars.isAsciiLetter(target) || target == chars.$BACKSLASH || target == chars.$MINUS ||
-      target == chars.$_ || chars.isDigit(target);
+  return chars.isAsciiLetter(target) || target == chars.$BACKSLASH || target == chars.$MINUS || target == chars.$_ || chars.isDigit(target);
 }
 
 function isValidPseudoSelectorCharacter(code: number): boolean {

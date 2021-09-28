@@ -9,13 +9,11 @@ import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/work
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
-
 @Component({
   templateUrl: './partyrate-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class PartyRateEditComponent extends TestScope implements OnInit, OnDestroy {
-
   title: string;
   subTitle: string;
 
@@ -32,9 +30,9 @@ export class PartyRateEditComponent extends TestScope implements OnInit, OnDestr
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PartyRateEditComponent>,
-    
+
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private saveService: SaveService
   ) {
     super();
 
@@ -42,19 +40,16 @@ export class PartyRateEditComponent extends TestScope implements OnInit, OnDestr
   }
 
   public ngOnInit(): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-
           const isCreate = this.data.id === undefined;
 
-          const pulls = [
-            pull.RateType({ sorting: [{ roleType: this.m.RateType.Name }] }),
-            pull.TimeFrequency({ sorting: [{ roleType: this.m.TimeFrequency.Name }] }),
-          ];
+          const pulls = [pull.RateType({ sorting: [{ roleType: this.m.RateType.Name }] }), pull.TimeFrequency({ sorting: [{ roleType: this.m.TimeFrequency.Name }] })];
 
           if (!isCreate) {
             pulls.push(
@@ -62,12 +57,11 @@ export class PartyRateEditComponent extends TestScope implements OnInit, OnDestr
                 objectId: this.data.id,
                 include: {
                   RateType: x,
-                  Frequency: x
-                }
-              }),
+                  Frequency: x,
+                },
+              })
             );
           }
-
 
           if (isCreate && this.data.associationId) {
             pulls.push(
@@ -75,19 +69,15 @@ export class PartyRateEditComponent extends TestScope implements OnInit, OnDestr
                 objectId: this.data.associationId,
                 include: {
                   PartyRates: x,
-                }
-              }),
+                },
+              })
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-
         this.allors.session.reset();
 
         this.party = loaded.object<Party>(m.Party);
@@ -123,19 +113,14 @@ export class PartyRateEditComponent extends TestScope implements OnInit, OnDestr
   }
 
   public save(): void {
+    this.allors.context.save().subscribe(() => {
+      const data: IObject = {
+        id: this.partyRate.id,
+        objectType: this.partyRate.objectType,
+      };
 
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.partyRate.id,
-          objectType: this.partyRate.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

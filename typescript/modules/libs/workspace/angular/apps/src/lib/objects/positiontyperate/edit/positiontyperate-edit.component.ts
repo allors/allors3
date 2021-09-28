@@ -11,10 +11,9 @@ import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './positiontyperate-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class PositionTypeRateEditComponent extends TestScope implements OnInit, OnDestroy {
-
   title: string;
   subTitle: string;
 
@@ -33,24 +32,23 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PositionTypeRateEditComponent>,
-    
-    public refreshService: RefreshService,
-    private saveService: SaveService,
-  ) {
 
+    public refreshService: RefreshService,
+    private saveService: SaveService
+  ) {
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-
           const isCreate = this.data.id === undefined;
 
           const pulls = [
@@ -59,8 +57,8 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
             pull.PositionType({
               sorting: [{ roleType: this.m.PositionType.Title }],
               include: {
-                PositionTypeRate: x
-              }
+                PositionTypeRate: x,
+              },
             }),
           ];
 
@@ -70,20 +68,16 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
                 objectId: this.data.id,
                 include: {
                   RateType: x,
-                  Frequency: x
-                }
-              }),
+                  Frequency: x,
+                },
+              })
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-
         this.allors.session.reset();
 
         this.rateTypes = loaded.collection<RateType>(m.RateType);
@@ -105,9 +99,8 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
         }
 
         this.positionTypes = loaded.collection<PositionType>(m.PositionType);
-        this.selectedPositionTypes = this.positionTypes.filter(v => v.PositionTypeRate === this.positionTypeRate);
+        this.selectedPositionTypes = this.positionTypes.filter((v) => v.PositionTypeRate === this.positionTypeRate);
         this.originalPositionTypes = this.selectedPositionTypes;
-
       });
   }
 
@@ -122,10 +115,8 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
   }
 
   public save(): void {
-
     if (this.selectedPositionTypes !== undefined) {
       this.selectedPositionTypes.forEach((positionType: PositionType) => {
-
         positionType.PositionTypeRate = this.positionTypeRate;
 
         const index = this.originalPositionTypes.indexOf(positionType);
@@ -139,18 +130,14 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
       positionType.PositionTypeRate = null;
     });
 
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.positionTypeRate.id,
-          objectType: this.positionTypeRate.objectType,
-        };
+    this.allors.context.save().subscribe(() => {
+      const data: IObject = {
+        id: this.positionTypeRate.id,
+        objectType: this.positionTypeRate.objectType,
+      };
 
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

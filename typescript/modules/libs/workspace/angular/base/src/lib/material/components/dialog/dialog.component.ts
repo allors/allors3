@@ -8,7 +8,6 @@ import { DialogData } from '../../services/dialog/dialog.data';
   templateUrl: 'dialog.component.html',
 })
 export class AllorsMaterialDialogComponent {
-
   public alert: boolean | undefined;
   public confirmation: boolean | undefined;
   public prompt: boolean | undefined;
@@ -21,7 +20,6 @@ export class AllorsMaterialDialogComponent {
   public value: string;
 
   constructor(public dialogRef: MatDialogRef<AllorsMaterialDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogData) {
-
     this.alert = data.alert;
     this.confirmation = data.confirmation;
     this.prompt = data.prompt;
@@ -34,5 +32,3 @@ export class AllorsMaterialDialogComponent {
     this.promptType = config.promptType || 'string';
   }
 }
-
-

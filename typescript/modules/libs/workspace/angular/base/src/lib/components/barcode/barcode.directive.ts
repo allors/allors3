@@ -7,9 +7,7 @@ import { AllorsBarcodeService } from '../../services/barcode/barcode.service';
   selector: '[aBarcode]',
 })
 export class AllorsBarcodeDirective {
-
-  constructor(private barcodeService: AllorsBarcodeService) {
-  }
+  constructor(private barcodeService: AllorsBarcodeService) {}
 
   @HostListener('document:keypress', ['$event'])
   onKeypress(event: KeyboardEvent) {

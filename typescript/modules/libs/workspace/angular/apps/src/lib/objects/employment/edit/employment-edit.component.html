@@ -1,11 +1,10 @@
 <form *ngIf="partyRelationship" #form="ngForm" (submit)="save()" novalidate>
   <h1></h1>
 
-  <h3 mat-dialog-title>{{title}}</h3>
+  <h3 mat-dialog-title>{{ title }}</h3>
 
   <mat-dialog-content>
     <div class="container-fluid">
-
       <div class="row">
         <a-mat-datepicker class="col-md" [object]="partyRelationship" [roleType]="m.PartyRelationship.FromDate"></a-mat-datepicker>
         <a-mat-datepicker class="col-md" [object]="partyRelationship" [roleType]="m.PartyRelationship.ThroughDate"></a-mat-datepicker>
@@ -18,10 +17,8 @@
       <div class="row">
         <div class="col-md">
           <div class="row">
-            <a-mat-select *ngIf="!person" class="col" [object]="partyRelationship" [roleType]="m.Employment.Employee"
-              [options]="people" display="displayName"></a-mat-select>
-            <a-mat-static *ngIf="person" class="col-md" [object]="partyRelationship" [roleType]="m.Employment.Employee"
-              display="displayName"></a-mat-static>
+            <a-mat-select *ngIf="!person" class="col" [object]="partyRelationship" [roleType]="m.Employment.Employee" [options]="people" display="displayName"></a-mat-select>
+            <a-mat-static *ngIf="person" class="col-md" [object]="partyRelationship" [roleType]="m.Employment.Employee" display="displayName"></a-mat-static>
             <button *ngIf="!person" mat-mini-fab color="accent" type="button" (click)="addEmployee = !addEmployee">
               <mat-icon *ngIf="!addEmployee">add</mat-icon>
               <mat-icon *ngIf="addEmployee">close</mat-icon>
@@ -33,8 +30,7 @@
           <mat-card>
             <mat-card-header>Add a new person</mat-card-header>
             <mat-card-content>
-              <person-inline (cancelled)="addEmployee = false" (saved)="employeeAdded($event); addEmployee = false">
-              </person-inline>
+              <person-inline (cancelled)="addEmployee = false" (saved)="employeeAdded($event); addEmployee = false"> </person-inline>
             </mat-card-content>
           </mat-card>
         </div>
@@ -46,5 +42,4 @@
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
     <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
   </div>
-
 </form>

@@ -14,10 +14,9 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './partcategory-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class PartCategoryEditComponent extends TestScope implements OnInit, OnDestroy {
-
   public m: M;
   public title: string;
 
@@ -31,11 +30,11 @@ export class PartCategoryEditComponent extends TestScope implements OnInit, OnDe
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PartCategoryEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,
-    private internalOrganisationId: InternalOrganisationId,
+    private internalOrganisationId: InternalOrganisationId
   ) {
     super();
 
@@ -43,13 +42,13 @@ export class PartCategoryEditComponent extends TestScope implements OnInit, OnDe
   }
 
   public ngOnInit(): void {
-
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-
           const isCreate = this.data.id === undefined;
 
           const pulls = [
@@ -61,31 +60,25 @@ export class PartCategoryEditComponent extends TestScope implements OnInit, OnDe
 
           if (!isCreate) {
             pulls.push(
-              pull.PartCategory(
-                {
-                  objectId: this.data.id,
-                  include: {
-                    Children: x,
-                    LocalisedNames: {
-                      Locale: x,
-                    },
-                    LocalisedDescriptions: {
-                      Locale: x,
-                    }
-                  }
-                }
-              ),
+              pull.PartCategory({
+                objectId: this.data.id,
+                include: {
+                  Children: x,
+                  LocalisedNames: {
+                    Locale: x,
+                  },
+                  LocalisedDescriptions: {
+                    Locale: x,
+                  },
+                },
+              })
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-
         this.allors.session.reset();
 
         this.category = loaded.object<PartCategory>(m.PartCategory);
@@ -102,7 +95,6 @@ export class PartCategoryEditComponent extends TestScope implements OnInit, OnDe
             this.title = 'View Part Category';
           }
         }
-
       });
   }
 
@@ -113,19 +105,14 @@ export class PartCategoryEditComponent extends TestScope implements OnInit, OnDe
   }
 
   public save(): void {
+    this.allors.context.save().subscribe((saved: Saved) => {
+      const data: IObject = {
+        id: this.category.id,
+        objectType: this.category.objectType,
+      };
 
-    this.allors.context
-      .save()
-      .subscribe((saved: Saved) => {
-        const data: IObject = {
-          id: this.category.id,
-          objectType: this.category.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

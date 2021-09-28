@@ -50,7 +50,7 @@ export class AllorsMaterialAutocompleteComponent extends RoleField implements On
           } else {
             return this.filter(search);
           }
-        }),
+        })
       );
     } else {
       this.filteredOptions = this.searchControl.valueChanges.pipe(
@@ -68,10 +68,8 @@ export class AllorsMaterialAutocompleteComponent extends RoleField implements On
 
               return false;
             })
-            .sort((a: IObject, b: IObject) =>
-              (a as any)[this.display] !== (b as any)[this.display] ? ((a as any)[this.display] < (b as any)[this.display] ? -1 : 1) : 0,
-            );
-        }),
+            .sort((a: IObject, b: IObject) => ((a as any)[this.display] !== (b as any)[this.display] ? ((a as any)[this.display] < (b as any)[this.display] ? -1 : 1) : 0));
+        })
       );
     }
   }
@@ -106,7 +104,7 @@ export class AllorsMaterialAutocompleteComponent extends RoleField implements On
 
   onRestore(event: Event) {
     event.stopPropagation();
-    this.restore()
+    this.restore();
     this.trigger.closePanel();
     this.changed.emit(this.model);
   }

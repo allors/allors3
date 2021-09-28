@@ -49,7 +49,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
@@ -100,7 +100,9 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
         switchMap(() => {
           this.part = undefined;
 
-          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+          const m = this.allors.workspace.configuration.metaPopulation as M;
+          const { pullBuilder: pull } = m;
+          const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -238,7 +240,9 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
   }
 
   public brandSelected(brand: Brand): void {
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.Brand({

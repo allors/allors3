@@ -17,10 +17,9 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'payment-overview-panel',
   templateUrl: './payment-overview-panel.component.html',
-  providers: [SessionService, PanelService]
+  providers: [SessionService, PanelService],
 })
 export class PaymentOverviewPanelComponent extends TestScope {
-
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -45,7 +44,7 @@ export class PaymentOverviewPanelComponent extends TestScope {
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public methodService: MethodService,
@@ -67,14 +66,8 @@ export class PaymentOverviewPanelComponent extends TestScope {
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'date' },
-        { name: 'amount' },
-      ],
-      actions: [
-        this.edit,
-        this.delete,
-      ],
+      columns: [{ name: 'date' }, { name: 'amount' }],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -96,22 +89,21 @@ export class PaymentOverviewPanelComponent extends TestScope {
               include: {
                 Sender: x,
                 PaymentMethod: x,
-              }
-            }
-          }
+              },
+            },
+          },
         }),
         pull.Invoice({
           object: this.panel.manager.id,
           include: {
             SalesInvoice_SalesInvoiceType: x,
             PurchaseInvoice_PurchaseInvoiceType: x,
-          }
-        }),
+          },
+        })
       );
     };
 
     panel.onPulled = (loaded) => {
-
       const invoice = loaded.object<Invoice>(m.Invoice);
 
       if (invoice.objectType.name === this.m.SalesInvoice.name) {
@@ -131,7 +123,7 @@ export class PaymentOverviewPanelComponent extends TestScope {
         return {
           object: v,
           date: v.EffectiveDate && format(new Date(v.EffectiveDate), 'dd-MM-yyyy'),
-          amount: v.Amount
+          amount: v.Amount,
         } as Row;
       });
     };

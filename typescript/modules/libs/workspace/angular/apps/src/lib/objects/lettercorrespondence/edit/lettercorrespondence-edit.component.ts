@@ -4,7 +4,19 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, CommunicationEventPurpose, ContactMechanism, LetterCorrespondence, CommunicationEventState, PartyContactMechanism, PostalAddress } from '@allors/workspace/domain/default';
+import {
+  Person,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  InternalOrganisation,
+  CommunicationEventPurpose,
+  ContactMechanism,
+  LetterCorrespondence,
+  CommunicationEventState,
+  PartyContactMechanism,
+  PostalAddress,
+} from '@allors/workspace/domain/default';
 import { NavigationService, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -13,10 +25,9 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 
 @Component({
   templateUrl: './lettercorrespondence-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class LetterCorrespondenceEditComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   addFromParty = false;
@@ -44,24 +55,23 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
     public dialogRef: MatDialogRef<LetterCorrespondenceEditComponent>,
     public refreshService: RefreshService,
     private saveService: SaveService,
-    
-    public navigation: NavigationService,
-    private internalOrganisationId: InternalOrganisationId,
-  ) {
 
+    public navigation: NavigationService,
+    private internalOrganisationId: InternalOrganisationId
+  ) {
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-
           const isCreate = this.data.id === undefined;
 
           let pulls = [
@@ -72,18 +82,18 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
                 ActiveEmployees: {
                   CurrentPartyContactMechanisms: {
                     ContactMechanism: {
-                      PostalAddress_Country: x
+                      PostalAddress_Country: x,
                     },
-                  }
-                }
-              }
+                  },
+                },
+              },
             }),
             pull.CommunicationEventPurpose({
               predicate: { kind: 'Equals', propertyType: m.CommunicationEventPurpose.IsActive, value: true },
-              sorting: [{ roleType: m.CommunicationEventPurpose.Name }]
+              sorting: [{ roleType: m.CommunicationEventPurpose.Name }],
             }),
             pull.CommunicationEventState({
-              sorting: [{ roleType: m.CommunicationEventState.Name }]
+              sorting: [{ roleType: m.CommunicationEventState.Name }],
             }),
           ];
 
@@ -95,26 +105,26 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
                 include: {
                   FromParty: {
                     CurrentPartyContactMechanisms: {
-                      ContactMechanism: x
-                    }
+                      ContactMechanism: x,
+                    },
                   },
                   ToParty: {
                     CurrentPartyContactMechanisms: {
-                      ContactMechanism: x
-                    }
+                      ContactMechanism: x,
+                    },
                   },
                   PostalAddress: {
-                    Country: x
+                    Country: x,
                   },
                   EventPurposes: x,
-                  CommunicationEventState: x
-                }
+                  CommunicationEventState: x,
+                },
               }),
               pull.CommunicationEvent({
                 objectId: this.data.id,
                 select: {
                   InvolvedParties: x,
-                }
+                },
               }),
             ];
           }
@@ -128,10 +138,10 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
                   CurrentContacts: x,
                   CurrentPartyContactMechanisms: {
                     ContactMechanism: {
-                      PostalAddress_Country: x
+                      PostalAddress_Country: x,
                     },
-                  }
-                }
+                  },
+                },
               }),
               pull.Person({
                 objectId: this.data.associationId,
@@ -145,25 +155,21 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
                         CurrentContacts: x,
                         CurrentPartyContactMechanisms: {
                           ContactMechanism: {
-                            PostalAddress_Country: x
+                            PostalAddress_Country: x,
                           },
-                        }
-                      }
-                    }
-                  }
-                }
-              })
+                        },
+                      },
+                    },
+                  },
+                },
+              }),
             ];
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-
         this.allors.session.reset();
 
         this.purposes = loaded.collection<CommunicationEventPurpose>(m.CommunicationEventPurpose);
@@ -217,7 +223,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
 
         this.contacts.push(...contacts);
         this.sortContacts();
-    });
+      });
   }
 
   public ngOnDestroy(): void {
@@ -227,7 +233,6 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
   }
 
   public fromAddressAdded(partyContactMechanism: PartyContactMechanism): void {
-
     if (!!this.communicationEvent.FromParty) {
       this.communicationEvent.FromParty.addPartyContactMechanism(partyContactMechanism);
     }
@@ -239,7 +244,6 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
   }
 
   public toAddressAdded(partyContactMechanism: PartyContactMechanism): void {
-
     if (!!this.communicationEvent.ToParty) {
       this.communicationEvent.ToParty.addPartyContactMechanism(partyContactMechanism);
     }
@@ -279,11 +283,13 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
   }
 
   private sortContacts(): void {
-    this.contacts.sort((a, b) => (a.displayName > b.displayName) ? 1 : ((b.displayName > a.displayName) ? -1 : 0));
+    this.contacts.sort((a, b) => (a.displayName > b.displayName ? 1 : b.displayName > a.displayName ? -1 : 0));
   }
 
   private updateFromParty(party: Party): void {
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.Party({
@@ -293,21 +299,18 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
             include: {
               ContactMechanism: {
                 ContactMechanismType: x,
-                PostalAddress_Country: x
+                PostalAddress_Country: x,
               },
-            }
-          }
+            },
+          },
         },
-      })
+      }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
-
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-        this.fromPostalAddresses = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.PostalAddress).map((v) => v.ContactMechanism);
-      });
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      this.fromPostalAddresses = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.PostalAddress).map((v) => v.ContactMechanism);
+    });
   }
 
   public toPartySelected(party: IObject) {
@@ -317,7 +320,9 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
   }
 
   private updateToParty(party: Party): void {
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.Party({
@@ -326,24 +331,20 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
           PartyContactMechanisms: {
             include: {
               ContactMechanism: {
-                ContactMechanismType: x
-              }
-            }
-          }
+                ContactMechanismType: x,
+              },
+            },
+          },
         },
-      })
+      }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
-
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-        this.toPostalAddresses = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.PostalAddress).map((v) => v.ContactMechanism);
-      });
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      this.toPostalAddresses = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.PostalAddress).map((v) => v.ContactMechanism);
+    });
   }
   public addressAdded(partyContactMechanism: PartyContactMechanism): void {
-
     this.party.addPartyContactMechanism(partyContactMechanism);
 
     const postalAddress = partyContactMechanism.ContactMechanism as PostalAddress;
@@ -352,19 +353,14 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
   }
 
   public save(): void {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      const data: IObject = {
+        id: this.communicationEvent.id,
+        objectType: this.communicationEvent.objectType,
+      };
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(
-        () => {
-          const data: IObject = {
-            id: this.communicationEvent.id,
-            objectType: this.communicationEvent.objectType,
-          };
-
-          this.dialogRef.close(data);
-          this.refreshService.refresh();
-        },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

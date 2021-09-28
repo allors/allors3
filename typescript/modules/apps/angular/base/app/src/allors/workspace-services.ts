@@ -14,7 +14,7 @@ export class WorkspaceServices implements IWorkspaceServices {
 
   constructor(private rules: IRule[]) {}
   m: M;
- 
+
   onInit(workspace: IWorkspace): void {
     this.workspace = workspace;
 

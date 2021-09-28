@@ -1,4 +1,3 @@
-
 export { PrintAction } from './lib/actions/print/print-action';
 export { PrintService, PrintConfig } from './lib/actions/print/print.service';
 
@@ -295,4 +294,3 @@ export { WorkTaskOverviewComponent } from './lib/objects/worktask/overview/workt
 export { WorkTaskOverviewDetailComponent } from './lib/objects/worktask/overview/detail/worktask-overview-detail.component';
 export { WorkTaskOverviewPanelComponent } from './lib/objects/worktask/overview/panel/worktask-overview-panel.component';
 export { WorkTaskOverviewSummaryComponent } from './lib/objects/worktask/overview/summary/worktask-overview-summary.component';
-

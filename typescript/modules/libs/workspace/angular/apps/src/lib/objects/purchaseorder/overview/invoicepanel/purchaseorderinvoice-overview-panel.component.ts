@@ -147,7 +147,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
 
       pulls.push(
         this.fetcher.internalOrganisation,
-        pull.InvoiceItemType(),
+        pull.InvoiceItemType({}),
         pull.PurchaseInvoice({
           name: pullName,
           objectId: id,

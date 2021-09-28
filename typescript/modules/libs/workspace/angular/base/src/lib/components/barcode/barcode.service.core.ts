@@ -14,7 +14,7 @@ export class AllorsBarcodeServiceCore extends AllorsBarcodeService {
 
   constructor() {
     super();
-    
+
     this.keypressSubject = new Subject();
     this.simulateSubject = new Subject();
 
@@ -33,7 +33,7 @@ export class AllorsBarcodeServiceCore extends AllorsBarcodeService {
           .join('')
           .trim();
       }),
-      share(),
+      share()
     );
 
     this.scan$ = merge(scanner, this.simulateSubject);

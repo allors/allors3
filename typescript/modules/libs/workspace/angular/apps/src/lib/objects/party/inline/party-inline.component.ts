@@ -13,5 +13,5 @@ export class PartyInlineComponent {
 
   @Output() public cancelled: EventEmitter<any> = new EventEmitter();
 
-  constructor(public allors: SessionService) { }
+  constructor(public allors: SessionService) {}
 }

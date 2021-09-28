@@ -9,7 +9,6 @@ import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/work
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
-
 @Component({
   templateUrl: './disbursement-edit.component.html',
   providers: [SessionService],
@@ -29,7 +28,7 @@ export class DisbursementEditComponent extends TestScope implements OnInit, OnDe
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<DisbursementEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService
   ) {
@@ -39,16 +38,17 @@ export class DisbursementEditComponent extends TestScope implements OnInit, OnDe
   }
 
   public ngOnInit(): void {
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id === undefined;
 
-          const pulls = [
-          ];
-          
+          const pulls = [];
+
           if (!isCreate) {
             pulls.push(
               pull.Disbursement({
@@ -56,7 +56,7 @@ export class DisbursementEditComponent extends TestScope implements OnInit, OnDe
                 include: {
                   PaymentApplications: x,
                 },
-              }),
+              })
             );
           }
 

@@ -17,7 +17,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'orderadjustment-overview-panel',
   templateUrl: './orderadjustment-overview-panel.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class OrderAdjustmentOverviewPanelComponent extends TestScope {
   container: any;
@@ -43,14 +43,11 @@ export class OrderAdjustmentOverviewPanelComponent extends TestScope {
   }
 
   get containerRoleType(): any {
-    if (this.container.objectType.name === this.m.ProductQuote.name
-      || this.container.objectType.name === this.m.Proposal.name
-      || this.container.objectType.name === this.m.StatementOfWork.name) {
+    if (this.container.objectType.name === this.m.ProductQuote.name || this.container.objectType.name === this.m.Proposal.name || this.container.objectType.name === this.m.StatementOfWork.name) {
       return this.m.Quote.OrderAdjustments;
     } else if (this.container.objectType.name === this.m.SalesOrder.name) {
       return this.m.SalesOrder.OrderAdjustments;
-    } else if (this.container.objectType.name === this.m.SalesInvoice.name
-      || this.container.objectType.name === this.m.PurchaseInvoice.name) {
+    } else if (this.container.objectType.name === this.m.SalesInvoice.name || this.container.objectType.name === this.m.PurchaseInvoice.name) {
       return this.m.Invoice.OrderAdjustments;
     }
   }
@@ -79,15 +76,8 @@ export class OrderAdjustmentOverviewPanelComponent extends TestScope {
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'adjustment' },
-        { name: 'amount' },
-        { name: 'percentage' },
-      ],
-      actions: [
-        this.edit,
-        this.delete,
-      ],
+      columns: [{ name: 'adjustment' }, { name: 'amount' }, { name: 'percentage' }],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -101,7 +91,9 @@ export class OrderAdjustmentOverviewPanelComponent extends TestScope {
     const invoicePullName = `${panel.name}_${this.m.Invoice.tag}`;
 
     panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -111,21 +103,21 @@ export class OrderAdjustmentOverviewPanelComponent extends TestScope {
           objectId: id,
           select: {
             OrderAdjustments: x,
-          }
+          },
         }),
         pull.Order({
           name: orderOrderAdjustmentsPullName,
           objectId: id,
           select: {
             OrderAdjustments: x,
-          }
+          },
         }),
         pull.Invoice({
           name: invoiceOrderAdjustmentsPullName,
           objectId: id,
           select: {
             OrderAdjustments: x,
-          }
+          },
         }),
         pull.Quote({
           name: quotePullName,
@@ -138,23 +130,18 @@ export class OrderAdjustmentOverviewPanelComponent extends TestScope {
         pull.Invoice({
           name: invoicePullName,
           objectId: id,
-        }),
+        })
       );
     };
 
     panel.onPulled = (loaded) => {
+      this.container = (loaded.objects[quotePullName] as Quote) || (loaded.objects[orderPullName] as Order) || (loaded.objects[invoicePullName] as Invoice);
 
-      this.container = loaded.objects[quotePullName] as Quote
-        || loaded.objects[orderPullName] as Order
-        || loaded.objects[invoicePullName] as Invoice;
+      this.objects =
+        (loaded.collections[quoteOrderAdjustmentsPullName] as OrderAdjustment[]) || (loaded.collections[orderOrderAdjustmentsPullName] as OrderAdjustment[]) || (loaded.collections[invoiceOrderAdjustmentsPullName] as OrderAdjustment[]);
 
-      this.objects = loaded.collections[quoteOrderAdjustmentsPullName] as OrderAdjustment[]
-        || loaded.collections[orderOrderAdjustmentsPullName] as OrderAdjustment[]
-        || loaded.collections[invoiceOrderAdjustmentsPullName] as OrderAdjustment[];
-
-      this.table.total = loaded.values[`${quoteOrderAdjustmentsPullName}_total`]
-        || loaded.values[`${orderOrderAdjustmentsPullName}_total`] || this.objects.length
-        || loaded.values[`${invoiceOrderAdjustmentsPullName}_total`] || this.objects.length;
+      this.table.total =
+        loaded.values[`${quoteOrderAdjustmentsPullName}_total`] || loaded.values[`${orderOrderAdjustmentsPullName}_total`] || this.objects.length || loaded.values[`${invoiceOrderAdjustmentsPullName}_total`] || this.objects.length;
 
       this.table.data = this.objects.map((v) => {
         return {

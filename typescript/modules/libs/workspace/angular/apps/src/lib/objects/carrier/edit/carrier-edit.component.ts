@@ -12,13 +12,11 @@ import { And } from '@allors/workspace/domain/system';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
-
 @Component({
   templateUrl: './carrier-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class CarrierEditComponent extends TestScope implements OnInit, OnDestroy {
-
   public title: string;
   public subTitle: string;
 
@@ -34,45 +32,37 @@ export class CarrierEditComponent extends TestScope implements OnInit, OnDestroy
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<CarrierEditComponent>,
-    
-    public refreshService: RefreshService,
-    private saveService: SaveService,
-  ) {
 
+    public refreshService: RefreshService,
+    private saveService: SaveService
+  ) {
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
     const { pullBuilder: pull } = this.m;
 
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
         switchMap(() => {
-
           const isCreate = this.data.id === undefined;
 
-          const pulls = [
-          ];
+          const pulls = [];
 
           if (!isCreate) {
             pulls.push(
               pull.Carrier({
                 objectId: this.data.id,
-              }),
+              })
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls)
-            .pipe(
-              map((loaded) => ({ loaded, isCreate }))
-            );
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-
         this.allors.session.reset();
 
         this.characteristics = loaded.collection<SerialisedItemCharacteristicType>(m.SerialisedItemCharacteristicType);
@@ -99,19 +89,14 @@ export class CarrierEditComponent extends TestScope implements OnInit, OnDestroy
   }
 
   public save(): void {
+    this.allors.context.save().subscribe(() => {
+      const data: IObject = {
+        id: this.carrier.id,
+        objectType: this.carrier.objectType,
+      };
 
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.carrier.id,
-          objectType: this.carrier.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

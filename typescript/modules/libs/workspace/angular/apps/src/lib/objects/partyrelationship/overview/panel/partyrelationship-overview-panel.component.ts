@@ -5,7 +5,6 @@ import { M } from '@allors/workspace/meta/default';
 import { PartyRelationship } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 
-
 interface Row extends TableRow {
   object: PartyRelationship;
   type: string;
@@ -18,10 +17,9 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'partyrelationship-overview-panel',
   templateUrl: './partyrelationship-overview-panel.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class PartyRelationshipOverviewPanelComponent extends TestScope implements OnInit {
-
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -48,7 +46,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     public deleteService: DeleteService,
@@ -60,7 +58,6 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
   }
 
   ngOnInit() {
-
     this.panel.name = 'partyrelationship';
     this.panel.title = 'Party Relationships';
     this.panel.icon = 'contacts';
@@ -78,10 +75,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
         { name: 'from', sort },
         { name: 'through', sort },
       ],
-      actions: [
-        this.edit,
-        this.delete,
-      ],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -92,8 +86,9 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
     const inactive = `${this.panel.name}_${this.m.PartyRelationship.name}_inactive`;
 
     this.panel.onPull = (pulls) => {
-
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
       const id = this.panel.manager.id;
 
       pulls.push(
@@ -103,10 +98,10 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
           select: {
             PartyRelationshipsWhereParty: {
               include: {
-                Parties: x
-              }
-            }
-          }
+                Parties: x,
+              },
+            },
+          },
         }),
         pull.Party({
           name: active,
@@ -114,10 +109,10 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
           select: {
             CurrentPartyRelationships: {
               include: {
-                Parties: x
-              }
-            }
-          }
+                Parties: x,
+              },
+            },
+          },
         }),
         pull.Party({
           name: inactive,
@@ -125,10 +120,10 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
           select: {
             InactivePartyRelationships: {
               include: {
-                Parties: x
-              }
-            }
-          }
+                Parties: x,
+              },
+            },
+          },
         })
       );
     };
@@ -137,10 +132,10 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
       this.objects = loaded.collections[pullName] as PartyRelationship[];
 
       this.currentPartyRelationships = loaded.collections[active] as PartyRelationship[];
-      this.currentPartyRelationships = this.currentPartyRelationships.filter(v => v.objectType.name !== this.m.PartyFinancialRelationship.name);
+      this.currentPartyRelationships = this.currentPartyRelationships.filter((v) => v.objectType.name !== this.m.PartyFinancialRelationship.name);
 
       this.inactivePartyRelationships = loaded.collections[inactive] as PartyRelationship[];
-      this.inactivePartyRelationships = this.inactivePartyRelationships.filter(v => v.objectType.name !== this.m.PartyFinancialRelationship.name);
+      this.inactivePartyRelationships = this.inactivePartyRelationships.filter((v) => v.objectType.name !== this.m.PartyFinancialRelationship.name);
 
       this.allPartyRelationships = [];
 
@@ -164,7 +159,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
       return {
         object: v,
         type: v.objectType.name,
-        parties: v.Parties.map(w => w.displayName).join(', '),
+        parties: v.Parties.map((w) => w.displayName).join(', '),
         from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
         through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
       } as Row;
@@ -172,7 +167,6 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
   }
 
   get partyRelationships(): any {
-
     switch (this.collection) {
       case 'Current':
         return this.currentPartyRelationships;

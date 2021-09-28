@@ -2,11 +2,29 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { isBefore, isAfter, format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { InternalOrganisation, Locale, Carrier,  Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Party, CustomerShipment, Currency, PostalAddress, Facility, ShipmentMethod, PositionTypeRate, TimeFrequency, RateType, PositionType, PriceComponent } from '@allors/workspace/domain/default';
+import {
+  InternalOrganisation,
+  Locale,
+  Carrier,
+  Person,
+  Organisation,
+  PartyContactMechanism,
+  OrganisationContactRelationship,
+  Party,
+  CustomerShipment,
+  Currency,
+  PostalAddress,
+  Facility,
+  ShipmentMethod,
+  PositionTypeRate,
+  TimeFrequency,
+  RateType,
+  PositionType,
+  PriceComponent,
+} from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, SaveService, SearchFactory, Table, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
-
 
 interface Row extends TableRow {
   object: PriceComponent;
@@ -21,10 +39,9 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'pricecomponent-overview-panel',
   templateUrl: './pricecomponent-overview-panel.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class PriceComponentOverviewPanelComponent extends TestScope implements OnInit {
-
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -48,7 +65,7 @@ export class PriceComponentOverviewPanelComponent extends TestScope implements O
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigationService: NavigationService,
 
@@ -61,7 +78,6 @@ export class PriceComponentOverviewPanelComponent extends TestScope implements O
   }
 
   ngOnInit() {
-
     const { pull, x, m } = this.metaService;
 
     this.panel.name = 'priceComponent';
@@ -75,27 +91,16 @@ export class PriceComponentOverviewPanelComponent extends TestScope implements O
     const sort = true;
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'type' },
-        { name: 'price', sort },
-        { name: 'from', sort },
-        { name: 'through', sort },
-        { name: 'lastModifiedDate' },
-      ],
-      actions: [
-        this.edit,
-        this.delete,
-      ],
+      columns: [{ name: 'type' }, { name: 'price', sort }, { name: 'from', sort }, { name: 'through', sort }, { name: 'lastModifiedDate' }],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
     });
 
-
     const pullName = `${this.panel.name}_${this.m.PriceComponent.tag}`;
 
     this.panel.onPull = (pulls) => {
-
       const id = this.panel.manager.id;
 
       pulls.push(
@@ -105,10 +110,10 @@ export class PriceComponentOverviewPanelComponent extends TestScope implements O
           select: {
             PriceComponentsWherePart: {
               include: {
-                Currency: x
-              }
-            }
-          }
+                Currency: x,
+              },
+            },
+          },
         }),
         pull.Product({
           name: pullName,
@@ -116,11 +121,11 @@ export class PriceComponentOverviewPanelComponent extends TestScope implements O
           select: {
             PriceComponentsWhereProduct: {
               include: {
-                Currency: x
-              }
-            }
-          }
-        }),
+                Currency: x,
+              },
+            },
+          },
+        })
       );
     };
 
@@ -142,18 +147,17 @@ export class PriceComponentOverviewPanelComponent extends TestScope implements O
         price: v.Currency.IsoCode + ' ' + v.Price,
         from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
         through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
-        lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date())
+        lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
       } as Row;
     });
   }
 
   get priceComponents(): PriceComponent[] {
-
     switch (this.priceComponentsCollection) {
       case 'Current':
-        return this.objects.filter(v => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
+        return this.objects.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
       case 'Inactive':
-        return this.objects.filter(v => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date())));
+        return this.objects.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date())));
       case 'All':
       default:
         return this.objects;

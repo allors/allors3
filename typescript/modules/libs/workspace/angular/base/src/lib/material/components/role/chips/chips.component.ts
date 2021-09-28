@@ -88,8 +88,8 @@ export class AllorsMaterialChipsComponent extends RoleField implements OnInit, D
 
         let differ = value == null || value.length !== model.length;
         if (!differ) {
-          for(let i=0; i<value.length ; i++){
-            if(value[i] !== model[i]){
+          for (let i = 0; i < value.length; i++) {
+            if (value[i] !== model[i]) {
               differ = true;
               break;
             }

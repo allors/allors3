@@ -23,7 +23,7 @@ export async function setUnitWrongObjectType() {
   let hasErrors: boolean;
 
   try {
-    c1a.strategy.setUnitRole(m.C1.C1AllorsInteger, "Not an integer");
+    c1a.strategy.setUnitRole(m.C1.C1AllorsInteger, 'Not an integer');
     hasErrors = false;
   } catch (e) {
     hasErrors = true;

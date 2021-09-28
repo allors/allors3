@@ -9,7 +9,6 @@ import { Person } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
-
 interface Row extends TableRow {
   object: Person;
   name: string;
@@ -36,7 +35,6 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
   constructor(
     @Self() public allors: SessionService,
 
-    
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
@@ -65,14 +63,15 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
     this.filter = m.Person.filter = m.Person.filter ?? new Filter(m.Person.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-            pageEvent =
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
+          pageEvent =
             previousRefresh !== refresh || filterFields !== previousFilterFields
               ? {
                   ...pageEvent,

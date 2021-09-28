@@ -1,9 +1,8 @@
-import { IStrategy } from "../istrategy";
-import { IDiff } from "./idiff";
+import { IStrategy } from '../istrategy';
+import { IDiff } from './idiff';
 
 export interface ICompositeDiff extends IDiff {
-    
-  originalRole : IStrategy;
-  
-  changedRole : IStrategy;
+  originalRole: IStrategy;
+
+  changedRole: IStrategy;
 }

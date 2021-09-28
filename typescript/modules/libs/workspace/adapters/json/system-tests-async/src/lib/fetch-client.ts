@@ -1,5 +1,5 @@
 import fetch from 'cross-fetch';
-import { InvokeRequest, PullRequest, PullResponse, PushRequest, PushResponse, Response, SyncRequest, SyncResponse, AccessRequest, AccessResponse, PermissionRequest, PermissionResponse} from '@allors/protocol/json/system';
+import { InvokeRequest, PullRequest, PullResponse, PushRequest, PushResponse, Response, SyncRequest, SyncResponse, AccessRequest, AccessResponse, PermissionRequest, PermissionResponse } from '@allors/protocol/json/system';
 import { IAsyncDatabaseJsonClient } from '@allors/workspace/adapters/json/system';
 
 interface AuthenticationTokenRequest {

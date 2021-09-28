@@ -2,7 +2,7 @@ import { IAsyncDatabaseClient, IWorkspace, IReactiveDatabaseClient } from '@allo
 import '@allors/workspace/domain/default';
 import { C1, C2 } from '@allors/workspace/domain/default';
 
-import { Fixture, name_c1A, name_c2A } from '../../fixture'
+import { Fixture, name_c1A, name_c2A } from '../../fixture';
 import '../../matchers';
 
 let fixture: Fixture;
@@ -123,8 +123,8 @@ export async function databaseStrategyHasChanges() {
     expect(c1.strategy.hasChangedRole(m.C1.C1C2One2One)).toBeFalsy();
   }
 
-   // Existing Object with with Composite Role to New Object
-   {
+  // Existing Object with with Composite Role to New Object
+  {
     const c1 = await fixture.pullC1(session, name_c1A);
     const c2 = session.create<C2>(m.C2);
 

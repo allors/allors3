@@ -43,7 +43,6 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
   constructor(
     @Self() public allors: SessionService,
 
-    
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public deleteService: DeleteService,
@@ -65,14 +64,7 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'number', sort: true },
-        { name: 'from' },
-        { name: 'state' },
-        { name: 'description', sort: true },
-        { name: 'responseRequired', sort: true },
-        { name: 'lastModifiedDate', sort: true },
-      ],
+      columns: [{ name: 'number', sort: true }, { name: 'from' }, { name: 'state' }, { name: 'description', sort: true }, { name: 'responseRequired', sort: true }, { name: 'lastModifiedDate', sort: true }],
       actions: [overviewService.overview(), this.delete],
       defaultAction: overviewService.overview(),
       pageSize: 50,
@@ -82,26 +74,18 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
     this.filter = m.RequestForQuote.filter = m.RequestForQuote.filter ?? new Filter(m.RequestForQuote.filterDefinition);
 
     const internalOrganisationPredicate = new Equals({ propertyType: m.Request.Recipient });
-    const predicate = new And([
-      internalOrganisationPredicate,
-      this.filter.definition.predicate
-    ]);
+    const predicate = new And([internalOrganisationPredicate, this.filter.definition.predicate]);
 
-    this.subscription = combineLatest([
-      this.refreshService.refresh$,
-      this.filter.fields$,
-      this.table.sort$,
-      this.table.pager$,
-      this.internalOrganisationId.observable$]
-    )
+    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
-            pageEvent =
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
+          pageEvent =
             previousRefresh !== refresh || filterFields !== previousFilterFields
               ? {
                   ...pageEvent,

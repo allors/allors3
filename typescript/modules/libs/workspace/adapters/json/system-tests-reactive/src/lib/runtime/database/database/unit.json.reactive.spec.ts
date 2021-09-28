@@ -1,5 +1,5 @@
-import {  initDatabaseUnit, databaseUnit } from '@allors/workspace/adapters/system-tests';
-import { Fixture } from '../../../fixture'
+import { initDatabaseUnit, databaseUnit } from '@allors/workspace/adapters/system-tests';
+import { Fixture } from '../../../fixture';
 
 let fixture: Fixture;
 

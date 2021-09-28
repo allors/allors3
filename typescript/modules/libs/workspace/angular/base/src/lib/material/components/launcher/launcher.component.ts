@@ -6,20 +6,16 @@ import { PanelManagerService } from '../../../services/panel/panel-manager.servi
   // tslint:disable-next-line:component-selector
   selector: 'a-mat-launcher',
   templateUrl: './launcher.component.html',
-  styleUrls: ['./launcher.component.scss']
+  styleUrls: ['./launcher.component.scss'],
 })
 export class AllorsMaterialLauncherComponent implements OnInit, OnDestroy {
-
   get panels() {
     return this.panelsService.panels.filter((v) => v.expandable);
   }
 
-  constructor(public panelsService: PanelManagerService) {
-  }
+  constructor(public panelsService: PanelManagerService) {}
 
-  public ngOnInit(): void {
-  }
+  public ngOnInit(): void {}
 
-  public ngOnDestroy(): void {
-  }
+  public ngOnDestroy(): void {}
 }

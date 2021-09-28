@@ -1,14 +1,5 @@
 import { Program } from 'typescript';
-import {
-  CompileMetadataResolver,
-  DirectiveNormalizer,
-  DirectiveResolver,
-  StaticReflector,
-  CompileIdentifierMetadata,
-  CompileNgModuleMetadata,
-  StaticSymbol,
-  PipeResolver
-} from '@angular/compiler';
+import { CompileMetadataResolver, DirectiveNormalizer, DirectiveResolver, StaticReflector, CompileIdentifierMetadata, CompileNgModuleMetadata, StaticSymbol, PipeResolver } from '@angular/compiler';
 import { ResourceResolver } from './resource-resolver';
 import { ProjectSymbols } from './project-symbols';
 import { Symbol } from './symbol';
@@ -80,44 +71,26 @@ export class ModuleSymbol extends Symbol {
   }
 
   getProviders() {
-    return this.module.providers.map(p => {
+    return this.module.providers.map((p) => {
       return new ProviderSymbol(this._program, p, this.metadataResolver);
     });
   }
 
   private getWrappedModules(modules: CompileNgModuleSummary[]) {
-    return modules.map(s => {
-      return new ModuleSymbol(
-        this._program,
-        s.type.reference,
-        this.metadataResolver,
-        this.directiveNormalizer,
-        this.resolver,
-        this.pipeResolver,
-        this.reflector,
-        this.resourceResolver,
-        this.projectSymbols
-      );
+    return modules.map((s) => {
+      return new ModuleSymbol(this._program, s.type.reference, this.metadataResolver, this.directiveNormalizer, this.resolver, this.pipeResolver, this.reflector, this.resourceResolver, this.projectSymbols);
     });
   }
 
   private getWrappedPipes(pipes: CompileIdentifierMetadata[]) {
-    return pipes.map(i => {
+    return pipes.map((i) => {
       return new PipeSymbol(this._program, i.reference, this.pipeResolver, this.metadataResolver, this.projectSymbols);
     });
   }
 
   private getWrapperDirectives(dirs: CompileIdentifierMetadata[]) {
-    return dirs.map(i => {
-      return new DirectiveSymbol(
-        this._program,
-        i.reference,
-        this.metadataResolver,
-        this.directiveNormalizer,
-        this.reflector,
-        this.resourceResolver,
-        this.projectSymbols
-      );
+    return dirs.map((i) => {
+      return new DirectiveSymbol(this._program, i.reference, this.metadataResolver, this.directiveNormalizer, this.reflector, this.resourceResolver, this.projectSymbols);
     });
   }
 }

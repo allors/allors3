@@ -14,11 +14,7 @@ export class AllorsFocusDirective implements OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(
-    private readonly element: ElementRef<HTMLElement>,
-    private readonly focusService: AllorsFocusService,
-    @Inject(PLATFORM_ID) platformId: string,
-  ) {
+  constructor(private readonly element: ElementRef<HTMLElement>, private readonly focusService: AllorsFocusService, @Inject(PLATFORM_ID) platformId: string) {
     const inBrowser = isPlatformBrowser(platformId);
 
     this.subscription = this.focusService.focus$
@@ -27,9 +23,9 @@ export class AllorsFocusDirective implements OnDestroy {
           timer(100).pipe(
             filter(() => {
               return inBrowser && v === this.aFocusTrigger;
-            }),
-          ),
-        ),
+            })
+          )
+        )
       )
       .subscribe(() => {
         try {

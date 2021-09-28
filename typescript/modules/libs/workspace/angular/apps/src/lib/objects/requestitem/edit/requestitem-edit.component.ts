@@ -96,14 +96,14 @@ export class RequestItemEditComponent extends TestScope implements OnInit, OnDes
               predicate: new Equals({ propertyType: m.UnitOfMeasure.IsActive, value: true },
               sorting: [{ roleType: m.UnitOfMeasure.Name }],
             }),
-            pull.RequestItemState(),
-            pull.RequestState(),
-            pull.QuoteItemState(),
-            pull.QuoteState(),
-            pull.SalesOrderItemState(),
-            pull.SalesOrderState(),
-            pull.ShipmentItemState(),
-            pull.ShipmentState(),
+            pull.RequestItemState({}),
+            pull.RequestState({}),
+            pull.QuoteItemState({}),
+            pull.QuoteState({}),
+            pull.SalesOrderItemState({}),
+            pull.SalesOrderState({}),
+            pull.ShipmentItemState({}),
+            pull.ShipmentState({}),
           ];
 
           if (!isCreate) {

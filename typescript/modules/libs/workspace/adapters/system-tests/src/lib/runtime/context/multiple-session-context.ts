@@ -1,4 +1,4 @@
-import { Fixture } from '../../fixture'
+import { Fixture } from '../../fixture';
 import { Context } from './context';
 
 export class MultipleSessionContext extends Context {

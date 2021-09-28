@@ -237,9 +237,7 @@ export class DirectiveSymbol extends Symbol {
     if (!ngModule) {
       throw new Error('Cannot find module associated with the directive ' + this.symbol.name);
     }
-    const resolvedDirectives = ngModule.transitiveModule.directives.map((d) =>
-      this.metadataResolver.getNonNormalizedDirectiveMetadata(d.reference)
-    );
+    const resolvedDirectives = ngModule.transitiveModule.directives.map((d) => this.metadataResolver.getNonNormalizedDirectiveMetadata(d.reference));
 
     // TypeScript doesn't handle well filtering & strictNull
     const tempDirectives: (CompileDirectiveSummary | null)[] = resolvedDirectives.map((d) => {
@@ -382,21 +380,14 @@ export class DirectiveSymbol extends Symbol {
   }
   private templateDataVoid(directiveInfo) {
     if (!directiveInfo.templateMetadata.template && directiveInfo.templateMetadata.templateUrl) {
-      directiveInfo.templateMetadata.templateUrl = this.urlResolver.resolve(
-        directiveInfo.componentUrl,
-        directiveInfo.templateMetadata.templateUrl
-      );
+      directiveInfo.templateMetadata.templateUrl = this.urlResolver.resolve(directiveInfo.componentUrl, directiveInfo.templateMetadata.templateUrl);
       directiveInfo.templateMetadata.template = this.resourceResolver.getSync(directiveInfo.templateMetadata.templateUrl);
     }
   }
   private stylesDataVoid(directiveInfo) {
     if (directiveInfo.templateMetadata.styleUrls.length) {
-      directiveInfo.templateMetadata.styleUrls = directiveInfo.templateMetadata.styleUrls.map((s) =>
-        this.urlResolver.resolve(directiveInfo.componentUrl, s)
-      );
-      directiveInfo.templateMetadata.styles = directiveInfo.templateMetadata.styles.concat(
-        directiveInfo.templateMetadata.styleUrls.map((s) => this.resourceResolver.getSync(s))
-      );
+      directiveInfo.templateMetadata.styleUrls = directiveInfo.templateMetadata.styleUrls.map((s) => this.urlResolver.resolve(directiveInfo.componentUrl, s));
+      directiveInfo.templateMetadata.styles = directiveInfo.templateMetadata.styles.concat(directiveInfo.templateMetadata.styleUrls.map((s) => this.resourceResolver.getSync(s)));
     }
   }
   private getDirectiveMetadata() {

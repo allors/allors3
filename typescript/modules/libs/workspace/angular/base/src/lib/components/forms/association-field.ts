@@ -25,11 +25,11 @@ export abstract class AssociationField extends Field implements AfterViewInit, O
 
   @Input()
   hint: string;
-  
+
   // tslint:disable-next-line:no-input-rename
   @Input('label')
   public assignedLabel: string;
-  
+
   @ViewChildren(NgModel) private controls: QueryList<NgModel>;
 
   get roleType(): RoleType {

@@ -2,7 +2,7 @@ import { IAsyncDatabaseClient, IWorkspace, IReactiveDatabaseClient } from '@allo
 import '@allors/workspace/domain/default';
 import { SC1 } from '@allors/workspace/domain/default';
 
-import { Fixture } from '../../fixture'
+import { Fixture } from '../../fixture';
 import '../../matchers';
 
 let fixture: Fixture;
@@ -56,9 +56,9 @@ export async function sessionCrossSessionShouldThrowError() {
   let hasErrors = false;
   try {
     objectSession1.addSessionSC1Many2Many(objectSession2);
-  } catch(error) {
+  } catch (error) {
     hasErrors = true;
-    expect(error.message).toBe('Strategy is from a different session')
+    expect(error.message).toBe('Strategy is from a different session');
   }
 
   expect(hasErrors).toBeTruthy();

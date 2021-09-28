@@ -6,7 +6,7 @@ export class FilterOptions {
   search: () => SearchFactory;
   display: (v: any) => string;
   initialValue: any | ((x: any) => any);
-  
+
   exist: PropertyType;
 
   constructor(fields: Partial<FilterOptions>) {
@@ -23,4 +23,3 @@ export class FilterOptions {
     }
   }
 }
-

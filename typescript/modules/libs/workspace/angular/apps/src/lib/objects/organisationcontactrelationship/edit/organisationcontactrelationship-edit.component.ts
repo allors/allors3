@@ -29,14 +29,14 @@ export class OrganisationContactRelationshipEditComponent extends TestScope impl
   organisations: Organisation[];
   contactKinds: OrganisationContactKind[];
   generalContact: OrganisationContactKind;
-  
+
   peopleFilter: SearchFactory;
 
   constructor(
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<OrganisationContactRelationshipEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId
@@ -56,7 +56,7 @@ export class OrganisationContactRelationshipEditComponent extends TestScope impl
           const isCreate = this.data.id === undefined;
 
           const pulls = [
-            pull.Organisation(),
+            pull.Organisation({}),
             pull.OrganisationContactKind({
               sorting: [{ roleType: this.m.OrganisationContactKind.Description }],
             }),
@@ -71,16 +71,15 @@ export class OrganisationContactRelationshipEditComponent extends TestScope impl
                   Contact: x,
                   Parties: x,
                 },
-              }),
+              })
             );
           }
-
 
           if (isCreate && this.data.associationId) {
             pulls.push(
               pull.Party({
                 objectId: this.data.associationId,
-              }),
+              })
             );
           }
 
@@ -101,7 +100,7 @@ export class OrganisationContactRelationshipEditComponent extends TestScope impl
           this.title = 'Add Organisation Contact';
 
           this.partyRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
-          this.partyRelationship.FromDate = new Date();;
+          this.partyRelationship.FromDate = new Date();
           this.partyRelationship.addContactKind(this.generalContact);
 
           this.party = loaded.object<Party>(m.Party);

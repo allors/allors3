@@ -1,5 +1,5 @@
-import { initDatabaseLifecycle,  databasePullSameSessionNotPushedException, databasPullOtherSessionNotPushedException, databaseStrategyHasChanges } from '@allors/workspace/adapters/system-tests';
-import { Fixture } from '../../fixture'
+import { initDatabaseLifecycle, databasePullSameSessionNotPushedException, databasPullOtherSessionNotPushedException, databaseStrategyHasChanges } from '@allors/workspace/adapters/system-tests';
+import { Fixture } from '../../fixture';
 
 let fixture: Fixture;
 

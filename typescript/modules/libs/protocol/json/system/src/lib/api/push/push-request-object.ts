@@ -1,4 +1,4 @@
-import { PushRequestRole } from "./push-request-role";
+import { PushRequestRole } from './push-request-role';
 
 export interface PushRequestObject {
   /** DatabaseId */

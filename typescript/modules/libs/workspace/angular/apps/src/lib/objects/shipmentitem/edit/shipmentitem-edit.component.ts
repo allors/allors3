@@ -131,22 +131,22 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
           const isCreate = this.data.id === undefined;
 
           const pulls = [
-            pull.SerialisedItemAvailability(),
+            pull.SerialisedItemAvailability({}),
             pull.SerialisedInventoryItemState({
               predicate: { kind: 'Equals', propertyType: m.SerialisedInventoryItemState.IsActive, value: true },
               sorting: [{ roleType: m.SerialisedInventoryItemState.Name }],
             }),
-            pull.RequestItemState(),
-            pull.RequestState(),
-            pull.QuoteItemState(),
-            pull.QuoteState(),
-            pull.SalesOrderItemState(),
-            pull.SalesOrderState(),
-            pull.PurchaseOrderItemState(),
-            pull.PurchaseOrderState(),
-            pull.ShipmentItemState(),
-            pull.ShipmentState(),
-            pull.Facility(),
+            pull.RequestItemState({}),
+            pull.RequestState({}),
+            pull.QuoteItemState({}),
+            pull.QuoteState({}),
+            pull.SalesOrderItemState({}),
+            pull.SalesOrderState({}),
+            pull.PurchaseOrderItemState({}),
+            pull.PurchaseOrderState({}),
+            pull.ShipmentItemState({}),
+            pull.ShipmentState({}),
+            pull.Facility({}),
           ];
 
           if (!isCreate) {

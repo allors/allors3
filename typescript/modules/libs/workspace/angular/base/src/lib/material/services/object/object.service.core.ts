@@ -11,25 +11,18 @@ import { ObjectData } from './object.data';
 
 @Injectable()
 export class ObjectServiceCore extends ObjectService {
-
-  constructor(
-    public dialog: MatDialog,
-    @Inject(OBJECT_CREATE_TOKEN) private createControlByObjectTypeTag: { [id: string]: any },
-    @Inject(OBJECT_EDIT_TOKEN) private editControlByObjectTypeTag: { [id: string]: any }
-  ) {
+  constructor(public dialog: MatDialog, @Inject(OBJECT_CREATE_TOKEN) private createControlByObjectTypeTag: { [id: string]: any }, @Inject(OBJECT_EDIT_TOKEN) private editControlByObjectTypeTag: { [id: string]: any }) {
     super();
   }
 
   create(objectType: ObjectType, createData?: ObjectData): Observable<IObject> {
-
     const data: ObjectData = Object.assign({ objectType }, createData);
 
     const component = this.createControlByObjectTypeTag[objectType.tag];
     if (component) {
       const dialogRef = this.dialog.open(component, { data, minWidth: '80vw', maxHeight: '90vh' });
 
-      return dialogRef
-        .afterClosed();
+      return dialogRef.afterClosed();
     }
 
     return throwError('Missing component');
@@ -49,11 +42,13 @@ export class ObjectServiceCore extends ObjectService {
   }
 
   edit(object: IObject, createData?: ObjectData): Observable<IObject> {
-
-    const data: ObjectData = Object.assign({
-      id: object.id,
-      objectType: object.strategy.cls.tag,
-    }, createData);
+    const data: ObjectData = Object.assign(
+      {
+        id: object.id,
+        objectType: object.strategy.cls.tag,
+      },
+      createData
+    );
 
     const component = this.editControlByObjectTypeTag[object.strategy.cls.tag];
     if (component) {
@@ -67,5 +62,4 @@ export class ObjectServiceCore extends ObjectService {
   hasEditControl(object: IObject) {
     return !!this.editControlByObjectTypeTag[object.strategy.cls.tag];
   }
-
 }

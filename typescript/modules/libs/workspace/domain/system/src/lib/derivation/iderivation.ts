@@ -1,6 +1,5 @@
-import { IValidation } from "./ivalidation";
+import { IValidation } from './ivalidation';
 
 export interface IDerivation {
-   
-    execute(): IValidation;
+  execute(): IValidation;
 }

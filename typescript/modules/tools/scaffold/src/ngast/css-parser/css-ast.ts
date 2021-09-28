@@ -6,9 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {ParseLocation, ParseSourceSpan} from './parse-util';
+import { ParseLocation, ParseSourceSpan } from './parse-util';
 
-import {CssToken, CssTokenType} from './css-lexer';
+import { CssToken, CssTokenType } from './css-lexer';
 
 export enum BlockType {
   Import,
@@ -22,7 +22,7 @@ export enum BlockType {
   Page,
   Document,
   Viewport,
-  Unsupported
+  Unsupported,
 }
 
 export interface CssAstVisitor {
@@ -46,8 +46,12 @@ export interface CssAstVisitor {
 
 export abstract class CssAst {
   constructor(public location: ParseSourceSpan) {}
-  get start(): ParseLocation { return this.location.start; }
-  get end(): ParseLocation { return this.location.end; }
+  get start(): ParseLocation {
+    return this.location.start;
+  }
+  get end(): ParseLocation {
+    return this.location.end;
+  }
   abstract visit(visitor: CssAstVisitor, context?: any): any;
 }
 
@@ -55,17 +59,19 @@ export class CssStyleValueAst extends CssAst {
   constructor(location: ParseSourceSpan, public tokens: CssToken[], public strValue: string) {
     super(location);
   }
-  visit(visitor: CssAstVisitor, context?: any): any { return visitor.visitCssValue(this); }
+  visit(visitor: CssAstVisitor, context?: any): any {
+    return visitor.visitCssValue(this);
+  }
 }
 
 export abstract class CssRuleAst extends CssAst {
-  constructor(location: ParseSourceSpan) { super(location); }
+  constructor(location: ParseSourceSpan) {
+    super(location);
+  }
 }
 
 export class CssBlockRuleAst extends CssRuleAst {
-  constructor(
-      public location: ParseSourceSpan, public type: BlockType, public block: CssBlockAst,
-      public name: CssToken|null = null) {
+  constructor(public location: ParseSourceSpan, public type: BlockType, public block: CssBlockAst, public name: CssToken | null = null) {
     super(location);
   }
   visit(visitor: CssAstVisitor, context?: any): any {
@@ -92,14 +98,10 @@ export class CssKeyframeDefinitionAst extends CssBlockRuleAst {
 }
 
 export class CssBlockDefinitionRuleAst extends CssBlockRuleAst {
-  constructor(
-      location: ParseSourceSpan, public strValue: string, type: BlockType,
-      public query: CssAtRulePredicateAst, block: CssBlockAst) {
+  constructor(location: ParseSourceSpan, public strValue: string, type: BlockType, public query: CssAtRulePredicateAst, block: CssBlockAst) {
     super(location, type, block);
     const firstCssToken: CssToken = query.tokens[0];
-    this.name = new CssToken(
-        firstCssToken.index, firstCssToken.column, firstCssToken.line, CssTokenType.Identifier,
-        this.strValue);
+    this.name = new CssToken(firstCssToken.index, firstCssToken.column, firstCssToken.line, CssTokenType.Identifier, this.strValue);
   }
   visit(visitor: CssAstVisitor, context?: any): any {
     return visitor.visitCssBlock(this.block, context);
@@ -107,9 +109,7 @@ export class CssBlockDefinitionRuleAst extends CssBlockRuleAst {
 }
 
 export class CssMediaQueryRuleAst extends CssBlockDefinitionRuleAst {
-  constructor(
-      location: ParseSourceSpan, strValue: string, query: CssAtRulePredicateAst,
-      block: CssBlockAst) {
+  constructor(location: ParseSourceSpan, strValue: string, query: CssAtRulePredicateAst, block: CssBlockAst) {
     super(location, strValue, BlockType.MediaQuery, query, block);
   }
   visit(visitor: CssAstVisitor, context?: any): any {
@@ -140,7 +140,7 @@ export class CssSelectorRuleAst extends CssBlockRuleAst {
 
   constructor(location: ParseSourceSpan, public selectors: CssSelectorAst[], block: CssBlockAst) {
     super(location, BlockType.Selector, block);
-    this.strValue = selectors.map(selector => selector.strValue).join(',');
+    this.strValue = selectors.map((selector) => selector.strValue).join(',');
   }
   visit(visitor: CssAstVisitor, context?: any): any {
     return visitor.visitCssSelectorRule(this, context);
@@ -148,8 +148,7 @@ export class CssSelectorRuleAst extends CssBlockRuleAst {
 }
 
 export class CssDefinitionAst extends CssAst {
-  constructor(
-      location: ParseSourceSpan, public property: CssToken, public value: CssStyleValueAst) {
+  constructor(location: ParseSourceSpan, public property: CssToken, public value: CssStyleValueAst) {
     super(location);
   }
   visit(visitor: CssAstVisitor, context?: any): any {
@@ -158,14 +157,16 @@ export class CssDefinitionAst extends CssAst {
 }
 
 export abstract class CssSelectorPartAst extends CssAst {
-  constructor(location: ParseSourceSpan) { super(location); }
+  constructor(location: ParseSourceSpan) {
+    super(location);
+  }
 }
 
 export class CssSelectorAst extends CssSelectorPartAst {
   public strValue: string;
   constructor(location: ParseSourceSpan, public selectorParts: CssSimpleSelectorAst[]) {
     super(location);
-    this.strValue = selectorParts.map(part => part.strValue).join('');
+    this.strValue = selectorParts.map((part) => part.strValue).join('');
   }
   visit(visitor: CssAstVisitor, context?: any): any {
     return visitor.visitCssSelector(this, context);
@@ -173,9 +174,7 @@ export class CssSelectorAst extends CssSelectorPartAst {
 }
 
 export class CssSimpleSelectorAst extends CssSelectorPartAst {
-  constructor(
-      location: ParseSourceSpan, public tokens: CssToken[], public strValue: string,
-      public pseudoSelectors: CssPseudoSelectorAst[], public operator: CssToken) {
+  constructor(location: ParseSourceSpan, public tokens: CssToken[], public strValue: string, public pseudoSelectors: CssPseudoSelectorAst[], public operator: CssToken) {
     super(location);
   }
   visit(visitor: CssAstVisitor, context?: any): any {
@@ -184,9 +183,7 @@ export class CssSimpleSelectorAst extends CssSelectorPartAst {
 }
 
 export class CssPseudoSelectorAst extends CssSelectorPartAst {
-  constructor(
-      location: ParseSourceSpan, public strValue: string, public name: string,
-      public tokens: CssToken[], public innerSelectors: CssSelectorAst[]) {
+  constructor(location: ParseSourceSpan, public strValue: string, public name: string, public tokens: CssToken[], public innerSelectors: CssSelectorAst[]) {
     super(location);
   }
   visit(visitor: CssAstVisitor, context?: any): any {
@@ -195,8 +192,12 @@ export class CssPseudoSelectorAst extends CssSelectorPartAst {
 }
 
 export class CssBlockAst extends CssAst {
-  constructor(location: ParseSourceSpan, public entries: CssAst[]) { super(location); }
-  visit(visitor: CssAstVisitor, context?: any): any { return visitor.visitCssBlock(this, context); }
+  constructor(location: ParseSourceSpan, public entries: CssAst[]) {
+    super(location);
+  }
+  visit(visitor: CssAstVisitor, context?: any): any {
+    return visitor.visitCssBlock(this, context);
+  }
 }
 
 /*
@@ -213,7 +214,9 @@ export class CssStylesBlockAst extends CssBlockAst {
 }
 
 export class CssStyleSheetAst extends CssAst {
-  constructor(location: ParseSourceSpan, public rules: CssAst[]) { super(location); }
+  constructor(location: ParseSourceSpan, public rules: CssAst[]) {
+    super(location);
+  }
   visit(visitor: CssAstVisitor, context?: any): any {
     return visitor.visitCssStyleSheet(this, context);
   }

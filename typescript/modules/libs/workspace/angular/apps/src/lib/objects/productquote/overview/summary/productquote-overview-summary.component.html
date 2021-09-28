@@ -1,61 +1,49 @@
 <mat-card *ngIf="productQuote">
-
-  <mat-card-header (click)="panel.manager.toggle('edit')" style="cursor: pointer;">
+  <mat-card-header (click)="panel.manager.toggle('edit')" style="cursor: pointer">
     <div mat-card-avatar>
       <mat-icon style="font-size: 36px">business</mat-icon>
     </div>
-    <mat-card-title>{{productQuote.QuoteNumber}}</mat-card-title>
+    <mat-card-title>{{ productQuote.QuoteNumber }}</mat-card-title>
     <mat-card-subtitle>
       <div>
-        {{productQuote.QuoteState?.Name}}
+        {{ productQuote.QuoteState?.Name }}
       </div>
-
     </mat-card-subtitle>
 
     <mat-card-subtitle>
-      <div>last modified: {{ productQuote.LastModifiedDate | date:'d/M/yyyy, HH:mm'}} by {{ productQuote.LastModifiedBy?.displayName}}</div>
+      <div>last modified: {{ productQuote.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by {{ productQuote.LastModifiedBy?.displayName }}</div>
     </mat-card-subtitle>
-
   </mat-card-header>
 
   <mat-card-content>
-    <div *ngIf="productQuote.Receiver" (click)="navigation.overview(productQuote.Receiver)" style="cursor: pointer;">
-      <div style="color: grey">
-        Quoted to
-      </div>
+    <div *ngIf="productQuote.Receiver" (click)="navigation.overview(productQuote.Receiver)" style="cursor: pointer">
+      <div style="color: grey">Quoted to</div>
       <div>
-        {{productQuote.Receiver?.displayName}}
+        {{ productQuote.Receiver?.displayName }}
       </div>
     </div>
 
-    <div *ngIf="productQuote.ContactPerson" (click)="navigation.overview(productQuote.ContactPerson)" style="cursor: pointer;">
-      <div style="color: grey">
-        ContactPerson
-      </div>
+    <div *ngIf="productQuote.ContactPerson" (click)="navigation.overview(productQuote.ContactPerson)" style="cursor: pointer">
+      <div style="color: grey">ContactPerson</div>
       <div>
-        {{productQuote.ContactPerson?.displayName}}
+        {{ productQuote.ContactPerson?.displayName }}
       </div>
     </div>
 
-    <div *ngIf="request" (click)="navigation.overview(request)" style="cursor: pointer;">
-      <div style="color: grey">
-        Request
-      </div>
+    <div *ngIf="request" (click)="navigation.overview(request)" style="cursor: pointer">
+      <div style="color: grey">Request</div>
       <div>
-        {{request.RequestNumber}}
+        {{ request.RequestNumber }}
       </div>
     </div>
 
-    <div *ngIf="salesOrder" (click)="navigation.overview(salesOrder)" style="cursor: pointer;">
-      <div style="color: grey">
-        SalesOrder
-      </div>
+    <div *ngIf="salesOrder" (click)="navigation.overview(salesOrder)" style="cursor: pointer">
+      <div style="color: grey">SalesOrder</div>
       <div>
-        {{salesOrder.OrderNumber}}
+        {{ salesOrder.OrderNumber }}
       </div>
     </div>
   </mat-card-content>
-
 
   <mat-card-actions>
     <button *ngIf="productQuote.CanExecuteSetReadyForProcessing" mat-button (click)="setReadyForProcessing()">Ready for processing</button>
@@ -69,5 +57,4 @@
     <button *ngIf="productQuote.CanExecuteOrder" mat-button type="button" (click)="order()">Create SalesOrder</button>
     <button mat-button type="button" (click)="print.execute(productQuote)">Print</button>
   </mat-card-actions>
-
 </mat-card>

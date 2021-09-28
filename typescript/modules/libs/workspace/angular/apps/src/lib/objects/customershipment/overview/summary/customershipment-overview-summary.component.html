@@ -1,31 +1,27 @@
 <mat-card *ngIf="shipment">
-
-  <mat-card-header (click)="panel.manager.toggle('edit')" style="cursor: pointer;">
+  <mat-card-header (click)="panel.manager.toggle('edit')" style="cursor: pointer">
     <div mat-card-avatar>
       <mat-icon style="font-size: 36px">local_shipping</mat-icon>
     </div>
-    <mat-card-title>{{shipment.ShipmentNumber}}</mat-card-title>
+    <mat-card-title>{{ shipment.ShipmentNumber }}</mat-card-title>
 
     <mat-card-subtitle>
-      <div>{{shipment.ShipmentState?.Name}}</div>
-      <div>{{shipment.ShipToParty?.displayName}}</div>
-      <div>{{shipment.ShipToAddress?.displayName}}</div>
+      <div>{{ shipment.ShipmentState?.Name }}</div>
+      <div>{{ shipment.ShipToParty?.displayName }}</div>
+      <div>{{ shipment.ShipToAddress?.displayName }}</div>
     </mat-card-subtitle>
 
     <mat-card-subtitle>
-      <div>last modified: {{ shipment.LastModifiedDate | date:'d/M/yyyy, HH:mm'}} by {{ shipment.LastModifiedBy?.displayName}}</div>
+      <div>last modified: {{ shipment.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by {{ shipment.LastModifiedBy?.displayName }}</div>
     </mat-card-subtitle>
-
   </mat-card-header>
 
   <mat-card-content>
     <div *ngFor="let salesOrder of salesOrders">
-      <div (click)="navigation.overview(salesOrder)" style="cursor: pointer;">
-        <div style="color: grey">
-          Sales Order
-        </div>
+      <div (click)="navigation.overview(salesOrder)" style="cursor: pointer">
+        <div style="color: grey">Sales Order</div>
         <div>
-          {{salesOrder?.OrderNumber}}
+          {{ salesOrder?.OrderNumber }}
         </div>
       </div>
     </div>
@@ -38,5 +34,4 @@
     <button *ngIf="shipment.ShipmentItems.length > 0 && shipment.CanExecutePick" mat-button (click)="pick()">Pick</button>
     <button *ngIf="shipment.ShipmentItems.length > 0 && shipment.CanExecuteShip" mat-button (click)="ship()">Ship</button>
   </mat-card-actions>
-
 </mat-card>

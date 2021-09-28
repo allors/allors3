@@ -1,4 +1,4 @@
-import { SyncResponseRole } from "./sync-response-role";
+import { SyncResponseRole } from './sync-response-role';
 
 export interface SyncResponseObject {
   /** Id */

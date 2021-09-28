@@ -13,10 +13,9 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 
 @Component({
   templateUrl: './emailaddress-edit.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class EmailAddressEditComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   contactMechanism: ElectronicAddress;
@@ -29,26 +28,22 @@ export class EmailAddressEditComponent extends TestScope implements OnInit, OnDe
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: IObject,
     public dialogRef: MatDialogRef<EmailAddressEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
     const { pullBuilder: pull } = this.m;
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-
-
           const pulls = [
             pull.ContactMechanism({
               objectId: this.data.id,
@@ -59,7 +54,6 @@ export class EmailAddressEditComponent extends TestScope implements OnInit, OnDe
         })
       )
       .subscribe((loaded) => {
-
         this.allors.session.reset();
         this.contactMechanism = loaded.object<ContactMechanism>(m.ContactMechanism);
 
@@ -78,18 +72,14 @@ export class EmailAddressEditComponent extends TestScope implements OnInit, OnDe
   }
 
   public save(): void {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      const data: IObject = {
+        id: this.contactMechanism.id,
+        objectType: this.contactMechanism.objectType,
+      };
 
-    this.allors.client.pushReactive(this.allors.session)
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.contactMechanism.id,
-          objectType: this.contactMechanism.objectType,
-        };
-
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

@@ -1,90 +1,67 @@
 <mat-card *ngIf="invoice">
-
-  <mat-card-header (click)="panel.manager.toggle('edit')" style="cursor: pointer;">
+  <mat-card-header (click)="panel.manager.toggle('edit')" style="cursor: pointer">
     <div mat-card-avatar>
       <mat-icon style="font-size: 36px">business</mat-icon>
     </div>
-    <mat-card-title>{{invoice.InvoiceNumber}}</mat-card-title>
+    <mat-card-title>{{ invoice.InvoiceNumber }}</mat-card-title>
 
     <mat-card-subtitle>
-      <div>{{invoice.SalesInvoiceState?.Name}}</div>
-      <div>{{invoice.DerivedShipToAddress?.displayName}}</div>
-      <div>last modified: {{ invoice.LastModifiedDate | date:'d/M/yyyy, HH:mm'}} by {{ invoice.LastModifiedBy?.displayName}}</div>
+      <div>{{ invoice.SalesInvoiceState?.Name }}</div>
+      <div>{{ invoice.DerivedShipToAddress?.displayName }}</div>
+      <div>last modified: {{ invoice.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by {{ invoice.LastModifiedBy?.displayName }}</div>
     </mat-card-subtitle>
-
   </mat-card-header>
 
   <mat-card-content>
-
-    <div (click)="navigation.overview(invoice.BillToCustomer)" style="cursor: pointer;">
-      <div style="color: grey">
-        Bill to
-      </div>
+    <div (click)="navigation.overview(invoice.BillToCustomer)" style="cursor: pointer">
+      <div style="color: grey">Bill to</div>
       <div>
-        {{invoice.BillToCustomer?.displayName}}
+        {{ invoice.BillToCustomer?.displayName }}
       </div>
     </div>
 
     <div>
-      <div style="color: grey">
-        Total Ex. VAT: {{invoice.TotalExVat}}
-      </div>
+      <div style="color: grey">Total Ex. VAT: {{ invoice.TotalExVat }}</div>
     </div>
 
     <div>
-      <div style="color: grey">
-        Invoice Total VAT: {{invoice.TotalVat}}
-      </div>
+      <div style="color: grey">Invoice Total VAT: {{ invoice.TotalVat }}</div>
     </div>
-    
+
     <div>
-      <div style="color: grey">
-        Total Inc. VAT: {{invoice.TotalIncVat}}
-      </div>
+      <div style="color: grey">Total Inc. VAT: {{ invoice.TotalIncVat }}</div>
     </div>
 
     <div *ngIf="hasIrpf">
-      <div style="color: grey">
-        Invoice IRPF: {{invoice.TotalIrpf}}
-      </div>
-      <div style="color: grey">
-        Invoice Total: {{invoice.GrandTotal}}
+      <div style="color: grey">Invoice IRPF: {{ invoice.TotalIrpf }}</div>
+      <div style="color: grey">Invoice Total: {{ invoice.GrandTotal }}</div>
+    </div>
+
+    <div *ngIf="creditNote" (click)="navigation.overview(creditNote)" style="cursor: pointer">
+      <div style="color: grey">Credited with:</div>
+      <div>
+        {{ creditNote.InvoiceNumber }}
       </div>
     </div>
 
-    <div *ngIf="creditNote" (click)="navigation.overview(creditNote)" style="cursor: pointer;">
-      <div style="color: grey">
-        Credited with:
-      </div>
+    <div *ngIf="invoice.CreditedFromInvoice" (click)="navigation.overview(invoice.CreditedFromInvoice)" style="cursor: pointer">
+      <div style="color: grey">From Sales Invoice:</div>
       <div>
-        {{creditNote.InvoiceNumber}}
+        {{ invoice.CreditedFromInvoice.InvoiceNumber }}
       </div>
     </div>
 
-    <div *ngIf="invoice.CreditedFromInvoice" (click)="navigation.overview(invoice.CreditedFromInvoice)" style="cursor: pointer;">
-      <div style="color: grey">
-        From Sales Invoice:
-      </div>
+    <div *ngFor="let order of orders" (click)="navigation.overview(order)" style="cursor: pointer">
+      <div style="color: grey">Order</div>
       <div>
-        {{invoice.CreditedFromInvoice.InvoiceNumber}}
+        {{ order.OrderNumber }}
       </div>
     </div>
 
-    <div *ngFor="let order of orders" (click)="navigation.overview(order)" style="cursor: pointer;">
-      <div style="color: grey">
-        Order
-      </div>
+    <div *ngFor="let workEffort of workEfforts" (click)="navigation.overview(workEffort)" style="cursor: pointer">
+      <div style="color: grey">Work Effort</div>
       <div>
-        {{order.OrderNumber}}
-      </div>
-    </div>
-
-    <div *ngFor="let workEffort of workEfforts" (click)="navigation.overview(workEffort)" style="cursor: pointer;">
-      <div style="color: grey">
-        Work Effort
-      </div>
-      <div>
-        {{workEffort.WorkEffortNumber}}
+        {{ workEffort.WorkEffortNumber }}
       </div>
     </div>
   </mat-card-content>
@@ -98,5 +75,4 @@
     <button *ngIf="invoice.CanExecuteCredit" mat-button type="button" (click)="credit()">Credit</button>
     <button mat-button type="button" (click)="print.execute(invoice)">Print</button>
   </mat-card-actions>
-
 </mat-card>

@@ -1,5 +1,4 @@
-import {ResourceLoader} from '@angular/compiler';
-
+import { ResourceLoader } from '@angular/compiler';
 
 /**
  * Provides interface for a resource loader/resolver.
@@ -11,7 +10,6 @@ import {ResourceLoader} from '@angular/compiler';
  * @extends {ResourceLoader}
  */
 export interface ResourceResolver extends ResourceLoader {
-
   /**
    * Gets the resource asynchronously.
    *

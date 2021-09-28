@@ -11,7 +11,6 @@ import { IPullResult } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { assert } from '@allors/workspace/meta/system';
 
-
 @Component({
   templateUrl: './person-overview.component.html',
   providers: [SessionService],

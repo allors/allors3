@@ -9,17 +9,16 @@ import { TestScope } from '@allors/angular/core';
   // tslint:disable-next-line:component-selector
   selector: 'nonunifiedgood-overview-summary',
   templateUrl: './nonunifiedgood-overview-summary.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class NonUnifiedGoodOverviewSummaryComponent extends TestScope {
-
   m: M;
 
   good: NonUnifiedGood;
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public navigation: NavigationService
   ) {
     super();
@@ -31,7 +30,9 @@ export class NonUnifiedGoodOverviewSummaryComponent extends TestScope {
     const pullName = `${panel.name}_${this.m.NonUnifiedGood.tag}`;
 
     panel.onPull = (pulls) => {
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
 
       const id = this.panel.manager.id;
 
@@ -41,13 +42,13 @@ export class NonUnifiedGoodOverviewSummaryComponent extends TestScope {
           objectId: id,
           include: {
             ProductIdentifications: {
-              ProductIdentificationType: x
+              ProductIdentificationType: x,
             },
             Part: {
               Brand: x,
-              Model: x
-            }
-          }
+              Model: x,
+            },
+          },
         })
       );
     };

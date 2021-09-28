@@ -84,7 +84,7 @@ export class FormComponent extends TestScope implements OnInit, OnDestroy {
                 Chips: {},
                 File: {},
                 MultipleFiles: {},
-                LocalisedTexts: {}
+                LocalisedTexts: {},
               },
             }),
             p.Organisation({

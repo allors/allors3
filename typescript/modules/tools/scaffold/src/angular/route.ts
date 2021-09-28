@@ -21,9 +21,7 @@ export class Route {
     this.children = route.children ? route.children.map((v) => new Route(v, pathResolver)) : undefined;
   }
 
-
   public toJSON(): any {
-
     const { path, pathMatch, component, redirectTo, outlet, data, children } = this;
 
     return {
@@ -34,10 +32,7 @@ export class Route {
       redirectTo,
       outlet,
       data,
-      children
+      children,
     };
   }
 }
-
-
-

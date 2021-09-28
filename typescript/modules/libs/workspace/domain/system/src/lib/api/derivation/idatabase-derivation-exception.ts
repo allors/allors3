@@ -1,4 +1,4 @@
-import { IDatabaseValidation } from "./idatabase-validation";
+import { IDatabaseValidation } from './idatabase-validation';
 
 export interface IDatabaseDerivationException {
   validation: IDatabaseValidation;

@@ -8,9 +8,7 @@ import { AllorsMaterialSideNavService } from '../../services/sidenav/side-nav.se
   templateUrl: './side-nav-toggle.component.html',
 })
 export class AllorsMaterialSideNavToggleComponent {
-
-  constructor(private sideNavService: AllorsMaterialSideNavService) {
-  }
+  constructor(private sideNavService: AllorsMaterialSideNavService) {}
 
   public toggle() {
     this.sideNavService.toggle();

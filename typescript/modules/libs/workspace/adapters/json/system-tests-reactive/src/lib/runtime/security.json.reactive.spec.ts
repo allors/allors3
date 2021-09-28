@@ -24,5 +24,3 @@ test('withoutPermissions', async () => {
 test('deniedPermissions', async () => {
   await deniedPermissions();
 });
-
-

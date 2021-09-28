@@ -6,7 +6,6 @@ import { MediaService } from '../../services/media/media.service';
 
 @Injectable()
 export class MediaServiceCore extends MediaService {
-
   constructor(private config: MediaConfig) {
     super();
   }

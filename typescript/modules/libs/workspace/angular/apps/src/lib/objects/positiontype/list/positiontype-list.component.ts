@@ -8,7 +8,6 @@ import { PositionType } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
-
 interface Row extends TableRow {
   object: PositionType;
   title: string;
@@ -33,7 +32,6 @@ export class PositionTypesOverviewComponent extends TestScope implements OnInit,
   constructor(
     @Self() public allors: SessionService,
 
-    
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public editService: EditService,
@@ -66,14 +64,15 @@ export class PositionTypesOverviewComponent extends TestScope implements OnInit,
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
     this.filter = m.PositionType.filter = m.PositionType.filter ?? new Filter(m.PositionType.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-            pageEvent =
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
+          pageEvent =
             previousRefresh !== refresh || filterFields !== previousFilterFields
               ? {
                   ...pageEvent,

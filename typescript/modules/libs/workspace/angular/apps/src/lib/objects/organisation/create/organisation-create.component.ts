@@ -15,10 +15,9 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './organisation-create.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class OrganisationCreateComponent extends TestScope implements OnInit, OnDestroy {
-
   public m: M;
 
   public title = 'Add Organisation';
@@ -51,15 +50,14 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<OrganisationCreateComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     private route: ActivatedRoute,
     private fetcher: FetcherService,
     private singletonId: SingletonId,
-    private internalOrganisationId: InternalOrganisationId,
+    private internalOrganisationId: InternalOrganisationId
   ) {
-
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
@@ -67,13 +65,13 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
   }
 
   public ngOnInit(): void {
-
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.route.url, this.refresh$, this.internalOrganisationId.observable$)
       .pipe(
-        switchMap(([,, internalOrganisationId]) => {
-
+        switchMap(([, , internalOrganisationId]) => {
           const id: string = this.route.snapshot.paramMap.get('id');
 
           const pulls = [
@@ -85,10 +83,10 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
                 Locales: {
                   include: {
                     Language: x,
-                    Country: x
-                  }
-                }
-              }
+                    Country: x,
+                  },
+                },
+              },
             }),
             pull.Organisation({ objectId: id }),
             pull.OrganisationRole({}),
@@ -97,46 +95,43 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
               sorting: [{ roleType: m.Currency.Name }],
             }),
             pull.CustomOrganisationClassification({
-              sorting: [{ roleType: m.CustomOrganisationClassification.Name }]
+              sorting: [{ roleType: m.CustomOrganisationClassification.Name }],
             }),
             pull.IndustryClassification({
-              sorting: [{ roleType: m.IndustryClassification.Name }]
+              sorting: [{ roleType: m.IndustryClassification.Name }],
             }),
             pull.LegalForm({
-              sorting: [{ roleType: m.LegalForm.Description }]
+              sorting: [{ roleType: m.LegalForm.Description }],
             }),
           ];
 
           if (id != null) {
-
             pulls.push(
-              pull.CustomerRelationship(
-                {
-                  predicate: new And({
-                    operands: [
-                      new Equals({ propertyType: m.CustomerRelationship.Customer, objectId: id }),
-                      new Equals({ propertyType: m.CustomerRelationship.InternalOrganisation, object: internalOrganisationId }),
-                      new Not({
-                        operand: new Exists({ propertyType: m.CustomerRelationship.ThroughDate }),
-                      }),
-                    ]
-                  }),
+              pull.CustomerRelationship({
+                predicate: new And({
+                  operands: [
+                    new Equals({ propertyType: m.CustomerRelationship.Customer, objectId: id }),
+                    new Equals({ propertyType: m.CustomerRelationship.InternalOrganisation, object: internalOrganisationId }),
+                    new Not({
+                      operand: new Exists({ propertyType: m.CustomerRelationship.ThroughDate }),
+                    }),
+                  ],
                 }),
+              })
             );
 
             pulls.push(
-              pull.SupplierRelationship(
-                {
-                  predicate: new And({
-                    operands: [
-                      new Equals({ propertyType: m.SupplierRelationship.Supplier, objectId: id }),
-                      new Equals({ propertyType: m.SupplierRelationship.InternalOrganisation, object: internalOrganisationId }),
-                      new Not({
-                        operand: new Exists({ propertyType: m.SupplierRelationship.ThroughDate }),
-                      })
-                    ]
-                  }),
+              pull.SupplierRelationship({
+                predicate: new And({
+                  operands: [
+                    new Equals({ propertyType: m.SupplierRelationship.Supplier, objectId: id }),
+                    new Equals({ propertyType: m.SupplierRelationship.InternalOrganisation, object: internalOrganisationId }),
+                    new Not({
+                      operand: new Exists({ propertyType: m.SupplierRelationship.ThroughDate }),
+                    }),
+                  ],
                 }),
+              })
             );
           }
 
@@ -144,7 +139,6 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
         })
       )
       .subscribe((loaded) => {
-
         this.organisation = loaded.object<Organisation>(m.Organisation);
         this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
@@ -194,7 +188,6 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
   }
 
   public save(): void {
-
     if (this.activeRoles.indexOf(this.customerRole) > -1 && !this.isActiveCustomer) {
       const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
       customerRelationship.Customer = this.organisation;
@@ -206,7 +199,7 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
     }
 
     if (this.activeRoles.indexOf(this.customerRole) === -1 && this.isActiveCustomer) {
-      this.customerRelationship.ThroughDate = new Date();;
+      this.customerRelationship.ThroughDate = new Date();
     }
 
     if (this.activeRoles.indexOf(this.supplierRole) > -1 && !this.isActiveSupplier) {
@@ -220,21 +213,17 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
     }
 
     if (this.activeRoles.indexOf(this.supplierRole) === -1 && this.isActiveSupplier) {
-      this.supplierRelationship.ThroughDate = new Date();;
+      this.supplierRelationship.ThroughDate = new Date();
     }
 
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.organisation.id,
-          objectType: this.organisation.objectType,
-        };
+    this.allors.context.save().subscribe(() => {
+      const data: IObject = {
+        id: this.organisation.id,
+        objectType: this.organisation.objectType,
+      };
 
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

@@ -11,7 +11,7 @@ export interface Composite extends ObjectType {
   directAssociationTypes: Set<AssociationType>;
   directRoleTypes: Set<RoleType>;
   directMethodTypes: Set<MethodType>;
-  propertyTypeByPropertyName: Map<string, PropertyType>
+  propertyTypeByPropertyName: Map<string, PropertyType>;
 
   supertypes: Set<Interface>;
   classes: Set<Class>;
@@ -21,6 +21,6 @@ export interface Composite extends ObjectType {
 
   databaseOriginRoleTypes: Set<RoleType>;
   workspaceOriginRoleTypes: Set<RoleType>;
-  
+
   isAssignableFrom(objectType: Composite): boolean;
 }

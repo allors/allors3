@@ -4,7 +4,18 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { InternalOrganisation, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Party, ContactMechanism, PhoneCommunication, CommunicationEventPurpose, CommunicationEventState } from '@allors/workspace/domain/default';
+import {
+  InternalOrganisation,
+  Person,
+  Organisation,
+  PartyContactMechanism,
+  OrganisationContactRelationship,
+  Party,
+  ContactMechanism,
+  PhoneCommunication,
+  CommunicationEventPurpose,
+  CommunicationEventState,
+} from '@allors/workspace/domain/default';
 import { NavigationService, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -42,10 +53,10 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PhoneCommunicationEditComponent>,
     public refreshService: RefreshService,
-    
+
     public navigation: NavigationService,
     private saveService: SaveService,
-    private internalOrganisationId: InternalOrganisationId,
+    private internalOrganisationId: InternalOrganisationId
   ) {
     super();
 
@@ -53,7 +64,9 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -134,7 +147,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
           }
 
           return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
-        }),
+        })
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.session.reset();
@@ -241,9 +254,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
 
   private addContactRelationship(party: Person): void {
     if (this.organisation) {
-      const relationShip: OrganisationContactRelationship = this.allors.context.create(
-        'OrganisationContactRelationship',
-      ) as OrganisationContactRelationship;
+      const relationShip: OrganisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
       relationShip.Contact = party;
       relationShip.Organisation = this.organisation;
     }
@@ -256,7 +267,9 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
   }
 
   private updateFromParty(party: Party): void {
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.Party({
@@ -275,9 +288,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
 
     this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.fromPhonenumbers = partyContactMechanisms
-        .filter((v) => v.ContactMechanism.objectType === this.metaService.m.TelecommunicationsNumber)
-        .map((v) => v.ContactMechanism);
+      this.fromPhonenumbers = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.TelecommunicationsNumber).map((v) => v.ContactMechanism);
     });
   }
 
@@ -288,7 +299,9 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
   }
 
   private updateToParty(party: Party): void {
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.Party({
@@ -307,9 +320,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
 
     this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.toPhonenumbers = partyContactMechanisms
-        .filter((v) => v.ContactMechanism.objectType === this.metaService.m.TelecommunicationsNumber)
-        .map((v) => v.ContactMechanism);
+      this.toPhonenumbers = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.TelecommunicationsNumber).map((v) => v.ContactMechanism);
     });
   }
 

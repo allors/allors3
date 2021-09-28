@@ -5,7 +5,7 @@ import { C1 } from '@allors/workspace/domain/default';
 import { SingleSessionContext } from '../../../context/single-session-context';
 import { MultipleSessionContext } from '../../../context/multiple-session-context';
 import { databaseModes } from '../../../context/modes/database-mode';
-import { Fixture } from '../../../../fixture'
+import { Fixture } from '../../../../fixture';
 import '../../../matchers';
 
 let fixture: Fixture;
@@ -48,7 +48,6 @@ export async function databaseManyToOneSetRole() {
     for (const mode1 of databaseModes) {
       for (const mode2 of databaseModes) {
         for (const contextFactory of contextFactories()) {
-
           const ctx = contextFactory();
           const { session1, session2 } = ctx;
           const { m, client } = fixture;
@@ -92,7 +91,6 @@ export async function databaseManyToOneRemoveRole() {
     for (const mode1 of databaseModes) {
       for (const mode2 of databaseModes) {
         for (const contextFactory of contextFactories()) {
-
           const ctx = contextFactory();
           const { session1, session2 } = ctx;
           const { m, client } = fixture;

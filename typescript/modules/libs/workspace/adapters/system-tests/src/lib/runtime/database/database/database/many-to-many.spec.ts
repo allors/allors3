@@ -5,7 +5,7 @@ import { C1 } from '@allors/workspace/domain/default';
 import { SingleSessionContext } from '../../../context/single-session-context';
 import { MultipleSessionContext } from '../../../context/multiple-session-context';
 import { databaseModes } from '../../../context/modes/database-mode';
-import { Fixture } from '../../../../fixture'
+import { Fixture } from '../../../../fixture';
 import '../../../matchers';
 
 let fixture: Fixture;

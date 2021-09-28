@@ -22,7 +22,7 @@ export class AllorsMaterialAssociationAutoCompleteComponent extends AssociationF
 
   @Input() filter: (search: string, parameters?: { [id: string]: TypeForParameter }) => Observable<IObject[]>;
 
-  @Input() filterParameters: ({ [id: string]: string });
+  @Input() filterParameters: { [id: string]: string };
 
   @Output() changed: EventEmitter<IObject> = new EventEmitter();
 
@@ -40,46 +40,37 @@ export class AllorsMaterialAssociationAutoCompleteComponent extends AssociationF
 
   public ngOnInit(): void {
     if (this.filter) {
-      this.filteredOptions = this.searchControl.valueChanges
-        .pipe(
-          filter((v) => v !== null && v !== undefined && v.trim),
-          debounceTime(this.debounceTime),
-          distinctUntilChanged(),
-          switchMap((search: string) => {
-            if (this.filterParameters) {
-              return this.filter(search, this.filterParameters);
-            } else {
-              return this.filter(search);
-            }
-          }))
-        ;
+      this.filteredOptions = this.searchControl.valueChanges.pipe(
+        filter((v) => v !== null && v !== undefined && v.trim),
+        debounceTime(this.debounceTime),
+        distinctUntilChanged(),
+        switchMap((search: string) => {
+          if (this.filterParameters) {
+            return this.filter(search, this.filterParameters);
+          } else {
+            return this.filter(search);
+          }
+        })
+      );
     } else {
-      this.filteredOptions = this.searchControl.valueChanges
-        .pipe(
-          filter((v) => v !== null && v !== undefined && v.trim),
-          debounceTime(this.debounceTime),
-          distinctUntilChanged(),
-          map((search: string) => {
-            const lowerCaseSearch = search.trim().toLowerCase();
-            return this.options
-              .filter((v: IObject) => {
-                const optionDisplay: string = (v as any)[this.display]
-                  ? (v as any)[this.display].toString().toLowerCase()
-                  : undefined;
-                if (optionDisplay) {
-                  return optionDisplay.indexOf(lowerCaseSearch) !== -1;
-                }
+      this.filteredOptions = this.searchControl.valueChanges.pipe(
+        filter((v) => v !== null && v !== undefined && v.trim),
+        debounceTime(this.debounceTime),
+        distinctUntilChanged(),
+        map((search: string) => {
+          const lowerCaseSearch = search.trim().toLowerCase();
+          return this.options
+            .filter((v: IObject) => {
+              const optionDisplay: string = (v as any)[this.display] ? (v as any)[this.display].toString().toLowerCase() : undefined;
+              if (optionDisplay) {
+                return optionDisplay.indexOf(lowerCaseSearch) !== -1;
+              }
 
-                return false;
-              })
-              .sort(
-                (a: IObject, b: IObject) =>
-                  (a as any)[this.display] !== (b as any)[this.display]
-                    ? (a as any)[this.display] < (b as any)[this.display] ? -1 : 1
-                    : 0,
-              );
-          })
-        );
+              return false;
+            })
+            .sort((a: IObject, b: IObject) => ((a as any)[this.display] !== (b as any)[this.display] ? ((a as any)[this.display] < (b as any)[this.display] ? -1 : 1) : 0));
+        })
+      );
     }
   }
 
@@ -103,7 +94,7 @@ export class AllorsMaterialAssociationAutoCompleteComponent extends AssociationF
   }
 
   displayFn(): (val: IObject) => string {
-    return (val: IObject) => val ? (val as any)[this.display] : '';
+    return (val: IObject) => (val ? (val as any)[this.display] : '');
   }
 
   optionSelected(event: MatAutocompleteSelectedEvent): void {

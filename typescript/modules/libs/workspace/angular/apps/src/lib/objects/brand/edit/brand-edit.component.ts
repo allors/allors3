@@ -32,7 +32,7 @@ export class BrandEditComponent extends TestScope implements OnInit, OnDestroy {
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<BrandEditComponent>,
-    
+
     public refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService
@@ -43,16 +43,16 @@ export class BrandEditComponent extends TestScope implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id === undefined;
 
-          const pulls = [
-            this.fetcher.locales,
-          ];
+          const pulls = [this.fetcher.locales];
 
           if (!isCreate) {
             pulls.push(
@@ -63,7 +63,7 @@ export class BrandEditComponent extends TestScope implements OnInit, OnDestroy {
                   Models: x,
                   LocalisedDescriptions: x,
                 },
-              }),
+              })
             );
           }
 

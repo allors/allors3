@@ -18,7 +18,7 @@ export async function initSandbox(asyncClient: IAsyncDatabaseClient, reactiveCli
 export async function sandbox() {
   const { workspace, m, client } = fixture;
   const session = workspace.createSession();
-  
+
   const c1x = session.create<C1>(m.C1);
   const c1y_2 = session.create<C1>(m.C1);
 

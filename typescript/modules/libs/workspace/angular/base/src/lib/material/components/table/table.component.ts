@@ -9,10 +9,9 @@ import { TableRow } from './table-row';
   // tslint:disable-next-line:component-selector
   selector: 'a-mat-table',
   templateUrl: './table.component.html',
-  styleUrls: ['./table.component.scss']
+  styleUrls: ['./table.component.scss'],
 })
 export class AllorsMaterialTableComponent implements OnInit {
-
   @Input()
   public table: BaseTable;
 
@@ -27,7 +26,6 @@ export class AllorsMaterialTableComponent implements OnInit {
   }
 
   onCellClick(row: TableRow, column: Column) {
-
     const action = this.action(row, column);
     if (action && !action.disabled(row.object)) {
       action.execute(row.object);
@@ -35,11 +33,10 @@ export class AllorsMaterialTableComponent implements OnInit {
   }
 
   get dataAllorsActions() {
-      return (this.table && this.table.actions) ? this.table.actions.map(v => v.name).join() : '';
+    return this.table && this.table.actions ? this.table.actions.map((v) => v.name).join() : '';
   }
 
   private action(row: TableRow, column: Column) {
     return column.action || this.table.defaultAction;
   }
-
 }

@@ -14,10 +14,9 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 
 @Component({
   templateUrl: './person-create.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class PersonCreateComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   public title = 'Add Person';
@@ -50,16 +49,15 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PersonCreateComponent>,
-    
+
     public navigationService: NavigationService,
     public refreshService: RefreshService,
     private route: ActivatedRoute,
     private saveService: SaveService,
     private fetcher: FetcherService,
     private singletonId: SingletonId,
-    private internalOrganisationId: InternalOrganisationId,
+    private internalOrganisationId: InternalOrganisationId
   ) {
-
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
@@ -67,13 +65,13 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
   }
 
   public ngOnInit(): void {
-
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.route.url, this.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(([,]) => {
-
           const pulls = [
             this.fetcher.internalOrganisation,
             this.fetcher.locales,
@@ -83,10 +81,10 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
                 Locales: {
                   include: {
                     Language: x,
-                    Country: x
-                  }
-                }
-              }
+                    Country: x,
+                  },
+                },
+              },
             }),
             pull.Currency({
               predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
@@ -101,7 +99,7 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
               sorting: [{ roleType: m.Salutation.Name }],
             }),
             pull.PersonRole({
-              sorting: [{ roleType: m.PersonRole.Name }]
+              sorting: [{ roleType: m.PersonRole.Name }],
             }),
             pull.OrganisationContactKind({
               sorting: [{ roleType: m.OrganisationContactKind.Description }],
@@ -111,7 +109,7 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
             }),
             pull.Organisation({
               name: 'AllOrganisations',
-              sorting: [{ roleType: m.Organisation.PartyName }]
+              sorting: [{ roleType: m.Organisation.PartyName }],
             }),
           ];
 
@@ -138,7 +136,6 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
         this.person = this.allors.session.create<Person>(m.Person);
         this.person.CollectiveWorkEffortInvoice = false;
         this.person.PreferredCurrency = this.internalOrganisation.PreferredCurrency;
-
       });
   }
 
@@ -149,7 +146,6 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
   }
 
   public save(): void {
-
     if (this.selectedRoles.indexOf(this.customerRole) > -1) {
       const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
       customerRelationship.Customer = this.person;
@@ -169,18 +165,14 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
       organisationContactRelationship.ContactKinds = this.selectedContactKinds;
     }
 
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.person.id,
-          objectType: this.person.objectType,
-        };
+    this.allors.context.save().subscribe(() => {
+      const data: IObject = {
+        id: this.person.id,
+        objectType: this.person.objectType,
+      };
 
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 }

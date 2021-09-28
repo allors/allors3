@@ -4,8 +4,6 @@ import { M } from '@allors/workspace/meta/default';
 import { PartyContactMechanism, ContactMechanismPurpose, EmailAddress } from '@allors/workspace/domain/default';
 import { SessionService } from '@allors/workspace/angular/core';
 
-
-
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'party-contactmechanism-emailAddress',
@@ -30,7 +28,9 @@ export class PartyContactMechanismEmailAddressInlineComponent implements OnInit,
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.ContactMechanismPurpose({

@@ -1,9 +1,8 @@
 <form class="a-edit" #form="ngForm" *ngIf="person" (submit)="save()">
-
   <mat-toolbar class="a-header">
     <mat-toolbar-row class="row">
       <a-mat-sidenavtoggle></a-mat-sidenavtoggle>
-      <h1>{{title}}</h1>
+      <h1>{{ title }}</h1>
       <span class="col"></span>
     </mat-toolbar-row>
   </mat-toolbar>
@@ -11,7 +10,6 @@
   <div>
     <mat-card>
       <mat-card-content class="container-fluid">
-
         <div class="row">
           <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.FirstName"></a-mat-input>
           <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.MiddleName"></a-mat-input>
@@ -22,7 +20,6 @@
           <a-mat-file class="col-md" [object]="person" [roleType]="m.Person.Photo"></a-mat-file>
           <a-mat-files class="col-md" [object]="person" [roleType]="m.Person.Pictures"></a-mat-files>
         </div>
-
       </mat-card-content>
     </mat-card>
   </div>
@@ -34,5 +31,4 @@
       <button mat-raised-button color="primary" type="submit" [disabled]="!form.form.valid">SAVE</button>
     </mat-toolbar-row>
   </mat-toolbar>
-
 </form>

@@ -30,7 +30,7 @@ export class AllorsMaterialSelectComponent extends RoleField {
 
   onRestore(event: Event) {
     event.stopPropagation();
-    this.restore()
+    this.restore();
     this.selected.emit(this.model);
   }
 }

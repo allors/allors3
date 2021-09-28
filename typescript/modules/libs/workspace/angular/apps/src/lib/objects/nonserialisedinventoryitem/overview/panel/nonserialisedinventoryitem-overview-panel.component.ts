@@ -4,7 +4,6 @@ import { M } from '@allors/workspace/meta/default';
 import { NonSerialisedInventoryItem, InventoryItem } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService, ActionTarget } from '@allors/workspace/angular/base';
 
-
 interface Row extends TableRow {
   object: InventoryItem;
   facility: string;
@@ -20,10 +19,9 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'nonserialisedinventoryitem-overview-panel',
   templateUrl: './nonserialisedinventoryitem-overview-panel.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class NonSerialisedInventoryItemComponent extends TestScope implements OnInit {
-
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -46,14 +44,14 @@ export class NonSerialisedInventoryItemComponent extends TestScope implements On
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public objectService: ObjectService,
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     public overviewService: OverviewService,
     public deleteService: DeleteService,
-    public editService: EditService,
+    public editService: EditService
   ) {
     super();
 
@@ -61,8 +59,9 @@ export class NonSerialisedInventoryItemComponent extends TestScope implements On
   }
 
   ngOnInit() {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.panel.name = 'nonserialised Inventory item';
     this.panel.title = 'Nonserialised Inventory items';
@@ -88,19 +87,8 @@ export class NonSerialisedInventoryItemComponent extends TestScope implements On
 
     this.table = new Table({
       selection: false,
-      columns: [
-        { name: 'facility' },
-        { name: 'part' },
-        { name: 'uom' },
-        { name: 'location' },
-        'qoh',
-        'atp',
-        'committedOut',
-      ],
-      actions: [
-        this.edit,
-        this.changeInventory,
-      ],
+      columns: [{ name: 'facility' }, { name: 'part' }, { name: 'uom' }, { name: 'location' }, 'qoh', 'atp', 'committedOut'],
+      actions: [this.edit, this.changeInventory],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -119,19 +107,18 @@ export class NonSerialisedInventoryItemComponent extends TestScope implements On
             InventoryItemsWherePart: {
               include: {
                 InventoryItemTransactionsWhereInventoryItem: {
-                  Reason: x
+                  Reason: x,
                 },
                 NonSerialisedInventoryItem_NonSerialisedInventoryItemState: x,
                 Facility: x,
                 UnitOfMeasure: x,
-              }
-            }
+              },
+            },
           },
         })
       );
 
       this.panel.onPulled = (loaded) => {
-
         this.objects = loaded.collections[pullName] as NonSerialisedInventoryItem[];
         // this.objects = this.objects.filter(v => v.QuantityOnHand > 0 || v.QuantityCommittedOut > 0 || v.QuantityExpectedIn > 0 || v.AvailableToPromise > 0);
 

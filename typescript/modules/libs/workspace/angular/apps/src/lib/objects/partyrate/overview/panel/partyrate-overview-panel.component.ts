@@ -18,10 +18,9 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'partyrate-overview-panel',
   templateUrl: './partyrate-overview-panel.component.html',
-  providers: [PanelService]
+  providers: [PanelService],
 })
 export class PartyRateOverviewPanelComponent extends TestScope implements OnInit {
-
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -48,7 +47,7 @@ export class PartyRateOverviewPanelComponent extends TestScope implements OnInit
 
   constructor(
     @Self() public panel: PanelService,
-    
+
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     public deleteService: DeleteService,
@@ -60,7 +59,6 @@ export class PartyRateOverviewPanelComponent extends TestScope implements OnInit
   }
 
   ngOnInit() {
-
     this.panel.name = 'partyrate';
     this.panel.title = 'Party Rates';
     this.panel.icon = 'contacts';
@@ -72,17 +70,8 @@ export class PartyRateOverviewPanelComponent extends TestScope implements OnInit
     const sort = true;
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'rateType' },
-        { name: 'from', sort },
-        { name: 'through', sort },
-        { name: 'rate', sort },
-        { name: 'frequency' },
-      ],
-      actions: [
-        this.edit,
-        this.delete,
-      ],
+      columns: [{ name: 'rateType' }, { name: 'from', sort }, { name: 'through', sort }, { name: 'rate', sort }, { name: 'frequency' }],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -91,8 +80,9 @@ export class PartyRateOverviewPanelComponent extends TestScope implements OnInit
     const pullName = `${this.panel.name}_${this.m.PartyRate.tag}`;
 
     this.panel.onPull = (pulls) => {
-
-      const m = this.m; const { pullBuilder: pull } = m; const x = {};
+      const m = this.m;
+      const { pullBuilder: pull } = m;
+      const x = {};
       const id = this.panel.manager.id;
 
       pulls.push(
@@ -103,11 +93,11 @@ export class PartyRateOverviewPanelComponent extends TestScope implements OnInit
             PartyRates: {
               include: {
                 RateType: x,
-                Frequency: x
-              }
-            }
-          }
-        }),
+                Frequency: x,
+              },
+            },
+          },
+        })
       );
     };
 
@@ -135,12 +125,11 @@ export class PartyRateOverviewPanelComponent extends TestScope implements OnInit
   }
 
   get partyRates(): any {
-
     switch (this.collection) {
       case 'Current':
-        return this.objects && this.objects.filter(v => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
+        return this.objects && this.objects.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
       case 'Inactive':
-        return this.objects && this.objects.filter(v => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date())));
+        return this.objects && this.objects.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date())));
       case 'All':
       default:
         return this.objects;

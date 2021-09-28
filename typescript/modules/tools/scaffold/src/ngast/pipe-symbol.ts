@@ -1,12 +1,6 @@
 import { Program } from 'typescript';
 import { resolveForwardRef, Pipe } from '@angular/core';
-import {
-  StaticSymbol,
-  PipeResolver,
-  CompileNgModuleMetadata,
-  CompileMetadataResolver,
-  ProviderMeta
-} from '@angular/compiler';
+import { StaticSymbol, PipeResolver, CompileNgModuleMetadata, CompileMetadataResolver, ProviderMeta } from '@angular/compiler';
 
 import { ProjectSymbols } from './project-symbols';
 import { Symbol } from './symbol';
@@ -30,13 +24,7 @@ export class PipeSymbol extends Symbol {
    *
    * @memberOf PipeSymbol
    */
-  constructor(
-    program: Program,
-    symbol: StaticSymbol,
-    private resolver: PipeResolver,
-    private metadataResolver: CompileMetadataResolver,
-    private projectSymbols: ProjectSymbols
-  ) {
+  constructor(program: Program, symbol: StaticSymbol, private resolver: PipeResolver, private metadataResolver: CompileMetadataResolver, private projectSymbols: ProjectSymbols) {
     super(program, symbol);
   }
 
@@ -67,7 +55,7 @@ export class PipeSymbol extends Symbol {
     if (!summary) {
       return [];
     } else {
-      return (summary.type.diDeps || []).map(d => {
+      return (summary.type.diDeps || []).map((d) => {
         let token = d.token;
         if (d.token) {
           if (d.token.identifier) {
@@ -75,11 +63,7 @@ export class PipeSymbol extends Symbol {
           }
         }
         const meta = new ProviderMeta(token, { useClass: d.value });
-        return new ProviderSymbol(
-          this._program,
-          this.metadataResolver.getProviderMetadata(meta),
-          this.metadataResolver
-        );
+        return new ProviderSymbol(this._program, this.metadataResolver.getProviderMetadata(meta), this.metadataResolver);
       });
     }
   }

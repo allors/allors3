@@ -1,4 +1,4 @@
-import { DerivationRelation } from "./derivation-relation";
+import { DerivationRelation } from './derivation-relation';
 
 export interface ResponseDerivationError {
   /** Message */

@@ -4,8 +4,62 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { WorkTask, Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale, Carrier, SerialisedItemCharacteristicType, WorkTask, ContactMechanism, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Catalogue, Singleton, ProductCategory, Scope, CommunicationEvent, WorkEffortState, Priority, WorkEffortPurpose, WorkEffortPartyAssignment, CustomerRelationship, Party, CustomerShipment, Currency, PostalAddress, Facility, ShipmentMethod } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectData, ObjectService, OverviewService, PanelService, RefreshService, SaveService, SearchFactory, Sorter, Table, TableRow, TestScope, PanelManagerService } from '@allors/workspace/angular/base';
+import {
+  WorkTask,
+  Good,
+  InternalOrganisation,
+  NonUnifiedGood,
+  Part,
+  PriceComponent,
+  Brand,
+  Model,
+  Locale,
+  Carrier,
+  SerialisedItemCharacteristicType,
+  WorkTask,
+  ContactMechanism,
+  Person,
+  Organisation,
+  PartyContactMechanism,
+  OrganisationContactRelationship,
+  Catalogue,
+  Singleton,
+  ProductCategory,
+  Scope,
+  CommunicationEvent,
+  WorkEffortState,
+  Priority,
+  WorkEffortPurpose,
+  WorkEffortPartyAssignment,
+  CustomerRelationship,
+  Party,
+  CustomerShipment,
+  Currency,
+  PostalAddress,
+  Facility,
+  ShipmentMethod,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  Filter,
+  FilterDefinition,
+  MediaService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  OverviewService,
+  PanelService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+  Sorter,
+  Table,
+  TableRow,
+  TestScope,
+  PanelManagerService,
+} from '@allors/workspace/angular/base';
 import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
 import { And, IObject } from '@allors/workspace/domain/system';
 
@@ -43,7 +97,7 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
   carriers: Carrier[];
 
   customersFilter: SearchFactory;
-  
+
   get shipToCustomerIsPerson(): boolean {
     return !this.customerShipment.ShipToParty || this.customerShipment.ShipToParty.objectType.name === this.m.Person.name;
   }
@@ -53,7 +107,7 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
     @Self() public allors: SessionService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<CustomerShipmentCreateComponent>,
-    
+
     private refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,
@@ -65,7 +119,8 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
   }
 
   public ngOnInit(): void {
-    const m = this.m; const { pullBuilder: pull } = m;
+    const m = this.m;
+    const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
@@ -144,9 +199,7 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
   }
 
   public shipToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create(
-      'OrganisationContactRelationship'
-    ) as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
     organisationContactRelationship.Organisation = this.customerShipment.ShipToParty as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -173,7 +226,9 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
   }
 
   private updateShipToParty(customer: Party): void {
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.Party({
@@ -204,15 +259,15 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.shipToAddresses = partyContactMechanisms
-        .filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress')
-        .map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
+      this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
       this.shipToContacts = loaded.collection<Person>(m.Person);
     });
   }
 
   private updateShipFromParty(organisation: Party): void {
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.Party({
@@ -237,9 +292,7 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
 
     this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.shipFromAddresses = partyContactMechanisms
-        .filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress')
-        .map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
+      this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
       this.shipToContacts = loaded.collection<Person>(m.Person);
     });
   }

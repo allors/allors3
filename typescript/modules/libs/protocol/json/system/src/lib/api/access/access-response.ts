@@ -1,5 +1,5 @@
-import { AccessResponseGrant } from "./access-response-grant";
-import { AccessResponseRevocation } from "./access-response-revocation";
+import { AccessResponseGrant } from './access-response-grant';
+import { AccessResponseRevocation } from './access-response-revocation';
 
 export interface AccessResponse {
   /** Grants */

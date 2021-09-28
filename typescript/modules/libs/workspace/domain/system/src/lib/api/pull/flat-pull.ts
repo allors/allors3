@@ -16,7 +16,7 @@ export interface FlatPull {
   sorting?: Sort[];
 
   object?: IObject;
- 
+
   objectId?: number | string;
 
   selectRef?: string;

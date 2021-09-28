@@ -8,14 +8,10 @@ import { AllorsBarcodeService } from '../../../services/barcode/barcode.service'
   templateUrl: './scanner.component.html',
 })
 export class AllorsMaterialScannerComponent {
-
   showScanner = false;
   barcode: string | null;
 
-  constructor(
-    private barcodeService: AllorsBarcodeService,
-  ) {
-  }
+  constructor(private barcodeService: AllorsBarcodeService) {}
 
   scan() {
     try {

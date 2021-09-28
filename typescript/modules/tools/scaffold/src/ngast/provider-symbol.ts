@@ -2,11 +2,7 @@ import { CompileProviderMetadata, CompileMetadataResolver, ProviderMeta } from '
 import { Program } from 'typescript';
 
 export class ProviderSymbol {
-  constructor(
-    private program: Program,
-    private provider: CompileProviderMetadata,
-    private metadataResolver: CompileMetadataResolver
-  ) {}
+  constructor(private program: Program, private provider: CompileProviderMetadata, private metadataResolver: CompileMetadataResolver) {}
 
   /**
    * Returns the provider metadata.
@@ -19,7 +15,7 @@ export class ProviderSymbol {
    * Returns the list of dependencies for given provider.
    */
   getDependencies() {
-    return (this.provider.deps || []).map(d => {
+    return (this.provider.deps || []).map((d) => {
       let token = d.token;
       if (d.token) {
         if (d.token.identifier) {

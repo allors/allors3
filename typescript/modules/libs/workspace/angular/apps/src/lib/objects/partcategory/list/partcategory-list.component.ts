@@ -36,7 +36,6 @@ export class PartCategoryListComponent extends TestScope implements OnInit, OnDe
   constructor(
     @Self() public allors: SessionService,
 
-    
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public editService: EditService,
@@ -74,7 +73,9 @@ export class PartCategoryListComponent extends TestScope implements OnInit, OnDe
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const predicate = new And([new Like({ roleType: m.PartCategory.Name, parameter: 'name' })]);
 
@@ -85,17 +86,10 @@ export class PartCategoryListComponent extends TestScope implements OnInit, OnDe
       name: m.PartCategory.Name,
     });
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.filter.fields$,
-      this.table.sort$,
-      this.table.pager$,
-      this.internalOrganisationId.observable$
-    )
+    this.subscription = combineLatest(this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$)
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
-            pageEvent =
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
+          pageEvent =
             previousRefresh !== refresh || filterFields !== previousFilterFields
               ? {
                   ...pageEvent,

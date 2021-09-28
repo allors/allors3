@@ -1,5 +1,5 @@
 import { initWorkspaceLifecycle, workspaceCrossSession, workspaceInstantiateOtherSession, workspacePullOtherSessionShouldThrowError } from '@allors/workspace/adapters/system-tests';
-import { Fixture } from '../../fixture'
+import { Fixture } from '../../fixture';
 
 let fixture: Fixture;
 
@@ -20,5 +20,3 @@ test('workspacePullOtherSessionShouldThrowError', async () => {
 test('workspaceCrossSession', async () => {
   await workspaceCrossSession();
 });
-
-

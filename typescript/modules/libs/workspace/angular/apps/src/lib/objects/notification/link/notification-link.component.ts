@@ -10,10 +10,9 @@ import { SessionService } from '@allors/workspace/angular/core';
   // tslint:disable-next-line:component-selector
   selector: 'notification-link',
   templateUrl: './notification-link.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class NotificationLinkComponent implements OnInit, OnDestroy {
-
   notifications: Notification[];
 
   private subscription: Subscription;
@@ -30,36 +29,36 @@ export class NotificationLinkComponent implements OnInit, OnDestroy {
       }
     }
 
-    return "?";
+    return '?';
   }
 
   constructor(
     @Self() public allors: SessionService,
-    
+
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
-    private userId: UserId,
-    ) {
-  }
+    private userId: UserId
+  ) {}
 
   ngOnInit(): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = this.refreshService.refresh$
       .pipe(
         switchMap(() => {
-
           const pulls = [
             pull.Person({
               object: this.userId.value,
               include: {
                 NotificationList: {
-                  UnconfirmedNotifications: x
-                }
-              }
-            })];
+                  UnconfirmedNotifications: x,
+                },
+              },
+            }),
+          ];
 
           return this.allors.client.pullReactive(this.allors.session, pulls);
         })

@@ -6,7 +6,7 @@ export interface RoleType extends PropertyType {
   readonly kind: 'RoleType';
 
   singularName: string;
-  
+
   associationType: AssociationType;
 
   relationType: RelationType;

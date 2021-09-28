@@ -117,6 +117,8 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   }
 
   public ngOnInit(): void {
+    const m = this.m;
+
     // Maximized
     this.subscription = combineLatest(this.refresh$, this.panel.manager.on$)
       .pipe(
@@ -186,11 +188,11 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
                 PriceComponentsWherePart: x,
               },
             }),
-            pull.UnitOfMeasure(),
-            pull.InventoryItemKind(),
-            pull.ProductIdentificationType(),
-            pull.Facility(),
-            pull.ProductIdentificationType(),
+            pull.UnitOfMeasure({}),
+            pull.InventoryItemKind({}),
+            pull.ProductIdentificationType({}),
+            pull.Facility({}),
+            pull.ProductIdentificationType({}),
             pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
             pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] }),
             pull.SupplierRelationship({

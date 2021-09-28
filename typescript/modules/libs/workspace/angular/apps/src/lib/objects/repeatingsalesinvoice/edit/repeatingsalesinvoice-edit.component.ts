@@ -53,7 +53,7 @@ export class RepeatingSalesInvoiceEditComponent extends TestScope implements OnI
               predicate: { kind: 'Equals', propertyType: m.TimeFrequency.IsActive, value: true },
               sorting: [{ roleType: m.TimeFrequency.Name }],
             }),
-            pull.DayOfWeek(),
+            pull.DayOfWeek({}),
           ];
 
           if (!isCreate) {

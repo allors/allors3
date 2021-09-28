@@ -1,12 +1,4 @@
-import {
-  initDiff,
-  databaseUnitDiff,
-  databaseUnitDiffAfterReset,
-  databaseUnitDiffAfterDoubleReset,
-  databaseMultipleUnitDiff,
-  workspaceUnitDiff,
-  workspaceUnitDiffAfterReset,
-} from '@allors/workspace/adapters/system-tests';
+import { initDiff, databaseUnitDiff, databaseUnitDiffAfterReset, databaseUnitDiffAfterDoubleReset, databaseMultipleUnitDiff, workspaceUnitDiff, workspaceUnitDiffAfterReset } from '@allors/workspace/adapters/system-tests';
 import { Fixture } from '../fixture';
 
 let fixture: Fixture;

@@ -41,4 +41,3 @@ export async function sessionFullName() {
 
   expect(jane.SessionFullName).toBe('Jane Doe');
 }
-

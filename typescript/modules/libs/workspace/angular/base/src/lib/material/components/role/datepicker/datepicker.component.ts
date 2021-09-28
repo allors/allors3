@@ -2,7 +2,6 @@ import { Component, Optional, Output, EventEmitter } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { RoleField } from '../../../../components/forms/role-field';
 
-
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'a-mat-datepicker',

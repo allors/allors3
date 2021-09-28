@@ -4,25 +4,22 @@ import { Node } from './Node';
 import { ExpansionCase } from './ExpansionCase';
 
 export class Expansion implements Node {
+  switchValue: string;
 
-    switchValue: string;
+  cases: ExpansionCase[];
 
-    cases: ExpansionCase[];
+  constructor(public node: compiler.Expansion) {
+    this.switchValue = node.switchValue;
+    this.cases = node.cases.map((v) => new ExpansionCase(v));
+  }
 
-    constructor(public node: compiler.Expansion) {
-        this.switchValue = node.switchValue;
-        this.cases = node.cases.map((v) => new ExpansionCase(v));
-    }
+  public toJSON(): any {
+    const { switchValue, cases } = this;
 
-    public toJSON(): any {
-
-        const { switchValue, cases } = this;
-
-        return {
-            kind: 'expansion',
-            name,
-            cases
-        };
-    }
+    return {
+      kind: 'expansion',
+      name,
+      cases,
+    };
+  }
 }
-

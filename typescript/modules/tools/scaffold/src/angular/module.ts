@@ -25,34 +25,13 @@ export class Module {
     this.name = module.symbol.name;
     this.path = pathResolver.relative(module.symbol.filePath);
 
-    this.bootstrapComponents = Reference.fromSymbols(
-      module.getBootstrapComponents(),
-      pathResolver
-    );
-    this.declaredDirectives = Reference.fromSymbols(
-      module.getDeclaredDirectives(),
-      pathResolver
-    );
-    this.exportedDirectives = Reference.fromSymbols(
-      module.getExportedDirectives(),
-      pathResolver
-    );
-    this.exportedPipes = Reference.fromSymbols(
-      module.getExportedPipes(),
-      pathResolver
-    );
-    this.declaredPipes = Reference.fromSymbols(
-      module.getDeclaredPipes(),
-      pathResolver
-    );
-    this.importedModules = Reference.fromSymbols(
-      module.getImportedModules(),
-      pathResolver
-    );
-    this.exportedModules = Reference.fromSymbols(
-      module.getExportedModules(),
-      pathResolver
-    );
+    this.bootstrapComponents = Reference.fromSymbols(module.getBootstrapComponents(), pathResolver);
+    this.declaredDirectives = Reference.fromSymbols(module.getDeclaredDirectives(), pathResolver);
+    this.exportedDirectives = Reference.fromSymbols(module.getExportedDirectives(), pathResolver);
+    this.exportedPipes = Reference.fromSymbols(module.getExportedPipes(), pathResolver);
+    this.declaredPipes = Reference.fromSymbols(module.getDeclaredPipes(), pathResolver);
+    this.importedModules = Reference.fromSymbols(module.getImportedModules(), pathResolver);
+    this.exportedModules = Reference.fromSymbols(module.getExportedModules(), pathResolver);
 
     module.getProviders();
     const summary = this.module.getModuleSummary();
@@ -78,37 +57,20 @@ export class Module {
       }
 
       const routes = summary.providers.filter((v) => {
-        return (
-          v.provider.token.identifier &&
-          v.provider.token.identifier.reference.name === 'ROUTES'
-        );
+        return v.provider.token.identifier && v.provider.token.identifier.reference.name === 'ROUTES';
       });
 
       if (routes && routes.length > 0 && routes[0]) {
         const route = routes[0];
         if (route.provider && route.provider.useValue) {
-          this.routes = route.provider.useValue.map(
-            (v: any) => new Route(v, pathResolver)
-          );
+          this.routes = route.provider.useValue.map((v: any) => new Route(v, pathResolver));
         }
       }
     }
   }
 
   public toJSON(): any {
-    const {
-      name,
-      path,
-      bootstrapComponents,
-      declaredDirectives,
-      exportedDirectives,
-      exportedPipes,
-      declaredPipes,
-      importedModules,
-      exportedModules,
-      entryComponents,
-      routes,
-    } = this;
+    const { name, path, bootstrapComponents, declaredDirectives, exportedDirectives, exportedPipes, declaredPipes, importedModules, exportedModules, entryComponents, routes } = this;
 
     return {
       kind: 'module',

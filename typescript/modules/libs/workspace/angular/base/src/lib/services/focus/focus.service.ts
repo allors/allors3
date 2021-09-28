@@ -5,5 +5,5 @@ import { Observable } from 'rxjs';
 export abstract class AllorsFocusService {
   abstract readonly focus$: Observable<any>;
 
-  abstract focus(trigger: any): void
+  abstract focus(trigger: any): void;
 }

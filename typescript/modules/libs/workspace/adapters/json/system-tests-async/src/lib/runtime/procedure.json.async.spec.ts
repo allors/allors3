@@ -1,9 +1,4 @@
-import {
-  initProcedure,
-  nonExistingProcedure,
-  testUnitSamplesWithNulls,
-  testUnitSamplesWithValues,
-} from '@allors/workspace/adapters/system-tests';
+import { initProcedure, nonExistingProcedure, testUnitSamplesWithNulls, testUnitSamplesWithValues } from '@allors/workspace/adapters/system-tests';
 import { Fixture } from '../fixture';
 
 let fixture: Fixture;
@@ -25,4 +20,3 @@ test('testUnitSamplesWithValues', async () => {
 test('nonExistingProcedure', async () => {
   await nonExistingProcedure();
 });
-

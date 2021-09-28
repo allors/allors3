@@ -62,21 +62,19 @@ export class Filters {
       objectType: m.Party,
       roleTypes: [m.Party.PartyName],
       post: (predicate: And) => {
-        predicate.operands.push(
-          {
-            kind: 'ContainedIn',
-            propertyType: m.Party.CustomerRelationshipsWhereCustomer,
-            extent: {
-              kind: 'Filter',
-              objectType: m.CustomerRelationship,
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.CustomerRelationship.InternalOrganisation,
-                value: internalOrganisationId,
-              },
+        predicate.operands.push({
+          kind: 'ContainedIn',
+          propertyType: m.Party.CustomerRelationshipsWhereCustomer,
+          extent: {
+            kind: 'Filter',
+            objectType: m.CustomerRelationship,
+            predicate: {
+              kind: 'Equals',
+              propertyType: m.CustomerRelationship.InternalOrganisation,
+              value: internalOrganisationId,
             },
-          }
-        );
+          },
+        });
       },
     });
   }
@@ -86,21 +84,19 @@ export class Filters {
       objectType: m.Organisation,
       roleTypes: [m.Organisation.PartyName],
       post: (predicate: And) => {
-        predicate.operands.push(
-          {
-            kind: 'ContainedIn',
-            propertyType: m.Organisation.SupplierRelationshipsWhereSupplier,
-            extent: {
-              kind: 'Filter',
-              objectType: m.SupplierRelationship,
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.SupplierRelationship.InternalOrganisation,
-                value: internalOrganisationId,
-              },
+        predicate.operands.push({
+          kind: 'ContainedIn',
+          propertyType: m.Organisation.SupplierRelationshipsWhereSupplier,
+          extent: {
+            kind: 'Filter',
+            objectType: m.SupplierRelationship,
+            predicate: {
+              kind: 'Equals',
+              propertyType: m.SupplierRelationship.InternalOrganisation,
+              value: internalOrganisationId,
             },
-          }
-        );
+          },
+        });
       },
     });
   }

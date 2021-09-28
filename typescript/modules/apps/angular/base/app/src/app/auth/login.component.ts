@@ -9,7 +9,6 @@ import { AuthenticationService, TestScope } from '@allors/workspace/angular/base
   templateUrl: './login.component.html',
 })
 export class LoginComponent extends TestScope implements OnDestroy {
-
   public loginFormGhost = this.formBuilder.group({
     password: ['', Validators.required],
     userName: ['', Validators.required],
@@ -22,11 +21,7 @@ export class LoginComponent extends TestScope implements OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(
-    private authService: AuthenticationService,
-    private router: Router,
-    public formBuilder: FormBuilder,
-  ) {
+  constructor(private authService: AuthenticationService, private router: Router, public formBuilder: FormBuilder) {
     super();
   }
 
@@ -46,7 +41,7 @@ export class LoginComponent extends TestScope implements OnDestroy {
           alert('Could not log in');
         }
       },
-      (error) => alert(JSON.stringify(error)),
+      (error) => alert(JSON.stringify(error))
     );
   }
 

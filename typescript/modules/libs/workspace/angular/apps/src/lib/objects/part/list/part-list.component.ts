@@ -8,7 +8,6 @@ import { ProductIdentificationType } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
-
 interface Row extends TableRow {
   object: Part;
   name: string;
@@ -39,7 +38,6 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: SessionService,
 
-    
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
@@ -59,15 +57,7 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'name', sort: true },
-        { name: 'partNo' },
-        { name: 'type' },
-        { name: 'qoh' },
-        { name: 'brand' },
-        { name: 'model' },
-        { name: 'kind' },
-      ],
+      columns: [{ name: 'name', sort: true }, { name: 'partNo' }, { name: 'type' }, { name: 'qoh' }, { name: 'brand' }, { name: 'model' }, { name: 'kind' }],
       actions: [overviewService.overview(), this.delete],
       defaultAction: overviewService.overview(),
       pageSize: 50,
@@ -75,14 +65,15 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
     this.filter = m.Part.filter = m.Part.filter ?? new Filter(m.Part.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-            pageEvent =
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
+          pageEvent =
             previousRefresh !== refresh || filterFields !== previousFilterFields
               ? {
                   ...pageEvent,
@@ -130,9 +121,7 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
         const partNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
 
         const partNumberByPart = parts.reduce((map, obj) => {
-          map[obj.id] = obj.ProductIdentifications.filter((v) => v.ProductIdentificationType === partNumberType).map(
-            (w) => w.Identification
-          );
+          map[obj.id] = obj.ProductIdentifications.filter((v) => v.ProductIdentificationType === partNumberType).map((w) => w.Identification);
           return map;
         }, {});
 

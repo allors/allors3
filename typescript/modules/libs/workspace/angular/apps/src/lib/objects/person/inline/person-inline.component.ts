@@ -7,10 +7,9 @@ import { SessionService } from '@allors/workspace/angular/core';
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'person-inline',
-  templateUrl: './person-inline.component.html'
+  templateUrl: './person-inline.component.html',
 })
 export class PersonInlineComponent implements OnInit, OnDestroy {
-
   @Output()
   public saved: EventEmitter<Person> = new EventEmitter<Person>();
 
@@ -25,19 +24,16 @@ export class PersonInlineComponent implements OnInit, OnDestroy {
   public genders: Enumeration[];
   public salutations: Enumeration[];
 
-  constructor(
-    private allors: SessionService) {
-
+  constructor(private allors: SessionService) {
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
     const { pullBuilder: pull } = this.m;
 
     const pulls = [
       pull.Locale({
-        sorting: [{ roleType: this.m.Locale.Name }]
+        sorting: [{ roleType: this.m.Locale.Name }],
       }),
       pull.GenderType({
         predicate: { kind: 'Equals', propertyType: this.m.GenderType.IsActive, value: true },
@@ -45,19 +41,17 @@ export class PersonInlineComponent implements OnInit, OnDestroy {
       }),
       pull.Salutation({
         predicate: { kind: 'Equals', propertyType: this.m.Salutation.IsActive, value: true },
-        sorting: [{ roleType: this.m.Salutation.Name }]
-      })
+        sorting: [{ roleType: this.m.Salutation.Name }],
+      }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe((loaded) => {
-        this.locales = loaded.collection<Locale>(m.Locale);
-        this.genders = loaded.collection<Enumeration>(m.Enumeration);
-        this.salutations = loaded.collection<Enumeration>(m.Enumeration);
+    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      this.locales = loaded.collection<Locale>(m.Locale);
+      this.genders = loaded.collection<Enumeration>(m.Enumeration);
+      this.salutations = loaded.collection<Enumeration>(m.Enumeration);
 
-        this.person = this.allors.session.create<Person>(m.Person);
-      });
+      this.person = this.allors.session.create<Person>(m.Person);
+    });
   }
 
   public ngOnDestroy(): void {
@@ -71,7 +65,7 @@ export class PersonInlineComponent implements OnInit, OnDestroy {
   }
 
   public save(): void {
-      this.saved.emit(this.person);
-      this.person = undefined;
+    this.saved.emit(this.person);
+    this.person = undefined;
   }
 }

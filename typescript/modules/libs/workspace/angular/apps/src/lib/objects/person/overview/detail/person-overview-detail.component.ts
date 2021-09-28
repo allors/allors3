@@ -145,7 +145,7 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
         this.person = loaded.object<Person>(m.Person);
         this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
         this.currencies = loaded.collection<Currency>(m.Currency);
-        this.locales = (loaded.collection<Locale>(m.Locale)) || [];
+        this.locales = loaded.collection<Locale>(m.Locale) || [];
         this.genders = loaded.collection<Enumeration>(m.Enumeration);
         this.salutations = loaded.collection<Enumeration>(m.Enumeration);
       });

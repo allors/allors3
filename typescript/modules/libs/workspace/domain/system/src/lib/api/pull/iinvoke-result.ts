@@ -1,3 +1,3 @@
-import { IResult } from "../iresult";
+import { IResult } from '../iresult';
 
 export type IInvokeResult = IResult;

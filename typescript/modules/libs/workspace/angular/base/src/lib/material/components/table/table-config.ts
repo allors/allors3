@@ -5,23 +5,23 @@ import { Action } from '../../../components/actions/action';
 import { Column } from './column';
 
 export interface TableConfig {
-    columns?: (Partial<Column> | string)[];
+  columns?: (Partial<Column> | string)[];
 
-    selection?: boolean;
+  selection?: boolean;
 
-    actions?: Action[];
+  actions?: Action[];
 
-    defaultAction?: Action;
+  defaultAction?: Action;
 
-    autoSort?: boolean;
+  autoSort?: boolean;
 
-    initialSort?: Partial<Sort> | string;
+  initialSort?: Partial<Sort> | string;
 
-    initialSortDirection?: SortDirection;
+  initialSortDirection?: SortDirection;
 
-    pageSize?: number;
+  pageSize?: number;
 
-    pageSizeOptions?: number[];
+  pageSizeOptions?: number[];
 
-    autoFilter?: boolean;
+  autoFilter?: boolean;
 }

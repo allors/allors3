@@ -1,8 +1,49 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale, Carrier, SerialisedItemCharacteristicType, WorkTask, ContactMechanism, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Catalogue, Singleton, ProductCategory, Scope, CommunicationEvent } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectData, ObjectService, OverviewService, PanelService, RefreshService, SaveService, SearchFactory, Sorter, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import {
+  Good,
+  InternalOrganisation,
+  NonUnifiedGood,
+  Part,
+  PriceComponent,
+  Brand,
+  Model,
+  Locale,
+  Carrier,
+  SerialisedItemCharacteristicType,
+  WorkTask,
+  ContactMechanism,
+  Person,
+  Organisation,
+  PartyContactMechanism,
+  OrganisationContactRelationship,
+  Catalogue,
+  Singleton,
+  ProductCategory,
+  Scope,
+  CommunicationEvent,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  Filter,
+  FilterDefinition,
+  MediaService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  OverviewService,
+  PanelService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+  Sorter,
+  Table,
+  TableRow,
+  TestScope,
+} from '@allors/workspace/angular/base';
 import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
 import { And } from '@allors/workspace/domain/system';
 

@@ -5,5 +5,4 @@ import { Component } from '@angular/core';
   selector: 'a-mat-footer',
   templateUrl: './footer.component.html',
 })
-export class AllorsMaterialFooterComponent {
-}
+export class AllorsMaterialFooterComponent {}

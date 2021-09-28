@@ -26,37 +26,34 @@ export class FacilityInlineComponent implements OnInit, OnDestroy {
 
   constructor(
     private allors: SessionService,
-    
+
     private fetcher: FetcherService
   ) {
-
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
     const { pullBuilder: pull } = this.m;
 
     const pulls = [
       this.fetcher.internalOrganisation,
       pull.Facility({}),
       pull.FacilityType({
-        sorting: [{ roleType: this.m.FacilityType.Name }]
-      })
+        sorting: [{ roleType: this.m.FacilityType.Name }],
+      }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls)
-      .subscribe((loaded) => {
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
-        this.facilities = loaded.collection<Facility>(m.Facility);
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+      this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+      this.facilities = loaded.collection<Facility>(m.Facility);
 
-        this.facilityTypes = loaded.collection<FacilityType>(m.FacilityType);
-        const storageLocation = this.facilityTypes.find((v) => v.UniqueId === 'ff66c1ad-3048-48fd-a7d9-fbf97a090edd');
+      this.facilityTypes = loaded.collection<FacilityType>(m.FacilityType);
+      const storageLocation = this.facilityTypes.find((v) => v.UniqueId === 'ff66c1ad-3048-48fd-a7d9-fbf97a090edd');
 
-        this.facility = this.allors.session.create<Facility>(m.Facility);
-        this.facility.Owner = this.internalOrganisation;
-        this.facility.FacilityType = storageLocation;
-      });
+      this.facility = this.allors.session.create<Facility>(m.Facility);
+      this.facility.Owner = this.internalOrganisation;
+      this.facility.FacilityType = storageLocation;
+    });
   }
 
   public ngOnDestroy(): void {

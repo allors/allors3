@@ -8,7 +8,6 @@ import { NonUnifiedGood, Good, ProductCategory } from '@allors/workspace/domain/
 import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
-
 interface Row extends TableRow {
   object: Good;
   name: string;
@@ -34,14 +33,13 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: SessionService,
 
-    
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
-    titleService: Title,
+    titleService: Title
   ) {
     super();
 
@@ -62,21 +60,18 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
     this.filter = m.Good.filter = m.Good.filter ?? new Filter(m.Good.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
         scan(
           ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-            return [
-              refresh,
-              filterFields,
-              sort,
-              previousRefresh !== refresh || filterFields !== previousFilterFields ? Object.assign({ pageIndex: 0 }, pageEvent) : pageEvent,
-            ];
+            return [refresh, filterFields, sort, previousRefresh !== refresh || filterFields !== previousFilterFields ? Object.assign({ pageIndex: 0 }, pageEvent) : pageEvent];
           },
-          [, , , , ,],
+          [, , , , ,]
         ),
         switchMap(([, filterFields, sort, pageEvent]) => {
           const pulls = [
@@ -108,7 +103,7 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
           ];
 
           return this.allors.client.pullReactive(this.allors.session, pulls);
-        }),
+        })
       )
       .subscribe((loaded) => {
         this.allors.session.reset();
@@ -121,8 +116,7 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
           return {
             object: v,
             name: v.Name,
-            id: v.ProductIdentifications.find((p) => p.ProductIdentificationType.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f')
-              .Identification,
+            id: v.ProductIdentifications.find((p) => p.ProductIdentificationType.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f').Identification,
             categories: productCategories
               .filter((w) => w.Products.includes(v))
               .map((w) => w.displayName)
@@ -133,7 +127,7 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
         });
       });
   }
-  
+
   public ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

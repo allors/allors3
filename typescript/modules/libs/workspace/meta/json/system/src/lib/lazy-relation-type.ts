@@ -1,5 +1,5 @@
 import { RelationTypeData } from '@allors/protocol/json/system';
-import { Multiplicity, Origin} from '@allors/workspace/meta/system';
+import { Multiplicity, Origin } from '@allors/workspace/meta/system';
 
 import { Lookup } from './utils/lookup';
 import { InternalAssociationType } from './internal/internal-association-type';

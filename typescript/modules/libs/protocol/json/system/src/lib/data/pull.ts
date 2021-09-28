@@ -1,5 +1,5 @@
-import { Extent } from "./extent";
-import { Result } from "./result";
+import { Extent } from './extent';
+import { Result } from './result';
 
 export interface Pull {
   /** ExtentRef */

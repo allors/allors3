@@ -3,14 +3,12 @@ import { humanize } from '@allors/workspace/meta/system';
 import { Action } from '../../../components/actions/action';
 
 export class Column {
-
   name: string;
   assignedLabel: string;
   sort: boolean;
   action: Action;
 
   constructor(fields?: Partial<Column> | string) {
-
     if (typeof fields === 'string' || fields instanceof String) {
       this.name = fields as string;
     } else {

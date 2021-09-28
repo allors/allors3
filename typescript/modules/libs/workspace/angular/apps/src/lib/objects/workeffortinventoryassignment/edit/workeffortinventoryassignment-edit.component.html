@@ -1,14 +1,12 @@
 <form *ngIf="workEffortInventoryAssignment" #form="ngForm" (submit)="save()" novalidate>
   <h1></h1>
 
-  <h3 mat-dialog-title>{{title}}</h3>
+  <h3 mat-dialog-title>{{ title }}</h3>
 
   <mat-dialog-content>
     <div class="container-fluid">
-
       <div class="row">
-        <a-mat-select class="col-md" [object]="workEffortInventoryAssignment" [roleType]="m.WorkEffortInventoryAssignment.InventoryItem" [options]="inventoryItems"
-        (selected)="inventoryItemSelected($event)" display="Name"></a-mat-select>
+        <a-mat-select class="col-md" [object]="workEffortInventoryAssignment" [roleType]="m.WorkEffortInventoryAssignment.InventoryItem" [options]="inventoryItems" (selected)="inventoryItemSelected($event)" display="Name"></a-mat-select>
       </div>
 
       <div class="row">
@@ -28,19 +26,16 @@
 
       <div class="row">
         <mat-form-field class="col">
-          <input type="number" matInput [(ngModel)]="workEffortInventoryAssignment.totalSellingPrice" name="totalSellingPrice"
-            placeholder="Total selling price" readonly>
+          <input type="number" matInput [(ngModel)]="workEffortInventoryAssignment.totalSellingPrice" name="totalSellingPrice" placeholder="Total selling price" readonly />
         </mat-form-field>
         <a-mat-static class="col-md" [object]="workEffortInventoryAssignment" [roleType]="m.WorkEffortInventoryAssignment.CostOfGoodsSold"></a-mat-static>
       </div>
-
     </div>
   </mat-dialog-content>
 
   <div mat-dialog-actions>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges ">SAVE & CLOSE</button>
+    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE & CLOSE</button>
     <button mat-button (click)="update()" type="button" color="accent" [disabled]="!form.form.valid">SAVE</button>
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
   </div>
-
 </form>

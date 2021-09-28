@@ -15,7 +15,7 @@ export class Session extends SystemSession {
     this.services.onInit(this);
     this.database = this.workspace.database as DatabaseConnection;
   }
- 
+
   create<T extends IObject>(cls: Class): T {
     const workspaceId = this.workspace.database.nextId();
     const strategy = new Strategy(this, cls, workspaceId);

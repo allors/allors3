@@ -5,25 +5,21 @@ import { Node, nodeFactory } from '../Html/Node';
 import { Directive } from './Directive';
 
 export class Template {
+  url: string;
+  html: Node[];
 
-    url: string;
-    html: Node[];
+  constructor(public directive: Directive, resolvedMetadata: CompileTemplateMetadata, pathResolver: PathResolver) {
+    this.url = pathResolver.relative(resolvedMetadata.templateUrl);
+    this.html = resolvedMetadata.htmlAst.rootNodes.map((v) => nodeFactory(v));
+  }
 
-    constructor(public directive: Directive, resolvedMetadata: CompileTemplateMetadata, pathResolver: PathResolver) {
+  public toJSON(): any {
+    const { url, html } = this;
 
-        this.url = pathResolver.relative(resolvedMetadata.templateUrl);
-        this.html = resolvedMetadata.htmlAst.rootNodes.map((v)=> nodeFactory(v));
-    }
-
-    public toJSON(): any {
-
-        const { url, html } = this;
-
-        return {
-            kind: 'template',
-            url,
-            html,
-        };
-    }
+    return {
+      kind: 'template',
+      url,
+      html,
+    };
+  }
 }
-

@@ -1,4 +1,4 @@
-import { Component , Input, Optional } from '@angular/core';
+import { Component, Input, Optional } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
 import { RoleField } from '../../../../components/forms/role-field';
@@ -8,7 +8,6 @@ import { RoleField } from '../../../../components/forms/role-field';
   templateUrl: './slider.component.html',
 })
 export class AllorsMaterialSliderComponent extends RoleField {
-
   @Input()
   public invert: boolean;
 

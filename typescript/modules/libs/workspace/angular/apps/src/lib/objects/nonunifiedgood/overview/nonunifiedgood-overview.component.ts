@@ -13,10 +13,9 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 
 @Component({
   templateUrl: './nonunifiedgood-overview.component.html',
-  providers: [PanelManagerService, SessionService]
+  providers: [PanelManagerService, SessionService],
 })
 export class NonUnifiedGoodOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
-
   title = 'Good';
 
   good: Good;
@@ -25,13 +24,13 @@ export class NonUnifiedGoodOverviewComponent extends TestScope implements AfterV
 
   constructor(
     @Self() public panelManager: PanelManagerService,
-    
+
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private route: ActivatedRoute,
     public injector: Injector,
     private internalOrganisationId: InternalOrganisationId,
-    titleService: Title,
+    titleService: Title
   ) {
     super();
 
@@ -39,12 +38,12 @@ export class NonUnifiedGoodOverviewComponent extends TestScope implements AfterV
   }
 
   public ngAfterViewInit(): void {
-
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
-        switchMap(([,,]) => {
-
-          const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+        switchMap(([, ,]) => {
+          const m = this.allors.workspace.configuration.metaPopulation as M;
+          const { pullBuilder: pull } = m;
+          const x = {};
 
           const navRoute = new NavigationActivatedRoute(this.route);
           this.panelManager.objectType = m.NonUnifiedGood;
@@ -58,24 +57,22 @@ export class NonUnifiedGoodOverviewComponent extends TestScope implements AfterV
               objectId: this.panelManager.id,
               include: {
                 ProductIdentifications: {
-                  ProductIdentificationType: x
+                  ProductIdentificationType: x,
                 },
                 Part: {
                   Brand: x,
-                  Model: x
-                }
-              }
-            })
+                  Model: x,
+                },
+              },
+            }),
           ];
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context
-            .load(new PullRequest({ pulls }));
+          return this.panelManager.context.load(new PullRequest({ pulls }));
         })
       )
       .subscribe((loaded) => {
-
         this.panelManager.context.session.reset();
         this.panelManager.onPulled(loaded);
 

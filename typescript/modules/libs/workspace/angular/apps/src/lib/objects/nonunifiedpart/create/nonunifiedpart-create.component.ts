@@ -6,7 +6,23 @@ import { switchMap } from 'rxjs/operators';
 import { isBefore, isAfter } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { Organisation, Part, SupplierOffering, ProductIdentificationType, Facility, InventoryItemKind, ProductType, Brand, Model, PartNumber, UnitOfMeasure, Settings, PartCategory, NonUnifiedPart, SupplierRelationship } from '@allors/workspace/domain/default';
+import {
+  Organisation,
+  Part,
+  SupplierOffering,
+  ProductIdentificationType,
+  Facility,
+  InventoryItemKind,
+  ProductType,
+  Brand,
+  Model,
+  PartNumber,
+  UnitOfMeasure,
+  Settings,
+  PartCategory,
+  NonUnifiedPart,
+  SupplierRelationship,
+} from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -15,10 +31,9 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './nonunifiedpart-create.component.html',
-  providers: [SessionService]
+  providers: [SessionService],
 })
 export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, OnDestroy {
-
   readonly m: M;
 
   public title = 'Add Part';
@@ -55,26 +70,25 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
     @Self() public allors: SessionService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<NonUnifiedPartCreateComponent>,
-    
+
     private refreshService: RefreshService,
     private saveService: SaveService,
     private snackBar: MatSnackBar,
     private fetcher: FetcherService
   ) {
-
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-
-    const m = this.allors.workspace.configuration.metaPopulation as M; const { pullBuilder: pull } = m; const x = {};
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-
           const pulls = [
             this.fetcher.locales,
             this.fetcher.Settings,
@@ -87,14 +101,14 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
             pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
             pull.SupplierRelationship({
               include: {
-                Supplier: x
-              }
+                Supplier: x,
+              },
             }),
             pull.Brand({
               include: {
-                Models: x
+                Models: x,
               },
-              sorting: [{ roleType: m.Brand.Name }]
+              sorting: [{ roleType: m.Brand.Name }],
             }),
             pull.Organisation({
               predicate: { kind: 'Equals', propertyType: m.Organisation.IsManufacturer, value: true },
@@ -105,10 +119,9 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
         })
       )
       .subscribe((loaded) => {
-
         this.allors.session.reset();
 
-        const now = new Date();;
+        const now = new Date();
 
         this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
         this.productTypes = loaded.collection<ProductType>(m.ProductType);
@@ -120,8 +133,8 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
         this.settings = loaded.object<Settings>(m.Settings);
 
         const supplierRelationships = loaded.collection<SupplierRelationship>(m.SupplierRelationship);
-        const currentsupplierRelationships = supplierRelationships.filter(v => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
-        this.currentSuppliers = new Set(currentsupplierRelationships.map(v => v.Supplier).sort((a, b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0)));
+        const currentsupplierRelationships = supplierRelationships.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
+        this.currentSuppliers = new Set(currentsupplierRelationships.map((v) => v.Supplier).sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0)));
 
         this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
         const piece = this.unitsOfMeasure.find((v) => v.UniqueId === 'f4bbdb52-3441-4768-92d4-729c6c5d6f1b');
@@ -153,29 +166,27 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
 
   public modelAdded(model: Model): void {
     this.selectedBrand.addModel(model);
-    this.models = this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0));
+    this.models = this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
     this.selectedModel = model;
   }
 
   public brandSelected(brand: Brand): void {
-
-    const m = this.m; const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.Brand({
         object: brand,
         include: {
           Models: x,
-        }
-      }
-      )
+        },
+      }),
     ];
 
-    this.allors.context
-      .load(new PullRequest({ pulls }))
-      .subscribe(() => {
-        this.models = this.selectedBrand.Models ? this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name) ? 1 : ((b.Name > a.Name) ? -1 : 0)) : [];
-      });
+    this.allors.context.load(new PullRequest({ pulls })).subscribe(() => {
+      this.models = this.selectedBrand.Models ? this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0)) : [];
+    });
   }
 
   public ngOnDestroy(): void {
@@ -185,22 +196,17 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
   }
 
   public save(): void {
-
     this.onSave();
 
-    this.allors.context
-      .save()
-      .subscribe(() => {
-        const data: IObject = {
-          id: this.part.id,
-          objectType: this.part.objectType,
-        };
+    this.allors.context.save().subscribe(() => {
+      const data: IObject = {
+        id: this.part.id,
+        objectType: this.part.objectType,
+      };
 
-        this.dialogRef.close(data);
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+      this.dialogRef.close(data);
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   public update(): void {
@@ -208,14 +214,10 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
 
     this.onSave();
 
-    context
-      .save()
-      .subscribe(() => {
-        this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
-        this.refreshService.refresh();
-      },
-        this.saveService.errorHandler
-      );
+    context.save().subscribe(() => {
+      this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
+      this.refreshService.refresh();
+    }, this.saveService.errorHandler);
   }
 
   private onSave() {

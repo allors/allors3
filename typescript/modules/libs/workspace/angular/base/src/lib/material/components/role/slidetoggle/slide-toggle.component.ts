@@ -8,7 +8,6 @@ import { RoleField } from '../../../../components/forms/role-field';
   templateUrl: './slide-toggle.component.html',
 })
 export class AllorsMaterialSlideToggleComponent extends RoleField {
-
   @Output()
   public changed: EventEmitter<any> = new EventEmitter();
 

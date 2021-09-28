@@ -11,7 +11,6 @@ import { RoleField } from '../../../../components/forms/role-field';
   templateUrl: './textarea.component.html',
 })
 export class AllorsMaterialTextareaComponent extends RoleField {
-
   @ViewChild('autosize') autosize: CdkTextareaAutosize;
 
   constructor(@Optional() parentForm: NgForm, private ngZone: NgZone) {
@@ -20,7 +19,6 @@ export class AllorsMaterialTextareaComponent extends RoleField {
 
   triggerResize() {
     // Wait for changes to be applied, then trigger textarea resize.
-    this.ngZone.onStable.pipe(take(1))
-      .subscribe(() => this.autosize.resizeToFitContent(true));
+    this.ngZone.onStable.pipe(take(1)).subscribe(() => this.autosize.resizeToFitContent(true));
   }
 }
