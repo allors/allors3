@@ -137,7 +137,7 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
         }),
       ];
 
-      this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+      this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
         this.selectedPart = loaded.object<Part>(m.Part);
         this.serialisedItem.Name = this.selectedPart.Name;
       });
@@ -149,13 +149,8 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
   public save(): void {
     this.selectedPart.addSerialisedItem(this.serialisedItem);
 
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.serialisedItem.id,
-        objectType: this.serialisedItem.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.serialisedItem);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

@@ -308,9 +308,9 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.fromEmails = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.EmailAddress).map((v) => v.ContactMechanism);
+      this.fromEmails = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress).map((v) => v.ContactMechanism);
     });
   }
 
@@ -340,20 +340,15 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.toEmails = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.EmailAddress).map((v) => v.ContactMechanism);
+      this.toEmails = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress).map((v) => v.ContactMechanism);
     });
   }
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.communicationEvent.id,
-        objectType: this.communicationEvent.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.communicationEvent);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

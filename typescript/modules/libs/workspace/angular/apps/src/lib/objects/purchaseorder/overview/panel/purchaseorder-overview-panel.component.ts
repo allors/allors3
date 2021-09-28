@@ -70,7 +70,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
     this.panel.icon = 'message';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.delete = this.deleteService.delete(this.panel.manager.session);
     this.invoice = methodService.create(allors.context, this.m.PurchaseOrder.Invoice, { name: 'Invoice' });
 
     const sort = true;
@@ -91,7 +91,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
       autoFilter: true,
     });
 
-    if (this.panel.manager.objectType === this.metaService.m.PurchaseInvoice) {
+    if (this.panel.manager.strategy.cls === this.m.PurchaseInvoice) {
       this.table.actions.push(this.delete);
     }
 
@@ -125,7 +125,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
     this.panel.onPulled = (loaded) => {
       this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
-      const purchaseOrders = loaded.collections[pullName] as PurchaseOrder[];
+      const purchaseOrders = loaded.collection<PurchaseOrder>(pullName);
       this.objects = purchaseOrders.filter((v) => v.OrderedBy === this.internalOrganisation);
       this.objects.sort((a, b) => (a.OrderNumber > b.OrderNumber ? 1 : b.OrderNumber > a.OrderNumber ? -1 : 0));
 

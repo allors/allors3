@@ -86,83 +86,83 @@ export class PurchaseOrderOverviewSummaryComponent {
 
     panel.onPulled = (loaded) => {
       this.order = loaded.objects[puchaseOrderPullName] as PurchaseOrder;
-      this.purchaseInvoices = loaded.collections[purchaseInvoicePullName] as PurchaseInvoice[];
-      this.shipments = loaded.collections[shipmentPullName] as Shipment[];
+      this.purchaseInvoices = loaded.collection<PurchaseInvoice>(purchaseInvoicePullName);
+      this.shipments = loaded.collection<Shipment>(shipmentPullName);
     };
   }
 
   public approve(): void {
-    this.panel.manager.context.invoke(this.order.Approve).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.order.Approve).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully approved.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public cancel(): void {
-    this.panel.manager.context.invoke(this.order.Cancel).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.order.Cancel).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public reject(): void {
-    this.panel.manager.context.invoke(this.order.Reject).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.order.Reject).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully rejected.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public hold(): void {
-    this.panel.manager.context.invoke(this.order.Hold).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.order.Hold).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully put on hold.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public continue(): void {
-    this.panel.manager.context.invoke(this.order.Continue).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.order.Continue).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully removed from hold.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public setReadyForProcessing(): void {
-    this.panel.manager.context.invoke(this.order.SetReadyForProcessing).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.order.SetReadyForProcessing).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully set ready for processing.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public reopen(): void {
-    this.panel.manager.context.invoke(this.order.Reopen).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.order.Reopen).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully reopened.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public revise(): void {
-    this.panel.manager.context.invoke(this.order.Revise).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.order.Revise).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully revised.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public send(): void {
-    this.panel.manager.context.invoke(this.order.Send).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.order.Send).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully send.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public invoice(): void {
-    this.panel.manager.context.invoke(this.order.Invoice).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.order.Invoice).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully created purchase invoice', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public quickReceive(): void {
-    this.panel.manager.context.invoke(this.order.QuickReceive).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.order.QuickReceive).subscribe(() => {
       this.panel.toggle();
       this.snackBar.open('inventory created for appropriate items', 'close', { duration: 5000 });
       this.refreshService.refresh();

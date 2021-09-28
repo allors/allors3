@@ -224,12 +224,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.invoiceItem.id,
-        objectType: this.invoiceItem.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.invoiceItem);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
@@ -258,7 +253,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
     const pulls = [
       pull.NonUnifiedGood({
         name: nonUnifiedGoodPullName,
-        object: good.id,
+        objectId: good.id,
         select: {
           Part: {
             SerialisedItems: {
@@ -272,7 +267,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
       }),
       pull.UnifiedGood({
         name: unifiedGoodPullName,
-        object: good.id,
+        objectId: good.id,
         select: {
           SerialisedItems: {
             include: {
@@ -284,9 +279,9 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
-      const serialisedItems1 = loaded.collections[unifiedGoodPullName] as SerialisedItem[];
-      const serialisedItems2 = loaded.collections[nonUnifiedGoodPullName] as SerialisedItem[];
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+      const serialisedItems1 = loaded.collection<SerialisedItem>(unifiedGoodPullName);
+      const serialisedItems2 = loaded.collection<SerialisedItem>(nonUnifiedGoodPullName);
       const items = serialisedItems1 || serialisedItems2;
 
       this.serialisedItems = items.filter((v) => v.AvailableForSale === true || v.SerialisedItemAvailability === this.inRent);

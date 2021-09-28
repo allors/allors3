@@ -78,14 +78,14 @@ export class PriceComponentOverviewPanelComponent extends TestScope implements O
   }
 
   ngOnInit() {
-    const { pull, x, m } = this.metaService;
+    const m = this.m;  const { pullBuilder: pull } = m; const x = {};
 
     this.panel.name = 'priceComponent';
     this.panel.title = 'Price Components';
     this.panel.icon = 'business';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.delete = this.deleteService.delete(this.panel.manager.session);
     this.edit = this.editService.edit();
 
     const sort = true;
@@ -130,7 +130,7 @@ export class PriceComponentOverviewPanelComponent extends TestScope implements O
     };
 
     this.panel.onPulled = (loaded) => {
-      this.objects = loaded.collections[pullName] as PriceComponent[];
+      this.objects = loaded.collection<PriceComponent>(pullName);
 
       if (this.objects) {
         this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;

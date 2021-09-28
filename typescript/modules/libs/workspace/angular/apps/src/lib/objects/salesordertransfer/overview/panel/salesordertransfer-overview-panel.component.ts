@@ -67,7 +67,7 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
     panel.icon = 'contacts';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.context);
+    this.delete = deleteService.delete(panel.manager.session);
     this.edit = this.editService.edit();
 
     const sort = true;
@@ -131,7 +131,7 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
 
     panel.onPulled = (loaded) => {
       this.container = (loaded.objects[salesOrderPullName] as SalesOrder) || (loaded.objects[salesInvoicePullName] as SalesInvoice);
-      this.objects = (loaded.collections[salesOrderTermsPullName] as SalesTerm[]) || (loaded.collections[salesInvoiceTermsPullName] as SalesTerm[]);
+      this.objects = (loaded.collection<SalesTerm>(salesOrderTermsPullName)) || (loaded.collection<SalesTerm>(salesInvoiceTermsPullName));
       this.table.total = loaded.values[`${salesOrderTermsPullName}_total`] || loaded.values[`${salesInvoiceTermsPullName}_total`] || this.objects.length;
       this.table.data = this.objects.map((v) => {
         return {

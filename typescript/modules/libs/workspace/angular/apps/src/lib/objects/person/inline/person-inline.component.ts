@@ -45,7 +45,7 @@ export class PersonInlineComponent implements OnInit, OnDestroy {
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       this.locales = loaded.collection<Locale>(m.Locale);
       this.genders = loaded.collection<Enumeration>(m.Enumeration);
       this.salutations = loaded.collection<Enumeration>(m.Enumeration);

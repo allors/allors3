@@ -127,7 +127,7 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
           this.timeEntry.BillingFrequency = hour;
           this.timeEntry.TimeFrequency = hour;
 
-          const workEffortPartyAssignments = loaded.collections[workEffortPartyAssignmentPullName] as WorkEffortPartyAssignment[];
+          const workEffortPartyAssignments = loaded.collection<WorkEffortPartyAssignment>(workEffortPartyAssignmentPullName);
           this.workers = Array.from(new Set(workEffortPartyAssignments.map((v) => v.Party)).values());
         } else {
           this.timeEntry = loaded.object<TimeEntry>(m.TimeEntry);
@@ -154,10 +154,6 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-  }
-
-  public setDirty(): void {
-    this.allors.session.hasChanges = true;
   }
 
   public findBillingRate(): void {
@@ -198,12 +194,7 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
     }
 
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.timeEntry.id,
-        objectType: this.timeEntry.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.timeEntry);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

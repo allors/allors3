@@ -179,12 +179,7 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
     this.inventoryItemTransaction.Facility = this.selectedFacility;
 
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.inventoryItemTransaction.id,
-        objectType: this.inventoryItemTransaction.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.inventoryItemTransaction);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
@@ -192,7 +187,5 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
   public facilityAdded(facility: Facility): void {
     this.facilities.push(facility);
     this.selectedFacility = facility;
-
-    this.allors.session.hasChanges = true;
   }
 }

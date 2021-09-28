@@ -72,7 +72,7 @@ export class QuoteItemOverviewPanelComponent extends TestScope {
     panel.icon = 'contacts';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.context);
+    this.delete = deleteService.delete(panel.manager.session);
     this.edit = this.editService.edit();
     this.cancel = methodService.create(allors.context, this.m.QuoteItem.Cancel, { name: 'Cancel' });
     this.reject = methodService.create(allors.context, this.m.QuoteItem.Reject, { name: 'Reject' });
@@ -120,7 +120,7 @@ export class QuoteItemOverviewPanelComponent extends TestScope {
     };
 
     panel.onPulled = (loaded) => {
-      this.quoteItems = loaded.collections[pullName] as QuoteItem[];
+      this.quoteItems = loaded.collection<QuoteItem>(pullName);
       this.quote = loaded.objects[quotePullName] as ProductQuote;
       this.table.total = loaded.values[`${pullName}_total`] || this.quoteItems.length;
       this.table.data = this.quoteItems.map((v) => {

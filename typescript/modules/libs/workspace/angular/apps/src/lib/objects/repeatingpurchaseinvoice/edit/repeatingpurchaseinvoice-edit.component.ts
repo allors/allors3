@@ -114,12 +114,7 @@ export class RepeatingPurchaseInvoiceEditComponent extends TestScope implements 
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.repeatinginvoice.id,
-        objectType: this.repeatinginvoice.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.repeatinginvoice);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

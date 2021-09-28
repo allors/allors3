@@ -41,7 +41,7 @@ export class UnifiedGoodOverviewComponent extends TestScope implements AfterView
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const { pull, x, m } = this.metaService;
+          const m = this.m;  const { pullBuilder: pull } = m; const x = {};
 
           const navRoute = new NavigationActivatedRoute(this.route);
           this.panelManager.id = navRoute.id();
@@ -52,7 +52,7 @@ export class UnifiedGoodOverviewComponent extends TestScope implements AfterView
 
           const pulls = [
             pull.UnifiedGood({
-              object: this.panelManager.id,
+              objectId: this.panelManager.id,
               include: {
                 InventoryItemKind: x,
               },
@@ -61,11 +61,11 @@ export class UnifiedGoodOverviewComponent extends TestScope implements AfterView
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context.load(new PullRequest({ pulls }));
+          return this.panelManager.client.pullReactive(this.panelManager.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.panelManager.context.session.reset();
+        this.panelManager.session.reset();
 
         this.panelManager.onPulled(loaded);
 

@@ -126,12 +126,7 @@ export class SerialisedItemCharacteristicEditComponent extends TestScope impleme
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.productCharacteristic.id,
-        objectType: this.productCharacteristic.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.productCharacteristic);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

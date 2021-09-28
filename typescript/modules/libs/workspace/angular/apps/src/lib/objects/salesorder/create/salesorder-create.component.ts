@@ -203,13 +203,8 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.order.id,
-        objectType: this.order.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.order);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
@@ -371,7 +366,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.previousShipToCustomer && this.order.ShipToCustomer !== this.previousShipToCustomer) {
         this.order.ShipToContactPerson = null;
       }
@@ -431,7 +426,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.previousBillToCustomer && this.order.BillToCustomer !== this.previousBillToCustomer) {
         this.order.BillToContactPerson = null;
       }
@@ -491,7 +486,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.previousBillToEndCustomer && this.order.BillToEndCustomer !== this.previousBillToEndCustomer) {
         this.order.BillToEndCustomerContactPerson = null;
       }
@@ -551,7 +546,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.previousShipToEndCustomer && this.order.ShipToEndCustomer !== this.previousShipToEndCustomer) {
         this.order.ShipToEndCustomerContactPerson = null;
       }

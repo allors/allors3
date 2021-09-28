@@ -143,13 +143,8 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.order.id,
-        objectType: this.order.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.order);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
@@ -216,8 +211,6 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
   public facilityAdded(facility: Facility): void {
     this.facilities.push(facility);
     this.selectedFacility = facility;
-
-    this.allors.session.hasChanges = true;
   }
 
   private updateSupplier(supplier: Party): void {
@@ -253,7 +246,7 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.takenViaContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.takenViaContacts = loaded.collection<Person>(m.Person);
@@ -299,7 +292,7 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);

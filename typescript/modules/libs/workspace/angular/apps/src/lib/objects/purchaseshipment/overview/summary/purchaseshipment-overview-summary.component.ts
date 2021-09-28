@@ -78,13 +78,13 @@ export class PurchaseShipmentOverviewSummaryComponent {
 
     panel.onPulled = (loaded) => {
       this.shipment = loaded.objects[shipmentPullName] as PurchaseShipment;
-      this.shipmentItems = loaded.collections[shipmentPullName] as ShipmentItem[];
+      this.shipmentItems = loaded.collection<ShipmentItem>(shipmentPullName);
       this.purchaseOrders = loaded.collection<PurchaseOrder>(m.PurchaseOrder);
     };
   }
 
   public receive(): void {
-    this.panel.manager.context.invoke(this.shipment.Receive).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.shipment.Receive).subscribe(() => {
       this.panel.toggle();
       this.snackBar.open('Successfully received.', 'close', { duration: 5000 });
       this.refreshService.refresh();

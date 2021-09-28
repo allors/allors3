@@ -95,13 +95,8 @@ export class ProductTypeEditComponent extends TestScope implements OnInit, OnDes
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.productType.id,
-        objectType: this.productType.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.productType);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

@@ -101,12 +101,7 @@ export class PurchaseInvoiceApprovalEditComponent extends TestScope implements O
         })
       )
       .subscribe(() => {
-        const data: IObject = {
-          id: this.purchaseInvoiceApproval.id,
-          objectType: this.purchaseInvoiceApproval.objectType,
-        };
-
-        this.dialogRef.close(data);
+        this.dialogRef.close(this.purchaseInvoiceApproval);
         this.refreshService.refresh();
       }, this.saveService.errorHandler);
   }

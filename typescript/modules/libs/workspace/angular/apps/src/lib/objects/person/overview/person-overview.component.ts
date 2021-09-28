@@ -67,11 +67,11 @@ export class PersonOverviewComponent extends TestScope implements AfterViewInit,
 
           this.panelManager.onPull(pulls);
 
-          return this.allors.client.pullReactive(this.panelManager.context, pulls);
+          return this.allors.client.pullReactive(this.panelManager.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.panelManager.context.reset();
+        this.panelManager.session.reset();
         this.panelManager.onPulled(loaded);
 
         this.person = loaded.object<Person>(m.Person);

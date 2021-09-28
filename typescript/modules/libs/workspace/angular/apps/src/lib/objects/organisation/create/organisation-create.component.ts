@@ -216,13 +216,8 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
       this.supplierRelationship.ThroughDate = new Date();
     }
 
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.organisation.id,
-        objectType: this.organisation.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.organisation);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

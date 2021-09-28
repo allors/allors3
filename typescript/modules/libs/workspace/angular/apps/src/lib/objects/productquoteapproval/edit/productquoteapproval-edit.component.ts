@@ -102,12 +102,7 @@ export class ProductQuoteApprovalEditComponent extends TestScope implements OnIn
         })
       )
       .subscribe(() => {
-        const data: IObject = {
-          id: this.productQuoteApproval.id,
-          objectType: this.productQuoteApproval.objectType,
-        };
-
-        this.dialogRef.close(data);
+        this.dialogRef.close(this.productQuoteApproval);
         this.refreshService.refresh();
       }, this.saveService.errorHandler);
   }

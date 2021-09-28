@@ -188,7 +188,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
     }, this.saveService.errorHandler);
@@ -249,7 +249,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.productQuote.Receiver !== this.previousReceiver) {
         this.productQuote.ContactPerson = null;
         this.productQuote.FullfillContactMechanism = null;

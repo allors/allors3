@@ -100,13 +100,8 @@ export class ExchangeRateEditComponent extends TestScope implements OnInit, OnDe
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.exchangeRate.id,
-        objectType: this.exchangeRate.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.exchangeRate);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

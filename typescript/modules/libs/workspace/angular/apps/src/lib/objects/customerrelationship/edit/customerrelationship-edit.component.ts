@@ -156,12 +156,7 @@ export class CustomerRelationshipEditComponent extends TestScope implements OnIn
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.partyRelationship.id,
-        objectType: this.partyRelationship.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.partyRelationship);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

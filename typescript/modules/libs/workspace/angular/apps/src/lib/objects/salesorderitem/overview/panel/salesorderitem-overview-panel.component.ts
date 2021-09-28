@@ -73,7 +73,7 @@ export class SalesOrderItemOverviewPanelComponent extends TestScope {
     panel.icon = 'contacts';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.context);
+    this.delete = deleteService.delete(panel.manager.session);
     this.edit = editService.edit();
     this.cancel = methodService.create(allors.context, this.m.SalesOrderItem.Cancel, { name: 'Cancel' });
     this.reject = methodService.create(allors.context, this.m.SalesOrderItem.Reject, { name: 'Reject' });
@@ -133,7 +133,7 @@ export class SalesOrderItemOverviewPanelComponent extends TestScope {
     };
 
     panel.onPulled = (loaded) => {
-      this.salesOrderItems = loaded.collections[pullName] as SalesOrderItem[];
+      this.salesOrderItems = loaded.collection<SalesOrderItem>(pullName);
       this.order = loaded.objects[orderPullName] as SalesOrder;
       this.table.total = loaded.values[`${pullName}_total`] || this.salesOrderItems.length;
       this.table.data = this.salesOrderItems.map((v) => {

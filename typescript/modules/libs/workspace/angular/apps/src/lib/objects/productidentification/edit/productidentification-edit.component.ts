@@ -96,12 +96,7 @@ export class ProductIdentificationEditComponent extends TestScope implements OnI
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.object.id,
-        objectType: this.object.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.object);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

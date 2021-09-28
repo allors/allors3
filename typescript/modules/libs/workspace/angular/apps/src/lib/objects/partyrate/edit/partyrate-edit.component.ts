@@ -108,18 +108,9 @@ export class PartyRateEditComponent extends TestScope implements OnInit, OnDestr
     }
   }
 
-  public setDirty(): void {
-    this.allors.session.hasChanges = true;
-  }
-
   public save(): void {
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.partyRate.id,
-        objectType: this.partyRate.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.partyRate);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

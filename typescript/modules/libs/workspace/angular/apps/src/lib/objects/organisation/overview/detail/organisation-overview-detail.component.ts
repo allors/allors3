@@ -139,7 +139,7 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.refreshService.refresh();
       window.history.back();
     }, this.saveService.errorHandler);

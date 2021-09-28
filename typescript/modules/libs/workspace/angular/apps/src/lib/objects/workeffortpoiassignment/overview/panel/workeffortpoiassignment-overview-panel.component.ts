@@ -62,7 +62,7 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope imp
     this.panel.expandable = true;
 
     this.edit = this.editService.edit();
-    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.delete = this.deleteService.delete(this.panel.manager.session);
 
     this.table = new Table({
       selection: true,
@@ -106,7 +106,7 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope imp
 
     this.panel.onPulled = (loaded) => {
       this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
-      this.objects = loaded.collections[pullName] as WorkEffortPurchaseOrderItemAssignment[];
+      this.objects = loaded.collection<WorkEffortPurchaseOrderItemAssignment>(pullName);
 
       if (this.objects) {
         this.table.total = this.objects.length;

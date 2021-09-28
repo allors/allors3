@@ -269,7 +269,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
     }, this.saveService.errorHandler);
@@ -423,7 +423,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.invoice.BillToCustomer !== this.previousBillToCustomer) {
         this.invoice.AssignedBillToContactMechanism = null;
         this.invoice.BillToContactPerson = null;
@@ -473,7 +473,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.invoice.ShipToCustomer !== this.previousShipToCustomer) {
         this.invoice.AssignedShipToAddress = null;
         this.invoice.ShipToContactPerson = null;
@@ -517,7 +517,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.invoice.BillToEndCustomer !== this.previousBillToEndCustomer) {
         this.invoice.AssignedBillToEndCustomerContactMechanism = null;
         this.invoice.BillToEndCustomerContactPerson = null;
@@ -561,7 +561,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.invoice.ShipToEndCustomer !== this.previousShipToEndCustomer) {
         this.invoice.AssignedShipToEndCustomerAddress = null;
         this.invoice.ShipToEndCustomerContactPerson = null;

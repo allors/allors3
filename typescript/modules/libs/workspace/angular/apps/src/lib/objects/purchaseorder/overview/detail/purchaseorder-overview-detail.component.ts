@@ -196,7 +196,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
     }, this.saveService.errorHandler);
@@ -205,8 +205,6 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   public facilityAdded(facility: Facility): void {
     this.facilities.push(facility);
     this.order.StoredInFacility = facility;
-
-    this.allors.session.hasChanges = true;
   }
 
   public supplierAdded(organisation: Organisation): void {
@@ -293,7 +291,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.order.TakenViaSupplier !== this.previousSupplier) {
         this.order.AssignedTakenViaContactMechanism = null;
         this.order.TakenViaContactPerson = null;
@@ -332,7 +330,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);

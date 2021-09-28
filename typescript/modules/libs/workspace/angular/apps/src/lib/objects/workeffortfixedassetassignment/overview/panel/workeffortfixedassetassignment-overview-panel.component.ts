@@ -58,7 +58,7 @@ export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope impl
   }
 
   ngOnInit() {
-    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.delete = this.deleteService.delete(this.panel.manager.session);
     this.edit = this.editService.edit();
 
     this.panel.name = 'workeffortfixedassetassignment';
@@ -117,7 +117,7 @@ export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope impl
 
     this.panel.onPulled = (loaded) => {
       this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
-      this.objects = loaded.collections[workeffortpullName] as WorkEffortFixedAssetAssignment[];
+      this.objects = loaded.collection<WorkEffortFixedAssetAssignment>(workeffortpullName);
 
       if (this.objects) {
         this.table.total = this.objects.length;

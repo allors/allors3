@@ -93,7 +93,7 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
 
     titleService.setTitle(this.title);
 
-    this.delete = deleteService.delete(allors);
+    this.delete = deleteService.delete(allors.client, allors.session);
     this.edit = editService.edit();
 
     this.delete.result.subscribe(() => {

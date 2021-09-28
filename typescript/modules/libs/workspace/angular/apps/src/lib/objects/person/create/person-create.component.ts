@@ -5,12 +5,12 @@ import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { InternalOrganisation, Locale, Person, Organisation, OrganisationContactRelationship, Currency, Enumeration } from '@allors/workspace/domain/default';
-import { NavigationService, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { InternalOrganisation, Locale, Person, Organisation, OrganisationContactRelationship, Currency, Enumeration, CustomerRelationship, Employment, PersonRole, OrganisationContactKind } from '@allors/workspace/domain/default';
+import { NavigationService, ObjectData, RefreshService, SaveService, SingletonId, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './person-create.component.html',
@@ -76,7 +76,7 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
             this.fetcher.internalOrganisation,
             this.fetcher.locales,
             pull.Singleton({
-              object: this.singletonId.value,
+              objectId: this.singletonId.value,
               select: {
                 Locales: {
                   include: {
@@ -165,13 +165,8 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
       organisationContactRelationship.ContactKinds = this.selectedContactKinds;
     }
 
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.person.id,
-        objectType: this.person.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.person);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

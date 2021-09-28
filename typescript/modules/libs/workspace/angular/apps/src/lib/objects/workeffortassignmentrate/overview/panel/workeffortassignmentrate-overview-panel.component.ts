@@ -68,7 +68,7 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
     this.panel.icon = 'contacts';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.delete = this.deleteService.delete(this.panel.manager.session);
     this.edit = this.editService.edit();
 
     const sort = true;
@@ -120,7 +120,7 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
 
     this.panel.onPulled = (loaded) => {
       this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
-      this.objects = loaded.collections[pullName] as WorkEffortAssignmentRate[];
+      this.objects = loaded.collection<WorkEffortAssignmentRate>(pullName);
 
       if (this.objects) {
         this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;

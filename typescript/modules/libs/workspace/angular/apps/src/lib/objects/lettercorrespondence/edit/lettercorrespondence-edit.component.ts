@@ -307,9 +307,9 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.fromPostalAddresses = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.PostalAddress).map((v) => v.ContactMechanism);
+      this.fromPostalAddresses = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.PostalAddress).map((v) => v.ContactMechanism);
     });
   }
 
@@ -339,9 +339,9 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.toPostalAddresses = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.PostalAddress).map((v) => v.ContactMechanism);
+      this.toPostalAddresses = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.PostalAddress).map((v) => v.ContactMechanism);
     });
   }
   public addressAdded(partyContactMechanism: PartyContactMechanism): void {
@@ -354,12 +354,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.communicationEvent.id,
-        objectType: this.communicationEvent.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.communicationEvent);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

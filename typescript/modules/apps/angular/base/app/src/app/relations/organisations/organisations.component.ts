@@ -36,7 +36,7 @@ export class OrganisationsComponent extends TestScope implements OnInit, OnDestr
     this.titleService.setTitle(this.title);
 
     this.overview = overviewService.overview();
-    this.delete = deleteService.delete(allors);
+    this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });

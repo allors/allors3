@@ -4,6 +4,7 @@ import { formatDistance } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { SerialisedItem, WorkEffort } from '@allors/workspace/domain/default';
 import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: WorkEffort;
@@ -44,7 +45,7 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
 
   constructor(
     @Self() public panel: PanelService,
-
+    public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public overviewService: OverviewService,
@@ -52,11 +53,11 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {
-    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.delete = this.deleteService.delete(this.panel.manager.session);
 
     this.panel.name = 'workeffort';
     this.panel.title = 'Work Efforts';
@@ -138,9 +139,9 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
 
     this.panel.onPulled = (loaded) => {
       this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
-      const fromCustomer = loaded.collections[customerPullName] as WorkEffort[];
-      const fromContact = loaded.collections[contactPullName] as WorkEffort[];
-      const fromAsset = loaded.collections[assetPullName] as WorkEffort[];
+      const fromCustomer = loaded.collection<WorkEffort>(customerPullName);
+      const fromContact = loaded.collection<WorkEffort>(contactPullName);
+      const fromAsset = loaded.collection<WorkEffort>(assetPullName);
 
       if (fromCustomer !== undefined && fromCustomer.length > 0) {
         this.objects = fromCustomer;

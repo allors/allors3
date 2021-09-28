@@ -226,12 +226,7 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.communicationEvent.id,
-        objectType: this.communicationEvent.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.communicationEvent);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

@@ -57,7 +57,7 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
   }
 
   public ngOnInit(): void {
-    const { pull, x, m } = this.metaService;
+    const m = this.m;  const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -144,12 +144,7 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.partyRelationship.id,
-        objectType: this.partyRelationship.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.partyRelationship);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

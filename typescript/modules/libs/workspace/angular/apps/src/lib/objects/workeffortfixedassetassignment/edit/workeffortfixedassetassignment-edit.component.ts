@@ -146,12 +146,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.workEffortFixedAssetAssignment.id,
-        objectType: this.workEffortFixedAssetAssignment.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.workEffortFixedAssetAssignment);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
@@ -170,7 +165,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       this.serialisedItems = loaded.collection<SerialisedItem>(m.SerialisedItem);
     });
   }

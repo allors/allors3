@@ -65,7 +65,7 @@ export class PurchaseInvoiceItemOverviewPanelComponent extends TestScope {
     panel.icon = 'business';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.context);
+    this.delete = deleteService.delete(panel.manager.session);
     this.edit = this.editService.edit();
 
     const sort = true;
@@ -110,7 +110,7 @@ export class PurchaseInvoiceItemOverviewPanelComponent extends TestScope {
     };
 
     panel.onPulled = (loaded) => {
-      this.purchaseInvoiceItems = loaded.collections[pullName] as PurchaseInvoiceItem[];
+      this.purchaseInvoiceItems = loaded.collection<PurchaseInvoiceItem>(pullName);
       this.invoice = loaded.objects[invoicePullName] as PurchaseInvoice;
       this.table.total = loaded.values[`${pullName}_total`] || this.purchaseInvoiceItems.length;
       this.table.data = this.purchaseInvoiceItems.map((v) => {

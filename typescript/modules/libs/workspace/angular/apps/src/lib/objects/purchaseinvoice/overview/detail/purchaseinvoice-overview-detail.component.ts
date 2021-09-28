@@ -379,7 +379,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   }
 
   private updateBilledFrom(party: Party): void {
-    const { pull, x, m } = this.metaService;
+    const m = this.m;  const { pullBuilder: pull } = m; const x = {};
 
     const pulls = [
       pull.Organisation({

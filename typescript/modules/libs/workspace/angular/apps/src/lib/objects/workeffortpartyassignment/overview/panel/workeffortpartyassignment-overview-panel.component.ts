@@ -60,14 +60,14 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
 
-    this.delete = deleteService.delete(allors);
+    this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
   }
 
   ngOnInit() {
-    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.delete = this.deleteService.delete(this.panel.manager.session);
     this.edit = this.editService.edit();
 
     this.panel.name = 'workeffortpartyassignment';
@@ -141,8 +141,8 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
 
     this.panel.onPulled = (loaded) => {
       this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
-      this.fromParty = loaded.collections[partypullName] as WorkEffortPartyAssignment[];
-      this.fromWorkEffort = loaded.collections[workeffortpullName] as WorkEffortPartyAssignment[];
+      this.fromParty = loaded.collection<WorkEffortPartyAssignment>(partypullName);
+      this.fromWorkEffort = loaded.collection<WorkEffortPartyAssignment>(workeffortpullName);
 
       if (this.fromParty !== undefined && this.fromParty.length > 0) {
         this.objects = this.fromParty;

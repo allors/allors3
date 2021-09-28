@@ -54,7 +54,7 @@ export class PartCategoryListComponent extends TestScope implements OnInit, OnDe
       this.table.selection.clear();
     });
 
-    this.delete = deleteService.delete(allors);
+    this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });

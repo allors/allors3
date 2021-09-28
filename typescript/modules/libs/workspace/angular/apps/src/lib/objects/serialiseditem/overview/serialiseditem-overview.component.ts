@@ -58,7 +58,7 @@ export class SerialisedItemOverviewComponent extends TestScope implements AfterV
 
           const pulls = [
             pull.SerialisedItem({
-              object: this.panelManager.id,
+              objectId: this.panelManager.id,
               include: {
                 OwnedBy: x,
               },
@@ -67,11 +67,11 @@ export class SerialisedItemOverviewComponent extends TestScope implements AfterV
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context.load(new PullRequest({ pulls }));
+          return this.panelManager.client.pullReactive(this.panelManager.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.panelManager.context.session.reset();
+        this.panelManager.session.reset();
         this.panelManager.onPulled(loaded);
 
         this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);

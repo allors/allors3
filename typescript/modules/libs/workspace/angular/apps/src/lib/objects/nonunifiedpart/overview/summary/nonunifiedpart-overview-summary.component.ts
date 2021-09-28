@@ -95,11 +95,11 @@ export class NonUnifiedPartOverviewSummaryComponent {
       this.part = loaded.objects[partPullName] as Part;
       this.serialised = this.part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 
-      this.allPricecomponents = loaded.collections[priceComponentPullName] as PriceComponent[];
+      this.allPricecomponents = loaded.collection<PriceComponent>(priceComponentPullName);
       this.currentPricecomponents = this.allPricecomponents.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
       this.inactivePricecomponents = this.allPricecomponents.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate !== null && isBefore(new Date(v.ThroughDate), new Date())));
 
-      this.allSupplierOfferings = loaded.collections[supplierOfferingsPullName] as SupplierOffering[];
+      this.allSupplierOfferings = loaded.collection<SupplierOffering>(supplierOfferingsPullName);
       this.currentSupplierOfferings = this.allSupplierOfferings.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
       this.inactiveSupplierOfferings = this.allSupplierOfferings.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate !== null && isBefore(new Date(v.ThroughDate), new Date())));
 

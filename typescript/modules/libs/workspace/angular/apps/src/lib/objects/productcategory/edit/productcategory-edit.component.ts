@@ -112,13 +112,8 @@ export class ProductCategoryEditComponent extends TestScope implements OnInit, O
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.category.id,
-        objectType: this.category.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.category);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

@@ -52,7 +52,7 @@ export class RequestForQuoteOverviewPanelComponent extends TestScope implements 
   }
 
   ngOnInit() {
-    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.delete = this.deleteService.delete(this.panel.manager.session);
 
     this.panel.name = 'requestsforquote';
     this.panel.title = 'Requests For Quote';
@@ -115,8 +115,8 @@ export class RequestForQuoteOverviewPanelComponent extends TestScope implements 
     };
 
     this.panel.onPulled = (loaded) => {
-      const fromAsset = loaded.collections[assetPullName] as RequestForQuote[];
-      const fromParty = loaded.collections[customerPullName] as RequestForQuote[];
+      const fromAsset = loaded.collection<RequestForQuote>(assetPullName);
+      const fromParty = loaded.collection<RequestForQuote>(customerPullName);
 
       if (fromAsset !== undefined && fromAsset.length > 0) {
         this.objects = fromAsset;

@@ -94,7 +94,6 @@ export class BrandEditComponent extends TestScope implements OnInit, OnDestroy {
   public modelAdded(model: Model): void {
     this.brand.addModel(model);
     this.models = this.brand.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
-    this.allors.session.hasChanges = true;
   }
 
   public ngOnDestroy(): void {

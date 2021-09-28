@@ -42,7 +42,7 @@ export class PartyContactMechanismTelecommunicationsNumberInlineComponent implem
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
       this.contactMechanismTypes = loaded.collection<ContactMechanismType>(m.ContactMechanismType);
 

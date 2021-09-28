@@ -160,12 +160,7 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.workEffortInventoryAssignment.id,
-        objectType: this.workEffortInventoryAssignment.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.workEffortInventoryAssignment);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
@@ -173,7 +168,7 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
   public inventoryItemSelected(inventoryItem: IObject): void {
     this.serialised = (inventoryItem as InventoryItem).Part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 
-    if (inventoryItem.objectType === this.metaService.m.NonSerialisedInventoryItem) {
+    if (inventoryItem.strategy.cls === this.m.NonSerialisedInventoryItem) {
       const item = inventoryItem as NonSerialisedInventoryItem;
       this.state = item.NonSerialisedInventoryItemState;
     } else {

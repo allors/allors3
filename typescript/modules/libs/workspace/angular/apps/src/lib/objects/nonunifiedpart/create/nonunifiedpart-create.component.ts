@@ -184,7 +184,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe(() => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe(() => {
       this.models = this.selectedBrand.Models ? this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0)) : [];
     });
   }
@@ -198,13 +198,8 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
   public save(): void {
     this.onSave();
 
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.part.id,
-        objectType: this.part.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.part);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

@@ -76,12 +76,7 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.contactMechanism.id,
-        objectType: this.contactMechanism.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.contactMechanism);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

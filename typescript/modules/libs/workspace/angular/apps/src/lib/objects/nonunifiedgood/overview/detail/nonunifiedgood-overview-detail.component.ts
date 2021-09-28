@@ -72,7 +72,7 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
       this.good = undefined;
 
       if (this.panel.isCollapsed) {
-        const { pull, x, m } = this.metaService;
+        const m = this.m;  const { pullBuilder: pull } = m; const x = {};
         const id = this.panel.manager.id;
 
         pulls.push(
@@ -218,9 +218,5 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
       this.refreshService.refresh();
       this.panel.toggle();
     }, this.saveService.errorHandler);
-  }
-
-  public setDirty(): void {
-    this.allors.session.hasChanges = true;
   }
 }

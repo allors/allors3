@@ -9,6 +9,7 @@ import { AllorsMaterialDialogService } from '../../dialog/dialog.service';
 import { Action } from '../../../../components/actions/action';
 
 import { DeleteAction } from './delete-action';
+import { IReactiveDatabaseClient, ISession } from '@allors/workspace/domain/system';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ import { DeleteAction } from './delete-action';
 export class DeleteService {
   constructor(private refreshService: RefreshService, private dialogService: AllorsMaterialDialogService, private saveService: SaveService, private snackBar: MatSnackBar) {}
 
-  delete(allors: SessionService): Action {
-    return new DeleteAction(this.refreshService, this.dialogService, this.saveService, this.snackBar, allors);
+  delete(client: IReactiveDatabaseClient, session: ISession): Action {
+    return new DeleteAction(this.refreshService, this.dialogService, this.saveService, this.snackBar, client, session);
   }
 }

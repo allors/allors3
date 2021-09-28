@@ -110,10 +110,6 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
     }
   }
 
-  public setDirty(): void {
-    this.allors.session.hasChanges = true;
-  }
-
   public save(): void {
     if (this.selectedPositionTypes !== undefined) {
       this.selectedPositionTypes.forEach((positionType: PositionType) => {
@@ -130,13 +126,8 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
       positionType.PositionTypeRate = null;
     });
 
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.positionTypeRate.id,
-        objectType: this.positionTypeRate.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.positionTypeRate);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

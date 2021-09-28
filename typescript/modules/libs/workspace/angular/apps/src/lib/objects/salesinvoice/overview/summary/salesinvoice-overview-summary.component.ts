@@ -130,7 +130,7 @@ export class SalesInvoiceOverviewSummaryComponent {
 
     panel.onPulled = (loaded) => {
       this.orders = loaded.collection<SalesOrder>(m.SalesOrder);
-      this.workEfforts = loaded.collections[workEffortPullName] as WorkEffort[];
+      this.workEfforts = loaded.collection<WorkEffort>(workEffortPullName);
       this.invoice = loaded.object<SalesInvoice>(m.SalesInvoice);
       this.repeatingInvoices = loaded.collection<RepeatingSalesInvoice>(m.RepeatingSalesInvoice);
       this.hasIrpf = Number(this.invoice.TotalIrpf) !== 0;
@@ -145,42 +145,42 @@ export class SalesInvoiceOverviewSummaryComponent {
   }
 
   send() {
-    this.panel.manager.context.invoke(this.invoice.Send).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.invoice.Send).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully sent.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public cancel(): void {
-    this.panel.manager.context.invoke(this.invoice.CancelInvoice).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.invoice.CancelInvoice).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public writeOff(): void {
-    this.panel.manager.context.invoke(this.invoice.WriteOff).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.invoice.WriteOff).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully written off.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public reopen(): void {
-    this.panel.manager.context.invoke(this.invoice.Reopen).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.invoice.Reopen).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully Reopened.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public credit(): void {
-    this.panel.manager.context.invoke(this.invoice.Credit).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.invoice.Credit).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully Credited.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public copy(): void {
-    this.panel.manager.context.invoke(this.invoice.Copy).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.invoice.Copy).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully copied.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);

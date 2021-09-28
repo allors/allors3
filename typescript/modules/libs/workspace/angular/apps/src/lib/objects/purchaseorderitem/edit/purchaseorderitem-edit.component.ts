@@ -258,20 +258,13 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
   public facilityAdded(facility: Facility): void {
     this.facilities.push(facility);
     this.selectedFacility = facility;
-
-    this.allors.session.hasChanges = true;
   }
 
   public save(): void {
     this.onSave();
 
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.orderItem.id,
-        objectType: this.orderItem.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.orderItem);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
@@ -283,7 +276,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
 
     const pulls = [
       pull.NonUnifiedGood({
-        object: product.id,
+        objectId: product.id,
         select: {
           Part: {
             include: {
@@ -294,7 +287,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
         },
       }),
       pull.UnifiedGood({
-        object: product.id,
+        objectId: product.id,
         include: {
           InventoryItemKind: x,
           SerialisedItems: x,
@@ -302,7 +295,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe(() => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe(() => {
       this.serialisedItems = this.part.SerialisedItems;
       this.serialised = this.part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
     });
@@ -342,7 +335,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       this.part = (loaded.objects.UnifiedGood || loaded.objects.Part) as Part;
       this.serialised = part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 

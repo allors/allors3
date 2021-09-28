@@ -106,12 +106,7 @@ export class DisbursementEditComponent extends TestScope implements OnInit, OnDe
     this.paymentApplication.AmountApplied = this.disbursement.Amount;
 
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.disbursement.id,
-        objectType: this.disbursement.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.disbursement.id);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

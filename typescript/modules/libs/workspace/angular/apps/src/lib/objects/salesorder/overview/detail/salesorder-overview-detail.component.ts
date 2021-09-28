@@ -218,12 +218,12 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
         this.order = loaded.objects[salesOrderPullName] as SalesOrder;
-        this.orderItems = loaded.collections[salesOrderPullName] as SalesOrderItem[];
+        this.orderItems = loaded.collection<SalesOrderItem>(salesOrderPullName);
         this.salesInvoice = loaded.objects[salesInvoicePullName] as SalesInvoice;
         this.currencies = loaded.collection<Currency>(m.Currency);
-        this.billingProcesses = loaded.collections[billingProcessPullName] as BillingProcess[];
+        this.billingProcesses = loaded.collection<BillingProcess>(billingProcessPullName);
         this.billingForOrderItems = this.billingProcesses.find((v: BillingProcess) => v.UniqueId === 'ab01ccc2-6480-4fc0-b20e-265afd41fae2');
-        this.inventoryItemStates = loaded.collections[serialisedInventoryItemStatePullName] as SerialisedInventoryItemState[];
+        this.inventoryItemStates = loaded.collection<SerialisedInventoryItemState>(serialisedInventoryItemStatePullName);
       }
     };
   }
@@ -340,7 +340,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
     }, this.saveService.errorHandler);
@@ -488,7 +488,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.order.ShipToCustomer !== this.previousShipToCustomer) {
         this.order.AssignedShipToAddress = null;
         this.order.ShipToContactPerson = null;
@@ -538,7 +538,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.order.BillToCustomer !== this.previousBillToCustomer) {
         this.order.AssignedBillToContactMechanism = null;
         this.order.BillToContactPerson = null;
@@ -582,7 +582,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.order.BillToEndCustomer !== this.previousBillToEndCustomer) {
         this.order.AssignedBillToEndCustomerContactMechanism = null;
         this.order.BillToEndCustomerContactPerson = null;
@@ -626,7 +626,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.order.ShipToEndCustomer !== this.previousShipToEndCustomer) {
         this.order.AssignedShipToEndCustomerAddress = null;
         this.order.ShipToEndCustomerContactPerson = null;

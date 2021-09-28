@@ -127,13 +127,8 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.quote.id,
-        objectType: this.quote.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.quote);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
@@ -172,7 +167,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.previousReceiver && this.quote.Receiver !== this.previousReceiver) {
         this.quote.ContactPerson = null;
         this.quote.FullfillContactMechanism = null;

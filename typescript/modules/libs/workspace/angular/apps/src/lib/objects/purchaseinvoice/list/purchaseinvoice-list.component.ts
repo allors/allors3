@@ -82,7 +82,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
     this.reopen = methodService.create(allors.context, this.m.PurchaseInvoice.Reopen, { name: 'Reopen' });
     this.print = printService.print();
 
-    this.delete = deleteService.delete(allors);
+    this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });

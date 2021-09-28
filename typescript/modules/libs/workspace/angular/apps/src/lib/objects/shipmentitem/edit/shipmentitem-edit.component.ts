@@ -28,10 +28,13 @@ import {
   SalesOrderState,
   ShipmentItemState,
   ShipmentState,
+  PurchaseOrderState,
+  Product,
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { And, IObject } from '@allors/workspace/domain/system';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './shipmentitem-edit.component.html',
@@ -112,7 +115,6 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<ShipmentItemEditComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     public snackBar: MatSnackBar
@@ -123,7 +125,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
   }
 
   public ngOnInit(): void {
-    const { pull, x, m } = this.metaService;
+    const m = this.m;  const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
@@ -207,7 +209,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
                 objectId: this.data.associationId,
                 select: {
                   ShipFromParty: {
-                    PurchaseOrdersWhereTakenViaSupplier: {
+                    Organisation_PurchaseOrdersWhereTakenViaSupplier: {
                       include: {
                         PurchaseOrderItems: {
                           Part: x,
@@ -235,8 +237,8 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
 
         this.shipmentItem = loaded.object<ShipmentItem>(m.ShipmentItem);
         this.shipment = loaded.object<Shipment>(m.Shipment) || this.shipmentItem.SyncedShipment;
-        this.isCustomerShipment = this.shipment.objectType === this.metaService.m.CustomerShipment;
-        this.isPurchaseShipment = this.shipment.objectType === this.metaService.m.PurchaseShipment;
+        this.isCustomerShipment = this.shipment.strategy.cls === this.m.CustomerShipment;
+        this.isPurchaseShipment = this.shipment.strategy.cls === this.m.PurchaseShipment;
 
         this.facilities = loaded.collection<Facility>(m.Facility);
         this.serialisedItemAvailabilities = loaded.collection<SerialisedItemAvailability>(m.SerialisedItemAvailability);
@@ -314,15 +316,15 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
             objectType: this.m.Part,
             roleTypes: [this.m.Part.Name, this.m.Part.SearchString],
             post: (predicate: And) => {
-              predicate.operands.push(
-                new ContainedIn({
-                  propertyType: this.m.Part.SupplierOfferingsWherePart,
-                  extent: new Extent({
-                    objectType: this.m.SupplierOffering,
-                    predicate: { kind: 'Equals', propertyType: m.SupplierOffering.Supplier, object: this.shipment.ShipFromParty },
-                  }),
-                })
-              );
+              predicate.operands.push({
+                kind: 'ContainedIn',
+                propertyType: this.m.Part.SupplierOfferingsWherePart,
+                extent: {
+                  kind: 'Filter',
+                  objectType: this.m.SupplierOffering,
+                  predicate: { kind: 'Equals', propertyType: m.SupplierOffering.Supplier, object: this.shipment.ShipFromParty },
+                },
+              });
             },
           });
         }
@@ -387,12 +389,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
     this.onSave();
 
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.shipmentItem.id,
-        objectType: this.shipmentItem.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.shipmentItem);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
@@ -505,8 +502,6 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
   public facilityAdded(facility: Facility): void {
     this.facilities.push(facility);
     this.selectedFacility = facility;
-
-    this.allors.session.hasChanges = true;
   }
 
   private loadProduct(product: Product): void {
@@ -516,7 +511,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
 
     const pulls = [
       pull.NonUnifiedGood({
-        object: product.id,
+        objectId: product.id,
         select: {
           Part: {
             include: {
@@ -552,7 +547,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
         },
       }),
       pull.UnifiedGood({
-        object: product.id,
+        objectId: product.id,
         include: {
           InventoryItemKind: x,
           SerialisedItems: {
@@ -611,7 +606,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
 
     const pulls = [
       pull.NonUnifiedPart({
-        object: part.id,
+        objectId: part.id,
         select: {
           InventoryItemsWherePart: {
             include: {
@@ -621,7 +616,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
         },
       }),
       pull.NonUnifiedPart({
-        object: part.id,
+        objectId: part.id,
         include: {
           InventoryItemKind: x,
         },

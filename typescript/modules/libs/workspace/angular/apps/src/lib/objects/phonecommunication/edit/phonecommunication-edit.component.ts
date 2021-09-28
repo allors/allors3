@@ -288,7 +288,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
 
     this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.fromPhonenumbers = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.TelecommunicationsNumber).map((v) => v.ContactMechanism);
+      this.fromPhonenumbers = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.TelecommunicationsNumber).map((v) => v.ContactMechanism);
     });
   }
 
@@ -320,18 +320,13 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
 
     this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.toPhonenumbers = partyContactMechanisms.filter((v) => v.ContactMechanism.objectType === this.metaService.m.TelecommunicationsNumber).map((v) => v.ContactMechanism);
+      this.toPhonenumbers = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.TelecommunicationsNumber).map((v) => v.ContactMechanism);
     });
   }
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.communicationEvent.id,
-        objectType: this.communicationEvent.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.communicationEvent);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

@@ -103,13 +103,8 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
   public save(): void {
     this.shipment.ShipToFacility = this.selectedFacility;
 
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.shipment.id,
-        objectType: this.shipment.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.shipment);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
@@ -117,8 +112,6 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
   public facilityAdded(facility: Facility): void {
     this.facilities.push(facility);
     this.selectedFacility = facility;
-
-    this.allors.session.hasChanges = true;
   }
 
   public supplierAdded(organisation: Organisation): void {
@@ -183,7 +176,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       this.shipFromContacts = loaded.collection<Person>(m.Person);
     });
   }
@@ -214,7 +207,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToContacts = loaded.collection<Person>(m.Person);

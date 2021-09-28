@@ -168,20 +168,17 @@ $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|$treeCompo
 >>
 
 treeComposite(composite) ::= <<
-export interface Tree$composite._.SingularName$  {
+export interface Tree$composite._.SingularName$$if(composite._.WorkspaceSubtypesByWorkspaceName.(workspaceName))$ extends $endif$$composite._.WorkspaceSubtypesByWorkspaceName.(workspaceName):{subtype|SubTree$subtype$}; separator=", "$ {
 $composite._.WorkspaceCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $role._.Name$?: Tree$role._.ObjectType._.Name$;}; separator="\n"$
 
 $composite._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{association|    $association._.Name$?: Tree$association._.ObjectType._.Name$;}; separator="\n"$
-
-$composite._.WorkspaceSubtypesByWorkspaceName.(workspaceName):{subtype|$treeSubtype(subtype)$}$
 }
->>
 
-treeSubtype(subtype) ::= <<
+export interface SubTree$composite._.SingularName$ {
+$composite._.WorkspaceCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $composite._.Name$_$role._.Name$?: Tree$role._.ObjectType._.Name$;}; separator="\n"$
 
-$subtype._.WorkspaceExclusiveCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $subtype._.Name$_$role._.Name$?: Tree$role._.ObjectType._.Name$;}; separator="\n"$
-
-$subtype._.WorkspaceExclusiveAssociationTypesByWorkspaceName.(workspaceName):{association|    $subtype._.Name$_$association._.Name$?: Tree$association._.ObjectType._.Name$;}; separator="\n"$
+$composite._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{association|    $composite._.Name$_$association._.Name$?: Tree$association._.ObjectType._.Name$;}; separator="\n"$
+}
 
 >>
 

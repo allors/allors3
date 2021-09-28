@@ -55,7 +55,7 @@ export class PurchaseOrderOverviewComponent extends TestScope implements AfterVi
 
           const pulls = [
             pull.PurchaseOrder({
-              object: this.panelManager.id,
+              objectId: this.panelManager.id,
               include: {
                 PurchaseOrderItems: {
                   InvoiceItemType: x,
@@ -66,11 +66,11 @@ export class PurchaseOrderOverviewComponent extends TestScope implements AfterVi
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context.load(new PullRequest({ pulls }));
+          return this.panelManager.client.pullReactive(this.panelManager.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.panelManager.context.session.reset();
+        this.panelManager.session.reset();
 
         this.panelManager.onPulled(loaded);
 

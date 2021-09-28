@@ -68,7 +68,7 @@ export class RequestItemOverviewPanelComponent extends TestScope {
     panel.icon = 'contacts';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.context);
+    this.delete = deleteService.delete(panel.manager.session);
     this.edit = this.editService.edit();
     this.cancel = methodService.create(allors.context, this.m.RequestItem.Cancel, { name: 'Cancel' });
     this.hold = methodService.create(allors.context, this.m.RequestItem.Hold, { name: 'Hold' });
@@ -120,7 +120,7 @@ export class RequestItemOverviewPanelComponent extends TestScope {
     };
 
     panel.onPulled = (loaded) => {
-      this.requestItems = loaded.collections[pullName] as RequestItem[];
+      this.requestItems = loaded.collection<RequestItem>(pullName);
       this.request = loaded.object<Request>(m.Request);
       this.table.total = loaded.values[`${pullName}_total`] || this.requestItems.length;
       this.table.data = this.requestItems.map((v) => {

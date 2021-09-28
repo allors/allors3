@@ -106,7 +106,7 @@ export class WorkEffortInventoryAssignmentOverviewPanelComponent extends TestSco
 
     this.panel.onPulled = (loaded) => {
       this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
-      this.objects = loaded.collections[pullName] as WorkEffortInventoryAssignment[];
+      this.objects = loaded.collection<WorkEffortInventoryAssignment>(pullName);
 
       if (this.objects) {
         this.table.total = this.objects.length;

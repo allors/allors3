@@ -82,35 +82,35 @@ export class CustomerShipmentOverviewSummaryComponent {
   }
 
   public invoice(): void {
-    this.panel.manager.context.invoke(this.shipment.Invoice).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.shipment.Invoice).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully invoiced.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public cancel(): void {
-    this.panel.manager.context.invoke(this.shipment.Cancel).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.shipment.Cancel).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public hold(): void {
-    this.panel.manager.context.invoke(this.shipment.Hold).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.shipment.Hold).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully put on hold.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public continue(): void {
-    this.panel.manager.context.invoke(this.shipment.Continue).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.shipment.Continue).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully removed from hold.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public pick(): void {
-    this.panel.manager.context.invoke(this.shipment.Pick).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.shipment.Pick).subscribe(() => {
       this.panel.toggle();
       this.snackBar.open('Successfully picked.', 'close', { duration: 5000 });
       this.refreshService.refresh();
@@ -118,7 +118,7 @@ export class CustomerShipmentOverviewSummaryComponent {
   }
 
   public ship(): void {
-    this.panel.manager.context.invoke(this.shipment.Ship).subscribe(() => {
+    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.shipment.Ship).subscribe(() => {
       this.panel.toggle();
       this.snackBar.open('Successfully shipped.', 'close', { duration: 5000 });
       this.refreshService.refresh();

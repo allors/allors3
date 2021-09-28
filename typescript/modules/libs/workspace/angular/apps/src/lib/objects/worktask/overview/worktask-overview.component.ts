@@ -39,10 +39,11 @@ export class WorkTaskOverviewComponent extends TestScope implements AfterViewIni
   }
 
   public ngAfterViewInit(): void {
+    const m = this.m;
+
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganistationId.observable$)
       .pipe(
         switchMap(([, ,]) => {
-          const m = this.m;
           const { pullBuilder: pull } = m;
 
           const navRoute = new NavigationActivatedRoute(this.route);
@@ -54,17 +55,17 @@ export class WorkTaskOverviewComponent extends TestScope implements AfterViewIni
 
           const pulls = [
             pull.WorkTask({
-              object: this.panelManager.id,
+              objectId: this.panelManager.id,
             }),
           ];
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context.load(new PullRequest({ pulls }));
+          return this.panelManager.client.pullReactive(this.panelManager.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.panelManager.context.session.reset();
+        this.panelManager.session.reset();
         this.panelManager.onPulled(loaded);
 
         this.workTask = loaded.object<WorkTask>(m.WorkTask);

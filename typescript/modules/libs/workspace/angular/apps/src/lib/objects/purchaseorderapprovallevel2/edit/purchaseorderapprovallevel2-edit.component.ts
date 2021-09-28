@@ -102,12 +102,7 @@ export class PurchaseOrderApprovalLevel2EditComponent extends TestScope implemen
         })
       )
       .subscribe(() => {
-        const data: IObject = {
-          id: this.purchaseOrderApproval.id,
-          objectType: this.purchaseOrderApproval.objectType,
-        };
-
-        this.dialogRef.close(data);
+        this.dialogRef.close(this.purchaseOrderApproval);
         this.refreshService.refresh();
       }, this.saveService.errorHandler);
   }

@@ -63,7 +63,7 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
     this.panel.icon = 'business';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.delete = this.deleteService.delete(this.panel.manager.session);
     this.edit = this.editService.edit();
 
     const sort = true;
@@ -107,7 +107,7 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
     };
 
     this.panel.onPulled = (loaded) => {
-      this.objects = loaded.collections[pullName] as SupplierOffering[];
+      this.objects = loaded.collection<SupplierOffering>(pullName);
       this.currentObjects = this.objects.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
 
       if (this.objects) {

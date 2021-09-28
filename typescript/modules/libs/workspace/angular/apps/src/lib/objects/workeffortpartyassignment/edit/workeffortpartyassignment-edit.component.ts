@@ -146,12 +146,7 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.workEffortPartyAssignment.id,
-        objectType: this.workEffortPartyAssignment.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.workEffortPartyAssignment);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

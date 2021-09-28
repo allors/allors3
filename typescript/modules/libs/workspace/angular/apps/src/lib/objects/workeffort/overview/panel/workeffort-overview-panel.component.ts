@@ -100,7 +100,7 @@ export class WorkEffortOverviewPanelComponent extends TestScope implements OnIni
     };
 
     this.panel.onPulled = (loaded) => {
-      this.objects = loaded.collections[pullName] as WorkEffort[];
+      this.objects = loaded.collection<WorkEffort>(pullName);
 
       if (this.objects) {
         this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;

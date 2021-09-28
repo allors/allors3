@@ -52,7 +52,7 @@ export class SalesOrderOverviewPanelComponent extends TestScope implements OnIni
   }
 
   ngOnInit() {
-    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.delete = this.deleteService.delete(this.panel.manager.session);
 
     this.panel.name = 'salesorder';
     this.panel.title = 'Sales Orders';
@@ -115,8 +115,8 @@ export class SalesOrderOverviewPanelComponent extends TestScope implements OnIni
     };
 
     this.panel.onPulled = (loaded) => {
-      const fromAsset = loaded.collections[assetPullName] as SalesOrder[];
-      const fromParty = loaded.collections[customerPullName] as SalesOrder[];
+      const fromAsset = loaded.collection<SalesOrder>(assetPullName);
+      const fromParty = loaded.collection<SalesOrder>(customerPullName);
 
       if (fromAsset !== undefined && fromAsset.length > 0) {
         this.objects = fromAsset;

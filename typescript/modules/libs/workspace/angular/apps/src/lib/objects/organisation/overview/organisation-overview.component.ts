@@ -67,11 +67,11 @@ export class OrganisationOverviewComponent extends TestScope implements AfterVie
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context.load(new PullRequest({ pulls }));
+          return this.panelManager.client.pullReactive(this.panelManager.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.panelManager.context.session.reset();
+        this.panelManager.session.reset();
         this.panelManager.onPulled(loaded);
 
         this.organisation = loaded.object<Organisation>(m.Organisation);

@@ -62,7 +62,7 @@ export class PartyContactMechanismOverviewPanelComponent extends TestScope imple
     this.panel.icon = 'contacts';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.delete = this.deleteService.delete(this.panel.manager.session);
     this.edit = this.editService.edit();
 
     const sort = true;
@@ -126,10 +126,10 @@ export class PartyContactMechanismOverviewPanelComponent extends TestScope imple
     };
 
     this.panel.onPulled = (loaded) => {
-      this.objects = loaded.collections[pullName] as PartyContactMechanism[];
+      this.objects = loaded.collection<PartyContactMechanism>(pullName);
 
-      this.currentPartyContactMechanisms = loaded.collections[active] as PartyContactMechanism[];
-      this.inactivePartyContactMechanisms = loaded.collections[inactive] as PartyContactMechanism[];
+      this.currentPartyContactMechanisms = loaded.collection<PartyContactMechanism>(active);
+      this.inactivePartyContactMechanisms = loaded.collection<PartyContactMechanism>(inactive);
 
       this.allPartyContactMechanisms = [];
 

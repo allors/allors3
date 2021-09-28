@@ -49,7 +49,7 @@ export class SupplierOfferingEditComponent extends TestScope implements OnInit, 
   }
 
   public ngOnInit(): void {
-    const { pull, x, m } = this.metaService;
+    const m = this.m;  const { pullBuilder: pull } = m; const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -135,12 +135,7 @@ export class SupplierOfferingEditComponent extends TestScope implements OnInit, 
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.supplierOffering.id,
-        objectType: this.supplierOffering.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.supplierOffering);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

@@ -80,7 +80,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
     this.panel.icon = 'message';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.delete = this.deleteService.delete(this.panel.manager.session);
 
     this.addToInvoice = {
       name: 'addtoinvoice',
@@ -134,7 +134,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
       autoFilter: true,
     });
 
-    if (this.panel.manager.objectType === this.metaService.m.PurchaseInvoice) {
+    if (this.panel.manager.strategy.cls === this.m.PurchaseInvoice) {
       this.table.actions.push(this.delete);
     }
 
@@ -208,7 +208,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
       this.partItem = invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b');
       this.workItem = invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === 'a4d2e6d0-c6c1-46ec-a1cf-3a64822e7a9e');
 
-      const purchaseOrders = loaded.collections[pullName] as PurchaseOrder[];
+      const purchaseOrders = loaded.collection<PurchaseOrder>(pullName);
       this.objects = purchaseOrders.filter(
         (v) =>
           (v.CanExecuteInvoice && (this.purchaseInvoice.PurchaseInvoiceState.UniqueId === '102f4080-1d12-4090-9196-f42c094c38ca' || this.purchaseInvoice.PurchaseInvoiceState.UniqueId === '639ba038-d8f3-4672-80b5-c8eb96e3275d')) ||

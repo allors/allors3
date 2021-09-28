@@ -87,7 +87,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
     this.credit = methodService.create(allors.context, this.m.SalesInvoice.Credit, { name: 'Credit' });
     this.reopen = methodService.create(allors.context, this.m.SalesInvoice.Reopen, { name: 'Reopen' });
 
-    this.delete = deleteService.delete(allors);
+    this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });

@@ -28,6 +28,7 @@ import {
   VatRegime,
   IrpfRegime,
   InvoiceItemType,
+  Product,
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
@@ -328,12 +329,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
     this.onSave();
 
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.orderItem.id,
-        objectType: this.orderItem.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.orderItem);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
@@ -438,7 +434,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
 
     const pulls = [
       pull.NonUnifiedGood({
-        object: product.id,
+        objectId: product.id,
         select: {
           Part: {
             include: {
@@ -474,7 +470,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
         },
       }),
       pull.UnifiedGood({
-        object: product.id,
+        objectId: product.id,
         include: {
           SerialisedItems: {
             SerialisedItemAvailability: x,
@@ -507,7 +503,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       this.part = (loaded.objects.UnifiedGood || loaded.objects.Part) as Part;
       this.serialisedItems = this.part.SerialisedItems;
 

@@ -240,7 +240,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.customerShipment.ShipToParty !== this.previousShipToparty) {
         this.customerShipment.ShipToAddress = null;
         this.customerShipment.ShipToContactPerson = null;
@@ -279,14 +279,10 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
       this.shipToContacts = loaded.collection<Person>(m.Person);
     });
-  }
-
-  public setDirty(): void {
-    this.allors.session.hasChanges = true;
   }
 }

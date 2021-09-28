@@ -90,13 +90,8 @@ export class UserProfileEditComponent extends TestScope implements OnInit, OnDes
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.userProfile.id,
-        objectType: this.userProfile.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.userProfile);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

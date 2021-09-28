@@ -58,7 +58,7 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
   }
 
   public ngOnInit(): void {
-    const { pull, x, m } = this.metaService;
+    const m = this.m;  const { pullBuilder: pull } = m; const x = {};
 
     const predicate = new And([new Like({ roleType: m.Notification.Confirmed, parameter: 'confirmed' })]);
 

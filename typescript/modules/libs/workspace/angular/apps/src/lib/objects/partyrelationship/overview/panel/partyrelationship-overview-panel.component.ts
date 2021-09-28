@@ -63,7 +63,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
     this.panel.icon = 'contacts';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.delete = this.deleteService.delete(this.panel.manager.session);
     this.edit = this.editService.edit();
 
     const sort = true;
@@ -129,12 +129,12 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
     };
 
     this.panel.onPulled = (loaded) => {
-      this.objects = loaded.collections[pullName] as PartyRelationship[];
+      this.objects = loaded.collection<PartyRelationship>(pullName);
 
-      this.currentPartyRelationships = loaded.collections[active] as PartyRelationship[];
+      this.currentPartyRelationships = loaded.collection<PartyRelationship>(active);
       this.currentPartyRelationships = this.currentPartyRelationships.filter((v) => v.objectType.name !== this.m.PartyFinancialRelationship.name);
 
-      this.inactivePartyRelationships = loaded.collections[inactive] as PartyRelationship[];
+      this.inactivePartyRelationships = loaded.collection<PartyRelationship>(inactive);
       this.inactivePartyRelationships = this.inactivePartyRelationships.filter((v) => v.objectType.name !== this.m.PartyFinancialRelationship.name);
 
       this.allPartyRelationships = [];

@@ -53,7 +53,7 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
   }
 
   ngOnInit() {
-    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.delete = this.deleteService.delete(this.panel.manager.session);
 
     this.panel.name = 'salesinvoice';
     this.panel.title = 'Sales Invoices';
@@ -117,8 +117,8 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
     };
 
     this.panel.onPulled = (loaded) => {
-      const fromAsset = loaded.collections[assetPullName] as SalesInvoice[];
-      const fromParty = loaded.collections[customerPullName] as SalesInvoice[];
+      const fromAsset = loaded.collection<SalesInvoice>(assetPullName);
+      const fromParty = loaded.collection<SalesInvoice>(customerPullName);
 
       if (fromAsset !== undefined && fromAsset.length > 0) {
         this.objects = fromAsset;

@@ -71,7 +71,7 @@ export class OrderAdjustmentOverviewPanelComponent extends TestScope {
     panel.icon = 'money';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.context);
+    this.delete = deleteService.delete(panel.manager.session);
     this.edit = this.editService.edit();
 
     this.table = new Table({
@@ -138,7 +138,7 @@ export class OrderAdjustmentOverviewPanelComponent extends TestScope {
       this.container = (loaded.objects[quotePullName] as Quote) || (loaded.objects[orderPullName] as Order) || (loaded.objects[invoicePullName] as Invoice);
 
       this.objects =
-        (loaded.collections[quoteOrderAdjustmentsPullName] as OrderAdjustment[]) || (loaded.collections[orderOrderAdjustmentsPullName] as OrderAdjustment[]) || (loaded.collections[invoiceOrderAdjustmentsPullName] as OrderAdjustment[]);
+        (loaded.collection<OrderAdjustment>(quoteOrderAdjustmentsPullName)) || (loaded.collection<OrderAdjustment>(orderOrderAdjustmentsPullName)) || (loaded.collection<OrderAdjustment>(invoiceOrderAdjustmentsPullName));
 
       this.table.total =
         loaded.values[`${quoteOrderAdjustmentsPullName}_total`] || loaded.values[`${orderOrderAdjustmentsPullName}_total`] || this.objects.length || loaded.values[`${invoiceOrderAdjustmentsPullName}_total`] || this.objects.length;

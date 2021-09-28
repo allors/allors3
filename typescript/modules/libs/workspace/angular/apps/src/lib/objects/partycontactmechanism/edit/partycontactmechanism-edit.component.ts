@@ -172,12 +172,7 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.partyContactMechanism.id,
-        objectType: this.partyContactMechanism.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.partyContactMechanism);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

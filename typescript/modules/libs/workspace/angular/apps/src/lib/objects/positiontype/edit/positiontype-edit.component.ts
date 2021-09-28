@@ -82,13 +82,8 @@ export class PositionTypeEditComponent extends TestScope implements OnInit, OnDe
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.positionType.id,
-        objectType: this.positionType.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.positionType);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

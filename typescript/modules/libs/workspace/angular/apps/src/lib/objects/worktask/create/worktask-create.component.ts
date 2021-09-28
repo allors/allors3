@@ -153,7 +153,7 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.dialogRef.close(this.workTask);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

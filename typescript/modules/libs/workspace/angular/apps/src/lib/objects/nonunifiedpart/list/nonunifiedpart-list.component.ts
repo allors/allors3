@@ -100,7 +100,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
 
     this.print = printService.print();
 
-    this.delete = deleteService.delete(allors);
+    this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });

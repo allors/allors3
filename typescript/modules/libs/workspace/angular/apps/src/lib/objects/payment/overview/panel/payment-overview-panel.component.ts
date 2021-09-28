@@ -61,7 +61,7 @@ export class PaymentOverviewPanelComponent extends TestScope {
     panel.icon = 'money';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.context);
+    this.delete = deleteService.delete(panel.manager.session);
     this.edit = editService.edit();
 
     this.table = new Table({
@@ -76,7 +76,7 @@ export class PaymentOverviewPanelComponent extends TestScope {
     const pullName = `${panel.name}_${this.m.Payment.tag}`;
 
     panel.onPull = (pulls) => {
-      const { pull, x, m } = this.metaService;
+      const m = this.m;  const { pullBuilder: pull } = m; const x = {};
 
       const id = this.panel.manager.id;
 
@@ -116,7 +116,7 @@ export class PaymentOverviewPanelComponent extends TestScope {
         this.receive = salesInvoice.PurchaseInvoiceType.UniqueId === '0187d927-81f5-4d6a-9847-58b674ad3e6a';
       }
 
-      this.payments = loaded.collections[pullName] as Payment[];
+      this.payments = loaded.collection<Payment>(pullName);
 
       this.table.total = loaded.values[`${pullName}_total`] || this.payments.length;
       this.table.data = this.payments.map((v) => {

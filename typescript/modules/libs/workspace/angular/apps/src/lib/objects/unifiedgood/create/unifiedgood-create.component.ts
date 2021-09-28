@@ -86,12 +86,7 @@ export class UnifiedGoodCreateComponent extends TestScope implements OnInit, OnD
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.good.id,
-        objectType: this.good.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.good);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

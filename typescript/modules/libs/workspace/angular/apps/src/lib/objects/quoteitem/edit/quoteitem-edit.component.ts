@@ -402,12 +402,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.quoteItem.id,
-        objectType: this.quoteItem.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.quoteItem);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
@@ -419,7 +414,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
 
     const pulls = [
       pull.NonUnifiedGood({
-        object: product.id,
+        objectId: product.id,
         select: {
           Part: {
             include: {
@@ -454,7 +449,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
         },
       }),
       pull.UnifiedGood({
-        object: product.id,
+        objectId: product.id,
         include: {
           SerialisedItems: {
             RequestItemsWhereSerialisedItem: {

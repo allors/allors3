@@ -83,12 +83,7 @@ export class NonSerialisedInventoryItemEditComponent extends TestScope implement
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe((saved: Saved) => {
-      const data: IObject = {
-        id: this.nonSerialisedInventoryItem.id,
-        objectType: this.nonSerialisedInventoryItem.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.nonSerialisedInventoryItem);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

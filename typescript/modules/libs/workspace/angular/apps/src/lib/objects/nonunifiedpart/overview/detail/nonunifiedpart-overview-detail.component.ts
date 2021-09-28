@@ -218,25 +218,18 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
     }
   }
 
-  public setDirty(): void {
-    this.allors.session.hasChanges = true;
-  }
 
   public brandAdded(brand: Brand): void {
     this.brands.push(brand);
     this.selectedBrand = brand;
     this.models = [];
     this.selectedModel = undefined;
-    this.allors.session.hasChanges = true;
-    this.setDirty();
   }
 
   public modelAdded(model: Model): void {
     this.selectedBrand.addModel(model);
     this.models = this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
     this.selectedModel = model;
-    this.allors.session.hasChanges = true;
-    this.setDirty();
   }
 
   public brandSelected(brand: Brand): void {
@@ -256,8 +249,6 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
     this.allors.client.pullReactive(this.allors.session, pulls).subscribe(() => {
       this.models = this.selectedBrand?.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
     });
-
-    this.setDirty();
   }
 
   public save(): void {

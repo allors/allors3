@@ -119,7 +119,7 @@ export class NonSerialisedInventoryItemComponent extends TestScope implements On
       );
 
       this.panel.onPulled = (loaded) => {
-        this.objects = loaded.collections[pullName] as NonSerialisedInventoryItem[];
+        this.objects = loaded.collection<NonSerialisedInventoryItem>(pullName);
         // this.objects = this.objects.filter(v => v.QuantityOnHand > 0 || v.QuantityCommittedOut > 0 || v.QuantityExpectedIn > 0 || v.AvailableToPromise > 0);
 
         if (this.objects) {

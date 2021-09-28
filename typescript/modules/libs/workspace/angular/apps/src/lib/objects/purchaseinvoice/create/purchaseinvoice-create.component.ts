@@ -184,13 +184,8 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.invoice.id,
-        objectType: this.invoice.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.invoice);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
@@ -345,7 +340,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.invoice.BilledFrom !== this.previousBilledFrom) {
         this.invoice.AssignedBilledFromContactMechanism = null;
         this.invoice.BilledFromContactPerson = null;
@@ -396,7 +391,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.invoice.ShipToCustomer !== this.previousShipToCustomer) {
         this.invoice.AssignedShipToEndCustomerAddress = null;
         this.invoice.ShipToCustomerContactPerson = null;
@@ -447,7 +442,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.invoice.BillToEndCustomer !== this.previousBillToEndCustomer) {
         this.invoice.AssignedBillToEndCustomerContactMechanism = null;
         this.invoice.BillToEndCustomerContactPerson = null;
@@ -503,7 +498,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.invoice.ShipToEndCustomer !== this.previousShipToEndCustomer) {
         this.invoice.AssignedShipToEndCustomerAddress = null;
         this.invoice.ShipToEndCustomerContactPerson = null;

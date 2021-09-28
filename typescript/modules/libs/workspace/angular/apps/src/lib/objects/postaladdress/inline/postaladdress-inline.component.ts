@@ -64,7 +64,7 @@ export class PartyContactMechanismPostalAddressInlineComponent implements OnInit
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       this.countries = loaded.collection<Country>(m.Country);
       this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
 

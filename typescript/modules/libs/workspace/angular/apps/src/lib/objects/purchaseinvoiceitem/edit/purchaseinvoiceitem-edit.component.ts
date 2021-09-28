@@ -243,12 +243,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
     this.onSave();
 
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.invoiceItem.id,
-        objectType: this.invoiceItem.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.invoiceItem);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
@@ -260,7 +255,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
 
     const pulls = [
       pull.NonUnifiedGood({
-        object: unifiedGood.id,
+        objectId: unifiedGood.id,
         select: {
           Part: {
             include: {
@@ -271,7 +266,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
         },
       }),
       pull.UnifiedGood({
-        object: unifiedGood.id,
+        objectId: unifiedGood.id,
         include: {
           InventoryItemKind: x,
           SerialisedItems: x,

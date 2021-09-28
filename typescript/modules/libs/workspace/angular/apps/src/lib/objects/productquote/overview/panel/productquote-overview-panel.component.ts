@@ -52,7 +52,7 @@ export class ProductQuoteOverviewPanelComponent extends TestScope implements OnI
   }
 
   ngOnInit() {
-    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.delete = this.deleteService.delete(this.panel.manager.session);
 
     this.panel.name = 'productquote';
     this.panel.title = 'Product Quotes';
@@ -115,8 +115,8 @@ export class ProductQuoteOverviewPanelComponent extends TestScope implements OnI
     };
 
     this.panel.onPulled = (loaded) => {
-      const fromAsset = loaded.collections[assetPullName] as ProductQuote[];
-      const fromParty = loaded.collections[customerPullName] as ProductQuote[];
+      const fromAsset = loaded.collection<ProductQuote>(assetPullName);
+      const fromParty = loaded.collection<ProductQuote>(customerPullName);
 
       if (fromAsset !== undefined && fromAsset.length > 0) {
         this.objects = fromAsset;

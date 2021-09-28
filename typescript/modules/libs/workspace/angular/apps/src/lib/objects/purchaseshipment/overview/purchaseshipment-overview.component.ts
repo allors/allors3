@@ -60,7 +60,7 @@ export class PurchaseShipmentOverviewComponent extends TestScope implements Afte
 
           const pulls = [
             pull.Shipment({
-              object: this.panelManager.id,
+              objectId: this.panelManager.id,
               include: {
                 ShipmentItems: {
                   Good: x,
@@ -81,11 +81,11 @@ export class PurchaseShipmentOverviewComponent extends TestScope implements Afte
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context.load(new PullRequest({ pulls }));
+          return this.panelManager.client.pullReactive(this.panelManager.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.panelManager.context.session.reset();
+        this.panelManager.session.reset();
 
         this.panelManager.onPulled(loaded);
 

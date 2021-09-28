@@ -224,7 +224,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       if (this.request.Originator !== this.previousOriginator) {
         this.request.FullfillContactMechanism = null;
         this.request.ContactPerson = null;

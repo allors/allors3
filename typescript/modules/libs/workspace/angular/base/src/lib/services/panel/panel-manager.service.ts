@@ -9,7 +9,7 @@ import { PanelService } from './panel.service';
 
 @Injectable()
 export class PanelManagerService {
-  context: ISession;
+  session: ISession;
 
   client: IReactiveDatabaseClient;
 
@@ -27,7 +27,7 @@ export class PanelManagerService {
   }
 
   constructor(workspaceService: WorkspaceService, public router: Router, public route: ActivatedRoute) {
-    this.context = workspaceService.workspace.createSession();
+    this.session = workspaceService.workspace.createSession();
     this.client = workspaceService.client;
 
     this.on$ = this.onSubject$ = new BehaviorSubject(new Date());

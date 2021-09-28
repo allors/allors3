@@ -18,6 +18,7 @@ import {
   VatRegime,
   IrpfRegime,
   SalesInvoiceType,
+  CustomerRelationship,
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
@@ -178,12 +179,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.invoice.id,
-        objectType: this.invoice.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.invoice);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

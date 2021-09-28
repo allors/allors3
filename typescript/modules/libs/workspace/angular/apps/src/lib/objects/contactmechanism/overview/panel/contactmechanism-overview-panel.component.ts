@@ -56,7 +56,7 @@ export class ContactMechanismOverviewPanelComponent extends TestScope implements
     this.panel.icon = 'contacts';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.delete = this.deleteService.delete(this.panel.manager.session);
     this.edit = this.editService.edit();
 
     const sort = true;
@@ -98,7 +98,7 @@ export class ContactMechanismOverviewPanelComponent extends TestScope implements
     };
 
     this.panel.onPulled = (loaded) => {
-      this.objects = loaded.collections[pullName] as ContactMechanism[];
+      this.objects = loaded.collection<ContactMechanism>(pullName);
 
       if (this.objects) {
         this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;

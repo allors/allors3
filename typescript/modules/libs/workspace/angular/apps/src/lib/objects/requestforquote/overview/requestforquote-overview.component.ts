@@ -55,7 +55,7 @@ export class RequestForQuoteOverviewComponent extends TestScope implements After
 
           const pulls = [
             pull.RequestForQuote({
-              object: this.panelManager.id,
+              objectId: this.panelManager.id,
               include: {
                 FullfillContactMechanism: {
                   PostalAddress_Country: x,
@@ -72,7 +72,7 @@ export class RequestForQuoteOverviewComponent extends TestScope implements After
               },
             }),
             pull.RequestForQuote({
-              object: this.panelManager.id,
+              objectId: this.panelManager.id,
               select: {
                 QuoteWhereRequest: x,
               },
@@ -81,11 +81,11 @@ export class RequestForQuoteOverviewComponent extends TestScope implements After
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context.load(new PullRequest({ pulls }));
+          return this.panelManager.client.pullReactive(this.panelManager.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.panelManager.context.session.reset();
+        this.panelManager.session.reset();
 
         this.panelManager.onPulled(loaded);
 

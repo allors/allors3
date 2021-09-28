@@ -70,7 +70,7 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
     titleService.setTitle(this.title);
 
     this.print = printService.print();
-    this.delete = deleteService.delete(allors);
+    this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });

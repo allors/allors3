@@ -106,12 +106,7 @@ export class ReceiptEditComponent extends TestScope implements OnInit, OnDestroy
     this.paymentApplication.AmountApplied = this.receipt.Amount;
 
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.receipt.id,
-        objectType: this.receipt.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.receipt);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

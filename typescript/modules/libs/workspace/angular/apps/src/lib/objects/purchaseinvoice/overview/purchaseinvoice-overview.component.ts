@@ -84,11 +84,11 @@ export class PurchaseInvoiceOverviewComponent extends TestScope implements After
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context.load(new PullRequest({ pulls }));
+          return this.panelManager.client.pullReactive(this.panelManager.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.panelManager.context.session.reset();
+        this.panelManager.session.reset();
 
         this.panelManager.onPulled(loaded);
 

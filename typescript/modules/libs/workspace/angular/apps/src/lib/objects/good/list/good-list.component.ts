@@ -45,7 +45,7 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
 
     titleService.setTitle(this.title);
 
-    this.delete = deleteService.delete(allors);
+    this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });

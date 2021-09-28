@@ -81,7 +81,7 @@ export class PersonOverviewSummaryComponent extends TestScope {
     panel.onPulled = (loaded) => {
       this.person = loaded.objects[personPullName] as Person;
 
-      this.organisationContactRelationships = loaded.collections[organisationContactRelationshipsPullName] as OrganisationContactRelationship[];
+      this.organisationContactRelationships = loaded.collection<OrganisationContactRelationship>(organisationContactRelationshipsPullName);
 
       if (this.organisationContactRelationships.length > 0) {
         const organisationContactRelationship = this.organisationContactRelationships[0];

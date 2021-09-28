@@ -59,7 +59,7 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
     this.panel.icon = 'link';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.delete = this.deleteService.delete(this.panel.manager.session);
 
     this.table = new Table({
       selection: true,
@@ -144,9 +144,9 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
       );
 
       this.panel.onPulled = (loaded) => {
-        const partSerialisedItems = loaded.collections[partSerialisedItemsName] as SerialisedItem[];
-        const ownedSerialisedItems = loaded.collections[ownedSerialisedItemsName] as SerialisedItem[];
-        const rentedSerialisedItems = loaded.collections[rentedSerialisedItemsName] as SerialisedItem[];
+        const partSerialisedItems = loaded.collection<SerialisedItem>(partSerialisedItemsName);
+        const ownedSerialisedItems = loaded.collection<SerialisedItem>(ownedSerialisedItemsName);
+        const rentedSerialisedItems = loaded.collection<SerialisedItem>(rentedSerialisedItemsName);
 
         this.objects = [];
 

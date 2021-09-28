@@ -53,17 +53,17 @@ export class SalesOrderOverviewComponent extends TestScope implements AfterViewI
 
           const pulls = [
             pull.SalesOrder({
-              object: this.panelManager.id,
+              objectId: this.panelManager.id,
             }),
           ];
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context.load(new PullRequest({ pulls }));
+          return this.panelManager.client.pullReactive(this.panelManager.session, pulls);
         })
       )
       .subscribe((loaded) => {
-        this.panelManager.context.session.reset();
+        this.panelManager.session.reset();
 
         this.panelManager.onPulled(loaded);
 

@@ -89,13 +89,8 @@ export class CarrierEditComponent extends TestScope implements OnInit, OnDestroy
   }
 
   public save(): void {
-    this.allors.context.save().subscribe(() => {
-      const data: IObject = {
-        id: this.carrier.id,
-        objectType: this.carrier.objectType,
-      };
-
-      this.dialogRef.close(data);
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+      this.dialogRef.close(this.carrier);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

@@ -137,12 +137,7 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
 
   public save(): void {
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      const data: IObject = {
-        id: this.workEffortPurchaseOrderItemAssignment.id,
-        objectType: this.workEffortPurchaseOrderItemAssignment.objectType,
-      };
-
-      this.dialogRef.close(data);
+      this.dialogRef.close(this.workEffortPurchaseOrderItemAssignment);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

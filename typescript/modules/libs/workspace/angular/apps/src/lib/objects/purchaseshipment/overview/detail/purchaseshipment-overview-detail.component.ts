@@ -213,8 +213,6 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
   public facilityAdded(facility: Facility): void {
     this.facilities.push(facility);
     this.selectedFacility = facility;
-
-    this.allors.session.hasChanges = true;
   }
 
   public shipFromContactPersonAdded(person: Person): void {
@@ -252,12 +250,8 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
       }),
     ];
 
-    this.allors.context.load(new PullRequest({ pulls })).subscribe((loaded) => {
+    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       this.shipFromContacts = loaded.collection<Person>(m.Person);
     });
-  }
-
-  public setDirty(): void {
-    this.allors.session.hasChanges = true;
   }
 }
