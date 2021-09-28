@@ -141,7 +141,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
       .subscribe((loaded) => {
         this.allors.session.reset();
 
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.request = loaded.object<RequestForQuote>(m.RequestForQuote);
         this.currencies = loaded.collection<Currency>(m.Currency);
 

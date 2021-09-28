@@ -143,15 +143,15 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
       .subscribe((loaded) => {
         this.allors.session.reset();
 
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.user = loaded.object<Person>(m.Person);
 
-        this.canCreate = this.internalOrganisation.CanExecuteCreateSalesOrder;
+        this.canCreate = this.internalOrganisation.canExecuteCreateSalesOrder;
 
         const requests = loaded.collection<SalesOrder>(m.SalesOrder);
         this.table.total = loaded.value('SalesOrders_total') as number;
         this.table.data = requests
-          .filter((v) => v.CanReadOrderNumber)
+          .filter((v) => v.canReadOrderNumber)
           .map((v) => {
             return {
               object: v,

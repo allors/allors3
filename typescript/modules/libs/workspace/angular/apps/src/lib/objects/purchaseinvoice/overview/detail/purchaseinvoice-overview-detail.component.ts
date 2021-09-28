@@ -217,7 +217,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
       .subscribe((loaded) => {
         this.allors.session.reset();
 
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);

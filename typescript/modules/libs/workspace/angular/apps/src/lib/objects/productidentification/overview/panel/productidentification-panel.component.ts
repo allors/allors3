@@ -58,7 +58,7 @@ export class ProductIdentificationsPanelComponent extends TestScope implements O
     this.panel.icon = 'fingerprint';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.session);
+    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
     this.edit = this.editService.edit();
 
     const sort = true;

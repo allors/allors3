@@ -159,7 +159,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
       .subscribe(({ loaded, isCreate }) => {
         this.allors.session.reset();
 
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.invoiceItem = loaded.object<PurchaseInvoiceItem>(m.PurchaseInvoiceItem);

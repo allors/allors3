@@ -137,7 +137,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
         })
       )
       .subscribe((loaded) => {
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.salesInvoiceTypes = loaded.collection<SalesInvoiceType>(m.SalesInvoiceType);

@@ -328,7 +328,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
         this.allors.session.reset();
 
         this.user = loaded.object<Person>(m.Person);
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.facilities = loaded.collection<Facility>(m.Facility);
         this.nonUnifiedPartBarcodePrint = loaded.object<NonUnifiedPartBarcodePrint>(m.NonUnifiedPartBarcodePrint);
 

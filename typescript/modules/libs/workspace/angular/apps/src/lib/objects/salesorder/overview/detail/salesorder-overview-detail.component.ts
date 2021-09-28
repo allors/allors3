@@ -299,7 +299,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
         this.allors.session.reset();
 
         this.order = loaded.object<SalesOrder>(m.SalesOrder);
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.facilities = loaded.collection<Facility>(m.Facility);

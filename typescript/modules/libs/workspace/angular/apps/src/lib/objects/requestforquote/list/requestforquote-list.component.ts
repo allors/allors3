@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { Request, Person, Organisation, InternalOrganisation } from '@allors/workspace/domain/default';
+import { Request, Person, Organisation, InternalOrganisation, displayName } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -126,15 +126,15 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
       .subscribe((loaded) => {
         this.allors.session.reset();
 
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.user = loaded.object<Person>(m.Person);
 
-        this.canCreate = this.internalOrganisation.CanExecuteCreateRequest;
+        this.canCreate = this.internalOrganisation.canExecuteCreateRequest;
 
         const requests = loaded.collection<Request>(m.Request);
         this.table.total = loaded.value('Requests_total') as number;
         this.table.data = requests
-          .filter((v) => v.CanReadRequestNumber)
+          .filter((v) => v.canReadRequestNumber)
           .map((v) => {
             return {
               object: v,

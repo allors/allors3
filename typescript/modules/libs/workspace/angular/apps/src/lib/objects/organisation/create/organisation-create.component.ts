@@ -140,7 +140,7 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
       )
       .subscribe((loaded) => {
         this.organisation = loaded.object<Organisation>(m.Organisation);
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
 
         if (this.organisation) {
           this.customerRelationship = loaded.collections.CustomerRelationships[0] as CustomerRelationship;

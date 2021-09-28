@@ -59,7 +59,7 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
     this.panel.icon = 'link';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.session);
+    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
 
     this.table = new Table({
       selection: true,

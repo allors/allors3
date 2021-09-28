@@ -84,7 +84,7 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
       .subscribe((loaded) => {
         this.allors.session.reset();
 
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.locales = loaded.collection<Locale>(m.Locale);
         this.organisations = loaded.collection<Organisation>(m.Organisation);
 

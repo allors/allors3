@@ -80,14 +80,14 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
     this.panel.icon = 'message';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.session);
+    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
 
     this.addToInvoice = {
       name: 'addtoinvoice',
       displayName: () => 'Add to invoice',
       description: () => '',
       disabled: (target: PurchaseOrder) => {
-        return !target.CanExecuteInvoice;
+        return !target.canExecuteInvoice;
       },
       execute: (target: PurchaseOrder) => {
         if (!Array.isArray(target)) {
@@ -200,7 +200,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
     };
 
     this.panel.onPulled = (loaded) => {
-      this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+      this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
       this.purchaseInvoice = loaded.objects[invoicePullName] as PurchaseInvoice;
       this.orderItemBillings = loaded.collection<OrderItemBilling>(m.OrderItemBilling);
 
@@ -211,7 +211,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
       const purchaseOrders = loaded.collection<PurchaseOrder>(pullName);
       this.objects = purchaseOrders.filter(
         (v) =>
-          (v.CanExecuteInvoice && (this.purchaseInvoice.PurchaseInvoiceState.UniqueId === '102f4080-1d12-4090-9196-f42c094c38ca' || this.purchaseInvoice.PurchaseInvoiceState.UniqueId === '639ba038-d8f3-4672-80b5-c8eb96e3275d')) ||
+          (v.canExecuteInvoice && (this.purchaseInvoice.PurchaseInvoiceState.UniqueId === '102f4080-1d12-4090-9196-f42c094c38ca' || this.purchaseInvoice.PurchaseInvoiceState.UniqueId === '639ba038-d8f3-4672-80b5-c8eb96e3275d')) ||
           v.PurchaseInvoicesWherePurchaseOrder.includes(this.purchaseInvoice)
       );
 

@@ -122,7 +122,7 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
         this.person = loaded.object<Person>(m.Person);
         this.organisation = loaded.object<Organisation>(m.Organisation);
         this.organisations = loaded.collection<Organisation>(m.Organisation);
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.currencies = loaded.collection<Currency>(m.Currency);
         this.locales = loaded.collection<Locale>(m.Locale) || [];
         this.genders = loaded.collection<Enumeration>(m.Enumeration);

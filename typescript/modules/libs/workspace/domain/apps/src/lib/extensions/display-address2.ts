@@ -1,4 +1,4 @@
-import { tags } from '@allors/workspace/meta/apps';
+import { tags } from '@allors/workspace/meta/default';
 import { Organisation, PostalAddress } from '../generated';
 
 export function displayAddress2(organisation: Organisation): string {

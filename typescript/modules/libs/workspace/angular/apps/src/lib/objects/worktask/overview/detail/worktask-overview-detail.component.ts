@@ -23,6 +23,7 @@ import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
+import { Filters } from '../../../../filters/filters';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -104,6 +105,8 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
   }
 
   public ngOnInit(): void {
+    const m = this.m;
+
     // Maximized
     this.subscription = this.panel.manager.on$
       .pipe(
@@ -158,7 +161,7 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
       .subscribe((loaded) => {
         this.allors.session.reset();
 
-        const internalOrganisation: Organisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        const internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.employees = internalOrganisation.ActiveEmployees;
 
         this.workTask = loaded.object<WorkTask>(m.WorkTask);
@@ -177,7 +180,7 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
   }
 
   public contactPersonAdded(contact: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.workTask.Customer as Organisation;
     organisationContactRelationship.Contact = contact;
 

@@ -69,7 +69,7 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
       .subscribe((loaded) => {
         this.allors.session.reset();
 
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.currencies = loaded.collection<Currency>(m.Currency);
 
         this.request = this.allors.session.create<RequestForQuote>(m.RequestForQuote);

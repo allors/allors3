@@ -17,7 +17,7 @@ import {
   WebAddress,
   WorkEffortPartyAssignment,
 } from '../generated';
-import { tags } from '@allors/workspace/meta/apps';
+import { tags } from '@allors/workspace/meta/default';
 
 export function displayName(
   item:

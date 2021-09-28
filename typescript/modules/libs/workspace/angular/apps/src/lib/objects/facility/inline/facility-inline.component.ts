@@ -44,7 +44,7 @@ export class FacilityInlineComponent implements OnInit, OnDestroy {
     ];
 
     this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
-      this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+      this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
       this.facilities = loaded.collection<Facility>(m.Facility);
 
       this.facilityTypes = loaded.collection<FacilityType>(m.FacilityType);

@@ -123,7 +123,7 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
       )
       .subscribe((loaded) => {
         this.organisation = loaded.object<Organisation>(m.Organisation);
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.currencies = loaded.collection<Currency>(m.Currency);
         this.locales = loaded.collection<Locale>(m.Locale) || [];
         this.classifications = loaded.collection<CustomOrganisationClassification>(m.CustomOrganisationClassification);

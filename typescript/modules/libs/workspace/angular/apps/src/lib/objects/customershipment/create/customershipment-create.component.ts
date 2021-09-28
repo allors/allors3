@@ -146,7 +146,7 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.session.reset();
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.locales = loaded.collection<Locale>(m.Locale);
         this.facilities = loaded.collection<Facility>(m.Facility);
         this.shipmentMethods = loaded.collection<ShipmentMethod>(m.ShipmentMethod);

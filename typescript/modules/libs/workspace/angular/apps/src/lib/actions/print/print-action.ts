@@ -13,7 +13,7 @@ export class PrintAction implements Action {
       let printable = target as Printable;
 
       if (roleType) {
-        printable = printable.get(roleType);
+        printable = printable.strategy.getRole(roleType) as Printable;
       }
 
       const url = `${config.url}print/${printable.id}`;
@@ -31,7 +31,7 @@ export class PrintAction implements Action {
     if (Array.isArray(target)) {
       return true;
     } else {
-      return !(target as Printable).CanReadPrintDocument || !(target as Printable).PrintDocument;
+      return !(target as Printable).canReadPrintDocument || !(target as Printable).PrintDocument;
     }
   };
 }

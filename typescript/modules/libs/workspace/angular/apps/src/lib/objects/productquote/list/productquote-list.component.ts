@@ -134,15 +134,15 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
       .subscribe((loaded) => {
         this.allors.session.reset();
 
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.user = loaded.object<Person>(m.Person);
 
-        this.canCreate = this.internalOrganisation.CanExecuteCreateQuote;
+        this.canCreate = this.internalOrganisation.canExecuteCreateQuote;
 
         const quotes = loaded.collection<Quote>(m.Quote);
         this.table.total = loaded.value('Quotes_total') as number;
         this.table.data = quotes
-          .filter((v) => v.CanReadQuoteNumber)
+          .filter((v) => v.canReadQuoteNumber)
           .map((v) => {
             return {
               object: v,

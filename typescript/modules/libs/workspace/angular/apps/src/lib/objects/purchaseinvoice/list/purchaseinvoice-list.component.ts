@@ -93,15 +93,15 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
       description: () => '',
       disabled: (target: ActionTarget) => {
         if (Array.isArray(target)) {
-          const anyDisabled = (target as PurchaseInvoice[]).filter((v) => !v.CanExecuteSetPaid);
+          const anyDisabled = (target as PurchaseInvoice[]).filter((v) => !v.canExecuteSetPaid);
           return target.length > 0 ? anyDisabled.length > 0 : true;
         } else {
-          return !(target as PurchaseInvoice).CanExecuteSetPaid;
+          return !(target as PurchaseInvoice).canExecuteSetPaid;
         }
       },
       execute: (target: PurchaseInvoice) => {
         const invoices = Array.isArray(target) ? (target as PurchaseInvoice[]) : [target as PurchaseInvoice];
-        const targets = invoices.filter((v) => v.CanExecuteSetPaid);
+        const targets = invoices.filter((v) => v.canExecuteSetPaid);
 
         if (targets.length > 0) {
           dialogService.prompt({ title: `Set Payment Date`, placeholder: `Payment date`, promptType: `date` }).subscribe((paymentDate: string) => {
@@ -227,15 +227,15 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
       .subscribe((loaded) => {
         this.allors.session.reset();
 
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.user = loaded.object<Person>(m.Person);
 
-        this.canCreate = this.internalOrganisation.CanExecuteCreatePurchaseInvoice;
+        this.canCreate = this.internalOrganisation.canExecuteCreatePurchaseInvoice;
 
         const purchaseInvoices = loaded.collection<PurchaseInvoice>(m.PurchaseInvoice);
         this.table.total = loaded.value('PurchaseInvoices_total') as number;
         this.table.data = purchaseInvoices
-          .filter((v) => v.CanReadInvoiceNumber)
+          .filter((v) => v.canReadInvoiceNumber)
           .map((v) => {
             return {
               object: v,

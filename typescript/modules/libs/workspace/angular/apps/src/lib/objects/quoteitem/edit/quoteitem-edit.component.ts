@@ -220,7 +220,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
       .subscribe(({ loaded, create }) => {
         this.allors.session.reset();
 
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.quoteItem = loaded.object<QuoteItem>(m.QuoteItem);

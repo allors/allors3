@@ -156,7 +156,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
         })
       )
       .subscribe((loaded) => {
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.stores = loaded.collection<Store>(m.Store);

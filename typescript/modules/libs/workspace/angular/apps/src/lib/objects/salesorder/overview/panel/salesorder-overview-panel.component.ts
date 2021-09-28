@@ -52,7 +52,7 @@ export class SalesOrderOverviewPanelComponent extends TestScope implements OnIni
   }
 
   ngOnInit() {
-    this.delete = this.deleteService.delete(this.panel.manager.session);
+    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
 
     this.panel.name = 'salesorder';
     this.panel.title = 'Sales Orders';

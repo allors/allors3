@@ -58,7 +58,7 @@ export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope impl
   }
 
   ngOnInit() {
-    this.delete = this.deleteService.delete(this.panel.manager.session);
+    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
     this.edit = this.editService.edit();
 
     this.panel.name = 'workeffortfixedassetassignment';

@@ -74,7 +74,7 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
         })
       )
       .subscribe((loaded) => {
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.facilities = loaded.collection<Facility>(m.Facility);
 
         this.purchaseReturn = this.allors.session.create<PurchaseReturn>(m.PurchaseReturn);

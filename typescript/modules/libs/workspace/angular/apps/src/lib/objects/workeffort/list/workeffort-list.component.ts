@@ -144,7 +144,7 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
         const workEfforts = loaded.collection<WorkEffort>(m.WorkEffort);
         this.table.total = loaded.value('WorkTasks_total') as number;
         this.table.data = workEfforts
-          .filter((v) => v.CanReadWorkEffortNumber)
+          .filter((v) => v.canReadWorkEffortNumber)
           .map((v) => {
             return {
               object: v,
@@ -152,7 +152,7 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
               name: v.Name,
               type: v.strategy.cls.singularName,
               state: v.WorkEffortState ? v.WorkEffortState.Name : '',
-              customer: v.Customer ? v.Customer.displayName : '',
+              customer: v.Customer ? displayName(v.Customer) : '',
               executedBy: v.ExecutedBy ? v.ExecutedBy.displayName : '',
               equipment: v.WorkEffortFixedAssetAssignmentsWhereAssignment ? v.WorkEffortFixedAssetAssignmentsWhereAssignment.map((w) => w.FixedAsset.displayName).join(', ') : '',
               worker: v.WorkEffortPartyAssignmentsWhereAssignment ? v.WorkEffortPartyAssignmentsWhereAssignment.map((w) => w.Party.displayName).join(', ') : '',

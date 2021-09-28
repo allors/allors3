@@ -173,7 +173,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
       .subscribe(({ loaded, isCreate }) => {
         this.allors.session.reset();
 
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.invoiceItem = loaded.object<SalesInvoiceItem>(m.SalesInvoiceItem);

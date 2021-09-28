@@ -94,7 +94,7 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
         this.allors.session.reset();
 
         this.people = loaded.collection<Person>(m.Person);
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
 
         if (isCreate) {
           this.title = 'Add Employment';

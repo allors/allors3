@@ -1,4 +1,4 @@
-import { tags } from '@allors/workspace/meta/apps';
+import { tags } from '@allors/workspace/meta/default';
 import { Person, EmailAddress } from '../generated';
 
 export function displayEmail(person: Person): string {

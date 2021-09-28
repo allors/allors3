@@ -67,7 +67,7 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
   }
 
   ngOnInit() {
-    this.delete = this.deleteService.delete(this.panel.manager.session);
+    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
     this.edit = this.editService.edit();
 
     this.panel.name = 'workeffortpartyassignment';

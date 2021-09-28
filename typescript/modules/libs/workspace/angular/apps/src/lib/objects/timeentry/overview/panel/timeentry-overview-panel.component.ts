@@ -59,7 +59,7 @@ export class TimeEntryOverviewPanelComponent extends TestScope implements OnInit
     this.panel.icon = 'timer';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.session);
+    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
     this.edit = this.editService.edit();
 
     this.table = new Table({

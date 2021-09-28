@@ -6,7 +6,6 @@ import { M, PullBuilder } from '@allors/workspace/meta/default';
 
 import { InternalOrganisationId } from '../state/internal-organisation-id';
 import { Pull } from '@allors/workspace/domain/system';
-import { Equals } from '../../../../../../domain/system/src/lib/data/equals';
 
 const x = {};
 
@@ -23,7 +22,7 @@ export class FetcherService {
   }
 
   public get internalOrganisation(): Pull {
-    return this.pull.Person({
+    return this.pull.InternalOrganisation({
       name: 'InternalOrganisation',
       objectId: this.internalOrganisationId.value,
       include: {
@@ -31,7 +30,8 @@ export class FetcherService {
         DefaultShipmentMethod: x,
         DefaultCollectionMethod: x,
         PaymentMethods: x,
-        ActiveCollectionMethods: x,
+        Organisation_AssignedActiveCollectionMethods: x,
+        Organisation_DerivedActiveCollectionMethods: x,
         ActiveCustomers: x,
         ActiveEmployees: x,
         ActiveSuppliers: x,

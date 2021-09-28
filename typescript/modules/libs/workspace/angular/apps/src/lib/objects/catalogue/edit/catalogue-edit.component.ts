@@ -85,7 +85,7 @@ export class CatalogueEditComponent extends TestScope implements OnInit, OnDestr
         this.locales = loaded.collection<Locale>(m.Locale);
         this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
         this.scopes = loaded.collection<Scope>(m.Scope);
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
 
         if (create) {
           this.title = 'Add Catalogue';

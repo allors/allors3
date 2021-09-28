@@ -70,7 +70,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
     this.panel.icon = 'message';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.session);
+    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
     this.invoice = methodService.create(allors.context, this.m.PurchaseOrder.Invoice, { name: 'Invoice' });
 
     const sort = true;
@@ -123,7 +123,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
     };
 
     this.panel.onPulled = (loaded) => {
-      this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+      this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
 
       const purchaseOrders = loaded.collection<PurchaseOrder>(pullName);
       this.objects = purchaseOrders.filter((v) => v.OrderedBy === this.internalOrganisation);

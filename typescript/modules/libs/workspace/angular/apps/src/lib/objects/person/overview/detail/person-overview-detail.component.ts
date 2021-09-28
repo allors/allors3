@@ -143,7 +143,7 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
         this.allors.session.reset();
 
         this.person = loaded.object<Person>(m.Person);
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.currencies = loaded.collection<Currency>(m.Currency);
         this.locales = loaded.collection<Locale>(m.Locale) || [];
         this.genders = loaded.collection<Enumeration>(m.Enumeration);

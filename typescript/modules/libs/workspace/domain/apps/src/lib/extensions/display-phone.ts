@@ -1,4 +1,4 @@
-import { tags } from '@allors/workspace/meta/apps';
+import { tags } from '@allors/workspace/meta/default';
 import { Party, TelecommunicationsNumber } from '../generated';
 import { displayName } from './display-name';
 

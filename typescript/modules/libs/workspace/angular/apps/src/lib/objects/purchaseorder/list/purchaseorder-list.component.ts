@@ -159,15 +159,15 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
       .subscribe((loaded) => {
         this.allors.session.reset();
 
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.user = loaded.object<Person>(m.Person);
 
-        this.canCreate = this.internalOrganisation.CanExecuteCreatePurchaseOrder;
+        this.canCreate = this.internalOrganisation.canExecuteCreatePurchaseOrder;
 
         const orders = loaded.collection<PurchaseOrder>(m.PurchaseOrder);
         this.table.total = loaded.value('PurchaseOrders_total') as number;
         this.table.data = orders
-          .filter((v) => v.CanReadOrderNumber)
+          .filter((v) => v.canReadOrderNumber)
           .map((v) => {
             return {
               object: v,

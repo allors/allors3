@@ -2,7 +2,7 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { SerialisedItem, WorkEffort } from '@allors/workspace/domain/default';
+import { displayName, SerialisedItem, WorkEffort } from '@allors/workspace/domain/default';
 import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -57,7 +57,9 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
   }
 
   ngOnInit() {
-    this.delete = this.deleteService.delete(this.panel.manager.session);
+    const m = this.m;
+
+    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
 
     this.panel.name = 'workeffort';
     this.panel.title = 'Work Efforts';
@@ -81,9 +83,9 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
       autoFilter: true,
     });
 
-    const customerPullName = `${this.panel.name}_${this.m.WorkEffort.name}_customer`;
-    const contactPullName = `${this.panel.name}_${this.m.WorkEffort.name}_contact`;
-    const assetPullName = `${this.panel.name}_${this.m.WorkEffort.name}_fixedasset`;
+    const customerPullName = `${this.panel.name}_${m.WorkEffort.tag}_customer`;
+    const contactPullName = `${this.panel.name}_${m.WorkEffort.tag}_contact`;
+    const assetPullName = `${this.panel.name}_${m.WorkEffort.tag}_fixedasset`;
 
     this.panel.onPull = (pulls) => {
       const m = this.m;
@@ -162,7 +164,7 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
             object: v,
             number: v.WorkEffortNumber,
             name: v.Name,
-            customer: v.Customer.displayName,
+            customer: displayName(v.Customer),
             state: v.WorkEffortState ? v.WorkEffortState.Name : '',
             cost: v.TotalCost,
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),

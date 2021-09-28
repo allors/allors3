@@ -104,7 +104,7 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
         this.purchaseShipment = loaded.objects[pullName] as PurchaseShipment;
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
       }
     };
   }

@@ -98,15 +98,15 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
       description: () => '',
       disabled: (target: ActionTarget) => {
         if (Array.isArray(target)) {
-          const anyDisabled = (target as SalesInvoice[]).filter((v) => !v.CanExecuteSetPaid);
+          const anyDisabled = (target as SalesInvoice[]).filter((v) => !v.canExecuteSetPaid);
           return target.length > 0 ? anyDisabled.length > 0 : true;
         } else {
-          return !(target as SalesInvoice).CanExecuteSetPaid;
+          return !(target as SalesInvoice).canExecuteSetPaid;
         }
       },
       execute: (target: SalesInvoice) => {
         const invoices = Array.isArray(target) ? (target as SalesInvoice[]) : [target as SalesInvoice];
-        const targets = invoices.filter((v) => v.CanExecuteSetPaid);
+        const targets = invoices.filter((v) => v.canExecuteSetPaid);
 
         if (targets.length > 0) {
           dialogService.prompt({ title: `Set Payment Date`, placeholder: `Payment date`, promptType: `date` }).subscribe((paymentDate: string) => {
@@ -230,15 +230,15 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
       .subscribe((loaded) => {
         this.allors.session.reset();
 
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.user = loaded.object<Person>(m.Person);
 
-        this.canCreate = this.internalOrganisation.CanExecuteCreateSalesInvoice;
+        this.canCreate = this.internalOrganisation.canExecuteCreateSalesInvoice;
 
         const salesInvoices = loaded.collection<SalesInvoice>(m.SalesInvoice);
         this.table.total = loaded.value('SalesInvoices_total') as number;
         this.table.data = salesInvoices
-          .filter((v) => v.CanReadInvoiceNumber)
+          .filter((v) => v.canReadInvoiceNumber)
           .map((v) => {
             return {
               object: v,

@@ -1,8 +1,9 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { WorkEffort, WorkEffortPurchaseOrderItemAssignment } from '@allors/workspace/domain/default';
+import { displayName, WorkEffort, WorkEffortPurchaseOrderItemAssignment } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: WorkEffortPurchaseOrderItemAssignment;
@@ -42,16 +43,15 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope imp
 
   constructor(
     @Self() public panel: PanelService,
-
+    public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
-
     public deleteService: DeleteService,
     public editService: EditService
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {
@@ -62,7 +62,7 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope imp
     this.panel.expandable = true;
 
     this.edit = this.editService.edit();
-    this.delete = this.deleteService.delete(this.panel.manager.session);
+    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
 
     this.table = new Table({
       selection: true,
@@ -113,7 +113,7 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope imp
         this.table.data = this.objects.map((v) => {
           return {
             object: v,
-            supplier: (v.PurchaseOrder.TakenViaSupplier && v.PurchaseOrder.TakenViaSupplier.displayName) || (v.PurchaseOrder.TakenViaSubcontractor && v.PurchaseOrder.TakenViaSubcontractor.displayName),
+            supplier: (v.PurchaseOrder.TakenViaSupplier && displayName(v.PurchaseOrder.TakenViaSupplier)) || (v.PurchaseOrder.TakenViaSubcontractor && displayName(v.PurchaseOrder.TakenViaSubcontractor)),
             description: v.PurchaseOrderItem.Description,
             orderNumber: v.PurchaseOrder.OrderNumber,
             quantity: v.Quantity,

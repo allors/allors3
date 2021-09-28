@@ -89,7 +89,7 @@ export class SubContractorRelationshipEditComponent extends TestScope implements
       .subscribe(({ loaded, isCreate }) => {
         this.allors.session.reset();
 
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.organisation = loaded.object<Organisation>(m.Organisation);
 
         if (isCreate) {

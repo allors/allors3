@@ -74,7 +74,7 @@ export class ExchangeRateEditComponent extends TestScope implements OnInit, OnDe
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.session.reset();
-        this.internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.currencies = loaded.collection<Currency>(m.Currency);
 
         if (isCreate) {
