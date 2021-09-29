@@ -5,7 +5,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Part, UnitOfMeasure, Good, SerialisedItem, UnifiedGood, RequestItemState, RequestState, QuoteItemState, QuoteState, SalesOrderItemState, SalesOrderState, ShipmentItemState, ShipmentState, RequestItem, Product } from '@allors/workspace/domain/default';
+import { Part, UnitOfMeasure, Good, SerialisedItem, UnifiedGood, Request, RequestItemState, RequestState, QuoteItemState, QuoteState, SalesOrderItemState, SalesOrderState, ShipmentItemState, ShipmentState, RequestItem, Product } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';

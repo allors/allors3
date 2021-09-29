@@ -123,7 +123,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
             this.workEffortFixedAssetAssignment.FixedAsset = this.serialisedItem;
           }
 
-          if (this.workEffort !== undefined && this.workEffort.objectType.name === m.WorkTask.name) {
+          if (this.workEffort !== undefined && this.workEffort.strategy.cls === m.WorkTask) {
             this.assignment = this.workEffort as WorkEffort;
             this.workEffortFixedAssetAssignment.Assignment = this.assignment;
           }

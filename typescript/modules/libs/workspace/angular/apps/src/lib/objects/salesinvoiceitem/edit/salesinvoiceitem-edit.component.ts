@@ -23,6 +23,7 @@ import {
   IrpfRegime,
   InvoiceItemType,
   SalesInvoiceItem,
+  Product,
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';

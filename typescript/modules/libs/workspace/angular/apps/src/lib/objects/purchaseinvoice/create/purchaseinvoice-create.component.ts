@@ -19,6 +19,7 @@ import {
   IrpfRegime,
   PurchaseInvoice,
   PurchaseInvoiceType,
+  CustomerRelationship,
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
@@ -87,15 +88,15 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
   showIrpf: boolean;
 
   get shipToCustomerIsPerson(): boolean {
-    return !this.invoice.ShipToCustomer || this.invoice.ShipToCustomer.strategy.cls  === this.m.Person;
+    return !this.invoice.ShipToCustomer || this.invoice.ShipToCustomer.strategy.cls === this.m.Person;
   }
 
   get billToEndCustomerIsPerson(): boolean {
-    return !this.invoice.BillToEndCustomer || this.invoice.BillToEndCustomer.strategy.cls  === this.m.Person;
+    return !this.invoice.BillToEndCustomer || this.invoice.BillToEndCustomer.strategy.cls === this.m.Person;
   }
 
   get shipToEndCustomerIsPerson(): boolean {
-    return !this.invoice.ShipToEndCustomer || this.invoice.ShipToEndCustomer.strategy.cls  === this.m.Person;
+    return !this.invoice.ShipToEndCustomer || this.invoice.ShipToEndCustomer.strategy.cls === this.m.Person;
   }
 
   constructor(
@@ -192,7 +193,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
   }
 
   public billedFromAdded(organisation: Organisation): void {
-    const supplierRelationship = this.allors.session.create<SupplierRelationship>(m.SupplierRelationship);
+    const supplierRelationship = this.allors.session.create<SupplierRelationship>(this.m.SupplierRelationship);
     supplierRelationship.Supplier = organisation;
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -201,7 +202,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
   }
 
   public shipToCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -209,7 +210,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
   }
 
   public billToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -217,7 +218,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
   }
 
   public shipToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -225,7 +226,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
   }
 
   public billedFromContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.invoice.BilledFrom as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -234,7 +235,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
   }
 
   public shipToCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.invoice.BilledFrom as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -243,7 +244,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
   }
 
   public billToEndCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.invoice.ShipToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -252,7 +253,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
   }
 
   public shipToEndCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.invoice.ShipToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -352,7 +353,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
       this.billedFromContactMechanisms = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
       this.billedFromContacts = loaded.collection<Person>(m.Person);
 
-      const selectedSupplier = loaded.object<selectedSupplier>(m.selectedSupplier);
+      const selectedSupplier = loaded.object<Organisation>('selectedSupplier');
       this.billedFromContactMechanismInitialRole = selectedSupplier.OrderAddress;
     });
   }
@@ -403,7 +404,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
       this.shipToCustomerAddresses = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToCustomerContacts = loaded.collection<Person>(m.Person);
 
-      const selectedparty = loaded.object<selectedParty>(m.selectedParty);
+      const selectedparty = loaded.object<Party>('selectedParty');
       this.shipToCustomerAddressInitialRole = selectedparty.BillingAddress ?? selectedparty.GeneralCorrespondence;
     });
   }
@@ -459,7 +460,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
       this.billToEndCustomerContactMechanisms = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
       this.billToEndCustomerContacts = loaded.collection<Person>(m.Person);
 
-      const selectedparty = loaded.object<selectedParty>(m.selectedParty);
+      const selectedparty = loaded.object<Party>('selectedParty');
       this.billToEndCustomerContactMechanismInitialRole = selectedparty.BillingAddress ?? selectedparty.GeneralCorrespondence;
     });
   }
@@ -515,7 +516,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
       this.shipToEndCustomerAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToEndCustomerContacts = loaded.collection<Person>(m.Person);
 
-      const selectedparty = loaded.object<selectedParty>(m.selectedParty);
+      const selectedparty = loaded.object<Party>('selectedParty');
       this.shipToEndCustomerAddressInitialRole = selectedparty.BillingAddress ?? selectedparty.GeneralCorrespondence;
     });
   }

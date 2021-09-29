@@ -2,7 +2,7 @@ import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { format } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { WorkEffort, TimeEntry } from '@allors/workspace/domain/default';
+import { WorkEffort, TimeEntry, displayName } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -20,7 +20,7 @@ interface Row extends TableRow {
   templateUrl: './timeentry-overview-panel.component.html',
   providers: [PanelService, SessionService],
 })
-export class TimeEntryOverviewPanelComponent extends TestScope implements OnInit {
+export class TimeEntryOverviewPanelComponent extends TestScope {
   workEffort: WorkEffort;
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
@@ -44,7 +44,6 @@ export class TimeEntryOverviewPanelComponent extends TestScope implements OnInit
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     public deleteService: DeleteService,
@@ -53,6 +52,9 @@ export class TimeEntryOverviewPanelComponent extends TestScope implements OnInit
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.panel.name = 'timeentry';
     this.panel.title = 'Time Entries';
@@ -72,9 +74,6 @@ export class TimeEntryOverviewPanelComponent extends TestScope implements OnInit
     });
 
     this.panel.onPull = (pulls) => {
-      const m = this.m;
-      const { pullBuilder: pull } = m;
-      const x = {};
       const id = this.panel.manager.id;
 
       pulls.push(
@@ -103,7 +102,7 @@ export class TimeEntryOverviewPanelComponent extends TestScope implements OnInit
         this.table.data = this.objects.map((v) => {
           return {
             object: v,
-            person: v.Worker && v.Worker.displayName,
+            person: v.Worker && displayName(v.Worker),
             from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
             through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
             time: v.AmountOfTime,
@@ -112,6 +111,4 @@ export class TimeEntryOverviewPanelComponent extends TestScope implements OnInit
       }
     };
   }
-
-  ngOnInit(): void {}
 }

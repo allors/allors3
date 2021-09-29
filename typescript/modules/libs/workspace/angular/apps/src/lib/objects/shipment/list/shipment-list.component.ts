@@ -5,13 +5,13 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { Shipment } from '@allors/workspace/domain/default';
+import { displayName, Shipment } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService, Sorter } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
-import { Equals } from '@allors/workspace/domain/system';
+import { And, Equals } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: Shipment;
@@ -84,14 +84,15 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.Shipment.filter = m.Shipment.filter ?? new Filter(m.Shipment.filterDefinition);
+
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularShipment = angularMeta.for(m.Shipment);
+    this.filter = angularShipment.filter ??= new Filter(angularShipment.filterDefinition);
 
     const fromInternalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Shipment.ShipFromParty };
     const toInternalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Shipment.ShipToParty };
 
-    const predicate = new And([new Or([fromInternalOrganisationPredicate, toInternalOrganisationPredicate]), this.filter.definition.predicate]);
-
-    const sorter = new Sorter({});
+    const predicate: And = { kind: 'And', operands: [{ kind: 'Or', operands: [fromInternalOrganisationPredicate, toInternalOrganisationPredicate] }, this.filter.definition.predicate] };
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$)
       .pipe(
@@ -111,13 +112,13 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
         switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          fromInternalOrganisationPredicate.object = internalOrganisationId;
-          toInternalOrganisationPredicate.object = internalOrganisationId;
+          fromInternalOrganisationPredicate.value = internalOrganisationId;
+          toInternalOrganisationPredicate.value = internalOrganisationId;
 
           const pulls = [
             pull.Shipment({
               predicate,
-              sorting: sort ? m.Shipment.sorter.create(sort) : null,
+              sorting: sort ? angularShipment.sorter?.create(sort) : null,
               include: {
                 ShipToParty: x,
                 ShipFromParty: x,
@@ -140,8 +141,8 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
           return {
             object: v,
             number: `${v.ShipmentNumber}`,
-            from: v.ShipFromParty.displayName,
-            to: v.ShipToParty.displayName,
+            from: displayName(v.ShipFromParty),
+            to: displayName(v.ShipToParty),
             state: `${v.ShipmentState && v.ShipmentState.Name}`,
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
           } as Row;

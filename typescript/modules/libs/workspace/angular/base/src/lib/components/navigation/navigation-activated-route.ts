@@ -4,8 +4,9 @@ import { Composite } from '@allors/workspace/meta/system';
 export class NavigationActivatedRoute {
   constructor(private activatedRoute: ActivatedRoute) {}
 
-  id(): string | null {
-    return this.activatedRoute.snapshot.paramMap.get('id');
+  id(): number | null {
+    const id = this.activatedRoute.snapshot.paramMap.get('id');
+    return id != null ? parseInt(id) : null;
   }
 
   panel(): string | null {

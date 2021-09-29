@@ -5,6 +5,7 @@ import { M } from '@allors/workspace/meta/default';
 import { SerialisedInventoryItemState, Shipment, SalesOrderItem, ProductQuote, SalesOrder, SalesInvoice, BillingProcess } from '@allors/workspace/domain/default';
 import { Action, NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { PrintService } from '../../../../actions/print/print.service';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -29,14 +30,17 @@ export class SalesOrderOverviewSummaryComponent {
 
   constructor(
     @Self() public panel: PanelService,
-
+    public workspaceService: WorkspaceService,
     public navigation: NavigationService,
     public printService: PrintService,
     public refreshService: RefreshService,
     private saveService: SaveService,
     public snackBar: MatSnackBar
   ) {
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    const m = this.m;
+    const { pullBuilder: pull, treeBuilder: tree } = m;
+    const x = {};
 
     this.print = printService.print();
 
@@ -50,10 +54,6 @@ export class SalesOrderOverviewSummaryComponent {
     const serialisedInventoryItemStatePullName = `${panel.name}_${this.m.SerialisedInventoryItemState.tag}`;
 
     panel.onPull = (pulls) => {
-      const m = this.allors.workspace.configuration.metaPopulation as M;
-      const { pullBuilder: pull } = m;
-      const x = {};
-
       pulls.push(
         pull.SalesOrder({
           name: salesOrderPullName,

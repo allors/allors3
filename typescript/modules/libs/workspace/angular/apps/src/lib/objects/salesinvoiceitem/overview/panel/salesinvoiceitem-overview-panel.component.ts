@@ -40,7 +40,7 @@ export class SalesInvoiceItemOverviewPanelComponent extends TestScope {
     return {
       associationId: this.panel.manager.id,
       associationObjectType: this.panel.manager.objectType,
-      associationRoleType: this.metaService.m.SalesInvoice.SalesInvoiceItems,
+      associationRoleType: this.m.SalesInvoice.SalesInvoiceItems,
     };
   }
 
@@ -111,7 +111,7 @@ export class SalesInvoiceItemOverviewPanelComponent extends TestScope {
     panel.onPulled = (loaded) => {
       this.salesInvoiceItems = loaded.collection<SalesInvoiceItem>(pullName);
       this.invoice = loaded.object<SalesInvoice>(invoicePullName);
-      this.table.total = loaded.values[`${pullName}_total`] || this.salesInvoiceItems.length;
+      this.table.total = loaded.value([`${pullName}_total`]) ?? this.salesInvoiceItems.length;
       this.table.data = this.salesInvoiceItems.map((v) => {
         return {
           object: v,

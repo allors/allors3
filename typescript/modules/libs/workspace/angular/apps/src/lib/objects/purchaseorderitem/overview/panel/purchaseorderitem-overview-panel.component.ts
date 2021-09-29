@@ -47,7 +47,7 @@ export class PurchaseOrderItemOverviewPanelComponent extends TestScope {
     return {
       associationId: this.panel.manager.id,
       associationObjectType: this.panel.manager.objectType,
-      associationRoleType: this.metaService.m.PurchaseOrder.PurchaseOrderItems,
+      associationRoleType: this.m.PurchaseOrder.PurchaseOrderItems,
     };
   }
 
@@ -125,7 +125,7 @@ export class PurchaseOrderItemOverviewPanelComponent extends TestScope {
     panel.onPulled = (loaded) => {
       this.objects = loaded.collection<PurchaseOrderItem>(pullName);
       this.order = loaded.object<PurchaseOrder>(orderPullName);
-      this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;
+      this.table.total = loaded.value([`${pullName}_total`]) ?? this.objects.length;
       this.table.data = this.objects.map((v) => {
         return {
           object: v,

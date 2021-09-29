@@ -66,7 +66,10 @@ export class ProductTypesOverviewComponent extends TestScope implements OnInit, 
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.ProductType.filter = m.ProductType.filter ?? new Filter(m.ProductType.filterDefinition);
+
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularProductType = angularMeta.for(m.ProductType);
+    this.filter = angularProductType.filter ??= new Filter(angularProductType.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -89,7 +92,7 @@ export class ProductTypesOverviewComponent extends TestScope implements OnInit, 
           const pulls = [
             pull.ProductType({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.ProductType.sorter.create(sort) : null,
+              sorting: sort ? angularProductType.sorter?.create(sort) : null,
               include: {
                 SerialisedItemCharacteristicTypes: x,
               },

@@ -4,6 +4,7 @@ import { M } from '@allors/workspace/meta/default';
 import { ProductIdentification } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { RoleType } from '@allors/workspace/meta/system';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: ProductIdentification;
@@ -39,20 +40,17 @@ export class ProductIdentificationsPanelComponent extends TestScope implements O
       associationRoleType: this.roleType,
     };
   }
-  constructor(
-    @Self() public panel: PanelService,
-
-    public objectService: ObjectService,
-    public refreshService: RefreshService,
-    public editService: EditService,
-    public deleteService: DeleteService
-  ) {
+  constructor(@Self() public panel: PanelService, public workspaceService: WorkspaceService, public objectService: ObjectService, public refreshService: RefreshService, public editService: EditService, public deleteService: DeleteService) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {
+    const m = this.m;
+    const { treeBuilder: tree } = m;
+    const x = {};
+
     this.panel.name = 'productidentification';
     this.panel.title = 'Product Identification';
     this.panel.icon = 'fingerprint';
@@ -77,27 +75,27 @@ export class ProductIdentificationsPanelComponent extends TestScope implements O
     const pullName = `${this.panel.name}_${this.m.ProductIdentification.tag}`;
 
     this.panel.onPull = (pulls) => {
-      const { x, tree } = this.metaService;
       const { id, objectType } = this.panel.manager;
 
-      pulls.push(
-        new Pull(objectType, {
-          name: pullName,
-          objectId: id,
-          fetch: new Fetch({
-            step: new Step({
+      pulls.push({
+        objectType: objectType,
+        objectId: id,
+        results: [
+          {
+            name: pullName,
+            select: {
               propertyType: this.roleType,
               include: tree.ProductIdentification({
                 ProductIdentificationType: x,
               }),
-            }),
-          }),
-        })
-      );
+            },
+          },
+        ],
+      });
 
       this.panel.onPulled = (loaded) => {
         this.objects = loaded.collection<ProductIdentification>(pullName);
-        this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;
+        this.table.total = loaded.value(`${pullName}_total`) ?? this.objects.length;
         this.table.data = this.objects.map((v) => {
           return {
             object: v,

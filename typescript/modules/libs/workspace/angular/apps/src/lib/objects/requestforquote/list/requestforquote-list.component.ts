@@ -11,7 +11,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { Equals } from '@allors/workspace/domain/system';
+import { And, Equals } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: Request;
@@ -78,7 +78,10 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.RequestForQuote.filter = m.RequestForQuote.filter ?? new Filter(m.RequestForQuote.filterDefinition);
+
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularRequestForQuote = angularMeta.for(m.RequestForQuote);
+    this.filter = angularRequestForQuote.filter ??= new Filter(angularRequestForQuote.filterDefinition);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Request.Recipient };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -101,7 +104,7 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
         switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          internalOrganisationPredicate.object = internalOrganisationId;
+          internalOrganisationPredicate.value = internalOrganisationId;
 
           const pulls = [
             this.fetcher.internalOrganisation,
@@ -110,7 +113,7 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
             }),
             pull.Request({
               predicate,
-              sorting: sort ? m.RequestForQuote.sorter.create(sort) : null,
+              sorting: sort ? angularRequestForQuote.sorter?.create(sort) : null,
               include: {
                 Originator: x,
                 RequestState: x,

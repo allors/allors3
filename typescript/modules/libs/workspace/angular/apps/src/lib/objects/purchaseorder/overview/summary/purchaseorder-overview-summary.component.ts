@@ -52,7 +52,7 @@ export class PurchaseOrderOverviewSummaryComponent {
       pulls.push(
         pull.PurchaseOrder({
           name: puchaseOrderPullName,
-          object: this.panel.manager.id,
+          objectId: this.panel.manager.id,
           include: {
             TakenViaSupplier: x,
             PurchaseOrderState: x,
@@ -67,7 +67,7 @@ export class PurchaseOrderOverviewSummaryComponent {
         }),
         pull.PurchaseOrder({
           name: shipmentPullName,
-          object: this.panel.manager.id,
+          objectId: this.panel.manager.id,
           select: {
             PurchaseOrderItems: {
               OrderShipmentsWhereOrderItem: {
@@ -80,7 +80,7 @@ export class PurchaseOrderOverviewSummaryComponent {
         }),
         pull.PurchaseOrder({
           name: purchaseInvoicePullName,
-          object: this.panel.manager.id,
+          objectId: this.panel.manager.id,
           select: { PurchaseInvoicesWherePurchaseOrder: x },
         })
       );

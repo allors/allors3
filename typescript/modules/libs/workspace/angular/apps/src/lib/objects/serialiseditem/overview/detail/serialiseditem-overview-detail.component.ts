@@ -63,7 +63,7 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
       this.serialisedItem = undefined;
 
       if (this.panel.isCollapsed) {
-        const { pullBuilder: pull } = this.m;
+        const m = this.m; const { pullBuilder: pull } = m;
         const id = this.panel.manager.id;
 
         pulls.push(

@@ -74,7 +74,10 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.PositionTypeRate.filter = m.PositionTypeRate.filter ?? new Filter(m.PositionTypeRate.filterDefinition);
+
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularPositionTypeRate = angularMeta.for(m.PositionTypeRate);
+    this.filter = angularPositionTypeRate.filter ??= new Filter(angularPositionTypeRate.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -97,7 +100,7 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
           const pulls = [
             pull.PositionTypeRate({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.PositionTypeRate.sorter.create(sort) : null,
+              sorting: sort ? angularPositionTypeRate.sorter?.create(sort) : null,
               include: {
                 Frequency: x,
                 RateType: x,

@@ -6,6 +6,7 @@ import { WorkEffort, SalesOrder, SalesInvoice, RepeatingSalesInvoice } from '@al
 import { Action, NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
 
 import { PrintService } from '../../../../actions/print/print.service';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -31,14 +32,15 @@ export class SalesInvoiceOverviewSummaryComponent {
 
   constructor(
     @Self() public panel: PanelService,
-
+    public workspaceService: WorkspaceService,
     public navigation: NavigationService,
     public printService: PrintService,
     public refreshService: RefreshService,
     private saveService: SaveService,
     public snackBar: MatSnackBar
   ) {
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    const m = this.m;
 
     this.print = printService.print();
 
@@ -51,7 +53,6 @@ export class SalesInvoiceOverviewSummaryComponent {
     const creditNotePullName = `${panel.name}_${this.m.SalesInvoice.tag}`;
 
     panel.onPull = (pulls) => {
-      const m = this.allors.workspace.configuration.metaPopulation as M;
       const { pullBuilder: pull } = m;
       const x = {};
 
@@ -119,7 +120,7 @@ export class SalesInvoiceOverviewSummaryComponent {
         }),
         pull.RepeatingSalesInvoice({
           name: repeatingSalesInvoicePullName,
-          predicate: { kind: 'Equals', propertyType: m.RepeatingSalesInvoice.Source, objectId: id },
+          predicate: { kind: 'Equals', propertyType: m.RepeatingSalesInvoice.Source, value: id },
           include: {
             Frequency: x,
             DayOfWeek: x,

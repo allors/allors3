@@ -2,7 +2,7 @@ import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { M } from '@allors/workspace/meta/default';
-import { OrderAdjustment } from '@allors/workspace/domain/default';
+import { Invoice, Order, OrderAdjustment, Quote } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -135,13 +135,11 @@ export class OrderAdjustmentOverviewPanelComponent extends TestScope {
     };
 
     panel.onPulled = (loaded) => {
-      this.container = (loaded.object<Quote>(quotePullName)) || (loaded.object<Order>(orderPullName)) || (loaded.object<Invoice>(invoicePullName));
+      this.container = loaded.object<Quote>(quotePullName) || loaded.object<Order>(orderPullName) || loaded.object<Invoice>(invoicePullName);
 
-      this.objects =
-        (loaded.collection<OrderAdjustment>(quoteOrderAdjustmentsPullName)) || (loaded.collection<OrderAdjustment>(orderOrderAdjustmentsPullName)) || (loaded.collection<OrderAdjustment>(invoiceOrderAdjustmentsPullName));
+      this.objects = loaded.collection<OrderAdjustment>(quoteOrderAdjustmentsPullName) || loaded.collection<OrderAdjustment>(orderOrderAdjustmentsPullName) || loaded.collection<OrderAdjustment>(invoiceOrderAdjustmentsPullName);
 
-      this.table.total =
-        loaded.values[`${quoteOrderAdjustmentsPullName}_total`] || loaded.values[`${orderOrderAdjustmentsPullName}_total`] || this.objects.length || loaded.values[`${invoiceOrderAdjustmentsPullName}_total`] || this.objects.length;
+      this.table.total = loaded.value(`${quoteOrderAdjustmentsPullName}_total`) ?? loaded.value(`${orderOrderAdjustmentsPullName}_total`) ?? loaded.value(`${invoiceOrderAdjustmentsPullName}_total`) ?? this.objects.length;
 
       this.table.data = this.objects.map((v) => {
         return {

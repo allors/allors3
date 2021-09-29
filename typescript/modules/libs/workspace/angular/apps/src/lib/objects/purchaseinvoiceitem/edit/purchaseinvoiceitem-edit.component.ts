@@ -24,7 +24,7 @@ import {
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { And, IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
@@ -83,7 +83,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
 
   public ngOnInit(): void {
     const m = this.allors.workspace.configuration.metaPopulation as M;
-    const { pullBuilder: pull } = m;
+    const { pullBuilder: pull, treeBuilder } = m;
     const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$])
@@ -152,7 +152,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
             );
           }
 
-          this.unifiedGoodsFilter = Filters.unifiedGoodsFilter(m, this.metaService.tree);
+          this.unifiedGoodsFilter = Filters.unifiedGoodsFilter(m, treeBuilder);
 
           return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
@@ -176,15 +176,11 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
           objectType: this.m.Part,
           roleTypes: [this.m.Part.Name, this.m.Part.SearchString],
           post: (predicate: And) => {
-            predicate.operands.push(
-              { kind: 'ContainedIn', 
-                propertyType: this.m.Part.SupplierOfferingsWherePart,
-                extent: { kind: 'Filter', 
-                  objectType: this.m.SupplierOffering,
-                  predicate: { kind: 'Equals', propertyType: m.SupplierOffering.Supplier, object: this.invoice.BilledFrom },
-                }),
-              })
-            );
+            predicate.operands.push({
+              kind: 'ContainedIn',
+              propertyType: this.m.Part.SupplierOfferingsWherePart,
+              extent: { kind: 'Filter', objectType: this.m.SupplierOffering, predicate: { kind: 'Equals', propertyType: m.SupplierOffering.Supplier, object: this.invoice.BilledFrom } },
+            });
           },
         });
 
@@ -199,8 +195,8 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
           this.invoice = this.invoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem;
 
           if (this.invoiceItem.Part) {
-            this.unifiedGood = this.invoiceItem.Part.objectType.name === m.UnifiedGood.name;
-            this.nonUnifiedPart = this.invoiceItem.Part.objectType.name === m.NonUnifiedPart.name;
+            this.unifiedGood = this.invoiceItem.Part.strategy.cls === m.UnifiedGood;
+            this.nonUnifiedPart = this.invoiceItem.Part.strategy.cls === m.NonUnifiedPart;
             this.updateFromPart(this.invoiceItem.Part);
           }
 
@@ -233,8 +229,8 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
 
   public partSelected(part: IObject): void {
     if (part) {
-      this.unifiedGood = this.invoiceItem.Part.objectType.name === this.m.UnifiedGood.name;
-      this.nonUnifiedPart = this.invoiceItem.Part.objectType.name === this.m.NonUnifiedPart.name;
+      this.unifiedGood = this.invoiceItem.Part.strategy.cls === this.m.UnifiedGood;
+      this.nonUnifiedPart = this.invoiceItem.Part.strategy.cls === this.m.NonUnifiedPart;
 
       this.updateFromPart(part as Part);
     }

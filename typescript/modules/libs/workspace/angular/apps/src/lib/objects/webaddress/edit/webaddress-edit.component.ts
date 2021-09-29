@@ -39,7 +39,8 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
   }
 
   public ngOnInit(): void {
-    const { pullBuilder: pull } = this.m;
+    const m = this.m;
+    const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(

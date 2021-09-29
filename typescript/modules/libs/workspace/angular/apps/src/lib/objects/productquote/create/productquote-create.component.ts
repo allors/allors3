@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, Currency, RequestForQuote, ProductQuote, VatRegime, IrpfRegime } from '@allors/workspace/domain/default';
+import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, Currency, RequestForQuote, ProductQuote, VatRegime, IrpfRegime, CustomerRelationship } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -99,7 +99,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
   }
 
   public receiverAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -107,7 +107,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
   }
 
   public personAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.quote.Receiver as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -180,7 +180,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
       this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.contacts = loaded.collection<Person>(m.Person);
 
-      const selectedParty = loaded.object<selectedParty>(m.selectedParty);
+      const selectedParty = loaded.object<Party>('selectedParty');
       this.currencyInitialRole = selectedParty.PreferredCurrency ?? this.quote.Issuer.PreferredCurrency;
     });
   }

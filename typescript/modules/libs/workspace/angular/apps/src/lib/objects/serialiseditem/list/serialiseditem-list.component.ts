@@ -77,7 +77,10 @@ export class SerialisedItemListComponent extends TestScope implements OnInit, On
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.SerialisedItem.filter = m.SerialisedItem.filter ?? new Filter(m.SerialisedItem.filterDefinition);
+
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularSerialisedItem = angularMeta.for(m.SerialisedItem);
+    this.filter = angularSerialisedItem.filter ??= new Filter(angularSerialisedItem.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -100,7 +103,7 @@ export class SerialisedItemListComponent extends TestScope implements OnInit, On
           const pulls = [
             pull.SerialisedItem({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.SerialisedItem.sorter.create(sort) : null,
+              sorting: sort ? angularSerialisedItem.sorter?.create(sort) : null,
               include: {
                 SerialisedItemState: x,
                 SerialisedItemAvailability: x,

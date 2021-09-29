@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { M } from '@allors/workspace/meta/default';
 import { RequestForQuote, Quote } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '../../../../../../../core/src/lib/workspace/workspace-service';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -17,15 +18,8 @@ export class RequestForQuoteOverviewSummaryComponent {
   requestForQuote: RequestForQuote;
   quote: Quote;
 
-  constructor(
-    @Self() public panel: PanelService,
-
-    public refreshService: RefreshService,
-    private saveService: SaveService,
-    public snackBar: MatSnackBar,
-    public navigation: NavigationService
-  ) {
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+  constructor(@Self() public panel: PanelService, public workspaceService: WorkspaceService, public refreshService: RefreshService, private saveService: SaveService, public snackBar: MatSnackBar, public navigation: NavigationService) {
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
 
     panel.name = 'summary';
 
@@ -40,7 +34,7 @@ export class RequestForQuoteOverviewSummaryComponent {
       pulls.push(
         pull.RequestForQuote({
           name: requestForQuotePullName,
-          object: this.panel.manager.id,
+          objectId: this.panel.manager.id,
           include: {
             FullfillContactMechanism: {
               PostalAddress_Country: x,
@@ -51,14 +45,14 @@ export class RequestForQuoteOverviewSummaryComponent {
             Originator: x,
             ContactPerson: x,
             RequestState: x,
-            Currency: x,
+            DerivedCurrency: x,
             CreatedBy: x,
             LastModifiedBy: x,
           },
         }),
         pull.RequestForQuote({
           name: productQuotePullName,
-          object: this.panel.manager.id,
+          objectId: this.panel.manager.id,
           select: {
             QuoteWhereRequest: x,
           },
@@ -68,7 +62,7 @@ export class RequestForQuoteOverviewSummaryComponent {
 
     panel.onPulled = (loaded) => {
       this.requestForQuote = loaded.object<RequestForQuote>(requestForQuotePullName);
-      this.quote = loaded.object<Quote>(m.Quote);
+      this.quote = loaded.object<Quote>(this.m.Quote);
     };
   }
 

@@ -1,7 +1,7 @@
 import { Component, Self } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, OrganisationContactRelationship } from '@allors/workspace/domain/default';
+import { Person, Organisation, OrganisationContactRelationship, OrganisationContactKind, Media } from '@allors/workspace/domain/default';
 import { MediaService, NavigationService, PanelService, TestScope } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -29,6 +29,9 @@ export class PersonOverviewSummaryComponent extends TestScope {
     super();
 
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    const m = this.m;
+    const { pullBuilder: pull, treeBuilder: tree } = m;
+    const x = {};
 
     panel.name = 'summary';
 
@@ -36,8 +39,6 @@ export class PersonOverviewSummaryComponent extends TestScope {
     const organisationContactRelationshipsPullName = `${panel.name}_${this.m.OrganisationContactRelationship.tag}`;
 
     panel.onPull = (pulls) => {
-      const { pull, tree, x } = this.metaService;
-
       const id = this.panel.manager.id;
 
       const partyContactMechanismTree = tree.PartyContactMechanism({

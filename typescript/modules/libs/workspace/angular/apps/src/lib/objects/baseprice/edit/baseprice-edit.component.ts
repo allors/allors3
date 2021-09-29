@@ -42,7 +42,7 @@ export class BasepriceEditComponent extends TestScope implements OnInit, OnDestr
   }
 
   public ngOnInit(): void {
-    const { pullBuilder: pull } = this.m;
+    const m = this.m; const { pullBuilder: pull } = m;
     const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])

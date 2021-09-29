@@ -42,7 +42,7 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
   }
 
   get containerRoleType(): any {
-    if (this.container.objectType.name === this.m.SalesOrder.name) {
+    if (this.container.strategy.cls === this.m.SalesOrder) {
       return this.m.SalesOrder.SalesTerms;
     } else {
       return this.m.SalesInvoice.SalesTerms;
@@ -131,9 +131,9 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
     };
 
     panel.onPulled = (loaded) => {
-      this.container = (loaded.object<SalesOrder>(salesOrderPullName)) || (loaded.object<SalesInvoice>(salesInvoicePullName));
-      this.objects = (loaded.collection<SalesTerm>(salesOrderTermsPullName)) || (loaded.collection<SalesTerm>(salesInvoiceTermsPullName));
-      this.table.total = loaded.values[`${salesOrderTermsPullName}_total`] || loaded.values[`${salesInvoiceTermsPullName}_total`] || this.objects.length;
+      this.container = loaded.object<SalesOrder>(salesOrderPullName) || loaded.object<SalesInvoice>(salesInvoicePullName);
+      this.objects = loaded.collection<SalesTerm>(salesOrderTermsPullName) || loaded.collection<SalesTerm>(salesInvoiceTermsPullName);
+      this.table.total = loaded.value(`${salesOrderTermsPullName}_total`) ?? loaded.value(`${salesInvoiceTermsPullName}_total`) ?? this.objects.length;
       this.table.data = this.objects.map((v) => {
         return {
           object: v,

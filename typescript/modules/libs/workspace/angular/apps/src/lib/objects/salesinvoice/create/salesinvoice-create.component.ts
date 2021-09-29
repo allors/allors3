@@ -82,19 +82,19 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
   showIrpf: boolean;
 
   get billToCustomerIsPerson(): boolean {
-    return !this.invoice.BillToCustomer || this.invoice.BillToCustomer.strategy.cls  === this.m.Person;
+    return !this.invoice.BillToCustomer || this.invoice.BillToCustomer.strategy.cls === this.m.Person;
   }
 
   get shipToCustomerIsPerson(): boolean {
-    return !this.invoice.ShipToCustomer || this.invoice.ShipToCustomer.strategy.cls  === this.m.Person;
+    return !this.invoice.ShipToCustomer || this.invoice.ShipToCustomer.strategy.cls === this.m.Person;
   }
 
   get billToEndCustomerIsPerson(): boolean {
-    return !this.invoice.BillToEndCustomer || this.invoice.BillToEndCustomer.strategy.cls  === this.m.Person;
+    return !this.invoice.BillToEndCustomer || this.invoice.BillToEndCustomer.strategy.cls === this.m.Person;
   }
 
   get shipToEndCustomerIsPerson(): boolean {
-    return !this.invoice.ShipToEndCustomer || this.invoice.ShipToEndCustomer.strategy.cls  === this.m.Person;
+    return !this.invoice.ShipToEndCustomer || this.invoice.ShipToEndCustomer.strategy.cls === this.m.Person;
   }
 
   constructor(
@@ -186,7 +186,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
   }
 
   public shipToCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -194,7 +194,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
   }
 
   public billToCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -202,7 +202,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
   }
 
   public shipToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -210,7 +210,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
   }
 
   public billToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -218,7 +218,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
   }
 
   public billToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.invoice.BillToCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -227,7 +227,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
   }
 
   public billToEndCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.invoice.BillToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -236,7 +236,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
   }
 
   public shipToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.invoice.ShipToCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -245,7 +245,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
   }
 
   public shipToEndCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create('OrganisationContactRelationship') as OrganisationContactRelationship;
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.invoice.ShipToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 

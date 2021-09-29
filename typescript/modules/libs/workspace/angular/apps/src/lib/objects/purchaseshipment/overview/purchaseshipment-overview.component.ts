@@ -5,9 +5,9 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { SerialisedInventoryItemState, Shipment, ShipmentItem, SalesInvoice, BillingProcess, PurchaseShipment } from '@allors/workspace/domain/default';
+import { SerialisedInventoryItemState, ShipmentItem, SalesInvoice, BillingProcess, PurchaseShipment } from '@allors/workspace/domain/default';
 import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
@@ -27,10 +27,11 @@ export class PurchaseShipmentOverviewComponent extends TestScope implements Afte
   public inventoryItemStates: SerialisedInventoryItemState[];
 
   subscription: Subscription;
+  m: M;
 
   constructor(
     @Self() public panelManager: PanelManagerService,
-
+    public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private route: ActivatedRoute,
@@ -41,13 +42,16 @@ export class PurchaseShipmentOverviewComponent extends TestScope implements Afte
     super();
 
     titleService.setTitle(this.title);
+
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   public ngAfterViewInit(): void {
+    const m = this.m;
+
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const m = this.allors.workspace.configuration.metaPopulation as M;
           const { pullBuilder: pull } = m;
           const x = {};
 
@@ -89,7 +93,7 @@ export class PurchaseShipmentOverviewComponent extends TestScope implements Afte
 
         this.panelManager.onPulled(loaded);
 
-        this.shipment = loaded.object<Shipment>(m.Shipment);
+        this.shipment = loaded.object<PurchaseShipment>(this.m.Shipment);
       });
   }
 

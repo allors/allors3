@@ -63,21 +63,21 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.Good.filter = m.Good.filter ?? new Filter(m.Good.filterDefinition);
+
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularGood = angularMeta.for(m.Good);
+    this.filter = angularGood.filter ??= new Filter(angularGood.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
-        scan(
-          ([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-            return [refresh, filterFields, sort, previousRefresh !== refresh || filterFields !== previousFilterFields ? Object.assign({ pageIndex: 0 }, pageEvent) : pageEvent];
-          },
-          [, , , , ,]
-        ),
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
+          return [refresh, filterFields, sort, previousRefresh !== refresh || filterFields !== previousFilterFields ? Object.assign({ pageIndex: 0 }, pageEvent) : pageEvent];
+        }, []),
         switchMap(([, filterFields, sort, pageEvent]) => {
           const pulls = [
             pull.Good({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.Good.sorter.create(sort) : null,
+              sorting: sort ? angularGood.sorter?.create(sort) : null,
               include: {
                 NonUnifiedGood_Part: x,
                 ProductIdentifications: {
@@ -90,7 +90,7 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
             }),
             pull.Good({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.Good.sorter.create(sort) : null,
+              sorting: sort ? angularGood.sorter?.create(sort) : null,
               select: {
                 ProductCategoriesWhereProduct: {
                   include: {

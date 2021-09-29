@@ -17,6 +17,7 @@ import {
   SalesOrder,
   VatRegime,
   IrpfRegime,
+  CustomerRelationship,
 } from '@allors/workspace/domain/default';
 import { PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
@@ -56,7 +57,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
   showIrpf: boolean;
 
   get receiverIsPerson(): boolean {
-    return !this.productQuote.Receiver || this.productQuote.Receiver.strategy.cls  === this.m.Person;
+    return !this.productQuote.Receiver || this.productQuote.Receiver.strategy.cls === this.m.Person;
   }
 
   constructor(
@@ -120,13 +121,17 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
 
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
-        this.productQuote = loaded.object<ProductQuote>(m.ProductQuote);
-        this.salesOrder = loaded.object<SalesOrder>(m.SalesOrder);
+        this.productQuote = loaded.object<ProductQuote>(this.m.ProductQuote);
+        this.salesOrder = loaded.object<SalesOrder>(this.m.SalesOrder);
       }
     };
   }
 
   public ngOnInit(): void {
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
+
     // Expanded
     this.subscription = this.panel.manager.on$
       .pipe(
@@ -136,9 +141,6 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
         switchMap(() => {
           this.productQuote = undefined;
 
-          const m = this.allors.workspace.configuration.metaPopulation as M;
-          const { pullBuilder: pull } = m;
-          const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -196,7 +198,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
   }
 
   public personAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.productQuote.Receiver as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -217,7 +219,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
   }
 
   public receiverAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 

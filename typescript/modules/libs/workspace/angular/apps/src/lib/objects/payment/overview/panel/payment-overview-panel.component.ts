@@ -44,7 +44,6 @@ export class PaymentOverviewPanelComponent extends TestScope {
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
-
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public methodService: MethodService,
@@ -83,7 +82,7 @@ export class PaymentOverviewPanelComponent extends TestScope {
       pulls.push(
         pull.PaymentApplication({
           name: pullName,
-          predicate: { kind: 'Equals', propertyType: m.PaymentApplication.Invoice, objectId: id },
+          predicate: { kind: 'Equals', propertyType: m.PaymentApplication.Invoice, value: id },
           select: {
             PaymentWherePaymentApplication: {
               include: {
@@ -94,7 +93,7 @@ export class PaymentOverviewPanelComponent extends TestScope {
           },
         }),
         pull.Invoice({
-          object: this.panel.manager.id,
+          objectId: this.panel.manager.id,
           include: {
             SalesInvoice_SalesInvoiceType: x,
             PurchaseInvoice_PurchaseInvoiceType: x,
@@ -104,21 +103,21 @@ export class PaymentOverviewPanelComponent extends TestScope {
     };
 
     panel.onPulled = (loaded) => {
-      const invoice = loaded.object<Invoice>(m.Invoice);
+      const invoice = loaded.object<Invoice>(this.m.Invoice);
 
-      if (invoice.objectType.name === this.m.SalesInvoice.name) {
+      if (invoice.strategy.cls === this.m.SalesInvoice) {
         const salesInvoice = invoice as SalesInvoice;
         this.receive = salesInvoice.SalesInvoiceType.UniqueId === '92411bf1-835e-41f8-80af-6611efce5b32';
       }
 
-      if (invoice.objectType.name === this.m.PurchaseInvoice.name) {
+      if (invoice.strategy.cls === this.m.PurchaseInvoice) {
         const salesInvoice = invoice as PurchaseInvoice;
         this.receive = salesInvoice.PurchaseInvoiceType.UniqueId === '0187d927-81f5-4d6a-9847-58b674ad3e6a';
       }
 
       this.payments = loaded.collection<Payment>(pullName);
 
-      this.table.total = loaded.values[`${pullName}_total`] || this.payments.length;
+      this.table.total = loaded.value([`${pullName}_total`]) ?? this.payments.length;
       this.table.data = this.payments.map((v) => {
         return {
           object: v,

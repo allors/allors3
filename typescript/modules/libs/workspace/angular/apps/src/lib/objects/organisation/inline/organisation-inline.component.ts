@@ -25,9 +25,7 @@ export class OrganisationInlineComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.allors.context.load(new PullRequest({})).subscribe(() => {
-      this.organisation = this.allors.session.create<Organisation>(m.Organisation);
-    });
+    this.organisation = this.allors.session.create<Organisation>(this.m.Organisation);
   }
 
   public ngOnDestroy(): void {

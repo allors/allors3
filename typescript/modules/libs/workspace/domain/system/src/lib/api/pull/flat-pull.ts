@@ -1,9 +1,9 @@
-import { IObject, Node } from '@allors/workspace/domain/system';
 import { Extent } from '../../data/extent';
 import { Predicate } from '../../data/predicate';
 import { Result } from '../../data/result';
 import { Select } from '../../data/select';
 import { Sort } from '../../data/sort';
+import { IObject } from '../../iobject';
 import { TypeForParameter } from '../../types';
 
 export interface FlatPull {

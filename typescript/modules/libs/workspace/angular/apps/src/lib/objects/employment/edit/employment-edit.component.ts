@@ -105,12 +105,12 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
 
           this.party = loaded.object<Party>(m.Party);
 
-          if (this.party.objectType.name === m.Person.name) {
+          if (this.party.strategy.cls === m.Person) {
             this.person = this.party as Person;
             this.partyRelationship.Employee = this.person;
           }
 
-          if (this.party.objectType.name === m.Organisation.name) {
+          if (this.party.strategy.cls === m.Organisation) {
             this.organisation = this.party as Organisation;
 
             if (!this.organisation.IsInternalOrganisation) {

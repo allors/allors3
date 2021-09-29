@@ -78,7 +78,7 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
               },
             }),
             pull.Organisation({
-              object: this.internalOrganisationId.value,
+              objectId: this.internalOrganisationId.value,
               name: 'InternalOrganisation',
               include: {
                 FacilitiesWhereOwner: x,

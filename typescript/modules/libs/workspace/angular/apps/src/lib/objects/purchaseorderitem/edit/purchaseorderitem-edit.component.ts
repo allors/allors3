@@ -21,10 +21,11 @@ import {
   VatRegime,
   IrpfRegime,
   InvoiceItemType,
+  Product,
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { And, IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
@@ -85,7 +86,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
 
   public ngOnInit(): void {
     const m = this.allors.workspace.configuration.metaPopulation as M;
-    const { pullBuilder: pull } = m;
+    const { pullBuilder: pull, treeBuilder } = m;
     const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$])
@@ -159,7 +160,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
             );
           }
 
-          this.unifiedGoodsFilter = Filters.unifiedGoodsFilter(m, this.metaService.tree);
+          this.unifiedGoodsFilter = Filters.unifiedGoodsFilter(m, treeBuilder);
 
           return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
@@ -184,19 +185,28 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
           objectType: this.m.NonUnifiedPart,
           roleTypes: [this.m.NonUnifiedPart.Name, this.m.NonUnifiedPart.SearchString],
           post: (predicate: And) => {
-            predicate.operands.push(
-              { kind: 'ContainedIn', 
-                propertyType: this.m.NonUnifiedPart.SupplierOfferingsWherePart,
-                extent: { kind: 'Filter', 
-                  objectType: this.m.SupplierOffering,
-                  predicate: new And([
-                    { kind: 'Equals',  propertyType: m.SupplierOffering.Supplier, object: this.order.TakenViaSupplier }),
-                    new LessThan({ roleType: m.SupplierOffering.FromDate, value: this.order.OrderDate }),
-                    new Or([new Not({ operand: new Exists({ propertyType: m.SupplierOffering.ThroughDate }) }), new GreaterThan({ roleType: m.SupplierOffering.ThroughDate, value: this.order.OrderDate })]),
-                  ]),
-                }),
-              })
-            );
+            predicate.operands.push({
+              kind: 'ContainedIn',
+              propertyType: this.m.NonUnifiedPart.SupplierOfferingsWherePart,
+              extent: {
+                kind: 'Filter',
+                objectType: this.m.SupplierOffering,
+                predicate: {
+                  kind: 'And',
+                  operands: [
+                    { kind: 'Equals', propertyType: m.SupplierOffering.Supplier, object: this.order.TakenViaSupplier },
+                    { kind: 'LessThan', roleType: m.SupplierOffering.FromDate, value: this.order.OrderDate },
+                    {
+                      kind: 'Or',
+                      operands: [
+                        { kind: 'Not', operand: { kind: 'Exists', propertyType: m.SupplierOffering.ThroughDate } },
+                        { kind: 'GreaterThan', roleType: m.SupplierOffering.ThroughDate, value: this.order.OrderDate },
+                      ],
+                    },
+                  ],
+                },
+              },
+            });
           },
         });
 
@@ -213,8 +223,8 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
           this.selectedFacility = this.orderItem.StoredInFacility;
 
           if (this.orderItem.Part) {
-            this.unifiedGood = this.orderItem.Part.objectType.name === m.UnifiedGood.name;
-            this.nonUnifiedPart = this.orderItem.Part.objectType.name === m.NonUnifiedPart.name;
+            this.unifiedGood = this.orderItem.Part.strategy.cls === m.UnifiedGood;
+            this.nonUnifiedPart = this.orderItem.Part.strategy.cls === m.NonUnifiedPart;
             this.updateFromPart(this.orderItem.Part);
           }
 
@@ -249,8 +259,8 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
 
   public partSelected(part: IObject): void {
     if (part) {
-      this.unifiedGood = this.orderItem.Part.objectType.name === this.m.UnifiedGood.name;
-      this.nonUnifiedPart = this.orderItem.Part.objectType.name === this.m.NonUnifiedPart.name;
+      this.unifiedGood = this.orderItem.Part.strategy.cls === this.m.UnifiedGood;
+      this.nonUnifiedPart = this.orderItem.Part.strategy.cls === this.m.NonUnifiedPart;
 
       this.updateFromPart(part as Part);
     }

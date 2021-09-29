@@ -1,8 +1,9 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { InventoryItem, SerialisedInventoryItem, SerialisedItem } from '@allors/workspace/domain/default';
+import { displayName, InventoryItem, SerialisedInventoryItem, SerialisedItem } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService, ActionTarget } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: InventoryItem;
@@ -43,7 +44,7 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
 
   constructor(
     @Self() public panel: PanelService,
-
+    public workspaceService: WorkspaceService,
     public objectService: ObjectService,
     public factoryService: ObjectService,
     public refreshService: RefreshService,
@@ -54,7 +55,7 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {
@@ -77,7 +78,7 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
         if (!Array.isArray(target)) {
           this.factoryService.create(this.m.InventoryItemTransaction, {
             associationId: target.id,
-            associationObjectType: target.objectType,
+            associationObjectType: target.strategy.cls,
           });
         }
       },
@@ -147,12 +148,12 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
         this.objects = inventoryObjects.concat(serialisedItemobjectsforPart);
 
         if (this.objects) {
-          this.table.total = loaded.values[`${this.objects.length}_total`] || this.objects.length;
+          this.table.total = loaded.value(`${this.objects.length}_total`) ?? this.objects.length;
           this.table.data = this.objects.map((v) => {
             return {
               object: v,
               facility: v.Facility.Name,
-              item: v.SerialisedItem?.displayName,
+              item: displayName(v.SerialisedItem),
               quantity: v.Quantity,
               state: v.SerialisedInventoryItemState ? v.SerialisedInventoryItemState.Name : '',
             } as Row;

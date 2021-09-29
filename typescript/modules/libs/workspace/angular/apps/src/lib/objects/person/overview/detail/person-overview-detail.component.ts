@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Currency, Enumeration, InternalOrganisation, Locale, Person } from '@allors/workspace/domain/default';
+import { Currency, Enumeration, InternalOrganisation, Locale, Organisation, Person } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService, SingletonId, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -53,7 +53,7 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
       this.person = undefined;
 
       if (this.panel.isCollapsed) {
-        const { pullBuilder: pull } = this.m;
+        const m = this.m; const { pullBuilder: pull } = m;
         const x = {};
         const id = this.panel.manager.id;
 

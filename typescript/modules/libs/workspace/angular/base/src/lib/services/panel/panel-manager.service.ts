@@ -13,7 +13,8 @@ export class PanelManagerService {
 
   client: IReactiveDatabaseClient;
 
-  id: string;
+  id: number;
+  
   objectType: ObjectType;
 
   panels: PanelService[] = [];

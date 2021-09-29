@@ -18,6 +18,7 @@ import {
   VatRegime,
   IrpfRegime,
   Store,
+  CustomerRelationship,
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
@@ -133,7 +134,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
             }),
             pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
             pull.Store({
-              predicate: { kind: 'Equals', propertyType: m.Store.InternalOrganisation, object: internalOrganisationId },
+              predicate: { kind: 'Equals', propertyType: m.Store.InternalOrganisation, value: internalOrganisationId },
               include: { BillingProcess: x },
               sorting: [{ roleType: m.Store.Name }],
             }),
@@ -211,7 +212,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
   }
 
   public shipToCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -219,7 +220,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
   }
 
   public billToCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -227,7 +228,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
   }
 
   public shipToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -235,7 +236,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
   }
 
   public billToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -243,7 +244,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
   }
 
   public billToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.BillToCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -252,7 +253,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
   }
 
   public billToEndCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.BillToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -261,7 +262,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
   }
 
   public shipToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.ShipToCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -270,7 +271,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
   }
 
   public shipToEndCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.ShipToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 

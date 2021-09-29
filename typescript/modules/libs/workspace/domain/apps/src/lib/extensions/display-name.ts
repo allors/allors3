@@ -4,6 +4,7 @@ import {
   Person,
   AutomatedAgent,
   EmailAddress,
+  FixedAsset,
   PartCategory,
   Party,
   PostalAddress,
@@ -23,6 +24,7 @@ export function displayName(
   item:
     | Party
     | EmailAddress
+    | FixedAsset
     | PartCategory
     | PostalAddress
     | ProductCategory

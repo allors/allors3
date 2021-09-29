@@ -3,12 +3,11 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
-import { SessionService, MetaService, RefreshService, NavigationService, MediaService } from '@allors/angular/services/core';
-import { FilterDefinition, Filter, TestScope, Action } from '@allors/angular/core';
-import { PullRequest } from '@allors/protocol/system';
-import { TableRow, Table, OverviewService, DeleteService, Sorter, EditService } from '@allors/angular/material/core';
-import { PositionType } from '@allors/domain/generated';
-import { And, Like } from '@allors/data/system';
+import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { PositionType } from '@allors/workspace/domain/default';
+import { M } from '@allors/workspace/meta/default';
+
 
 interface Row extends TableRow {
   object: PositionType;
@@ -69,7 +68,10 @@ export class PositionTypesOverviewComponent extends TestScope implements OnInit,
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.PositionType.filter = m.PositionType.filter ?? new Filter(m.PositionType.filterDefinition);
+
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularPositionType = angularMeta.for(m.PositionType);
+    this.filter = angularPositionType.filter ??= new Filter(angularPositionType.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -92,7 +94,7 @@ export class PositionTypesOverviewComponent extends TestScope implements OnInit,
           const pulls = [
             pull.PositionType({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.PositionType.sorter.create(sort) : null,
+              sorting: sort ? angularPositionType.sorter.create(sort) : null,
               include: {
                 PositionTypeRate: x,
               },

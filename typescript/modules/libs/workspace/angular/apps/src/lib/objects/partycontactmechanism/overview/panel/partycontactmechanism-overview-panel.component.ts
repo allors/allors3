@@ -2,7 +2,7 @@ import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { PartyContactMechanism } from '@allors/workspace/domain/default';
+import { displayName, PartyContactMechanism } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -47,7 +47,6 @@ export class PartyContactMechanismOverviewPanelComponent extends TestScope imple
   constructor(
     @Self() public panel: PanelService,
     public workspaceService: WorkspaceService,
-
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     public deleteService: DeleteService,
@@ -59,6 +58,10 @@ export class PartyContactMechanismOverviewPanelComponent extends TestScope imple
   }
 
   ngOnInit() {
+    const m = this.m;
+    const { pullBuilder: pull, treeBuilder: tree } = m;
+    const x = {};
+
     this.panel.name = 'partycontactmechanism';
     this.panel.title = 'Party ContactMechanisms';
     this.panel.icon = 'contacts';
@@ -86,7 +89,6 @@ export class PartyContactMechanismOverviewPanelComponent extends TestScope imple
     const inactive = `${this.panel.name}_${this.m.PartyContactMechanism.tag}_inactive`;
 
     this.panel.onPull = (pulls) => {
-      const { pull, x, tree } = this.metaService;
       const id = this.panel.manager.id;
 
       const partyContactMechanismTree = tree.PartyContactMechanism({
@@ -144,7 +146,7 @@ export class PartyContactMechanismOverviewPanelComponent extends TestScope imple
       }
 
       if (this.objects) {
-        this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;
+        this.table.total = loaded.value(`${pullName}_total`) ?? this.objects.length;
         this.refreshTable();
       }
     };
@@ -155,7 +157,7 @@ export class PartyContactMechanismOverviewPanelComponent extends TestScope imple
       return {
         object: v,
         purpose: v.ContactPurposes.map((w) => w.Name).join(', '),
-        contact: v.ContactMechanism.displayName,
+        contact: displayName(v.ContactMechanism),
         lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
       } as Row;
     });

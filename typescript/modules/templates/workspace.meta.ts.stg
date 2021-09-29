@@ -169,15 +169,15 @@ $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|$treeCompo
 
 treeComposite(composite) ::= <<
 export interface Tree$composite._.SingularName$$if(composite._.WorkspaceSubtypesByWorkspaceName.(workspaceName))$ extends $endif$$composite._.WorkspaceSubtypesByWorkspaceName.(workspaceName):{subtype|SubTree$subtype$}; separator=", "$ {
-$composite._.WorkspaceCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $role._.Name$?: Tree$role._.ObjectType._.Name$;}; separator="\n"$
+$composite._.WorkspaceCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $role._.Name$?: Tree$role._.ObjectType._.Name$ | Node[];}; separator="\n"$
 
-$composite._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{association|    $association._.Name$?: Tree$association._.ObjectType._.Name$;}; separator="\n"$
+$composite._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{association|    $association._.Name$?: Tree$association._.ObjectType._.Name$ | Node[];}; separator="\n"$
 }
 
 export interface SubTree$composite._.SingularName$ {
-$composite._.WorkspaceCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $composite._.Name$_$role._.Name$?: Tree$role._.ObjectType._.Name$;}; separator="\n"$
+$composite._.WorkspaceCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $composite._.Name$_$role._.Name$?: Tree$role._.ObjectType._.Name$ | Node[];}; separator="\n"$
 
-$composite._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{association|    $composite._.Name$_$association._.Name$?: Tree$association._.ObjectType._.Name$;}; separator="\n"$
+$composite._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{association|    $composite._.Name$_$association._.Name$?: Tree$association._.ObjectType._.Name$ | Node[];}; separator="\n"$
 }
 
 >>
@@ -188,6 +188,7 @@ selectBuilder(meta, workspaceName) ::= <<
 // tslint:disable:no-empty-interface
 // tslint:disable:no-consecutive-blank-lines
 import { Select } from '@allors/workspace/domain/system';
+import { Node } from '@allors/workspace/domain/system';
 import { $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Tree$composite._.name$}; separator=", "$ } from './TreeBuilder.g';
 
 export interface SelectBuilder {
@@ -223,6 +224,7 @@ resultBuilder(meta, workspaceName) ::= <<
 // tslint:disable:no-empty-interface
 // tslint:disable:no-consecutive-blank-lines
 import { FlatResult, Result, Node, Select } from '@allors/workspace/domain/system';
+import { Node } from '@allors/workspace/domain/system';
 import { $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Select$composite._.name$}; separator=", "$ } from './SelectBuilder.g';
 import { $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Tree$composite._.name$}; separator=", "$ } from './TreeBuilder.g';
 
@@ -248,6 +250,7 @@ pullBuilder(meta, workspaceName) ::= <<
 // tslint:disable:no-empty-interface
 // tslint:disable:no-consecutive-blank-lines
 import { FlatPull, Pull, Node, Select, Result } from '@allors/workspace/domain/system';
+import { Node } from '@allors/workspace/domain/system';
 import { $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Select$composite._.name$}; separator=", "$ } from './SelectBuilder.g';
 import { $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Tree$composite._.name$}; separator=", "$ } from './TreeBuilder.g';
 import { $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Result$composite._.name$}; separator=", "$ } from './ResultBuilder.g';

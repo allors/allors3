@@ -5,7 +5,8 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { Carrier } from '@allors/workspace/domain/default';
-import { SessionService } from '@allors/workspace/angular/core';
+import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
+import { M } from '@allors/workspace/meta/default';
 
 interface Row extends TableRow {
   object: Carrier;
@@ -26,10 +27,11 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
 
   private subscription: Subscription;
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
-
+    public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public editService: EditService,
@@ -41,6 +43,8 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
     super();
 
     titleService.setTitle(this.title);
+
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
 
     this.edit = editService.edit();
     this.edit.result.subscribe(() => {
@@ -65,7 +69,9 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    this.filter = m.Carrier.filter = m.Carrier.filter ?? new Filter(m.Carrier.filterDefinition);
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularCarrier = angularMeta.for(m.Carrier);
+    this.filter = angularCarrier.filter ??= new Filter(angularCarrier.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -88,7 +94,7 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
           const pulls = [
             pull.Carrier({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.Carrier.sorter.create(sort) : null,
+              sorting: sort ? angularCarrier.sorter?.create(sort) : null,
               arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,

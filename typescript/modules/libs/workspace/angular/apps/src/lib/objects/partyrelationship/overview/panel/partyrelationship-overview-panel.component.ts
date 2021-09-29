@@ -48,7 +48,6 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
   constructor(
     @Self() public panel: PanelService,
     public workspaceService: WorkspaceService,
-
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     public deleteService: DeleteService,
@@ -134,10 +133,10 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
       this.objects = loaded.collection<PartyRelationship>(pullName);
 
       this.currentPartyRelationships = loaded.collection<PartyRelationship>(active);
-      this.currentPartyRelationships = this.currentPartyRelationships.filter((v) => v.strategy.cls.singularName !== this.m.PartyFinancialRelationship.name);
+      this.currentPartyRelationships = this.currentPartyRelationships.filter((v) => v.strategy.cls !== this.m.PartyFinancialRelationshi.);
 
       this.inactivePartyRelationships = loaded.collection<PartyRelationship>(inactive);
-      this.inactivePartyRelationships = this.inactivePartyRelationships.filter((v) => v.strategy.cls.singularName !== this.m.PartyFinancialRelationship.name);
+      this.inactivePartyRelationships = this.inactivePartyRelationships.filter((v) => v.strategy.cls !== this.m.PartyFinancialRelationship);
 
       this.allPartyRelationships = [];
 
@@ -150,7 +149,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
       }
 
       if (this.objects) {
-        this.table.total = loaded.values[`${pullName}_total`] || this.currentPartyRelationships.length;
+        this.table.total = loaded.value(`${pullName}_total`) ?? this.currentPartyRelationships.length;
         this.refreshTable();
       }
     };

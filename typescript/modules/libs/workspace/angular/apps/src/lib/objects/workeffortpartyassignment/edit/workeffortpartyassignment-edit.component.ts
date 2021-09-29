@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Party, WorkEffort, WorkEffortPartyAssignment } from '@allors/workspace/domain/default';
+import { Person, Party, WorkEffort, WorkEffortPartyAssignment, Employment } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -105,12 +105,12 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
           this.party = loaded.object<Party>(m.Party);
           this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
 
-          if (this.party !== undefined && this.party.objectType.name === m.Person.name) {
+          if (this.party !== undefined && this.party.strategy.cls === m.Person) {
             this.person = this.party as Person;
             this.workEffortPartyAssignment.Party = this.person;
           }
 
-          if (this.workEffort !== undefined && this.workEffort.objectType.name === m.WorkTask.name) {
+          if (this.workEffort !== undefined && this.workEffort.strategy.cls === m.WorkTask) {
             this.assignment = this.workEffort as WorkEffort;
             this.workEffortPartyAssignment.Assignment = this.assignment;
           }

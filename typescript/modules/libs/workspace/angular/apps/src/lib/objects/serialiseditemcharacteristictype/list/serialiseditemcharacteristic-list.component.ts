@@ -97,7 +97,7 @@ export class SerialisedItemCharacteristicListComponent extends TestScope impleme
           const pulls = [
             pull.SerialisedItemCharacteristicType({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.SerialisedItemCharacteristic.sorter.create(sort) : null,
+              sorting: sort ? angularSerialisedItemCharacteristic.sorter?.create(sort) : null,
               include: {
                 UnitOfMeasure: x,
               },

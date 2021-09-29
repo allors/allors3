@@ -78,6 +78,6 @@ export class NotificationLinkComponent implements OnInit, OnDestroy {
   }
 
   toNotifications() {
-    this.navigation.list(this.metaService.m.Notification);
+    this.navigation.list(this.m.Notification);
   }
 }

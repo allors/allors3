@@ -47,7 +47,7 @@ export class QuoteItemOverviewPanelComponent extends TestScope {
     return {
       associationId: this.panel.manager.id,
       associationObjectType: this.panel.manager.objectType,
-      associationRoleType: this.metaService.m.Quote.QuoteItems,
+      associationRoleType: this.m.Quote.QuoteItems,
     };
   }
 
@@ -122,7 +122,7 @@ export class QuoteItemOverviewPanelComponent extends TestScope {
     panel.onPulled = (loaded) => {
       this.quoteItems = loaded.collection<QuoteItem>(pullName);
       this.quote = loaded.object<ProductQuote>(quotePullName);
-      this.table.total = loaded.values[`${pullName}_total`] || this.quoteItems.length;
+      this.table.total = loaded.value([`${pullName}_total`]) ?? this.quoteItems.length;
       this.table.data = this.quoteItems.map((v) => {
         return {
           object: v,

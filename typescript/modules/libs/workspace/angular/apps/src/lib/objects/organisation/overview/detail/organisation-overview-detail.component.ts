@@ -28,15 +28,7 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
   legalForms: LegalForm[];
   currencies: Currency[];
 
-  constructor(
-    @Self() public allors: SessionService,
-    @Self() public panel: PanelService,
-
-    public saveService: SaveService,
-    public refreshService: RefreshService,
-    private singletonId: SingletonId,
-    private fetcher: FetcherService
-  ) {
+  constructor(@Self() public allors: SessionService, @Self() public panel: PanelService, public saveService: SaveService, public refreshService: RefreshService, private singletonId: SingletonId, private fetcher: FetcherService) {
     super();
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
@@ -51,7 +43,8 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {
-        const { pullBuilder: pull } = this.m;
+        const m = this.m;
+        const { pullBuilder: pull } = m;
         const id = this.panel.manager.id;
 
         pulls.push(
@@ -71,6 +64,10 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
   }
 
   public ngOnInit(): void {
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
+
     // Expanded
     this.subscription = this.panel.manager.on$
       .pipe(
@@ -80,14 +77,13 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
         switchMap(() => {
           this.organisation = undefined;
 
-          const { m, x, pull } = this.metaService;
           const id = this.panel.manager.id;
 
           const pulls = [
             this.fetcher.internalOrganisation,
             this.fetcher.locales,
             pull.Singleton({
-              object: this.singletonId.value,
+              objectId: this.singletonId.value,
               select: {
                 Locales: {
                   include: {

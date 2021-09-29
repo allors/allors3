@@ -40,7 +40,7 @@ export class PurchaseInvoiceItemOverviewPanelComponent extends TestScope {
     return {
       associationId: this.panel.manager.id,
       associationObjectType: this.panel.manager.objectType,
-      associationRoleType: this.metaService.m.PurchaseInvoice.PurchaseInvoiceItems,
+      associationRoleType: this.m.PurchaseInvoice.PurchaseInvoiceItems,
     };
   }
 
@@ -112,7 +112,7 @@ export class PurchaseInvoiceItemOverviewPanelComponent extends TestScope {
     panel.onPulled = (loaded) => {
       this.purchaseInvoiceItems = loaded.collection<PurchaseInvoiceItem>(pullName);
       this.invoice = loaded.object<PurchaseInvoice>(invoicePullName);
-      this.table.total = loaded.values[`${pullName}_total`] || this.purchaseInvoiceItems.length;
+      this.table.total = loaded.value([`${pullName}_total`]) ?? this.purchaseInvoiceItems.length;
       this.table.data = this.purchaseInvoiceItems.map((v) => {
         return {
           object: v,

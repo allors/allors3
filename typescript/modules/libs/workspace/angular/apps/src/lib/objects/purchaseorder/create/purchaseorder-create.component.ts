@@ -151,7 +151,7 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
   }
 
   public supplierAdded(supplier: Organisation): void {
-    const supplierRelationship = this.allors.session.create<SupplierRelationship>(m.SupplierRelationship);
+    const supplierRelationship = this.allors.session.create<SupplierRelationship>(this.m.SupplierRelationship);
     supplierRelationship.Supplier = supplier;
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -161,7 +161,7 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
   }
 
   public takenViaContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.TakenViaSupplier as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -176,7 +176,7 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
   }
 
   public billToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -191,7 +191,7 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
   }
 
   public shipToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -252,7 +252,7 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
       this.takenViaContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.takenViaContacts = loaded.collection<Person>(m.Person);
 
-      const selectedSupplier = loaded.object<selectedSupplier>(m.selectedSupplier);
+      const selectedSupplier = loaded.object<Organisation>('selectedSupplier');
       this.takenViaContactMechanismInitialRole = selectedSupplier.OrderAddress;
     });
   }
@@ -300,7 +300,7 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
       this.billToContacts = loaded.collection<Person>(m.Person);
       this.shipToContacts = this.billToContacts;
 
-      const selectedOrganisation = loaded.object<selectedOrganisation>(m.selectedOrganisation);
+      const selectedOrganisation = loaded.object<Organisation>('selectedOrganisation');
       this.currencyInitialRole = selectedOrganisation.PreferredCurrency;
       this.shipToAddressInitialRole = selectedOrganisation.ShippingAddress;
       this.billToContactMechanismInitialRole = selectedOrganisation.BillingAddress ?? selectedOrganisation.GeneralCorrespondence;

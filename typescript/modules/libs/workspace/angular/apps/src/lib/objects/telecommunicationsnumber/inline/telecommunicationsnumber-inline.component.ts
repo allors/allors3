@@ -29,7 +29,7 @@ export class PartyContactMechanismTelecommunicationsNumberInlineComponent implem
   }
 
   public ngOnInit(): void {
-    const { pullBuilder: pull } = this.m;
+    const m = this.m; const { pullBuilder: pull } = m;
 
     const pulls = [
       pull.ContactMechanismPurpose({

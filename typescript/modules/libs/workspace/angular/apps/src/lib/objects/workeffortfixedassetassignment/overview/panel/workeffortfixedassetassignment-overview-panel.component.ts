@@ -118,7 +118,7 @@ export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope impl
     };
 
     this.panel.onPulled = (loaded) => {
-      this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
+      this.workEffort = loaded.object<WorkEffort>(this.m.WorkEffort);
       this.objects = loaded.collection<WorkEffortFixedAssetAssignment>(workeffortpullName);
 
       if (this.objects) {

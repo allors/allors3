@@ -5,14 +5,14 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, InternalOrganisation, SalesOrder } from '@allors/workspace/domain/default';
+import { Person, Organisation, InternalOrganisation, SalesOrder, displayName } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { Equals } from '@allors/workspace/domain/system';
+import { And, Equals } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: SalesOrder;
@@ -91,7 +91,10 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.SalesOrder.filter = m.SalesOrder.filter ?? new Filter(m.SalesOrder.filterDefinition);
+
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularSalesOrder = angularMeta.for(m.SalesOrder);
+    this.filter = angularSalesOrder.filter ??= new Filter(angularSalesOrder.filterDefinition);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.SalesOrder.TakenBy };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -114,7 +117,7 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
         switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          internalOrganisationPredicate.object = internalOrganisationId;
+          internalOrganisationPredicate.value = internalOrganisationId;
 
           const pulls = [
             this.fetcher.internalOrganisation,
@@ -123,7 +126,7 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
             }),
             pull.SalesOrder({
               predicate,
-              sorting: sort ? m.SalesOrder.sorter.create(sort) : null,
+              sorting: sort ? angularSalesOrder.sorter?.create(sort) : null,
               include: {
                 PrintDocument: {
                   Media: x,
@@ -157,7 +160,7 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
             return {
               object: v,
               number: `${v.OrderNumber}`,
-              shipToCustomer: v.ShipToCustomer && v.ShipToCustomer.displayName,
+              shipToCustomer: v.ShipToCustomer && displayName(v.ShipToCustomer),
               state: `${v.SalesOrderState && v.SalesOrderState.Name}`,
               invoice: v.SalesInvoicesWhereSalesOrder.map((w) => w.InvoiceNumber).join(', '),
               customerReference: `${v.Description || ''}`,

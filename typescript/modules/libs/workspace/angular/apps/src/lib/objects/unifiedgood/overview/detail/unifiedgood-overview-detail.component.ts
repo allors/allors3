@@ -97,7 +97,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
       this.good = undefined;
 
       if (this.panel.isCollapsed) {
-        const { pullBuilder: pull } = this.m;
+        const m = this.m; const { pullBuilder: pull } = m;
         const id = this.panel.manager.id;
 
         pulls.push(
@@ -336,7 +336,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
     });
 
     this.originalCategories.forEach((category: ProductCategory) => {
-      category.RemoveProduct(this.good);
+      category.removeProduct(this.good);
     });
 
     this.good.Brand = this.selectedBrand;
@@ -375,7 +375,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   }
 
   private newSupplierOffering(supplier: Organisation): SupplierOffering {
-    const supplierOffering = this.allors.session.create<SupplierOffering>(m.SupplierOffering);
+    const supplierOffering = this.allors.session.create<SupplierOffering>(this.m.SupplierOffering);
     supplierOffering.Supplier = supplier;
     supplierOffering.Part = this.good;
     supplierOffering.UnitOfMeasure = this.good.UnitOfMeasure;

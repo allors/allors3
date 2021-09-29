@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { ProductIdentificationType, ProductIdentification } from '@allors/workspace/domain/default';
+import { ProductIdentificationType, ProductIdentification, Part, Good } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -46,12 +46,15 @@ export class ProductIdentificationEditComponent extends TestScope implements OnI
       .pipe(
         switchMap(() => {
           const isCreate = (this.data as IObject).id === undefined;
-          const { strategy: { cls }, associationRoleType } = this.data;
+          const {
+            strategy: { cls },
+            associationRoleType,
+          } = this.data;
 
           const pulls = [
             pull.ProductIdentificationType({
               predicate: { kind: 'Equals', propertyType: m.ProductIdentificationType.IsActive, value: true },
-              sorting: [{ roleType: m.ProductIdentificationType.Name }]
+              sorting: [{ roleType: m.ProductIdentificationType.Name }],
             }),
           ];
 
@@ -73,16 +76,16 @@ export class ProductIdentificationEditComponent extends TestScope implements OnI
           return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, create: isCreate, cls, associationRoleType })));
         })
       )
-      .subscribe(({ loaded, create, objectType, associationRoleType }) => {
+      .subscribe(({ loaded, create, cls, associationRoleType }) => {
         this.allors.session.reset();
 
-        this.container = loaded.objects.Good || loaded.object<Part>(m.Part);
+        this.container = loaded.object<Good>(m.Good) || loaded.object<Part>(m.Part);
         this.object = loaded.object<ProductIdentification>(m.ProductIdentification);
         this.productIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
 
         if (create) {
           this.title = 'Add Identification';
-          this.object = this.allors.context.create(objectType) as ProductIdentification;
+          this.object = this.allors.session.create<ProductIdentification>(cls);
           this.container.strategy.addCompositesRole(associationRoleType, this.object);
         }
       });

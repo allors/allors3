@@ -81,6 +81,6 @@ export class TaskAssignmentLinkComponent implements OnInit, OnDestroy {
   }
 
   toTasks() {
-    this.navigation.list(this.metaService.m.TaskAssignment);
+    this.navigation.list(this.m.TaskAssignment);
   }
 }

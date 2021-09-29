@@ -39,7 +39,7 @@ export class ShipmentItemOverviewPanelComponent extends TestScope {
     return {
       associationId: this.panel.manager.id,
       associationObjectType: this.panel.manager.objectType,
-      associationRoleType: this.metaService.m.Shipment.ShipmentItems,
+      associationRoleType: this.m.Shipment.ShipmentItems,
     };
   }
 
@@ -117,7 +117,7 @@ export class ShipmentItemOverviewPanelComponent extends TestScope {
     panel.onPulled = (loaded) => {
       this.shipmentItems = loaded.collection<ShipmentItem>(pullName);
       this.shipment = loaded.object<Shipment>(shipmentPullName);
-      this.table.total = loaded.values[`${pullName}_total`] || this.shipmentItems.length;
+      this.table.total = loaded.value([`${pullName}_total`]) ?? this.shipmentItems.length;
       this.table.data = this.shipmentItems.map((v) => {
         return {
           object: v,

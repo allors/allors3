@@ -39,7 +39,7 @@ export class EmailAddressEditComponent extends TestScope implements OnInit, OnDe
   }
 
   public ngOnInit(): void {
-    const { pullBuilder: pull } = this.m;
+    const m = this.m; const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(

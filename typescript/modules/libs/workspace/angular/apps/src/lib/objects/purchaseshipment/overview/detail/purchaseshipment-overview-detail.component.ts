@@ -89,7 +89,7 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
       this.purchaseShipment = undefined;
 
       if (this.panel.isCollapsed) {
-        const { pullBuilder: pull } = this.m;
+        const m = this.m; const { pullBuilder: pull } = m;
         const id = this.panel.manager.id;
 
         pulls.push(
@@ -105,12 +105,14 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
         this.purchaseShipment = loaded.object<PurchaseShipment>(pullName);
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(this.m.InternalOrganisation);
       }
     };
   }
 
   public ngOnInit(): void {
+    const m = this.m;
+
     // Maximized
     this.subscription = combineLatest([this.refresh$, this.panel.manager.on$])
       .pipe(
@@ -217,7 +219,7 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
   }
 
   public shipFromContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.purchaseShipment.ShipFromParty as Organisation;
     organisationContactRelationship.Contact = person;
 

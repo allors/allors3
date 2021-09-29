@@ -2,14 +2,12 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { MetaService, RefreshService, NavigationService, PanelService, SessionService } from '@allors/angular/services/core';
-import { Organisation, ProductType, ProductCategory, Brand, Model, ProductIdentificationType, ProductNumber, NonUnifiedGood, Ownership, ProductFeatureApplicability, ProductDimension, Locale } from '@allors/domain/generated';
-import { SaveService } from '@allors/angular/material/services/core';
-import { Meta } from '@allors/meta/generated';
-import { FetcherService, Filters } from '@allors/angular/base';
-import { PullRequest } from '@allors/protocol/system';
-import { Sort } from '@allors/data/system';
-import { TestScope, SearchFactory } from '@allors/angular/core';
+import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { Brand, Model, NonUnifiedGood, Organisation, Ownership, ProductCategory, ProductDimension, ProductFeatureApplicability, ProductIdentificationType, ProductNumber, ProductType, Locale } from '@allors/workspace/domain/default';
+import { M } from '@allors/workspace/meta/default';
+import { FetcherService } from '../../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../../filters/filters';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -49,7 +47,6 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
@@ -72,7 +69,9 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
       this.good = undefined;
 
       if (this.panel.isCollapsed) {
-        const m = this.m;  const { pullBuilder: pull } = m; const x = {};
+        const m = this.m;
+        const { pullBuilder: pull } = m;
+        const x = {};
         const id = this.panel.manager.id;
 
         pulls.push(
@@ -102,6 +101,10 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
   }
 
   public ngOnInit(): void {
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
+
     // Maximized
     this.subscription = combineLatest([this.refresh$, this.panel.manager.on$])
       .pipe(
@@ -111,9 +114,6 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
         switchMap(() => {
           this.good = undefined;
 
-          const m = this.allors.workspace.configuration.metaPopulation as M;
-          const { pullBuilder: pull } = m;
-          const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -186,7 +186,7 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
         this.locales = loaded.collection<Locale>(m.Locale);
         this.productFeatureApplicabilities = loaded.collection<ProductFeatureApplicability>(m.ProductFeatureApplicability);
-        this.productDimensions = this.productFeatureApplicabilities.map((v) => v.ProductFeature).filter((v) => v.strategy.cls.singularName === this.m.ProductDimension.name) as ProductDimension[];
+        this.productDimensions = this.productFeatureApplicabilities.map((v) => v.ProductFeature).filter((v) => v.strategy.cls === this.m.ProductDimension) as ProductDimension[];
 
         const goodNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
 
@@ -211,7 +211,7 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
     });
 
     this.originalCategories.forEach((category: ProductCategory) => {
-      category.RemoveProduct(this.good);
+      category.removeProduct(this.good);
     });
 
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {

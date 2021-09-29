@@ -6,9 +6,10 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Action, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IResult } from '@allors/workspace/domain/system';
 
 import { PrintService } from '../../../actions/print/print.service';
+import { PurchaseInvoiceApproval } from '@allors/workspace/domain/default';
 
 @Component({
   templateUrl: './purchaseinvoiceapproval-edit.component.html',
@@ -79,21 +80,21 @@ export class PurchaseInvoiceApprovalEditComponent extends TestScope implements O
   }
 
   approve(): void {
-    this.saveAndInvoke(() => this.allors.context.invoke(this.purchaseInvoiceApproval.Approve));
+    this.saveAndInvoke(() => this.allors.client.invokeReactive(this.allors.session, (this.purchaseInvoiceApproval.Approve)));
   }
 
   reject(): void {
-    this.saveAndInvoke(() => this.allors.context.invoke(this.purchaseInvoiceApproval.Reject));
+    this.saveAndInvoke(() => this.allors.client.invokeReactive(this.allors.session, (this.purchaseInvoiceApproval.Reject)));
   }
 
-  saveAndInvoke(methodCall: () => Observable<Invoked>): void {
-    const { pullBuilder: pull } = this.m;
+  saveAndInvoke(methodCall: () => Observable<IResult>): void {
+    const m = this.m; const { pullBuilder: pull } = m;
+    const { client, session} = this.allors;
 
-    this.allors.context
-      .save()
+    client.pushReactive(session)
       .pipe(
         switchMap(() => {
-          return this.allors.client.pullReactive(this.allors.session, pull.PurchaseInvoiceApproval({ objectId: this.data.id }));
+          return this.allors.client.pullReactive(this.allors.session, [pull.PurchaseInvoiceApproval({ objectId: this.data.id })]);
         }),
         switchMap(() => {
           this.allors.session.reset();

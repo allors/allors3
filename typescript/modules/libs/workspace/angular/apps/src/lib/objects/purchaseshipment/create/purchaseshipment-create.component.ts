@@ -116,7 +116,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
   }
 
   public supplierAdded(organisation: Organisation): void {
-    const supplierRelationship = this.allors.session.create<SupplierRelationship>(m.SupplierRelationship);
+    const supplierRelationship = this.allors.session.create<SupplierRelationship>(this.m.SupplierRelationship);
     supplierRelationship.Supplier = organisation;
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -124,7 +124,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
   }
 
   public shipFromContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.shipment.ShipFromParty as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -133,7 +133,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
   }
 
   public shipToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.shipment.ShipToParty as Organisation;
     organisationContactRelationship.Contact = person;
 

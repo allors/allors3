@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, Currency, RequestForQuote, Quote } from '@allors/workspace/domain/default';
+import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, Currency, RequestForQuote, Quote, CustomerRelationship } from '@allors/workspace/domain/default';
 import { PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -78,7 +78,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
               Originator: x,
               ContactPerson: x,
               RequestState: x,
-              Currency: x,
+              DerivedCurrency: x,
               CreatedBy: x,
               LastModifiedBy: x,
             },
@@ -97,7 +97,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
         this.request = loaded.object<RequestForQuote>(requestForQuotePullName);
-        this.quote = loaded.object<Quote>(m.Quote);
+        this.quote = loaded.object<Quote>(this.m.Quote);
       }
     };
   }
@@ -123,7 +123,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
             pull.RequestForQuote({
               objectId: id,
               include: {
-                Currency: x,
+                DerivedCurrency: x,
                 Originator: x,
                 ContactPerson: x,
                 RequestState: x,
@@ -142,9 +142,9 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
       .subscribe((loaded) => {
         this.allors.session.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
-        this.request = loaded.object<RequestForQuote>(m.RequestForQuote);
-        this.currencies = loaded.collection<Currency>(m.Currency);
+        this.internalOrganisation = loaded.object<Organisation>(this.m.InternalOrganisation);
+        this.request = loaded.object<RequestForQuote>(this.m.RequestForQuote);
+        this.currencies = loaded.collection<Currency>(this.m.Currency);
 
         if (this.request.Originator) {
           this.previousOriginator = this.request.Originator;
@@ -183,7 +183,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
   }
 
   public personAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.request.Originator as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -192,7 +192,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
   }
 
   public originatorAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 

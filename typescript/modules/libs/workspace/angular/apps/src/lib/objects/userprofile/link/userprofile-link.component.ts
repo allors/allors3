@@ -5,6 +5,7 @@ import { switchMap } from 'rxjs/operators';
 import { Person } from '@allors/workspace/domain/default';
 import { Action, EditService, ObjectService, RefreshService, UserId } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
+import { M } from '@allors/workspace/meta/default';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -17,16 +18,18 @@ export class UserProfileLinkComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
   user: Person;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
-
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public editService: EditService,
     private userId: UserId
   ) {
     this.edit = editService.edit();
+
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit(): void {
@@ -39,7 +42,7 @@ export class UserProfileLinkComponent implements OnInit, OnDestroy {
         switchMap(() => {
           const pulls = [
             pull.Person({
-              object: this.userId.value,
+              objectId: this.userId.value,
               include: {
                 UserProfile: {
                   DefaultInternalOrganization: x,

@@ -2,9 +2,10 @@ import { Component, Self } from '@angular/core';
 import { isBefore, isAfter } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { Part, BasePrice, PriceComponent, SupplierOffering, ProductIdentificationType } from '@allors/workspace/domain/default';
+import { Part, BasePrice, PriceComponent, SupplierOffering, ProductIdentificationType, displayName } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
+import { SortDirection } from '@allors/workspace/domain/system';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -51,7 +52,7 @@ export class NonUnifiedPartOverviewSummaryComponent {
             Part: x,
             Currency: x,
           },
-          sorting: [{ roleType: m.PriceComponent.FromDate, descending: true }],
+          sorting: [{ roleType: m.PriceComponent.FromDate, sortDirection: SortDirection.Descending }],
         }),
         pull.Part({
           name: partPullName,
@@ -100,7 +101,7 @@ export class NonUnifiedPartOverviewSummaryComponent {
       this.currentSupplierOfferings = this.allSupplierOfferings.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
       this.inactiveSupplierOfferings = this.allSupplierOfferings.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate !== null && isBefore(new Date(v.ThroughDate), new Date())));
 
-      const goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
+      const goodIdentificationTypes = loaded.collection<ProductIdentificationType>(this.m.ProductIdentificationType);
       const partNumberType = goodIdentificationTypes.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
       this.partnumber = this.part.ProductIdentifications.filter((v) => v.ProductIdentificationType === partNumberType).map((w) => w.Identification);
 

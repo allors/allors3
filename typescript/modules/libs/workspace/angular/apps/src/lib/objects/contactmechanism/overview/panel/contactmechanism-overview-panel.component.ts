@@ -102,7 +102,7 @@ export class ContactMechanismOverviewPanelComponent extends TestScope implements
       this.objects = loaded.collection<ContactMechanism>(pullName);
 
       if (this.objects) {
-        this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;
+        this.table.total = loaded.value([`${pullName}_total`]) ?? this.objects.length;
         this.table.data = this.objects.map((v) => {
           return {
             object: v,

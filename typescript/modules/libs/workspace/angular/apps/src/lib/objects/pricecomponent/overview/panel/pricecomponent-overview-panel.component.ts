@@ -2,29 +2,9 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { isBefore, isAfter, format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import {
-  InternalOrganisation,
-  Locale,
-  Carrier,
-  Person,
-  Organisation,
-  PartyContactMechanism,
-  OrganisationContactRelationship,
-  Party,
-  CustomerShipment,
-  Currency,
-  PostalAddress,
-  Facility,
-  ShipmentMethod,
-  PositionTypeRate,
-  TimeFrequency,
-  RateType,
-  PositionType,
-  PriceComponent,
-} from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, SaveService, SearchFactory, Table, TestScope } from '@allors/workspace/angular/base';
-import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { PriceComponent } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: PriceComponent;
@@ -135,7 +115,7 @@ export class PriceComponentOverviewPanelComponent extends TestScope implements O
       this.objects = loaded.collection<PriceComponent>(pullName);
 
       if (this.objects) {
-        this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;
+        this.table.total = loaded.value([`${pullName}_total`]) ?? this.objects.length;
         this.refreshTable();
       }
     };

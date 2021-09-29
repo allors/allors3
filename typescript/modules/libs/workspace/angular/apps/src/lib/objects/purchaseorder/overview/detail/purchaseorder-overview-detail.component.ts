@@ -94,7 +94,8 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {
-        const { pullBuilder: pull } = this.m;
+        const m = this.m;
+        const { pullBuilder: pull } = m;
 
         pulls.push(
           pull.PurchaseOrder({
@@ -113,6 +114,10 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public ngOnInit(): void {
+    const m = this.m;
+    const { pullBuilder: pull, treeBuilder: tree } = m;
+    const x = {};
+
     // Expanded
     this.subscription = this.panel.manager.on$
       .pipe(
@@ -122,9 +127,6 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
         switchMap(() => {
           this.order = undefined;
 
-          const m = this.allors.workspace.configuration.metaPopulation as M;
-          const { pullBuilder: pull } = m;
-          const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -209,7 +211,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public supplierAdded(organisation: Organisation): void {
-    const supplierRelationship = this.allors.session.create<SupplierRelationship>(m.SupplierRelationship);
+    const supplierRelationship = this.allors.session.create<SupplierRelationship>(this.m.SupplierRelationship);
     supplierRelationship.Supplier = organisation;
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -218,7 +220,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public takenViaContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.takenVia as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -233,7 +235,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public billToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -248,7 +250,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public shipToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
 

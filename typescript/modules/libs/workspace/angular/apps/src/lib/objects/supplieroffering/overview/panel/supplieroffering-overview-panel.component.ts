@@ -2,8 +2,9 @@ import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { format, isBefore, isAfter } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { SupplierOffering } from '@allors/workspace/domain/default';
+import { displayName, SupplierOffering } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: SupplierOffering;
@@ -46,7 +47,7 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
 
   constructor(
     @Self() public panel: PanelService,
-
+    public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     public deleteService: DeleteService,
@@ -54,10 +55,14 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
+
     this.panel.name = 'supplieroffering';
     this.panel.title = 'Supplier Offerings';
     this.panel.icon = 'business';
@@ -85,9 +90,6 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
     const pullName = `${this.panel.name}_${this.m.SupplierOffering.tag}`;
 
     this.panel.onPull = (pulls) => {
-      const m = this.m;
-      const { pullBuilder: pull } = m;
-      const x = {};
       const id = this.panel.manager.id;
 
       pulls.push(
@@ -111,7 +113,7 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
       this.currentObjects = this.objects.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
 
       if (this.objects) {
-        this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;
+        this.table.total = loaded.value([`${pullName}_total`]) ?? this.objects.length;
         this.refreshTable();
       }
     };
@@ -121,7 +123,7 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
     this.table.data = this.suplierOfferings.map((v) => {
       return {
         object: v,
-        supplier: v.Supplier.displayName,
+        supplier: displayName(v.Supplier),
         price: v.Currency.IsoCode + ' ' + v.Price,
         uom: v.UnitOfMeasure.Abbreviation || v.UnitOfMeasure.Name,
         from: format(new Date(v.FromDate), 'dd-MM-yyyy'),

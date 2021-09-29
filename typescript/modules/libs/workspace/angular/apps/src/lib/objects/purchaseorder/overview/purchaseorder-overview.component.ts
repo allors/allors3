@@ -7,7 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { M } from '@allors/workspace/meta/default';
 import { PurchaseOrder, PurchaseOrderItem } from '@allors/workspace/domain/default';
 import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
@@ -22,10 +22,11 @@ export class PurchaseOrderOverviewComponent extends TestScope implements AfterVi
   public orderItems: PurchaseOrderItem[] = [];
 
   subscription: Subscription;
+  m: M;
 
   constructor(
     @Self() public panelManager: PanelManagerService,
-
+    public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private route: ActivatedRoute,
@@ -36,13 +37,16 @@ export class PurchaseOrderOverviewComponent extends TestScope implements AfterVi
     super();
 
     titleService.setTitle(this.title);
+
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   public ngAfterViewInit(): void {
+    const m = this.m;
+
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const m = this.allors.workspace.configuration.metaPopulation as M;
           const { pullBuilder: pull } = m;
           const x = {};
 

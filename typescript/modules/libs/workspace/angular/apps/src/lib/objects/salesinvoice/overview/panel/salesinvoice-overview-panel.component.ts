@@ -2,8 +2,9 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { SalesInvoice } from '@allors/workspace/domain/default';
+import { displayName, SalesInvoice } from '@allors/workspace/domain/default';
 import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: SalesInvoice;
@@ -41,7 +42,7 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
 
   constructor(
     @Self() public panel: PanelService,
-
+    public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public overviewService: OverviewService,
@@ -49,7 +50,7 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {

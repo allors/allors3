@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { ProductIdentificationType } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope, Part } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -68,7 +68,10 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.Part.filter = m.Part.filter ?? new Filter(m.Part.filterDefinition);
+
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularWorkPart = angularMeta.for(m.Part);
+    this.filter = angularWorkPart.filter ??= new Filter(angularWorkPart.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -91,7 +94,7 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
           const pulls = [
             pull.Part({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.Part.sorter.create(sort) : null,
+              sorting: sort ? angularWorkPart.sorter?.create(sort) : null,
               include: {
                 Brand: x,
                 Model: x,

@@ -67,7 +67,10 @@ export class PositionTypesOverviewComponent extends TestScope implements OnInit,
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.PositionType.filter = m.PositionType.filter ?? new Filter(m.PositionType.filterDefinition);
+
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularPositionType = angularMeta.for(m.PositionType);
+    this.filter = angularPositionType.filter ??= new Filter(angularPositionType.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -90,7 +93,7 @@ export class PositionTypesOverviewComponent extends TestScope implements OnInit,
           const pulls = [
             pull.PositionType({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.PositionType.sorter.create(sort) : null,
+              sorting: sort ? angularPositionType.sorter?.create(sort) : null,
               include: {
                 PositionTypeRate: x,
               },

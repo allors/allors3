@@ -7,7 +7,7 @@ import { M } from '@allors/workspace/meta/default';
 import { ProductQuoteApproval } from '@allors/workspace/domain/default';
 import { Action, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IResult } from '@allors/workspace/domain/system';
 
 import { PrintService } from '../../../actions/print/print.service';
 
@@ -80,21 +80,22 @@ export class ProductQuoteApprovalEditComponent extends TestScope implements OnIn
   }
 
   approve(): void {
-    this.saveAndInvoke(() => this.allors.context.invoke(this.productQuoteApproval.Approve));
+    this.saveAndInvoke(() => this.allors.client.invokeReactive(this.allors.session, this.productQuoteApproval.Approve));
   }
 
   reject(): void {
-    this.saveAndInvoke(() => this.allors.context.invoke(this.productQuoteApproval.Reject));
+    this.saveAndInvoke(() => this.allors.client.invokeReactive(this.allors.session, this.productQuoteApproval.Reject));
   }
 
-  saveAndInvoke(methodCall: () => Observable<Invoked>): void {
-    const { pullBuilder: pull } = this.m;
+  saveAndInvoke(methodCall: () => Observable<IResult>): void {
+    const m = this.m;
+    const { pullBuilder: pull } = m;
 
     this.allors.context
       .save()
       .pipe(
         switchMap(() => {
-          return this.allors.client.pullReactive(this.allors.session, pull.ProductQuoteApproval({ objectId: this.data.id }));
+          return this.allors.client.pullReactive(this.allors.session, [pull.ProductQuoteApproval({ objectId: this.data.id })]);
         }),
         switchMap(() => {
           this.allors.session.reset();

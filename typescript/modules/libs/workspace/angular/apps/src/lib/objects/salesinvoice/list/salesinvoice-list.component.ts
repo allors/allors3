@@ -6,14 +6,14 @@ import { format, formatDistance } from 'date-fns';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, InternalOrganisation, SalesInvoice } from '@allors/workspace/domain/default';
+import { Person, Organisation, InternalOrganisation, SalesInvoice, Disbursement, Receipt, PaymentApplication } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, ActionTarget, AllorsMaterialDialogService } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { Equals } from '@allors/workspace/domain/system';
+import { And, Equals } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: SalesInvoice;
@@ -79,6 +79,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
 
     titleService.setTitle(this.title);
     this.m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
 
     this.print = printService.print();
     this.send = methodService.create(allors.client, allors.session, this.m.SalesInvoice.Send, { name: 'Send' });
@@ -110,8 +111,10 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
         const targets = invoices.filter((v) => v.canExecuteSetPaid);
 
         if (targets.length > 0) {
-          dialogService.prompt({ title: `Set Payment Date`, placeholder: `Payment date`, promptType: `date` }).subscribe((paymentDate: string) => {
-            if (paymentDate) {
+          dialogService.prompt({ title: `Set Payment Date`, placeholder: `Payment date`, promptType: `date` }).subscribe((paymentDateString: string) => {
+            if (paymentDateString) {
+              // TODO: Martien
+              const paymentDate = new Date(paymentDateString);
               targets.forEach((salesinvoice) => {
                 const amountToPay = parseFloat(salesinvoice.TotalIncVat) - parseFloat(salesinvoice.AmountPaid);
 
@@ -177,9 +180,12 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.SalesInvoice.filter = m.SalesInvoice.filter ?? new Filter(m.SalesInvoice.filterDefinition);
 
-    const internalOrganisationPredicate : Equals = { kind: 'Equals', propertyType: m.SalesInvoice.BilledFrom };
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularSalesInvoice = angularMeta.for(m.SalesInvoice);
+    this.filter = angularSalesInvoice.filter ??= new Filter(angularSalesInvoice.filterDefinition);
+
+    const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.SalesInvoice.BilledFrom };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
@@ -200,16 +206,16 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
         switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          internalOrganisationPredicate.object = internalOrganisationId;
+          internalOrganisationPredicate.value = internalOrganisationId;
 
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.Person({
-              object: this.userId.value,
+              objectId: this.userId.value,
             }),
             pull.SalesInvoice({
               predicate,
-              sorting: sort ? m.SalesInvoice.sorter.create(sort) : null,
+              sorting: sort ? angularSalesInvoice.sorter?.create(sort) : null,
               include: {
                 PrintDocument: {
                   Media: x,

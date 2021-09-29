@@ -12,7 +12,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { Equals } from '@allors/workspace/domain/system';
+import { And, Equals } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: Quote;
@@ -83,7 +83,10 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.ProductQuote.filter = m.ProductQuote.filter ?? new Filter(m.ProductQuote.filterDefinition);
+    
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularProductQuote = angularMeta.for(m.ProductQuote);
+    this.filter = angularProductQuote.filter ??= new Filter(angularProductQuote.filterDefinition);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Quote.Issuer };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -106,16 +109,16 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
         switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          internalOrganisationPredicate.object = internalOrganisationId;
+          internalOrganisationPredicate.value = internalOrganisationId;
 
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.Person({
-              object: this.userId.value,
+              objectId: this.userId.value,
             }),
             pull.Quote({
               predicate,
-              sorting: sort ? m.ProductQuote.sorter.create(sort) : null,
+              sorting: sort ? angularProductQuote.sorter?.create(sort) : null,
               include: {
                 PrintDocument: {
                   Media: x,

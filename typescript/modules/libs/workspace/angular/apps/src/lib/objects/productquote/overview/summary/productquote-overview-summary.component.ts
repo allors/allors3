@@ -5,6 +5,7 @@ import { M } from '@allors/workspace/meta/default';
 import { RequestForQuote, ProductQuote, SalesOrder } from '@allors/workspace/domain/default';
 import { Action, NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { PrintService } from '../../../../actions/print/print.service';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -22,14 +23,17 @@ export class ProductQuoteOverviewSummaryComponent {
 
   constructor(
     @Self() public panel: PanelService,
-
+    public workspaceService: WorkspaceService,
     public navigation: NavigationService,
     public printService: PrintService,
     private saveService: SaveService,
     public refreshService: RefreshService,
     public snackBar: MatSnackBar
   ) {
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.print = printService.print();
 
@@ -40,10 +44,6 @@ export class ProductQuoteOverviewSummaryComponent {
     const requestPullName = `${panel.name}_${this.m.RequestForQuote.tag}`;
 
     panel.onPull = (pulls) => {
-      const m = this.m;
-      const { pullBuilder: pull } = m;
-      const x = {};
-
       pulls.push(
         pull.ProductQuote({
           name: productQuotePullName,

@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { WorkEffort } from '@allors/workspace/domain/default';
+import { displayName, WorkEffort } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -87,7 +87,10 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.WorkEffort.filter = m.WorkEffort.filter ?? new Filter(m.WorkEffort.filterDefinition);
+
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularWorkEffort = angularMeta.for(m.WorkEffort);
+    this.filter = angularWorkEffort.filter ??= new Filter(angularWorkEffort.filterDefinition);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.WorkEffort.TakenBy };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -110,12 +113,12 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
         switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          internalOrganisationPredicate.object = internalOrganisationId;
+          internalOrganisationPredicate.value = internalOrganisationId;
 
           const pulls = [
             pull.WorkEffort({
               predicate,
-              sorting: sort ? m.WorkEffort.sorter.create(sort) : null,
+              sorting: sort ? angularWorkEffort.sorter?.create(sort) : null,
               include: {
                 Customer: x,
                 ExecutedBy: x,
@@ -154,9 +157,9 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
               type: v.strategy.cls.singularName,
               state: v.WorkEffortState ? v.WorkEffortState.Name : '',
               customer: v.Customer ? displayName(v.Customer) : '',
-              executedBy: v.ExecutedBy ? v.ExecutedBy.displayName : '',
-              equipment: v.WorkEffortFixedAssetAssignmentsWhereAssignment ? v.WorkEffortFixedAssetAssignmentsWhereAssignment.map((w) => w.FixedAsset.displayName).join(', ') : '',
-              worker: v.WorkEffortPartyAssignmentsWhereAssignment ? v.WorkEffortPartyAssignmentsWhereAssignment.map((w) => w.Party.displayName).join(', ') : '',
+              executedBy: v.ExecutedBy ? displayName(v.ExecutedBy) : '',
+              equipment: v.WorkEffortFixedAssetAssignmentsWhereAssignment ? v.WorkEffortFixedAssetAssignmentsWhereAssignment.map((w) => displayName(w.FixedAsset)).join(', ') : '',
+              worker: v.WorkEffortPartyAssignmentsWhereAssignment ? v.WorkEffortPartyAssignmentsWhereAssignment.map((w) => displayName(w.Party)).join(', ') : '',
               lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
             } as Row;
           });

@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Organisation, Part, PriceComponent, ProductIdentificationType, Facility, InventoryItemKind, ProductType, Brand, Model, PartNumber, UnitOfMeasure, Settings, PartCategory } from '@allors/workspace/domain/default';
+import { Organisation, Part, PriceComponent, ProductIdentificationType, Facility, InventoryItemKind, ProductType, Brand, Model, PartNumber, UnitOfMeasure, Settings, PartCategory, Locale } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
@@ -49,7 +49,6 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
@@ -71,7 +70,8 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
     panel.onPull = (pulls) => {
       this.part = undefined;
       if (this.panel.isCollapsed) {
-        const { pullBuilder: pull } = this.m;
+        const m = this.m;
+        const { pullBuilder: pull } = m;
         const id = this.panel.manager.id;
 
         pulls.push(
@@ -91,6 +91,10 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
   }
 
   public ngOnInit(): void {
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
+
     // Maximized
     this.subscription = combineLatest(this.refreshService.refresh$, this.panel.manager.on$)
       .pipe(
@@ -100,9 +104,6 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
         switchMap(() => {
           this.part = undefined;
 
-          const m = this.allors.workspace.configuration.metaPopulation as M;
-          const { pullBuilder: pull } = m;
-          const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -218,7 +219,6 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
     }
   }
 
-
   public brandAdded(brand: Brand): void {
     this.brands.push(brand);
     this.selectedBrand = brand;
@@ -260,8 +260,6 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
   }
 
   public update(): void {
-    
-
     this.onSave();
 
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
@@ -281,7 +279,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
     });
 
     this.originalCategories.forEach((category: PartCategory) => {
-      category.RemovePart(this.part);
+      category.removePart(this.part);
     });
 
     this.part.Brand = this.selectedBrand;

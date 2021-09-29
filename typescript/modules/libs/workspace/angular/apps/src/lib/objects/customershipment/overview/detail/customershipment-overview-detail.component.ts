@@ -47,13 +47,12 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
   customersFilter: SearchFactory;
 
   get shipToCustomerIsPerson(): boolean {
-    return !this.customerShipment.ShipToParty || this.customerShipment.ShipToParty.strategy.cls  === this.m.Person;
+    return !this.customerShipment.ShipToParty || this.customerShipment.ShipToParty.strategy.cls === this.m.Person;
   }
 
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
@@ -77,7 +76,8 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
       this.customerShipment = undefined;
 
       if (this.panel.isCollapsed) {
-        const { pullBuilder: pull } = this.m;
+        const m = this.m;
+        const { pullBuilder: pull } = m;
         const id = this.panel.manager.id;
 
         pulls.push(
@@ -93,12 +93,16 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
         this.customerShipment = loaded.object<CustomerShipment>(pullName);
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+        this.internalOrganisation = loaded.object<Organisation>(this.m.InternalOrganisation);
       }
     };
   }
 
   public ngOnInit(): void {
+    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const { pullBuilder: pull } = m;
+    const x = {};
+
     // Maximized
     this.subscription = combineLatest([this.refresh$, this.panel.manager.on$])
       .pipe(
@@ -108,9 +112,6 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
         switchMap(() => {
           this.customerShipment = undefined;
 
-          const m = this.allors.workspace.configuration.metaPopulation as M;
-          const { pullBuilder: pull } = m;
-          const x = {};
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -178,7 +179,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
   }
 
   public shipToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.customerShipment.ShipToParty as Organisation;
     organisationContactRelationship.Contact = person;
 

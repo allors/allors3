@@ -4,50 +4,11 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import {
-  Good,
-  InternalOrganisation,
-  NonUnifiedGood,
-  Part,
-  PriceComponent,
-  Brand,
-  Model,
-  Locale,
-  Carrier,
-  SerialisedItemCharacteristicType,
-  WorkTask,
-  ContactMechanism,
-  Person,
-  Organisation,
-  PartyContactMechanism,
-  OrganisationContactRelationship,
-  Catalogue,
-  Singleton,
-  ProductCategory,
-  Scope,
-} from '@allors/workspace/domain/default';
-import {
-  Action,
-  DeleteService,
-  EditService,
-  Filter,
-  FilterDefinition,
-  MediaService,
-  NavigationService,
-  ObjectData,
-  OverviewService,
-  RefreshService,
-  SaveService,
-  SearchFactory,
-  Sorter,
-  Table,
-  TableRow,
-  TestScope,
-} from '@allors/workspace/angular/base';
+import { Catalogue } from '@allors/workspace/domain/default';
+import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
-import { And } from '@allors/workspace/domain/system';
+import { And, Equals } from '@allors/workspace/domain/system';
 
-import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 interface Row extends TableRow {
@@ -71,6 +32,7 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
 
   private subscription: Subscription;
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
@@ -87,6 +49,8 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
     super();
 
     titleService.setTitle(this.title);
+
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.edit = editService.edit();
     this.edit.result.subscribe(() => {
@@ -112,12 +76,15 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.Catalogue.filter = m.Catalogue.filter ?? new Filter(m.Catalogue.filterDefinition);
 
-    const internalOrganisationPredicate = : Equals = { kind: 'Equals', propertyType: m.Catalogue.InternalOrganisation };
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularCatalogue = angularMeta.for(m.Catalogue);
+    this.filter = angularCatalogue.filter ??= new Filter(angularCatalogue.filterDefinition);
+
+    const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Catalogue.InternalOrganisation };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
@@ -138,12 +105,12 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
         switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          internalOrganisationPredicate.object = internalOrganisationId;
+          internalOrganisationPredicate.value = internalOrganisationId;
 
           const pulls = [
             pull.Catalogue({
               predicate: predicate,
-              sorting: sort ? m.Catalogue.sorter.create(sort) : null,
+              sorting: sort ? angularCatalogue.sorter?.create(sort) : null,
               include: {
                 CatalogueImage: x,
                 ProductCategories: x,

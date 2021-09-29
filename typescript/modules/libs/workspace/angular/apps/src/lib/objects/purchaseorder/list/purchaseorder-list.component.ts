@@ -5,14 +5,14 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, InternalOrganisation, PurchaseOrder } from '@allors/workspace/domain/default';
+import { Person, Organisation, InternalOrganisation, PurchaseOrder, displayName } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { Equals } from '@allors/workspace/domain/system';
+import { And, Equals } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: PurchaseOrder;
@@ -104,8 +104,11 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.PurchaseOrder.filter = m.PurchaseOrder.filter ?? new Filter(m.PurchaseOrder.filterDefinition);
 
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularPurchaseOrder = angularMeta.for(m.PurchaseOrder);
+    this.filter = angularPurchaseOrder.filter ??= new Filter(angularPurchaseOrder.filterDefinition);
+   
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.PurchaseOrder.OrderedBy };
 
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -128,16 +131,16 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
         switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          internalOrganisationPredicate.object = internalOrganisationId;
+          internalOrganisationPredicate.value = internalOrganisationId;
 
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.Person({
-              object: this.userId.value,
+              objectId: this.userId.value,
             }),
             pull.PurchaseOrder({
               predicate,
-              sorting: sort ? m.PurchaseOrder.sorter.create(sort) : null,
+              sorting: sort ? angularPurchaseOrder.sorter?.create(sort) : null,
               include: {
                 PrintDocument: {
                   Media: x,
@@ -173,7 +176,7 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
             return {
               object: v,
               number: `${v.OrderNumber}`,
-              supplier: v.TakenViaSupplier && v.TakenViaSupplier.displayName,
+              supplier: v.TakenViaSupplier && displayName(v.TakenViaSupplier),
               state: `${v.PurchaseOrderState && v.PurchaseOrderState.Name}`,
               shipmentState: `${v.PurchaseOrderShipmentState && v.PurchaseOrderShipmentState.Name}`,
               customerReference: `${v.Description || ''}`,

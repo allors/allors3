@@ -2,7 +2,7 @@ import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { M } from '@allors/workspace/meta/default';
-import { Organisation, InternalOrganisation, PurchaseOrder, PurchaseOrderItem, InvoiceItemType, PurchaseInvoice, OrderItemBilling } from '@allors/workspace/domain/default';
+import { Organisation, PurchaseOrder, PurchaseOrderItem, InvoiceItemType, PurchaseInvoice, OrderItemBilling, PurchaseInvoiceItem } from '@allors/workspace/domain/default';
 import { Action, DeleteService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, SaveService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -75,6 +75,10 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
 
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
+
     this.panel.name = 'purchaseorder';
     this.panel.title = 'Purchase Orders';
     this.panel.icon = 'message';
@@ -134,7 +138,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
       autoFilter: true,
     });
 
-    if (this.panel.manager.strategy.cls === this.m.PurchaseInvoice) {
+    if (this.panel.manager.objectType === this.m.PurchaseInvoice) {
       this.table.actions.push(this.delete);
     }
 
@@ -142,7 +146,6 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
     const invoicePullName = `${this.panel.name}_${this.m.PurchaseInvoice.tag}`;
 
     this.panel.onPull = (pulls) => {
-      const { x, pull, m } = this.metaService;
       const { id } = this.panel.manager;
 
       pulls.push(
@@ -153,7 +156,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
           objectId: id,
           select: {
             BilledFrom: {
-              PurchaseOrdersWhereTakenViaSupplier: {
+              Organisation_PurchaseOrdersWhereTakenViaSupplier: {
                 include: {
                   PurchaseOrderState: x,
                   PurchaseOrderShipmentState: x,
@@ -171,18 +174,16 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
           },
         }),
         pull.OrderItemBilling({
-          predicate: new And([
-            { kind: 'ContainedIn', 
-              propertyType: m.OrderItemBilling.InvoiceItem,
-              extent: { kind: 'Filter', 
-                objectType: m.InvoiceItem,
-                predicate: { kind: 'ContainedIn', 
-                  propertyType: m.InvoiceItem.InvoiceWhereValidInvoiceItem,
-                  objects: [id],
-                }),
-              }),
-            }),
-          ]),
+          predicate: {
+            kind: 'And',
+            operands: [
+              {
+                kind: 'ContainedIn',
+                propertyType: m.OrderItemBilling.InvoiceItem,
+                extent: { kind: 'Filter', objectType: m.InvoiceItem, predicate: { kind: 'ContainedIn', propertyType: m.InvoiceItem.InvoiceWhereValidInvoiceItem, objectIds: [id] } },
+              },
+            ],
+          },
         }),
         pull.PurchaseInvoice({
           name: invoicePullName,
@@ -216,7 +217,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
       );
 
       if (this.objects) {
-        this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;
+        this.table.total = loaded.value(`${pullName}_total`) ?? this.objects.length;
         this.table.data = this.objects.map((v) => {
           return {
             object: v,
@@ -234,14 +235,14 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
   }
 
   public addFromPurchaseOrder(panelPurchaseOrder: PurchaseOrder): void {
-    
+    const { session } = this.allors;
 
-    const purchaseInvoice = context.get(this.purchaseInvoice.id) as PurchaseInvoice;
-    const purchaseOrder = context.get(panelPurchaseOrder.id) as PurchaseOrder;
+    const purchaseInvoice = session.instantiate<PurchaseInvoice>(this.purchaseInvoice.id);
+    const purchaseOrder = session.instantiate<PurchaseOrder>(panelPurchaseOrder.id);
 
     purchaseOrder.ValidOrderItems.forEach((purchaseOrderItem: PurchaseOrderItem) => {
       if (purchaseOrderItem.CanInvoice) {
-        const invoiceItem = context.create('PurchaseInvoiceItem') as PurchaseInvoiceItem;
+        const invoiceItem = session.create<PurchaseInvoiceItem>(this.m.PurchaseInvoiceItem);
         invoiceItem.AssignedUnitPrice = purchaseOrderItem.UnitPrice;
         invoiceItem.Part = purchaseOrderItem.Part;
         invoiceItem.Quantity = purchaseOrderItem.QuantityOrdered;
@@ -261,7 +262,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
 
         purchaseInvoice.addPurchaseInvoiceItem(invoiceItem);
 
-        const orderItemBilling = context.create('OrderItemBilling') as OrderItemBilling;
+        const orderItemBilling = session.create<OrderItemBilling>(m.OrderItemBilling);
         orderItemBilling.Quantity = purchaseOrderItem.QuantityOrdered;
         orderItemBilling.Amount = purchaseOrderItem.TotalBasePrice;
         orderItemBilling.OrderItem = purchaseOrderItem;
@@ -270,22 +271,22 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
     });
 
     this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      context.reset();
+      session.reset();
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
 
   public removeFromPurchaseOrder(panelPurchaseOrder: PurchaseOrder): void {
-    
+    const { client, session } = this.allors;
 
-    const purchaseOrder = context.get(panelPurchaseOrder.id) as PurchaseOrder;
+    const purchaseOrder = session.instantiate<PurchaseOrder>(panelPurchaseOrder.id);
 
     purchaseOrder.ValidOrderItems.forEach((purchaseOrderItem: PurchaseOrderItem) => {
       const orderItemBilling = this.orderItemBillings.find((v) => v.OrderItem.id === purchaseOrderItem.id);
       if (orderItemBilling) {
-        context.invoke(orderItemBilling.InvoiceItem.Delete).subscribe(() => {
-          context.reset();
+        client.invokeReactive(session, orderItemBilling.InvoiceItem.Delete).subscribe(() => {
+          session.reset();
           this.refreshService.refresh();
           this.snackBar.open('Successfully removed from invoice.', 'close', { duration: 5000 });
         }, this.saveService.errorHandler);

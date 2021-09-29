@@ -17,25 +17,19 @@ export class OrganisationOverviewSummaryComponent extends TestScope {
   organisation: Organisation;
   contactKindsText: string;
 
-  constructor(
-    @Self() public panel: PanelService,
-    public workspaceService: WorkspaceService,
-
-    public navigation: NavigationService
-  ) {
+  constructor(@Self() public panel: PanelService, public workspaceService: WorkspaceService, public navigation: NavigationService) {
     super();
 
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
-
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
+    
     panel.name = 'summary';
 
     const organisationPullName = `${panel.name}_${this.m.Organisation.tag}`;
 
     panel.onPull = (pulls) => {
-      const m = this.m;
-      const { pullBuilder: pull } = m;
-      const x = {};
-
       const id = this.panel.manager.id;
 
       pulls.push(

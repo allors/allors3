@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { RequestForQuote, RequestItem } from '@allors/workspace/domain/default';
+import { RequestForQuote, RequestItem, Request } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -43,7 +43,7 @@ export class RequestItemOverviewPanelComponent extends TestScope {
     return {
       associationId: this.panel.manager.id,
       associationObjectType: this.panel.manager.objectType,
-      associationRoleType: this.metaService.m.Request.RequestItems,
+      associationRoleType: this.m.Request.RequestItems,
     };
   }
 
@@ -121,8 +121,8 @@ export class RequestItemOverviewPanelComponent extends TestScope {
 
     panel.onPulled = (loaded) => {
       this.requestItems = loaded.collection<RequestItem>(pullName);
-      this.request = loaded.object<Request>(m.Request);
-      this.table.total = loaded.values[`${pullName}_total`] || this.requestItems.length;
+      this.request = loaded.object<RequestForQuote>(this.m.Request);
+      this.table.total = loaded.value([`${pullName}_total`]) ?? this.requestItems.length;
       this.table.data = this.requestItems.map((v) => {
         return {
           object: v,

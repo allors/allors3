@@ -37,7 +37,7 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
   }
 
   public ngOnInit(): void {
-    const { pullBuilder: pull } = this.m;
+    const m = this.m; const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(

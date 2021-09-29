@@ -6,14 +6,14 @@ import { format, formatDistance } from 'date-fns';
 import { MatSnackBar } from '@angular/material/snack-bar/snack-bar';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, InternalOrganisation, Receipt, PaymentApplication, PurchaseInvoice } from '@allors/workspace/domain/default';
+import { Person, Organisation, InternalOrganisation, Receipt, PaymentApplication, PurchaseInvoice, displayName, Disbursement } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, ActionTarget, AllorsMaterialDialogService } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { Equals } from '@allors/workspace/domain/system';
+import { And, Equals } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: PurchaseInvoice;
@@ -76,6 +76,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
     titleService.setTitle(this.title);
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
 
     this.approve = methodService.create(allors.client, allors.session, this.m.PurchaseInvoice.Approve, { name: 'Approve' });
     this.reject = methodService.create(allors.client, allors.session, this.m.PurchaseInvoice.Reject, { name: 'Reject' });
@@ -105,8 +106,10 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
         const targets = invoices.filter((v) => v.canExecuteSetPaid);
 
         if (targets.length > 0) {
-          dialogService.prompt({ title: `Set Payment Date`, placeholder: `Payment date`, promptType: `date` }).subscribe((paymentDate: string) => {
-            if (paymentDate) {
+          dialogService.prompt({ title: `Set Payment Date`, placeholder: `Payment date`, promptType: `date` }).subscribe((paymentDateString: string) => {
+            if (paymentDateString) {
+              // TODO: Martien
+              const paymentDate = new Date(paymentDateString);
               targets.forEach((purchaseInvoice) => {
                 const amountToPay = parseFloat(purchaseInvoice.TotalIncVat) - parseFloat(purchaseInvoice.AmountPaid);
 
@@ -172,7 +175,10 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.PurchaseInvoice.filter = m.PurchaseInvoice.filter ?? new Filter(m.PurchaseInvoice.filterDefinition);
+
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularPurchaseInvoice = angularMeta.for(m.PurchaseInvoice);
+    this.filter = angularPurchaseInvoice.filter ??= new Filter(angularPurchaseInvoice.filterDefinition);
 
     const internalOrganisationPredicate : Equals = { kind: 'Equals', propertyType: m.PurchaseInvoice.BilledTo };
 
@@ -196,16 +202,16 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
         switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          internalOrganisationPredicate.object = internalOrganisationId;
+          internalOrganisationPredicate.value = internalOrganisationId;
 
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.Person({
-              object: this.userId.value,
+              objectId: this.userId.value,
             }),
             pull.PurchaseInvoice({
               predicate,
-              sorting: sort ? m.PurchaseInvoice.sorter.create(sort) : null,
+              sorting: sort ? angularPurchaseInvoice.sorter?.create(sort) : null,
               include: {
                 BilledFrom: x,
                 BilledTo: x,
@@ -242,7 +248,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
               object: v,
               number: v.InvoiceNumber,
               type: `${v.PurchaseInvoiceType && v.PurchaseInvoiceType.Name}`,
-              billedFrom: v.BilledFrom && v.BilledFrom.displayName,
+              billedFrom: v.BilledFrom && displayName(v.BilledFrom),
               state: `${v.PurchaseInvoiceState && v.PurchaseInvoiceState.Name}`,
               reference: `${v.CustomerReference}`,
               dueDate: v.DueDate && format(new Date(v.DueDate), 'dd-MM-yyyy'),

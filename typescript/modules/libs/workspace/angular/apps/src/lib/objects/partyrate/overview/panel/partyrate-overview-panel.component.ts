@@ -49,7 +49,6 @@ export class PartyRateOverviewPanelComponent extends TestScope implements OnInit
   constructor(
     @Self() public panel: PanelService,
     public workspaceService: WorkspaceService,
-
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     public deleteService: DeleteService,
@@ -107,7 +106,7 @@ export class PartyRateOverviewPanelComponent extends TestScope implements OnInit
       this.objects = loaded.collection<PartyRate>(pullName);
 
       if (this.objects) {
-        this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;
+        this.table.total = loaded.value(`${pullName}_total`) ?? this.objects.length;
         this.refreshTable();
       }
     };

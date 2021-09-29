@@ -108,29 +108,33 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
           if (id != null) {
             pulls.push(
               pull.CustomerRelationship({
-                predicate: new And({
+                predicate: {
+                  kind: 'And',
                   operands: [
-                    { kind: 'Equals',  propertyType: m.CustomerRelationship.Customer, objectId: id }),
-                    { kind: 'Equals',  propertyType: m.CustomerRelationship.InternalOrganisation, object: internalOrganisationId }),
-                    new Not({
-                      operand: new Exists({ propertyType: m.CustomerRelationship.ThroughDate }),
-                    }),
+                    { kind: 'Equals', propertyType: m.CustomerRelationship.Customer, value: id },
+                    { kind: 'Equals', propertyType: m.CustomerRelationship.InternalOrganisation, value: internalOrganisationId },
+                    {
+                      kind: 'Not',
+                      operand: { kind: 'Exists', propertyType: m.CustomerRelationship.ThroughDate },
+                    },
                   ],
-                }),
+                },
               })
             );
 
             pulls.push(
               pull.SupplierRelationship({
-                predicate: new And({
+                predicate: {
+                  kind: 'And',
                   operands: [
-                    { kind: 'Equals',  propertyType: m.SupplierRelationship.Supplier, objectId: id }),
-                    { kind: 'Equals',  propertyType: m.SupplierRelationship.InternalOrganisation, object: internalOrganisationId }),
-                    new Not({
-                      operand: new Exists({ propertyType: m.SupplierRelationship.ThroughDate }),
-                    }),
+                    { kind: 'Equals', propertyType: m.SupplierRelationship.Supplier, value: id },
+                    { kind: 'Equals', propertyType: m.SupplierRelationship.InternalOrganisation, value: internalOrganisationId },
+                    {
+                      kind: 'Not',
+                      operand: { kind: 'Exists', propertyType: m.SupplierRelationship.ThroughDate },
+                    },
                   ],
-                }),
+                },
               })
             );
           }
@@ -143,8 +147,8 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
 
         if (this.organisation) {
-          this.customerRelationship = loaded.collections.CustomerRelationships[0] as CustomerRelationship;
-          this.supplierRelationship = loaded.collections.SupplierRelationships[0] as SupplierRelationship;
+          this.customerRelationship = loaded.collection<CustomerRelationship>(m.CustomerRelationship)[0];
+          this.supplierRelationship = loaded.collection<SupplierRelationship>(m.SupplierRelationship)[0];
         } else {
           this.organisation = this.allors.session.create<Organisation>(m.Organisation);
           this.organisation.IsManufacturer = false;
@@ -189,7 +193,7 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
 
   public save(): void {
     if (this.activeRoles.indexOf(this.customerRole) > -1 && !this.isActiveCustomer) {
-      const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+      const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
       customerRelationship.Customer = this.organisation;
       customerRelationship.InternalOrganisation = this.internalOrganisation;
     }
@@ -203,7 +207,7 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
     }
 
     if (this.activeRoles.indexOf(this.supplierRole) > -1 && !this.isActiveSupplier) {
-      const supplierRelationship = this.allors.session.create<SupplierRelationship>(m.SupplierRelationship);
+      const supplierRelationship = this.allors.session.create<SupplierRelationship>(this.m.SupplierRelationship);
       supplierRelationship.Supplier = this.organisation;
       supplierRelationship.InternalOrganisation = this.internalOrganisation;
     }

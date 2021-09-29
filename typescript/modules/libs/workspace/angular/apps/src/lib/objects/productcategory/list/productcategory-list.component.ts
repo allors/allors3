@@ -9,7 +9,7 @@ import { Action, DeleteService, EditService, Filter, MediaService, NavigationSer
 import { SessionService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
-import { Equals } from '@allors/workspace/domain/system';
+import { And, Equals } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: ProductCategory;
@@ -78,7 +78,10 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
     const m = this.allors.workspace.configuration.metaPopulation as M;
     const { pullBuilder: pull } = m;
     const x = {};
-    this.filter = m.ProductCategory.filter = m.ProductCategory.filter ?? new Filter(m.ProductCategory.filterDefinition);
+
+    const angularMeta = this.allors.workspace.services.angularMetaService;
+    const angularProductCategory = angularMeta.for(m.ProductCategory);
+    this.filter = angularProductCategory.filter ??= new Filter(angularProductCategory.filterDefinition);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.ProductCategory.InternalOrganisation };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -101,12 +104,12 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
         switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          internalOrganisationPredicate.object = internalOrganisationId;
+          internalOrganisationPredicate.value = internalOrganisationId;
 
           const pulls = [
             pull.ProductCategory({
               predicate: predicate,
-              sorting: sort ? m.ProductCategory.sorter.create(sort) : null,
+              sorting: sort ? angularProductCategory.sorter?.create(sort) : null,
               include: {
                 CategoryImage: x,
                 LocalisedNames: x,
