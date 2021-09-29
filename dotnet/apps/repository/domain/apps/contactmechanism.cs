@@ -11,7 +11,7 @@ namespace Allors.Repository
     #region Allors
     [Id("b033f9c9-c799-485c-a199-914a9e9119d9")]
     #endregion
-    public partial interface ContactMechanism : Auditable, Deletable
+    public partial interface ContactMechanism : Auditable, Deletable, IDisplayName
     {
         #region Allors
         [Id("3c4ab373-8ff4-44ef-a97d-d8a27513f69c")]
@@ -33,15 +33,5 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         ContactMechanismType ContactMechanismType { get; set; }
-
-        #region Workspace
-        #region Allors
-        [Id("c49a7743-16ff-4cc0-9499-7fea66e08059")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        [Derived]
-        string DisplayName { get; set; }
-        #endregion
     }
 }

@@ -62,6 +62,7 @@ namespace Allors.Repository
         public DateTime CreationDate { get; set; }
 
         public DateTime LastModifiedDate { get; set; }
+        public string DisplayName { get; set; }
 
         #endregion InheritedProperties
 
@@ -394,14 +395,6 @@ namespace Allors.Repository
         public bool OnWorkEffort { get; set; }
 
         #region Workspace
-        #region Allors
-        [Id("199c607b-ed6c-4a10-97bf-a152da62b2c3")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        [Derived]
-        public string DisplayName { get; set; }
-
         #region Allors
         [Id("2b8ec573-5a21-4df4-b7dd-8a770f06c865")]
         #endregion

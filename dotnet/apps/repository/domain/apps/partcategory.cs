@@ -12,7 +12,7 @@ namespace Allors.Repository
     #region Allors
     [Id("27A26380-7007-4A18-8054-D7A446604452")]
     #endregion
-    public partial class PartCategory : UniquelyIdentifiable, Deletable, Object
+    public partial class PartCategory : UniquelyIdentifiable, Deletable, IDisplayName
     {
         #region inherited properties
         public Revocation[] Revocations { get; set; }
@@ -20,6 +20,7 @@ namespace Allors.Repository
         public SecurityToken[] SecurityTokens { get; set; }
 
         public Guid UniqueId { get; set; }
+        public string DisplayName { get; set; }
 
         #endregion
 
@@ -112,16 +113,6 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         public Part[] Parts { get; set; }
-
-        #region Workspace
-        #region Allors
-        [Id("90b2d80b-d505-49ab-bb5f-42dc7cf17dda")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        [Derived]
-        public string DisplayName { get; set; }
-        #endregion
 
         #region inherited methods
 

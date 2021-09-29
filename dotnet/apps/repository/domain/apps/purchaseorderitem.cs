@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("ab648bd0-6e31-4ab0-a9ee-cf4a6f02033d")]
     #endregion
-    public partial class PurchaseOrderItem : OrderItem, Versioned
+    public partial class PurchaseOrderItem : OrderItem, Versioned, IDisplayName
     {
         #region inherited properties
         public ObjectState[] PreviousObjectStates { get; set; }
@@ -121,6 +121,8 @@ namespace Allors.Repository
         public DateTime LastModifiedDate { get; set; }
 
         public Guid DerivationTrigger { get; set; }
+
+        public string DisplayName { get; set; }
 
         #endregion
 
@@ -289,16 +291,6 @@ namespace Allors.Repository
         [Required]
         [Workspace(Default)]
         public bool IsReceivable { get; set; }
-
-        #region Workspace
-        #region Allors
-        [Id("4e5d9598-c31b-4367-aa73-dbdc161ac56c")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        [Derived]
-        public string DisplayName { get; set; }
-        #endregion
 
         #region inherited methods
 

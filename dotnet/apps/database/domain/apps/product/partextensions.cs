@@ -65,11 +65,5 @@ namespace Allors.Database.Domain
 
             return genericPriceComponents;
         }
-
-        public static void AppsSetDisplayName(this Part @this, PartSetDisplayName method)
-        {
-            @this.DisplayName = @this.Name;
-            method.StopPropagation = true;
-        }
     }
 }

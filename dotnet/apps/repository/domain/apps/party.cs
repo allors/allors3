@@ -367,14 +367,6 @@ namespace Allors.Repository
 
         #region Workspace
         #region Allors
-        [Id("4B6CACEC-F358-4AF9-8CCB-9A3E1B5F37A0")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        [Derived]
-        string DisplayName { get; set; }
-
-        #region Allors
         [Id("54c717d7-c2c0-4e3b-92a8-2374e782435a")]
         #endregion
         [Workspace(Default)]
