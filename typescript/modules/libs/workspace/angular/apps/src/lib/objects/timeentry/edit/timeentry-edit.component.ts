@@ -180,9 +180,9 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
   }
 
   public update(): void {
-    const { context } = this.allors;
+    
 
-    context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

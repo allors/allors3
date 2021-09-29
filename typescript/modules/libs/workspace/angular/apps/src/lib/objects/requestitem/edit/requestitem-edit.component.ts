@@ -9,6 +9,7 @@ import { Part, UnitOfMeasure, Good, SerialisedItem, UnifiedGood, RequestItemStat
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './requestitem-edit.component.html',
@@ -93,7 +94,7 @@ export class RequestItemEditComponent extends TestScope implements OnInit, OnDes
 
           const pulls = [
             pull.UnitOfMeasure({
-              predicate: new Equals({ propertyType: m.UnitOfMeasure.IsActive, value: true },
+              predicate: { kind: 'Equals',  propertyType: m.UnitOfMeasure.IsActive, value: true },
               sorting: [{ roleType: m.UnitOfMeasure.Name }],
             }),
             pull.RequestItemState({}),

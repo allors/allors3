@@ -139,9 +139,9 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
 
       this.panel.onPulled = (loaded) => {
         this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
-        const inventoryObjects = (loaded.collection<SerialisedInventoryItem>(inventoryPullName)) ?? [];
+        const inventoryObjects = loaded.collection<SerialisedInventoryItem>(inventoryPullName) ?? [];
 
-        const serialisedItemobjects = (loaded.collection<SerialisedInventoryItem>(serialiseditemPullName)) ?? [];
+        const serialisedItemobjects = loaded.collection<SerialisedInventoryItem>(serialiseditemPullName) ?? [];
         const serialisedItemobjectsforPart = serialisedItemobjects.filter((v) => v.Part === this.serialisedItem?.PartWhereSerialisedItem);
 
         this.objects = inventoryObjects.concat(serialisedItemobjectsforPart);

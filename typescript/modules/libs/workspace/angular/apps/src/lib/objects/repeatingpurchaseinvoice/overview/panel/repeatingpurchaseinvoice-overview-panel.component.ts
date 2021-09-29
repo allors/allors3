@@ -64,7 +64,7 @@ export class RepeatingPurchaseInvoiceOverviewPanelComponent extends TestScope {
     panel.icon = 'business';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.session);
+    this.delete = deleteService.delete(panel.manager.client, panel.manager.session);
     this.edit = this.editService.edit();
 
     const sort = true;

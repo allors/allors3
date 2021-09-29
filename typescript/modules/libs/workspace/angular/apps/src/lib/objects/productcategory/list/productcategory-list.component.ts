@@ -9,6 +9,7 @@ import { Action, DeleteService, EditService, Filter, MediaService, NavigationSer
 import { SessionService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { Equals } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: ProductCategory;
@@ -79,8 +80,8 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
     const x = {};
     this.filter = m.ProductCategory.filter = m.ProductCategory.filter ?? new Filter(m.ProductCategory.filterDefinition);
 
-    const internalOrganisationPredicate = new Equals({ propertyType: m.ProductCategory.InternalOrganisation });
-    const predicate = new And([internalOrganisationPredicate, this.filter.definition.predicate]);
+    const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.ProductCategory.InternalOrganisation };
+    const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
       .pipe(

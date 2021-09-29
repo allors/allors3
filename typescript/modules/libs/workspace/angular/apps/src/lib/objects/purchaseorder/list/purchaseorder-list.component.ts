@@ -12,6 +12,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Equals } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: PurchaseOrder;
@@ -105,9 +106,9 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
     const x = {};
     this.filter = m.PurchaseOrder.filter = m.PurchaseOrder.filter ?? new Filter(m.PurchaseOrder.filterDefinition);
 
-    const internalOrganisationPredicate = new Equals({ propertyType: m.PurchaseOrder.OrderedBy });
+    const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.PurchaseOrder.OrderedBy };
 
-    const predicate = new And([internalOrganisationPredicate, this.filter.definition.predicate]);
+    const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
       .pipe(

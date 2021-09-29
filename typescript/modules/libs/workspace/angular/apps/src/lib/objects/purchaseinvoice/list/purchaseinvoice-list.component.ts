@@ -13,6 +13,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Equals } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: PurchaseInvoice;
@@ -76,10 +77,10 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
 
-    this.approve = methodService.create(allors.context, this.m.PurchaseInvoice.Approve, { name: 'Approve' });
-    this.reject = methodService.create(allors.context, this.m.PurchaseInvoice.Reject, { name: 'Reject' });
-    this.cancel = methodService.create(allors.context, this.m.PurchaseInvoice.Cancel, { name: 'Cancel' });
-    this.reopen = methodService.create(allors.context, this.m.PurchaseInvoice.Reopen, { name: 'Reopen' });
+    this.approve = methodService.create(allors.client, allors.session, this.m.PurchaseInvoice.Approve, { name: 'Approve' });
+    this.reject = methodService.create(allors.client, allors.session, this.m.PurchaseInvoice.Reject, { name: 'Reject' });
+    this.cancel = methodService.create(allors.client, allors.session, this.m.PurchaseInvoice.Cancel, { name: 'Cancel' });
+    this.reopen = methodService.create(allors.client, allors.session, this.m.PurchaseInvoice.Reopen, { name: 'Reopen' });
     this.print = printService.print();
 
     this.delete = deleteService.delete(allors.client, allors.session);
@@ -173,9 +174,9 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
     const x = {};
     this.filter = m.PurchaseInvoice.filter = m.PurchaseInvoice.filter ?? new Filter(m.PurchaseInvoice.filterDefinition);
 
-    const internalOrganisationPredicate = new Equals({ propertyType: m.PurchaseInvoice.BilledTo });
+    const internalOrganisationPredicate : Equals = { kind: 'Equals', propertyType: m.PurchaseInvoice.BilledTo };
 
-    const predicate = new And([internalOrganisationPredicate, this.filter.definition.predicate]);
+    const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
       .pipe(

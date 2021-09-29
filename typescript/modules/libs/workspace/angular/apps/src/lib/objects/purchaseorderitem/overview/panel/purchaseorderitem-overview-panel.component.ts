@@ -73,12 +73,12 @@ export class PurchaseOrderItemOverviewPanelComponent extends TestScope {
     panel.icon = 'business';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.session);
+    this.delete = deleteService.delete(panel.manager.client, panel.manager.session);
     this.edit = editService.edit();
-    this.cancel = methodService.create(allors.context, this.m.PurchaseOrderItem.Cancel, { name: 'Cancel' });
-    this.reject = methodService.create(allors.context, this.m.PurchaseOrderItem.Reject, { name: 'Reject' });
-    this.reopen = methodService.create(allors.context, this.m.PurchaseOrderItem.Reopen, { name: 'Reopen' });
-    this.quickReceive = methodService.create(allors.context, this.m.PurchaseOrderItem.QuickReceive, { name: 'QuickReceive' });
+    this.cancel = methodService.create(allors.client, allors.session, this.m.PurchaseOrderItem.Cancel, { name: 'Cancel' });
+    this.reject = methodService.create(allors.client, allors.session, this.m.PurchaseOrderItem.Reject, { name: 'Reject' });
+    this.reopen = methodService.create(allors.client, allors.session, this.m.PurchaseOrderItem.Reopen, { name: 'Reopen' });
+    this.quickReceive = methodService.create(allors.client, allors.session, this.m.PurchaseOrderItem.QuickReceive, { name: 'QuickReceive' });
 
     const sort = true;
     this.table = new Table({
@@ -124,7 +124,7 @@ export class PurchaseOrderItemOverviewPanelComponent extends TestScope {
 
     panel.onPulled = (loaded) => {
       this.objects = loaded.collection<PurchaseOrderItem>(pullName);
-      this.order = loaded.objects[orderPullName] as PurchaseOrder;
+      this.order = loaded.object<PurchaseOrder>(orderPullName);
       this.table.total = loaded.values[`${pullName}_total`] || this.objects.length;
       this.table.data = this.objects.map((v) => {
         return {

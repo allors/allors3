@@ -65,7 +65,7 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
 
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
-        this.organisation = loaded.objects[pullName] as Organisation;
+        this.organisation = loaded.object<Organisation>(pullName);
       }
     };
   }

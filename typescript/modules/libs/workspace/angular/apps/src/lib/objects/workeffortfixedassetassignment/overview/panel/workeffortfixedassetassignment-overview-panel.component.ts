@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffort, WorkEffortFixedAssetAssignment } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: WorkEffortFixedAssetAssignment;
@@ -45,6 +46,7 @@ export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope impl
 
   constructor(
     @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
 
     public refreshService: RefreshService,
     public navigation: NavigationService,
@@ -54,7 +56,7 @@ export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope impl
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {
@@ -84,7 +86,7 @@ export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope impl
       autoFilter: true,
     });
 
-    const workeffortpullName = `${this.panel.name}_${this.m.WorkEffortFixedAssetAssignment.name}_workeffort`;
+    const workeffortpullName = `${this.panel.name}_${this.m.WorkEffortFixedAssetAssignment.tag}_workeffort`;
 
     this.panel.onPull = (pulls) => {
       const m = this.m;

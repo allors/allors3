@@ -68,11 +68,11 @@ export class RequestItemOverviewPanelComponent extends TestScope {
     panel.icon = 'contacts';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.session);
+    this.delete = deleteService.delete(panel.manager.client, panel.manager.session);
     this.edit = this.editService.edit();
-    this.cancel = methodService.create(allors.context, this.m.RequestItem.Cancel, { name: 'Cancel' });
-    this.hold = methodService.create(allors.context, this.m.RequestItem.Hold, { name: 'Hold' });
-    this.submit = methodService.create(allors.context, this.m.RequestItem.Submit, { name: 'Submit' });
+    this.cancel = methodService.create(allors.client, allors.session, this.m.RequestItem.Cancel, { name: 'Cancel' });
+    this.hold = methodService.create(allors.client, allors.session, this.m.RequestItem.Hold, { name: 'Hold' });
+    this.submit = methodService.create(allors.client, allors.session, this.m.RequestItem.Submit, { name: 'Submit' });
 
     const sort = true;
     this.table = new Table({

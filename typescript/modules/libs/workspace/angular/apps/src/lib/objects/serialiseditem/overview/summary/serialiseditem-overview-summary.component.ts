@@ -97,8 +97,8 @@ export class SerialisedItemOverviewSummaryComponent {
     };
 
     panel.onPulled = (loaded) => {
-      this.serialisedItem = loaded.objects[serialisedItemPullName] as SerialisedItem;
-      this.part = loaded.objects[partPullName] as Part;
+      this.serialisedItem = loaded.object<SerialisedItem>(serialisedItemPullName);
+      this.part = loaded.object<Part>(partPullName);
 
       const requests = loaded.collection<RequestForQuote>(m.RequestForQuote) || [];
       if (requests.length > 0) {

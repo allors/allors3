@@ -7,7 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { M } from '@allors/workspace/meta/default';
 import { Party, Part, SerialisedItem } from '@allors/workspace/domain/default';
 import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
@@ -27,6 +27,7 @@ export class SerialisedItemOverviewComponent extends TestScope implements AfterV
 
   constructor(
     @Self() public panelManager: PanelManagerService,
+    public workspaceService: WorkspaceService,
 
     public refreshService: RefreshService,
     public navigationService: NavigationService,
@@ -37,7 +38,7 @@ export class SerialisedItemOverviewComponent extends TestScope implements AfterV
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
     titleService.setTitle(this.title);
   }
 

@@ -27,6 +27,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './purchaseinvoiceitem-edit.component.html',
@@ -176,9 +177,9 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
           roleTypes: [this.m.Part.Name, this.m.Part.SearchString],
           post: (predicate: And) => {
             predicate.operands.push(
-              new ContainedIn({
+              { kind: 'ContainedIn', 
                 propertyType: this.m.Part.SupplierOfferingsWherePart,
-                extent: new Extent({
+                extent: { kind: 'Filter', 
                   objectType: this.m.SupplierOffering,
                   predicate: { kind: 'Equals', propertyType: m.SupplierOffering.Supplier, object: this.invoice.BilledFrom },
                 }),
@@ -315,7 +316,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
     ];
 
     this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
-      this.part = (loaded.objects.UnifiedGood || loaded.objects.Part) as Part;
+      this.part = (loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.Part)) as Part;
       this.serialised = part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 
       const supplierOfferings = loaded.collection<SupplierOffering>(m.SupplierOffering);

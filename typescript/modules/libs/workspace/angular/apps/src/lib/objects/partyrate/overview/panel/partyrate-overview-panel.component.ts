@@ -4,6 +4,7 @@ import { format, isBefore, isAfter } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { PartyRate } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: PartyRate;
@@ -47,6 +48,7 @@ export class PartyRateOverviewPanelComponent extends TestScope implements OnInit
 
   constructor(
     @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
 
     public refreshService: RefreshService,
     public navigationService: NavigationService,
@@ -55,7 +57,7 @@ export class PartyRateOverviewPanelComponent extends TestScope implements OnInit
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {

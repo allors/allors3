@@ -29,12 +29,14 @@ import {
   IrpfRegime,
   InvoiceItemType,
   Product,
+  UnifiedGood,
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './salesorderitem-edit.component.html',
@@ -413,9 +415,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
   }
 
   public update(): void {
-    const { context } = this.allors;
-
-    context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
@@ -504,7 +504,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
     ];
 
     this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
-      this.part = (loaded.objects.UnifiedGood || loaded.objects.Part) as Part;
+      this.part = (loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.Part)) as Part;
       this.serialisedItems = this.part.SerialisedItems;
 
       if (this.orderItem.Product !== this.previousProduct) {

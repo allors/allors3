@@ -110,8 +110,8 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
               pull.CustomerRelationship({
                 predicate: new And({
                   operands: [
-                    new Equals({ propertyType: m.CustomerRelationship.Customer, objectId: id }),
-                    new Equals({ propertyType: m.CustomerRelationship.InternalOrganisation, object: internalOrganisationId }),
+                    { kind: 'Equals',  propertyType: m.CustomerRelationship.Customer, objectId: id }),
+                    { kind: 'Equals',  propertyType: m.CustomerRelationship.InternalOrganisation, object: internalOrganisationId }),
                     new Not({
                       operand: new Exists({ propertyType: m.CustomerRelationship.ThroughDate }),
                     }),
@@ -124,8 +124,8 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
               pull.SupplierRelationship({
                 predicate: new And({
                   operands: [
-                    new Equals({ propertyType: m.SupplierRelationship.Supplier, objectId: id }),
-                    new Equals({ propertyType: m.SupplierRelationship.InternalOrganisation, object: internalOrganisationId }),
+                    { kind: 'Equals',  propertyType: m.SupplierRelationship.Supplier, objectId: id }),
+                    { kind: 'Equals',  propertyType: m.SupplierRelationship.InternalOrganisation, object: internalOrganisationId }),
                     new Not({
                       operand: new Exists({ propertyType: m.SupplierRelationship.ThroughDate }),
                     }),

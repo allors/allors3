@@ -3,6 +3,7 @@ import { Component, Self } from '@angular/core';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, TestScope } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -18,12 +19,13 @@ export class OrganisationOverviewSummaryComponent extends TestScope {
 
   constructor(
     @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
 
     public navigation: NavigationService
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
 
     panel.name = 'summary';
 
@@ -49,7 +51,7 @@ export class OrganisationOverviewSummaryComponent extends TestScope {
     };
 
     panel.onPulled = (loaded) => {
-      this.organisation = loaded.objects[organisationPullName] as Organisation;
+      this.organisation = loaded.object<Organisation>(organisationPullName);
     };
   }
 }

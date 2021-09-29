@@ -50,7 +50,7 @@ export class UnifiedGoodOverviewSummaryComponent {
     };
 
     panel.onPulled = (loaded) => {
-      this.good = loaded.objects[pullName] as UnifiedGood;
+      this.good = loaded.object<UnifiedGood>(pullName);
 
       if (this.good.SuppliedBy.length > 0) {
         this.suppliers = this.good.SuppliedBy.map((v) => displayName(v)).reduce((acc: string, cur: string) => acc + ', ' + cur);

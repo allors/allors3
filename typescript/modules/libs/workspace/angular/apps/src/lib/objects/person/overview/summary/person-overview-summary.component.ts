@@ -3,6 +3,7 @@ import { Component, Self } from '@angular/core';
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, OrganisationContactRelationship } from '@allors/workspace/domain/default';
 import { MediaService, NavigationService, PanelService, TestScope } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -20,13 +21,14 @@ export class PersonOverviewSummaryComponent extends TestScope {
 
   constructor(
     @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
 
     public navigation: NavigationService,
     private mediaService: MediaService
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
 
     panel.name = 'summary';
 
@@ -79,7 +81,7 @@ export class PersonOverviewSummaryComponent extends TestScope {
     };
 
     panel.onPulled = (loaded) => {
-      this.person = loaded.objects[personPullName] as Person;
+      this.person = loaded.object<Person>(personPullName);
 
       this.organisationContactRelationships = loaded.collection<OrganisationContactRelationship>(organisationContactRelationshipsPullName);
 

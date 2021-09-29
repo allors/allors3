@@ -1,9 +1,9 @@
 import { Component, Self } from '@angular/core';
 
-import { MetaService, NavigationService, PanelService } from '@allors/angular/services/core';
-import { NonUnifiedGood } from '@allors/domain/generated';
-import { Meta } from '@allors/meta/generated';
-import { TestScope } from '@allors/angular/core';
+import { M } from '@allors/workspace/meta/default';
+import { NavigationService, PanelService, TestScope } from '@allors/workspace/angular/base';
+import { NonUnifiedGood } from '@allors/workspace/domain/default';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -16,14 +16,10 @@ export class NonUnifiedGoodOverviewSummaryComponent extends TestScope {
 
   good: NonUnifiedGood;
 
-  constructor(
-    @Self() public panel: PanelService,
-
-    public navigation: NavigationService
-  ) {
+  constructor(@Self() public panel: PanelService, public workspaceService: WorkspaceService, public navigation: NavigationService) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
 
     panel.name = 'summary';
 
@@ -54,7 +50,7 @@ export class NonUnifiedGoodOverviewSummaryComponent extends TestScope {
     };
 
     panel.onPulled = (loaded) => {
-      this.good = loaded.objects[pullName] as NonUnifiedGood;
+      this.good = loaded.object<NonUnifiedGood>(pullName);
     };
   }
 }

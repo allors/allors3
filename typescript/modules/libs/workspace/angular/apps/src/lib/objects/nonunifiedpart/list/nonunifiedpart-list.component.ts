@@ -18,9 +18,9 @@ import {
   PartCategory,
   NonUnifiedPart,
   NonUnifiedPartBarcodePrint,
-  InternalOrganisation,
   NonSerialisedInventoryItem,
   displayName,
+  ProductIdentification,
 } from '@allors/workspace/domain/default';
 import {
   Action,
@@ -38,12 +38,15 @@ import {
   UserId,
   OverviewService,
   SingletonId,
+  Sorter,
 } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../filters/filters';
+import { And } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: Part;
@@ -79,10 +82,10 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
   user: Person;
   internalOrganisation: Organisation;
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
-
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
@@ -98,6 +101,8 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
     titleService: Title
   ) {
     titleService.setTitle(this.title);
+
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.print = printService.print();
 
@@ -127,65 +132,47 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const predicate = new And([
-      new Or([
-        new Like({ roleType: m.Part.Name, parameter: 'name' }),
-        new ContainedIn({
-          propertyType: m.Part.LocalisedNames,
-          extent: new Extent({
-            objectType: m.LocalisedText,
-            predicate: new Like({
-              roleType: m.LocalisedText.Text,
-              parameter: 'name',
-            }),
-          }),
-        }),
-      ]),
-      new Like({ roleType: m.Part.Keywords, parameter: 'keyword' }),
-      new Like({ roleType: m.Part.HsCode, parameter: 'hsCode' }),
-      new Contains({ propertyType: m.Part.ProductIdentifications, parameter: 'identification' }),
-      new Contains({ propertyType: m.Part.SuppliedBy, parameter: 'supplier' }),
-      new ContainedIn({
-        propertyType: m.Part.SupplierOfferingsWherePart,
-        extent: new Extent({
-          objectType: m.SupplierOffering,
-          predicate: new Like({
-            roleType: m.SupplierOffering.SupplierProductId,
-            parameter: 'supplierReference',
-          }),
-        }),
-      }),
-      new Equals({ propertyType: m.Part.ManufacturedBy, parameter: 'manufacturer' }),
-      new Equals({ propertyType: m.Part.Brand, parameter: 'brand' }),
-      new Equals({ propertyType: m.Part.Model, parameter: 'model' }),
-      new Equals({ propertyType: m.Part.InventoryItemKind, parameter: 'kind' }),
-      new Equals({ propertyType: m.Part.ProductType, parameter: 'type' }),
-      new Contains({ propertyType: m.NonUnifiedPart.PartCategoriesWherePart, parameter: 'category' }),
-      new ContainedIn({
-        propertyType: m.Part.InventoryItemsWherePart,
-        extent: new Extent({
-          objectType: m.NonSerialisedInventoryItem,
-          predicate: new Equals({
-            propertyType: m.InventoryItem.Facility,
-            parameter: 'inStock',
-          }),
-        }),
-      }),
-      new ContainedIn({
-        propertyType: m.Part.InventoryItemsWherePart,
-        extent: new Extent({
-          objectType: m.NonSerialisedInventoryItem,
-          predicate: new Equals({
-            propertyType: m.InventoryItem.Facility,
-            parameter: 'outOfStock',
-          }),
-        }),
-      }),
-    ]);
+    const predicate: And = {
+      kind: 'And',
+      operands: [
+        {
+          kind: 'Or',
+          operands: [
+            { kind: 'Like', roleType: m.Part.Name, parameter: 'name' },
+            { kind: 'ContainedIn', propertyType: m.Part.LocalisedNames, extent: { kind: 'Filter', objectType: m.LocalisedText, predicate: { kind: 'Like', roleType: m.LocalisedText.Text, parameter: 'name' } } },
+          ],
+        },
+        { kind: 'Like', roleType: m.Part.Keywords, parameter: 'keyword' },
+        { kind: 'Like', roleType: m.Part.HsCode, parameter: 'hsCode' },
+        { kind: 'Contains', propertyType: m.Part.ProductIdentifications, parameter: 'identification' },
+        { kind: 'Contains', propertyType: m.Part.SuppliedBy, parameter: 'supplier' },
+        {
+          kind: 'ContainedIn',
+          propertyType: m.Part.SupplierOfferingsWherePart,
+          extent: { kind: 'Filter', objectType: m.SupplierOffering, predicate: { kind: 'Like', roleType: m.SupplierOffering.SupplierProductId, parameter: 'supplierReference' } },
+        },
+        { kind: 'Equals', propertyType: m.Part.ManufacturedBy, parameter: 'manufacturer' },
+        { kind: 'Equals', propertyType: m.Part.Brand, parameter: 'brand' },
+        { kind: 'Equals', propertyType: m.Part.Model, parameter: 'model' },
+        { kind: 'Equals', propertyType: m.Part.InventoryItemKind, parameter: 'kind' },
+        { kind: 'Equals', propertyType: m.Part.ProductType, parameter: 'type' },
+        { kind: 'Contains', propertyType: m.NonUnifiedPart.PartCategoriesWherePart, parameter: 'category' },
+        {
+          kind: 'ContainedIn',
+          propertyType: m.Part.InventoryItemsWherePart,
+          extent: { kind: 'Filter', objectType: m.NonSerialisedInventoryItem, predicate: { kind: 'Equals', propertyType: m.InventoryItem.Facility, parameter: 'inStock' } },
+        },
+        {
+          kind: 'ContainedIn',
+          propertyType: m.Part.InventoryItemsWherePart,
+          extent: { kind: 'Filter', objectType: m.NonSerialisedInventoryItem, predicate: { kind: 'Equals', propertyType: m.InventoryItem.Facility, parameter: 'outOfStock' } },
+        },
+      ],
+    };
 
     const typeSearch = new SearchFactory({
       objectType: m.ProductType,
@@ -194,7 +181,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
 
     const kindSearch = new SearchFactory({
       objectType: m.InventoryItemKind,
-      predicates: [new Equals({ propertyType: m.Enumeration.IsActive, value: true })],
+      predicates: [{ kind: 'Equals', propertyType: m.Enumeration.IsActive, value: true }],
       roleTypes: [m.InventoryItemKind.Name],
     });
 
@@ -215,7 +202,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
 
     const manufacturerSearch = new SearchFactory({
       objectType: m.Organisation,
-      predicates: [new Equals({ propertyType: m.Organisation.IsManufacturer, value: true })],
+      predicates: [{ kind: 'Equals', propertyType: m.Organisation.IsManufacturer, value: true }],
       roleTypes: [m.Organisation.PartyName],
     });
 
@@ -302,7 +289,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
               },
             }),
             pull.Singleton({
-              object: this.singletonId.value,
+              objectId: this.singletonId.value,
               select: {
                 NonUnifiedPartBarcodePrint: {
                   include: {
@@ -385,13 +372,11 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
   }
 
   public printBarcode(parts: any): void {
-    const { context } = this.allors;
-
     this.nonUnifiedPartBarcodePrint.Parts = parts;
     this.nonUnifiedPartBarcodePrint.Facility = this.internalOrganisation.FacilitiesWhereOwner[0];
     this.nonUnifiedPartBarcodePrint.Locale = this.user.Locale;
 
-    context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       const m = this.m;
       const { pullBuilder: pull } = m;
       const x = {};

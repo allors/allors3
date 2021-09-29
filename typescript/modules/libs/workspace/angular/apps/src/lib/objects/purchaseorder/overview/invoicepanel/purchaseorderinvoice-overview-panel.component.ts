@@ -172,11 +172,11 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
         }),
         pull.OrderItemBilling({
           predicate: new And([
-            new ContainedIn({
+            { kind: 'ContainedIn', 
               propertyType: m.OrderItemBilling.InvoiceItem,
-              extent: new Extent({
+              extent: { kind: 'Filter', 
                 objectType: m.InvoiceItem,
-                predicate: new ContainedIn({
+                predicate: { kind: 'ContainedIn', 
                   propertyType: m.InvoiceItem.InvoiceWhereValidInvoiceItem,
                   objects: [id],
                 }),
@@ -201,7 +201,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
 
     this.panel.onPulled = (loaded) => {
       this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
-      this.purchaseInvoice = loaded.objects[invoicePullName] as PurchaseInvoice;
+      this.purchaseInvoice = loaded.object<PurchaseInvoice>(invoicePullName);
       this.orderItemBillings = loaded.collection<OrderItemBilling>(m.OrderItemBilling);
 
       const invoiceItemTypes = loaded.collection<InvoiceItemType>(m.InvoiceItemType);
@@ -234,7 +234,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
   }
 
   public addFromPurchaseOrder(panelPurchaseOrder: PurchaseOrder): void {
-    const { context } = this.allors;
+    
 
     const purchaseInvoice = context.get(this.purchaseInvoice.id) as PurchaseInvoice;
     const purchaseOrder = context.get(panelPurchaseOrder.id) as PurchaseOrder;
@@ -269,7 +269,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
       }
     });
 
-    context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       context.reset();
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
@@ -277,7 +277,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
   }
 
   public removeFromPurchaseOrder(panelPurchaseOrder: PurchaseOrder): void {
-    const { context } = this.allors;
+    
 
     const purchaseOrder = context.get(panelPurchaseOrder.id) as PurchaseOrder;
 

@@ -24,6 +24,7 @@ import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
+import { Filters } from '../../../../filters/filters';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -55,7 +56,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
   showIrpf: boolean;
 
   get receiverIsPerson(): boolean {
-    return !this.productQuote.Receiver || this.productQuote.Receiver.objectType.name === this.m.Person.name;
+    return !this.productQuote.Receiver || this.productQuote.Receiver.strategy.cls  === this.m.Person;
   }
 
   constructor(

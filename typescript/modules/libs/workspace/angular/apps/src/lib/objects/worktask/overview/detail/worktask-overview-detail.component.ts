@@ -99,7 +99,7 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
 
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
-        this.workTask = loaded.objects[pullName] as WorkTask;
+        this.workTask = loaded.object<WorkTask>(pullName);
       }
     };
   }

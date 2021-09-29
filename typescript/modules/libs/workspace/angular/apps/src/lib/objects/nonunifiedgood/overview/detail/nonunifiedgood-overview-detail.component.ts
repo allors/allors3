@@ -96,7 +96,7 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
 
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
-        this.good = loaded.objects[pullName] as NonUnifiedGood;
+        this.good = loaded.object<NonUnifiedGood>(pullName);
       }
     };
   }

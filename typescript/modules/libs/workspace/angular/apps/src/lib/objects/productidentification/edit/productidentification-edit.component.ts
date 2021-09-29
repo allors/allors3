@@ -46,12 +46,12 @@ export class ProductIdentificationEditComponent extends TestScope implements OnI
       .pipe(
         switchMap(() => {
           const isCreate = (this.data as IObject).id === undefined;
-          const { objectType, associationRoleType } = this.data;
+          const { strategy: { cls }, associationRoleType } = this.data;
 
           const pulls = [
             pull.ProductIdentificationType({
               predicate: { kind: 'Equals', propertyType: m.ProductIdentificationType.IsActive, value: true },
-              sort: [new Sort(m.ProductIdentificationType.Name)],
+              sorting: [{ roleType: m.ProductIdentificationType.Name }]
             }),
           ];
 
@@ -70,20 +70,20 @@ export class ProductIdentificationEditComponent extends TestScope implements OnI
             pulls.push(pull.Good({ objectId: this.data.associationId }), pull.Part({ objectId: this.data.associationId }));
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, create: isCreate, objectType, associationRoleType })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, create: isCreate, cls, associationRoleType })));
         })
       )
       .subscribe(({ loaded, create, objectType, associationRoleType }) => {
         this.allors.session.reset();
 
-        this.container = loaded.objects.Good || loaded.objects.Part;
+        this.container = loaded.objects.Good || loaded.object<Part>(m.Part);
         this.object = loaded.object<ProductIdentification>(m.ProductIdentification);
         this.productIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
 
         if (create) {
           this.title = 'Add Identification';
           this.object = this.allors.context.create(objectType) as ProductIdentification;
-          this.container.add(associationRoleType, this.object);
+          this.container.strategy.addCompositesRole(associationRoleType, this.object);
         }
       });
   }

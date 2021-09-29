@@ -72,7 +72,7 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
 
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
-        this.person = loaded.objects[pullName] as Person;
+        this.person = loaded.object<Person>(pullName);
       }
     };
   }

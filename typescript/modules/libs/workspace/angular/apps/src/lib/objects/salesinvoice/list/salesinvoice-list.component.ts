@@ -13,6 +13,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Equals } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: SalesInvoice;
@@ -80,12 +81,12 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
     this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.print = printService.print();
-    this.send = methodService.create(allors.context, this.m.SalesInvoice.Send, { name: 'Send' });
-    this.cancel = methodService.create(allors.context, this.m.SalesInvoice.CancelInvoice, { name: 'Cancel' });
-    this.writeOff = methodService.create(allors.context, this.m.SalesInvoice.WriteOff, { name: 'WriteOff' });
-    this.copy = methodService.create(allors.context, this.m.SalesInvoice.Copy, { name: 'Copy' });
-    this.credit = methodService.create(allors.context, this.m.SalesInvoice.Credit, { name: 'Credit' });
-    this.reopen = methodService.create(allors.context, this.m.SalesInvoice.Reopen, { name: 'Reopen' });
+    this.send = methodService.create(allors.client, allors.session, this.m.SalesInvoice.Send, { name: 'Send' });
+    this.cancel = methodService.create(allors.client, allors.session, this.m.SalesInvoice.CancelInvoice, { name: 'Cancel' });
+    this.writeOff = methodService.create(allors.client, allors.session, this.m.SalesInvoice.WriteOff, { name: 'WriteOff' });
+    this.copy = methodService.create(allors.client, allors.session, this.m.SalesInvoice.Copy, { name: 'Copy' });
+    this.credit = methodService.create(allors.client, allors.session, this.m.SalesInvoice.Credit, { name: 'Credit' });
+    this.reopen = methodService.create(allors.client, allors.session, this.m.SalesInvoice.Reopen, { name: 'Reopen' });
 
     this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
@@ -178,8 +179,8 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
     const x = {};
     this.filter = m.SalesInvoice.filter = m.SalesInvoice.filter ?? new Filter(m.SalesInvoice.filterDefinition);
 
-    const internalOrganisationPredicate = new Equals({ propertyType: m.SalesInvoice.BilledFrom });
-    const predicate = new And([internalOrganisationPredicate, this.filter.definition.predicate]);
+    const internalOrganisationPredicate : Equals = { kind: 'Equals', propertyType: m.SalesInvoice.BilledFrom };
+    const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
       .pipe(
@@ -244,7 +245,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
               object: v,
               number: v.InvoiceNumber,
               type: `${v.SalesInvoiceType && v.SalesInvoiceType.Name}`,
-              billedTo: v.BillToCustomer && v.BillToCustomer.displayName,
+              billedTo: v.BillToCustomer && displayName(v.BillToCustomer),
               state: `${v.SalesInvoiceState && v.SalesInvoiceState.Name}`,
               invoiceDate: format(new Date(v.InvoiceDate), 'dd-MM-yyyy'),
               dueDate: `${v.DueDate && format(new Date(v.DueDate), 'dd-MM-yyyy')}`,

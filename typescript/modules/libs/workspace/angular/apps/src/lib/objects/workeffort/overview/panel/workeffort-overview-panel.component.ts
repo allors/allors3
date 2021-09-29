@@ -3,6 +3,7 @@ import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffort } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: WorkEffort;
@@ -39,6 +40,7 @@ export class WorkEffortOverviewPanelComponent extends TestScope implements OnIni
 
   constructor(
     @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
 
     public refreshService: RefreshService,
     public navigationService: NavigationService,
@@ -49,7 +51,7 @@ export class WorkEffortOverviewPanelComponent extends TestScope implements OnIni
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {

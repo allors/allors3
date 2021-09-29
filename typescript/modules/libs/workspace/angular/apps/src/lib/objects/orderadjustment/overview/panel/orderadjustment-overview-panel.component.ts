@@ -43,11 +43,11 @@ export class OrderAdjustmentOverviewPanelComponent extends TestScope {
   }
 
   get containerRoleType(): any {
-    if (this.container.objectType.name === this.m.ProductQuote.name || this.container.objectType.name === this.m.Proposal.name || this.container.objectType.name === this.m.StatementOfWork.name) {
+    if (this.container.objectType.name === this.m.ProductQuote.tag || this.container.objectType.name === this.m.Proposal.tag || this.container.objectType.name === this.m.StatementOfWork.tag) {
       return this.m.Quote.OrderAdjustments;
-    } else if (this.container.objectType.name === this.m.SalesOrder.name) {
+    } else if (this.container.objectType.name === this.m.SalesOrder.tag) {
       return this.m.SalesOrder.OrderAdjustments;
-    } else if (this.container.objectType.name === this.m.SalesInvoice.name || this.container.objectType.name === this.m.PurchaseInvoice.name) {
+    } else if (this.container.objectType.name === this.m.SalesInvoice.tag || this.container.objectType.name === this.m.PurchaseInvoice.tag) {
       return this.m.Invoice.OrderAdjustments;
     }
   }
@@ -64,14 +64,14 @@ export class OrderAdjustmentOverviewPanelComponent extends TestScope {
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
 
     panel.name = 'orderadjustment';
     panel.title = 'Order/Invoice Adjustments';
     panel.icon = 'money';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.session);
+    this.delete = deleteService.delete(panel.manager.client, panel.manager.session);
     this.edit = this.editService.edit();
 
     this.table = new Table({
@@ -83,9 +83,9 @@ export class OrderAdjustmentOverviewPanelComponent extends TestScope {
       autoFilter: true,
     });
 
-    const quoteOrderAdjustmentsPullName = `${panel.name}_${this.m.Quote.name}_adjustments`;
-    const orderOrderAdjustmentsPullName = `${panel.name}_${this.m.Order.name}_adjustments`;
-    const invoiceOrderAdjustmentsPullName = `${panel.name}_${this.m.Invoice.name}_adjustments`;
+    const quoteOrderAdjustmentsPullName = `${panel.name}_${this.m.Quote.tag}_adjustments`;
+    const orderOrderAdjustmentsPullName = `${panel.name}_${this.m.Order.tag}_adjustments`;
+    const invoiceOrderAdjustmentsPullName = `${panel.name}_${this.m.Invoice.tag}_adjustments`;
     const quotePullName = `${panel.name}_${this.m.Quote.tag}`;
     const orderPullName = `${panel.name}_${this.m.Order.tag}`;
     const invoicePullName = `${panel.name}_${this.m.Invoice.tag}`;
@@ -135,7 +135,7 @@ export class OrderAdjustmentOverviewPanelComponent extends TestScope {
     };
 
     panel.onPulled = (loaded) => {
-      this.container = (loaded.objects[quotePullName] as Quote) || (loaded.objects[orderPullName] as Order) || (loaded.objects[invoicePullName] as Invoice);
+      this.container = (loaded.object<Quote>(quotePullName)) || (loaded.object<Order>(orderPullName)) || (loaded.object<Invoice>(invoicePullName));
 
       this.objects =
         (loaded.collection<OrderAdjustment>(quoteOrderAdjustmentsPullName)) || (loaded.collection<OrderAdjustment>(orderOrderAdjustmentsPullName)) || (loaded.collection<OrderAdjustment>(invoiceOrderAdjustmentsPullName));

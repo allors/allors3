@@ -11,6 +11,7 @@ import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './requestforquote-create.component.html',
@@ -92,7 +93,7 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
   }
 
   get originatorIsPerson(): boolean {
-    return !this.request.Originator || this.request.Originator.objectType.name === this.m.Person.name;
+    return !this.request.Originator || this.request.Originator.strategy.cls  === this.m.Person;
   }
 
   public originatorSelected(party: IObject) {

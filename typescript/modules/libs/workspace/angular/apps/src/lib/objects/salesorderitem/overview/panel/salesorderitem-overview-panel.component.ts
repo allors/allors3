@@ -48,7 +48,7 @@ export class SalesOrderItemOverviewPanelComponent extends TestScope {
     return {
       associationId: this.panel.manager.id,
       associationObjectType: this.panel.manager.objectType,
-      associationRoleType: this.metaService.m.SalesOrder.SalesOrderItems,
+      associationRoleType: this.m.SalesOrder.SalesOrderItems,
     };
   }
 
@@ -56,7 +56,6 @@ export class SalesOrderItemOverviewPanelComponent extends TestScope {
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
-
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public methodService: MethodService,
@@ -73,11 +72,11 @@ export class SalesOrderItemOverviewPanelComponent extends TestScope {
     panel.icon = 'contacts';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.session);
+    this.delete = deleteService.delete(panel.manager.client, panel.manager.session);
     this.edit = editService.edit();
-    this.cancel = methodService.create(allors.context, this.m.SalesOrderItem.Cancel, { name: 'Cancel' });
-    this.reject = methodService.create(allors.context, this.m.SalesOrderItem.Reject, { name: 'Reject' });
-    this.reopen = methodService.create(allors.context, this.m.SalesOrderItem.Reopen, { name: 'Reopen' });
+    this.cancel = methodService.create(allors.client, allors.session, this.m.SalesOrderItem.Cancel, { name: 'Cancel' });
+    this.reject = methodService.create(allors.client, allors.session, this.m.SalesOrderItem.Reject, { name: 'Reject' });
+    this.reopen = methodService.create(allors.client, allors.session, this.m.SalesOrderItem.Reopen, { name: 'Reopen' });
 
     const sort = true;
     this.table = new Table({
@@ -134,8 +133,8 @@ export class SalesOrderItemOverviewPanelComponent extends TestScope {
 
     panel.onPulled = (loaded) => {
       this.salesOrderItems = loaded.collection<SalesOrderItem>(pullName);
-      this.order = loaded.objects[orderPullName] as SalesOrder;
-      this.table.total = loaded.values[`${pullName}_total`] || this.salesOrderItems.length;
+      this.order = loaded.object<SalesOrder>(orderPullName);
+      this.table.total = loaded.value(`${pullName}_total`) || this.salesOrderItems.length;
       this.table.data = this.salesOrderItems.map((v) => {
         return {
           object: v,

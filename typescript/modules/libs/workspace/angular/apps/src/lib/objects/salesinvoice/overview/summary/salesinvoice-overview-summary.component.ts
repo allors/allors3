@@ -134,7 +134,7 @@ export class SalesInvoiceOverviewSummaryComponent {
       this.invoice = loaded.object<SalesInvoice>(m.SalesInvoice);
       this.repeatingInvoices = loaded.collection<RepeatingSalesInvoice>(m.RepeatingSalesInvoice);
       this.hasIrpf = Number(this.invoice.TotalIrpf) !== 0;
-      this.creditNote = loaded.objects[creditNotePullName] as SalesInvoice;
+      this.creditNote = loaded.object<SalesInvoice>(creditNotePullName);
 
       if (this.repeatingInvoices) {
         this.repeatingInvoice = this.repeatingInvoices[0];

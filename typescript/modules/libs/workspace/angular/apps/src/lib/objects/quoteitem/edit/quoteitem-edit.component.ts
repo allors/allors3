@@ -34,6 +34,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './quoteitem-edit.component.html',
@@ -143,7 +144,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
             }),
             pull.UnitOfMeasure({
               predicate: { kind: 'Equals', propertyType: m.UnitOfMeasure.IsActive, value: true },
-              sort: [new Sort(m.UnitOfMeasure.Name)],
+              sorting: [{ roleType: m.UnitOfMeasure.Name }]
             }),
             pull.RequestItemState({}),
             pull.RequestState({}),
@@ -482,7 +483,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
     ];
 
     this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
-      this.part = (loaded.objects.UnifiedGood || loaded.objects.Part) as Part;
+      this.part = (loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.Part)) as Part;
       this.serialisedItems = this.part.SerialisedItems.filter((v) => v.AvailableForSale === true);
 
       if (this.quoteItem.Product !== this.previousProduct) {

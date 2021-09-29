@@ -26,6 +26,7 @@ import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './salesinvoice-create.component.html',
@@ -81,19 +82,19 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
   showIrpf: boolean;
 
   get billToCustomerIsPerson(): boolean {
-    return !this.invoice.BillToCustomer || this.invoice.BillToCustomer.objectType.name === this.m.Person.name;
+    return !this.invoice.BillToCustomer || this.invoice.BillToCustomer.strategy.cls  === this.m.Person;
   }
 
   get shipToCustomerIsPerson(): boolean {
-    return !this.invoice.ShipToCustomer || this.invoice.ShipToCustomer.objectType.name === this.m.Person.name;
+    return !this.invoice.ShipToCustomer || this.invoice.ShipToCustomer.strategy.cls  === this.m.Person;
   }
 
   get billToEndCustomerIsPerson(): boolean {
-    return !this.invoice.BillToEndCustomer || this.invoice.BillToEndCustomer.objectType.name === this.m.Person.name;
+    return !this.invoice.BillToEndCustomer || this.invoice.BillToEndCustomer.strategy.cls  === this.m.Person;
   }
 
   get shipToEndCustomerIsPerson(): boolean {
-    return !this.invoice.ShipToEndCustomer || this.invoice.ShipToEndCustomer.objectType.name === this.m.Person.name;
+    return !this.invoice.ShipToEndCustomer || this.invoice.ShipToEndCustomer.strategy.cls  === this.m.Person;
   }
 
   constructor(
@@ -349,7 +350,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToContacts = loaded.collection<Person>(m.Person);
 
       this.setDerivedInitialRoles();
@@ -516,7 +517,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.shipToEndCustomerAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToEndCustomerAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToEndCustomerContacts = loaded.collection<Person>(m.Person);
 
       this.setDerivedInitialRoles();

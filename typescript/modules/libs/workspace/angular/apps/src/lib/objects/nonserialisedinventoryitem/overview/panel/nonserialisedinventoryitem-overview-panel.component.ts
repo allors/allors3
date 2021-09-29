@@ -3,6 +3,7 @@ import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { M } from '@allors/workspace/meta/default';
 import { NonSerialisedInventoryItem, InventoryItem } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService, ActionTarget } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: InventoryItem;
@@ -44,7 +45,7 @@ export class NonSerialisedInventoryItemComponent extends TestScope implements On
 
   constructor(
     @Self() public panel: PanelService,
-
+    public workspaceService: WorkspaceService,
     public objectService: ObjectService,
     public factoryService: ObjectService,
     public refreshService: RefreshService,
@@ -55,7 +56,7 @@ export class NonSerialisedInventoryItemComponent extends TestScope implements On
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {

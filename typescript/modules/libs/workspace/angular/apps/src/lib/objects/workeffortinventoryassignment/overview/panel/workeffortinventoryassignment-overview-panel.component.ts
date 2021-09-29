@@ -3,6 +3,7 @@ import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffort, WorkEffortInventoryAssignment } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: WorkEffortInventoryAssignment;
@@ -41,6 +42,7 @@ export class WorkEffortInventoryAssignmentOverviewPanelComponent extends TestSco
 
   constructor(
     @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
 
     public refreshService: RefreshService,
     public navigation: NavigationService,
@@ -50,7 +52,7 @@ export class WorkEffortInventoryAssignmentOverviewPanelComponent extends TestSco
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {

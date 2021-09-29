@@ -25,6 +25,7 @@ import {
   VatClause,
   Store,
   BillingProcess,
+  CustomerRelationship,
 } from '@allors/workspace/domain/default';
 import { PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
@@ -32,6 +33,7 @@ import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
+import { Filters } from '../../../../filters/filters';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -97,19 +99,19 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   showIrpf: boolean;
 
   get billToCustomerIsPerson(): boolean {
-    return !this.order.BillToCustomer || this.order.BillToCustomer.objectType.name === this.m.Person.name;
+    return !this.order.BillToCustomer || this.order.BillToCustomer.strategy.cls  === this.m.Person;
   }
 
   get shipToCustomerIsPerson(): boolean {
-    return !this.order.ShipToCustomer || this.order.ShipToCustomer.objectType.name === this.m.Person.name;
+    return !this.order.ShipToCustomer || this.order.ShipToCustomer.strategy.cls  === this.m.Person;
   }
 
   get billToEndCustomerIsPerson(): boolean {
-    return !this.order.BillToEndCustomer || this.order.BillToEndCustomer.objectType.name === this.m.Person.name;
+    return !this.order.BillToEndCustomer || this.order.BillToEndCustomer.strategy.cls  === this.m.Person;
   }
 
   get shipToEndCustomerIsPerson(): boolean {
-    return !this.order.ShipToEndCustomer || this.order.ShipToEndCustomer.objectType.name === this.m.Person.name;
+    return !this.order.ShipToEndCustomer || this.order.ShipToEndCustomer.strategy.cls  === this.m.Person;
   }
 
   constructor(
@@ -217,10 +219,10 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
 
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
-        this.order = loaded.objects[salesOrderPullName] as SalesOrder;
+        this.order = loaded.object<SalesOrder>(salesOrderPullName);
         this.orderItems = loaded.collection<SalesOrderItem>(salesOrderPullName);
-        this.salesInvoice = loaded.objects[salesInvoicePullName] as SalesInvoice;
-        this.currencies = loaded.collection<Currency>(m.Currency);
+        this.salesInvoice = loaded.object<SalesInvoice>(salesInvoicePullName);
+        this.currencies = loaded.collection<Currency>(this.m.Currency);
         this.billingProcesses = loaded.collection<BillingProcess>(billingProcessPullName);
         this.billingForOrderItems = this.billingProcesses.find((v: BillingProcess) => v.UniqueId === 'ab01ccc2-6480-4fc0-b20e-265afd41fae2');
         this.inventoryItemStates = loaded.collection<SerialisedInventoryItemState>(serialisedInventoryItemStatePullName);
@@ -298,18 +300,18 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
       .subscribe((loaded) => {
         this.allors.session.reset();
 
-        this.order = loaded.object<SalesOrder>(m.SalesOrder);
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+        this.order = loaded.object<SalesOrder>(this.m.SalesOrder);
+        this.internalOrganisation = loaded.object<Organisation>(this.m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.facilities = loaded.collection<Facility>(m.Facility);
-        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
-        this.vatClauses = loaded.collection<VatClause>(m.VatClause);
-        this.stores = loaded.collection<Store>(m.Store);
-        this.currencies = loaded.collection<Currency>(m.Currency);
+        this.facilities = loaded.collection<Facility>(this.m.Facility);
+        this.irpfRegimes = loaded.collection<IrpfRegime>(this.m.IrpfRegime);
+        this.vatClauses = loaded.collection<VatClause>(this.m.VatClause);
+        this.stores = loaded.collection<Store>(this.m.Store);
+        this.currencies = loaded.collection<Currency>(this.m.Currency);
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-        this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.PartyContactMechanism);
+        this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === this.m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
 
         if (this.order.ShipToCustomer) {
           this.previousShipToCustomer = this.order.ShipToCustomer;
@@ -347,7 +349,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public shipToCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -355,7 +357,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public billToCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -363,7 +365,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public shipToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -371,7 +373,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public billToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -379,7 +381,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public billToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.BillToCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -388,7 +390,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public billToEndCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.BillToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -397,7 +399,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public shipToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.ShipToCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -406,7 +408,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public shipToEndCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.ShipToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -500,9 +502,9 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
         this.updateBillToCustomer(this.order.ShipToCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToContacts = loaded.collection<Person>(m.Person);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.PartyContactMechanism);
+      this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToContacts = loaded.collection<Person>(this.m.Person);
     });
   }
 
@@ -550,9 +552,9 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
         this.updateShipToCustomer(this.order.ShipToCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.PartyContactMechanism);
       this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.billToContacts = loaded.collection<Person>(m.Person);
+      this.billToContacts = loaded.collection<Person>(this.m.Person);
     });
   }
 
@@ -594,9 +596,9 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
         this.updateShipToEndCustomer(this.order.ShipToEndCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.PartyContactMechanism);
       this.billToEndCustomerContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.billToEndCustomerContacts = loaded.collection<Person>(m.Person);
+      this.billToEndCustomerContacts = loaded.collection<Person>(this.m.Person);
     });
   }
 
@@ -638,9 +640,9 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
         this.updateBillToEndCustomer(this.order.BillToEndCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.shipToEndCustomerAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToEndCustomerContacts = loaded.collection<Person>(m.Person);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.PartyContactMechanism);
+      this.shipToEndCustomerAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToEndCustomerContacts = loaded.collection<Person>(this.m.Person);
     });
   }
 
@@ -651,9 +653,9 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public update(): void {
-    const { context } = this.allors;
+    
 
-    context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

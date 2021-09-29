@@ -10,6 +10,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
+import { Filters } from '../../../../filters/filters';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -76,12 +77,14 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
 
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
-        this.serialisedItem = loaded.objects[pullName] as SerialisedItem;
+        this.serialisedItem = loaded.object<SerialisedItem>(pullName);
       }
     };
   }
 
   public ngOnInit(): void {
+    const m = this.m;
+
     // Maximized
     this.subscription = this.panel.manager.on$
       .pipe(
@@ -156,9 +159,9 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
               },
             }),
             pull.InternalOrganisation({
-              object: this.internalOrganisationId.value,
+              objectId: this.internalOrganisationId.value,
               select: {
-                CurrentSuppliers: x,
+                ObsoleteCurrentSuppliers: x,
               },
             }),
             pull.SerialisedItemState({
@@ -223,11 +226,9 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
   }
 
   public update(): void {
-    const { context } = this.allors;
-
     this.onSave();
 
-    context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

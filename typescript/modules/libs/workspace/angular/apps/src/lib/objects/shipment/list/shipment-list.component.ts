@@ -11,6 +11,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
+import { Equals } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: Shipment;
@@ -85,8 +86,8 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
     const x = {};
     this.filter = m.Shipment.filter = m.Shipment.filter ?? new Filter(m.Shipment.filterDefinition);
 
-    const fromInternalOrganisationPredicate = new Equals({ propertyType: m.Shipment.ShipFromParty });
-    const toInternalOrganisationPredicate = new Equals({ propertyType: m.Shipment.ShipToParty });
+    const fromInternalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Shipment.ShipFromParty };
+    const toInternalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Shipment.ShipToParty };
 
     const predicate = new And([new Or([fromInternalOrganisationPredicate, toInternalOrganisationPredicate]), this.filter.definition.predicate]);
 

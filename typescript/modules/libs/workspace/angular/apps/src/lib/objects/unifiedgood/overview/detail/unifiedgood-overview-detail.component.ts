@@ -111,7 +111,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
 
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
-        this.good = loaded.objects[pullName] as UnifiedGood;
+        this.good = loaded.object<UnifiedGood>(pullName);
       }
     };
   }
@@ -315,11 +315,11 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   }
 
   public update(): void {
-    const { context } = this.allors;
+    
 
     this.onSave();
 
-    context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

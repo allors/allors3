@@ -7,6 +7,7 @@ import { formatDistance } from 'date-fns';
 import { Notification } from '@allors/workspace/domain/default';
 import { Action, Filter, FilterDefinition, MediaService, MethodService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, UserId } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
+import { M } from '@allors/workspace/meta/default';
 
 interface Row extends TableRow {
   object: Notification;
@@ -29,9 +30,11 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
   private subscription: Subscription;
 
   filter: Filter;
+
+  M: M;
+
   constructor(
     @Self() public allors: SessionService,
-
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public methodService: MethodService,
@@ -42,11 +45,12 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
   ) {
     super();
 
+    this.M = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.M;
+
     titleService.setTitle(this.title);
 
-    const { m } = this.metaService;
-
-    this.confirm = methodService.create(allors.context, m.Notification.Confirm, { name: 'Confirm' });
+    this.confirm = methodService.create(allors.client, allors.session, m.Notification.Confirm, { name: 'Confirm' });
 
     this.table = new Table({
       selection: true,
@@ -58,9 +62,11 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
   }
 
   public ngOnInit(): void {
-    const m = this.m;  const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
-    const predicate = new And([new Like({ roleType: m.Notification.Confirmed, parameter: 'confirmed' })]);
+    const predicate = new And([{ kind: 'Like',  roleType: m.Notification.Confirmed, parameter: 'confirmed' })]);
 
     const filterDefinition = new FilterDefinition(predicate);
     this.filter = new Filter(filterDefinition);

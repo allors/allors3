@@ -11,6 +11,7 @@ import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './productquote-create.component.html',
@@ -88,7 +89,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
   }
 
   get receiverIsPerson(): boolean {
-    return !this.quote.Receiver || this.quote.Receiver.objectType.name === this.m.Person.name;
+    return !this.quote.Receiver || this.quote.Receiver.strategy.cls  === this.m.Person;
   }
 
   public receiverSelected(party: IObject): void {

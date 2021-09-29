@@ -64,7 +64,7 @@ export class ShipmentItemOverviewPanelComponent extends TestScope {
     panel.icon = 'shopping_cart';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.session);
+    this.delete = deleteService.delete(panel.manager.client, panel.manager.session);
     this.edit = editService.edit();
 
     const sort = true;
@@ -116,7 +116,7 @@ export class ShipmentItemOverviewPanelComponent extends TestScope {
 
     panel.onPulled = (loaded) => {
       this.shipmentItems = loaded.collection<ShipmentItem>(pullName);
-      this.shipment = loaded.objects[shipmentPullName] as Shipment;
+      this.shipment = loaded.object<Shipment>(shipmentPullName);
       this.table.total = loaded.values[`${pullName}_total`] || this.shipmentItems.length;
       this.table.data = this.shipmentItems.map((v) => {
         return {

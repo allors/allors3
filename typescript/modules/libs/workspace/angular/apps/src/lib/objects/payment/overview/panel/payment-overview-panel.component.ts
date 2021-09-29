@@ -61,7 +61,7 @@ export class PaymentOverviewPanelComponent extends TestScope {
     panel.icon = 'money';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.session);
+    this.delete = deleteService.delete(panel.manager.client, panel.manager.session);
     this.edit = editService.edit();
 
     this.table = new Table({

@@ -85,9 +85,9 @@ export class ProductQuoteOverviewSummaryComponent {
     };
 
     panel.onPulled = (loaded) => {
-      this.productQuote = loaded.objects[productQuotePullName] as ProductQuote;
-      this.salesOrder = loaded.objects[salesOrderPullName] as SalesOrder;
-      this.request = loaded.objects[requestPullName] as RequestForQuote;
+      this.productQuote = loaded.object<ProductQuote>(productQuotePullName);
+      this.salesOrder = loaded.object<SalesOrder>(salesOrderPullName);
+      this.request = loaded.object<RequestForQuote>(requestPullName);
     };
   }
 

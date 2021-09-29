@@ -3,6 +3,7 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { M } from '@allors/workspace/meta/default';
 import { SerialisedItem } from '@allors/workspace/domain/default';
 import { Action, DeleteService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService, ActionTarget } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: SerialisedItem;
@@ -41,6 +42,7 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
 
   constructor(
     @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
 
     public factoryService: ObjectService,
     public refreshService: RefreshService,
@@ -50,7 +52,7 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {
@@ -89,8 +91,8 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
     });
 
     const partSerialisedItemsName = `${this.panel.name}_${this.m.SerialisedItem.tag}`;
-    const ownedSerialisedItemsName = `${this.panel.name}_${this.m.SerialisedItem.name}_OwnedSerialisedItemsName`;
-    const rentedSerialisedItemsName = `${this.panel.name}_${this.m.SerialisedItem.name}_RentedSerialisedItems`;
+    const ownedSerialisedItemsName = `${this.panel.name}_${this.m.SerialisedItem.tag}_OwnedSerialisedItemsName`;
+    const rentedSerialisedItemsName = `${this.panel.name}_${this.m.SerialisedItem.tag}_RentedSerialisedItems`;
 
     this.panel.onPull = (pulls) => {
       const m = this.m;

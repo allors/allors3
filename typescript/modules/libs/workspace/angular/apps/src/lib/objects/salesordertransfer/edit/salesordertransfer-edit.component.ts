@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { SalesTerm, TermType } from '@allors/workspace/domain/default';
+import { SalesInvoice, SalesOrder, SalesTerm, TermType } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -46,7 +46,10 @@ export class SalesOrderTransferEditComponent extends TestScope implements OnInit
       .pipe(
         switchMap(() => {
           const isCreate = (this.data as IObject).id === undefined;
-          const { objectType, associationRoleType } = this.data;
+          const {
+            strategy: { cls },
+            associationRoleType,
+          } = this.data;
 
           const pulls = [
             pull.SalesTerm({
@@ -57,7 +60,7 @@ export class SalesOrderTransferEditComponent extends TestScope implements OnInit
             }),
             pull.TermType({
               predicate: { kind: 'Equals', propertyType: m.TermType.IsActive, value: true },
-              sort: [new Sort(m.TermType.Name)],
+              sorting: [{ roleType: m.TermType.Name }],
             }),
           ];
 
@@ -76,21 +79,21 @@ export class SalesOrderTransferEditComponent extends TestScope implements OnInit
             pulls.push(pull.SalesInvoice({ objectId: this.data.associationId }), pull.SalesOrder({ objectId: this.data.associationId }));
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, create: isCreate, objectType, associationRoleType })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, create: isCreate, cls, associationRoleType })));
         })
       )
-      .subscribe(({ loaded, create, objectType, associationRoleType }) => {
+      .subscribe(({ loaded, create, cls, associationRoleType }) => {
         this.allors.session.reset();
 
-        this.container = loaded.objects.SalesInvoice || loaded.objects.SalesOrder;
+        this.container = loaded.object<SalesInvoice>(m.SalesInvoice) || loaded.object<SalesOrder>(m.SalesOrder);
         this.object = loaded.object<SalesTerm>(m.SalesTerm);
         this.termTypes = loaded.collection<TermType>(m.TermType);
-        this.termTypes = this.termTypes.filter((v) => v.strategy.cls.singularName === `${objectType.name}Type`);
+        this.termTypes = this.termTypes.filter((v) => v.strategy.cls.singularName === `${cls.singularName}Type`);
 
         if (create) {
           this.title = 'Add Sales Term';
-          this.object = this.allors.context.create(objectType.name) as SalesTerm;
-          this.container.add(associationRoleType, this.object);
+          this.object = this.allors.session.create<SalesTerm>(cls);
+          this.container.strategy.addCompositesRole(associationRoleType, this.object);
         }
       });
   }

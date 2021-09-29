@@ -6,6 +6,7 @@ import { CustomerShipment, SalesOrder } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
 
 import { PrintService } from '../../../../actions/print/print.service';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -21,14 +22,14 @@ export class CustomerShipmentOverviewSummaryComponent {
 
   constructor(
     @Self() public panel: PanelService,
-
+    public workspaceService: WorkspaceService,
     public navigation: NavigationService,
     public printService: PrintService,
     public refreshService: RefreshService,
     private saveService: SaveService,
     public snackBar: MatSnackBar
   ) {
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
 
     panel.name = 'summary';
 
@@ -76,7 +77,7 @@ export class CustomerShipmentOverviewSummaryComponent {
     };
 
     panel.onPulled = (loaded) => {
-      this.shipment = loaded.objects[shipmentPullName] as CustomerShipment;
+      this.shipment = loaded.object<CustomerShipment>(shipmentPullName);
       this.salesOrders = loaded.collection<SalesOrder>(m.SalesOrder);
     };
   }

@@ -71,7 +71,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
     this.panel.expandable = true;
 
     this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
-    this.invoice = methodService.create(allors.context, this.m.PurchaseOrder.Invoice, { name: 'Invoice' });
+    this.invoice = methodService.create(allors.client, allors.session, this.m.PurchaseOrder.Invoice, { name: 'Invoice' });
 
     const sort = true;
     this.table = new Table({

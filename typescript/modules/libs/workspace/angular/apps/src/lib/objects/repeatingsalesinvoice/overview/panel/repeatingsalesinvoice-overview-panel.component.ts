@@ -66,7 +66,7 @@ export class RepeatingSalesInvoiceOverviewPanelComponent extends TestScope {
     panel.icon = 'business';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.session);
+    this.delete = deleteService.delete(panel.manager.client, panel.manager.session);
     this.edit = this.editService.edit();
 
     const sort = true;
@@ -116,8 +116,8 @@ export class RepeatingSalesInvoiceOverviewPanelComponent extends TestScope {
     };
 
     panel.onPulled = (loaded) => {
-      this.repeatingInvoice = loaded.objects[pullName] as RepeatingSalesInvoice;
-      this.invoice = loaded.objects[invoicePullName] as SalesInvoice;
+      this.repeatingInvoice = loaded.object<RepeatingSalesInvoice>(pullName);
+      this.invoice = loaded.object<SalesInvoice>(invoicePullName);
 
       if (this.repeatingInvoice) {
         this.objects.splice(0, this.objects.length);

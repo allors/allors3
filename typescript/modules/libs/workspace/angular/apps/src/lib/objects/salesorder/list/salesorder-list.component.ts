@@ -12,6 +12,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Equals } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: SalesOrder;
@@ -72,8 +73,8 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
     this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.print = printService.print();
-    this.ship = methodService.create(allors.context, this.m.SalesOrder.Ship, { name: 'Ship' });
-    this.invoice = methodService.create(allors.context, this.m.SalesOrder.Invoice, { name: 'Invoice' });
+    this.ship = methodService.create(allors.client, allors.session, this.m.SalesOrder.Ship, { name: 'Ship' });
+    this.invoice = methodService.create(allors.client, allors.session, this.m.SalesOrder.Invoice, { name: 'Invoice' });
 
     this.table = new Table({
       selection: true,
@@ -92,8 +93,8 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
     const x = {};
     this.filter = m.SalesOrder.filter = m.SalesOrder.filter ?? new Filter(m.SalesOrder.filterDefinition);
 
-    const internalOrganisationPredicate = new Equals({ propertyType: m.SalesOrder.TakenBy });
-    const predicate = new And([internalOrganisationPredicate, this.filter.definition.predicate]);
+    const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.SalesOrder.TakenBy };
+    const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
       .pipe(
@@ -118,7 +119,7 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.Person({
-              object: this.userId.value,
+              objectId: this.userId.value,
             }),
             pull.SalesOrder({
               predicate,

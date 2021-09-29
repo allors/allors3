@@ -25,6 +25,7 @@ import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './salesorder-create.component.html',
@@ -86,19 +87,19 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
   showIrpf: boolean;
 
   get billToCustomerIsPerson(): boolean {
-    return !this.order.BillToCustomer || this.order.BillToCustomer.objectType.name === this.m.Person.name;
+    return !this.order.BillToCustomer || this.order.BillToCustomer.strategy.cls  === this.m.Person;
   }
 
   get shipToCustomerIsPerson(): boolean {
-    return !this.order.ShipToCustomer || this.order.ShipToCustomer.objectType.name === this.m.Person.name;
+    return !this.order.ShipToCustomer || this.order.ShipToCustomer.strategy.cls  === this.m.Person;
   }
 
   get billToEndCustomerIsPerson(): boolean {
-    return !this.order.BillToEndCustomer || this.order.BillToEndCustomer.objectType.name === this.m.Person.name;
+    return !this.order.BillToEndCustomer || this.order.BillToEndCustomer.strategy.cls  === this.m.Person;
   }
 
   get shipToEndCustomerIsPerson(): boolean {
-    return !this.order.ShipToEndCustomer || this.order.ShipToEndCustomer.objectType.name === this.m.Person.name;
+    return !this.order.ShipToEndCustomer || this.order.ShipToEndCustomer.strategy.cls  === this.m.Person;
   }
 
   constructor(
@@ -167,7 +168,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
         this.order.TakenBy = this.internalOrganisation;
 
         const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-        this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);
+        this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
 
         if (this.stores.length === 1) {
           this.order.Store = this.stores[0];
@@ -378,7 +379,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToContacts = loaded.collection<Person>(m.Person);
 
       this.setDerivedInitialRoles();
@@ -559,7 +560,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.shipToEndCustomerAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToEndCustomerAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToEndCustomerContacts = loaded.collection<Person>(m.Person);
 
       this.setDerivedInitialRoles();

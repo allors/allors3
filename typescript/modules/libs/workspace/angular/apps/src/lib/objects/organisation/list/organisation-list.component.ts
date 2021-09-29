@@ -60,7 +60,7 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
       this.table.selection.clear();
     });
 
-    // this.delete2 = methodService.create(allors.context, m.Organisation.Delete, { name: 'Delete (Method)' });
+    // this.delete2 = methodService.create(allors.client, allors.session, m.Organisation.Delete, { name: 'Delete (Method)' });
 
     this.table = new Table({
       selection: true,

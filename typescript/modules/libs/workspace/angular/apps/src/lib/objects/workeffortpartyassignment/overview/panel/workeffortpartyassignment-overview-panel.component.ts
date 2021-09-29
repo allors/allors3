@@ -2,7 +2,7 @@ import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { format } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { WorkEffort, WorkEffortPartyAssignment } from '@allors/workspace/domain/default';
+import { displayName, WorkEffort, WorkEffortPartyAssignment } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -92,8 +92,8 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
       autoFilter: true,
     });
 
-    const partypullName = `${this.panel.name}_${this.m.WorkEffortPartyAssignment.name}_party`;
-    const workeffortpullName = `${this.panel.name}_${this.m.WorkEffortPartyAssignment.name}_workeffort`;
+    const partypullName = `${this.panel.name}_${this.m.WorkEffortPartyAssignment.tag}_party`;
+    const workeffortpullName = `${this.panel.name}_${this.m.WorkEffortPartyAssignment.tag}_workeffort`;
 
     this.panel.onPull = (pulls) => {
       const m = this.m;
@@ -140,7 +140,7 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
     };
 
     this.panel.onPulled = (loaded) => {
-      this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
+      this.workEffort = loaded.object<WorkEffort>(this.m.WorkEffort);
       this.fromParty = loaded.collection<WorkEffortPartyAssignment>(partypullName);
       this.fromWorkEffort = loaded.collection<WorkEffortPartyAssignment>(workeffortpullName);
 
@@ -161,7 +161,7 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
             object: v,
             number: v.Assignment.WorkEffortNumber,
             name: v.Assignment.Name,
-            party: v.Party.displayName,
+            party: displayName(v.Party),
             status: v.Assignment.WorkEffortState ? v.Assignment.WorkEffortState.Name : '',
             from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
             through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',

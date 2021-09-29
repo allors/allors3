@@ -117,8 +117,8 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
     const x = {};
     this.filter = m.Catalogue.filter = m.Catalogue.filter ?? new Filter(m.Catalogue.filterDefinition);
 
-    const internalOrganisationPredicate = new Equals({ propertyType: m.Catalogue.InternalOrganisation });
-    const predicate = new And([internalOrganisationPredicate, this.filter.definition.predicate]);
+    const internalOrganisationPredicate = : Equals = { kind: 'Equals', propertyType: m.Catalogue.InternalOrganisation };
+    const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
       .pipe(

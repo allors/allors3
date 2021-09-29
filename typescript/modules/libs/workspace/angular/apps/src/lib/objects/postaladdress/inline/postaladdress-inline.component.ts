@@ -1,31 +1,8 @@
 import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import {
-  InternalOrganisation,
-  Locale,
-  Carrier,
-  Person,
-  Organisation,
-  PartyContactMechanism,
-  OrganisationContactRelationship,
-  Party,
-  CustomerShipment,
-  Currency,
-  PostalAddress,
-  Facility,
-  ShipmentMethod,
-  PositionTypeRate,
-  TimeFrequency,
-  RateType,
-  PositionType,
-  PriceComponent,
-  Country,
-  ContactMechanismPurpose,
-} from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, SaveService, SearchFactory, Table, TestScope } from '@allors/workspace/angular/base';
+import { PartyContactMechanism, PostalAddress, Country, ContactMechanismPurpose } from '@allors/workspace/domain/default';
 import { SessionService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   // tslint:disable-next-line:component-selector

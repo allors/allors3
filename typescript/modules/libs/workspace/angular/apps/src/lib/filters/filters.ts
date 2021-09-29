@@ -106,14 +106,7 @@ export class Filters {
       objectType: m.Organisation,
       roleTypes: [m.Organisation.PartyName],
       post: (predicate: And) => {
-        predicate.operands.push(
-          new ContainedIn({
-            propertyType: m.Organisation.SupplierRelationshipsWhereSupplier,
-            extent: new Extent({
-              objectType: m.SupplierRelationship,
-            }),
-          })
-        );
+        predicate.operands.push({ kind: 'ContainedIn', propertyType: m.Organisation.SupplierRelationshipsWhereSupplier, extent: { kind: 'Filter', objectType: m.SupplierRelationship } });
       },
     });
   }
@@ -123,18 +116,11 @@ export class Filters {
       objectType: m.Organisation,
       roleTypes: [m.Organisation.PartyName],
       post: (predicate: And) => {
-        predicate.operands.push(
-          new ContainedIn({
-            propertyType: m.Organisation.SubContractorRelationshipsWhereSubContractor,
-            extent: new Extent({
-              objectType: m.SubContractorRelationship,
-              predicate: new Equals({
-                propertyType: m.SubContractorRelationship.Contractor,
-                object: internalOrganisationId,
-              }),
-            }),
-          })
-        );
+        predicate.operands.push({
+          kind: 'ContainedIn',
+          propertyType: m.Organisation.SubContractorRelationshipsWhereSubContractor,
+          extent: { kind: 'Filter', objectType: m.SubContractorRelationship, predicate: { kind: 'Equals', propertyType: m.SubContractorRelationship.Contractor, value: internalOrganisationId } },
+        });
       },
     });
   }
@@ -144,15 +130,11 @@ export class Filters {
       objectType: m.Person,
       roleTypes: [m.Person.PartyName, m.Person.UserName],
       post: (predicate: And) => {
-        predicate.operands.push(
-          new ContainedIn({
-            propertyType: m.Person.EmploymentsWhereEmployee,
-            extent: new Extent({
-              objectType: m.Employment,
-              predicate: { kind: 'Equals', propertyType: m.Employment.Employer, object: internalOrganisationId },
-            }),
-          })
-        );
+        predicate.operands.push({
+          kind: 'ContainedIn',
+          propertyType: m.Person.EmploymentsWhereEmployee,
+          extent: { kind: 'Filter', objectType: m.Employment, predicate: { kind: 'Equals', propertyType: m.Employment.Employer, value: internalOrganisationId } },
+        });
       },
     });
   }
@@ -169,7 +151,7 @@ export class Filters {
       objectType: m.Organisation,
       roleTypes: [m.Organisation.PartyName],
       post: (predicate: And) => {
-        predicate.operands.push(new Equals({ propertyType: m.Organisation.IsInternalOrganisation, value: true }));
+        predicate.operands.push({ kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true });
       },
     });
   }

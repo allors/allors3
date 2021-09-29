@@ -9,6 +9,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
+import { Filters } from '../../../../filters/filters';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -95,7 +96,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
 
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
-        this.request = loaded.objects[requestForQuotePullName] as RequestForQuote;
+        this.request = loaded.object<RequestForQuote>(requestForQuotePullName);
         this.quote = loaded.object<Quote>(m.Quote);
       }
     };
@@ -166,7 +167,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
   }
 
   get originatorIsPerson(): boolean {
-    return !this.request.Originator || this.request.Originator.objectType.name === this.m.Person.name;
+    return !this.request.Originator || this.request.Originator.strategy.cls  === this.m.Person;
   }
 
   public originatorSelected(party: IObject) {

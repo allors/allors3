@@ -4,6 +4,7 @@ import { formatDistance } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { PartyContactMechanism } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: PartyContactMechanism;
@@ -45,6 +46,7 @@ export class PartyContactMechanismOverviewPanelComponent extends TestScope imple
 
   constructor(
     @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
 
     public refreshService: RefreshService,
     public navigationService: NavigationService,
@@ -53,7 +55,7 @@ export class PartyContactMechanismOverviewPanelComponent extends TestScope imple
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {
@@ -80,8 +82,8 @@ export class PartyContactMechanismOverviewPanelComponent extends TestScope imple
     });
 
     const pullName = `${this.panel.name}_${this.m.PartyContactMechanism.tag}`;
-    const active = `${this.panel.name}_${this.m.PartyContactMechanism.name}_active`;
-    const inactive = `${this.panel.name}_${this.m.PartyContactMechanism.name}_inactive`;
+    const active = `${this.panel.name}_${this.m.PartyContactMechanism.tag}_active`;
+    const inactive = `${this.panel.name}_${this.m.PartyContactMechanism.tag}_inactive`;
 
     this.panel.onPull = (pulls) => {
       const { pull, x, tree } = this.metaService;

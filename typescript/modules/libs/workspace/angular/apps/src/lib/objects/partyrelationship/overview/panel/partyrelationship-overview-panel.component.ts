@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { displayName, PartyRelationship } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: PartyRelationship;
@@ -46,6 +47,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
 
   constructor(
     @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
 
     public refreshService: RefreshService,
     public navigationService: NavigationService,
@@ -54,7 +56,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {
@@ -82,8 +84,8 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
     });
 
     const pullName = `${this.panel.name}_${this.m.PartyRelationship.tag}`;
-    const active = `${this.panel.name}_${this.m.PartyRelationship.name}_active`;
-    const inactive = `${this.panel.name}_${this.m.PartyRelationship.name}_inactive`;
+    const active = `${this.panel.name}_${this.m.PartyRelationship.tag}_active`;
+    const inactive = `${this.panel.name}_${this.m.PartyRelationship.tag}_inactive`;
 
     this.panel.onPull = (pulls) => {
       const m = this.m;

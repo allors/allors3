@@ -23,7 +23,7 @@ import {
   PriceComponent,
 } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, SaveService, SearchFactory, Table, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
@@ -65,7 +65,7 @@ export class PriceComponentOverviewPanelComponent extends TestScope implements O
 
   constructor(
     @Self() public panel: PanelService,
-
+    public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
 
@@ -74,11 +74,13 @@ export class PriceComponentOverviewPanelComponent extends TestScope implements O
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {
-    const m = this.m;  const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.panel.name = 'priceComponent';
     this.panel.title = 'Price Components';

@@ -2,8 +2,9 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { SalesOrder } from '@allors/workspace/domain/default';
+import { displayName, SalesOrder } from '@allors/workspace/domain/default';
 import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: SalesOrder;
@@ -40,7 +41,7 @@ export class SalesOrderOverviewPanelComponent extends TestScope implements OnIni
 
   constructor(
     @Self() public panel: PanelService,
-
+    public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public overviewService: OverviewService,
@@ -48,7 +49,7 @@ export class SalesOrderOverviewPanelComponent extends TestScope implements OnIni
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {
@@ -74,8 +75,8 @@ export class SalesOrderOverviewPanelComponent extends TestScope implements OnIni
       autoFilter: true,
     });
 
-    const assetPullName = `${this.panel.name}_${this.m.SalesOrder.name}_fixedasset`;
-    const customerPullName = `${this.panel.name}_${this.m.SalesOrder.name}_customer`;
+    const assetPullName = `${this.panel.name}_${this.m.SalesOrder.tag}_fixedasset`;
+    const customerPullName = `${this.panel.name}_${this.m.SalesOrder.tag}_customer`;
 
     this.panel.onPull = (pulls) => {
       const m = this.m;
@@ -132,7 +133,7 @@ export class SalesOrderOverviewPanelComponent extends TestScope implements OnIni
           return {
             object: v,
             number: v.OrderNumber,
-            customer: v.BillToCustomer.displayName,
+            customer: displayName(v.BillToCustomer),
             state: v.SalesOrderState ? v.SalesOrderState.Name : '',
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
           } as Row;

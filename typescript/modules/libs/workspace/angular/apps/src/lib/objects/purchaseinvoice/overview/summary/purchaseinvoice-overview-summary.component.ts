@@ -6,6 +6,7 @@ import { PurchaseOrder, PurchaseInvoice } from '@allors/workspace/domain/default
 import { Action, NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
 
 import { PrintService } from '../../../../actions/print/print.service';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -28,6 +29,7 @@ export class PurchasInvoiceOverviewSummaryComponent {
 
   constructor(
     @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
 
     public navigation: NavigationService,
     public printService: PrintService,
@@ -36,8 +38,9 @@ export class PurchasInvoiceOverviewSummaryComponent {
     public refreshService: RefreshService,
     public snackBar: MatSnackBar
   ) {
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
-
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    const m = this.m;
+    
     this.print = printService.print();
 
     panel.name = 'summary';
@@ -46,7 +49,6 @@ export class PurchasInvoiceOverviewSummaryComponent {
     const purchaseOrderPullName = `${panel.name}_${this.m.PurchaseOrder.tag}`;
 
     panel.onPull = (pulls) => {
-      const m = this.allors.workspace.configuration.metaPopulation as M;
       const { pullBuilder: pull } = m;
       const x = {};
 
@@ -92,7 +94,7 @@ export class PurchasInvoiceOverviewSummaryComponent {
     };
 
     panel.onPulled = (loaded) => {
-      this.invoice = loaded.objects[purchaseInvoicePullName] as PurchaseInvoice;
+      this.invoice = loaded.object<PurchaseInvoice>(purchaseInvoicePullName);
       this.orders = loaded.collection<PurchaseOrder>(purchaseOrderPullName);
 
       this.orderTotalExVat = this.orders.reduce((partialOrderTotal, order) => partialOrderTotal + order.ValidOrderItems.reduce((partialItemTotal, item) => partialItemTotal + parseFloat(item.TotalExVat), 0), 0);

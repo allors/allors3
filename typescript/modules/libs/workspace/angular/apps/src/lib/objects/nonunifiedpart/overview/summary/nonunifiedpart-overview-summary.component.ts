@@ -4,6 +4,7 @@ import { isBefore, isAfter } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { Part, BasePrice, PriceComponent, SupplierOffering, ProductIdentificationType } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -26,12 +27,8 @@ export class NonUnifiedPartOverviewSummaryComponent {
   inactiveSupplierOfferings: SupplierOffering[];
   partnumber: string[];
 
-  constructor(
-    @Self() public panel: PanelService,
-
-    public navigation: NavigationService
-  ) {
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+  constructor(@Self() public panel: PanelService, public workspaceService: WorkspaceService, public navigation: NavigationService) {
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
 
     panel.name = 'summary';
 
@@ -40,7 +37,7 @@ export class NonUnifiedPartOverviewSummaryComponent {
     const supplierOfferingsPullName = `${panel.name}_${this.m.SupplierOffering.tag}`;
 
     panel.onPull = (pulls) => {
-      const m = this.allors.workspace.configuration.metaPopulation as M;
+      const m = this.m;
       const { pullBuilder: pull } = m;
       const x = {};
 
@@ -49,12 +46,12 @@ export class NonUnifiedPartOverviewSummaryComponent {
       pulls.push(
         pull.PriceComponent({
           name: priceComponentPullName,
-          predicate: { kind: 'Equals', propertyType: m.PriceComponent.Part, objectId: id },
+          predicate: { kind: 'Equals', propertyType: m.PriceComponent.Part, value: id },
           include: {
             Part: x,
             Currency: x,
           },
-          sorting: [{ roleType: { roleType: m.PriceComponent.FromDate, descending: true } }],
+          sorting: [{ roleType: m.PriceComponent.FromDate, descending: true }],
         }),
         pull.Part({
           name: partPullName,
@@ -92,7 +89,7 @@ export class NonUnifiedPartOverviewSummaryComponent {
     };
 
     panel.onPulled = (loaded) => {
-      this.part = loaded.objects[partPullName] as Part;
+      this.part = loaded.object<Part>(partPullName);
       this.serialised = this.part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 
       this.allPricecomponents = loaded.collection<PriceComponent>(priceComponentPullName);

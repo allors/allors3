@@ -77,7 +77,7 @@ export class PartCategoryListComponent extends TestScope implements OnInit, OnDe
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const predicate = new And([new Like({ roleType: m.PartCategory.Name, parameter: 'name' })]);
+    const predicate = new And([{ kind: 'Like',  roleType: m.PartCategory.Name, parameter: 'name' })]);
 
     const filterDefinition = new FilterDefinition(predicate);
     this.filter = new Filter(filterDefinition);

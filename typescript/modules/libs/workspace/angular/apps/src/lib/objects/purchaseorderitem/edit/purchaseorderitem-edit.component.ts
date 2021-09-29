@@ -27,6 +27,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './purchaseorderitem-edit.component.html',
@@ -184,12 +185,12 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
           roleTypes: [this.m.NonUnifiedPart.Name, this.m.NonUnifiedPart.SearchString],
           post: (predicate: And) => {
             predicate.operands.push(
-              new ContainedIn({
+              { kind: 'ContainedIn', 
                 propertyType: this.m.NonUnifiedPart.SupplierOfferingsWherePart,
-                extent: new Extent({
+                extent: { kind: 'Filter', 
                   objectType: this.m.SupplierOffering,
                   predicate: new And([
-                    new Equals({ propertyType: m.SupplierOffering.Supplier, object: this.order.TakenViaSupplier }),
+                    { kind: 'Equals',  propertyType: m.SupplierOffering.Supplier, object: this.order.TakenViaSupplier }),
                     new LessThan({ roleType: m.SupplierOffering.FromDate, value: this.order.OrderDate }),
                     new Or([new Not({ operand: new Exists({ propertyType: m.SupplierOffering.ThroughDate }) }), new GreaterThan({ roleType: m.SupplierOffering.ThroughDate, value: this.order.OrderDate })]),
                   ]),
@@ -336,7 +337,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
     ];
 
     this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
-      this.part = (loaded.objects.UnifiedGood || loaded.objects.Part) as Part;
+      this.part = (loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.Part)) as Part;
       this.serialised = part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 
       const supplierOfferings = loaded.collection<SupplierOffering>(m.SupplierOffering);

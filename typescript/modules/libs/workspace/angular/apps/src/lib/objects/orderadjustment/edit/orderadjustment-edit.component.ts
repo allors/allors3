@@ -43,7 +43,7 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
       .pipe(
         switchMap(() => {
           const isCreate = (this.data as IObject).id === undefined;
-          const { objectType, associationRoleType } = this.data;
+          const { strategy: { cls }, associationRoleType } = this.data;
 
           const pulls = [];
 
@@ -59,21 +59,21 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
             pulls.push(pull.Quote({ objectId: this.data.associationId }), pull.Order({ objectId: this.data.associationId }), pull.Invoice({ objectId: this.data.associationId }));
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, create: isCreate, objectType, associationRoleType })));
+          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, create: isCreate, cls, associationRoleType })));
         })
       )
-      .subscribe(({ loaded, create, objectType, associationRoleType }) => {
+      .subscribe(({ loaded, create, cls, associationRoleType }) => {
         this.allors.session.reset();
 
         this.container = loaded.objects.Quote || loaded.objects.Order || loaded.objects.Invoice;
         this.object = loaded.object<OrderAdjustment>(m.OrderAdjustment);
 
         if (create) {
-          this.title = `Add ${objectType.tag}`;
-          this.object = this.allors.context.create(objectType.name) as OrderAdjustment;
-          this.container.add(associationRoleType, this.object);
+          this.title = `Add ${cls.singularName}`;
+          this.object = this.allors.session.create<OrderAdjustment>(cls);
+          this.container.strategy.addCompositesRole(associationRoleType, this.object);
         } else {
-          this.title = `Edit ${objectType.tag}`;
+          this.title = `Edit ${cls.singularName}`;
         }
       });
   }

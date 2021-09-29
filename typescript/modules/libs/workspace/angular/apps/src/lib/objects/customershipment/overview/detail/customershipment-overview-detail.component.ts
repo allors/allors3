@@ -3,24 +3,14 @@ import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import {
-  InternalOrganisation,
-  Locale,
-  Carrier,
-  Person,
-  Organisation,
-  PartyContactMechanism,
-  OrganisationContactRelationship,
-  Party,
-  CustomerShipment,
-  Currency,
-  PostalAddress,
-  Facility,
-  ShipmentMethod,
-} from '@allors/workspace/domain/default';
+import { Locale, Carrier, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Party, CustomerShipment, Currency, PostalAddress, Facility, ShipmentMethod } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
+
+import { Filters } from '../../../../filters/filters';
+import { FetcherService } from '../../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -57,7 +47,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
   customersFilter: SearchFactory;
 
   get shipToCustomerIsPerson(): boolean {
-    return !this.customerShipment.ShipToParty || this.customerShipment.ShipToParty.objectType.name === this.m.Person.name;
+    return !this.customerShipment.ShipToParty || this.customerShipment.ShipToParty.strategy.cls  === this.m.Person;
   }
 
   constructor(
@@ -102,7 +92,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
 
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
-        this.customerShipment = loaded.objects[pullName] as CustomerShipment;
+        this.customerShipment = loaded.object<CustomerShipment>(pullName);
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
       }
     };
@@ -248,7 +238,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
+      this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
       this.shipToContacts = loaded.collection<Person>(m.Person);
     });
   }
@@ -281,7 +271,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
 
     this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-      this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
+      this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
       this.shipToContacts = loaded.collection<Person>(m.Person);
     });
   }

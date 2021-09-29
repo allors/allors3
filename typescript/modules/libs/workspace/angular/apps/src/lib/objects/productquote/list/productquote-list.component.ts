@@ -12,6 +12,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Equals } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: Quote;
@@ -84,8 +85,8 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
     const x = {};
     this.filter = m.ProductQuote.filter = m.ProductQuote.filter ?? new Filter(m.ProductQuote.filterDefinition);
 
-    const internalOrganisationPredicate = new Equals({ propertyType: m.Quote.Issuer });
-    const predicate = new And([internalOrganisationPredicate, this.filter.definition.predicate]);
+    const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Quote.Issuer };
+    const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
       .pipe(

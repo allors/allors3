@@ -76,8 +76,8 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
       autoFilter: true,
     });
 
-    const assetPullName = `${this.panel.name}_${this.m.SalesInvoice.name}_fixedasset`;
-    const customerPullName = `${this.panel.name}_${this.m.SalesInvoice.name}_customer`;
+    const assetPullName = `${this.panel.name}_${this.m.SalesInvoice.tag}_fixedasset`;
+    const customerPullName = `${this.panel.name}_${this.m.SalesInvoice.tag}_customer`;
 
     this.panel.onPull = (pulls) => {
       const m = this.m;
@@ -134,7 +134,7 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
           return {
             object: v,
             number: v.InvoiceNumber,
-            customer: v.BillToCustomer.displayName,
+            customer: displayName(v.BillToCustomer),
             totalExVat: v.TotalExVat,
             state: v.SalesInvoiceState ? v.SalesInvoiceState.Name : '',
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),

@@ -29,6 +29,7 @@ import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './salesinvoiceitem-edit.component.html',
@@ -247,8 +248,8 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const unifiedGoodPullName = `${this.m.UnifiedGood.name}_items`;
-    const nonUnifiedGoodPullName = `${this.m.NonUnifiedGood.name}_items`;
+    const unifiedGoodPullName = `${this.m.UnifiedGood.tag}_items`;
+    const nonUnifiedGoodPullName = `${this.m.NonUnifiedGood.tag}_items`;
 
     const pulls = [
       pull.NonUnifiedGood({

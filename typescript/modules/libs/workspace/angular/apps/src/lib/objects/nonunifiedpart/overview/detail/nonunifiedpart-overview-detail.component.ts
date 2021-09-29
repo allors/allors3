@@ -85,7 +85,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
 
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
-        this.part = loaded.objects[pullName] as Part;
+        this.part = loaded.object<Part>(pullName);
       }
     };
   }
@@ -260,11 +260,11 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
   }
 
   public update(): void {
-    const { context } = this.allors;
+    
 
     this.onSave();
 
-    context.save().subscribe(() => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

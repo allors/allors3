@@ -4,6 +4,7 @@ import { formatDistance } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { ProductQuote } from '@allors/workspace/domain/default';
 import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: ProductQuote;
@@ -40,7 +41,7 @@ export class ProductQuoteOverviewPanelComponent extends TestScope implements OnI
 
   constructor(
     @Self() public panel: PanelService,
-
+    public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public overviewService: OverviewService,
@@ -48,7 +49,7 @@ export class ProductQuoteOverviewPanelComponent extends TestScope implements OnI
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {
@@ -74,8 +75,8 @@ export class ProductQuoteOverviewPanelComponent extends TestScope implements OnI
       autoFilter: true,
     });
 
-    const assetPullName = `${this.panel.name}_${this.m.ProductQuote.name}_fixedasset`;
-    const customerPullName = `${this.panel.name}_${this.m.ProductQuote.name}_customer`;
+    const assetPullName = `${this.panel.name}_${this.m.ProductQuote.tag}_fixedasset`;
+    const customerPullName = `${this.panel.name}_${this.m.ProductQuote.tag}_customer`;
 
     this.panel.onPull = (pulls) => {
       const m = this.m;

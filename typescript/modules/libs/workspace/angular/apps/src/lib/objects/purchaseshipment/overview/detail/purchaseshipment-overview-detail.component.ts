@@ -24,6 +24,7 @@ import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
+import { Filters } from '../../../../filters/filters';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -58,7 +59,7 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
   suppliersFilter: SearchFactory;
 
   get shipFromCustomerIsPerson(): boolean {
-    return !this.purchaseShipment.ShipFromParty || this.purchaseShipment.ShipFromParty.objectType.name === this.m.Person.name;
+    return !this.purchaseShipment.ShipFromParty || this.purchaseShipment.ShipFromParty.strategy.cls  === this.m.Person;
   }
 
   constructor(
@@ -103,7 +104,7 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
 
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
-        this.purchaseShipment = loaded.objects[pullName] as PurchaseShipment;
+        this.purchaseShipment = loaded.object<PurchaseShipment>(pullName);
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
       }
     };
@@ -177,7 +178,7 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
         this.allors.session.reset();
 
         const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
-        this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.objectType.name === 'PostalAddress').map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
+        this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
         this.shipToContacts = loaded.collection<Person>(m.Person);
 
         this.purchaseShipment = loaded.object<PurchaseShipment>(m.PurchaseShipment);

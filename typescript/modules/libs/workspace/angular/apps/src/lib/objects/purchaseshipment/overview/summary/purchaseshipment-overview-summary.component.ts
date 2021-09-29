@@ -6,6 +6,7 @@ import { PurchaseOrder, ShipmentItem, PurchaseShipment } from '@allors/workspace
 import { NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
 
 import { PrintService } from '../../../../actions/print/print.service';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -22,6 +23,7 @@ export class PurchaseShipmentOverviewSummaryComponent {
 
   constructor(
     @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
 
     public navigation: NavigationService,
     public printService: PrintService,
@@ -29,7 +31,7 @@ export class PurchaseShipmentOverviewSummaryComponent {
     private saveService: SaveService,
     public snackBar: MatSnackBar
   ) {
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
 
     panel.name = 'summary';
 
@@ -77,9 +79,9 @@ export class PurchaseShipmentOverviewSummaryComponent {
     };
 
     panel.onPulled = (loaded) => {
-      this.shipment = loaded.objects[shipmentPullName] as PurchaseShipment;
+      this.shipment = loaded.object<PurchaseShipment>(shipmentPullName);
       this.shipmentItems = loaded.collection<ShipmentItem>(shipmentPullName);
-      this.purchaseOrders = loaded.collection<PurchaseOrder>(m.PurchaseOrder);
+      this.purchaseOrders = loaded.collection<PurchaseOrder>(this.m.PurchaseOrder);
     };
   }
 

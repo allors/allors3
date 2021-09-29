@@ -11,6 +11,7 @@ import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './serialiseditem-create.component.html',
@@ -95,7 +96,7 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
         const externalOwner = loaded.object<Party>(m.Party);
         this.owner = externalOwner || internalOrganisation;
 
-        this.part = loaded.object<forPart>(m.forPart);
+        this.part = loaded.object<Part>('forPart');
 
         this.serialisedItemStates = loaded.collection<SerialisedItemState>(m.SerialisedItemState);
         this.serialisedItemAvailabilities = loaded.collection<Enumeration>(m.Enumeration);

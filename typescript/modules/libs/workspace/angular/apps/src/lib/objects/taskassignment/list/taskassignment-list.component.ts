@@ -67,12 +67,12 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
     const x = {};
 
     const predicate = new And([
-      new Equals({ propertyType: m.TaskAssignment.User, object: this.userId.value }),
-      new ContainedIn({
+      { kind: 'Equals',  propertyType: m.TaskAssignment.User, object: this.userId.value }),
+      { kind: 'ContainedIn', 
         propertyType: m.TaskAssignment.Task,
-        extent: new Extent({
+        extent: { kind: 'Filter', 
           objectType: m.Task,
-          predicate: new Like({ roleType: m.Task.Title, parameter: 'title' }),
+          predicate: { kind: 'Like',  roleType: m.Task.Title, parameter: 'title' }),
         }),
       }),
     ]);
