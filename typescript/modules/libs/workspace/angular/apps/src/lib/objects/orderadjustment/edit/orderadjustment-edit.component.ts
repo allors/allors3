@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { OrderAdjustment } from '@allors/workspace/domain/default';
+import { Invoice, Order, OrderAdjustment, Quote } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -37,13 +37,17 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
   }
 
   public ngOnInit(): void {
-    const m = this.m; const { pullBuilder: pull } = m;
+    const m = this.m;
+    const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
         switchMap(() => {
           const isCreate = (this.data as IObject).id === undefined;
-          const { strategy: { cls }, associationRoleType } = this.data;
+          const {
+            strategy: { cls },
+            associationRoleType,
+          } = this.data;
 
           const pulls = [];
 
@@ -65,7 +69,7 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
       .subscribe(({ loaded, create, cls, associationRoleType }) => {
         this.allors.session.reset();
 
-        this.container = loaded.objects.Quote || loaded.objects.Order || loaded.objects.Invoice;
+        this.container = loaded.object<Quote>(m.Quote) ?? loaded.object<Order>(m.Order) ?? loaded.object<Invoice>(m.Invoice);
         this.object = loaded.object<OrderAdjustment>(m.OrderAdjustment);
 
         if (create) {

@@ -5,63 +5,24 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import {
-  WorkTask,
-  Good,
-  InternalOrganisation,
-  NonUnifiedGood,
-  Part,
-  PriceComponent,
-  Brand,
-  Model,
   Locale,
   Carrier,
-  SerialisedItemCharacteristicType,
   WorkTask,
-  ContactMechanism,
   Person,
   Organisation,
   PartyContactMechanism,
   OrganisationContactRelationship,
-  Catalogue,
-  Singleton,
-  ProductCategory,
-  Scope,
-  CommunicationEvent,
-  WorkEffortState,
-  Priority,
-  WorkEffortPurpose,
-  WorkEffortPartyAssignment,
-  CustomerRelationship,
   Party,
   CustomerShipment,
   Currency,
   PostalAddress,
   Facility,
   ShipmentMethod,
+  ShipmentPackage,
 } from '@allors/workspace/domain/default';
-import {
-  Action,
-  DeleteService,
-  EditService,
-  Filter,
-  FilterDefinition,
-  MediaService,
-  NavigationService,
-  ObjectData,
-  ObjectService,
-  OverviewService,
-  PanelService,
-  RefreshService,
-  SaveService,
-  SearchFactory,
-  Sorter,
-  Table,
-  TableRow,
-  TestScope,
-  PanelManagerService,
-} from '@allors/workspace/angular/base';
-import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
-import { And, IObject } from '@allors/workspace/domain/system';
+import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope, PanelManagerService } from '@allors/workspace/angular/base';
+import { SessionService } from '@allors/workspace/angular/core';
+import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -100,7 +61,7 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
   customersFilter: SearchFactory;
 
   get shipToCustomerIsPerson(): boolean {
-    return !this.customerShipment.ShipToParty || this.customerShipment.ShipToParty.strategy.cls  === this.m.Person;
+    return !this.customerShipment.ShipToParty || this.customerShipment.ShipToParty.strategy.cls === this.m.Person;
   }
 
   constructor(

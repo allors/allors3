@@ -20,7 +20,7 @@ export class SalesOrderOverviewComponent extends TestScope implements AfterViewI
 
   subscription: Subscription;
   order: SalesOrder;
-  M: M;
+  m: M;
 
   constructor(
     @Self() public panelManager: PanelManagerService,
@@ -36,16 +36,16 @@ export class SalesOrderOverviewComponent extends TestScope implements AfterViewI
 
     titleService.setTitle(this.title);
 
-    this.M = this.workspaceService.workspace.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   public ngAfterViewInit(): void {
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const m = this.M;
-          const { pullBuilder: pull } = m;
-
           const navRoute = new NavigationActivatedRoute(this.route);
           this.panelManager.id = navRoute.id();
           this.panelManager.objectType = m.SalesOrder;

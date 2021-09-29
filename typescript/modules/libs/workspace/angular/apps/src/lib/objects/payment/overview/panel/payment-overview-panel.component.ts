@@ -117,7 +117,7 @@ export class PaymentOverviewPanelComponent extends TestScope {
 
       this.payments = loaded.collection<Payment>(pullName);
 
-      this.table.total = loaded.value([`${pullName}_total`]) ?? this.payments.length;
+      this.table.total = (loaded.value(`${pullName}_total`) ?? this.payments.length) as number;;
       this.table.data = this.payments.map((v) => {
         return {
           object: v,

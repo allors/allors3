@@ -2,7 +2,7 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { format } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { , PartyRelationship } from '@allors/workspace/domain/default';
+import { PartyRelationship } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -149,7 +149,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
       }
 
       if (this.objects) {
-        this.table.total = loaded.value(`${pullName}_total`) ?? this.currentPartyRelationships.length;
+        this.table.total = (loaded.value(`${pullName}_total`) ?? this.currentPartyRelationships.length) as number;;
         this.refreshTable();
       }
     };

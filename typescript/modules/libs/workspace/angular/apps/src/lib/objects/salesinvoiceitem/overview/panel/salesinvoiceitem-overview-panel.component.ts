@@ -110,7 +110,7 @@ export class SalesInvoiceItemOverviewPanelComponent extends TestScope {
     panel.onPulled = (loaded) => {
       this.salesInvoiceItems = loaded.collection<SalesInvoiceItem>(pullName);
       this.invoice = loaded.object<SalesInvoice>(invoicePullName);
-      this.table.total = loaded.value([`${pullName}_total`]) ?? this.salesInvoiceItems.length;
+      this.table.total = ((loaded.value(`${pullName}_total`) as number) ?? this.salesInvoiceItems.length) as number;
       this.table.data = this.salesInvoiceItems.map((v) => {
         return {
           object: v,

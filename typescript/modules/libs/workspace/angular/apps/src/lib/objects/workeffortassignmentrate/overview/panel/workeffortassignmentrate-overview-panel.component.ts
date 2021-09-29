@@ -127,7 +127,7 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
       this.objects = loaded.collection<WorkEffortAssignmentRate>(pullName);
 
       if (this.objects) {
-        this.table.total = loaded.value(`${pullName}_total`) ?? this.objects.length;
+        this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.objects.length;
         this.refreshTable();
       }
     };

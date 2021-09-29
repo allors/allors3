@@ -139,7 +139,8 @@ export class OrderAdjustmentOverviewPanelComponent extends TestScope {
 
       this.objects = loaded.collection<OrderAdjustment>(quoteOrderAdjustmentsPullName) || loaded.collection<OrderAdjustment>(orderOrderAdjustmentsPullName) || loaded.collection<OrderAdjustment>(invoiceOrderAdjustmentsPullName);
 
-      this.table.total = loaded.value(`${quoteOrderAdjustmentsPullName}_total`) ?? loaded.value(`${orderOrderAdjustmentsPullName}_total`) ?? loaded.value(`${invoiceOrderAdjustmentsPullName}_total`) ?? this.objects.length;
+      this.table.total =
+        (loaded.value(`${quoteOrderAdjustmentsPullName}_total`) as number) ?? (loaded.value(`${orderOrderAdjustmentsPullName}_total`) as number) ?? (loaded.value(`${invoiceOrderAdjustmentsPullName}_total`) as number) ?? this.objects.length;
 
       this.table.data = this.objects.map((v) => {
         return {

@@ -216,7 +216,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
       );
 
       if (this.objects) {
-        this.table.total = loaded.value(`${pullName}_total`) ?? this.objects.length;
+        this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects.length) as number;;
         this.table.data = this.objects.map((v) => {
           return {
             object: v,

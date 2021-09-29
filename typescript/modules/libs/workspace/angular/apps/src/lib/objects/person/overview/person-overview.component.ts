@@ -43,12 +43,11 @@ export class PersonOverviewComponent extends TestScope implements AfterViewInit,
 
   public ngAfterViewInit(): void {
     const m = this.m;
+    const { pullBuilder: p } = m;
 
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(([, ,]) => {
-          const { pullBuilder: p } = m;
-
           const navRoute = new NavigationActivatedRoute(this.route);
           this.panelManager.id = navRoute.id();
           this.panelManager.objectType = m.Person;

@@ -116,7 +116,7 @@ export class ShipmentItemOverviewPanelComponent extends TestScope {
     panel.onPulled = (loaded) => {
       this.shipmentItems = loaded.collection<ShipmentItem>(pullName);
       this.shipment = loaded.object<Shipment>(shipmentPullName);
-      this.table.total = loaded.value([`${pullName}_total`]) ?? this.shipmentItems.length;
+      this.table.total = ((loaded.value(`${pullName}_total`) as number) ?? this.shipmentItems.length) as number;
       this.table.data = this.shipmentItems.map((v) => {
         return {
           object: v,

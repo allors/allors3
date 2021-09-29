@@ -15,6 +15,7 @@ import {
   PhoneCommunication,
   CommunicationEventPurpose,
   CommunicationEventState,
+  TelecommunicationsNumber,
 } from '@allors/workspace/domain/default';
 import { NavigationService, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
@@ -74,7 +75,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
 
           let pulls = [
             pull.Organisation({
-              object: this.internalOrganisationId.value,
+              objectId: this.internalOrganisationId.value,
               name: 'InternalOrganisation',
               include: {
                 ActiveEmployees: {
@@ -248,7 +249,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
   }
 
   private sortContacts(): void {
-    this.contacts.sort((a, b) => (a.displayName > b.displayName ? 1 : b.displayName > a.displayName ? -1 : 0));
+    this.contacts.sort((a, b) => (a.DisplayName > b.DisplayName ? 1 : b.DisplayName > a.DisplayName ? -1 : 0));
   }
 
   private addContactRelationship(party: Person): void {

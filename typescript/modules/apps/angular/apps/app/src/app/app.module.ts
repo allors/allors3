@@ -17,6 +17,7 @@ import { M, tags } from '@allors/workspace/meta/default';
 import { ruleBuilder } from '@allors/workspace/derivations/apps-custom';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -863,6 +864,7 @@ export const edit = {
     ReactiveFormsModule,
     RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
     MatAutocompleteModule,
+    MatBadgeModule,
     MatButtonModule,
     MatCardModule,
     MatCheckboxModule,

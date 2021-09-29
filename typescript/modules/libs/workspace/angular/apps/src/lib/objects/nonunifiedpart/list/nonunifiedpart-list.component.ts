@@ -19,7 +19,6 @@ import {
   NonUnifiedPart,
   NonUnifiedPartBarcodePrint,
   NonSerialisedInventoryItem,
-  displayName,
   ProductIdentification,
 } from '@allors/workspace/domain/default';
 import {
@@ -383,7 +382,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
 
       const pulls = [
         pull.Singleton({
-          object: this.singletonId.value,
+          objectId: this.singletonId.value,
           select: {
             NonUnifiedPartBarcodePrint: {
               include: {

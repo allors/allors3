@@ -1,7 +1,7 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { , InventoryItem, SerialisedInventoryItem, SerialisedItem } from '@allors/workspace/domain/default';
+import { InventoryItem, SerialisedInventoryItem, SerialisedItem } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService, ActionTarget } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 

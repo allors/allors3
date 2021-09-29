@@ -23,6 +23,7 @@ export class SalesInvoiceOverviewComponent extends TestScope implements AfterVie
   public repeatingInvoice: RepeatingSalesInvoice;
 
   subscription: Subscription;
+  m: M;
 
   constructor(
     @Self() public panelManager: PanelManagerService,
@@ -37,16 +38,18 @@ export class SalesInvoiceOverviewComponent extends TestScope implements AfterVie
     super();
 
     titleService.setTitle(this.title);
+
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   public ngAfterViewInit(): void {
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
+
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const m = this.workspaceService.workspace.configuration.metaPopulation as M;
-          const { pullBuilder: pull } = m;
-          const x = {};
-
           const navRoute = new NavigationActivatedRoute(this.route);
           this.panelManager.id = navRoute.id();
           this.panelManager.objectType = m.SalesInvoice;
