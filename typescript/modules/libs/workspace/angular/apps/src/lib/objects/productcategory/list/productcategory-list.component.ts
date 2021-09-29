@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayName, ProductCategory } from '@allors/workspace/domain/default';
+import { , ProductCategory } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -33,10 +33,10 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
 
   private subscription: Subscription;
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
-
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public editService: EditService,
@@ -49,6 +49,8 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
     super();
 
     titleService.setTitle(this.title);
+
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.edit = editService.edit();
     this.edit.result.subscribe(() => {
@@ -75,7 +77,7 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
@@ -140,8 +142,8 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
           return {
             object: v,
             name: v.Name,
-            primaryParent: v.PrimaryParent && displayName(v.PrimaryParent),
-            secondaryParents: v.SecondaryParents.map((w) => displayName(w)).join(', '),
+            primaryParent: v.PrimaryParent && v.PrimaryParent.DisplayName,
+            secondaryParents: v.SecondaryParents.map((w) => w.DisplayName).join(', '),
             scope: v.CatScope.Name,
           } as Row;
         });

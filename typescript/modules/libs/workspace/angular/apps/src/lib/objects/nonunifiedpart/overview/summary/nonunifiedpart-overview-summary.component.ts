@@ -2,7 +2,7 @@ import { Component, Self } from '@angular/core';
 import { isBefore, isAfter } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { Part, BasePrice, PriceComponent, SupplierOffering, ProductIdentificationType, displayName } from '@allors/workspace/domain/default';
+import { Part, BasePrice, PriceComponent, SupplierOffering, ProductIdentificationType } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { SortDirection } from '@allors/workspace/domain/system';
@@ -106,7 +106,7 @@ export class NonUnifiedPartOverviewSummaryComponent {
       this.partnumber = this.part.ProductIdentifications.filter((v) => v.ProductIdentificationType === partNumberType).map((w) => w.Identification);
 
       if (this.part.SuppliedBy.length > 0) {
-        this.suppliers = this.part.SuppliedBy.map((v) => displayName(v)).reduce((acc: string, cur: string) => acc + ', ' + cur);
+        this.suppliers = this.part.SuppliedBy.map((v) => v.DisplayName).reduce((acc: string, cur: string) => acc + ', ' + cur);
       }
     };
   }

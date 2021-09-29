@@ -28,6 +28,7 @@ export class BrandsOverviewComponent extends TestScope implements OnInit, OnDest
 
   private subscription: Subscription;
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
@@ -43,6 +44,8 @@ export class BrandsOverviewComponent extends TestScope implements OnInit, OnDest
     super();
 
     titleService.setTitle(this.title);
+
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.edit = editService.edit();
     this.edit.result.subscribe(() => {
@@ -64,7 +67,7 @@ export class BrandsOverviewComponent extends TestScope implements OnInit, OnDest
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
 
     const predicate: And = { kind: 'And', operands: [{ kind: 'Like', roleType: m.Brand.Name, parameter: 'name' }] };

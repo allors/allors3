@@ -39,7 +39,6 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,
@@ -94,7 +93,7 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
         switchMap(() => {
           this.serialisedItem = undefined;
 
-          const m = this.allors.workspace.configuration.metaPopulation as M;
+          const m = this.m;
           const { pullBuilder: pull } = m;
           const x = {};
           const id = this.panel.manager.id;

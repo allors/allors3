@@ -30,7 +30,6 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<SupplierRelationshipEditComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId,

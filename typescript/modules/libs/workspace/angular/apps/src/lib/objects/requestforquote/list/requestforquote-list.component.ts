@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { Request, Person, Organisation, InternalOrganisation, displayName } from '@allors/workspace/domain/default';
+import { Request, Person, Organisation, InternalOrganisation } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -40,10 +40,10 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
 
   private subscription: Subscription;
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
-
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public deleteService: DeleteService,
@@ -57,6 +57,8 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
     super();
 
     titleService.setTitle(this.title);
+
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
@@ -75,7 +77,7 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
@@ -143,7 +145,7 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
             return {
               object: v,
               number: `${v.RequestNumber}`,
-              from: v.Originator && displayName(v.Originator),
+              from: v.Originator && v.Originator.DisplayName,
               state: `${v.RequestState && v.RequestState.Name}`,
               description: `${v.Description || ''}`,
               responseRequired: v.RequiredResponseDate && format(new Date(v.RequiredResponseDate), 'dd-MM-yyyy'),

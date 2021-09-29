@@ -39,7 +39,6 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,
@@ -112,7 +111,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
         switchMap(() => {
           this.request = undefined;
 
-          const m = this.allors.workspace.configuration.metaPopulation as M;
+          const m = this.m;
           const { pullBuilder: pull } = m;
           const x = {};
           const id = this.panel.manager.id;

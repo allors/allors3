@@ -2,7 +2,7 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { format } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayName, PartyRelationship } from '@allors/workspace/domain/default';
+import { , PartyRelationship } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -160,7 +160,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
       return {
         object: v,
         type: v.strategy.cls.singularName,
-        parties: v.Parties.map((w) => displayName(w)).join(', '),
+        parties: v.Parties.map((w) => w.DisplayName).join(', '),
         from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
         through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
       } as Row;

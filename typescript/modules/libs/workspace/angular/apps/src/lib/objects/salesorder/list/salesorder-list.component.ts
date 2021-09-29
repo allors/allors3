@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, InternalOrganisation, SalesOrder, displayName } from '@allors/workspace/domain/default';
+import { Person, Organisation, InternalOrganisation, SalesOrder } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -65,12 +65,12 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
 
     titleService.setTitle(this.title);
 
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
+
     this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
-
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.print = printService.print();
     this.ship = methodService.create(allors.client, allors.session, this.m.SalesOrder.Ship, { name: 'Ship' });
@@ -88,7 +88,7 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
@@ -160,7 +160,7 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
             return {
               object: v,
               number: `${v.OrderNumber}`,
-              shipToCustomer: v.ShipToCustomer && displayName(v.ShipToCustomer),
+              shipToCustomer: v.ShipToCustomer && v.ShipToCustomer.DisplayName,
               state: `${v.SalesOrderState && v.SalesOrderState.Name}`,
               invoice: v.SalesInvoicesWhereSalesOrder.map((w) => w.InvoiceNumber).join(', '),
               customerReference: `${v.Description || ''}`,

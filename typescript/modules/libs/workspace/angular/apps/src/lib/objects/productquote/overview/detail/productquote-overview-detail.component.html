@@ -34,7 +34,7 @@
                     class="col-md"
                     [object]="productQuote"
                     [roleType]="m.Quote.Receiver"
-                    [filter]="customersFilter.create(allors.context)"
+                    [filter]="customersFilter.create(allors)"
                     display="displayName"
                     (changed)="receiverSelected($event)"
                     label="To"
@@ -153,7 +153,7 @@
     </mat-card-content>
 
     <mat-card-actions>
-      <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+      <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE</button>
       <button mat-button (click)="panel.toggle()" type="button">CANCEL</button>
     </mat-card-actions>
   </mat-card>

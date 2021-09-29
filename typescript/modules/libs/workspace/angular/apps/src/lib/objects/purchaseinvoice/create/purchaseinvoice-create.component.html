@@ -9,7 +9,7 @@
     <div class="row">
       <div class="col-md">
         <div class="row">
-          <a-mat-autocomplete class="col-md" [object]="invoice" [roleType]="m.PurchaseInvoice.BilledFrom" [filter]="suppliersFilter.create(allors.context)" display="displayName" (changed)="billedFromSelected($event)"></a-mat-autocomplete>
+          <a-mat-autocomplete class="col-md" [object]="invoice" [roleType]="m.PurchaseInvoice.BilledFrom" [filter]="suppliersFilter.create(allors)" display="displayName" (changed)="billedFromSelected($event)"></a-mat-autocomplete>
           <button mat-mini-fab color="accent" [disabled]="!invoice.canWriteBilledFrom" type="button" (click)="addBilledFrom = !addBilledFrom">
             <mat-icon *ngIf="!addBilledFrom">add</mat-icon>
             <mat-icon *ngIf="addBilledFrom">close</mat-icon>
@@ -74,7 +74,7 @@
     </div>
 
     <div class="row">
-      <a-mat-autocomplete class="col-md" [object]="invoice" [roleType]="m.PurchaseInvoice.BilledToContactPerson" [filter]="employeeFilter.create(allors.context)" display="displayName" label="Billed to Contact Person"></a-mat-autocomplete>
+      <a-mat-autocomplete class="col-md" [object]="invoice" [roleType]="m.PurchaseInvoice.BilledToContactPerson" [filter]="employeeFilter.create(allors)" display="displayName" label="Billed to Contact Person"></a-mat-autocomplete>
     </div>
 
     <div class="row">
@@ -84,7 +84,7 @@
             class="col-md"
             [object]="invoice"
             [roleType]="m.PurchaseInvoice.ShipToCustomer"
-            [filter]="customersFilter.create(allors.context)"
+            [filter]="customersFilter.create(allors)"
             display="displayName"
             (changed)="shipToCustomerSelected($event)"
           ></a-mat-autocomplete>
@@ -158,7 +158,7 @@
             class="col-md"
             [object]="invoice"
             [roleType]="m.PurchaseInvoice.BillToEndCustomer"
-            [filter]="customersFilter.create(allors.context)"
+            [filter]="customersFilter.create(allors)"
             display="displayName"
             (changed)="billToEndCustomerSelected($event)"
           ></a-mat-autocomplete>
@@ -243,7 +243,7 @@
             class="col-md"
             [object]="invoice"
             [roleType]="m.PurchaseInvoice.ShipToEndCustomer"
-            [filter]="customersFilter.create(allors.context)"
+            [filter]="customersFilter.create(allors)"
             display="displayName"
             (changed)="shipToEndCustomerSelected($event)"
           ></a-mat-autocomplete>
@@ -350,7 +350,7 @@
   </mat-dialog-content>
 
   <div mat-dialog-actions>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE</button>
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
   </div>
 </form>

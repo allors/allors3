@@ -33,7 +33,7 @@
                     class="col-md"
                     [object]="order"
                     [roleType]="m.PurchaseOrder.TakenViaSupplier"
-                    [filter]="suppliersFilter.create(allors.context)"
+                    [filter]="suppliersFilter.create(allors)"
                     display="displayName"
                     (changed)="supplierSelected($event)"
                     label="Supplier"
@@ -272,7 +272,7 @@
     </mat-card-content>
 
     <mat-card-actions>
-      <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+      <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE</button>
       <button mat-button (click)="panel.toggle()" type="button">CANCEL</button>
     </mat-card-actions>
   </mat-card>

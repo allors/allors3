@@ -137,7 +137,7 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
     this.table.data = this.workEffortAssignmentRates.map((v) => {
       return {
         object: v,
-        // partyAssignment: displayName(v.WorkEffortPartyAssignment),
+        // partyAssignment: v.WorkEffortPartyAssignment.DisplayName,
         // from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
         // through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
         rateType: v.RateType.Name,

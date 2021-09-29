@@ -15,11 +15,11 @@ import { IAngularMetaService } from '../../../meta/iangular-meta-service';
   styleUrls: ['./factory-fab.component.scss'],
 })
 export class FactoryFabComponent implements OnInit {
-  @Input() private objectType: Composite;
+  @Input() public objectType: Composite;
 
-  @Input() private createData: ObjectData;
+  @Input() public createData: ObjectData;
 
-  @Output() private created: EventEmitter<IObject> = new EventEmitter();
+  @Output() public created: EventEmitter<IObject> = new EventEmitter();
 
   classes: Class[];
 

@@ -71,7 +71,6 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PurchaseInvoiceItemEditComponent>,
-
     private fetcher: FetcherService,
     public refreshService: RefreshService,
     private saveService: SaveService
@@ -82,7 +81,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull, treeBuilder } = m;
     const x = {};
 

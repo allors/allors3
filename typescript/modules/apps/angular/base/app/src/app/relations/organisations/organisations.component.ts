@@ -29,11 +29,14 @@ export class OrganisationsComponent extends TestScope implements OnInit, OnDestr
   filter: Filter;
 
   private subscription: Subscription;
+  m: M;
 
   constructor(@Self() public allors: SessionService, public refreshService: RefreshService, public deleteService: DeleteService, public overviewService: OverviewService, private titleService: Title) {
     super();
 
     this.titleService.setTitle(this.title);
+
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.overview = overviewService.overview();
     this.delete = deleteService.delete(allors.client, allors.session);
@@ -50,7 +53,7 @@ export class OrganisationsComponent extends TestScope implements OnInit, OnDestr
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: p } = m;
 
     const angularMeta = this.allors.workspace.services.angularMetaService;

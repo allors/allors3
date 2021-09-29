@@ -24,7 +24,7 @@
           [roleType]="m.PurchaseOrderItem.Part"
           display="Name"
           (changed)="goodSelected($event)"
-          [filter]="unifiedGoodsFilter.create(allors.context)"
+          [filter]="unifiedGoodsFilter.create(allors)"
         ></a-mat-autocomplete>
         <a-mat-static class="col-md" *ngIf="!orderItem.isNew" [object]="orderItem" [roleType]="m.PurchaseOrderItem.Part" display="Name"></a-mat-static>
         <a-mat-select class="col-md" *ngIf="orderItem.isNew" [object]="orderItem" [roleType]="m.PurchaseOrderItem.SerialisedItem" [options]="serialisedItems" (selected)="serialisedItemSelected($event)" display="displayName"></a-mat-select>
@@ -32,7 +32,7 @@
       </div>
 
       <div class="row" *ngIf="orderItem.InvoiceItemType === partItemType">
-        <a-mat-autocomplete *ngIf="orderItem.isNew" class="col-md" [object]="orderItem" [roleType]="m.PurchaseOrderItem.Part" display="Name" [filter]="partsFilter.create(allors.context)" (changed)="partSelected($event)">
+        <a-mat-autocomplete *ngIf="orderItem.isNew" class="col-md" [object]="orderItem" [roleType]="m.PurchaseOrderItem.Part" display="Name" [filter]="partsFilter.create(allors)" (changed)="partSelected($event)">
         </a-mat-autocomplete>
         <a-mat-static class="col-md" *ngIf="!orderItem.isNew" [object]="orderItem" [roleType]="m.PurchaseOrderItem.Part" display="Name"></a-mat-static>
         <a-mat-select
@@ -115,6 +115,6 @@
 
   <div mat-dialog-actions>
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE</button>
   </div>
 </form>

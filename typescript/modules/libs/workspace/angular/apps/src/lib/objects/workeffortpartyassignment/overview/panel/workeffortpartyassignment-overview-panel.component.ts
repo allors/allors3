@@ -2,7 +2,7 @@ import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { format } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayName, WorkEffort, WorkEffortPartyAssignment } from '@allors/workspace/domain/default';
+import { , WorkEffort, WorkEffortPartyAssignment } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -49,10 +49,8 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-
     public refreshService: RefreshService,
     public navigation: NavigationService,
-
     public deleteService: DeleteService,
     public editService: EditService
   ) {
@@ -161,7 +159,7 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
             object: v,
             number: v.Assignment.WorkEffortNumber,
             name: v.Assignment.Name,
-            party: displayName(v.Party),
+            party: v.Party.DisplayName,
             status: v.Assignment.WorkEffortState ? v.Assignment.WorkEffortState.Name : '',
             from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
             through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',

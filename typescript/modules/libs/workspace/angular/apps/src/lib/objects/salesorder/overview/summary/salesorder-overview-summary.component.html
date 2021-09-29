@@ -10,11 +10,11 @@
       <div>Shipment: {{ order.SalesOrderShipmentState?.Name }}</div>
       <div>Invoice:{{ order.SalesOrderInvoiceState?.Name }}</div>
       <div>Payment: {{ order.SalesOrderPaymentState?.Name }}</div>
-      <div>{{ order.DerivedShipToAddress?.displayName }}</div>
+      <div>{{ order.DerivedShipToAddress?.DisplayName }}</div>
     </mat-card-subtitle>
 
     <mat-card-subtitle>
-      <div>last modified: {{ order.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by {{ order.LastModifiedBy?.displayName }}</div>
+      <div>last modified: {{ order.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by {{ order.LastModifiedBy?.DisplayName }}</div>
     </mat-card-subtitle>
   </mat-card-header>
 
@@ -22,28 +22,28 @@
     <div *ngIf="order.Quote" (click)="navigation.overview(order.Quote)" style="cursor: pointer">
       <div style="color: grey">Quote</div>
       <div>
-        {{ order.Quote.Receiver?.displayName }}
+        {{ order.Quote.Receiver?.DisplayName }}
       </div>
     </div>
 
     <div *ngIf="order.ShipToCustomer === order.BillToCustomer" (click)="navigation.overview(order.ShipToCustomer)" style="cursor: pointer">
       <div style="color: grey">Ship to / Bill to</div>
       <div>
-        {{ order.ShipToCustomer?.displayName }}
+        {{ order.ShipToCustomer?.DisplayName }}
       </div>
     </div>
 
     <div *ngIf="order.ShipToCustomer !== order.BillToCustomer" (click)="navigation.overview(order.ShipToCustomer)" style="cursor: pointer">
       <div style="color: grey">Ship to</div>
       <div>
-        {{ order.ShipToCustomer?.displayName }}
+        {{ order.ShipToCustomer?.DisplayName }}
       </div>
     </div>
 
     <div *ngIf="order.ShipToCustomer !== order.BillToCustomer" (click)="navigation.overview(order.ShipToCustomer)" style="cursor: pointer">
       <div style="color: grey">Bill to</div>
       <div>
-        {{ order.BillToCustomer?.displayName }}
+        {{ order.BillToCustomer?.DisplayName }}
       </div>
     </div>
 

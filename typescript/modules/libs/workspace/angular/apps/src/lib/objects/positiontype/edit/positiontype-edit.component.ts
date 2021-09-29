@@ -27,7 +27,6 @@ export class PositionTypeEditComponent extends TestScope implements OnInit, OnDe
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PositionTypeEditComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService
   ) {

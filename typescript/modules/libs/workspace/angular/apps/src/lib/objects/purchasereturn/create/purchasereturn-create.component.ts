@@ -42,7 +42,6 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
     @Self() public allors: SessionService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PurchaseReturnCreateComponent>,
-
     private refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,

@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, InternalOrganisation, PurchaseOrder, displayName } from '@allors/workspace/domain/default';
+import { Person, Organisation, InternalOrganisation, PurchaseOrder } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -53,7 +53,6 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
 
   constructor(
     @Self() public allors: SessionService,
-
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public printService: PrintService,
@@ -69,6 +68,8 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
     super();
 
     titleService.setTitle(this.title);
+
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.print = printService.print();
     this.delete = deleteService.delete(allors.client, allors.session);
@@ -101,7 +102,7 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
@@ -176,7 +177,7 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
             return {
               object: v,
               number: `${v.OrderNumber}`,
-              supplier: v.TakenViaSupplier && displayName(v.TakenViaSupplier),
+              supplier: v.TakenViaSupplier && v.TakenViaSupplier.DisplayName,
               state: `${v.PurchaseOrderState && v.PurchaseOrderState.Name}`,
               shipmentState: `${v.PurchaseOrderShipmentState && v.PurchaseOrderShipmentState.Name}`,
               customerReference: `${v.Description || ''}`,

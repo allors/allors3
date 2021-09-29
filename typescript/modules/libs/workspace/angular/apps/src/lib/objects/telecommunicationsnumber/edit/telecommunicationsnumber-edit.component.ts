@@ -28,7 +28,6 @@ export class TelecommunicationsNumberEditComponent extends TestScope implements 
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: IObject,
     public dialogRef: MatDialogRef<TelecommunicationsNumberEditComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId

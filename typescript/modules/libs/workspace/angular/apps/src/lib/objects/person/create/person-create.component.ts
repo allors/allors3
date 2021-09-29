@@ -49,7 +49,6 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PersonCreateComponent>,
-
     public navigationService: NavigationService,
     public refreshService: RefreshService,
     private route: ActivatedRoute,
@@ -65,7 +64,7 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 

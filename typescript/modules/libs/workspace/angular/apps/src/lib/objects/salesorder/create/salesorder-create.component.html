@@ -39,7 +39,7 @@
               class="col-md"
               [object]="order"
               [roleType]="m.SalesOrder.ShipToCustomer"
-              [filter]="customersFilter.create(allors.context)"
+              [filter]="customersFilter.create(allors)"
               display="displayName"
               (changed)="shipToCustomerSelected($event)"
               label="Ship to"
@@ -114,7 +114,7 @@
               class="col-md"
               [object]="order"
               [roleType]="m.SalesOrder.BillToCustomer"
-              [filter]="customersFilter.create(allors.context)"
+              [filter]="customersFilter.create(allors)"
               display="displayName"
               (changed)="billToCustomerSelected($event)"
               label="Bill to"
@@ -198,7 +198,7 @@
               class="col-md"
               [object]="order"
               [roleType]="m.SalesOrder.ShipToEndCustomer"
-              [filter]="customersFilter.create(allors.context)"
+              [filter]="customersFilter.create(allors)"
               display="displayName"
               (changed)="shipToEndCustomerSelected($event)"
               label="Ship to end customer"
@@ -282,7 +282,7 @@
               class="col-md"
               [object]="order"
               [roleType]="m.SalesOrder.BillToEndCustomer"
-              [filter]="customersFilter.create(allors.context)"
+              [filter]="customersFilter.create(allors)"
               display="displayName"
               (changed)="billToEndCustomerSelected($event)"
               label="Bill to end customer"
@@ -397,6 +397,6 @@
 
   <div mat-dialog-actions>
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE</button>
   </div>
 </form>

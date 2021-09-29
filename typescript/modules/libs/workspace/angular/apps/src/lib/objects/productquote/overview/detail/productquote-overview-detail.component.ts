@@ -63,7 +63,6 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,

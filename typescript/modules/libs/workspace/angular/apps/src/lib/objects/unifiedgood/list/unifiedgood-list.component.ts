@@ -32,10 +32,10 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
 
   private subscription: Subscription;
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
-
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
@@ -48,6 +48,8 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
 
     titleService.setTitle(this.title);
 
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    
     this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
@@ -63,7 +65,7 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const { angularMetaService: a } = this.allors.workspace.services;
     const angularUnifiedGood = a.for(m.UnifiedGood);

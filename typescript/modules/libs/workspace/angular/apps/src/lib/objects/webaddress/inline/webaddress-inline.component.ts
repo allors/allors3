@@ -26,7 +26,7 @@ export class InlineWebAddressComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
@@ -51,7 +51,7 @@ export class InlineWebAddressComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    if (!!this.partyContactMechanism) {
+    if (this.partyContactMechanism) {
       this.allors.client.invokeReactive(this.allors.session, this.partyContactMechanism.Delete);
       this.allors.client.invokeReactive(this.allors.session, this.webAddress.Delete);
     }

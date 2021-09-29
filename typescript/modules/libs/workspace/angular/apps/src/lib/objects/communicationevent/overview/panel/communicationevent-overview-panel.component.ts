@@ -1,7 +1,7 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { CommunicationEvent, displayName } from '@allors/workspace/domain/default';
+import { CommunicationEvent } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -112,7 +112,7 @@ export class CommunicationEventOverviewPanelComponent extends TestScope implemen
             object: v,
             type: v.strategy.cls.singularName,
             description: v.Description,
-            involved: v.InvolvedParties.map((w) => displayName(w)).join(', '),
+            involved: v.InvolvedParties.map((w) => w.DisplayName).join(', '),
             status: v.CommunicationEventState.Name,
             purpose: v.EventPurposes.map((w) => w.Name).join(', '),
           } as Row;

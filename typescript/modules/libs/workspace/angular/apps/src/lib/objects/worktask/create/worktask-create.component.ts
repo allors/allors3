@@ -45,7 +45,6 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<WorkTaskCreateComponent>,
-
     public navigationService: NavigationService,
     public refreshService: RefreshService,
     private saveService: SaveService,

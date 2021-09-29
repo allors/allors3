@@ -11,7 +11,7 @@
           [roleType]="m.ShipmentItem.Good"
           display="Name"
           (changed)="goodSelected($event)"
-          [filter]="goodsFilter.create(allors.context)"
+          [filter]="goodsFilter.create(allors)"
         ></a-mat-autocomplete>
         <a-mat-static class="col-md" *ngIf="selectedSalesOrderItem || !shipmentItem.isNew" [object]="shipmentItem" [roleType]="m.ShipmentItem.Good" display="Name"></a-mat-static>
         <a-mat-select
@@ -42,7 +42,7 @@
           *ngIf="shipmentItem.isNew && !selectedPurchaseOrderItem && !goodIsSelected"
           [object]="shipmentItem"
           [roleType]="m.ShipmentItem.Part"
-          [filter]="supplierPartsFilter.create(allors.context)"
+          [filter]="supplierPartsFilter.create(allors)"
           display="Name"
           (changed)="partSelected($event)"
         ></a-mat-autocomplete>
@@ -57,7 +57,7 @@
           [roleType]="m.ShipmentItem.Part"
           display="Name"
           (changed)="goodSelected($event)"
-          [filter]="goodsFilter.create(allors.context)"
+          [filter]="goodsFilter.create(allors)"
           label="Product"
         ></a-mat-autocomplete>
         <a-mat-select
@@ -75,7 +75,7 @@
       <div class="row">
         <mat-form-field class="col-md">
           <mat-select name="purchaseOrderItems" [(ngModel)]="selectedPurchaseOrderItem" placeholder="purchaseOrderItems" multiple="false" (ngModelChange)="purchaseOrderItemSelected($event)">
-            <mat-option *ngFor="let purchaseOrderItem of purchaseOrderItems" [value]="purchaseOrderItem">{{ purchaseOrderItem.displayName }}</mat-option>
+            <mat-option *ngFor="let purchaseOrderItem of purchaseOrderItems" [value]="purchaseOrderItem">{{ purchaseOrderItem.DisplayName }}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -124,7 +124,7 @@
   </mat-dialog-content>
 
   <div mat-dialog-actions>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE</button>
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
   </div>
 </form>

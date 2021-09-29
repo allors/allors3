@@ -51,7 +51,6 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-
     public objectService: ObjectService,
     public methodService: MethodService,
     public refreshService: RefreshService,

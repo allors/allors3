@@ -34,7 +34,7 @@
                     class="col-md"
                     [object]="invoice"
                     [roleType]="m.PurchaseInvoice.BilledFrom"
-                    [filter]="suppliersFilter.create(allors.context)"
+                    [filter]="suppliersFilter.create(allors)"
                     display="displayName"
                     (changed)="billedFromSelected($event)"
                   ></a-mat-autocomplete>
@@ -105,7 +105,7 @@
                 class="col-md"
                 [object]="invoice"
                 [roleType]="m.PurchaseInvoice.BilledToContactPerson"
-                [filter]="employeeFilter.create(allors.context)"
+                [filter]="employeeFilter.create(allors)"
                 display="displayName"
                 label="Billed to Contact Person"
               ></a-mat-autocomplete>
@@ -118,7 +118,7 @@
                     class="col-md"
                     [object]="invoice"
                     [roleType]="m.PurchaseInvoice.ShipToCustomer"
-                    [filter]="customersFilter.create(allors.context)"
+                    [filter]="customersFilter.create(allors)"
                     display="displayName"
                     (changed)="shipToCustomerSelected($event)"
                   ></a-mat-autocomplete>
@@ -199,7 +199,7 @@
                     class="col-md"
                     [object]="invoice"
                     [roleType]="m.PurchaseInvoice.BillToEndCustomer"
-                    [filter]="customersFilter.create(allors.context)"
+                    [filter]="customersFilter.create(allors)"
                     display="displayName"
                     (changed)="billToEndCustomerSelected($event)"
                   ></a-mat-autocomplete>
@@ -291,7 +291,7 @@
                     class="col-md"
                     [object]="invoice"
                     [roleType]="m.PurchaseInvoice.ShipToEndCustomer"
-                    [filter]="customersFilter.create(allors.context)"
+                    [filter]="customersFilter.create(allors)"
                     display="displayName"
                     (changed)="shipToEndCustomerSelected($event)"
                   ></a-mat-autocomplete>
@@ -417,7 +417,7 @@
     </mat-card-content>
 
     <mat-card-actions>
-      <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+      <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE</button>
       <button mat-button (click)="panel.toggle()" type="button">CANCEL</button>
     </mat-card-actions>
   </mat-card>

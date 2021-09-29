@@ -34,10 +34,10 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
   private subscription: Subscription;
   goodIdentificationTypes: ProductIdentificationType[];
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
-
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
@@ -49,6 +49,8 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
     super();
 
     titleService.setTitle(this.title);
+
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
@@ -65,7 +67,7 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 

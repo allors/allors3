@@ -34,7 +34,6 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: SessionService,
-
     private saveService: SaveService,
     private route: ActivatedRoute,
     public refreshService: RefreshService,
@@ -47,7 +46,7 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 

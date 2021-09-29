@@ -6,7 +6,7 @@
       <mat-form-field class="col-md">
         <mat-select [(ngModel)]="selectedWorker" name="workers" placeholder="Workers" (ngModelChange)="findBillingRate()">
           <mat-option>None</mat-option>
-          <mat-option *ngFor="let worker of workers" [value]="worker"> {{ worker.displayName }} </mat-option>
+          <mat-option *ngFor="let worker of workers" [value]="worker"> {{ worker.DisplayName }} </mat-option>
         </mat-select>
       </mat-form-field>
     </div>
@@ -47,7 +47,7 @@
   </mat-dialog-content>
 
   <div mat-dialog-actions>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE & CLOSE</button>
+    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE & CLOSE</button>
     <button mat-button (click)="update()" type="button" color="accent" [disabled]="!form.form.valid">SAVE</button>
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
   </div>

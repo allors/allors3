@@ -41,6 +41,7 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
   private pager$: BehaviorSubject<PageEvent>;
 
   private subscription: Subscription;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
@@ -55,13 +56,15 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
 
     titleService.setTitle(this.title);
 
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
+
     this.sort$ = new BehaviorSubject<Sort | null>(null);
     this.refresh$ = new BehaviorSubject<Date>(new Date());
     this.pager$ = new BehaviorSubject<PageEvent>(Object.assign(new PageEvent(), { pageIndex: 0, pageSize: 50 }));
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: p } = m;
 
     const angularMeta = this.allors.workspace.services.angularMetaService;

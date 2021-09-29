@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayAddress, displayAddress2, displayAddress3, displayName, displayPhone, InternalOrganisation, Organisation } from '@allors/workspace/domain/default';
+import { displayAddress, displayAddress2, displayAddress3, displayPhone, InternalOrganisation, Organisation } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -37,6 +37,7 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
   private subscription: Subscription;
   internalOrganisation: Organisation;
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
@@ -55,6 +56,8 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
 
     titleService.setTitle(this.title);
 
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    
     this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
@@ -72,7 +75,7 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
@@ -131,11 +134,11 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
         this.table.data = organisations.map((v) => {
           return {
             object: v,
-            name: displayName(v),
-            street: displayAddress(v),
-            locality: displayAddress2(v),
-            country: displayAddress3(v),
-            phone: displayPhone(v),
+            name: v.DisplayName,
+            street: v.DisplayAddress,
+            locality: v.DisplayAddress2,
+            country: v.DisplayAddress3,
+            phone: v.DisplayPhone,
             isCustomer: v.CustomerRelationshipsWhereCustomer.length > 0 ? 'Yes' : 'No',
             isSupplier: v.SupplierRelationshipsWhereSupplier.length > 0 ? 'Yes' : 'No',
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),

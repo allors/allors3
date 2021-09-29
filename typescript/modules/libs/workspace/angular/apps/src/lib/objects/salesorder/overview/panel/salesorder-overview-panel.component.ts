@@ -2,7 +2,7 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayName, SalesOrder } from '@allors/workspace/domain/default';
+import { , SalesOrder } from '@allors/workspace/domain/default';
 import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -133,7 +133,7 @@ export class SalesOrderOverviewPanelComponent extends TestScope implements OnIni
           return {
             object: v,
             number: v.OrderNumber,
-            customer: displayName(v.BillToCustomer),
+            customer: v.BillToCustomer.DisplayName,
             state: v.SalesOrderState ? v.SalesOrderState.Name : '',
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
           } as Row;

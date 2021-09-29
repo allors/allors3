@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayName, WorkEffort } from '@allors/workspace/domain/default';
+import { , WorkEffort } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -39,6 +39,7 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
 
   private subscription: Subscription;
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
@@ -56,6 +57,8 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
     super();
 
     titleService.setTitle(this.title);
+
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
@@ -84,7 +87,7 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
@@ -156,10 +159,10 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
               name: v.Name,
               type: v.strategy.cls.singularName,
               state: v.WorkEffortState ? v.WorkEffortState.Name : '',
-              customer: v.Customer ? displayName(v.Customer) : '',
-              executedBy: v.ExecutedBy ? displayName(v.ExecutedBy) : '',
-              equipment: v.WorkEffortFixedAssetAssignmentsWhereAssignment ? v.WorkEffortFixedAssetAssignmentsWhereAssignment.map((w) => displayName(w.FixedAsset)).join(', ') : '',
-              worker: v.WorkEffortPartyAssignmentsWhereAssignment ? v.WorkEffortPartyAssignmentsWhereAssignment.map((w) => displayName(w.Party)).join(', ') : '',
+              customer: v.Customer ? v.Customer.DisplayName : '',
+              executedBy: v.ExecutedBy ? v.ExecutedBy.DisplayName : '',
+              equipment: v.WorkEffortFixedAssetAssignmentsWhereAssignment ? v.WorkEffortFixedAssetAssignmentsWhereAssignment.map((w) => w.FixedAsset.DisplayName).join(', ') : '',
+              worker: v.WorkEffortPartyAssignmentsWhereAssignment ? v.WorkEffortPartyAssignmentsWhereAssignment.map((w) => w.Party.DisplayName).join(', ') : '',
               lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
             } as Row;
           });

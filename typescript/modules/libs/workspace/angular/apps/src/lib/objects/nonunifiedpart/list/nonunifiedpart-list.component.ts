@@ -354,7 +354,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
             localQoh: facilitySearchId && (v.InventoryItemsWherePart as NonSerialisedInventoryItem[]).find((i) => i.Facility.id === facilitySearchId).QuantityOnHand,
             categories: partCategories
               .filter((w) => w.Parts.includes(v))
-              .map((w) => displayName(w))
+              .map((w) => w.DisplayName)
               .join(', '),
             brand: v.Brand ? v.Brand.Name : '',
             model: v.Model ? v.Model.Name : '',

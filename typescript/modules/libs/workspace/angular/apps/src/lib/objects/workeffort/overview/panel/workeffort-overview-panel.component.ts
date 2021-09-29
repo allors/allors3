@@ -1,7 +1,7 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayName, WorkEffort } from '@allors/workspace/domain/default';
+import { , WorkEffort } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -110,7 +110,7 @@ export class WorkEffortOverviewPanelComponent extends TestScope implements OnIni
           return {
             object: v,
             id: v.WorkEffortNumber,
-            takenBy: displayName(v.TakenBy),
+            takenBy: v.TakenBy.DisplayName,
             name: v.Name,
             description: v.Description,
           } as Row;

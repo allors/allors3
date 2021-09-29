@@ -46,7 +46,6 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
     @Self() public allors: SessionService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<ProductQuoteCreateComponent>,
-
     private saveService: SaveService,
     public refreshService: RefreshService,
     private fetcher: FetcherService,

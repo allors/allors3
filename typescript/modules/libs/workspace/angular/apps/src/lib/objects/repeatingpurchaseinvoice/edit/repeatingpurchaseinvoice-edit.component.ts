@@ -31,7 +31,6 @@ export class RepeatingPurchaseInvoiceEditComponent extends TestScope implements 
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<RepeatingPurchaseInvoiceEditComponent>,
-
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId,
     public refreshService: RefreshService
@@ -42,7 +41,7 @@ export class RepeatingPurchaseInvoiceEditComponent extends TestScope implements 
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 

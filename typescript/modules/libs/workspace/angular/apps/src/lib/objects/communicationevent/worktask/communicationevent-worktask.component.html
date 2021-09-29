@@ -22,7 +22,7 @@
         <div class="row">
           <mat-form-field class="col-md">
             <mat-select name="assignment" [(ngModel)]="assignees" placeholder="Assign To" multiple="true">
-              <mat-option *ngFor="let employee of employees" [value]="employee">{{ employee.displayName }}</mat-option>
+              <mat-option *ngFor="let employee of employees" [value]="employee">{{ employee.DisplayName }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>

@@ -32,7 +32,6 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<WorkEffortPurchaseOrderItemAssignmentEditComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId,

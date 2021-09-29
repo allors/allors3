@@ -7,7 +7,7 @@
 
     <mat-card-subtitle>
       <div>{{ invoice.PurchaseInvoiceState?.Name }}</div>
-      <div>last modified: {{ invoice.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by {{ invoice.LastModifiedBy?.displayName }}</div>
+      <div>last modified: {{ invoice.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by {{ invoice.LastModifiedBy?.DisplayName }}</div>
     </mat-card-subtitle>
   </mat-card-header>
 
@@ -15,21 +15,21 @@
     <div (click)="navigation.overview(invoice.BilledFrom)" style="cursor: pointer">
       <div style="color: grey">Billed from</div>
       <div>
-        {{ invoice.BilledFrom?.displayName }}
+        {{ invoice.BilledFrom?.DisplayName }}
       </div>
     </div>
 
     <div *ngIf="invoice.ShipToCustomer && invoice.ShipToCustomer !== invoice.BilledTo" (click)="navigation.overview(invoice.BilledFrom)" style="cursor: pointer">
       <div style="color: grey">ship to</div>
       <div>
-        {{ invoice.ShipToCustomer?.displayName }}
+        {{ invoice.ShipToCustomer?.DisplayName }}
       </div>
     </div>
 
     <div *ngIf="invoice.BillToEndCustomer" (click)="navigation.overview(invoice.BilledFrom)" style="cursor: pointer">
       <div style="color: grey">Bill to End Customer</div>
       <div>
-        {{ invoice.BillToEndCustomer?.displayName }}
+        {{ invoice.BillToEndCustomer?.DisplayName }}
       </div>
     </div>
 

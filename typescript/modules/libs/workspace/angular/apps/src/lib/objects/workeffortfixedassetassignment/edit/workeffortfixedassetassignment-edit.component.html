@@ -24,7 +24,7 @@
           class="col-md"
           [object]="workEffortFixedAssetAssignment"
           [roleType]="m.WorkEffortFixedAssetAssignment.FixedAsset"
-          [filter]="serialisedItemsFilter.create(allors.context)"
+          [filter]="serialisedItemsFilter.create(allors)"
           display="displayName"
           label="Asset"
         ></a-mat-autocomplete>
@@ -52,6 +52,6 @@
 
   <div mat-dialog-actions>
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE</button>
   </div>
 </form>

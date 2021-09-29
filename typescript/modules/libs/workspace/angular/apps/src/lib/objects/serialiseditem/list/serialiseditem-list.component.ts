@@ -33,10 +33,10 @@ export class SerialisedItemListComponent extends TestScope implements OnInit, On
 
   private subscription: Subscription;
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
-
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
@@ -48,6 +48,8 @@ export class SerialisedItemListComponent extends TestScope implements OnInit, On
     super();
 
     titleService.setTitle(this.title);
+
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
@@ -74,7 +76,7 @@ export class SerialisedItemListComponent extends TestScope implements OnInit, On
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 

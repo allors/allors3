@@ -22,6 +22,7 @@ export class PersonOverviewComponent extends TestScope implements AfterViewInit,
   employee: boolean;
 
   subscription: Subscription;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
@@ -35,11 +36,13 @@ export class PersonOverviewComponent extends TestScope implements AfterViewInit,
   ) {
     super();
 
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
+
     titleService.setTitle(this.title);
   }
 
   public ngAfterViewInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
 
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(

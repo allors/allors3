@@ -16,7 +16,7 @@ export interface ISession {
 
   pushToWorkspace(): IWorkspaceResult;
 
-  hasChangedRoles: boolean;
+  hasChanges: boolean;
 
   checkpoint(): IChangeSet;
 

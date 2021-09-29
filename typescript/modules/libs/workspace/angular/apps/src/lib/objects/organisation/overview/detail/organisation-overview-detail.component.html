@@ -6,7 +6,7 @@
       </div>
       <div class="col-9 col-md-10 p-3">
         <h4>{{ panel.title }}</h4>
-        <div>{{ organisation.displayName }}</div>
+        <div>{{ organisation.DisplayName }}</div>
       </div>
     </div>
   </div>
@@ -53,7 +53,7 @@
     </mat-card-content>
 
     <mat-card-actions>
-      <button mat-button class="ml-2" color="primary" type="submit" [disabled]="(false && !form.form.valid) || !allors.context.hasChanges">SAVE</button>
+      <button mat-button class="ml-2" color="primary" type="submit" [disabled]="(false && !form.form.valid) || !allors.session.hasChanges">SAVE</button>
       <button mat-button (click)="panel.toggle()" type="button">CANCEL</button>
     </mat-card-actions>
   </mat-card>

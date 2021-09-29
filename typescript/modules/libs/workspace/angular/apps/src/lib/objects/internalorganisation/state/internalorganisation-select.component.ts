@@ -13,6 +13,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   providers: [SessionService],
 })
 export class SelectInternalOrganisationComponent implements OnInit, OnDestroy {
+  m: any;
   public get internalOrganisation() {
     const internalOrganisation = this.internalOrganisations.find((v) => v.id === this.internalOrganisationId.value);
     return internalOrganisation;
@@ -28,9 +29,11 @@ export class SelectInternalOrganisationComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: SessionService,
-
     private internalOrganisationId: InternalOrganisationId
-  ) {}
+  ) {
+
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
+  }
 
   ngOnInit(): void {
     const m = this.m;

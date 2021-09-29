@@ -78,7 +78,7 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 

@@ -41,7 +41,7 @@ export class NonUnifiedGoodOverviewComponent extends TestScope implements AfterV
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(([, ,]) => {
-          const m = this.allors.workspace.configuration.metaPopulation as M;
+          const m = this.m;
           const { pullBuilder: pull } = m;
           const x = {};
 

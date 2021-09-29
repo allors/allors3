@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayEmail, displayName, displayPhone, Person } from '@allors/workspace/domain/default';
+import { displayEmail, displayPhone, Person } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -31,10 +31,10 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
 
   private subscription: Subscription;
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
-
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
@@ -46,6 +46,8 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
     super();
 
     titleService.setTitle(this.title);
+
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
@@ -63,7 +65,7 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
@@ -118,9 +120,9 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
         this.table.data = people.map((v) => {
           return {
             object: v,
-            name: displayName(v),
-            email: displayEmail(v),
-            phone: displayPhone(v),
+            name: v.DisplayName,
+            email: v.DisplayEmail,
+            phone: v.DisplayPhone,
             isCustomer: v.CustomerRelationshipsWhereCustomer.length > 0 ? 'Yes' : 'No',
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
           } as Row;

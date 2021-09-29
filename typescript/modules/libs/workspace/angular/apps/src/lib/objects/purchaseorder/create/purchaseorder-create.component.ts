@@ -78,7 +78,6 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
     @Self() public allors: SessionService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PurchaseOrderCreateComponent>,
-
     private refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,

@@ -24,7 +24,7 @@
           [roleType]="m.PurchaseInvoiceItem.Part"
           display="Name"
           (changed)="goodSelected($event)"
-          [filter]="unifiedGoodsFilter.create(allors.context)"
+          [filter]="unifiedGoodsFilter.create(allors)"
         ></a-mat-autocomplete>
         <a-mat-static class="col-md" *ngIf="!invoiceItem.isNew" [object]="invoiceItem" [roleType]="m.PurchaseInvoiceItem.Part" display="Name"></a-mat-static>
         <a-mat-select
@@ -40,7 +40,7 @@
       </div>
 
       <div class="row" *ngIf="invoiceItem.InvoiceItemType === partItemType">
-        <a-mat-autocomplete *ngIf="invoiceItem.isNew" class="col-md" [object]="invoiceItem" [roleType]="m.PurchaseInvoiceItem.Part" display="Name" [filter]="partsFilter.create(allors.context)" (changed)="partSelected($event)">
+        <a-mat-autocomplete *ngIf="invoiceItem.isNew" class="col-md" [object]="invoiceItem" [roleType]="m.PurchaseInvoiceItem.Part" display="Name" [filter]="partsFilter.create(allors)" (changed)="partSelected($event)">
         </a-mat-autocomplete>
         <a-mat-static class="col-md" *ngIf="!invoiceItem.isNew" [object]="invoiceItem" [roleType]="m.PurchaseInvoiceItem.Part" display="Name"></a-mat-static>
         <a-mat-select
@@ -100,6 +100,6 @@
 
   <div mat-dialog-actions>
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE</button>
   </div>
 </form>

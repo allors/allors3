@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, Party, InternalOrganisation } from '@allors/workspace/domain/default';
+import { Person, Organisation, Party, InternalOrganisation, Employment } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -35,7 +35,6 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<EmploymentEditComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId,
@@ -57,7 +56,9 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
   }
 
   public ngOnInit(): void {
-    const m = this.m;  const { pullBuilder: pull } = m; const x = {};
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(

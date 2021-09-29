@@ -28,7 +28,6 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: IObject,
     public dialogRef: MatDialogRef<WebAddressEditComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId

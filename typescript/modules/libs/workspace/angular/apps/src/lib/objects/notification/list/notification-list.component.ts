@@ -31,7 +31,7 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
 
   filter: Filter;
 
-  M: M;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
@@ -45,8 +45,8 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
   ) {
     super();
 
-    this.M = this.allors.workspace.configuration.metaPopulation as M;
-    const m = this.M;
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
 
     titleService.setTitle(this.title);
 

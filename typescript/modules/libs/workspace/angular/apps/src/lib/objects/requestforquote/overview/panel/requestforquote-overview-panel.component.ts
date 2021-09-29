@@ -2,7 +2,7 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayName, RequestForQuote } from '@allors/workspace/domain/default';
+import { , RequestForQuote } from '@allors/workspace/domain/default';
 import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -134,7 +134,7 @@ export class RequestForQuoteOverviewPanelComponent extends TestScope implements 
           return {
             object: v,
             number: v.RequestNumber,
-            customer: v.Originator && displayName(v.Originator),
+            customer: v.Originator && v.Originator.DisplayName,
             state: v.RequestState ? v.RequestState.Name : '',
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
           } as Row;

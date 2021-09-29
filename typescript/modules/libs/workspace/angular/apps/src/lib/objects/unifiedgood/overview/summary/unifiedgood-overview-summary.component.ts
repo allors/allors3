@@ -1,7 +1,7 @@
 import { Component, Self } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayName, UnifiedGood } from '@allors/workspace/domain/default';
+import { , UnifiedGood } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -49,7 +49,7 @@ export class UnifiedGoodOverviewSummaryComponent {
       this.good = loaded.object<UnifiedGood>(pullName);
 
       if (this.good.SuppliedBy.length > 0) {
-        this.suppliers = this.good.SuppliedBy.map((v) => displayName(v)).reduce((acc: string, cur: string) => acc + ', ' + cur);
+        this.suppliers = this.good.SuppliedBy.map((v) => v.DisplayName).reduce((acc: string, cur: string) => acc + ', ' + cur);
       }
     };
   }

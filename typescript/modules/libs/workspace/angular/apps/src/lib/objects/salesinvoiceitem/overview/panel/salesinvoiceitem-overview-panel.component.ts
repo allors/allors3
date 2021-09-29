@@ -48,7 +48,6 @@ export class SalesInvoiceItemOverviewPanelComponent extends TestScope {
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
-
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public editService: EditService,

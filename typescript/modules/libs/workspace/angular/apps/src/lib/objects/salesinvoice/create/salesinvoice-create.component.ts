@@ -101,7 +101,6 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<SalesInvoiceCreateComponent>,
-
     private saveService: SaveService,
     public refreshService: RefreshService,
     public internalOrganisationId: InternalOrganisationId,

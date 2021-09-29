@@ -2,7 +2,7 @@ import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { format, isBefore, isAfter } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayName, SupplierOffering } from '@allors/workspace/domain/default';
+import { , SupplierOffering } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -123,7 +123,7 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
     this.table.data = this.suplierOfferings.map((v) => {
       return {
         object: v,
-        supplier: displayName(v.Supplier),
+        supplier: v.Supplier.DisplayName,
         price: v.Currency.IsoCode + ' ' + v.Price,
         uom: v.UnitOfMeasure.Abbreviation || v.UnitOfMeasure.Name,
         from: format(new Date(v.FromDate), 'dd-MM-yyyy'),

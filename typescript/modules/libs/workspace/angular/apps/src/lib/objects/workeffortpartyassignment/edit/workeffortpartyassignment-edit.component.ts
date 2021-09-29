@@ -34,7 +34,6 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<WorkEffortPartyAssignmentEditComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId
@@ -45,7 +44,7 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
