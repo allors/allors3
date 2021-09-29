@@ -364,5 +364,15 @@ namespace Allors.Repository
         [Required]
         [Workspace(Default)]
         Guid DerivationTrigger { get; set; }
+
+        #region Workspace
+        #region Allors
+        [Id("4B6CACEC-F358-4AF9-8CCB-9A3E1B5F37A0")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        string DisplayName { get; set; }
+        #endregion
     }
 }

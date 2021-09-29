@@ -12,8 +12,8 @@
   </mat-dialog-content>
 
   <div mat-dialog-actions>
-    <button mat-button (click)="approve()" class="ml-2" color="primary" type="button" [disabled]="!purchaseInvoiceApproval.CanExecuteApprove">APPROVE</button>
-    <button mat-button (click)="reject()" class="ml-2" color="primary" type="button" [disabled]="!purchaseInvoiceApproval.CanExecuteReject">REJECT</button>
+    <button mat-button (click)="approve()" class="ml-2" color="primary" type="button" [disabled]="!purchaseInvoiceApproval.canExecuteApprove">APPROVE</button>
+    <button mat-button (click)="reject()" class="ml-2" color="primary" type="button" [disabled]="!purchaseInvoiceApproval.canExecuteReject">REJECT</button>
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
   </div>
 </form>

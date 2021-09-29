@@ -44,17 +44,17 @@
   </mat-card-content>
 
   <mat-card-actions>
-    <button *ngIf="order.CanExecuteCancel" mat-button (click)="cancel()">Cancel</button>
-    <button *ngIf="order.CanExecuteApprove" mat-button (click)="approve()">Approve</button>
-    <button *ngIf="order.CanExecuteReject" mat-button (click)="reject()">Reject</button>
-    <button *ngIf="order.CanExecuteHold" mat-button (click)="hold()">Hold</button>
-    <button *ngIf="order.CanExecuteContinue" mat-button (click)="continue()">Continue</button>
-    <button *ngIf="order.CanExecuteSetReadyForProcessing" mat-button (click)="setReadyForProcessing()">Ready for processing</button>
-    <button *ngIf="order.CanExecuteReopen" mat-button (click)="reopen()">Reopen</button>
-    <button *ngIf="order.CanExecuteRevise" mat-button (click)="revise()">Revise</button>
+    <button *ngIf="order.canExecuteCancel" mat-button (click)="cancel()">Cancel</button>
+    <button *ngIf="order.canExecuteApprove" mat-button (click)="approve()">Approve</button>
+    <button *ngIf="order.canExecuteReject" mat-button (click)="reject()">Reject</button>
+    <button *ngIf="order.canExecuteHold" mat-button (click)="hold()">Hold</button>
+    <button *ngIf="order.canExecuteContinue" mat-button (click)="continue()">Continue</button>
+    <button *ngIf="order.canExecuteSetReadyForProcessing" mat-button (click)="setReadyForProcessing()">Ready for processing</button>
+    <button *ngIf="order.canExecuteReopen" mat-button (click)="reopen()">Reopen</button>
+    <button *ngIf="order.canExecuteRevise" mat-button (click)="revise()">Revise</button>
     <button mat-button type="button" (click)="print.execute(order)">Print</button>
-    <button *ngIf="order.CanExecuteSend" mat-button (click)="send()">Send</button>
-    <button *ngIf="order.CanExecuteInvoice" mat-button (click)="invoice()">Invoice</button>
-    <button *ngIf="order.CanExecuteQuickReceive" mat-button (click)="quickReceive()">Quick Receive</button>
+    <button *ngIf="order.canExecuteSend" mat-button (click)="send()">Send</button>
+    <button *ngIf="order.canExecuteInvoice" mat-button (click)="invoice()">Invoice</button>
+    <button *ngIf="order.canExecuteQuickReceive" mat-button (click)="quickReceive()">Quick Receive</button>
   </mat-card-actions>
 </mat-card>

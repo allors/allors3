@@ -28,6 +28,6 @@
   </mat-card-content>
 
   <mat-card-actions>
-    <button *ngIf="shipment.ShipmentItems.length > 0 && shipment.CanExecuteReceive" mat-button (click)="receive()">Receive</button>
+    <button *ngIf="shipment.ShipmentItems.length > 0 && shipment.canExecuteReceive" mat-button (click)="receive()">Receive</button>
   </mat-card-actions>
 </mat-card>

@@ -69,6 +69,8 @@ export function displayName(
     case tags.WorkEffortPartyAssignment:
       return displayNameForWorkEffortPartyAssignment(item as WorkEffortPartyAssignment);
   }
+
+  return undefined;
 }
 
 function displayNameForPerson(person: Person): string {

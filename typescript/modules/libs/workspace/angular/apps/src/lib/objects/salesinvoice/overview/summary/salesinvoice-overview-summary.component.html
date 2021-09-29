@@ -67,12 +67,12 @@
   </mat-card-content>
 
   <mat-card-actions>
-    <button *ngIf="invoice.CanExecuteSend" mat-button type="button" (click)="send()">Send</button>
-    <button *ngIf="invoice.CanExecuteCancelInvoice" mat-button type="button" (click)="cancel()">Cancel</button>
-    <button *ngIf="invoice.CanExecuteWriteOff" mat-button type="button" (click)="writeOff()">Write off</button>
-    <button *ngIf="invoice.CanExecuteCopy" mat-button type="button" (click)="copy()">Copy</button>
-    <button *ngIf="invoice.CanExecuteReopen" mat-button type="button" (click)="reopen()">Reopen</button>
-    <button *ngIf="invoice.CanExecuteCredit" mat-button type="button" (click)="credit()">Credit</button>
+    <button *ngIf="invoice.canExecuteSend" mat-button type="button" (click)="send()">Send</button>
+    <button *ngIf="invoice.canExecuteCancelInvoice" mat-button type="button" (click)="cancel()">Cancel</button>
+    <button *ngIf="invoice.canExecuteWriteOff" mat-button type="button" (click)="writeOff()">Write off</button>
+    <button *ngIf="invoice.canExecuteCopy" mat-button type="button" (click)="copy()">Copy</button>
+    <button *ngIf="invoice.canExecuteReopen" mat-button type="button" (click)="reopen()">Reopen</button>
+    <button *ngIf="invoice.canExecuteCredit" mat-button type="button" (click)="credit()">Credit</button>
     <button mat-button type="button" (click)="print.execute(invoice)">Print</button>
   </mat-card-actions>
 </mat-card>

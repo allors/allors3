@@ -38,10 +38,10 @@
   </mat-card-content>
 
   <mat-card-actions>
-    <button *ngIf="requestForQuote.CanExecuteCancel" mat-button type="button" (click)="cancel()">Cancel</button>
-    <button *ngIf="requestForQuote.CanExecuteReject" mat-button type="button" (click)="reject()">Reject</button>
-    <button *ngIf="requestForQuote.CanExecuteSubmit" mat-button type="button" (click)="submit()">Submit</button>
-    <button *ngIf="requestForQuote.CanExecuteHold" mat-button type="button" (click)="hold()">Hold</button>
-    <button *ngIf="requestForQuote.CanExecuteCreateQuote" mat-button type="button" (click)="createQuote()">Create Quote</button>
+    <button *ngIf="requestForQuote.canExecuteCancel" mat-button type="button" (click)="cancel()">Cancel</button>
+    <button *ngIf="requestForQuote.canExecuteReject" mat-button type="button" (click)="reject()">Reject</button>
+    <button *ngIf="requestForQuote.canExecuteSubmit" mat-button type="button" (click)="submit()">Submit</button>
+    <button *ngIf="requestForQuote.canExecuteHold" mat-button type="button" (click)="hold()">Hold</button>
+    <button *ngIf="requestForQuote.canExecuteCreateQuote" mat-button type="button" (click)="createQuote()">Create Quote</button>
   </mat-card-actions>
 </mat-card>

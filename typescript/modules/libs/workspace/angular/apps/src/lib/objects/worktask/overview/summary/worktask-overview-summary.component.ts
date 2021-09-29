@@ -3,10 +3,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { M } from '@allors/workspace/meta/default';
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { WorkTask, SalesInvoice, FixedAsset, Printable } from '@allors/workspace/domain/default';
+import { WorkTask, SalesInvoice, FixedAsset, Printable, displayName } from '@allors/workspace/domain/default';
 import { Action, NavigationService, PanelService, RefreshService, SaveService, ActionTarget } from '@allors/workspace/angular/base';
 
 import { PrintService } from '../../../../actions/print/print.service';
+import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -25,6 +26,8 @@ export class WorkTaskOverviewSummaryComponent {
   salesInvoices: Set<SalesInvoice>;
   assets: FixedAsset[];
 
+  displayName: (item: IObject) => string;
+
   constructor(
     @Self() public panel: PanelService,
     public workspaceService: WorkspaceService,
@@ -35,6 +38,8 @@ export class WorkTaskOverviewSummaryComponent {
     public snackBar: MatSnackBar
   ) {
     const m = this.workspaceService.workspace.configuration.metaPopulation as M;
+
+    this.displayName = displayName;
 
     this.print = printService.print();
     this.printForWorker = {

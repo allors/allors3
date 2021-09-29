@@ -14,7 +14,7 @@
       <div class="col-md-8 align-self-stretch" [ngClass]="panelManager.panelContainerClass">
         <unifiedgood-overview-detail></unifiedgood-overview-detail>
 
-        <productidentification-panel [roleType]="metaService.m.Good.ProductIdentifications"></productidentification-panel>
+        <productidentification-panel [roleType]="m.Good.ProductIdentifications"></productidentification-panel>
 
         <nonserialisedinventoryitem-overview-panel *ngIf="serialised === false"></nonserialisedinventoryitem-overview-panel>
 

@@ -8,7 +8,6 @@ import { M } from '@allors/workspace/meta/default';
 import { Party, WorkEffort, WorkEffortPartyAssignment, WorkEffortAssignmentRate, TimeFrequency, RateType, TimeEntry, TimeSheet, PartyRate } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './timeentry-edit.component.html',

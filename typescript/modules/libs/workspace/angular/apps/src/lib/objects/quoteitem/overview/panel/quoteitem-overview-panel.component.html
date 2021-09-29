@@ -25,7 +25,7 @@
   </div>
 
   <div *ngIf="quote.canWriteQuoteItems">
-    <a-mat-factory-fab [objectType]="metaService.m.QuoteItem" [createData]="createData" (created)="this.refreshService.refresh()"></a-mat-factory-fab>
+    <a-mat-factory-fab [objectType]="m.QuoteItem" [createData]="createData" (created)="this.refreshService.refresh()"></a-mat-factory-fab>
   </div>
 
   <div>
