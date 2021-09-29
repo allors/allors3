@@ -50,6 +50,48 @@ namespace Allors.Repository
         [Workspace(Default)]
         public InventoryTransactionReason[] InventoryTransactionReasonsToCancel { get; set; }
 
+        #region Workspace
+        #region Allors
+        [Id("5dd8e375-5c37-4b6e-b43a-8af8945ef4f8")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string IsCreated { get; set; }
+
+        #region Allors
+        [Id("2d8397e0-6165-4765-aaaa-e2b8a2575bf4")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string IsInProgress { get; set; }
+
+        #region Allors
+        [Id("707b5fe1-3ed7-42a4-9578-efce378a32ab")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string IsCancelled { get; set; }
+
+        #region Allors
+        [Id("e2938d67-dfcf-45b8-a1ff-fb7078600fce")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string IsCompleted { get; set; }
+
+        #region Allors
+        [Id("a4a966a0-1929-429d-a462-e909d599fb26")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string IsFinished { get; set; }
+        #endregion
+
         #region inherited methods
 
         public void OnBuild() { }

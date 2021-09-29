@@ -113,6 +113,16 @@ namespace Allors.Repository
         [Workspace(Default)]
         public Part[] Parts { get; set; }
 
+        #region Workspace
+        #region Allors
+        [Id("90b2d80b-d505-49ab-bb5f-42dc7cf17dda")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string DisplayName { get; set; }
+        #endregion
+
         #region inherited methods
 
         public void OnBuild() { }

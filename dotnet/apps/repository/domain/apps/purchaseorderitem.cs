@@ -290,6 +290,16 @@ namespace Allors.Repository
         [Workspace(Default)]
         public bool IsReceivable { get; set; }
 
+        #region Workspace
+        #region Allors
+        [Id("4e5d9598-c31b-4367-aa73-dbdc161ac56c")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string DisplayName { get; set; }
+        #endregion
+
         #region inherited methods
 
         public void OnBuild() { }

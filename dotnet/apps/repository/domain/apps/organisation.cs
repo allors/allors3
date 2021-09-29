@@ -238,6 +238,10 @@ namespace Allors.Repository
         public Country Country { get; set; }
         public InternalOrganisationAccountingSettings SettingsForAccounting { get; set; }
 
+        public string DisplayName { get; set; }
+
+        public string DisplayPhone { get; set; }
+
         #endregion
 
         #region Versioning
@@ -354,6 +358,40 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         public OrganisationContactRelationship[] InactiveOrganisationContactRelationships { get; set; }
+
+        #region Workspace
+        #region Allors
+        [Id("4af28ea6-0670-4b6f-a881-4f9948ed8d61")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string DisplayClassification { get; set; }
+
+        #region Allors
+        [Id("c12e30e4-bdca-45ef-b03f-c8311abcdc55")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string DisplayAddress { get; set; }
+
+        #region Allors
+        [Id("81047591-26a9-4e0f-8dd2-8ca32f0dcf39")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string DisplayAddress2 { get; set; }
+
+        #region Allors
+        [Id("c80c18af-f6c0-4d45-a112-3e0bcf6314d6")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string DisplayAddress3 { get; set; }
+        #endregion
 
         #region inherited methods
 

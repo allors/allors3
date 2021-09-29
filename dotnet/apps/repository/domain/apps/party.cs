@@ -373,6 +373,14 @@ namespace Allors.Repository
         [Origin(Origin.Session)]
         [Derived]
         string DisplayName { get; set; }
+
+        #region Allors
+        [Id("54c717d7-c2c0-4e3b-92a8-2374e782435a")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        string DisplayPhone { get; set; }
         #endregion
     }
 }

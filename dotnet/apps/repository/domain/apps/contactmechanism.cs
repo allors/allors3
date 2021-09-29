@@ -33,5 +33,15 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         ContactMechanismType ContactMechanismType { get; set; }
+
+        #region Workspace
+        #region Allors
+        [Id("c49a7743-16ff-4cc0-9499-7fea66e08059")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        string DisplayName { get; set; }
+        #endregion
     }
 }

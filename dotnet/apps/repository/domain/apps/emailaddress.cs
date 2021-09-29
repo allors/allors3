@@ -34,6 +34,8 @@ namespace Allors.Repository
 
         public DateTime LastModifiedDate { get; set; }
 
+        public string DisplayName { get; set; }
+
         #endregion
 
         #region inherited methods
@@ -50,6 +52,5 @@ namespace Allors.Repository
 
         public void Delete() { }
         #endregion
-
     }
 }

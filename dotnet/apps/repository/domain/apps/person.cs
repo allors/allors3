@@ -110,6 +110,10 @@ namespace Allors.Repository
 
         public Guid DerivationTrigger { get; set; }
 
+        public string DisplayName { get; set; }
+
+        public string DisplayPhone { get; set; }
+
         #endregion
 
         #region Versioning
@@ -317,6 +321,16 @@ namespace Allors.Repository
         [Derived]
         [Workspace(Default)]
         public ContactMechanism[] CurrentOrganisationContactMechanisms { get; set; }
+
+        #region Workspace
+        #region Allors
+        [Id("6a03aaa4-2227-4429-b8f0-1034dc9d140a")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string DisplayEmail { get; set; }
+        #endregion
 
         #region inherited methods
         public void Delete() { }

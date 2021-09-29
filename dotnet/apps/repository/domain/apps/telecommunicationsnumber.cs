@@ -33,6 +33,8 @@ namespace Allors.Repository
 
         public DateTime LastModifiedDate { get; set; }
 
+        public string DisplayName { get; set; }
+
         #endregion
 
         #region Allors
@@ -71,6 +73,5 @@ namespace Allors.Repository
 
         public void Delete() { }
         #endregion
-
     }
 }

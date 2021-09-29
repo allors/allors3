@@ -75,6 +75,16 @@ namespace Allors.Repository
         [Workspace(Default)]
         public WorkEffortAssignmentRate[] AssignmentRates { get; set; }
 
+        #region Workspace
+        #region Allors
+        [Id("20017ae5-5c42-4909-a9c0-8b8ac42b8d48")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string DisplayName { get; set; }
+        #endregion
+
         #region inherited methods
 
         public void OnBuild() { }

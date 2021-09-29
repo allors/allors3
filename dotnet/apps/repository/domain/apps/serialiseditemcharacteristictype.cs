@@ -46,6 +46,16 @@ namespace Allors.Repository
         [Required]
         public bool IsPublic { get; set; }
 
+        #region Workspace
+        #region Allors
+        [Id("e7898f9b-a26a-477f-b505-2e18a8dd50f5")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string DisplayName { get; set; }
+        #endregion
+
         #region inherited methods
 
         public void OnBuild() { }

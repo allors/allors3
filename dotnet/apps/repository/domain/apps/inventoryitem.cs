@@ -1,3 +1,4 @@
+
 // <copyright file="InventoryItem.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
@@ -75,5 +76,15 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         Lot Lot { get; set; }
+
+        #region Workspace
+        #region Allors
+        [Id("ab7dfe1c-6753-4735-8090-bb782b0ab631")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        string FacilityName { get; set; }
+        #endregion
     }
 }

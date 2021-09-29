@@ -53,6 +53,8 @@ namespace Allors.Repository
 
         public string SearchString { get; set; }
 
+        public string FacilityName { get; set; }
+
         #endregion
 
         #region SerialisedInventoryItemState

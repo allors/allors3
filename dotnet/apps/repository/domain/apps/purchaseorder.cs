@@ -389,6 +389,16 @@ namespace Allors.Repository
         [Indexed]
         public PurchaseOrderItemByProduct[] PurchaseOrderItemsByProduct { get; set; }
 
+        #region Workspace
+        #region Allors
+        [Id("0640a0f7-328b-493e-aab3-f18d4fa7a64b")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string DisplayName { get; set; }
+        #endregion
+
         #region inherited methods
 
         public void OnBuild() { }

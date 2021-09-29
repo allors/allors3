@@ -112,6 +112,10 @@ namespace Allors.Repository
 
         public Guid DerivationTrigger { get; set; }
 
+        public string DisplayName { get; set; }
+
+        public string DisplayPhone { get; set; }
+
         #endregion
 
         #region Versioning

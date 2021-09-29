@@ -168,6 +168,16 @@ namespace Allors.Repository
         [Workspace(Default)]
         public Guid DerivationTrigger { get; set; }
 
+        #region Workspace
+        #region Allors
+        [Id("2931256f-8acb-4978-8b79-2fad352be654")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string CategoryNames { get; set; }
+        #endregion
+
         #region inherited methods
 
         public void OnBuild() { }

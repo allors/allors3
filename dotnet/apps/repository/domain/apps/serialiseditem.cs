@@ -393,6 +393,32 @@ namespace Allors.Repository
         [Workspace(Default)]
         public bool OnWorkEffort { get; set; }
 
+        #region Workspace
+        #region Allors
+        [Id("199c607b-ed6c-4a10-97bf-a152da62b2c3")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string DisplayName { get; set; }
+
+        #region Allors
+        [Id("2b8ec573-5a21-4df4-b7dd-8a770f06c865")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string Age { get; set; }
+
+        #region Allors
+        [Id("5df485dd-53eb-4733-85c7-fda95a44b23a")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string YearsToGo { get; set; }
+        #endregion
+
         #region inherited methods
         public void OnBuild() { }
 

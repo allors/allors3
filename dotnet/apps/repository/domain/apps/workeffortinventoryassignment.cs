@@ -115,6 +115,16 @@ namespace Allors.Repository
         [Workspace(Default)]
         public decimal UnitSellingPrice { get; set; }
 
+        #region Workspace
+        #region Allors
+        [Id("b54ba143-29b2-4c78-899b-a7727c80d2d6")]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string TotalSellingPrice { get; set; }
+        #endregion
+
         #region Versioning
         #region Allors
         [Id("07AAB5A6-19C0-4812-B957-B051C3998BCD")]
