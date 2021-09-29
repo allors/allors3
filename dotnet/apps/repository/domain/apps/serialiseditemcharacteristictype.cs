@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("5A0B6477-7B54-48FA-AF59-7B664587F197")]
     #endregion
-    public partial class SerialisedItemCharacteristicType : Enumeration
+    public partial class SerialisedItemCharacteristicType : Enumeration, IDisplayName
     {
         #region inherited properties
 
@@ -28,6 +28,7 @@ namespace Allors.Repository
         public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
+        public string DisplayName { get; set; }
         #endregion
 
         #region Allors
@@ -45,16 +46,6 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Required]
         public bool IsPublic { get; set; }
-
-        #region Workspace
-        #region Allors
-        [Id("e7898f9b-a26a-477f-b505-2e18a8dd50f5")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        [Derived]
-        public string DisplayName { get; set; }
-        #endregion
 
         #region inherited methods
 

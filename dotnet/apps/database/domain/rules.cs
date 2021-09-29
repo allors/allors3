@@ -233,7 +233,6 @@ namespace Allors.Database.Domain
                 new NonUnifiedGoodDeniedPermissionRule(m),
                 new PartRule(m),
                 new PartInventoryItemRule(m),
-                new PartDisplayNameRule(m),
                 new PartSyncInventoryItemsRule(m),
                 new InventoryItemTransactionRule(m),
                 new InventoryItemRule(m),

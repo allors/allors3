@@ -12,7 +12,7 @@ namespace Allors.Repository
     #region Allors
     [Id("ea83087e-05cc-458c-a6ba-3ce947644a0f")]
     #endregion
-    public partial class ProductCategory : UniquelyIdentifiable, Deletable, Object
+    public partial class ProductCategory : UniquelyIdentifiable, Deletable
     {
         #region inherited properties
         public Revocation[] Revocations { get; set; }
@@ -102,7 +102,7 @@ namespace Allors.Repository
         [Id("97CB34DD-4E6A-4DCF-90B4-50071752B2D8")]
         #endregion
         [Workspace(Default)]
-        public string ObsoleteDisplayName { get; set; }
+        public string DisplayName { get; set; }
 
         #region Allors
         [Id("0FB2F768-8313-450C-94AE-5F9C52B758E8")]
@@ -188,16 +188,6 @@ namespace Allors.Repository
         [Derived]
         [Workspace(Default)]
         public NonSerialisedInventoryItem[] AllNonSerialisedInventoryItemsForSale { get; set; }
-
-        #region Workspace
-        #region Allors
-        [Id("32cfe8f2-9db8-47d0-bef4-d58324929d0b")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        [Derived]
-        public string DisplayName { get; set; }
-        #endregion
 
         #region inherited methods
 

@@ -192,8 +192,6 @@ namespace Allors.Repository
 
         public void Delete() { }
 
-        public void SetDisplayName() { }
-
         #endregion
     }
 }

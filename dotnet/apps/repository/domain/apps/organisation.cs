@@ -12,7 +12,7 @@ namespace Allors.Repository
     #region Allors
     [Id("3a5dcec7-308f-48c7-afee-35d38415aa0b")]
     #endregion
-    public partial class Organisation : InternalOrganisation, Deletable, Versioned
+    public partial class Organisation : InternalOrganisation, Deletable, Versioned, IDisplayName
     {
         #region inherited properties
         public string PurchaseOrderNumberPrefix { get; set; }

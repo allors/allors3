@@ -33,8 +33,7 @@ namespace Allors.Database.Domain
 
                 if (@this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
                 {
-                    @this.Name =
-                        @this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
+                    @this.Name = @this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;
                 }
             }
         }

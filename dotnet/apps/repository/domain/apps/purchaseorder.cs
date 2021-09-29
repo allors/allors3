@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("062bd939-9902-4747-a631-99ea10002156")]
     #endregion
-    public partial class PurchaseOrder : Order, Versioned, WorkItem
+    public partial class PurchaseOrder : Order, Versioned, WorkItem, IDisplayName
     {
         #region inherited properties
 
@@ -140,6 +140,7 @@ namespace Allors.Repository
         public decimal TotalBasePriceInPreferredCurrency { get; set; }
 
         public decimal TotalListPriceInPreferredCurrency { get; set; }
+        public string DisplayName { get; set; }
 
         #endregion
 
@@ -388,16 +389,6 @@ namespace Allors.Repository
         [Derived]
         [Indexed]
         public PurchaseOrderItemByProduct[] PurchaseOrderItemsByProduct { get; set; }
-
-        #region Workspace
-        #region Allors
-        [Id("0640a0f7-328b-493e-aab3-f18d4fa7a64b")]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Session)]
-        [Derived]
-        public string DisplayName { get; set; }
-        #endregion
 
         #region inherited methods
 

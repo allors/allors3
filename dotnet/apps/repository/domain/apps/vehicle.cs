@@ -52,6 +52,7 @@ namespace Allors.Repository
         public Media[] PrivateElectronicDocuments { get; set; }
 
         public LocalisedMedia[] PrivateLocalisedElectronicDocuments { get; set; }
+        public string DisplayName { get; set; }
 
         #endregion
 
@@ -68,6 +69,5 @@ namespace Allors.Repository
         public void OnPostDerive() { }
 
         #endregion
-
     }
 }

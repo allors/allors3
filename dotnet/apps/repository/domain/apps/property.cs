@@ -53,6 +53,8 @@ namespace Allors.Repository
 
         public LocalisedMedia[] PrivateLocalisedElectronicDocuments { get; set; }
 
+        public string DisplayName { get; set; }
+
         #endregion
 
         #region inherited methods
@@ -68,6 +70,5 @@ namespace Allors.Repository
         public void OnPostDerive() { }
 
         #endregion
-
     }
 }

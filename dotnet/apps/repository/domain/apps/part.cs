@@ -171,13 +171,5 @@ namespace Allors.Repository
         [Scale(2)]
         [Workspace(Default)]
         decimal QuantityExpectedIn { get; set; }
-
-        #region Allors
-
-        [Id("d18b7185-0a7c-42a1-b135-0a8f7d459347")]
-
-        #endregion
-
-        public void SetDisplayName();
     }
 }

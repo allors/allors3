@@ -1,9 +1,9 @@
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
-import { Party } from '@allors/workspace/domain/default';
+import { Person } from '@allors/workspace/domain/default';
 
-export class PartyDisplayNameRule implements IRule {
-  id: '7A62C83563AF4E989BB8BF24A9CB7CE7';
+export class PersonDisplayNameRule implements IRule {
+  id: '93d61e576fb14e898abcf0b06b8fcd34';
   patterns: IPattern[];
 
   constructor(m: M) {
@@ -16,16 +16,12 @@ export class PartyDisplayNameRule implements IRule {
         kind: 'RolePattern',
         roleType: m.Person.LastName,
       },
-      {
-        kind: 'RolePattern',
-        roleType: m.Organisation.Name,
-      },
     ];
   }
 
-  derive(cycle: ICycle, matches: Party[]) {
+  derive(cycle: ICycle, matches: Person[]) {
     for (const person of matches) {
-      person.SessionFullName = `${person.FirstName} ${person.LastName}`;
+      person.DisplayName = `${person.FirstName} ${person.LastName}`;
     }
   }
 }
