@@ -13,7 +13,7 @@ namespace Allors.Repository
     [Id("3bba6e5a-dc2d-4838-b6c4-881f6c8c3013")]
     #endregion
     [Plural("Parties")]
-    public partial interface Party : Localised, Auditable, UniquelyIdentifiable, Commentable
+    public partial interface Party : Localised, Auditable, UniquelyIdentifiable, Commentable, IDisplayName
     {
         #region Allors
         [Id("BB29E79A-5B37-4CE7-B366-32F67FFD1FA3")]
