@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
 
             this.ranges = services.Get<IRanges<long>>();
             this.permissionCache = services.Get<IPermissionsCache>();
-            
+
             this.workspaceName = workspaceName ?? throw new ArgumentNullException(nameof(workspaceName));
             this.User = user ?? throw new ArgumentNullException(nameof(user));
             this.aclByObject = new Dictionary<IObject, IAccessControlList>();
