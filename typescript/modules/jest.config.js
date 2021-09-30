@@ -34,5 +34,6 @@ module.exports = {
     '<rootDir>/libs/workspace/domain/apps',
     '<rootDir>/libs/workspace/meta/apps',
     '<rootDir>/libs/workspace/meta/json/apps',
+    '<rootDir>/libs/workspace/derivations/apps-tests',
   ],
 };

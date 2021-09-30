@@ -70,6 +70,9 @@
     "workspace-derivations-apps-custom": {
       "tags": []
     },
+    "workspace-derivations-apps-tests": {
+      "tags": []
+    },
     "workspace-derivations-base": {
       "tags": []
     },

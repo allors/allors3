@@ -29,6 +29,7 @@
       "@allors/workspace/configuration/core": ["libs/workspace/configuration/core/src/index.ts"],
       "@allors/workspace/derivations/apps": ["libs/workspace/derivations/apps/src/index.ts"],
       "@allors/workspace/derivations/apps-custom": ["libs/workspace/derivations/apps-custom/src/index.ts"],
+      "@allors/workspace/derivations/apps-tests": ["libs/workspace/derivations/apps-tests/src/index.ts"],
       "@allors/workspace/derivations/base": ["libs/workspace/derivations/base/src/index.ts"],
       "@allors/workspace/derivations/base-custom": ["libs/workspace/derivations/base-custom/src/index.ts"],
       "@allors/workspace/derivations/core": ["libs/workspace/derivations/core/src/index.ts"],

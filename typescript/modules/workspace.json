@@ -561,6 +561,27 @@
         }
       }
     },
+    "workspace-derivations-apps-tests": {
+      "root": "libs/workspace/derivations/apps-tests",
+      "sourceRoot": "libs/workspace/derivations/apps-tests/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/derivations/apps-tests/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/derivations/apps-tests"],
+          "options": {
+            "jestConfig": "libs/workspace/derivations/apps-tests/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "workspace-derivations-base": {
       "root": "libs/workspace/derivations/base",
       "sourceRoot": "libs/workspace/derivations/base/src",

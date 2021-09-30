@@ -38,20 +38,6 @@ export function displayName(
     | WorkEffortPartyAssignment
 ): string {
   switch (item.strategy.cls.tag) {
-    case tags.Person:
-      return displayNameForPerson(item as Person);
-    case tags.Organisation:
-      return (item as Organisation).Name ?? 'N/A';
-    case tags.AutomatedAgent:
-      return (item as AutomatedAgent).UserName ?? 'N/A';
-    case tags.EmailAddress:
-      return (item as EmailAddress).ElectronicAddressString ?? 'N/A';
-    case tags.PartCategory:
-      return displayNameForPartCategory(item as PartCategory);
-    case tags.PostalAddress:
-      return displayNameForPostalAddress(item as PostalAddress);
-    case tags.ProductCategory:
-      return displayNameForProductCategory(item as ProductCategory);
     case tags.PurchaseOrder:
       return displayNameForPurchaseOrder(item as PurchaseOrder);
     case tags.PurchaseOrderItem:
@@ -71,44 +57,6 @@ export function displayName(
   }
 
   return undefined;
-}
-
-function displayNameForPerson(person: Person): string {
-  return person.FirstName + ' ' + person.LastName;
-}
-
-function displayNameForPartCategory(partCategory: PartCategory): string {
-  const selfAndPrimaryAncestors = [partCategory];
-  let ancestor: PartCategory | null = partCategory;
-  while (ancestor != null && selfAndPrimaryAncestors.indexOf(ancestor) < 0) {
-    selfAndPrimaryAncestors.push(ancestor);
-    ancestor = ancestor.PrimaryParent;
-  }
-
-  selfAndPrimaryAncestors.reverse();
-  const displayName = selfAndPrimaryAncestors.map((v) => v.Name).join('/');
-  return displayName;
-}
-
-function displayNameForPostalAddress(postalAddress: PostalAddress): string {
-  return stripIndents`
-  ${[postalAddress.Address1, postalAddress.Address2, postalAddress.Address3].filter((v) => v).map((v) => oneLine`${v}`)}
-  ${inlineLists`${[postalAddress.PostalCode, postalAddress.Locality].filter((v) => v)}`}
-  ${postalAddress.Country?.Name ?? ''}
-  `;
-}
-
-function displayNameForProductCategory(productCategory: ProductCategory): string {
-  const selfAndPrimaryAncestors = [productCategory];
-  let ancestor: ProductCategory | null = productCategory;
-  while (ancestor != null && selfAndPrimaryAncestors.indexOf(ancestor) < 0) {
-    selfAndPrimaryAncestors.push(ancestor);
-    ancestor = ancestor.PrimaryParent;
-  }
-
-  selfAndPrimaryAncestors.reverse();
-  const displayName = selfAndPrimaryAncestors.map((v) => v.Name).join('/');
-  return displayName;
 }
 
 function displayNameForPurchaseOrder(purchaseOrder: PurchaseOrder): string {
