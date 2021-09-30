@@ -401,7 +401,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         [Derived]
-        public string Age { get; set; }
+        public int Age { get; set; }
 
         #region Allors
         [Id("5df485dd-53eb-4733-85c7-fda95a44b23a")]
@@ -409,7 +409,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Origin(Origin.Session)]
         [Derived]
-        public string YearsToGo { get; set; }
+        public int YearsToGo { get; set; }
         #endregion
 
         #region inherited methods
