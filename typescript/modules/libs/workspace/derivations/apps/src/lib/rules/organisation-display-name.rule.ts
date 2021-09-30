@@ -1,4 +1,4 @@
-import { ICycle, IRule, IPattern, IObject } from '@allors/workspace/domain/system';
+import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation } from '@allors/workspace/domain/default';
 
