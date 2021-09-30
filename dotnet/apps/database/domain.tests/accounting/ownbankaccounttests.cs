@@ -7,7 +7,6 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
-    using Configuration.Derivations.Default;
     using Database.Derivations;
     using Meta;
     using Xunit;

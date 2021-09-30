@@ -58,7 +58,7 @@ export class FacilityInlineComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     if (this.facility) {
-      this.allors.client.invokeReactive(this.allors.session, this.facility.Delete);
+      this.facility.strategy.delete();
     }
   }
 

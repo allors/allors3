@@ -55,18 +55,18 @@ namespace Allors.Database.Domain
                 permissions.Get(this.Meta, this.Meta.Delete),
             };
 
-            var changePermisions = new List<Permission>();
-            foreach (RoleType roleType in this.Meta.RoleTypes)
+            var changePermissions = new List<Permission>();
+            foreach (var roleType in this.Meta.DatabaseRoleTypes)
             {
-                changePermisions.Add(permissions.Get(this.Meta, roleType, Operations.Write));
+                changePermissions.Add(permissions.Get(this.Meta, roleType, Operations.Write));
             }
 
-            foreach (MethodType methodType in this.Meta.MethodTypes)
+            foreach (var methodType in this.Meta.MethodTypes)
             {
-                changePermisions.Add(permissions.Get(this.Meta, methodType));
+                changePermissions.Add(permissions.Get(this.Meta, methodType));
             }
 
-            revocations.SalesOrderItemChangeRevocation.DeniedPermissions = changePermisions;
+            revocations.SalesOrderItemChangeRevocation.DeniedPermissions = changePermissions;
         }
     }
 }

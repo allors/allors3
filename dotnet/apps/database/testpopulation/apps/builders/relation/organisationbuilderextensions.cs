@@ -8,7 +8,7 @@ namespace Allors.Database.Domain.TestPopulation
     using System.Linq;
     using Bogus;
     using Meta;
-    using LegalForm = Domain.LegalForm;
+    using LegalForm = LegalForm;
 
     public static partial class OrganisationBuilderExtensions
     {

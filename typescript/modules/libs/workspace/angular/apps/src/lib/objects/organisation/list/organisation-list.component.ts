@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayAddress, displayAddress2, displayAddress3, displayPhone, InternalOrganisation, Organisation } from '@allors/workspace/domain/default';
+import { Organisation } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -62,8 +62,6 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
-
-    // this.delete2 = methodService.create(allors.client, allors.session, m.Organisation.Delete, { name: 'Delete (Method)' });
 
     this.table = new Table({
       selection: true,

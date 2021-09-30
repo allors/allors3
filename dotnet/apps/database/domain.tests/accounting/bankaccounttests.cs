@@ -10,7 +10,6 @@ namespace Allors.Database.Domain.Tests
     using Database.Derivations;
     using Meta;
     using Resources;
-
     using Xunit;
 
     public class BankAccountTests : DomainTest, IClassFixture<Fixture>

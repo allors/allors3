@@ -90,8 +90,8 @@ export class ProductQuoteApprovalEditComponent extends TestScope implements OnIn
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    this.allors.context
-      .save()
+    this.allors.client
+      .pushReactive(this.allors.session)
       .pipe(
         switchMap(() => {
           return this.allors.client.pullReactive(this.allors.session, [pull.ProductQuoteApproval({ objectId: this.data.id })]);

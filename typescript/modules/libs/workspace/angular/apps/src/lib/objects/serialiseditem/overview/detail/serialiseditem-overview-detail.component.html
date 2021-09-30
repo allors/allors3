@@ -106,14 +106,14 @@
 
             <div class="row">
               <mat-form-field class="col-md">
-                <input matInput [(ngModel)]="serialisedItem.age" name="age" placeholder="Age" readonly />
+                <input matInput [(ngModel)]="serialisedItem.Age" name="age" placeholder="Age" readonly />
               </mat-form-field>
               <a-mat-static class="col-md" [object]="part" [roleType]="m.UnifiedGood.LifeTime"></a-mat-static>
             </div>
 
             <div class="row">
               <mat-form-field class="col-md">
-                <input matInput [(ngModel)]="serialisedItem.yearsToGo" name="yearsToGo" placeholder="Years to go" readonly />
+                <input matInput [(ngModel)]="serialisedItem.YearsToGo" name="yearsToGo" placeholder="Years to go" readonly />
               </mat-form-field>
               <a-mat-static class="col-md" [object]="part" [roleType]="m.UnifiedGood.DepreciationYears"></a-mat-static>
             </div>
@@ -227,7 +227,7 @@
             <mat-tab label="Additional">
               <div class="container-fluid">
                 <div class="row pt-3">
-                  <a-mat-files class="col-md-12" [object]="serialisedItem" [roleType]="m.SerialisedItem.additionalPhotos" accept="image/*"></a-mat-files>
+                  <a-mat-files class="col-md-12" [object]="serialisedItem" [roleType]="m.SerialisedItem.AdditionalPhotos" accept="image/*"></a-mat-files>
                 </div>
               </div>
             </mat-tab>

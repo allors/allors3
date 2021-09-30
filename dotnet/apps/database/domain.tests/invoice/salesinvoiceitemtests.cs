@@ -9,21 +9,9 @@ namespace Allors.Database.Domain.Tests
     using System;
     using System.Linq;
     using Database.Derivations;
-    using TestPopulation;
     using Resources;
+    using TestPopulation;
     using Xunit;
-    using BasePrice = Domain.BasePrice;
-    using City = Domain.City;
-    using Colour = Domain.Colour;
-    using NonUnifiedGood = Domain.NonUnifiedGood;
-    using Organisation = Domain.Organisation;
-    using Part = Domain.Part;
-    using Permission = Domain.Permission;
-    using PostalAddress = Domain.PostalAddress;
-    using SalesInvoice = Domain.SalesInvoice;
-    using Singleton = Domain.Singleton;
-    using SupplierOffering = Domain.SupplierOffering;
-    using VatRegime = Domain.VatRegime;
 
     public class SalesInvoiceItemTests : DomainTest, IClassFixture<Fixture>
     {

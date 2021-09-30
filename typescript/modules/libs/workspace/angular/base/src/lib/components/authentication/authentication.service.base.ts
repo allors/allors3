@@ -39,7 +39,7 @@ export class AuthenticationServiceBase extends AuthenticationService {
       map((result: AuthenticationTokenResponse) => {
         if (result.a) {
           this.token = result.t;
-          this.userIdState.value = result.u.toString();
+          this.userIdState.value = result.u;
         }
 
         return result;

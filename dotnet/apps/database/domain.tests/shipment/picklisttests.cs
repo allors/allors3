@@ -534,7 +534,7 @@ namespace Allors.Database.Domain.Tests
             var customer = new PersonBuilder(this.Transaction).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).Build();
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var order1 = new SalesOrderBuilder(this.Transaction)
                 .WithStore(store1)
@@ -546,10 +546,10 @@ namespace Allors.Database.Domain.Tests
             var order1Item = new SalesOrderItemBuilder(this.Transaction).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).Build();
             order1.AddSalesOrderItem(order1Item);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order1.SetReadyForPosting();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order1.Post();
             this.Transaction.Derive();
@@ -568,10 +568,10 @@ namespace Allors.Database.Domain.Tests
             var order2Item = new SalesOrderItemBuilder(this.Transaction).WithProduct(good1).WithQuantityOrdered(2).WithAssignedUnitPrice(15).Build();
             order2.AddSalesOrderItem(order2Item);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order2.SetReadyForPosting();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order2.Post();
             this.Transaction.Derive();
@@ -595,10 +595,10 @@ namespace Allors.Database.Domain.Tests
             var order3Item = new SalesOrderItemBuilder(this.Transaction).WithProduct(good1).WithQuantityOrdered(5).WithAssignedUnitPrice(15).Build();
             order3.AddSalesOrderItem(order3Item);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order3.SetReadyForPosting();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order3.Post();
             this.Transaction.Derive();

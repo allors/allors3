@@ -7,11 +7,10 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
-    using Allors.Database.Domain.TestPopulation;
     using Configuration.Derivations.Default;
     using Database.Derivations;
+    using TestPopulation;
     using Xunit;
-    using PartyContactMechanism = Domain.PartyContactMechanism;
 
     public class PartyContactMechanismTests : DomainTest, IClassFixture<Fixture>
     {

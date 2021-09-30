@@ -26,7 +26,6 @@ export class WorkTaskOverviewSummaryComponent {
   salesInvoices: Set<SalesInvoice>;
   assets: FixedAsset[];
 
-  displayName: (item: IObject) => string;
 
   constructor(
     @Self() public panel: PanelService,
@@ -38,8 +37,6 @@ export class WorkTaskOverviewSummaryComponent {
     public snackBar: MatSnackBar
   ) {
     const m = this.workspaceService.workspace.configuration.metaPopulation as M;
-
-    this.displayName = displayName;
 
     this.print = printService.print();
     this.printForWorker = {

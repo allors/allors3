@@ -220,7 +220,7 @@ namespace Allors.Database.Domain.Tests
             // Use 65 items in a workorder
             var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(this.InternalOrganisation).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
@@ -228,7 +228,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(65)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             Assert.Equal(110, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
@@ -237,7 +237,7 @@ namespace Allors.Database.Domain.Tests
             // Cancel workeffort inventory assignment
             inventoryAssignment.Delete();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             Assert.Equal(175, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
@@ -249,9 +249,9 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(35)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             Assert.Equal(140, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
@@ -264,7 +264,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(30)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             Assert.Equal(110, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
@@ -326,12 +326,12 @@ namespace Allors.Database.Domain.Tests
                 .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var outgoingItem = new ShipmentItemBuilder(this.Transaction).WithGood(part).WithQuantity(10).Build();
             outgoingShipment.AddShipmentItem(outgoingItem);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             outgoingShipment.Pick();
             this.Transaction.Derive();
@@ -400,12 +400,12 @@ namespace Allors.Database.Domain.Tests
                 .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             outgoingItem = new ShipmentItemBuilder(this.Transaction).WithGood(part).WithQuantity(330).Build();
             outgoingShipment.AddShipmentItem(outgoingItem);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             outgoingShipment.Pick();
             this.Transaction.Derive();
@@ -433,12 +433,12 @@ namespace Allors.Database.Domain.Tests
                 .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             outgoingItem = new ShipmentItemBuilder(this.Transaction).WithGood(part).WithQuantity(20).Build();
             outgoingShipment.AddShipmentItem(outgoingItem);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             outgoingShipment.Pick();
             this.Transaction.Derive();
@@ -695,7 +695,7 @@ namespace Allors.Database.Domain.Tests
             // Use 65 items in a workorder
             var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(this.InternalOrganisation).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
@@ -703,7 +703,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(65)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             Assert.Equal(110, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
@@ -712,7 +712,7 @@ namespace Allors.Database.Domain.Tests
             // Cancel workeffort inventory assignment
             inventoryAssignment.Delete();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             Assert.Equal(175, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
@@ -724,9 +724,9 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(35)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             Assert.Equal(140, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
@@ -739,7 +739,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(30)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             Assert.Equal(110, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
@@ -801,12 +801,12 @@ namespace Allors.Database.Domain.Tests
                 .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var outgoingItem = new ShipmentItemBuilder(this.Transaction).WithGood(good).WithQuantity(10).Build();
             outgoingShipment.AddShipmentItem(outgoingItem);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             outgoingShipment.Pick();
             this.Transaction.Derive();
@@ -875,12 +875,12 @@ namespace Allors.Database.Domain.Tests
                 .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             outgoingItem = new ShipmentItemBuilder(this.Transaction).WithGood(good).WithQuantity(330).Build();
             outgoingShipment.AddShipmentItem(outgoingItem);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             outgoingShipment.Pick();
             this.Transaction.Derive();
@@ -908,12 +908,12 @@ namespace Allors.Database.Domain.Tests
                 .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             outgoingItem = new ShipmentItemBuilder(this.Transaction).WithGood(good).WithQuantity(20).Build();
             outgoingShipment.AddShipmentItem(outgoingItem);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             outgoingShipment.Pick();
             this.Transaction.Derive();

@@ -37,19 +37,17 @@ namespace Allors.Server
         {
             services.AddSingleton(this.Configuration);
 
-            var workspaceConfig = new WorkspaceConfig(new Dictionary<HostString, string>
-            {
-                {new HostString("localhost", 5000), "Default"}
-            });
-
             // Allors
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IPolicyService, PolicyService>();
             services.AddSingleton<IDatabaseService, DatabaseService>();
-            services.AddSingleton(workspaceConfig);
+            services.AddSingleton(new WorkspaceConfig(new Dictionary<HostString, string>
+            {
+                {new HostString("localhost", 5000), "Default"}
+            }));
+            services.AddScoped<IWorkspaceService, WorkspaceService>();
             // Allors Scoped
             services.AddScoped<ITransactionService, TransactionService>();
-            services.AddScoped<IWorkspaceService, WorkspaceService>();
 
             services.AddCors(options =>
                 options.AddDefaultPolicy(

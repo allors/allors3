@@ -11,7 +11,6 @@ namespace Allors.Database.Domain.Tests
     using Resources;
     using TestPopulation;
     using Xunit;
-    using Permission = Domain.Permission;
 
     public class QuoteItemTests : DomainTest, IClassFixture<Fixture>
     {

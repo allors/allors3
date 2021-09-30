@@ -1,92 +1,47 @@
-// <copyright file="DomainTest.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
-// Licensed under the LGPL license. See LICENSE file in the project root for full license information.
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Setup.cs" company="Allors bvba">
+//   Copyright 2002-2012 Allors bvba.
+//
+// Dual Licensed under
+//   a) the General Public Licence v3 (GPL)
+//   b) the Allors License
+//
+// The GPL License is included in the file gpl.txt.
+// The Allors License is an addendum to your contract.
+//
+// Allors Applications is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// For more information visit http://www.allors.com/legal
 // </copyright>
-// <summary>Defines the DomainTest type.</summary>
+// --------------------------------------------------------------------------------------------------------------------
 
-namespace Allors.Database.Domain.Tests
+namespace Allors
 {
-    using System;
     using System.Globalization;
     using System.Linq;
-    using Adapters.Memory;
-    using Configuration;
-    using Database.Derivations;
-    using Meta;
-    using TestPopulation;
-    using Organisation = Domain.Organisation;
-    using Person = Domain.Person;
-    using User = Domain.User;
+    using Database;
+    using Database.Domain;
+    using Database.Domain.TestPopulation;
 
-    public class DomainTest : IDisposable
+    public partial class TestPopulation
     {
-        public DomainTest(Fixture fixture, bool populate = true)
+        public TestPopulation(ITransaction transaction)
         {
-            var database = new Database(
-                new TestDatabaseServices(fixture.Engine),
-                new Configuration
-                {
-                    ObjectFactory = new ObjectFactory(fixture.M, typeof(User)),
-                });
-
-            this.M = database.Services.Get<MetaPopulation>();
-
-            this.Setup(database, populate);
+            this.Transaction = transaction;
         }
 
-        public MetaPopulation M { get; }
+        public ITransaction Transaction { get; }
 
-        public virtual Config Config { get; } = new Config { SetupSecurity = false };
-
-        public ITransaction Transaction { get; private set; }
-
-        public ITime Time => this.Transaction.Database.Services.Get<ITime>();
-
-        public TimeSpan? TimeShift
-        {
-            get => this.Time.Shift;
-
-            set => this.Time.Shift = value;
-        }
-
-        protected Organisation InternalOrganisation { get; set; }
-
-        protected Person Administrator => this.GetPersonByUserName("administrator");
-
-        protected Person OrderProcessor => this.GetPersonByUserName("orderProcessor");
-
-        protected Person Purchaser => this.GetPersonByUserName("purchaser");
-
-        public void Dispose()
-        {
-            this.Transaction.Rollback();
-            this.Transaction = null;
-        }
-
-        protected IValidation Derive() => this.Transaction.Derive(false, true);
-
-        protected void Setup(IDatabase database, bool populate)
-        {
-            database.Init();
-
-            if (populate)
-            {
-                this.Populate(database);
-            }
-
-            this.Transaction ??= database.CreateTransaction();
-        }
-
-        private void Populate(IDatabase database)
+        public void Populate()
         {
             CultureInfo.CurrentCulture = new CultureInfo("en-GB");
             CultureInfo.CurrentUICulture = new CultureInfo("en-GB");
 
-            new Setup(database, this.Config).Apply();
-
-            this.Transaction = database.CreateTransaction();
-
-            var administrator = new PersonBuilder(this.Transaction).WithUserName("administrator").Build();
+            var administrator = new PersonBuilder(this.Transaction).WithUserName("jane@example.com").Build();
+            administrator.SetPassword("letmein");
 
             this.Transaction.Derive();
             this.Transaction.Commit();
@@ -111,7 +66,7 @@ namespace Allors.Database.Domain.Tests
                 .WithCountry(belgium)
                 .Build();
 
-            this.InternalOrganisation = new OrganisationBuilder(this.Transaction)
+            var internalOrganisation = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
                 .WithDoAccounting(true)
                 .WithName("internalOrganisation")
@@ -155,11 +110,11 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var organisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
-                .WithInternalOrganisation(this.InternalOrganisation)
+                .WithInternalOrganisation(internalOrganisation)
                 .WithGeneralLedgerAccount(glAccount0001)
                 .Build();
 
-            this.InternalOrganisation.DefaultCollectionMethod = new OwnBankAccountBuilder(this.Transaction)
+            internalOrganisation.DefaultCollectionMethod = new OwnBankAccountBuilder(this.Transaction)
                 .WithBankAccount(new BankAccountBuilder(this.Transaction).WithBank(bank)
                                     .WithCurrency(euro)
                                     .WithIban("BE68539007547034")
@@ -174,7 +129,7 @@ namespace Allors.Database.Domain.Tests
                                 .Build())
                 .Build();
 
-            this.InternalOrganisation.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction)
+            internalOrganisation.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction)
                 .WithUseAsDefault(true)
                 .WithContactMechanism(postalAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).GeneralCorrespondence)
@@ -185,7 +140,7 @@ namespace Allors.Database.Domain.Tests
             var facility = new FacilityBuilder(this.Transaction)
                 .WithFacilityType(new FacilityTypes(this.Transaction).Warehouse)
                 .WithName("facility")
-                .WithOwner(this.InternalOrganisation)
+                .WithOwner(internalOrganisation)
                 .Build();
 
             singleton.Settings.DefaultFacility = facility;
@@ -195,7 +150,7 @@ namespace Allors.Database.Domain.Tests
             new StoreBuilder(this.Transaction)
                 .WithName("store")
                 .WithBillingProcess(new BillingProcesses(this.Transaction).BillingForShipmentItems)
-                .WithInternalOrganisation(this.InternalOrganisation)
+                .WithInternalOrganisation(internalOrganisation)
                 .WithCustomerShipmentNumberPrefix("shipmentno: ")
                 .WithSalesInvoiceNumberPrefix("invoiceno: ")
                 .WithSalesOrderNumberPrefix("orderno: ")
@@ -211,11 +166,11 @@ namespace Allors.Database.Domain.Tests
 
             new ProductCategoryBuilder(this.Transaction).WithName("Primary Category").Build();
 
-            this.InternalOrganisation.CreateEmployee("letmein", this.Transaction.Faker());
-            this.InternalOrganisation.CreateB2BCustomer(this.Transaction.Faker());
-            this.InternalOrganisation.CreateB2CCustomer(this.Transaction.Faker());
-            this.InternalOrganisation.CreateSupplier(this.Transaction.Faker());
-            this.InternalOrganisation.CreateSubContractor(this.Transaction.Faker());
+            internalOrganisation.CreateEmployee("letmein", this.Transaction.Faker());
+            internalOrganisation.CreateB2BCustomer(this.Transaction.Faker());
+            internalOrganisation.CreateB2CCustomer(this.Transaction.Faker());
+            internalOrganisation.CreateSupplier(this.Transaction.Faker());
+            internalOrganisation.CreateSubContractor(this.Transaction.Faker());
 
             var purchaser = new PersonBuilder(this.Transaction).WithFirstName("The").WithLastName("purchaser").WithUserName("purchaser").Build();
             var orderProcessor = new PersonBuilder(this.Transaction).WithFirstName("The").WithLastName("orderProcessor").WithUserName("orderProcessor").Build();
@@ -230,9 +185,9 @@ namespace Allors.Database.Domain.Tests
             new UserGroups(this.Transaction).Creators.AddMember(orderProcessor);
             new UserGroups(this.Transaction).Creators.AddMember(administrator);
 
-            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithEmployee(purchaser).WithEmployer(this.InternalOrganisation).Build();
+            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithEmployee(purchaser).WithEmployer(internalOrganisation).Build();
 
-            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithEmployee(orderProcessor).WithEmployer(this.InternalOrganisation).Build();
+            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithEmployee(orderProcessor).WithEmployer(internalOrganisation).Build();
 
             var good1 = new NonUnifiedGoodBuilder(this.Transaction)
                 .WithProductIdentification(new ProductNumberBuilder(this.Transaction)
@@ -273,7 +228,7 @@ namespace Allors.Database.Domain.Tests
                     .WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build())
                 .Build();
 
-            var serialisedUnifiedGood = new UnifiedGoodBuilder(this.Transaction).WithSerialisedDefaults(this.InternalOrganisation).Build();
+            var serialisedUnifiedGood = new UnifiedGoodBuilder(this.Transaction).WithSerialisedDefaults(internalOrganisation).Build();
 
             var catMain = new ProductCategoryBuilder(this.Transaction).WithName("main cat").Build();
 
@@ -292,8 +247,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
             this.Transaction.Commit();
-        }
 
-        private Person GetPersonByUserName(string userName) => new People(this.Transaction).FindBy(this.M.User.UserName, userName);
+        }
     }
 }

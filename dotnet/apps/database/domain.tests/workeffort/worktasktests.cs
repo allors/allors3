@@ -7,6 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System;
+    using System.IO;
     using System.Linq;
     using Resources;
     using Xunit;
@@ -57,7 +58,7 @@ namespace Allors.Database.Domain.Tests
             var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
             new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var yesterday = DateTimeFactory.CreateDateTime(this.Transaction.Now().AddDays(-1));
             var laterYesterday = DateTimeFactory.CreateDateTime(yesterday.AddHours(3));
@@ -94,7 +95,7 @@ namespace Allors.Database.Domain.Tests
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry3);
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             Assert.Equal(13.0M, workOrder.ActualHours);
@@ -115,7 +116,7 @@ namespace Allors.Database.Domain.Tests
             var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
             new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var yesterday = DateTimeFactory.CreateDateTime(this.Transaction.Now().AddDays(-1));
             var laterYesterday = DateTimeFactory.CreateDateTime(yesterday.AddHours(3));
@@ -136,7 +137,7 @@ namespace Allors.Database.Domain.Tests
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntryToday);
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             Assert.Equal(today, workOrder.ActualStart);
@@ -153,7 +154,7 @@ namespace Allors.Database.Domain.Tests
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntryYesterday);
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             Assert.Equal(yesterday, workOrder.ActualStart);
@@ -172,7 +173,7 @@ namespace Allors.Database.Domain.Tests
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntryTomorrow);
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             Assert.Equal(yesterday, workOrder.ActualStart);
@@ -219,7 +220,7 @@ namespace Allors.Database.Domain.Tests
             var part2 = this.CreatePart("P2");
             var part3 = this.CreatePart("P3");
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var inventoryAssignment1 = this.CreateInventoryAssignment(workOrder, part1, 11);
             var inventoryAssignment2 = this.CreateInventoryAssignment(workOrder, part2, 12);
@@ -244,7 +245,7 @@ namespace Allors.Database.Domain.Tests
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntryTomorrow);
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             Assert.True(workOrder.ExistPrintDocument);
@@ -282,7 +283,7 @@ namespace Allors.Database.Domain.Tests
             var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
             var employment = new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(organisation).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var salesOrderItem = salesOrder.SalesOrderItems.FirstOrDefault();
             salesOrder.AddValidOrderItem(salesOrderItem);
@@ -292,13 +293,13 @@ namespace Allors.Database.Domain.Tests
             var part2 = this.CreatePart("P2");
             var part3 = this.CreatePart("P3");
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var inventoryAssignment1 = this.CreateInventoryAssignment(workOrder, part1, 11);
             var inventoryAssignment2 = this.CreateInventoryAssignment(workOrder, part2, 12);
             var inventoryAssignment3 = this.CreateInventoryAssignment(workOrder, part3, 13);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             //// Work Effort Time Entries
             var yesterday = DateTimeFactory.CreateDateTime(this.Transaction.Now().AddDays(-1));
@@ -318,7 +319,7 @@ namespace Allors.Database.Domain.Tests
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntryToday);
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntryTomorrow);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Act
             workOrder.Print();
@@ -330,8 +331,8 @@ namespace Allors.Database.Domain.Tests
             Assert.True(workOrder.PrintDocument.ExistMedia);
 
             var desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var outputFile = System.IO.File.Create(System.IO.Path.Combine(desktopDir, "workTask.odt"));
-            var stream = new System.IO.MemoryStream(workOrder.PrintDocument.Media.MediaContent.Data);
+            var outputFile = File.Create(Path.Combine(desktopDir, "workTask.odt"));
+            var stream = new MemoryStream(workOrder.PrintDocument.Media.MediaContent.Data);
 
             stream.CopyTo(outputFile);
             stream.Close();
@@ -350,7 +351,7 @@ namespace Allors.Database.Domain.Tests
 
             var workOrder = new WorkTaskBuilder(this.Transaction).WithName("Task").WithCustomer(customer).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var yesterday = DateTimeFactory.CreateDateTime(this.Transaction.Now().AddDays(-1));
             var laterYesterday = DateTimeFactory.CreateDateTime(yesterday.AddHours(3));
@@ -393,7 +394,7 @@ namespace Allors.Database.Domain.Tests
 
             workOrder.Complete();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             workOrder.Invoice();
 
@@ -430,7 +431,7 @@ namespace Allors.Database.Domain.Tests
 
             var parentWorkOrder = new WorkTaskBuilder(this.Transaction).WithName("Parent Task").WithCustomer(customer).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var yesterday = DateTimeFactory.CreateDateTime(this.Transaction.Now().AddDays(-1));
             var laterYesterday = DateTimeFactory.CreateDateTime(yesterday.AddHours(3));
@@ -476,15 +477,15 @@ namespace Allors.Database.Domain.Tests
 
             childWorkOrder.Complete();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             parentWorkOrder.Complete();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             parentWorkOrder.Invoice();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var salesInvoice = customer.SalesInvoicesWhereBillToCustomer.First();
 
@@ -512,7 +513,7 @@ namespace Allors.Database.Domain.Tests
 
             new WorkEffortAssignmentRateBuilder(this.Transaction).WithWorkEffort(workOrder).WithRate(10).WithRateType(new RateTypes(this.Transaction).StandardRate).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var yesterday = DateTimeFactory.CreateDateTime(this.Transaction.Now().AddDays(-1));
             var laterYesterday = DateTimeFactory.CreateDateTime(yesterday.AddHours(3));
@@ -552,7 +553,7 @@ namespace Allors.Database.Domain.Tests
 
             workOrder.Complete();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             workOrder.Invoice();
 
@@ -569,7 +570,7 @@ namespace Allors.Database.Domain.Tests
             var organisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
 
             var customerEmail = new PartyContactMechanismBuilder(this.Transaction)
-                .WithContactMechanism(new EmailAddressBuilder(this.Transaction).WithElectronicAddressString($"customer@acme.com").Build())
+                .WithContactMechanism(new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("customer@acme.com").Build())
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
@@ -589,7 +590,7 @@ namespace Allors.Database.Domain.Tests
 
             var part1 = this.CreatePart("P1");
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part1)
@@ -597,7 +598,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(11)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var part1BasePriceYesterday = new BasePriceBuilder(this.Transaction)
                 .WithDescription("baseprice part1")
@@ -624,7 +625,7 @@ namespace Allors.Database.Domain.Tests
 
             var workOrder = new WorkTaskBuilder(this.Transaction).WithName("Task").WithCustomer(customer).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var timeEntryToday = new TimeEntryBuilder(this.Transaction)
                 .WithRateType(new RateTypes(this.Transaction).StandardRate)
@@ -638,15 +639,15 @@ namespace Allors.Database.Domain.Tests
 
             new WorkEffortInventoryAssignmentBuilder(this.Transaction).WithAssignment(workOrder).WithInventoryItem(part1.InventoryItemsWherePart.FirstOrDefault()).WithQuantity(3).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             workOrder.Complete();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             workOrder.Invoice();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var salesInvoice = customer.SalesInvoicesWhereBillToCustomer.First();
 
@@ -661,7 +662,7 @@ namespace Allors.Database.Domain.Tests
             var organisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
 
             var customerEmail = new PartyContactMechanismBuilder(this.Transaction)
-                .WithContactMechanism(new EmailAddressBuilder(this.Transaction).WithElectronicAddressString($"customer@acme.com").Build())
+                .WithContactMechanism(new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("customer@acme.com").Build())
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
@@ -679,11 +680,11 @@ namespace Allors.Database.Domain.Tests
 
             var tomorrow = DateTimeFactory.CreateDateTime(this.Transaction.Now().AddDays(1));
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var workOrder = new WorkTaskBuilder(this.Transaction).WithName("Task").WithCustomer(customer).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Transaction)
                                         .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Time)
@@ -697,13 +698,13 @@ namespace Allors.Database.Domain.Tests
                 .WithSalesInvoiceItem(salesInvoiceItem)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             workOrder.Complete();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             workOrder.Invoice();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var salesInvoice = customer.SalesInvoicesWhereBillToCustomer.First();
 

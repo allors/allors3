@@ -20,7 +20,6 @@ import {
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
@@ -122,23 +121,23 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
       .subscribe(({ loaded }) => {
         this.allors.session.reset();
 
-        this.inventoryTransactionReasons = loaded.collection<InventoryTransactionReason>(m.InventoryTransactionReason);
-        this.nonSerialisedInventoryItemState = loaded.collection<NonSerialisedInventoryItemState>(m.NonSerialisedInventoryItemState);
-        this.serialisedInventoryItemState = loaded.collection<SerialisedInventoryItemState>(m.SerialisedInventoryItemState);
-        this.part = loaded.object<Part>(m.Part);
-        this.parts = loaded.collection<Part>(m.Part);
-        this.facilities = loaded.collection<Facility>(m.Facility);
-        this.lots = loaded.collection<Lot>(m.Lot);
-        this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
-        this.inventoryItem = loaded.object<InventoryItem>(m.InventoryItem);
+        this.inventoryTransactionReasons = loaded.collection(m.InventoryTransactionReason);
+        this.nonSerialisedInventoryItemState = loaded.collection(m.NonSerialisedInventoryItemState);
+        this.serialisedInventoryItemState = loaded.collection(m.SerialisedInventoryItemState);
+        this.part = loaded.object(m.Part);
+        this.parts = loaded.collection(m.Part);
+        this.facilities = loaded.collection(m.Facility);
+        this.lots = loaded.collection(m.Lot);
+        this.serialisedItem = loaded.object(m.SerialisedItem);
+        this.inventoryItem = loaded.object(m.InventoryItem);
 
         if (this.part) {
           this.selectedPart = this.part;
         }
 
         if (this.inventoryItem) {
-          this.serialisedInventoryItem = loaded.object<InventoryItem>(m.InventoryItem);
-          this.nonSerialisedInventoryItem = loaded.object<InventoryItem>(m.InventoryItem);
+          this.serialisedInventoryItem = loaded.object(m.InventoryItem);
+          this.nonSerialisedInventoryItem = loaded.object(m.InventoryItem);
           this.part = this.inventoryItem.Part;
           this.selectedFacility = this.inventoryItem.Facility;
           this.serialised = this.inventoryItem.Part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';

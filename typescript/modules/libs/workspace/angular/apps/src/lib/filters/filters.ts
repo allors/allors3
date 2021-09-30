@@ -57,7 +57,7 @@ export class Filters {
     });
   }
 
-  static customersFilter(m: M, internalOrganisationId: string) {
+  static customersFilter(m: M, internalOrganisationId: number) {
     return new SearchFactory({
       objectType: m.Party,
       roleTypes: [m.Party.PartyName],
@@ -79,7 +79,7 @@ export class Filters {
     });
   }
 
-  static suppliersFilter(m: M, internalOrganisationId: string) {
+  static suppliersFilter(m: M, internalOrganisationId: number) {
     return new SearchFactory({
       objectType: m.Organisation,
       roleTypes: [m.Organisation.PartyName],
@@ -111,7 +111,7 @@ export class Filters {
     });
   }
 
-  static subContractorsFilter(m: M, internalOrganisationId: string) {
+  static subContractorsFilter(m: M, internalOrganisationId: number) {
     return new SearchFactory({
       objectType: m.Organisation,
       roleTypes: [m.Organisation.PartyName],
@@ -125,7 +125,7 @@ export class Filters {
     });
   }
 
-  static employeeFilter(m: M, internalOrganisationId: string) {
+  static employeeFilter(m: M, internalOrganisationId: number) {
     return new SearchFactory({
       objectType: m.Person,
       roleTypes: [m.Person.PartyName, m.Person.UserName],

@@ -56,7 +56,7 @@ export class PersonInlineComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     if (this.person) {
-      this.allors.client.invokeReactive(this.allors.session, this.person.Delete);
+      this.person.strategy.delete();
     }
   }
 

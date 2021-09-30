@@ -28,7 +28,7 @@ export class InlineModelComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     if (this.model) {
-      this.allors.client.invokeReactive(this.allors.session, this.model.Delete);
+      this.model.strategy.delete();
     }
   }
 

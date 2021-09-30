@@ -30,7 +30,7 @@ namespace Allors.Database.Domain.Tests
                     .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part)
@@ -39,7 +39,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             Assert.Empty(workEffort.WorkEffortInventoryAssignmentsWhereAssignment);
@@ -53,7 +53,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             var transactions = inventoryAssignment.InventoryItemTransactions;
@@ -90,7 +90,7 @@ namespace Allors.Database.Domain.Tests
                     .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part1)
@@ -104,7 +104,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(10)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
@@ -113,7 +113,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             var transactions = inventoryAssignment.InventoryItemTransactions.ToArray();
@@ -127,7 +127,7 @@ namespace Allors.Database.Domain.Tests
             inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.FirstOrDefault();
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             var part1Transactions = inventoryAssignment.InventoryItemTransactions.Where(t => t.Part.Equals(part1)).ToArray();
@@ -157,7 +157,7 @@ namespace Allors.Database.Domain.Tests
                     .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part)
@@ -165,7 +165,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(10)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
@@ -173,11 +173,11 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(10)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Act
             workEffort.Cancel();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             var transactions = inventoryAssignment.InventoryItemTransactions;
@@ -210,11 +210,11 @@ namespace Allors.Database.Domain.Tests
                     .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction).WithPart(part).WithQuantity(100).WithReason(reasons.PhysicalCount).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
@@ -222,11 +222,11 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(10)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Act
             workEffort.Complete();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             var transactions = inventoryAssignment.InventoryItemTransactions;
@@ -257,7 +257,7 @@ namespace Allors.Database.Domain.Tests
                     .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part)
@@ -265,7 +265,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(10)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
@@ -273,14 +273,14 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(10)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Act
             workEffort.Complete();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             workEffort.Cancel();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             var transactions = inventoryAssignment.InventoryItemTransactions;
@@ -317,7 +317,7 @@ namespace Allors.Database.Domain.Tests
                     .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part1)
@@ -331,7 +331,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(10)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
@@ -339,14 +339,14 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(10)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Act
             inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.FirstOrDefault();
             inventoryAssignment.Quantity = 5;
 
             workEffort.Complete();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             var part1Transactions = inventoryAssignment.InventoryItemTransactions.Where(t => t.Part.Equals(part1)).ToArray();
@@ -384,7 +384,7 @@ namespace Allors.Database.Domain.Tests
                     .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part1)
@@ -398,7 +398,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(5)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
@@ -406,19 +406,19 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(10)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             workEffort.Complete();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             workEffort.Reopen();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Act
             inventoryAssignment.InventoryItem = part2.InventoryItemsWherePart.FirstOrDefault();
             inventoryAssignment.Quantity = 4;
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             var part1Transactions = inventoryAssignment.InventoryItemTransactions.Where(t => t.Part.Equals(part1)).ToArray();
@@ -451,7 +451,7 @@ namespace Allors.Database.Domain.Tests
                     .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part)
@@ -459,7 +459,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(20)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
@@ -468,7 +468,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             var consumption = inventoryAssignment.InventoryItemTransactions.First(t => t.Reason.Equals(reasons.Consumption) && t.Quantity > 0);
@@ -478,7 +478,7 @@ namespace Allors.Database.Domain.Tests
             inventoryAssignment.Quantity = 10;
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             var consumptions = inventoryAssignment.InventoryItemTransactions.Where(t => t.Reason.Equals(reasons.Consumption));
@@ -488,7 +488,7 @@ namespace Allors.Database.Domain.Tests
             workEffort.Complete();
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             consumptions = inventoryAssignment.InventoryItemTransactions.Where(t => t.Reason.Equals(reasons.Consumption));

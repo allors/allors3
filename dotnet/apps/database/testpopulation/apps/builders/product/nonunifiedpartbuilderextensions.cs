@@ -9,7 +9,7 @@ namespace Allors.Database.Domain.TestPopulation
     using System.Linq;
     using Bogus;
     using Meta;
-    using Organisation = Domain.Organisation;
+    using Organisation = Organisation;
 
     public static partial class NonUnifiedPartBuilderExtensions
     {

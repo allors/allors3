@@ -8,8 +8,8 @@ namespace Allors.Database.Domain.TestPopulation
 {
     using System.Linq;
     using Meta;
-    using InvoiceItemType = Domain.InvoiceItemType;
-    using UnifiedGood = Domain.UnifiedGood;
+    using InvoiceItemType = InvoiceItemType;
+    using UnifiedGood = UnifiedGood;
 
     public static partial class PurchaseInvoiceItemBuilderExtensions
     {

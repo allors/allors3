@@ -47,7 +47,7 @@ namespace Allors.Database.Domain.Tests.Print
             var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
             var employment = new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(organisation).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var salesOrderItem = salesOrder.SalesOrderItems.FirstOrDefault();
             salesOrder.AddValidOrderItem(salesOrderItem);
@@ -57,13 +57,13 @@ namespace Allors.Database.Domain.Tests.Print
             var part2 = this.CreatePart("P2");
             var part3 = this.CreatePart("P3");
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var inventoryAssignment1 = this.CreateInventoryAssignment(workOrder, part1, 11);
             var inventoryAssignment2 = this.CreateInventoryAssignment(workOrder, part2, 12);
             var inventoryAssignment3 = this.CreateInventoryAssignment(workOrder, part3, 13);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             //// Work Effort Time Entries
             var yesterday = DateTimeFactory.CreateDateTime(this.Transaction.Now().AddDays(-1));
@@ -86,7 +86,7 @@ namespace Allors.Database.Domain.Tests.Print
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntryToday);
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntryTomorrow);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Act
             var model = new Model(workOrder);

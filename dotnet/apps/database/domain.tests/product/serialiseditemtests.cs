@@ -6,11 +6,13 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using Xunit;
-    using TestPopulation;
-    using Resources;
     using System.Linq;
     using Database.Derivations;
+    using Meta;
+    using Resources;
+    using TestPopulation;
+    using Xunit;
+    using Revocation = Domain.Revocation;
 
     public class SerialisedItemTests : DomainTest, IClassFixture<Fixture>
     {
@@ -137,7 +139,7 @@ namespace Allors.Database.Domain.Tests
             serialisedItem.AcquisitionYear = 2020;
 
             var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
-            Assert.Equal(new Meta.IRoleType[]
+            Assert.Equal(new IRoleType[]
             {
                 this.M.SerialisedItem.AcquiredDate,
                 this.M.SerialisedItem.AcquisitionYear,
@@ -153,7 +155,7 @@ namespace Allors.Database.Domain.Tests
             serialisedItem.AcquiredDate = this.Transaction.Now();
 
             var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
-            Assert.Equal(new Meta.IRoleType[]
+            Assert.Equal(new IRoleType[]
             {
                 this.M.SerialisedItem.AcquiredDate,
                 this.M.SerialisedItem.AcquisitionYear,

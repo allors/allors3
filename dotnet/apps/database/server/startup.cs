@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Server.Controllers
 {
+    using System.Collections.Generic;
     using System.Text;
     using Adapters;
     using Domain;
@@ -41,6 +42,11 @@ namespace Allors.Database.Server.Controllers
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IPolicyService, PolicyService>();
             services.AddSingleton<IDatabaseService, DatabaseService>();
+            services.AddSingleton(new WorkspaceConfig(new Dictionary<HostString, string>
+            {
+                {new HostString("localhost", 5000), "Default"}
+            }));
+            services.AddScoped<IWorkspaceService, WorkspaceService>();
             services.AddScoped<ITransactionService, TransactionService>();
 
             services.AddCors(options =>

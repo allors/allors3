@@ -22,6 +22,7 @@ import {
   PartCategory,
   NonUnifiedPart,
   SupplierRelationship,
+  Locale
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
@@ -223,7 +224,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
 
     if (this.selectedSuppliers !== undefined) {
       this.selectedSuppliers.forEach((supplier: Organisation) => {
-        const supplierOffering = this.allors.session.create<SupplierOffering>(m.SupplierOffering);
+        const supplierOffering = this.allors.session.create<SupplierOffering>(this.m.SupplierOffering);
         supplierOffering.Supplier = supplier;
         supplierOffering.Part = this.part;
         supplierOffering.UnitOfMeasure = this.part.UnitOfMeasure;

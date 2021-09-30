@@ -61,7 +61,7 @@ export class TelecommunicationsNumberEditComponent extends TestScope implements 
         this.allors.session.reset();
 
         this.contactMechanismTypes = loaded.collection<Enumeration>(m.Enumeration);
-        this.contactMechanism = loaded.object<ContactMechanism>(m.ContactMechanism);
+        this.contactMechanism = loaded.object<TelecommunicationsNumber>(m.ContactMechanism);
 
         if (this.contactMechanism.canWriteAreaCode) {
           this.title = 'Edit Phone Number';

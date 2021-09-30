@@ -21,6 +21,10 @@ export abstract class Strategy implements IStrategy {
 
     this.rangeId = id;
   }
+  delete() {
+    throw new Error('Method not implemented.');
+  }
+  
   get version(): number {
     switch (this.cls.origin) {
       case Origin.Session:

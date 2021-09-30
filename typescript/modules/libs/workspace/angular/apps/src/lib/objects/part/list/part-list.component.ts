@@ -4,8 +4,8 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { ProductIdentificationType } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope, Part } from '@allors/workspace/angular/base';
+import { ProductIdentificationType, Part } from '@allors/workspace/domain/default';
+import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {

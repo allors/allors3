@@ -9,10 +9,10 @@ namespace Allors.Database.Domain.TestPopulation
 {
     using System;
     using Meta;
-    using Organisation = Domain.Organisation;
-    using Ownership = Domain.Ownership;
-    using SerialisedItemAvailability = Domain.SerialisedItemAvailability;
-    using SerialisedItemState = Domain.SerialisedItemState;
+    using Organisation = Organisation;
+    using Ownership = Ownership;
+    using SerialisedItemAvailability = SerialisedItemAvailability;
+    using SerialisedItemState = SerialisedItemState;
 
     public static partial class SerialisedItemBuilderExtensions
     {

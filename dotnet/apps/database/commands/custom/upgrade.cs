@@ -64,12 +64,9 @@ namespace Commands
 
                 this.Parent.Database.RelationNotLoaded += (sender, args) =>
                 {
-                    if (!this.excludedRelationTypes.Contains(args.RelationTypeId))
+                    if (!this.excludedRelationTypes.Contains(args.RelationTypeId) && !notLoadedObjects.Contains(args.AssociationId))
                     {
-                        if (!notLoadedObjects.Contains(args.AssociationId))
-                        {
-                            notLoadedRelationTypeIds.Add(args.RelationTypeId);
-                        }
+                        notLoadedRelationTypeIds.Add(args.RelationTypeId);
                     }
                 };
 

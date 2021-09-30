@@ -22,7 +22,7 @@ namespace Allors.Database.Domain
             this.transaction = database.CreateTransaction();
 
             this.objectsByObjectType = new Dictionary<IObjectType, IObjects>();
-            foreach (var objectType in transaction.Database.MetaPopulation.DatabaseComposites)
+            foreach (var objectType in this.transaction.Database.MetaPopulation.DatabaseComposites)
             {
                 this.objectsByObjectType[objectType] = objectType.GetObjects(transaction);
             }

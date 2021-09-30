@@ -7,8 +7,8 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
-    using Allors.Database.Domain.TestPopulation;
     using Resources;
+    using TestPopulation;
     using Xunit;
 
     public class OrderShipmentRuleTests : DomainTest, IClassFixture<Fixture>

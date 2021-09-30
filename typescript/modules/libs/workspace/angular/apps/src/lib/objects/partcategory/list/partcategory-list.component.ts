@@ -5,10 +5,11 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { PartCategory } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, Filter, FilterDefinition, MediaService, NavigationService, OverviewService, RefreshService, Sorter, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { And } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: PartCategory;
@@ -79,7 +80,7 @@ export class PartCategoryListComponent extends TestScope implements OnInit, OnDe
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const predicate = new And([{ kind: 'Like',  roleType: m.PartCategory.Name, parameter: 'name' })]);
+    const predicate: And = { kind: 'And', operands: [{ kind: 'Like', roleType: m.PartCategory.Name, parameter: 'name' }] };
 
     const filterDefinition = new FilterDefinition(predicate);
     this.filter = new Filter(filterDefinition);

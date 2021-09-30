@@ -9,9 +9,9 @@ namespace Allors.Database.Domain.TestPopulation
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
-    using Organisation = Domain.Organisation;
-    using PaymentMethod = Domain.PaymentMethod;
-    using Person = Domain.Person;
+    using Organisation = Organisation;
+    using PaymentMethod = PaymentMethod;
+    using Person = Person;
 
     public static partial class SalesOrderBuilderExtensions
     {

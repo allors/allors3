@@ -7,12 +7,28 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
-    using Allors.Database.Domain.TestPopulation;
     using Configuration.Derivations.Default;
     using Database.Derivations;
+    using Meta;
     using Resources;
+    using TestPopulation;
     using Xunit;
-    using IRoleType = Meta.IRoleType;
+    using BasePrice = Domain.BasePrice;
+    using City = Domain.City;
+    using Colour = Domain.Colour;
+    using CustomerShipment = Domain.CustomerShipment;
+    using Good = Domain.Good;
+    using Organisation = Domain.Organisation;
+    using Part = Domain.Part;
+    using PostalAddress = Domain.PostalAddress;
+    using ProductCategory = Domain.ProductCategory;
+    using SalesInvoiceItem = Domain.SalesInvoiceItem;
+    using SalesOrder = Domain.SalesOrder;
+    using ShipmentItem = Domain.ShipmentItem;
+    using Store = Domain.Store;
+    using SupplierOffering = Domain.SupplierOffering;
+    using User = Domain.User;
+    using VatRegime = Domain.VatRegime;
 
     public class SalesOrderItemTests : DomainTest, IClassFixture<Fixture>
     {
@@ -607,10 +623,10 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             this.order.Post();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             this.order.Accept();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             Assert.Equal(new Facilities(this.Transaction).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Transaction).Warehouse), item1.ReservedFromNonSerialisedInventoryItem.Facility);
             Assert.Equal(new Facilities(this.Transaction).FindBy(this.M.Facility.FacilityType, new FacilityTypes(this.Transaction).Warehouse), item2.ReservedFromNonSerialisedInventoryItem.Facility);
@@ -714,10 +730,10 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             this.order.Post();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             this.order.Accept();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             Assert.Equal(salesOrderItem.QuantityOrdered, salesOrderItem.ReservedFromNonSerialisedInventoryItem.QuantityCommittedOut);
             Assert.Equal(0, salesOrderItem.ReservedFromNonSerialisedInventoryItem.AvailableToPromise);
@@ -754,10 +770,10 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             this.order.Post();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             this.order.Accept();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             Assert.Equal(salesOrderItem.QuantityOrdered, salesOrderItem.ReservedFromNonSerialisedInventoryItem.QuantityCommittedOut);
             Assert.Equal(0, salesOrderItem.ReservedFromNonSerialisedInventoryItem.AvailableToPromise);

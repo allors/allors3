@@ -85,7 +85,7 @@ namespace Allors.Database.Domain.Tests
             var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
             new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var now = DateTimeFactory.CreateDateTime(this.Transaction.Now());
             var later = DateTimeFactory.CreateDateTime(now.AddHours(4));
@@ -101,7 +101,7 @@ namespace Allors.Database.Domain.Tests
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             Assert.Equal(4.00M, timeEntry.AmountOfTime);
@@ -112,7 +112,7 @@ namespace Allors.Database.Domain.Tests
             timeEntry.TimeFrequency = frequencies.Day;
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             Assert.Equal(Math.Round(4.0M / 24.0M, this.M.TimeEntry.AmountOfTime.Scale ?? 2), timeEntry.AmountOfTime);
@@ -123,7 +123,7 @@ namespace Allors.Database.Domain.Tests
             timeEntry.TimeFrequency = frequencies.Minute;
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             Assert.Equal(4.0M * 60.0M, timeEntry.AmountOfTime);
@@ -144,7 +144,7 @@ namespace Allors.Database.Domain.Tests
             var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
             new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var now = DateTimeFactory.CreateDateTime(this.Transaction.Now());
             var hour = frequencies.Hour;
@@ -160,7 +160,7 @@ namespace Allors.Database.Domain.Tests
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             var timeSpan = timeEntry.ThroughDate - timeEntry.FromDate;
@@ -172,7 +172,7 @@ namespace Allors.Database.Domain.Tests
             timeEntry.TimeFrequency = frequencies.Minute;
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             timeSpan = timeEntry.ThroughDate - timeEntry.FromDate;
@@ -184,7 +184,7 @@ namespace Allors.Database.Domain.Tests
             timeEntry.TimeFrequency = frequencies.Day;
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             timeSpan = timeEntry.ThroughDate - timeEntry.FromDate;

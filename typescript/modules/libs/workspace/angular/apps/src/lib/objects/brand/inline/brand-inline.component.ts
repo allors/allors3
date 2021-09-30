@@ -28,7 +28,7 @@ export class InlineBrandComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     if (this.brand) {
-      this.allors.client.invokeReactive(this.allors.session, this.brand.Delete);
+      this.brand.strategy.delete();
     }
   }
 

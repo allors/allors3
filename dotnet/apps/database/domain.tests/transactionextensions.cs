@@ -5,9 +5,6 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using Database;
-    using Domain;
-
     public static class TransactionExtensions
     {
         public static User GetUser(this ITransaction @this) => @this.Services.Get<IUserService>().User;

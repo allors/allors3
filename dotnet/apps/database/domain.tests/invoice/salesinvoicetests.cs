@@ -8,8 +8,8 @@ namespace Allors.Database.Domain.Tests
 {
     using System;
     using System.Linq;
-    using TestPopulation;
     using Resources;
+    using TestPopulation;
     using Xunit;
 
     public class SalesInvoiceTests : DomainTest, IClassFixture<Fixture>
@@ -144,7 +144,7 @@ namespace Allors.Database.Domain.Tests
 
             invoice.BilledFrom = this.InternalOrganisation;
 
-            Assert.False(this.Transaction.Derive(true).HasErrors);
+            Assert.False(this.Transaction.Derive().HasErrors);
         }
 
         [Fact]
@@ -1072,10 +1072,10 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             order.Post();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order.Accept();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order.Invoice();
 
@@ -1952,7 +1952,7 @@ namespace Allors.Database.Domain.Tests
                 .WithProductIdentificationType(new ProductIdentificationTypes(this.Transaction).Part).Build())
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)
                 .WithPart(part)

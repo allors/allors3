@@ -28,6 +28,7 @@ export class PositionTypesOverviewComponent extends TestScope implements OnInit,
 
   private subscription: Subscription;
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
@@ -44,7 +45,7 @@ export class PositionTypesOverviewComponent extends TestScope implements OnInit,
     titleService.setTitle(this.title);
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
-    
+
     this.edit = editService.edit();
     this.edit.result.subscribe(() => {
       this.table.selection.clear();

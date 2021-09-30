@@ -55,8 +55,8 @@ export class PartyContactMechanismEmailAddressInlineComponent implements OnInit,
 
   public ngOnDestroy(): void {
     if (this.partyContactMechanism) {
-      this.allors.client.invokeReactive(this.allors.session, this.partyContactMechanism.Delete);
-      this.allors.client.invokeReactive(this.allors.session, this.emailAddress.Delete);
+      this.partyContactMechanism.strategy.delete();
+      this.emailAddress.strategy.delete();
     }
   }
 

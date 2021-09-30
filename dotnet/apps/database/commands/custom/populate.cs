@@ -5,11 +5,12 @@
 
 namespace Commands
 {
+    using Allors;
     using Allors.Database.Domain;
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
 
-    [Command(Description = "Add file contents to the index")]
+    [Command(Description = "Creates a new test population")]
     public class Populate
     {
         public Program Parent { get; set; }
@@ -29,8 +30,12 @@ namespace Commands
 
             using (var transaction = database.CreateTransaction())
             {
-                var scheduler = new AutomatedAgents(transaction).System;
-                transaction.Services.Get<IUserService>().User = scheduler;
+                transaction.Services.Get<IUserService>().User = new AutomatedAgents(transaction).System;
+
+                new TestPopulation(transaction).Populate();
+
+                transaction.Derive();
+                transaction.Commit();
 
                 new Allors.Database.Domain.Upgrade(transaction, this.Parent.DataPath).Execute();
 

@@ -10,7 +10,6 @@ namespace Allors.Database.Domain.Tests
     using Database.Derivations;
     using Resources;
     using Xunit;
-    using Permission = Domain.Permission;
 
     public class RequestItemRuleTests : DomainTest, IClassFixture<Fixture>
     {

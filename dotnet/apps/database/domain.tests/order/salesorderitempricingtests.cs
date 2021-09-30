@@ -297,7 +297,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             this.order.Accept();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             this.Transaction.Commit();
         }

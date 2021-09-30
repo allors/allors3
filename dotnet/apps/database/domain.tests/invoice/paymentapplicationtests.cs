@@ -8,8 +8,8 @@ namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
     using Database.Derivations;
-    using TestPopulation;
     using Resources;
+    using TestPopulation;
     using Xunit;
 
     public class PaymentApplicationTests : DomainTest, IClassFixture<Fixture>

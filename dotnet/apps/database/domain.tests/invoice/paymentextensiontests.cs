@@ -5,10 +5,10 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using TestPopulation;
-    using Resources;
-    using Xunit;
     using System.Linq;
+    using Resources;
+    using TestPopulation;
+    using Xunit;
 
     public class PaymentExtensionTests : DomainTest, IClassFixture<Fixture>
     {

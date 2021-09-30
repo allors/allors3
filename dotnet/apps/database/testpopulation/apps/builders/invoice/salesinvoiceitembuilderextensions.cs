@@ -8,9 +8,9 @@ namespace Allors.Database.Domain.TestPopulation
 {
     using System.Linq;
     using Meta;
-    using InvoiceItemType = Domain.InvoiceItemType;
-    using SerialisedItemAvailability = Domain.SerialisedItemAvailability;
-    using UnifiedGood = Domain.UnifiedGood;
+    using InvoiceItemType = InvoiceItemType;
+    using SerialisedItemAvailability = SerialisedItemAvailability;
+    using UnifiedGood = UnifiedGood;
 
     public static partial class SalesInvoiceItemBuilderExtensions
     {

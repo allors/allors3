@@ -52,8 +52,8 @@ export class InlineWebAddressComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     if (this.partyContactMechanism) {
-      this.allors.client.invokeReactive(this.allors.session, this.partyContactMechanism.Delete);
-      this.allors.client.invokeReactive(this.allors.session, this.webAddress.Delete);
+      this.partyContactMechanism.strategy.delete();
+      this.webAddress.strategy.delete();
     }
   }
 

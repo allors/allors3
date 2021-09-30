@@ -27,7 +27,7 @@ namespace Allors.Database.Domain.Tests
             var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
             new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             new WorkEffortAssignmentRateBuilder(this.Transaction)
                 .WithWorkEffort(workOrder)

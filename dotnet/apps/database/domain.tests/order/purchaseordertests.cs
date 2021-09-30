@@ -8,10 +8,12 @@ namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
     using Database.Derivations;
-    using TestPopulation;
+    using Meta;
     using Resources;
+    using TestPopulation;
     using Xunit;
     using ContactMechanism = Domain.ContactMechanism;
+    using Revocation = Domain.Revocation;
 
     public class PurchaseOrderTests : DomainTest, IClassFixture<Fixture>
     {
@@ -691,7 +693,7 @@ namespace Allors.Database.Domain.Tests
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
 
             var errors = this.Derive().Errors.OfType<IDerivationErrorAtLeastOne>();
-            Assert.Equal(new Meta.IRoleType[]
+            Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrder.TakenViaSupplier,
                 this.M.PurchaseOrder.TakenViaSubcontractor,
@@ -709,7 +711,7 @@ namespace Allors.Database.Domain.Tests
             order.TakenViaSupplier = this.InternalOrganisation.ActiveSuppliers.FirstOrDefault();
 
             var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
-            Assert.Equal(new Meta.IRoleType[]
+            Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrder.TakenViaSupplier,
                 this.M.PurchaseOrder.TakenViaSubcontractor,
@@ -727,7 +729,7 @@ namespace Allors.Database.Domain.Tests
             order.TakenViaSubcontractor = this.InternalOrganisation.ActiveSubContractors.FirstOrDefault();
 
             var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
-            Assert.Equal(new Meta.IRoleType[]
+            Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrder.TakenViaSupplier,
                 this.M.PurchaseOrder.TakenViaSubcontractor,

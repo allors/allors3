@@ -18,8 +18,9 @@
             "tsConfig": "apps/angular/apps/app/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": ["apps/angular/apps/app/src/favicon.ico", "apps/angular/apps/app/src/assets"],
-            "styles": ["apps/angular/apps/app/src/styles.scss"],
-            "scripts": []
+            "styles": ["./node_modules/@angular/material/prebuilt-themes/indigo-pink.css", "apps/angular/apps/app/src/styles.scss", "./node_modules/easymde/dist/easymde.min.css"],
+            "scripts": [],
+            "allowedCommonJsDependencies": ["zone.js", "markdown.component", "easymde", "codemirror", "codemirror-spell-checker"]
           },
           "configurations": {
             "production": {

@@ -6,8 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using TestPopulation;
     using System.Linq;
+    using TestPopulation;
     using Xunit;
 
     public class SubContractorRelationshipTests : DomainTest, IClassFixture<Fixture>

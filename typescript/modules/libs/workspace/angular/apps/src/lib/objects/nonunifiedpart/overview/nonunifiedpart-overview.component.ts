@@ -41,13 +41,13 @@ export class NonUnifiedPartOverviewComponent extends TestScope implements AfterV
   }
 
   public ngAfterViewInit(): void {
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
+
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const m = this.m;
-          const { pullBuilder: pull } = m;
-          const x = {};
-
           const navRoute = new NavigationActivatedRoute(this.route);
           this.panelManager.id = navRoute.id();
           this.panelManager.objectType = m.NonUnifiedPart;

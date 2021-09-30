@@ -84,11 +84,11 @@ export class ProductCategoryEditComponent extends TestScope implements OnInit, O
       .subscribe(({ loaded, isCreate }) => {
         this.allors.session.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
-        this.category = loaded.object<ProductCategory>(m.ProductCategory);
-        this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
-        this.scopes = loaded.collection<Scope>(m.Scope);
-        this.locales = loaded.collection<Locale>(m.Locale);
+        this.internalOrganisation = loaded.object(m.InternalOrganisation);
+        this.category = loaded.object(m.ProductCategory);
+        this.categories = loaded.collection(m.ProductCategory);
+        this.scopes = loaded.collection(m.Scope);
+        this.locales = loaded.collection(m.Locale);
 
         if (isCreate) {
           this.title = 'Add Category';

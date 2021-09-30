@@ -6,9 +6,9 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using Allors.Database.Domain.TestPopulation;
     using System;
     using System.Linq;
+    using TestPopulation;
     using Xunit;
 
     public class NonSerialisedInventoryItemTests : DomainTest, IClassFixture<Fixture>
@@ -163,7 +163,7 @@ namespace Allors.Database.Domain.Tests
 
             // Act
             order1.SetReadyForPosting();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order1.Post();
             this.Transaction.Derive();
@@ -176,7 +176,7 @@ namespace Allors.Database.Domain.Tests
 
             order2.SetReadyForPosting();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order2.Post();
             this.Transaction.Derive();
@@ -212,7 +212,7 @@ namespace Allors.Database.Domain.Tests
             this.CreateInventoryTransaction(15, varianceReasons.Unknown, finishedGood);
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
             this.Transaction.Commit();
 
             // Assert
@@ -357,7 +357,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             order.SetReadyForPosting();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order.Post();
             this.Transaction.Derive();
@@ -380,7 +380,7 @@ namespace Allors.Database.Domain.Tests
             this.CreateInventoryTransaction(15, new InventoryTransactionReasons(this.Transaction).Unknown, unifiedGood);
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             Assert.Equal(0, salesItem1.QuantityRequestsShipping);
             Assert.Equal(10, salesItem1.QuantityPendingShipment);

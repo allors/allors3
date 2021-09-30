@@ -7,8 +7,8 @@
 namespace Allors.Database.Domain.TestPopulation
 {
     using Meta;
-    using Organisation = Domain.Organisation;
-    using VatRegime = Domain.VatRegime;
+    using Organisation = Organisation;
+    using VatRegime = VatRegime;
 
     public static partial class NonUnifiedGoodBuilderExtensions
     {

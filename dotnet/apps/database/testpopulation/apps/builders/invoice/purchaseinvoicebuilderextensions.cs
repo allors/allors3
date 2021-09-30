@@ -52,7 +52,7 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var faker = @this.Transaction.Faker();
 
-            var supplier = internalOrganisation.ActiveSuppliers.FirstOrDefault(v => v.GetType().Name == nameof(Domain.Organisation));
+            var supplier = internalOrganisation.ActiveSuppliers.FirstOrDefault(v => v.GetType().Name == nameof(Organisation));
 
             var purchaseInvoiceType = faker.Random.ListItem(@this.Transaction.Extent<PurchaseInvoiceType>());
 

@@ -30,7 +30,7 @@ export class OrganisationInlineComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     if (this.organisation) {
-      this.allors.client.invokeReactive(this.allors.session, this.organisation.Delete);
+      this.organisation.strategy.delete();
     }
   }
 

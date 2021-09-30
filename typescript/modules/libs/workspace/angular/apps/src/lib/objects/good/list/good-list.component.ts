@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { NonUnifiedGood, Good, ProductCategory } from '@allors/workspace/domain/default';
+import { NonUnifiedGood, Good, ProductCategory, UnifiedGood } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 

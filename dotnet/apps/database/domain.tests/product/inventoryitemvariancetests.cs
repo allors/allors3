@@ -24,7 +24,7 @@ namespace Allors.Database.Domain.Tests
 
             var finishedGood = this.CreatePart("FG1", nonSerialized);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
             this.Transaction.Commit();
 
             var inventoryItem = (NonSerialisedInventoryItem)finishedGood.InventoryItemsWherePart.First();
@@ -33,7 +33,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(0, inventoryItem.QuantityOnHand);
 
             var transaction = this.CreateInventoryTransaction(10, unknown, finishedGood);
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             Assert.Equal(10, finishedGood.QuantityOnHand);
             Assert.Equal(10, inventoryItem.QuantityOnHand);

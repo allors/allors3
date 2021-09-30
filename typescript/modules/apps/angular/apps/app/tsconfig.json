@@ -35,7 +35,7 @@
       "@allors/workspace/domain/default": ["libs/workspace/domain/apps/src/index.ts"],
       "@allors/workspace/domain/system": ["libs/workspace/domain/system/src/index.ts"],
       "@allors/workspace/meta/default": ["libs/workspace/meta/apps/src/index.ts"],
-      "@allors/workspace/meta/json/default": ["libs/workspace/meta/json/base/src/index.ts"],
+      "@allors/workspace/meta/json/default": ["libs/workspace/meta/json/apps/src/index.ts"],
       "@allors/workspace/meta/json/system": ["libs/workspace/meta/json/system/src/index.ts"],
       "@allors/workspace/meta/system": ["libs/workspace/meta/system/src/index.ts"]
     }

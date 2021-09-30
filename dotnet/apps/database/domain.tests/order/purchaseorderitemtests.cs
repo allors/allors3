@@ -8,15 +8,16 @@ namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
     using Database.Derivations;
-    using TestPopulation;
+    using Meta;
     using Resources;
+    using TestPopulation;
     using Xunit;
     using ContactMechanism = Domain.ContactMechanism;
     using Organisation = Domain.Organisation;
     using Part = Domain.Part;
-    using Permission = Domain.Permission;
     using PurchaseOrder = Domain.PurchaseOrder;
     using PurchaseShipment = Domain.PurchaseShipment;
+    using Revocation = Domain.Revocation;
     using SupplierOffering = Domain.SupplierOffering;
     using User = Domain.User;
 
@@ -651,7 +652,7 @@ namespace Allors.Database.Domain.Tests
             orderItem.Part = serialisedPart;
 
             var errors = this.Derive().Errors.OfType<IDerivationErrorAtLeastOne>();
-            Assert.Equal(new Meta.IRoleType[]
+            Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrderItem.SerialisedItem,
                 this.M.PurchaseOrderItem.SerialNumber,
@@ -672,7 +673,7 @@ namespace Allors.Database.Domain.Tests
             orderItem.SerialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
 
             var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
-            Assert.Equal(new Meta.IRoleType[]
+            Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrderItem.SerialisedItem,
                 this.M.PurchaseOrderItem.SerialNumber,
@@ -693,7 +694,7 @@ namespace Allors.Database.Domain.Tests
             orderItem.SerialNumber = "number";
 
             var errors = this.Derive().Errors.OfType<IDerivationErrorAtMostOne>();
-            Assert.Equal(new Meta.IRoleType[]
+            Assert.Equal(new IRoleType[]
             {
                 this.M.PurchaseOrderItem.SerialisedItem,
                 this.M.PurchaseOrderItem.SerialNumber,

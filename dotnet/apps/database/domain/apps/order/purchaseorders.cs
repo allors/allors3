@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Meta;
 
     public partial class PurchaseOrders
@@ -100,13 +101,13 @@ namespace Allors.Database.Domain
                 permissions.Get(this.Meta, this.Meta.Reopen),
             };
 
-            var writePermisions = new List<Permission>();
-            foreach (RoleType roleType in this.Meta.RoleTypes)
+            var writePermissions = new List<Permission>();
+            foreach (var roleType in this.Meta.DatabaseRoleTypes)
             {
-                writePermisions.Add(permissions.Get(this.Meta, roleType, Operations.Write));
+                writePermissions.Add(permissions.Get(this.Meta, roleType, Operations.Write));
             }
 
-            revocations.PurchaseOrderWriteRevocation.DeniedPermissions = writePermisions;
+            revocations.PurchaseOrderWriteRevocation.DeniedPermissions = writePermissions;
         }
     }
 }

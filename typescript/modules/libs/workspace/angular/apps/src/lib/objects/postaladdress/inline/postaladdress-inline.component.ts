@@ -53,8 +53,8 @@ export class PartyContactMechanismPostalAddressInlineComponent implements OnInit
 
   public ngOnDestroy(): void {
     if (this.partyContactMechanism) {
-      this.allors.client.invokeReactive(this.allors.session, this.partyContactMechanism.Delete);
-      this.allors.client.invokeReactive(this.allors.session, this.postalAddress.Delete);
+      this.partyContactMechanism.strategy.delete();
+      this.postalAddress.strategy.delete();
     }
   }
 

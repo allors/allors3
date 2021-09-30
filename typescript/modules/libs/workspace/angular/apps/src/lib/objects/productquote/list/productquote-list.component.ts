@@ -153,7 +153,7 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
             return {
               object: v,
               number: `${v.QuoteNumber}`,
-              to: v.Receiver && v.Receiver.displayName,
+              to: v.Receiver && v.Receiver.DisplayName,
               state: `${v.QuoteState && v.QuoteState.Name}`,
               description: `${v.Description || ''}`,
               responseRequired: v.RequiredResponseDate && format(new Date(v.RequiredResponseDate), 'dd-MM-yyyy'),

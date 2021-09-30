@@ -27,7 +27,7 @@ namespace Allors.Database.Domain.Tests
             var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
             new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var today = DateTimeFactory.CreateDateTime(this.Transaction.Now());
             var tomorrow = DateTimeFactory.CreateDateTime(this.Transaction.Now().AddDays(1));
@@ -44,7 +44,7 @@ namespace Allors.Database.Domain.Tests
             employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             var partyAssignment = workOrder.WorkEffortPartyAssignmentsWhereAssignment.FirstOrDefault();
@@ -69,7 +69,7 @@ namespace Allors.Database.Domain.Tests
             new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
 
             internalOrganisation.RequireExistingWorkEffortPartyAssignment = true;
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var today = DateTimeFactory.CreateDateTime(this.Transaction.Now());
             var tomorrow = DateTimeFactory.CreateDateTime(this.Transaction.Now().AddDays(1));
@@ -120,7 +120,7 @@ namespace Allors.Database.Domain.Tests
 
             var workEffortPartyAssignment = new WorkEffortPartyAssignmentBuilder(this.Transaction).WithAssignment(workOrder).WithParty(employee).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var assignedRate = new WorkEffortAssignmentRateBuilder(this.Transaction)
                 .WithWorkEffort(workOrder)

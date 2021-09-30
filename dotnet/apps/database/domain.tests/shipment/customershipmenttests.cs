@@ -7,7 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
-    using Allors.Database.Domain.TestPopulation;
+    using TestPopulation;
     using Xunit;
 
     public class CustomerShipmentTests : DomainTest, IClassFixture<Fixture>
@@ -863,7 +863,7 @@ namespace Allors.Database.Domain.Tests
             var internalOrganisation = this.InternalOrganisation;
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var order1 = new SalesOrderBuilder(this.Transaction)
                 .WithStore(new Stores(this.Transaction).FindBy(this.M.Store.Name, "store"))
@@ -875,13 +875,13 @@ namespace Allors.Database.Domain.Tests
             var order1Item = new SalesOrderItemBuilder(this.Transaction).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).Build();
             order1.AddSalesOrderItem(order1Item);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order1.SetReadyForPosting();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order1.Post();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order1.Accept();
             this.Transaction.Derive();
@@ -897,13 +897,13 @@ namespace Allors.Database.Domain.Tests
             var order2Item = new SalesOrderItemBuilder(this.Transaction).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).Build();
             order2.AddSalesOrderItem(order2Item);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order2.SetReadyForPosting();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order2.Post();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order2.Accept();
             this.Transaction.Derive();
@@ -919,13 +919,13 @@ namespace Allors.Database.Domain.Tests
             var order3Item = new SalesOrderItemBuilder(this.Transaction).WithProduct(good1).WithQuantityOrdered(1).WithAssignedUnitPrice(15).Build();
             order3.AddSalesOrderItem(order3Item);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order3.SetReadyForPosting();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order3.Post();
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             order3.Accept();
             this.Transaction.Derive();

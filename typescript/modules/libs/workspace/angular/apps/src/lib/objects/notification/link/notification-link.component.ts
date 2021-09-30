@@ -5,6 +5,7 @@ import { switchMap } from 'rxjs/operators';
 import { Notification, Person } from '@allors/workspace/domain/default';
 import { NavigationService, ObjectService, RefreshService, UserId } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
+import { M } from '@allors/workspace/meta/default';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -33,13 +34,7 @@ export class NotificationLinkComponent implements OnInit, OnDestroy {
     return '?';
   }
 
-  constructor(
-    @Self() public allors: SessionService,
-    public factoryService: ObjectService,
-    public refreshService: RefreshService,
-    public navigation: NavigationService,
-    private userId: UserId
-  ) {
+  constructor(@Self() public allors: SessionService, public factoryService: ObjectService, public refreshService: RefreshService, public navigation: NavigationService, private userId: UserId) {
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 

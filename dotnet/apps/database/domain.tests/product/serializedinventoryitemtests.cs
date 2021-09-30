@@ -6,8 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using Xunit;
     using System.Linq;
+    using Xunit;
 
     public class SerialisedInventoryItemTests : DomainTest, IClassFixture<Fixture>
     {
@@ -26,7 +26,7 @@ namespace Allors.Database.Domain.Tests
                 .WithSerialisedItem(serialItem)
                 .Build();
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
             this.Transaction.Commit();
 
             var builder = new SerialisedInventoryItemBuilder(this.Transaction).WithFacility(this.InternalOrganisation.FacilitiesWhereOwner.FirstOrDefault()).WithPart(part);
@@ -63,12 +63,12 @@ namespace Allors.Database.Domain.Tests
             var finishedGood = this.CreatePart("1", kinds.Serialised);
             finishedGood.AddSerialisedItem(serialItem);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             var serialInventoryItem = new SerialisedInventoryItemBuilder(this.Transaction).WithSerialisedItem(serialItem).WithPart(finishedGood).Build();
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             Assert.Equal(goodOrder, serialInventoryItem.SerialisedInventoryItemState);
@@ -100,13 +100,13 @@ namespace Allors.Database.Domain.Tests
             var good = this.CreateGood("10101", vatRegime, "good1", unitsOfMeasure.Piece, category, serialPart);
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             this.CreateInventoryTransaction(1, unknown, serialPart, serialItem1);
             this.CreateInventoryTransaction(1, unknown, serialPart, serialItem2);
             this.CreateInventoryTransaction(1, unknown, serialPart, serialItem3);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             Assert.Equal(3, serialPart.QuantityOnHand);
@@ -136,12 +136,12 @@ namespace Allors.Database.Domain.Tests
             var good = this.CreateGood("10101", vatRegime, "good1", piece, category, finishedGood);
 
             // Act
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             this.CreateInventoryTransaction(1, unknown, finishedGood, serialItem1, warehouse1);
             this.CreateInventoryTransaction(1, unknown, finishedGood, serialItem2, warehouse2);
 
-            this.Transaction.Derive(true);
+            this.Transaction.Derive();
 
             // Assert
             var item1 = (SerialisedInventoryItem)new InventoryItems(this.Transaction).Extent().First(i => i.Facility.Equals(warehouse1));

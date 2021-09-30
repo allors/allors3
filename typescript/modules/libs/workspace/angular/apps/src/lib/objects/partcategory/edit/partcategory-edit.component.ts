@@ -104,7 +104,7 @@ export class PartCategoryEditComponent extends TestScope implements OnInit, OnDe
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe((saved: Saved) => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.dialogRef.close(this.category);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

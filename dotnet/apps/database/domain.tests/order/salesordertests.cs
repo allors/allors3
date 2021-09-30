@@ -8,16 +8,9 @@ namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
     using Database.Derivations;
-    using TestPopulation;
     using Resources;
+    using TestPopulation;
     using Xunit;
-    using CustomerShipment = Domain.CustomerShipment;
-    using NonSerialisedInventoryItem = Domain.NonSerialisedInventoryItem;
-    using SalesInvoiceItem = Domain.SalesInvoiceItem;
-    using SalesOrderItem = Domain.SalesOrderItem;
-    using ShipmentItem = Domain.ShipmentItem;
-    using Store = Domain.Store;
-    using User = Domain.User;
 
     public class SalesOrderTests : DomainTest, IClassFixture<Fixture>
     {

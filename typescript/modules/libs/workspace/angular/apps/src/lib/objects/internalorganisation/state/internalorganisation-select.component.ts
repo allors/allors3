@@ -5,6 +5,7 @@ import { Organisation } from '@allors/workspace/domain/default';
 import { SessionService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { M } from '@allors/workspace/meta/default';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -15,7 +16,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 export class SelectInternalOrganisationComponent implements OnInit, OnDestroy {
   m: any;
   public get internalOrganisation() {
-    const internalOrganisation = this.internalOrganisations.find((v) => v.id === this.internalOrganisationId.value);
+    const internalOrganisation = this.internalOrganisations.find((v) => v.strategy.id === this.internalOrganisationId.value);
     return internalOrganisation;
   }
 
