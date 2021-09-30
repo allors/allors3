@@ -5,7 +5,7 @@
     <div class="row">
       <a-mat-select class="col-md" [object]="positionTypeRate" [roleType]="m.PositionTypeRate.RateType" [options]="rateTypes" display="Name"></a-mat-select>
       <mat-form-field class="col-md">
-        <mat-select name="positions" [(ngModel)]="selectedPositionTypes" placeholder="positions" multiple="true" (ngModelChange)="setDirty()">
+        <mat-select name="positions" [(ngModel)]="selectedPositionTypes" placeholder="positions" multiple="true">
           <mat-option *ngFor="let positionType of positionTypes" [value]="positionType">{{ positionType.Title }}</mat-option>
         </mat-select>
       </mat-form-field>

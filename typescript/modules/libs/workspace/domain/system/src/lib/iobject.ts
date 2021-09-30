@@ -4,6 +4,4 @@ export interface IObject {
   id: number;
 
   strategy: IStrategy;
-
-  isNew: boolean;
 }

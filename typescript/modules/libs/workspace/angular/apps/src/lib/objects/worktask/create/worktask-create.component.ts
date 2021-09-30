@@ -132,7 +132,7 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
   }
 
   public contactPersonAdded(contact: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.workTask.Customer as Organisation;
     organisationContactRelationship.Contact = contact;
 

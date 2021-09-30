@@ -54,18 +54,18 @@ export abstract class Strategy implements IStrategy {
     return diffs;
   }
 
-  get hasChangedRoles(): boolean {
-    return this.session.sessionOriginState.hasChangedRoles(this) || this.WorkspaceOriginState?.hasChangedRoles || this.DatabaseOriginState?.hasChangedRoles;
+  get hasChanges(): boolean {
+    return this.session.sessionOriginState.hasChanges(this) || this.WorkspaceOriginState?.hasChanges || this.DatabaseOriginState?.hasChanges;
   }
 
-  hasChangedRole(roleType: RoleType): boolean {
+  hasChanged(roleType: RoleType): boolean {
     switch (roleType.origin) {
       case Origin.Session:
-        return this.session.sessionOriginState.hasChangedRole(this, roleType);
+        return this.session.sessionOriginState.hasChanged(this, roleType);
       case Origin.Workspace:
-        return this.WorkspaceOriginState?.hasChangedRole(roleType) ?? false;
+        return this.WorkspaceOriginState?.hasChanged(roleType) ?? false;
       case Origin.Database:
-        return this.canRead(roleType) ? this.DatabaseOriginState?.hasChangedRole(roleType) ?? false : false;
+        return this.canRead(roleType) ? this.DatabaseOriginState?.hasChanged(roleType) ?? false : false;
       default:
         throw new Error('Unknown origin');
     }
