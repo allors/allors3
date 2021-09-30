@@ -27,7 +27,7 @@
                 class="col-md"
                 [object]="customerShipment"
                 [roleType]="m.CustomerShipment.ShipToParty"
-                [filter]="customersFilter.create(allors.context)"
+                [filter]="customersFilter.create(allors)"
                 display="displayName"
                 (changed)="customerSelected($event)"
                 label="Customer"
@@ -141,7 +141,7 @@
     </mat-card-content>
 
     <mat-card-actions>
-      <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+      <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE</button>
       <button mat-button (click)="panel.toggle()" type="button">CANCEL</button>
     </mat-card-actions>
   </mat-card>

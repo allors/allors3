@@ -30,7 +30,7 @@ export class WorkspaceOriginState extends RecordBasedOriginState {
   }
 
   push() {
-    if (this.hasChangedRoles) {
+    if (this.hasChanges) {
       this.workspace.push(this.id, this.class, this.record?.version ?? UnknownVersion, this.changedRoleByRelationType);
     }
 

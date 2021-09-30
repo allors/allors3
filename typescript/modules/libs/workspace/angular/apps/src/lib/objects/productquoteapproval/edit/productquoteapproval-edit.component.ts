@@ -31,7 +31,6 @@ export class ProductQuoteApprovalEditComponent extends TestScope implements OnIn
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<ProductQuoteApprovalEditComponent>,
-
     public printService: PrintService,
     public refreshService: RefreshService,
     private saveService: SaveService

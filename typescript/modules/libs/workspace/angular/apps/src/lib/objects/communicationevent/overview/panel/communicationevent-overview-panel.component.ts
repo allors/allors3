@@ -1,7 +1,7 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { CommunicationEvent, displayName } from '@allors/workspace/domain/default';
+import { CommunicationEvent } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -55,6 +55,10 @@ export class CommunicationEventOverviewPanelComponent extends TestScope implemen
   }
 
   ngOnInit() {
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
+
     this.panel.name = 'communicationevent';
     this.panel.title = 'Communication events';
     this.panel.icon = 'message';
@@ -82,7 +86,6 @@ export class CommunicationEventOverviewPanelComponent extends TestScope implemen
     const pullName = `${this.panel.name}_${this.m.CommunicationEvent.tag}`;
 
     this.panel.onPull = (pulls) => {
-      const { x, pull } = this.metaService;
       const { id } = this.panel.manager;
 
       pulls.push(
@@ -106,13 +109,13 @@ export class CommunicationEventOverviewPanelComponent extends TestScope implemen
       this.objects = loaded.collection(pullName) as CommunicationEvent[];
 
       if (this.objects) {
-        this.table.total = loaded.value(`${pullName}_total`) ?? this.objects.length;
+        this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects.length) as number;
         this.table.data = this.objects.map((v) => {
           return {
             object: v,
             type: v.strategy.cls.singularName,
             description: v.Description,
-            involved: v.InvolvedParties.map((w) => displayName(w)).join(', '),
+            involved: v.InvolvedParties.map((w) => w.DisplayName).join(', '),
             status: v.CommunicationEventState.Name,
             purpose: v.EventPurposes.map((w) => w.Name).join(', '),
           } as Row;

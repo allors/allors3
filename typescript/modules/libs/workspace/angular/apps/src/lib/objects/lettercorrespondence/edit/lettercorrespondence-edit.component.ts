@@ -65,7 +65,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
@@ -76,7 +76,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
 
           let pulls = [
             pull.Organisation({
-              object: this.internalOrganisationId.value,
+              objectId: this.internalOrganisationId.value,
               name: 'InternalOrganisation',
               include: {
                 ActiveEmployees: {
@@ -201,7 +201,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
 
         const contacts = new Set<Party>();
 
-        if (!!this.organisation) {
+        if (this.organisation) {
           contacts.add(this.organisation);
         }
 
@@ -209,15 +209,15 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
           internalOrganisation.ActiveEmployees.reduce((c, e) => c.add(e), contacts);
         }
 
-        if (!!this.organisation && this.organisation.CurrentContacts !== undefined) {
+        if (this.organisation && this.organisation.CurrentContacts !== undefined) {
           this.organisation.CurrentContacts.reduce((c, e) => c.add(e), contacts);
         }
 
-        if (!!this.person) {
+        if (this.person) {
           contacts.add(this.person);
         }
 
-        if (!!this.parties) {
+        if (this.parties) {
           this.parties.reduce((c, e) => c.add(e), contacts);
         }
 
@@ -233,7 +233,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
   }
 
   public fromAddressAdded(partyContactMechanism: PartyContactMechanism): void {
-    if (!!this.communicationEvent.FromParty) {
+    if (this.communicationEvent.FromParty) {
       this.communicationEvent.FromParty.addPartyContactMechanism(partyContactMechanism);
     }
 
@@ -244,7 +244,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
   }
 
   public toAddressAdded(partyContactMechanism: PartyContactMechanism): void {
-    if (!!this.communicationEvent.ToParty) {
+    if (this.communicationEvent.ToParty) {
       this.communicationEvent.ToParty.addPartyContactMechanism(partyContactMechanism);
     }
 
@@ -270,7 +270,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
 
   private addContactRelationship(party: Person): void {
     if (this.organisation) {
-      const relationShip: OrganisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+      const relationShip: OrganisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
       relationShip.Contact = party;
       relationShip.Organisation = this.organisation;
     }
@@ -283,7 +283,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
   }
 
   private sortContacts(): void {
-    this.contacts.sort((a, b) => (a.displayName > b.displayName ? 1 : b.displayName > a.displayName ? -1 : 0));
+    this.contacts.sort((a, b) => (a.DisplayName > b.DisplayName ? 1 : b.DisplayName > a.DisplayName ? -1 : 0));
   }
 
   private updateFromParty(party: Party): void {

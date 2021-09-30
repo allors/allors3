@@ -7,7 +7,7 @@ import { format, formatDistance } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
-import { CommunicationEvent, displayName } from '@allors/workspace/domain/default';
+import { CommunicationEvent } from '@allors/workspace/domain/default';
 
 interface Row extends TableRow {
   object: CommunicationEvent;
@@ -35,6 +35,7 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
 
   private subscription: Subscription;
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
@@ -50,9 +51,10 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
 
     titleService.setTitle(this.title);
 
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
+
     this.delete = deleteService.delete(allors.client, allors.session);
     this.edit = editService.edit();
-
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -67,7 +69,7 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
@@ -120,7 +122,7 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
             type: v.strategy.cls.singularName,
             state: v.CommunicationEventState && v.CommunicationEventState.Name,
             subject: v.Subject,
-            involved: v.InvolvedParties.map((w) => displayName(w)).join(', '),
+            involved: v.InvolvedParties.map((w) => w.DisplayName).join(', '),
             started: v.ActualStart && format(new Date(v.ActualStart), 'dd-MM-yyyy'),
             ended: v.ActualEnd && format(new Date(v.ActualEnd), 'dd-MM-yyyy'),
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),

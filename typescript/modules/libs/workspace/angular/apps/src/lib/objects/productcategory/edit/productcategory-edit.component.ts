@@ -32,7 +32,6 @@ export class ProductCategoryEditComponent extends TestScope implements OnInit, O
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<ProductCategoryEditComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,
@@ -44,7 +43,7 @@ export class ProductCategoryEditComponent extends TestScope implements OnInit, O
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 

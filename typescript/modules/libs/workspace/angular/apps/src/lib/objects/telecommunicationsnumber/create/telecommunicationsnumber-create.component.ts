@@ -32,7 +32,6 @@ export class TelecommunicationsNumberCreateComponent extends TestScope implement
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<TelecommunicationsNumberCreateComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId

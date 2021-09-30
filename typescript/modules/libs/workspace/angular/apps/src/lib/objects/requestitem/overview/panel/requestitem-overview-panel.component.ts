@@ -51,7 +51,6 @@ export class RequestItemOverviewPanelComponent extends TestScope {
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
-
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public methodService: MethodService,
@@ -122,7 +121,7 @@ export class RequestItemOverviewPanelComponent extends TestScope {
     panel.onPulled = (loaded) => {
       this.requestItems = loaded.collection<RequestItem>(pullName);
       this.request = loaded.object<RequestForQuote>(this.m.Request);
-      this.table.total = loaded.value([`${pullName}_total`]) ?? this.requestItems.length;
+      this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.requestItems.length;
       this.table.data = this.requestItems.map((v) => {
         return {
           object: v,

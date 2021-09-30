@@ -31,10 +31,10 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
 
   private subscription: Subscription;
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
-
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public editService: EditService,
@@ -44,6 +44,8 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
     titleService: Title
   ) {
     super();
+
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
 
     titleService.setTitle(this.title);
 
@@ -69,7 +71,7 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 

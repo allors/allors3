@@ -7,7 +7,6 @@ import { M } from '@allors/workspace/meta/default';
 import { Organisation, Part, SupplierOffering, UnitOfMeasure, Settings, Currency, RatingType, Ordinal } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -38,7 +37,6 @@ export class SupplierOfferingEditComponent extends TestScope implements OnInit, 
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<SupplierOfferingEditComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,

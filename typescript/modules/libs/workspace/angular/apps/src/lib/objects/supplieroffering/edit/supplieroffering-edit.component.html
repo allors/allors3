@@ -6,7 +6,7 @@
   <mat-dialog-content>
     <div class="container-fluid">
       <div class="row">
-        <a-mat-autocomplete class="col-md" [object]="supplierOffering" [roleType]="m.SupplierOffering.Supplier" [filter]="allSuppliersFilter.create(allors.context)" display="displayName" label="Supplier"></a-mat-autocomplete>
+        <a-mat-autocomplete class="col-md" [object]="supplierOffering" [roleType]="m.SupplierOffering.Supplier" [filter]="allSuppliersFilter.create(allors)" display="displayName" label="Supplier"></a-mat-autocomplete>
       </div>
 
       <div class="row">
@@ -42,6 +42,6 @@
 
   <div mat-dialog-actions>
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE</button>
   </div>
 </form>

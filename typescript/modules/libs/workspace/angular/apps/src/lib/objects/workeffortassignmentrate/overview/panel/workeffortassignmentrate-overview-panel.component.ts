@@ -127,7 +127,7 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
       this.objects = loaded.collection<WorkEffortAssignmentRate>(pullName);
 
       if (this.objects) {
-        this.table.total = loaded.value(`${pullName}_total`) ?? this.objects.length;
+        this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.objects.length;
         this.refreshTable();
       }
     };
@@ -137,7 +137,7 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
     this.table.data = this.workEffortAssignmentRates.map((v) => {
       return {
         object: v,
-        // partyAssignment: displayName(v.WorkEffortPartyAssignment),
+        // partyAssignment: v.WorkEffortPartyAssignment.DisplayName,
         // from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
         // through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
         rateType: v.RateType.Name,

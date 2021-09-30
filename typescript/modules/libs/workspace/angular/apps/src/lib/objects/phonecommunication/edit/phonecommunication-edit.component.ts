@@ -15,6 +15,7 @@ import {
   PhoneCommunication,
   CommunicationEventPurpose,
   CommunicationEventState,
+  TelecommunicationsNumber,
 } from '@allors/workspace/domain/default';
 import { NavigationService, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
@@ -53,7 +54,6 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PhoneCommunicationEditComponent>,
     public refreshService: RefreshService,
-
     public navigation: NavigationService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId
@@ -64,7 +64,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
@@ -75,7 +75,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
 
           let pulls = [
             pull.Organisation({
-              object: this.internalOrganisationId.value,
+              objectId: this.internalOrganisationId.value,
               name: 'InternalOrganisation',
               include: {
                 ActiveEmployees: {
@@ -181,7 +181,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
 
         const contacts = new Set<Party>();
 
-        if (!!this.organisation) {
+        if (this.organisation) {
           contacts.add(this.organisation);
         }
 
@@ -189,15 +189,15 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
           internalOrganisation.ActiveEmployees.reduce((c, e) => c.add(e), contacts);
         }
 
-        if (!!this.organisation && this.organisation.CurrentContacts !== undefined) {
+        if (this.organisation && this.organisation.CurrentContacts !== undefined) {
           this.organisation.CurrentContacts.reduce((c, e) => c.add(e), contacts);
         }
 
-        if (!!this.person) {
+        if (this.person) {
           contacts.add(this.person);
         }
 
-        if (!!this.parties) {
+        if (this.parties) {
           this.parties.reduce((c, e) => c.add(e), contacts);
         }
 
@@ -213,7 +213,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
   }
 
   public fromPhoneNumberAdded(partyContactMechanism: PartyContactMechanism): void {
-    if (!!this.communicationEvent.FromParty) {
+    if (this.communicationEvent.FromParty) {
       this.communicationEvent.FromParty.addPartyContactMechanism(partyContactMechanism);
     }
 
@@ -224,7 +224,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
   }
 
   public toPhoneNumberAdded(partyContactMechanism: PartyContactMechanism): void {
-    if (!!this.communicationEvent.ToParty) {
+    if (this.communicationEvent.ToParty) {
       this.communicationEvent.ToParty.addPartyContactMechanism(partyContactMechanism);
     }
 
@@ -249,7 +249,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
   }
 
   private sortContacts(): void {
-    this.contacts.sort((a, b) => (a.displayName > b.displayName ? 1 : b.displayName > a.displayName ? -1 : 0));
+    this.contacts.sort((a, b) => (a.DisplayName > b.DisplayName ? 1 : b.DisplayName > a.DisplayName ? -1 : 0));
   }
 
   private addContactRelationship(party: Person): void {

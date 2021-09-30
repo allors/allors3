@@ -30,7 +30,6 @@ export class SubContractorRelationshipEditComponent extends TestScope implements
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<SubContractorRelationshipEditComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId,
@@ -41,9 +40,8 @@ export class SubContractorRelationshipEditComponent extends TestScope implements
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
-  static canCreate(createData: ObjectData) {
-    const personId = ids.Person;
-    if (createData.associationObjectType.id === personId) {
+  public canCreate(createData: ObjectData) {
+    if (createData.associationObjectType === this.m.Person) {
       return false;
     }
 

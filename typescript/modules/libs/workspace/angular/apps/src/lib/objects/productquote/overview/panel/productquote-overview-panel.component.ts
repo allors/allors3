@@ -2,7 +2,7 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayName, ProductQuote } from '@allors/workspace/domain/default';
+import { ProductQuote } from '@allors/workspace/domain/default';
 import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -133,7 +133,7 @@ export class ProductQuoteOverviewPanelComponent extends TestScope implements OnI
           return {
             object: v,
             number: v.QuoteNumber,
-            customer: displayName(v.Receiver),
+            customer: v.Receiver.DisplayName,
             state: v.QuoteState ? v.QuoteState.Name : '',
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
           } as Row;

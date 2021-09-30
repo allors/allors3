@@ -4,10 +4,9 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { NonUnifiedGood, Organisation, ProductIdentificationType, ProductType, Settings, Good, ProductCategory, Ownership, ProductNumber } from '@allors/workspace/domain/default';
+import { NonUnifiedGood, Organisation, ProductIdentificationType, ProductType, Settings, Good, ProductCategory, Ownership, ProductNumber, Locale } from '@allors/workspace/domain/default';
 import { NavigationService, ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';

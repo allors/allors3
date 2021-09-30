@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayName, Shipment } from '@allors/workspace/domain/default';
+import { Shipment } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService, Sorter } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -55,6 +55,8 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
 
     titleService.setTitle(this.title);
 
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
+
     this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
@@ -81,7 +83,7 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
@@ -141,8 +143,8 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
           return {
             object: v,
             number: `${v.ShipmentNumber}`,
-            from: displayName(v.ShipFromParty),
-            to: displayName(v.ShipToParty),
+            from: v.ShipFromParty.DisplayName,
+            to: v.ShipToParty.DisplayName,
             state: `${v.ShipmentState && v.ShipmentState.Name}`,
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
           } as Row;

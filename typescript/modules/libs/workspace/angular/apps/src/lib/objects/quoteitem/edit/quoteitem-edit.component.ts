@@ -112,12 +112,10 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<QuoteItemEditComponent>,
-
     private saveService: SaveService,
     public refreshService: RefreshService,
 
     private fetcher: FetcherService,
-
     public snackBar: MatSnackBar
   ) {
     super();
@@ -126,7 +124,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 

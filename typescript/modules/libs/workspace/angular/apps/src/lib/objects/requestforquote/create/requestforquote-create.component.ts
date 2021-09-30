@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, Currency, RequestForQuote, CustomerRelationship } from '@allors/workspace/domain/default';
+import { Person, Organisation, OrganisationContactRelationship, Party, ContactMechanism, PartyContactMechanism, Currency, RequestForQuote, CustomerRelationship } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -42,7 +42,6 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<RequestForQuoteCreateComponent>,
-
     private refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,

@@ -45,13 +45,13 @@ export abstract class Session implements ISession {
     this.pushToWorkspaceTracker = new PushToWorkspaceTracker();
   }
 
-  get hasChangedRoles(): boolean {
+  get hasChanges(): boolean {
     // TODO: Optimize
-    // for (const [, strategy] of this.strategyByWorkspaceId) {
-    //   if (strategy.hasChangedRoles) {
-    //     return true;
-    //   }
-    // }
+    for (const [, strategy] of this.strategyByWorkspaceId) {
+      if (strategy.hasChanges) {
+        return true;
+      }
+    }
 
     return false;
   }

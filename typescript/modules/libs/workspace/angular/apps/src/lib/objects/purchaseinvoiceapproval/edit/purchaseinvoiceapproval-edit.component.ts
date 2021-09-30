@@ -31,7 +31,6 @@ export class PurchaseInvoiceApprovalEditComponent extends TestScope implements O
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PurchaseInvoiceApprovalEditComponent>,
-
     public printService: PrintService,
     public refreshService: RefreshService,
     private saveService: SaveService

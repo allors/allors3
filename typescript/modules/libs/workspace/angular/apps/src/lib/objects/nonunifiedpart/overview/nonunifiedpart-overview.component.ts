@@ -6,8 +6,9 @@ import { switchMap } from 'rxjs/operators';
 
 import { Part, NonUnifiedPart } from '@allors/workspace/domain/default';
 import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { M } from '@allors/workspace/meta/default';
 
 @Component({
   templateUrl: './nonunifiedpart-overview.component.html',
@@ -20,10 +21,11 @@ export class NonUnifiedPartOverviewComponent extends TestScope implements AfterV
 
   subscription: Subscription;
   serialised: boolean;
+  m: M;
 
   constructor(
     @Self() public panelManager: PanelManagerService,
-
+    public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private route: ActivatedRoute,
@@ -33,6 +35,8 @@ export class NonUnifiedPartOverviewComponent extends TestScope implements AfterV
   ) {
     super();
 
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+
     titleService.setTitle(this.title);
   }
 
@@ -40,7 +44,9 @@ export class NonUnifiedPartOverviewComponent extends TestScope implements AfterV
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const m = this.m;  const { pullBuilder: pull } = m; const x = {};
+          const m = this.m;
+          const { pullBuilder: pull } = m;
+          const x = {};
 
           const navRoute = new NavigationActivatedRoute(this.route);
           this.panelManager.id = navRoute.id();

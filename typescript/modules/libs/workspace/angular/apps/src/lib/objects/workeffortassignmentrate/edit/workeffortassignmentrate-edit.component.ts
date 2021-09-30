@@ -31,7 +31,6 @@ export class WorkEffortAssignmentRateEditComponent extends TestScope implements 
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<WorkEffortAssignmentRateEditComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService
   ) {

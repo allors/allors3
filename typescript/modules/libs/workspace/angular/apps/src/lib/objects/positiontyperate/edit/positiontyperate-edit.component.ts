@@ -32,7 +32,6 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PositionTypeRateEditComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService
   ) {

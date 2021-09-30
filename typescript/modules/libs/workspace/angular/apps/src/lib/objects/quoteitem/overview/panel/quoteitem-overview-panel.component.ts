@@ -55,7 +55,6 @@ export class QuoteItemOverviewPanelComponent extends TestScope {
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
-
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public methodService: MethodService,
@@ -122,7 +121,7 @@ export class QuoteItemOverviewPanelComponent extends TestScope {
     panel.onPulled = (loaded) => {
       this.quoteItems = loaded.collection<QuoteItem>(pullName);
       this.quote = loaded.object<ProductQuote>(quotePullName);
-      this.table.total = loaded.value([`${pullName}_total`]) ?? this.quoteItems.length;
+      this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.quoteItems.length;
       this.table.data = this.quoteItems.map((v) => {
         return {
           object: v,

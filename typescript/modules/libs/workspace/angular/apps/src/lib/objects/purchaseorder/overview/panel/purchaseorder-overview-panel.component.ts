@@ -51,7 +51,6 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-
     public objectService: ObjectService,
     public methodService: MethodService,
     public refreshService: RefreshService,
@@ -132,7 +131,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
       this.objects.sort((a, b) => (a.OrderNumber > b.OrderNumber ? 1 : b.OrderNumber > a.OrderNumber ? -1 : 0));
 
       if (this.objects) {
-        this.table.total = loaded.value(`${pullName}_total`) ?? this.objects.length;
+        this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.objects.length;
         this.table.data = this.objects.map((v) => {
           return {
             object: v,

@@ -34,7 +34,6 @@ export class UnifiedGoodCreateComponent extends TestScope implements OnInit, OnD
     @Self() public allors: SessionService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<UnifiedGoodCreateComponent>,
-
     private refreshService: RefreshService,
     public navigationService: NavigationService,
     private saveService: SaveService,

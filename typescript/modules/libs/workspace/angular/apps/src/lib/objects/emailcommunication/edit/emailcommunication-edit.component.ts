@@ -16,6 +16,7 @@ import {
   PartyContactMechanism,
   EmailCommunication,
   EmailTemplate,
+  EmailAddress,
 } from '@allors/workspace/domain/default';
 import { NavigationService, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
@@ -67,7 +68,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
@@ -277,12 +278,12 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
   }
 
   private sortContacts(): void {
-    this.contacts.sort((a, b) => (a.displayName > b.displayName ? 1 : b.displayName > a.displayName ? -1 : 0));
+    this.contacts.sort((a, b) => (a.DisplayName > b.DisplayName ? 1 : b.DisplayName > a.DisplayName ? -1 : 0));
   }
 
   private addContactRelationship(party: Person): void {
     if (this.organisation) {
-      const relationShip: OrganisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+      const relationShip: OrganisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
       relationShip.Contact = party;
       relationShip.Organisation = this.organisation;
     }

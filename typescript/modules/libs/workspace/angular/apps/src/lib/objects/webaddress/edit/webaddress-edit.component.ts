@@ -28,7 +28,6 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: IObject,
     public dialogRef: MatDialogRef<WebAddressEditComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId
@@ -59,7 +58,7 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
 
         this.contactMechanismTypes = loaded.collection<Enumeration>(m.Enumeration);
 
-        this.contactMechanism = loaded.object<ContactMechanism>(m.ContactMechanism);
+        this.contactMechanism = loaded.object<ElectronicAddress>(m.ContactMechanism);
 
         if (this.contactMechanism.canWriteElectronicAddressString) {
           this.title = 'Edit Web Address';

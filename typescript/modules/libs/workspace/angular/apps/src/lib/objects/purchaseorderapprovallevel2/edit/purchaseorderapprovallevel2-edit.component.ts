@@ -31,7 +31,6 @@ export class PurchaseOrderApprovalLevel2EditComponent extends TestScope implemen
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PurchaseOrderApprovalLevel2EditComponent>,
-
     public printService: PrintService,
     public refreshService: RefreshService,
     private saveService: SaveService

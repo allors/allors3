@@ -10,7 +10,7 @@
           class="col-md"
           [object]="serialisedItem"
           [roleType]="m.SerialisedItem.PartWhereItem"
-          [filter]="serialisedgoodsFilter.create(allors.context)"
+          [filter]="serialisedgoodsFilter.create(allors)"
           display="Name"
           label="Product"
           (changed)="partSelected($event)"
@@ -33,11 +33,11 @@
 
       <div class="row">
         <a-mat-select class="col-md" [object]="serialisedItem" [roleType]="m.SerialisedItem.Ownership" [options]="ownerships" display="Name"></a-mat-select>
-        <a-mat-autocomplete class="col-md" [object]="serialisedItem" [roleType]="m.SerialisedItem.OwnedBy" [filter]="partiesFilter.create(allors.context)" display="displayName"></a-mat-autocomplete>
+        <a-mat-autocomplete class="col-md" [object]="serialisedItem" [roleType]="m.SerialisedItem.OwnedBy" [filter]="partiesFilter.create(allors)" display="displayName"></a-mat-autocomplete>
       </div>
 
       <div class="row">
-        <a-mat-autocomplete class="col-md-6" [object]="serialisedItem" [roleType]="m.SerialisedItem.RentedBy" [filter]="partiesFilter.create(allors.context)" display="displayName"></a-mat-autocomplete>
+        <a-mat-autocomplete class="col-md-6" [object]="serialisedItem" [roleType]="m.SerialisedItem.RentedBy" [filter]="partiesFilter.create(allors)" display="displayName"></a-mat-autocomplete>
       </div>
 
       <div class="row">
@@ -56,6 +56,6 @@
 
   <div mat-dialog-actions>
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges || !selectedPart">SAVE</button>
+    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges || !selectedPart">SAVE</button>
   </div>
 </form>

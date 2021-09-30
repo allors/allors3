@@ -2,12 +2,12 @@
   <h3 mat-dialog-title>{{ title }}</h3>
 
   <mat-dialog-content>
-    <div *ngIf="!requestItem.isNew" class="row">
+    <div *ngIf="!requestItem.strategy.isNew" class="row">
       <a-mat-static [object]="requestItem" [roleType]="m.RequestItem.RequestItemState" display="Name" label="State" class="col-md"></a-mat-static>
     </div>
 
     <div class="row">
-      <a-mat-autocomplete [object]="requestItem" [roleType]="m.RequestItem.Product" display="Name" [filter]="goodsFilter.create(allors.context)" (changed)="goodSelected($event)" class="col-md"></a-mat-autocomplete>
+      <a-mat-autocomplete [object]="requestItem" [roleType]="m.RequestItem.Product" display="Name" [filter]="goodsFilter.create(allors)" (changed)="goodSelected($event)" class="col-md"></a-mat-autocomplete>
     </div>
 
     <div class="row">
@@ -37,6 +37,6 @@
 
   <div mat-dialog-actions>
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE</button>
   </div>
 </form>

@@ -2,7 +2,7 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { format } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayName, PartyRelationship } from '@allors/workspace/domain/default';
+import { PartyRelationship } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -133,7 +133,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
       this.objects = loaded.collection<PartyRelationship>(pullName);
 
       this.currentPartyRelationships = loaded.collection<PartyRelationship>(active);
-      this.currentPartyRelationships = this.currentPartyRelationships.filter((v) => v.strategy.cls !== this.m.PartyFinancialRelationshi.);
+      this.currentPartyRelationships = this.currentPartyRelationships.filter((v) => v.strategy.cls !== this.m.PartyFinancialRelationship);
 
       this.inactivePartyRelationships = loaded.collection<PartyRelationship>(inactive);
       this.inactivePartyRelationships = this.inactivePartyRelationships.filter((v) => v.strategy.cls !== this.m.PartyFinancialRelationship);
@@ -149,7 +149,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
       }
 
       if (this.objects) {
-        this.table.total = loaded.value(`${pullName}_total`) ?? this.currentPartyRelationships.length;
+        this.table.total = (loaded.value(`${pullName}_total`) ?? this.currentPartyRelationships.length) as number;;
         this.refreshTable();
       }
     };
@@ -160,7 +160,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
       return {
         object: v,
         type: v.strategy.cls.singularName,
-        parties: v.Parties.map((w) => displayName(w)).join(', '),
+        parties: v.Parties.map((w) => w.DisplayName).join(', '),
         from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
         through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
       } as Row;

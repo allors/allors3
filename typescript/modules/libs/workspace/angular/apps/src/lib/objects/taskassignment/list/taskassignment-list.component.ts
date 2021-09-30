@@ -7,7 +7,8 @@ import { formatDistance } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { TaskAssignment } from '@allors/workspace/domain/default';
 import { Action, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, UserId } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
+import { And } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: TaskAssignment;
@@ -28,10 +29,11 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
 
   private subscription: Subscription;
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
-
+    public workspaceService: WorkspaceService,
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public editService: EditService,
@@ -44,9 +46,9 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
 
     titleService.setTitle(this.title);
 
-    const { m } = this.metaService;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
 
-    this.edit = editService.edit(m.TaskAssignment.Task);
+    this.edit = editService.edit(this.m.TaskAssignment.Task);
     this.edit.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -62,20 +64,17 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
-    const { pullBuilder: pull } = m;
+    const m = this.m;
+    const { pullBuilder: pull, treeBuilder: tree } = m;
     const x = {};
 
-    const predicate = new And([
-      { kind: 'Equals',  propertyType: m.TaskAssignment.User, object: this.userId.value }),
-      { kind: 'ContainedIn', 
-        propertyType: m.TaskAssignment.Task,
-        extent: { kind: 'Filter', 
-          objectType: m.Task,
-          predicate: { kind: 'Like',  roleType: m.Task.Title, parameter: 'title' }),
-        }),
-      }),
-    ]);
+    const predicate: And = {
+      kind: 'And',
+      operands: [
+        { kind: 'Equals', propertyType: m.TaskAssignment.User, value: this.userId.value },
+        { kind: 'ContainedIn', propertyType: m.TaskAssignment.Task, extent: { kind: 'Filter', objectType: m.Task, predicate: { kind: 'Like', roleType: m.Task.Title, parameter: 'title' } } },
+      ],
+    };
 
     const filterDefinition = new FilterDefinition(predicate);
     this.filter = new Filter(filterDefinition);

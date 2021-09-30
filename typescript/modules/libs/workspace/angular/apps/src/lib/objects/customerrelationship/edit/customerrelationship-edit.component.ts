@@ -29,7 +29,6 @@ export class CustomerRelationshipEditComponent extends TestScope implements OnIn
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<CustomerRelationshipEditComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,

@@ -79,7 +79,7 @@
         <mat-form-field class="col-md">
           <mat-select [(ngModel)]="selectedCategories" name="categories" placeholder="Categories" multiple="true">
             <mat-option>None</mat-option>
-            <mat-option *ngFor="let category of categories" [value]="category"> {{ category.displayName }} </mat-option>
+            <mat-option *ngFor="let category of categories" [value]="category"> {{ category.DisplayName }} </mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -109,6 +109,6 @@
 
   <div mat-dialog-actions>
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE</button>
   </div>
 </form>

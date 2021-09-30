@@ -39,7 +39,7 @@ export class CarrierEditComponent extends TestScope implements OnInit, OnDestroy
 
   public ngOnInit(): void {
     const m = this.m;
-    const m = this.m; const { pullBuilder: pull } = m;
+    const { pullBuilder: pull } = m;
 
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(

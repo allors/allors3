@@ -38,7 +38,6 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<TimeEntryEditComponent>,
-
     public refreshService: RefreshService,
     private snackBar: MatSnackBar,
     private saveService: SaveService

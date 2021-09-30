@@ -58,7 +58,6 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-
     public objectService: ObjectService,
     public factoryService: ObjectService,
     public methodService: MethodService,
@@ -217,7 +216,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
       );
 
       if (this.objects) {
-        this.table.total = loaded.value(`${pullName}_total`) ?? this.objects.length;
+        this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects.length) as number;;
         this.table.data = this.objects.map((v) => {
           return {
             object: v,
@@ -262,7 +261,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
 
         purchaseInvoice.addPurchaseInvoiceItem(invoiceItem);
 
-        const orderItemBilling = session.create<OrderItemBilling>(m.OrderItemBilling);
+        const orderItemBilling = session.create<OrderItemBilling>(this.m.OrderItemBilling);
         orderItemBilling.Quantity = purchaseOrderItem.QuantityOrdered;
         orderItemBilling.Amount = purchaseOrderItem.TotalBasePrice;
         orderItemBilling.OrderItem = purchaseOrderItem;

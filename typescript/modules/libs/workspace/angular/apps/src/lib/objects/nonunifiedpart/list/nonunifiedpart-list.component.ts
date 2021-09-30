@@ -19,7 +19,6 @@ import {
   NonUnifiedPart,
   NonUnifiedPartBarcodePrint,
   NonSerialisedInventoryItem,
-  displayName,
   ProductIdentification,
 } from '@allors/workspace/domain/default';
 import {
@@ -354,7 +353,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
             localQoh: facilitySearchId && (v.InventoryItemsWherePart as NonSerialisedInventoryItem[]).find((i) => i.Facility.id === facilitySearchId).QuantityOnHand,
             categories: partCategories
               .filter((w) => w.Parts.includes(v))
-              .map((w) => displayName(w))
+              .map((w) => w.DisplayName)
               .join(', '),
             brand: v.Brand ? v.Brand.Name : '',
             model: v.Model ? v.Model.Name : '',
@@ -383,7 +382,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
 
       const pulls = [
         pull.Singleton({
-          object: this.singletonId.value,
+          objectId: this.singletonId.value,
           select: {
             NonUnifiedPartBarcodePrint: {
               include: {

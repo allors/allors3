@@ -98,7 +98,6 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
   constructor(
     @Self() public allors: SessionService,
     @Self() public panel: PanelService,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,
@@ -119,7 +118,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {
-        const m = this.allors.workspace.configuration.metaPopulation as M;
+        const m = this.m;
         const { pullBuilder: pull } = m;
         const x = {};
 
@@ -188,7 +187,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
         switchMap(() => {
           this.invoice = undefined;
 
-          const m = this.allors.workspace.configuration.metaPopulation as M;
+          const m = this.m;
           const { pullBuilder: pull } = m;
           const x = {};
           const id = this.panel.manager.id;

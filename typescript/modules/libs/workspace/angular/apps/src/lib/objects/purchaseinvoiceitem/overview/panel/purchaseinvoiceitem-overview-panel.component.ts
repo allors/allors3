@@ -112,7 +112,7 @@ export class PurchaseInvoiceItemOverviewPanelComponent extends TestScope {
     panel.onPulled = (loaded) => {
       this.purchaseInvoiceItems = loaded.collection<PurchaseInvoiceItem>(pullName);
       this.invoice = loaded.object<PurchaseInvoice>(invoicePullName);
-      this.table.total = loaded.value([`${pullName}_total`]) ?? this.purchaseInvoiceItems.length;
+      this.table.total = (loaded.value(`${pullName}_total`) ?? this.purchaseInvoiceItems.length) as number;;
       this.table.data = this.purchaseInvoiceItems.map((v) => {
         return {
           object: v,

@@ -67,7 +67,7 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
   get model(): any {
     if (this.ExistObject) {
       if (this.assignedRoleType) {
-        if (this.object.strategy.hasChangedRole(this.assignedRoleType)) {
+        if (this.object.strategy.hasChanged(this.assignedRoleType)) {
           return this.object.strategy.getRole(this.assignedRoleType);
         }
 
@@ -151,7 +151,7 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
   }
 
   get canRestore(): boolean {
-    return this.ExistObject && this.assignedRoleType && this.object.strategy.hasChangedRole(this.assignedRoleType);
+    return this.ExistObject && this.assignedRoleType && this.object.strategy.hasChanged(this.assignedRoleType);
   }
 
   restore(): void {

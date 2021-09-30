@@ -8,6 +8,7 @@ import { Notification } from '@allors/workspace/domain/default';
 import { Action, Filter, FilterDefinition, MediaService, MethodService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, UserId } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
+import { And } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: Notification;
@@ -31,7 +32,7 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
 
   filter: Filter;
 
-  M: M;
+  m: M;
 
   constructor(
     @Self() public allors: SessionService,
@@ -45,8 +46,8 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
   ) {
     super();
 
-    this.M = this.allors.workspace.configuration.metaPopulation as M;
-    const m = this.M;
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
 
     titleService.setTitle(this.title);
 
@@ -66,7 +67,7 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const predicate = new And([{ kind: 'Like',  roleType: m.Notification.Confirmed, parameter: 'confirmed' })]);
+    const predicate: And = { kind: 'And', operands: [{ kind: 'Like', roleType: m.Notification.Confirmed, parameter: 'confirmed' }] };
 
     const filterDefinition = new FilterDefinition(predicate);
     this.filter = new Filter(filterDefinition);
@@ -91,7 +92,7 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
         switchMap(([, ,]) => {
           const pulls = [
             pull.Person({
-              object: this.userId.value,
+              objectId: this.userId.value,
               select: {
                 NotificationList: {
                   UnconfirmedNotifications: x,

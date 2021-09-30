@@ -1,7 +1,7 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayName, SerialisedItem } from '@allors/workspace/domain/default';
+import { SerialisedItem } from '@allors/workspace/domain/default';
 import { Action, DeleteService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService, ActionTarget } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -170,11 +170,11 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
             return {
               object: v,
               number: v.ItemNumber,
-              name: displayName(v),
+              name: v.DisplayName,
               availability: v.SerialisedItemAvailability ? v.SerialisedItemAvailability.Name : '',
               onWebsite: v.AvailableForSale ? 'Yes' : 'No',
               ownership: v.Ownership ? v.Ownership.Name : '',
-              ownedBy: v.OwnedBy ? displayName(v.OwnedBy) : '',
+              ownedBy: v.OwnedBy ? v.OwnedBy.DisplayName : '',
             } as Row;
           });
         }

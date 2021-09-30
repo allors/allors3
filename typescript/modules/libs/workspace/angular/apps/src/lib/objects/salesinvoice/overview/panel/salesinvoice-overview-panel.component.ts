@@ -2,7 +2,7 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayName, SalesInvoice } from '@allors/workspace/domain/default';
+import { SalesInvoice } from '@allors/workspace/domain/default';
 import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -135,7 +135,7 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
           return {
             object: v,
             number: v.InvoiceNumber,
-            customer: displayName(v.BillToCustomer),
+            customer: v.BillToCustomer.DisplayName,
             totalExVat: v.TotalExVat,
             state: v.SalesInvoiceState ? v.SalesInvoiceState.Name : '',
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),

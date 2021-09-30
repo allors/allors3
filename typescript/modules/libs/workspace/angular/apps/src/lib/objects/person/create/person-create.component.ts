@@ -49,7 +49,6 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PersonCreateComponent>,
-
     public navigationService: NavigationService,
     public refreshService: RefreshService,
     private route: ActivatedRoute,
@@ -65,7 +64,7 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
@@ -147,19 +146,19 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
 
   public save(): void {
     if (this.selectedRoles.indexOf(this.customerRole) > -1) {
-      const customerRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+      const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
       customerRelationship.Customer = this.person;
       customerRelationship.InternalOrganisation = this.internalOrganisation;
     }
 
     if (this.selectedRoles.indexOf(this.employeeRole) > -1) {
-      const employment = this.allors.session.create<Employment>(m.Employment);
+      const employment = this.allors.session.create<Employment>(this.m.Employment);
       employment.Employee = this.person;
       employment.Employer = this.internalOrganisation;
     }
 
     if (this.organisation !== undefined) {
-      const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+      const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
       organisationContactRelationship.Contact = this.person;
       organisationContactRelationship.Organisation = this.organisation;
       organisationContactRelationship.ContactKinds = this.selectedContactKinds;

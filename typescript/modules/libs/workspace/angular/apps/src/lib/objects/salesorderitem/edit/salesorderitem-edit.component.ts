@@ -115,7 +115,6 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<SalesOrderItemEditComponent>,
-
     public refreshService: RefreshService,
     private fetcher: FetcherService,
     private saveService: SaveService,
@@ -127,7 +126,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 

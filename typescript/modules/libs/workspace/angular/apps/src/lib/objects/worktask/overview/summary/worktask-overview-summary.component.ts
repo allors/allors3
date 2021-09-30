@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { M } from '@allors/workspace/meta/default';
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { WorkTask, SalesInvoice, FixedAsset, Printable, displayName } from '@allors/workspace/domain/default';
+import { WorkTask, SalesInvoice, FixedAsset, Printable } from '@allors/workspace/domain/default';
 import { Action, NavigationService, PanelService, RefreshService, SaveService, ActionTarget } from '@allors/workspace/angular/base';
 
 import { PrintService } from '../../../../actions/print/print.service';

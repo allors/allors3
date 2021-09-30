@@ -11,7 +11,7 @@
     </mat-card-subtitle>
 
     <mat-card-subtitle>
-      <div>last modified: {{ productQuote.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by {{ productQuote.LastModifiedBy?.displayName }}</div>
+      <div>last modified: {{ productQuote.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by {{ productQuote.LastModifiedBy?.DisplayName }}</div>
     </mat-card-subtitle>
   </mat-card-header>
 
@@ -19,14 +19,14 @@
     <div *ngIf="productQuote.Receiver" (click)="navigation.overview(productQuote.Receiver)" style="cursor: pointer">
       <div style="color: grey">Quoted to</div>
       <div>
-        {{ productQuote.Receiver?.displayName }}
+        {{ productQuote.Receiver?.DisplayName }}
       </div>
     </div>
 
     <div *ngIf="productQuote.ContactPerson" (click)="navigation.overview(productQuote.ContactPerson)" style="cursor: pointer">
       <div style="color: grey">ContactPerson</div>
       <div>
-        {{ productQuote.ContactPerson?.displayName }}
+        {{ productQuote.ContactPerson?.DisplayName }}
       </div>
     </div>
 

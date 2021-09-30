@@ -17,6 +17,7 @@ export class TaskAssignmentLinkComponent implements OnInit, OnDestroy {
   tasks: Task[];
 
   private subscription: Subscription;
+  m: M;
 
   get nrOfTasks() {
     if (this.tasks) {
@@ -35,15 +36,16 @@ export class TaskAssignmentLinkComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: SessionService,
-
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private userId: UserId
-  ) {}
+  ) {
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
+  }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
@@ -57,7 +59,7 @@ export class TaskAssignmentLinkComponent implements OnInit, OnDestroy {
               },
             }),
             pull.Person({
-              object: this.userId.value,
+              objectId: this.userId.value,
             }),
           ];
 

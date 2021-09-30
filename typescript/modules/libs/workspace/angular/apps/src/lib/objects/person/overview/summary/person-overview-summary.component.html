@@ -7,7 +7,7 @@
         <img mat-card-image [src]="src" />
       </div>
     </div>
-    <mat-card-title>{{ person.displayName }}</mat-card-title>
+    <mat-card-title>{{ person.DisplayName }}</mat-card-title>
     <mat-card-subtitle>
       <div>
         {{ contactKindsText }}
@@ -19,7 +19,7 @@
     </mat-card-subtitle>
 
     <mat-card-subtitle>
-      <div>last modified: {{ person.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by {{ person.LastModifiedBy?.displayName }}</div>
+      <div>last modified: {{ person.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by {{ person.LastModifiedBy?.DisplayName }}</div>
     </mat-card-subtitle>
   </mat-card-header>
 
@@ -29,7 +29,7 @@
     </div>
     <div *ngFor="let organisationContactRelationship of organisationContactRelationships" (click)="navigation.overview(organisationContactRelationship.Organisation)" style="cursor: pointer">
       <div>
-        {{ organisationContactRelationship.Organisation.displayName }}
+        {{ organisationContactRelationship.Organisation.DisplayName }}
       </div>
     </div>
   </mat-card-content>

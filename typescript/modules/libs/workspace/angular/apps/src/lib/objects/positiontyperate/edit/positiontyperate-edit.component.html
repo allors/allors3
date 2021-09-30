@@ -5,7 +5,7 @@
     <div class="row">
       <a-mat-select class="col-md" [object]="positionTypeRate" [roleType]="m.PositionTypeRate.RateType" [options]="rateTypes" display="Name"></a-mat-select>
       <mat-form-field class="col-md">
-        <mat-select name="positions" [(ngModel)]="selectedPositionTypes" placeholder="positions" multiple="true" (ngModelChange)="setDirty()">
+        <mat-select name="positions" [(ngModel)]="selectedPositionTypes" placeholder="positions" multiple="true">
           <mat-option *ngFor="let positionType of positionTypes" [value]="positionType">{{ positionType.Title }}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -25,6 +25,6 @@
 
   <div mat-dialog-actions>
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE</button>
   </div>
 </form>

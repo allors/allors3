@@ -48,7 +48,7 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
@@ -221,7 +221,7 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
   }
 
   private sortContacts(): void {
-    this.contacts.sort((a, b) => (a.displayName > b.displayName ? 1 : b.displayName > a.displayName ? -1 : 0));
+    this.contacts.sort((a, b) => (a.DisplayName > b.DisplayName ? 1 : b.DisplayName > a.DisplayName ? -1 : 0));
   }
 
   public save(): void {
@@ -233,7 +233,7 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
 
   private addContactRelationship(party: Person): void {
     if (this.organisation) {
-      const relationShip: OrganisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+      const relationShip: OrganisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
       relationShip.Contact = party;
       relationShip.Organisation = this.organisation;
     }

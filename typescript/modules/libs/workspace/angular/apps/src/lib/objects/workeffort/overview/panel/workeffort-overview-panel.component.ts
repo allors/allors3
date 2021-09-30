@@ -1,7 +1,7 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayName, WorkEffort } from '@allors/workspace/domain/default';
+import { WorkEffort } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -105,12 +105,12 @@ export class WorkEffortOverviewPanelComponent extends TestScope implements OnIni
       this.objects = loaded.collection<WorkEffort>(pullName);
 
       if (this.objects) {
-        this.table.total = loaded.value(`${pullName}_total`) ?? this.objects.length;
+        this.table.total = loaded.value(`${pullName}_total`)as number ?? this.objects.length;
         this.table.data = this.objects.map((v) => {
           return {
             object: v,
             id: v.WorkEffortNumber,
-            takenBy: displayName(v.TakenBy),
+            takenBy: v.TakenBy.DisplayName,
             name: v.Name,
             description: v.Description,
           } as Row;

@@ -74,7 +74,6 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PurchaseOrderItemEditComponent>,
-
     private fetcher: FetcherService,
     public refreshService: RefreshService,
     private saveService: SaveService
@@ -85,7 +84,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull, treeBuilder } = m;
     const x = {};
 

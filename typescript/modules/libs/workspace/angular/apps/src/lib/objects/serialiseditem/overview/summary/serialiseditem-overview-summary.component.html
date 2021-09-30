@@ -3,7 +3,7 @@
     <div mat-card-avatar>
       <mat-icon style="font-size: 36px">business</mat-icon>
     </div>
-    <mat-card-title>{{ serialisedItem.displayName }}</mat-card-title>
+    <mat-card-title>{{ serialisedItem.DisplayName }}</mat-card-title>
     <mat-card-subtitle>
       <div *ngIf="serialisedItem.SerialisedItemState.Name !== 'N/A'">
         {{ serialisedItem.SerialisedItemState.Name }}
@@ -36,14 +36,14 @@
     <div *ngIf="serialisedItem.OwnedBy" (click)="navigation.overview(serialisedItem.OwnedBy)" style="cursor: pointer">
       <div>
         <div style="color: grey">Owned by</div>
-        {{ serialisedItem.OwnedBy.displayName }}
+        {{ serialisedItem.OwnedBy.DisplayName }}
       </div>
     </div>
 
     <div *ngIf="serialisedItem.RentedBy" (click)="navigation.overview(serialisedItem.RentedBy)" style="cursor: pointer">
       <div>
         <div style="color: grey">Rented by</div>
-        {{ serialisedItem.RentedBy.displayName }}
+        {{ serialisedItem.RentedBy.DisplayName }}
       </div>
     </div>
 

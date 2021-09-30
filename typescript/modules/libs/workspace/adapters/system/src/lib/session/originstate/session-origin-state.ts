@@ -17,12 +17,12 @@ export class SessionOriginState {
     changeSet.addSessionStateChanges(this.propertyByObjectByPropertyType.checkpoint());
   }
 
-  hasChangedRoles(object: Strategy): boolean {
+  hasChanges(object: Strategy): boolean {
     // TODO:
     return false;
   }
 
-  hasChangedRole(object: Strategy, roleType: RoleType) {
+  hasChanged(object: Strategy, roleType: RoleType) {
     // TODO:
     return false;
   }

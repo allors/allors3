@@ -29,7 +29,6 @@ export class ProductTypeEditComponent extends TestScope implements OnInit, OnDes
     @Self() public allors: SessionService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<ProductTypeEditComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService
   ) {
@@ -39,7 +38,7 @@ export class ProductTypeEditComponent extends TestScope implements OnInit, OnDes
   }
 
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 

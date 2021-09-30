@@ -60,7 +60,6 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
 
   constructor(
     @Self() public allors: SessionService,
-
     public methodService: MethodService,
     public printService: PrintService,
     public overviewService: OverviewService,
@@ -177,7 +176,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
     });
   }
   public ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
@@ -251,7 +250,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
               object: v,
               number: v.InvoiceNumber,
               type: `${v.SalesInvoiceType && v.SalesInvoiceType.Name}`,
-              billedTo: v.BillToCustomer && displayName(v.BillToCustomer),
+              billedTo: v.BillToCustomer && v.BillToCustomer.DisplayName,
               state: `${v.SalesInvoiceState && v.SalesInvoiceState.Name}`,
               invoiceDate: format(new Date(v.InvoiceDate), 'dd-MM-yyyy'),
               dueDate: `${v.DueDate && format(new Date(v.DueDate), 'dd-MM-yyyy')}`,

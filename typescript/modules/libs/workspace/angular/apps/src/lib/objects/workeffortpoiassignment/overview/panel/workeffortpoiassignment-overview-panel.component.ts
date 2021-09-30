@@ -1,7 +1,7 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayName, WorkEffort, WorkEffortPurchaseOrderItemAssignment } from '@allors/workspace/domain/default';
+import { WorkEffort, WorkEffortPurchaseOrderItemAssignment } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -113,7 +113,7 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope imp
         this.table.data = this.objects.map((v) => {
           return {
             object: v,
-            supplier: (v.PurchaseOrder.TakenViaSupplier && displayName(v.PurchaseOrder.TakenViaSupplier)) || (v.PurchaseOrder.TakenViaSubcontractor && displayName(v.PurchaseOrder.TakenViaSubcontractor)),
+            supplier: (v.PurchaseOrder.TakenViaSupplier && v.PurchaseOrder.TakenViaSupplier.DisplayName) || (v.PurchaseOrder.TakenViaSubcontractor && v.PurchaseOrder.TakenViaSubcontractor.DisplayName),
             description: v.PurchaseOrderItem.Description,
             orderNumber: v.PurchaseOrder.OrderNumber,
             quantity: v.Quantity,

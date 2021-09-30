@@ -10,15 +10,15 @@
       </div>
 
       <div class="row">
-        <a-mat-input class="col-md" [object]="contactMechanism" [roleType]="m.PostalAddress.address1" label="Address line 1"></a-mat-input>
+        <a-mat-input class="col-md" [object]="contactMechanism" [roleType]="m.PostalAddress.Address1" label="Address line 1"></a-mat-input>
       </div>
 
       <div class="row">
-        <a-mat-input class="col-md" [object]="contactMechanism" [roleType]="m.PostalAddress.address2" label="Address line 2"></a-mat-input>
+        <a-mat-input class="col-md" [object]="contactMechanism" [roleType]="m.PostalAddress.Address2" label="Address line 2"></a-mat-input>
       </div>
 
       <div class="row">
-        <a-mat-input class="col-md" [object]="contactMechanism" [roleType]="m.PostalAddress.address3" label="Address line 3"></a-mat-input>
+        <a-mat-input class="col-md" [object]="contactMechanism" [roleType]="m.PostalAddress.Address3" label="Address line 3"></a-mat-input>
       </div>
 
       <div class="row">
@@ -40,6 +40,6 @@
 
   <div mat-dialog-actions>
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE</button>
   </div>
 </form>

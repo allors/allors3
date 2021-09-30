@@ -28,7 +28,6 @@ export class SerialisedItemOverviewComponent extends TestScope implements AfterV
   constructor(
     @Self() public panelManager: PanelManagerService,
     public workspaceService: WorkspaceService,
-
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private route: ActivatedRoute,
@@ -43,13 +42,13 @@ export class SerialisedItemOverviewComponent extends TestScope implements AfterV
   }
 
   public ngAfterViewInit(): void {
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
+
     this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const m = this.allors.workspace.configuration.metaPopulation as M;
-          const { pullBuilder: pull } = m;
-          const x = {};
-
           const navRoute = new NavigationActivatedRoute(this.route);
           this.panelManager.objectType = m.SerialisedItem;
           this.panelManager.id = navRoute.id();

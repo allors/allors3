@@ -16,6 +16,7 @@ export class NotificationLinkComponent implements OnInit, OnDestroy {
   notifications: Notification[];
 
   private subscription: Subscription;
+  m: any;
 
   get nrOfNotifications() {
     if (this.notifications) {
@@ -34,12 +35,13 @@ export class NotificationLinkComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: SessionService,
-
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private userId: UserId
-  ) {}
+  ) {
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
+  }
 
   ngOnInit(): void {
     const m = this.m;

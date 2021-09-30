@@ -2,7 +2,7 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { displayName, SerialisedItem, WorkEffort } from '@allors/workspace/domain/default';
+import { SerialisedItem, WorkEffort } from '@allors/workspace/domain/default';
 import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -164,7 +164,7 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
             object: v,
             number: v.WorkEffortNumber,
             name: v.Name,
-            customer: displayName(v.Customer),
+            customer: v.Customer.DisplayName,
             state: v.WorkEffortState ? v.WorkEffortState.Name : '',
             cost: v.TotalCost,
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),

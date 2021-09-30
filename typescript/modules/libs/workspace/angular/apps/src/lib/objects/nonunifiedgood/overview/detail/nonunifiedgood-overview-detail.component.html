@@ -32,14 +32,14 @@
 
           <div class="row">
             <a-mat-datepicker class="col-md" [object]="good" [roleType]="m.NonUnifiedGood.SalesDiscontinuationDate"></a-mat-datepicker>
-            <a-mat-autocomplete class="col-md" [object]="good" [roleType]="m.NonUnifiedGood.Part" [filter]="nonUnifiedPartsFilter.create(allors.context)" display="Name"></a-mat-autocomplete>
+            <a-mat-autocomplete class="col-md" [object]="good" [roleType]="m.NonUnifiedGood.Part" [filter]="nonUnifiedPartsFilter.create(allors)" display="Name"></a-mat-autocomplete>
           </div>
 
           <div class="row">
             <mat-form-field class="col-md">
               <mat-select [(ngModel)]="selectedCategories" name="categories" placeholder="Categories" multiple="true">
                 <mat-option>None</mat-option>
-                <mat-option *ngFor="let category of categories" [value]="category"> {{ category.displayName }} </mat-option>
+                <mat-option *ngFor="let category of categories" [value]="category"> {{ category.DisplayName }} </mat-option>
               </mat-select>
             </mat-form-field>
           </div>
@@ -115,7 +115,7 @@
     </mat-card-content>
 
     <mat-card-actions>
-      <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+      <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE</button>
       <button mat-button (click)="panel.toggle()" type="button">CANCEL</button>
     </mat-card-actions>
   </mat-card>

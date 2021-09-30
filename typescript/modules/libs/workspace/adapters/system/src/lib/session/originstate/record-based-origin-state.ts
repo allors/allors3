@@ -252,11 +252,11 @@ export abstract class RecordBasedOriginState {
     }
   }
 
-  get hasChangedRoles(): boolean {
+  get hasChanges(): boolean {
     return this.record == null || this.changedRoleByRelationType?.size > 0;
   }
 
-  hasChangedRole(roleType: RoleType): boolean {
+  hasChanged(roleType: RoleType): boolean {
     return this.changedRoleByRelationType?.has(roleType.relationType) ?? false;
   }
 

@@ -66,7 +66,7 @@ export class Table<Row extends TableRow> implements BaseTable {
         this.pageSize = this.pageSizeOptions[0];
       }
 
-      if (!!this.pageSize && !this.pageSizeOptions) {
+      if (this.pageSize && !this.pageSizeOptions) {
         this.pageSizeOptions = [this.pageSize, this.pageSize * 2, this.pageSize * 5];
       }
 

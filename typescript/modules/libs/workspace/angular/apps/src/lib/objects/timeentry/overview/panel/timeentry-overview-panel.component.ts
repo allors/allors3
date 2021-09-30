@@ -2,7 +2,7 @@ import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { format } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { WorkEffort, TimeEntry, displayName } from '@allors/workspace/domain/default';
+import { WorkEffort, TimeEntry } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
 
@@ -102,7 +102,7 @@ export class TimeEntryOverviewPanelComponent extends TestScope {
         this.table.data = this.objects.map((v) => {
           return {
             object: v,
-            person: v.Worker && displayName(v.Worker),
+            person: v.Worker && v.Worker.DisplayName,
             from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
             through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
             time: v.AmountOfTime,

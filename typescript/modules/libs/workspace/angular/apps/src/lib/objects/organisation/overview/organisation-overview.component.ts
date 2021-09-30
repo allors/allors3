@@ -22,6 +22,7 @@ export class OrganisationOverviewComponent extends TestScope implements AfterVie
 
   subscription: Subscription;
   supplierOfferings: SupplierOffering[];
+  m: M;
 
   constructor(
     @Self() public panelManager: PanelManagerService,
@@ -36,10 +37,12 @@ export class OrganisationOverviewComponent extends TestScope implements AfterVie
     super();
 
     titleService.setTitle(this.title);
+
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   public ngAfterViewInit(): void {
-    const m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 

@@ -31,7 +31,6 @@ export class PositionTypesOverviewComponent extends TestScope implements OnInit,
 
   constructor(
     @Self() public allors: SessionService,
-
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public editService: EditService,
@@ -44,6 +43,8 @@ export class PositionTypesOverviewComponent extends TestScope implements OnInit,
 
     titleService.setTitle(this.title);
 
+    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    
     this.edit = editService.edit();
     this.edit.result.subscribe(() => {
       this.table.selection.clear();
@@ -64,7 +65,7 @@ export class PositionTypesOverviewComponent extends TestScope implements OnInit,
   }
 
   ngOnInit(): void {
-    const m = this.allors.workspace.configuration.metaPopulation as M;
+    const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 

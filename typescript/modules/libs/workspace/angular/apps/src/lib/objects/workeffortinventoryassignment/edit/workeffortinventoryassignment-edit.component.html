@@ -26,7 +26,7 @@
 
       <div class="row">
         <mat-form-field class="col">
-          <input type="number" matInput [(ngModel)]="workEffortInventoryAssignment.totalSellingPrice" name="totalSellingPrice" placeholder="Total selling price" readonly />
+          <input type="number" matInput [(ngModel)]="workEffortInventoryAssignment.TotalSellingPrice" name="totalSellingPrice" placeholder="Total selling price" readonly />
         </mat-form-field>
         <a-mat-static class="col-md" [object]="workEffortInventoryAssignment" [roleType]="m.WorkEffortInventoryAssignment.CostOfGoodsSold"></a-mat-static>
       </div>
@@ -34,7 +34,7 @@
   </mat-dialog-content>
 
   <div mat-dialog-actions>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE & CLOSE</button>
+    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.session.hasChanges">SAVE & CLOSE</button>
     <button mat-button (click)="update()" type="button" color="accent" [disabled]="!form.form.valid">SAVE</button>
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
   </div>

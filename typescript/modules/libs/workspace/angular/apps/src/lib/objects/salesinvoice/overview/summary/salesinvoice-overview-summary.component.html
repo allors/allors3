@@ -7,8 +7,8 @@
 
     <mat-card-subtitle>
       <div>{{ invoice.SalesInvoiceState?.Name }}</div>
-      <div>{{ invoice.DerivedShipToAddress?.displayName }}</div>
-      <div>last modified: {{ invoice.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by {{ invoice.LastModifiedBy?.displayName }}</div>
+      <div>{{ invoice.DerivedShipToAddress?.DisplayName }}</div>
+      <div>last modified: {{ invoice.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by {{ invoice.LastModifiedBy?.DisplayName }}</div>
     </mat-card-subtitle>
   </mat-card-header>
 
@@ -16,7 +16,7 @@
     <div (click)="navigation.overview(invoice.BillToCustomer)" style="cursor: pointer">
       <div style="color: grey">Bill to</div>
       <div>
-        {{ invoice.BillToCustomer?.displayName }}
+        {{ invoice.BillToCustomer?.DisplayName }}
       </div>
     </div>
 

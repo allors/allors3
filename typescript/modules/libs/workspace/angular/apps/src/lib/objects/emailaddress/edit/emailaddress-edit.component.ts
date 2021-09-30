@@ -55,7 +55,7 @@ export class EmailAddressEditComponent extends TestScope implements OnInit, OnDe
       )
       .subscribe((loaded) => {
         this.allors.session.reset();
-        this.contactMechanism = loaded.object<ContactMechanism>(m.ContactMechanism);
+        this.contactMechanism = loaded.object<ElectronicAddress>(m.ContactMechanism);
 
         if (this.contactMechanism.canWriteElectronicAddressString) {
           this.title = 'Edit Email Address';
