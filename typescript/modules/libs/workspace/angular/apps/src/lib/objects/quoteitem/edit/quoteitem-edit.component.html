@@ -2,16 +2,16 @@
   <h3 mat-dialog-title>{{ title }}</h3>
 
   <mat-dialog-content>
-    <div *ngIf="!quoteItem.isNew" class="row">
+    <div *ngIf="!quoteItem.strategy.isNew" class="row">
       <a-mat-static [object]="quoteItem" [roleType]="m.QuoteItem.QuoteItemState" display="Name" label="Status" class="col-md"></a-mat-static>
     </div>
 
-    <div class="row" *ngIf="quoteItem.isNew">
+    <div class="row" *ngIf="quoteItem.strategy.isNew">
       <a-mat-select class="col-md" [object]="quoteItem" [roleType]="m.QuoteItem.InvoiceItemType" [options]="invoiceItemTypes" display="Name"></a-mat-select>
     </div>
 
     <div *ngIf="quoteItem.InvoiceItemType">
-      <div class="row" *ngIf="!quoteItem.isNew && quoteItem.InvoiceItemType !== productItemType">
+      <div class="row" *ngIf="!quoteItem.strategy.isNew && quoteItem.InvoiceItemType !== productItemType">
         <a-mat-select class="col-md" [object]="quoteItem" [roleType]="m.QuoteItem.InvoiceItemType" [options]="invoiceItemTypes" display="Name"></a-mat-select>
       </div>
 

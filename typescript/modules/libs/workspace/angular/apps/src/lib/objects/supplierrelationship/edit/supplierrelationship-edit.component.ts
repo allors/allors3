@@ -40,9 +40,8 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
-  static canCreate(createData: ObjectData) {
-    const personId = ids.Person;
-    if (createData.associationObjectType.id === personId) {
+  public canCreate(createData: ObjectData) {
+    if (createData.associationObjectType === this.m.Person) {
       return false;
     }
 

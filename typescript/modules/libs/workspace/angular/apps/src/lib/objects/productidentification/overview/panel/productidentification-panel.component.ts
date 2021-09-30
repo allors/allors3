@@ -95,7 +95,7 @@ export class ProductIdentificationsPanelComponent extends TestScope implements O
 
       this.panel.onPulled = (loaded) => {
         this.objects = loaded.collection<ProductIdentification>(pullName);
-        this.table.total = (loaded.value(`${pullName}_total`)) ?? this.objects.length) as number;;
+        this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.objects.length;
         this.table.data = this.objects.map((v) => {
           return {
             object: v,

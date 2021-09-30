@@ -7,7 +7,7 @@ import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, Party, InternalOrganisation, Employment } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject, ISession } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -45,10 +45,9 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
 
-  static canCreate(createData: ObjectData, context: Context) {
-    const organisationId = ids.Organisation;
-    if (createData.associationObjectType.id === organisationId) {
-      const organisation = context.session.get(createData.associationId) as Organisation;
+  public canCreate(createData: ObjectData) {
+    if (createData.associationObjectType === this.m.Organisation) {
+      const organisation = this.allors.session.instantiate<Organisation>(createData.associationId);
       return organisation.IsInternalOrganisation;
     }
 

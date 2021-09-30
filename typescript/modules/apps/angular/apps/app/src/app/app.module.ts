@@ -19,6 +19,7 @@ import { ruleBuilder } from '@allors/workspace/derivations/apps-custom';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
@@ -851,6 +852,7 @@ export const edit = {
     WorkTaskOverviewPanelComponent,
     WorkTaskOverviewSummaryComponent,
     // App
+    ErrorComponent,
     LoginComponent,
     MainComponent,
     DashboardComponent,
@@ -866,6 +868,7 @@ export const edit = {
     MatAutocompleteModule,
     MatBadgeModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatCardModule,
     MatCheckboxModule,
     MatChipsModule,

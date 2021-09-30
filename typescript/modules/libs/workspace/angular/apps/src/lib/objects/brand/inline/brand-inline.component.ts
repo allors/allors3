@@ -1,12 +1,8 @@
 import { Component, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { Brand } from '@allors/workspace/domain/default';
 import { SessionService } from '@allors/workspace/angular/core';
-
-import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -27,7 +23,7 @@ export class InlineBrandComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.brand = this.allors.session.create<Brand>(m.Brand);
+    this.brand = this.allors.session.create<Brand>(this.m.Brand);
   }
 
   public ngOnDestroy(): void {

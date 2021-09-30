@@ -1,19 +1,19 @@
 import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { format, formatDistance } from 'date-fns';
-import { MatSnackBar } from '@angular/material/snack-bar/snack-bar';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, InternalOrganisation, Receipt, PaymentApplication, PurchaseInvoice, Disbursement } from '@allors/workspace/domain/default';
+import { Person, Organisation, Receipt, PaymentApplication, PurchaseInvoice, Disbursement } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, ActionTarget, AllorsMaterialDialogService } from '@allors/workspace/angular/base';
 import { SessionService } from '@allors/workspace/angular/core';
+import { And, Equals } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { And, Equals } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: PurchaseInvoice;

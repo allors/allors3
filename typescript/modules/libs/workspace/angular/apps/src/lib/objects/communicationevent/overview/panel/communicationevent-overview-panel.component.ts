@@ -55,6 +55,10 @@ export class CommunicationEventOverviewPanelComponent extends TestScope implemen
   }
 
   ngOnInit() {
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
+
     this.panel.name = 'communicationevent';
     this.panel.title = 'Communication events';
     this.panel.icon = 'message';
@@ -82,7 +86,6 @@ export class CommunicationEventOverviewPanelComponent extends TestScope implemen
     const pullName = `${this.panel.name}_${this.m.CommunicationEvent.tag}`;
 
     this.panel.onPull = (pulls) => {
-      const { x, pull } = this.metaService;
       const { id } = this.panel.manager;
 
       pulls.push(
@@ -106,7 +109,7 @@ export class CommunicationEventOverviewPanelComponent extends TestScope implemen
       this.objects = loaded.collection(pullName) as CommunicationEvent[];
 
       if (this.objects) {
-        this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects.length) as number;;
+        this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects.length) as number;
         this.table.data = this.objects.map((v) => {
           return {
             object: v,

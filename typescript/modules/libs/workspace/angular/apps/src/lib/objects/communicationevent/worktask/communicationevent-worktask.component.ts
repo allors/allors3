@@ -32,14 +32,7 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(
-    @Self() public allors: SessionService,
-    private saveService: SaveService,
-    private route: ActivatedRoute,
-    public refreshService: RefreshService,
-    private internalOrganisationId: InternalOrganisationId,
-    titleService: Title
-  ) {
+  constructor(@Self() public allors: SessionService, private saveService: SaveService, private route: ActivatedRoute, public refreshService: RefreshService, private internalOrganisationId: InternalOrganisationId, titleService: Title) {
     titleService.setTitle(this.title);
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
@@ -112,12 +105,12 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
 
   public save(): void {
     this.assignees.forEach((assignee: Person) => {
-      const workEffortPartyAssignment: WorkEffortPartyAssignment = this.allors.session.create<WorkEffortPartyAssignment>(m.WorkEffortPartyAssignment);
+      const workEffortPartyAssignment: WorkEffortPartyAssignment = this.allors.session.create<WorkEffortPartyAssignment>(this.m.WorkEffortPartyAssignment);
       workEffortPartyAssignment.Assignment = this.workTask;
       workEffortPartyAssignment.Party = assignee;
     });
 
-    this.allors.client.pushReactive(this.allors.session).subscribe((saved: Saved) => {
+    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
       this.goBack();
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

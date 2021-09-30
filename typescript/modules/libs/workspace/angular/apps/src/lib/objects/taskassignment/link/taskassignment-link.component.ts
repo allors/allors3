@@ -59,7 +59,7 @@ export class TaskAssignmentLinkComponent implements OnInit, OnDestroy {
               },
             }),
             pull.Person({
-              object: this.userId.value,
+              objectId: this.userId.value,
             }),
           ];
 

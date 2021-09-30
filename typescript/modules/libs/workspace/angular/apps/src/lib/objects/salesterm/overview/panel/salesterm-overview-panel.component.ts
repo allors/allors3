@@ -134,7 +134,7 @@ export class SalesTermOverviewPanelComponent extends TestScope {
     panel.onPulled = (loaded) => {
       this.container = loaded.object<SalesOrder>(salesOrderPullName) || loaded.object<SalesInvoice>(salesInvoicePullName);
       this.objects = loaded.collection<SalesTerm>(salesOrderTermsPullName) || loaded.collection<SalesTerm>(salesInvoiceTermsPullName);
-      this.table.total = loaded.value(`${salesOrderTermsPullName}_total`) ?? loaded.value(`${salesInvoiceTermsPullName}_total`) ?? this.objects.length;
+      this.table.total = (loaded.value(`${salesOrderTermsPullName}_total`) as number) ?? (loaded.value(`${salesInvoiceTermsPullName}_total`) as number) ?? this.objects.length;
       this.table.data = this.objects.map((v) => {
         return {
           object: v,

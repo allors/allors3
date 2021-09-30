@@ -120,7 +120,7 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
           this.customerShipment.ShipFromParty = this.internalOrganisation;
 
           const shipmentPackage = this.allors.session.create<ShipmentPackage>(m.ShipmentPackage);
-          this.customerShipment.addShipmentPackshipmentPackage.Age;
+          this.customerShipment.addShipmentPackage(shipmentPackage);
 
           if (this.facilities.length === 1) {
             this.customerShipment.ShipFromFacility = this.facilities[0];

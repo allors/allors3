@@ -23,7 +23,7 @@ export class InlineModelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.model = this.allors.session.create<Model>(m.Model);
+    this.model = this.allors.session.create<Model>(this.m.Model);
   }
 
   public ngOnDestroy(): void {

@@ -133,7 +133,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
       this.objects = loaded.collection<PartyRelationship>(pullName);
 
       this.currentPartyRelationships = loaded.collection<PartyRelationship>(active);
-      this.currentPartyRelationships = this.currentPartyRelationships.filter((v) => v.strategy.cls !== this.m.PartyFinancialRelationshi.);
+      this.currentPartyRelationships = this.currentPartyRelationships.filter((v) => v.strategy.cls !== this.m.PartyFinancialRelationship);
 
       this.inactivePartyRelationships = loaded.collection<PartyRelationship>(inactive);
       this.inactivePartyRelationships = this.inactivePartyRelationships.filter((v) => v.strategy.cls !== this.m.PartyFinancialRelationship);

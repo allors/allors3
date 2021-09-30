@@ -108,7 +108,7 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
   }
 
   public shipToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.purchaseReturn.ShipToParty as Organisation;
     organisationContactRelationship.Contact = person;
 

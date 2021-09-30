@@ -261,7 +261,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
 
         purchaseInvoice.addPurchaseInvoiceItem(invoiceItem);
 
-        const orderItemBilling = session.create<OrderItemBilling>(m.OrderItemBilling);
+        const orderItemBilling = session.create<OrderItemBilling>(this.m.OrderItemBilling);
         orderItemBilling.Quantity = purchaseOrderItem.QuantityOrdered;
         orderItemBilling.Amount = purchaseOrderItem.TotalBasePrice;
         orderItemBilling.OrderItem = purchaseOrderItem;

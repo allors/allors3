@@ -2,16 +2,16 @@
   <h3 mat-dialog-title>{{ title }}</h3>
 
   <mat-dialog-content>
-    <div class="row" *ngIf="!invoiceItem.isNew">
+    <div class="row" *ngIf="!invoiceItem.strategy.isNew">
       <a-mat-static class="col-md" [object]="invoiceItem" [roleType]="m.SalesInvoiceItem.SalesInvoiceItemState" display="Name" label="Status"></a-mat-static>
     </div>
 
-    <div class="row" *ngIf="invoiceItem.isNew">
+    <div class="row" *ngIf="invoiceItem.strategy.isNew">
       <a-mat-select class="col-md" [object]="invoiceItem" [roleType]="m.SalesInvoiceItem.InvoiceItemType" [options]="invoiceItemTypes" display="Name"></a-mat-select>
     </div>
 
     <div *ngIf="invoiceItem.InvoiceItemType">
-      <div class="row" *ngIf="!invoiceItem.isNew && invoiceItem.InvoiceItemType !== productItemType">
+      <div class="row" *ngIf="!invoiceItem.strategy.isNew && invoiceItem.InvoiceItemType !== productItemType">
         <a-mat-select class="col-md" [object]="invoiceItem" [roleType]="m.SalesInvoiceItem.InvoiceItemType" [options]="invoiceItemTypes" display="Name"></a-mat-select>
       </div>
 
@@ -19,24 +19,24 @@
         <div class="row">
           <a-mat-autocomplete
             class="col-md"
-            *ngIf="invoiceItem.isNew"
+            *ngIf="invoiceItem.strategy.isNew"
             [object]="invoiceItem"
             [roleType]="m.SalesInvoiceItem.Product"
             display="Name"
             (changed)="goodSelected($event)"
             [filter]="goodsFilter.create(allors)"
           ></a-mat-autocomplete>
-          <a-mat-static class="col-md" *ngIf="!invoiceItem.isNew" [object]="invoiceItem" [roleType]="m.SalesInvoiceItem.Product" display="Name"></a-mat-static>
+          <a-mat-static class="col-md" *ngIf="!invoiceItem.strategy.isNew" [object]="invoiceItem" [roleType]="m.SalesInvoiceItem.Product" display="Name"></a-mat-static>
           <a-mat-select
             class="col-md"
-            *ngIf="invoiceItem.isNew"
+            *ngIf="invoiceItem.strategy.isNew"
             [object]="invoiceItem"
             [roleType]="m.SalesInvoiceItem.SerialisedItem"
             [options]="serialisedItems"
             (selected)="serialisedItemSelected($event)"
             display="displayName"
           ></a-mat-select>
-          <a-mat-static class="col-md" *ngIf="!invoiceItem.isNew" [object]="invoiceItem" [roleType]="m.SalesInvoiceItem.SerialisedItem" display="displayName"></a-mat-static>
+          <a-mat-static class="col-md" *ngIf="!invoiceItem.strategy.isNew" [object]="invoiceItem" [roleType]="m.SalesInvoiceItem.SerialisedItem" display="displayName"></a-mat-static>
           <a-mat-static class="col-md" [object]="serialisedItem" [roleType]="m.SerialisedItem.ExpectedSalesPrice"> </a-mat-static>
         </div>
       </div>

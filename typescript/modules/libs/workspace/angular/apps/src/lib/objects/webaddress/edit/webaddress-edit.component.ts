@@ -58,7 +58,7 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
 
         this.contactMechanismTypes = loaded.collection<Enumeration>(m.Enumeration);
 
-        this.contactMechanism = loaded.object<ContactMechanism>(m.ContactMechanism);
+        this.contactMechanism = loaded.object<ElectronicAddress>(m.ContactMechanism);
 
         if (this.contactMechanism.canWriteElectronicAddressString) {
           this.title = 'Edit Web Address';
