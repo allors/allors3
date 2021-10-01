@@ -9,6 +9,60 @@ function nav(composite: Composite, list: string, overview?: string) {
 }
 
 export function configure(m: M) {
+  // Menu
+  m._.menu = [
+    { title: 'Home', icon: 'home', link: '/' },
+    {
+      title: 'Contacts',
+      icon: 'group',
+      children: [{ objectType: m.Person }, { objectType: m.Organisation }, { objectType: m.CommunicationEvent }],
+    },
+    {
+      title: 'Products',
+      icon: 'label',
+      children: [
+        { objectType: m.Good, title: 'Goods' },
+        { objectType: m.Part, title: 'Parts' },
+        { objectType: m.Catalogue },
+        { objectType: m.ProductCategory },
+        { objectType: m.SerialisedItemCharacteristic, title: 'Characteristics' },
+        { objectType: m.ProductType },
+        { objectType: m.SerialisedItem, title: 'Serialised Assets' },
+        { objectType: m.UnifiedGood, title: 'Unified Goods' },
+      ],
+    },
+    {
+      title: 'Sales',
+      icon: 'credit_card',
+      children: [{ objectType: m.RequestForQuote }, { objectType: m.ProductQuote }, { objectType: m.SalesOrder }, { objectType: m.SalesInvoice }],
+    },
+    {
+      title: 'Purchasing',
+      icon: 'local_shipping',
+      children: [{ objectType: m.PurchaseOrder }, { objectType: m.PurchaseInvoice }],
+    },
+    {
+      title: 'Shipments',
+      icon: 'local_shipping',
+      children: [{ objectType: m.Shipment }, { objectType: m.Carrier }],
+    },
+    {
+      title: 'WorkEfforts',
+      icon: 'schedule',
+      children: [{ objectType: m.WorkEffort }],
+    },
+    {
+      title: 'HR',
+      icon: 'group',
+      children: [{ objectType: m.PositionType }, { objectType: m.PositionTypeRate }],
+    },
+    {
+      title: 'Accounting',
+      icon: 'money',
+      children: [{ objectType: m.ExchangeRate }],
+    },
+  ];
+
   // Navigation
   nav(m.Person, '/contacts/people', '/contacts/person/:id');
   nav(m.Organisation, '/contacts/organisations', '/contacts/organisation/:id');

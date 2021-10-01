@@ -1,12 +1,35 @@
-import { FilterDefinition, IAngularMetaService } from '@allors/workspace/angular/base';
+import { FilterDefinition } from '@allors/workspace/angular/base';
 import { M } from '@allors/workspace/meta/default';
 import { Sorter } from '@allors/workspace/angular/base';
+import { Composite } from '@allors/workspace/meta/system';
 
-export function configure(m: M, angularMeta: IAngularMetaService) {
-  const angularPerson = angularMeta.for(m.Person);
-  angularPerson.list = '/contacts/people';
-  angularPerson.overview = '/contacts/person/:id';
-  angularPerson.filterDefinition = new FilterDefinition({
+function nav(composite: Composite, list: string, overview?: string) {
+  composite._.list = list;
+  composite._.overview = overview;
+}
+
+export function configure(m: M) {
+  // Menu
+  m._.menu = [
+    { title: 'Home', icon: 'home', link: '/' },
+    {
+      title: 'Contacts',
+      icon: 'business',
+      children: [{ objectType: m.Person }, { objectType: m.Organisation }],
+    },
+    {
+      title: 'Tests',
+      icon: 'build',
+      children: [{ title: 'Form', icon: 'share', link: '/tests/form' }],
+    },
+  ];
+
+  // Navigation
+  nav(m.Person, '/contacts/people', '/contacts/person/:id');
+  nav(m.Organisation, '/contacts/organisations', '/contacts/organisation/:id');
+
+  // Filter & Sort
+  m.Person._.filterDefinition = new FilterDefinition({
     kind: 'And',
     operands: [
       {
@@ -26,16 +49,13 @@ export function configure(m: M, angularMeta: IAngularMetaService) {
       },
     ],
   });
-  angularPerson.sorter = new Sorter({
+  m.Person._.sorter = new Sorter({
     firstName: m.Person.FirstName,
     lastName: m.Person.LastName,
     email: m.Person.UserEmail,
   });
 
-  const angularOrganisation = angularMeta.for(m.Organisation);
-  angularOrganisation.list = '/contacts/organisations';
-  angularOrganisation.overview = '/contacts/organisation/:id';
-  angularOrganisation.filterDefinition = new FilterDefinition({
+  m.Organisation._.filterDefinition = new FilterDefinition({
     kind: 'And',
     operands: [
       {
@@ -45,5 +65,5 @@ export function configure(m: M, angularMeta: IAngularMetaService) {
       },
     ],
   });
-  angularOrganisation.sorter = new Sorter({ name: m.Organisation.Name });
+  m.Organisation._.sorter = new Sorter({ name: m.Organisation.Name });
 }

@@ -10,8 +10,6 @@ import { AllorsMaterialSideNavService, SideMenuItem } from '@allors/workspace/an
 import { Composite } from '@allors/workspace/meta/system';
 import { M } from '@allors/workspace/meta/default';
 
-import { menu } from './main.menu';
-
 @Component({
   styleUrls: ['main.component.scss'],
   templateUrl: './main.component.html',
@@ -35,25 +33,25 @@ export class MainComponent implements OnInit, OnDestroy {
     const { workspace } = this.allors;
     const m = workspace.configuration.metaPopulation as M;
 
-    menu.forEach((menuItem) => {
-      const objectType = menuItem.tag ? (m.metaObjectByTag.get(menuItem.tag) as Composite) : null;
+    m._.menu.forEach((menuItem) => {
+      const objectType = menuItem.objectType;
 
       const sideMenuItem: SideMenuItem = {
-        icon: menuItem.icon ?? objectType._.icon,
-        title: menuItem.title ?? objectType._.displayName ?? objectType.pluralName,
-        link: menuItem.link ?? objectType._.list,
+        icon: menuItem.icon ?? objectType?._.icon,
+        title: menuItem.title ?? objectType?._.displayName ?? objectType?.pluralName,
+        link: menuItem.link ?? objectType?._.list,
         children:
           menuItem.children &&
           menuItem.children.map((childMenuItem) => {
-            const childObjectType = childMenuItem.tag ? (m.metaObjectByTag.get(childMenuItem.tag) as Composite) : null;
+            const childObjectType = childMenuItem.objectType;
             return {
-              icon: childMenuItem.icon ?? childObjectType._.icon,
-              title: childMenuItem.title ?? childObjectType._.displayName ?? childObjectType.pluralName,
-              link: childMenuItem.link ?? childObjectType._.list,
+              icon: childMenuItem.icon ?? childObjectType?._.icon,
+              title: childMenuItem.title ?? childObjectType?._.displayName ?? childObjectType?.pluralName,
+              link: childMenuItem.link ?? childObjectType?._.list,
             };
           }),
       };
-
+      
       this.sideMenuItems.push(sideMenuItem);
     });
 

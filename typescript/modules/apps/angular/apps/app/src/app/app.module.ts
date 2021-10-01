@@ -332,6 +332,7 @@ import { MainComponent } from './main/main.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
 import { ErrorComponent } from './error/error.component';
+import { configure } from './configure';
 
 export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
   return async () => {
@@ -349,6 +350,8 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
     const database = new DatabaseConnection(configuration, idGenerator, serviceBuilder);
     const workspace = database.createWorkspace();
     workspaceService.workspace = workspace;
+
+    configure(m);
   };
 }
 
