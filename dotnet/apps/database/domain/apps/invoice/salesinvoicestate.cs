@@ -7,6 +7,8 @@ namespace Allors.Database.Domain
 {
     public partial class SalesInvoiceState
     {
+        public bool IsNotPaid => this.UniqueId == SalesInvoiceStates.NotPaidId;
+
         public bool IsPaid => this.UniqueId == SalesInvoiceStates.PaidId;
 
         public bool IsPartiallyPaid => this.UniqueId == SalesInvoiceStates.PartiallyPaidId;

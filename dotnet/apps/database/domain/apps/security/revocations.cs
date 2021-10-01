@@ -33,6 +33,7 @@ namespace Allors.Database.Domain
         public static readonly Guid RequestForQuoteDeleteRevocationId = new Guid("5a5864e2-b452-4da1-9915-093b0250cd61");
         public static readonly Guid RequestForQuoteSubmitRevocationId = new Guid("3de464eb-acad-47e6-be0f-8ceb38a81abc");
         public static readonly Guid RequestItemDeleteRevocationId = new Guid("23aeb662-32f5-4a6d-9b7e-f6078914f7e4");
+        public static readonly Guid SalesInvoiceCancelRevocationId = new Guid("e45c0710-4970-448d-8b1f-9bbab940189b");
         public static readonly Guid SalesInvoiceDeleteRevocationId = new Guid("8f07e179-9a61-4244-ad9f-53d1985ec639");
         public static readonly Guid SalesInvoiceItemDeleteRevocationId = new Guid("69faf684-6ca3-4106-a9d1-7b9268c0893d");
         public static readonly Guid SalesOrderDeleteRevocationId = new Guid("c7841df0-9b8c-4667-8b21-70ec31453052");
@@ -95,6 +96,8 @@ namespace Allors.Database.Domain
 
         public Revocation RequestItemDeleteRevocation => this.Cache[RequestItemDeleteRevocationId];
 
+        public Revocation SalesInvoiceCancelRevocation => this.Cache[SalesInvoiceCancelRevocationId];
+
         public Revocation SalesInvoiceDeleteRevocation => this.Cache[SalesInvoiceDeleteRevocationId];
 
         public Revocation SalesInvoiceItemDeleteRevocation => this.Cache[SalesInvoiceItemDeleteRevocationId];
@@ -152,6 +155,7 @@ namespace Allors.Database.Domain
             merge(RequestForQuoteDeleteRevocationId, _ => { });
             merge(RequestForQuoteSubmitRevocationId, _ => { });
             merge(RequestItemDeleteRevocationId, _ => { });
+            merge(SalesInvoiceCancelRevocationId, _ => { });
             merge(SalesInvoiceDeleteRevocationId, _ => { });
             merge(SalesInvoiceItemDeleteRevocationId, _ => { });
             merge(SalesOrderDeleteRevocationId, _ => { });
