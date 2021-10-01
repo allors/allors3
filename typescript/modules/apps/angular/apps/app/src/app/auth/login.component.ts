@@ -2,13 +2,14 @@ import { Component, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { of, Subscription } from 'rxjs';
-
-import { AuthenticationService, TestScope } from '@allors/workspace/angular/base';
 import { map, switchMap } from 'rxjs/operators';
+
 import { SessionService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
-import { Organisation } from '@allors/workspace/domain/default';
+import { Organisation, Singleton } from '@allors/workspace/domain/default';
 import { IPullResult } from '@allors/workspace/domain/system';
+import { AuthenticationService, SingletonId, TestScope } from '@allors/workspace/angular/base';
+import { InternalOrganisationId } from '@allors/workspace/angular/apps';
 
 @Component({
   templateUrl: './login.component.html',
@@ -27,7 +28,7 @@ export class LoginComponent extends TestScope implements OnDestroy {
   subscription: Subscription;
   m: M;
 
-  constructor(private allors: SessionService, private authService: AuthenticationService, private router: Router, public formBuilder: FormBuilder) {
+  constructor(private allors: SessionService, private authService: AuthenticationService, private singletonId: SingletonId, private internalOrganisationId: InternalOrganisationId, private router: Router, public formBuilder: FormBuilder) {
     super();
     this.m = this.allors.workspace.configuration.metaPopulation as M;
   }
@@ -50,6 +51,7 @@ export class LoginComponent extends TestScope implements OnDestroy {
             const x = {};
 
             const pulls = [
+              pull.Singleton({}),
               pull.Organisation({
                 predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
               }),
@@ -61,7 +63,6 @@ export class LoginComponent extends TestScope implements OnDestroy {
                   },
                 },
               }),
-              pull.Singleton({}),
             ];
 
             return this.allors.client.pullReactive(this.allors.session, pulls).pipe(
@@ -70,31 +71,35 @@ export class LoginComponent extends TestScope implements OnDestroy {
                 const defaultInternalOrganization = loaded.object<Organisation>(m.UserProfile.DefaultInternalOrganization);
 
                 try {
-                  if (internalOrganisations && internalOrganisations.length > 0) {
+                  if (internalOrganisations.length > 0) {
                     const organisation = internalOrganisations.find((v) => v.id === this.internalOrganisationId.value);
 
-                    if (!organisation && defaultInternalOrganization) {
-                      this.internalOrganisationId.value = defaultInternalOrganization.id;
-                    } else if (!organisation) {
-                      this.internalOrganisationId.value = internalOrganisations[0].id;
+                    if (!organisation) {
+                      if (defaultInternalOrganization) {
+                        this.internalOrganisationId.value = defaultInternalOrganization.id;
+                      } else {
+                        this.internalOrganisationId.value = internalOrganisations[0].id;
+                      }
                     }
                   }
                 } catch {
                   this.internalOrganisationId.value = internalOrganisations[0].id;
                 }
 
-                const singletons = loaded.collections.Singletons as Singleton[];
+                const singletons = loaded.collection<Singleton>(m.Singleton);
                 this.singletonId.value = singletons[0].id;
+
+                return { init: true };
               })
             );
           } else {
-            return of(false);
+            return of({ init: false });
           }
         })
       )
       .subscribe(
-        (result) => {
-          if (result) {
+        ({ init }) => {
+          if (init) {
             this.router.navigate(['/']);
           } else {
             alert('Could not log in');

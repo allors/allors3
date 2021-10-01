@@ -2,7 +2,7 @@ import { IObject, IPullResult, ISession, IWorkspace, IUnit } from '@allors/works
 import { PullResponse } from '@allors/protocol/json/system';
 import { Result } from '../result';
 import { AssociationType, Class, Interface, RoleType } from '@allors/workspace/meta/system';
-import { frozenEmptyMap } from '@allors/workspace/adapters/system';
+import { frozenEmptyArray, frozenEmptyMap } from '@allors/workspace/adapters/system';
 
 export class PullResult extends Result implements IPullResult {
   mergeErrors: IObject[];
@@ -37,22 +37,22 @@ export class PullResult extends Result implements IPullResult {
     return this._values ?? this.pullResponse.v ? new Map(Object.keys(this.pullResponse.v).map((v) => [v.toUpperCase(), this.pullResponse.v[v]])) : (frozenEmptyMap as Map<string, IUnit>);
   }
 
-  collection<T extends IObject>(nameOrClass: string | Class | Interface | AssociationType | RoleType): T[] {
-    if (typeof nameOrClass === 'string') {
-      return this.collections.get(nameOrClass.toUpperCase()) as T[];
+  collection<T extends IObject>(nameOrType: string | Class | Interface | AssociationType | RoleType): T[] {
+    if (typeof nameOrType === 'string') {
+      return (this.collections.get(nameOrType.toUpperCase()) as T[]) ?? (frozenEmptyArray as T[]);
     }
 
-    switch (nameOrClass.kind) {
+    switch (nameOrType.kind) {
       case 'AssociationType':
       case 'RoleType':
-        return this.collections.get((nameOrClass.isMany ? nameOrClass.pluralName : nameOrClass.singularName).toUpperCase()) as T[];
+        return (this.collections.get((nameOrType.isMany ? nameOrType.pluralName : nameOrType.singularName).toUpperCase()) as T[]) ?? (frozenEmptyArray as T[]);
       default:
-        return this.collections.get(nameOrClass.pluralName.toUpperCase()) as T[];
+        return (this.collections.get(nameOrType.pluralName.toUpperCase()) as T[]) ?? (frozenEmptyArray as T[]);
     }
   }
 
-  object<T extends IObject>(nameOrClass: string | Class | Interface): T {
-    const name = typeof nameOrClass === 'string' ? nameOrClass : nameOrClass.singularName;
+  object<T extends IObject>(nameOrType: string | Class | Interface | AssociationType | RoleType): T {
+    const name = typeof nameOrType === 'string' ? nameOrType : nameOrType.singularName;
     return this.objects.get(name.toUpperCase()) as T;
   }
 

@@ -12,7 +12,7 @@ export interface PropertyType extends OperandType {
   isMethodType: boolean;
   origin: Origin;
   singularName: string;
-   pluralName: string;
+  pluralName: string;
   objectType: ObjectType;
   isOne: boolean;
   isMany: boolean;

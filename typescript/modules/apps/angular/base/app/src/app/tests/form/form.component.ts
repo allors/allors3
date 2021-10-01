@@ -41,7 +41,7 @@ export class FormComponent extends TestScope implements OnInit, OnDestroy {
   }
 
   get organisationsWithEmployees(): Organisation[] {
-    return this.organisations?.filter((v) => v.Employees?.length > 0);
+    return this.organisations?.filter((v) => v.Employees.length > 0);
   }
 
   private refresh$: BehaviorSubject<Date>;
