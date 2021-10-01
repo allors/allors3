@@ -66,7 +66,7 @@ namespace Allors.Database.Protocol.Json
                                               objects.SelectMany(v =>
                                               {
                                                   var stepResult = select.Get(v, this.acls);
-                                                  return stepResult is HashSet<object> set ? set.Cast<IObject>().ToArray() : ((Extent)stepResult)?.ToArray() ?? Array.Empty<IObject>();
+                                                  return (IEnumerable<IObject>)stepResult ?? Array.Empty<IObject>();
                                               }).Distinct().ToArray();
 
                                 var propertyType = select.End.PropertyType;

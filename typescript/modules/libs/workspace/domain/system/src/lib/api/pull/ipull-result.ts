@@ -14,7 +14,7 @@ export interface IPullResult extends IResult {
 
   collection<T extends IObject>(nameOrClass: string | Class | Interface | AssociationType | RoleType): T[];
 
-  object<T extends IObject>(nameOrClass: string | Class | Interface): T;
+  object<T extends IObject>(nameOrClass: string | Class | Interface | AssociationType | RoleType): T;
 
   value(name: string): IUnit | Array<IUnit>;
 
