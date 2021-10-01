@@ -10,9 +10,10 @@ import { LazyComposite } from './lazy-composite';
 
 export class LazyClass extends LazyComposite implements InternalClass {
   readonly kind = 'Class';
-  readonly isInterface = false;
-  readonly isClass = true;
-  readonly classes: Set<InternalClass>;
+  readonly _ = {};
+  isInterface = false;
+  isClass = true;
+  classes: Set<InternalClass>;
 
   overriddenRequiredRoleTypes: RoleType[];
 

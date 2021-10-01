@@ -142,9 +142,6 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
     const database = new DatabaseConnection(configuration, idGenerator, serviceBuilder);
     const workspace = database.createWorkspace();
     workspaceService.workspace = workspace;
-
-    const angularMeta = workspace.services.angularMetaService;
-    configure(m, angularMeta);
   };
 }
 

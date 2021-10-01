@@ -91,9 +91,7 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const angularMeta = this.allors.workspace.services.angularMetaService;
-    const angularWorkEffort = angularMeta.for(m.WorkEffort);
-    this.filter = angularWorkEffort.filter ??= new Filter(angularWorkEffort.filterDefinition);
+    this.filter = m.WorkEffort._.filter ??= new Filter(m.WorkEffort._.filterDefinition);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.WorkEffort.TakenBy };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -121,7 +119,7 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
           const pulls = [
             pull.WorkEffort({
               predicate,
-              sorting: sort ? angularWorkEffort.sorter?.create(sort) : null,
+              sorting: sort ? m.WorkEffort._.sorter?.create(sort) : null,
               include: {
                 Customer: x,
                 ExecutedBy: x,

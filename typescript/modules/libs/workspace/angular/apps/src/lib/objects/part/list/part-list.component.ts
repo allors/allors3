@@ -71,9 +71,7 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const angularMeta = this.allors.workspace.services.angularMetaService;
-    const angularWorkPart = angularMeta.for(m.Part);
-    this.filter = angularWorkPart.filter ??= new Filter(angularWorkPart.filterDefinition);
+    this.filter = m.Part._.filter ??= new Filter(m.Part._.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -96,7 +94,7 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
           const pulls = [
             pull.Part({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? angularWorkPart.sorter?.create(sort) : null,
+              sorting: sort ? m.Part._.sorter?.create(sort) : null,
               include: {
                 Brand: x,
                 Model: x,

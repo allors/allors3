@@ -81,9 +81,7 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const angularMeta = this.allors.workspace.services.angularMetaService;
-    const angularRequestForQuote = angularMeta.for(m.RequestForQuote);
-    this.filter = angularRequestForQuote.filter ??= new Filter(angularRequestForQuote.filterDefinition);
+    this.filter = m.RequestForQuote._.filter ??= new Filter(m.RequestForQuote._.filterDefinition);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Request.Recipient };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -115,7 +113,7 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
             }),
             pull.Request({
               predicate,
-              sorting: sort ? angularRequestForQuote.sorter?.create(sort) : null,
+              sorting: sort ? m.RequestForQuote._.sorter?.create(sort) : null,
               include: {
                 Originator: x,
                 RequestState: x,

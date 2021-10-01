@@ -49,7 +49,7 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
     titleService.setTitle(this.title);
 
     this.m = this.allors.workspace.configuration.metaPopulation as M;
-    
+
     this.delete = deleteService.delete(allors.client, allors.session);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
@@ -67,10 +67,8 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
   public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
-    const { angularMetaService: a } = this.allors.workspace.services;
-    const angularUnifiedGood = a.for(m.UnifiedGood);
 
-    this.filter = angularUnifiedGood.filter ??= new Filter(angularUnifiedGood.filterDefinition);
+    this.filter = m.UnifiedGood._.filter ??= new Filter(m.UnifiedGood._.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -93,7 +91,7 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
           const pulls = [
             pull.UnifiedGood({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? a.for(m.UnifiedGood).sorter?.create(sort) : null,
+              sorting: sort ? m.UnifiedGood._.sorter?.create(sort) : null,
               include: {
                 Photos: {},
                 PrimaryPhoto: {},
@@ -107,7 +105,7 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
             }),
             pull.UnifiedGood({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? a.for(m.UnifiedGood).sorter?.create(sort) : null,
+              sorting: sort ? m.UnifiedGood._.sorter?.create(sort) : null,
               select: {
                 ProductCategoriesWhereProduct: {
                   include: {

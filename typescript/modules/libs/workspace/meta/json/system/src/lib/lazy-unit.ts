@@ -1,9 +1,9 @@
-import { Origin, UnitTags } from '@allors/workspace/meta/system';
-import { InternalUnit } from './internal/internal-unit';
+import { Origin, Unit, UnitTags } from '@allors/workspace/meta/system';
 import { InternalMetaPopulation } from './internal/internal-meta-population';
 
-export class LazyUnit implements InternalUnit {
-  public readonly kind = 'Unit';
+export class LazyUnit implements Unit {
+  readonly kind = 'Unit';
+  readonly _ = {};
   isUnit = true;
   isComposite = false;
   isInterface = false;

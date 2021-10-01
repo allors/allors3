@@ -34,23 +34,22 @@ export class MainComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     const { workspace } = this.allors;
     const m = workspace.configuration.metaPopulation as M;
-    const angularMeta = workspace.services.angularMetaService;
 
     menu.forEach((menuItem) => {
       const objectType = menuItem.tag ? (m.metaObjectByTag.get(menuItem.tag) as Composite) : null;
 
       const sideMenuItem: SideMenuItem = {
-        icon: menuItem.icon ?? angularMeta.for(objectType)?.icon,
-        title: menuItem.title ?? angularMeta.for(objectType)?.displayName ?? objectType.pluralName,
-        link: menuItem.link ?? angularMeta.for(objectType)?.list,
+        icon: menuItem.icon ?? objectType._.icon,
+        title: menuItem.title ?? objectType._.displayName ?? objectType.pluralName,
+        link: menuItem.link ?? objectType._.list,
         children:
           menuItem.children &&
           menuItem.children.map((childMenuItem) => {
             const childObjectType = childMenuItem.tag ? (m.metaObjectByTag.get(childMenuItem.tag) as Composite) : null;
             return {
-              icon: childMenuItem.icon ?? angularMeta.for(childObjectType)?.icon,
-              title: childMenuItem.title ?? angularMeta.for(childObjectType)?.displayName ?? childObjectType.pluralName,
-              link: childMenuItem.link ?? angularMeta.for(childObjectType)?.list,
+              icon: childMenuItem.icon ?? childObjectType._.icon,
+              title: childMenuItem.title ?? childObjectType._.displayName ?? childObjectType.pluralName,
+              link: childMenuItem.link ?? childObjectType._.list,
             };
           }),
       };

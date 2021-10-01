@@ -106,9 +106,7 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const angularMeta = this.allors.workspace.services.angularMetaService;
-    const angularPurchaseOrder = angularMeta.for(m.PurchaseOrder);
-    this.filter = angularPurchaseOrder.filter ??= new Filter(angularPurchaseOrder.filterDefinition);
+    this.filter = m.PurchaseOrder._.filter ??= new Filter(m.PurchaseOrder._.filterDefinition);
    
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.PurchaseOrder.OrderedBy };
 
@@ -141,7 +139,7 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
             }),
             pull.PurchaseOrder({
               predicate,
-              sorting: sort ? angularPurchaseOrder.sorter?.create(sort) : null,
+              sorting: sort ? m.PurchaseOrder._.sorter?.create(sort) : null,
               include: {
                 PrintDocument: {
                   Media: x,

@@ -176,9 +176,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const angularMeta = this.allors.workspace.services.angularMetaService;
-    const angularPurchaseInvoice = angularMeta.for(m.PurchaseInvoice);
-    this.filter = angularPurchaseInvoice.filter ??= new Filter(angularPurchaseInvoice.filterDefinition);
+    this.filter = m.PurchaseInvoice._.filter ??= new Filter(m.PurchaseInvoice._.filterDefinition);
 
     const internalOrganisationPredicate : Equals = { kind: 'Equals', propertyType: m.PurchaseInvoice.BilledTo };
 
@@ -211,7 +209,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
             }),
             pull.PurchaseInvoice({
               predicate,
-              sorting: sort ? angularPurchaseInvoice.sorter?.create(sort) : null,
+              sorting: sort ? m.PurchaseInvoice._.sorter?.create(sort) : null,
               include: {
                 BilledFrom: x,
                 BilledTo: x,

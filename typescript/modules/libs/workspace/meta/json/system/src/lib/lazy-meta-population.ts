@@ -2,14 +2,9 @@ import { MetaData } from '@allors/protocol/json/system';
 
 import { Lookup } from './utils/lookup';
 import { InternalMetaPopulation } from './internal/internal-meta-population';
-import { InternalMetaObject } from './internal/internal-meta-object';
-import { InternalUnit } from './internal/internal-unit';
 import { InternalInterface } from './internal/internal-interface';
 import { InternalClass } from './internal/internal-class';
 import { InternalComposite } from './internal/internal-composite';
-import { InternalRelationType } from './internal/internal-relation-type';
-import { InternalMethodType } from './internal/internal-method-type';
-import { InternalObjectType } from './internal/internal-object-type';
 
 import { LazyTreeBuilder } from './builders/lazy-tree-builder';
 import { LazySelectBuilder } from './builders/lazy-select-builder';
@@ -19,16 +14,18 @@ import { LazyResultBuilder } from './builders/lazy-result-builder';
 import { LazyUnit } from './lazy-unit';
 import { LazyInterface } from './lazy-interface';
 import { LazyClass } from './lazy-class';
+import { MetaObject, MethodType, ObjectType, RelationType, Unit } from '@allors/workspace/meta/system';
 
 export class LazyMetaPopulation implements InternalMetaPopulation {
   readonly kind = 'MetaPopulation';
-  readonly metaObjectByTag: Map<string, InternalMetaObject> = new Map();
-  readonly units: Set<InternalUnit>;
-  readonly interfaces: Set<InternalInterface>;
-  readonly classes: Set<InternalClass>;
-  readonly composites = new Set<InternalComposite>();
-  readonly relationTypes: Set<InternalRelationType>;
-  readonly methodTypes: Set<InternalMethodType>;
+  readonly _ = {};
+  metaObjectByTag: Map<string, MetaObject> = new Map();
+  units: Set<Unit>;
+  interfaces: Set<InternalInterface>;
+  classes: Set<InternalClass>;
+  composites = new Set<InternalComposite>();
+  relationTypes: Set<RelationType>;
+  methodTypes: Set<MethodType>;
 
   constructor(data: MetaData) {
     const lookup = new Lookup(data);
@@ -56,11 +53,11 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
     this['resultBuilder'] = new LazyResultBuilder(this);
   }
 
-  onNew(metaObject: InternalMetaObject) {
+  onNew(metaObject: MetaObject) {
     this.metaObjectByTag.set(metaObject.tag, metaObject);
   }
 
-  onNewObjectType(objectType: InternalObjectType) {
+  onNewObjectType(objectType: ObjectType) {
     this.onNew(objectType);
     (this as Record<string, unknown>)[objectType.singularName] = objectType;
   }

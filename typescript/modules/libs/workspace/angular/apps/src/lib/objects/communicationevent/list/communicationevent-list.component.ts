@@ -73,9 +73,7 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const angularMeta = this.allors.workspace.services.angularMetaService;
-    const angularCommunicationEvent = angularMeta.for(m.CommunicationEvent);
-    this.filter = angularCommunicationEvent.filter ??= new Filter(angularCommunicationEvent.filterDefinition);
+    this.filter = m.CommunicationEvent._.filter ??= new Filter(m.CommunicationEvent._.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -98,7 +96,7 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
           const pulls = [
             pull.CommunicationEvent({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? angularCommunicationEvent.sorter?.create(sort) : null,
+              sorting: sort ? m.CommunicationEvent._.sorter?.create(sort) : null,
               include: {
                 CommunicationEventState: x,
                 InvolvedParties: x,

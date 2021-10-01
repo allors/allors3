@@ -6,7 +6,6 @@ import { IObject } from '@allors/workspace/domain/system';
 import { ObjectData } from '../../services/object/object.data';
 import { ObjectService } from '../../services/object/object.service';
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { IAngularMetaService } from '../../../meta/iangular-meta-service';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -23,11 +22,7 @@ export class FactoryFabComponent implements OnInit {
 
   classes: Class[];
 
-  angularMeta: IAngularMetaService;
-
-  constructor(public readonly factoryService: ObjectService, private workspaceService: WorkspaceService) {
-    this.angularMeta = this.workspaceService.workspace.services.angularMetaService;
-  }
+  constructor(public readonly factoryService: ObjectService, private workspaceService: WorkspaceService) {}
 
   ngOnInit(): void {
     if (this.objectType.isInterface) {

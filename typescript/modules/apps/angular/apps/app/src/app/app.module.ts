@@ -331,7 +331,6 @@ import { LoginComponent } from './auth/login.component';
 import { MainComponent } from './main/main.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
-import { configure } from './configure';
 import { ErrorComponent } from './error/error.component';
 
 export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
@@ -350,9 +349,6 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
     const database = new DatabaseConnection(configuration, idGenerator, serviceBuilder);
     const workspace = database.createWorkspace();
     workspaceService.workspace = workspace;
-
-    const angularMeta = workspace.services.angularMetaService;
-    configure(m, angularMeta);
   };
 }
 

@@ -1,27 +1,25 @@
-import { Multiplicity, Origin } from '@allors/workspace/meta/system';
+import { AssociationType, Multiplicity, Origin, RelationType, RoleType } from '@allors/workspace/meta/system';
 
-import { InternalAssociationType } from './internal/internal-association-type';
 import { InternalComposite } from './internal/internal-composite';
-import { InternalRelationType } from './internal/internal-relation-type';
-import { InternalRoleType } from './internal/internal-role-type';
 
-export class LazyAssociationType implements InternalAssociationType {
+export class LazyAssociationType implements AssociationType {
   readonly kind = 'AssociationType';
-  readonly isRoleType = false;
-  readonly isAssociationType = true;
-  readonly isMethodType = false;
+  readonly _ = {};
+  isRoleType = false;
+  isAssociationType = true;
+  isMethodType = false;
 
-  readonly relationType: InternalRelationType;
-  readonly operandTag: string;
-  readonly origin: Origin;
-  readonly isOne: boolean;
-  readonly isMany: boolean;
-  readonly name: string;
-  readonly singularName: string;
+  relationType: RelationType;
+  operandTag: string;
+  origin: Origin;
+  isOne: boolean;
+  isMany: boolean;
+  name: string;
+  singularName: string;
 
   private _pluralName?: string;
 
-  constructor(public roleType: InternalRoleType, public objectType: InternalComposite, multiplicity: Multiplicity) {
+  constructor(public roleType: RoleType, public objectType: InternalComposite, multiplicity: Multiplicity) {
     this.relationType = roleType.relationType;
     this.operandTag = this.relationType.tag;
     this.origin = this.relationType.origin;

@@ -69,9 +69,7 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    const angularMeta = this.allors.workspace.services.angularMetaService;
-    const angularCarrier = angularMeta.for(m.Carrier);
-    this.filter = angularCarrier.filter ??= new Filter(angularCarrier.filterDefinition);
+    this.filter = m.Carrier._.filter ??= new Filter(m.Carrier._.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -94,7 +92,7 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
           const pulls = [
             pull.Carrier({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? angularCarrier.sorter?.create(sort) : null,
+              sorting: sort ? m.Carrier._.sorter?.create(sort) : null,
               arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,

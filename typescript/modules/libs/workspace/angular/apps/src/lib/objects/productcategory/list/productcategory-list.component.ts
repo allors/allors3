@@ -81,9 +81,7 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const angularMeta = this.allors.workspace.services.angularMetaService;
-    const angularProductCategory = angularMeta.for(m.ProductCategory);
-    this.filter = angularProductCategory.filter ??= new Filter(angularProductCategory.filterDefinition);
+    this.filter = m.ProductCategory._.filter ??= new Filter(m.ProductCategory._.filterDefinition);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.ProductCategory.InternalOrganisation };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -111,7 +109,7 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
           const pulls = [
             pull.ProductCategory({
               predicate: predicate,
-              sorting: sort ? angularProductCategory.sorter?.create(sort) : null,
+              sorting: sort ? m.ProductCategory._.sorter?.create(sort) : null,
               include: {
                 CategoryImage: x,
                 LocalisedNames: x,

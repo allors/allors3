@@ -1,4 +1,4 @@
-import { Origin, pluralize, PropertyType, RoleType } from '@allors/workspace/meta/system';
+import { AssociationType, MethodType, Origin, pluralize, PropertyType, RoleType } from '@allors/workspace/meta/system';
 import { ObjectTypeData } from '@allors/protocol/json/system';
 
 import { frozenEmptySet } from './utils/frozen-empty-set';
@@ -6,9 +6,6 @@ import { Lookup } from './utils/lookup';
 
 import { InternalComposite } from './internal/internal-composite';
 import { InternalInterface } from './internal/internal-interface';
-import { InternalAssociationType } from './internal/internal-association-type';
-import { InternalRoleType } from './internal/internal-role-type';
-import { InternalMethodType } from './internal/internal-method-type';
 import { InternalClass } from './internal/internal-class';
 import { InternalMetaPopulation } from './internal/internal-meta-population';
 
@@ -16,23 +13,24 @@ import { LazyRelationType } from './lazy-relation-type';
 import { LazyMethodType } from './lazy-method-type';
 
 export abstract class LazyComposite implements InternalComposite {
+  readonly _ = {};
   isUnit = false;
   isComposite = true;
-  readonly tag: string;
-  readonly singularName: string;
-  readonly origin: Origin;
+  tag: string;
+  singularName: string;
+  origin: Origin;
 
-  associationTypes!: Set<InternalAssociationType>;
-  roleTypes!: Set<InternalRoleType>;
-  methodTypes!: Set<InternalMethodType>;
+  associationTypes!: Set<AssociationType>;
+  roleTypes!: Set<RoleType>;
+  methodTypes!: Set<MethodType>;
   propertyTypeByPropertyName!: Map<string, PropertyType>;
 
   directSupertypes!: Set<InternalInterface>;
   supertypes!: Set<InternalInterface>;
 
-  directAssociationTypes: Set<InternalAssociationType> = new Set();
-  directRoleTypes: Set<InternalRoleType> = new Set();
-  directMethodTypes: Set<InternalMethodType> = new Set();
+  directAssociationTypes: Set<AssociationType> = new Set();
+  directRoleTypes: Set<RoleType> = new Set();
+  directMethodTypes: Set<MethodType> = new Set();
 
   databaseOriginRoleTypes: Set<RoleType>;
   workspaceOriginRoleTypes: Set<RoleType>;
@@ -57,11 +55,11 @@ export abstract class LazyComposite implements InternalComposite {
     metaPopulation.onNewComposite(this);
   }
 
-  onNewAssociationType(associationType: InternalAssociationType) {
+  onNewAssociationType(associationType: AssociationType) {
     this.directAssociationTypes.add(associationType);
   }
 
-  onNewRoleType(roleType: InternalRoleType) {
+  onNewRoleType(roleType: RoleType) {
     this.directRoleTypes.add(roleType);
   }
 
@@ -81,7 +79,7 @@ export abstract class LazyComposite implements InternalComposite {
     if (m) {
       this.directMethodTypes = new Set(m?.map((v) => new LazyMethodType(this, v)));
     } else {
-      this.directMethodTypes = frozenEmptySet as Set<InternalMethodType>;
+      this.directMethodTypes = frozenEmptySet as Set<MethodType>;
     }
   }
 
@@ -121,7 +119,7 @@ export abstract class LazyComposite implements InternalComposite {
     }
   }
 
-  *associationTypeGenerator(): IterableIterator<InternalAssociationType> {
+  *associationTypeGenerator(): IterableIterator<AssociationType> {
     if (this.associationTypes) {
       yield* this.associationTypes;
     } else {
@@ -132,7 +130,7 @@ export abstract class LazyComposite implements InternalComposite {
     }
   }
 
-  *roleTypeGenerator(): IterableIterator<InternalRoleType> {
+  *roleTypeGenerator(): IterableIterator<RoleType> {
     if (this.roleTypes) {
       yield* this.roleTypes;
     } else {
@@ -143,7 +141,7 @@ export abstract class LazyComposite implements InternalComposite {
     }
   }
 
-  *methodTypeGenerator(): IterableIterator<InternalMethodType> {
+  *methodTypeGenerator(): IterableIterator<MethodType> {
     if (this.methodTypes) {
       yield* this.methodTypes;
     } else {
@@ -154,7 +152,7 @@ export abstract class LazyComposite implements InternalComposite {
     }
   }
 
-  *databaseOriginRoleTypesGenerator(): IterableIterator<InternalRoleType> {
+  *databaseOriginRoleTypesGenerator(): IterableIterator<RoleType> {
     for (const roleType of this.roleTypes) {
       if (roleType.origin === Origin.Database) {
         yield roleType;
@@ -162,7 +160,7 @@ export abstract class LazyComposite implements InternalComposite {
     }
   }
 
-  *workspaceOriginRoleTypesGenerator(): IterableIterator<InternalRoleType> {
+  *workspaceOriginRoleTypesGenerator(): IterableIterator<RoleType> {
     for (const roleType of this.roleTypes) {
       if (roleType.origin === Origin.Workspace) {
         yield roleType;

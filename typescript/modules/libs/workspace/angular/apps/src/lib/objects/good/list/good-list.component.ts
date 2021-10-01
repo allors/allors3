@@ -66,9 +66,7 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const angularMeta = this.allors.workspace.services.angularMetaService;
-    const angularGood = angularMeta.for(m.Good);
-    this.filter = angularGood.filter ??= new Filter(angularGood.filterDefinition);
+    this.filter = m.Good._.filter ??= new Filter(m.Good._.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -79,7 +77,7 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
           const pulls = [
             pull.Good({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? angularGood.sorter?.create(sort) : null,
+              sorting: sort ? m.Good._.sorter?.create(sort) : null,
               include: {
                 NonUnifiedGood_Part: x,
                 ProductIdentifications: {
@@ -92,7 +90,7 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
             }),
             pull.Good({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? angularGood.sorter?.create(sort) : null,
+              sorting: sort ? m.Good._.sorter?.create(sort) : null,
               select: {
                 ProductCategoriesWhereProduct: {
                   include: {

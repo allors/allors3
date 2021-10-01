@@ -180,9 +180,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const angularMeta = this.allors.workspace.services.angularMetaService;
-    const angularSalesInvoice = angularMeta.for(m.SalesInvoice);
-    this.filter = angularSalesInvoice.filter ??= new Filter(angularSalesInvoice.filterDefinition);
+    this.filter = m.SalesInvoice._.filter ??= new Filter(m.SalesInvoice._.filterDefinition);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.SalesInvoice.BilledFrom };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -214,7 +212,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
             }),
             pull.SalesInvoice({
               predicate,
-              sorting: sort ? angularSalesInvoice.sorter?.create(sort) : null,
+              sorting: sort ? m.SalesInvoice._.sorter?.create(sort) : null,
               include: {
                 PrintDocument: {
                   Media: x,

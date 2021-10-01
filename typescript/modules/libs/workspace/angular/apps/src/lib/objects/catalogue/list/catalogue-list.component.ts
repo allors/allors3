@@ -80,9 +80,7 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const angularMeta = this.allors.workspace.services.angularMetaService;
-    const angularCatalogue = angularMeta.for(m.Catalogue);
-    this.filter = angularCatalogue.filter ??= new Filter(angularCatalogue.filterDefinition);
+    this.filter = m.Catalogue._.filter ??= new Filter(m.Catalogue._.filterDefinition);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Catalogue.InternalOrganisation };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -110,7 +108,7 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
           const pulls = [
             pull.Catalogue({
               predicate: predicate,
-              sorting: sort ? angularCatalogue.sorter?.create(sort) : null,
+              sorting: sort ? m.Catalogue._.sorter?.create(sort) : null,
               include: {
                 CatalogueImage: x,
                 ProductCategories: x,

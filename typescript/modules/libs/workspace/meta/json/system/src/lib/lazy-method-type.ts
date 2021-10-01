@@ -1,21 +1,21 @@
 import { MethodTypeData } from '@allors/protocol/json/system';
-import { Origin } from '@allors/workspace/meta/system';
+import { MethodType, Origin } from '@allors/workspace/meta/system';
 
 import { InternalComposite } from './internal/internal-composite';
 import { InternalMetaPopulation } from './internal/internal-meta-population';
-import { InternalMethodType } from './internal/internal-method-type';
 
-export class LazyMethodType implements InternalMethodType {
+export class LazyMethodType implements MethodType {
+  readonly _ = {};
   readonly kind = 'MethodType';
-  readonly isRoleType = false;
-  readonly isAssociationType = false;
-  readonly isMethodType = true;
+  isRoleType = false;
+  isAssociationType = false;
+  isMethodType = true;
 
-  readonly metaPopulation: InternalMetaPopulation;
-  readonly tag: string;
-  readonly name: string;
-  readonly origin = Origin.Database;
-  readonly operandTag: string;
+  metaPopulation: InternalMetaPopulation;
+  tag: string;
+  name: string;
+  origin = Origin.Database;
+  operandTag: string;
 
   constructor(public objectType: InternalComposite, d: MethodTypeData) {
     this.metaPopulation = objectType.metaPopulation as InternalMetaPopulation;

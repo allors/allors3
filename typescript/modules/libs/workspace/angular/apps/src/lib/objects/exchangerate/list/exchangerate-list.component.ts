@@ -75,9 +75,7 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const angularMeta = this.allors.workspace.services.angularMetaService;
-    const angularExchangeRate = angularMeta.for(m.ExchangeRate);
-    this.filter = angularExchangeRate.filter ??= new Filter(angularExchangeRate.filterDefinition);
+    this.filter = m.ExchangeRate._.filter ??= new Filter(m.ExchangeRate._.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -100,7 +98,7 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
           const pulls = [
             pull.ExchangeRate({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? angularExchangeRate.sorter?.create(sort) : null,
+              sorting: sort ? m.ExchangeRate._.sorter?.create(sort) : null,
               include: {
                 FromCurrency: x,
                 ToCurrency: x,

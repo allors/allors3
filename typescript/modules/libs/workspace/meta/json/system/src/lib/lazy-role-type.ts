@@ -1,42 +1,38 @@
 import { RelationTypeData } from '@allors/protocol/json/system';
-import { Origin, pluralize, Multiplicity } from '@allors/workspace/meta/system';
+import { Origin, pluralize, Multiplicity, RoleType, AssociationType, RelationType, ObjectType, Unit } from '@allors/workspace/meta/system';
 
 import { Lookup } from './utils/lookup';
-import { InternalAssociationType } from './internal/internal-association-type';
-import { InternalObjectType } from './internal/internal-object-type';
-import { InternalRelationType } from './internal/internal-relation-type';
-import { InternalRoleType } from './internal/internal-role-type';
-import { InternalUnit } from './internal/internal-unit';
 import { InternalComposite } from './internal/internal-composite';
 
 import { LazyAssociationType } from './lazy-association-type';
 
-export class LazyRoleType implements InternalRoleType {
+export class LazyRoleType implements RoleType {
   readonly kind = 'RoleType';
-  readonly isRoleType = true;
-  readonly isAssociationType = false;
-  readonly isMethodType = false;
+  readonly _ = {};
+  isRoleType = true;
+  isAssociationType = false;
+  isMethodType = false;
 
-  readonly objectType: InternalObjectType;
-  readonly isOne: boolean;
-  readonly isMany: boolean;
-  readonly origin: Origin;
-  readonly name: string;
-  readonly singularName: string;
-  readonly isDerived: boolean;
-  readonly isRequired: boolean;
-  readonly isUnique: boolean;
-  readonly size?: number;
-  readonly precision?: number;
-  readonly scale?: number;
-  readonly mediaType?: string;
-  readonly operandTag: string;
+  objectType: ObjectType;
+  isOne: boolean;
+  isMany: boolean;
+  origin: Origin;
+  name: string;
+  singularName: string;
+  isDerived: boolean;
+  isRequired: boolean;
+  isUnique: boolean;
+  size?: number;
+  precision?: number;
+  scale?: number;
+  mediaType?: string;
+  operandTag: string;
 
-  readonly associationType: InternalAssociationType;
+  associationType: AssociationType;
 
   private _pluralName?: string;
 
-  constructor(public relationType: InternalRelationType, associationObjectType: InternalComposite, roleObjectType: InternalObjectType, multiplicity: Multiplicity, data: RelationTypeData, lookup: Lookup) {
+  constructor(public relationType: RelationType, associationObjectType: InternalComposite, roleObjectType: ObjectType, multiplicity: Multiplicity, data: RelationTypeData, lookup: Lookup) {
     this.isOne = (multiplicity & 1) == 0;
     this.isMany = !this.isOne;
     this.origin = relationType.origin;
@@ -54,7 +50,7 @@ export class LazyRoleType implements InternalRoleType {
     this._pluralName = !Number.isInteger(v1) ? (v1 as string) : undefined;
 
     if (this.objectType.isUnit) {
-      const unit = this.objectType as InternalUnit;
+      const unit = this.objectType as Unit;
       if (unit.isString || unit.isDecimal) {
         let sizeOrScale = undefined;
         let precision = undefined;

@@ -1,15 +1,12 @@
-import { Interface } from '@allors/workspace/meta/system';
-import { InternalAssociationType } from './internal-association-type';
+import { AssociationType, Interface, MethodType, RoleType } from '@allors/workspace/meta/system';
 import { InternalComposite } from './internal-composite';
-import { InternalMethodType } from './internal-method-type';
-import { InternalRoleType } from './internal-role-type';
 
 export interface InternalInterface extends InternalComposite, Interface {
   deriveSub(): void;
 
-  associationTypeGenerator(): IterableIterator<InternalAssociationType>;
+  associationTypeGenerator(): IterableIterator<AssociationType>;
 
-  roleTypeGenerator(): IterableIterator<InternalRoleType>;
+  roleTypeGenerator(): IterableIterator<RoleType>;
 
-  methodTypeGenerator(): IterableIterator<InternalMethodType>;
+  methodTypeGenerator(): IterableIterator<MethodType>;
 }

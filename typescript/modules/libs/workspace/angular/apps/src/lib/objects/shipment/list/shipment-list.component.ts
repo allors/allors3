@@ -87,9 +87,7 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const angularMeta = this.allors.workspace.services.angularMetaService;
-    const angularShipment = angularMeta.for(m.Shipment);
-    this.filter = angularShipment.filter ??= new Filter(angularShipment.filterDefinition);
+    this.filter = m.Shipment._.filter ??= new Filter(m.Shipment._.filterDefinition);
 
     const fromInternalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Shipment.ShipFromParty };
     const toInternalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Shipment.ShipToParty };
@@ -120,7 +118,7 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
           const pulls = [
             pull.Shipment({
               predicate,
-              sorting: sort ? angularShipment.sorter?.create(sort) : null,
+              sorting: sort ? m.Shipment._.sorter?.create(sort) : null,
               include: {
                 ShipToParty: x,
                 ShipFromParty: x,

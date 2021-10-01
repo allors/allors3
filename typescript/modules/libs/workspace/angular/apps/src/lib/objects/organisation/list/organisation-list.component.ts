@@ -77,9 +77,7 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const angularMeta = this.allors.workspace.services.angularMetaService;
-    const angularOrganisation = angularMeta.for(m.Organisation);
-    this.filter = angularOrganisation.filter ??= new Filter(angularOrganisation.filterDefinition);
+    this.filter = m.Organisation._.filter ??= new Filter(m.Organisation._.filterDefinition);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -103,7 +101,7 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
             this.fetcher.internalOrganisation,
             pull.Organisation({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? angularOrganisation.sorter?.create(sort) : null,
+              sorting: sort ? m.Organisation._.sorter?.create(sort) : null,
               include: {
                 CustomerRelationshipsWhereCustomer: x,
                 SupplierRelationshipsWhereSupplier: x,

@@ -1,8 +1,11 @@
 import { Composite } from './composite';
-import { MetaObject } from './meta-object';
-import { OperandType } from './operand-type';
+import { MetaObject, MetaObjectExtension } from './meta-object';
+import { OperandType, OperandTypeExtension } from './operand-type';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface MethodTypeTypeExtension extends MetaObjectExtension, OperandTypeExtension {}
 
 export interface MethodType extends MetaObject, OperandType {
-  kind: 'MethodType';
+  readonly kind: 'MethodType';
   objectType: Composite;
 }

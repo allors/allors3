@@ -86,9 +86,7 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
     const { pullBuilder: pull } = m;
     const x = {};
     
-    const angularMeta = this.allors.workspace.services.angularMetaService;
-    const angularProductQuote = angularMeta.for(m.ProductQuote);
-    this.filter = angularProductQuote.filter ??= new Filter(angularProductQuote.filterDefinition);
+    this.filter = m.ProductQuote._.filter ??= new Filter(m.ProductQuote._.filterDefinition);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Quote.Issuer };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -120,7 +118,7 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
             }),
             pull.Quote({
               predicate,
-              sorting: sort ? angularProductQuote.sorter?.create(sort) : null,
+              sorting: sort ? m.ProductQuote._.sorter?.create(sort) : null,
               include: {
                 PrintDocument: {
                   Media: x,

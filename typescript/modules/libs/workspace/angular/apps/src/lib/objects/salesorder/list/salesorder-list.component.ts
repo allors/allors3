@@ -92,9 +92,7 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const angularMeta = this.allors.workspace.services.angularMetaService;
-    const angularSalesOrder = angularMeta.for(m.SalesOrder);
-    this.filter = angularSalesOrder.filter ??= new Filter(angularSalesOrder.filterDefinition);
+    this.filter = m.SalesOrder._.filter ??= new Filter(m.SalesOrder._.filterDefinition);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.SalesOrder.TakenBy };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -126,7 +124,7 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
             }),
             pull.SalesOrder({
               predicate,
-              sorting: sort ? angularSalesOrder.sorter?.create(sort) : null,
+              sorting: sort ? m.SalesOrder._.sorter?.create(sort) : null,
               include: {
                 PrintDocument: {
                   Media: x,

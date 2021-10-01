@@ -67,9 +67,7 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
     const m = this.m;
     const { pullBuilder: p } = m;
 
-    const angularMeta = this.allors.workspace.services.angularMetaService;
-    const angularPerson = angularMeta.for(m.Person);
-    this.filter = angularPerson.filter = angularPerson.filter ??= new Filter(angularPerson.filterDefinition);
+    this.filter = m.Person._.filter ??= new Filter(m.Person._.filterDefinition);
 
     this.subscription = combineLatest([this.refresh$, this.filter.fields$, this.sort$, this.pager$])
       .pipe(
@@ -80,7 +78,7 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
           const pulls = [
             p.Person({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? angularPerson.sorter.create(sort) : null,
+              sorting: sort ? m.Person._.sorter?.create(sort) : null,
               include: {
                 Pictures: {},
               },

@@ -1,47 +1,55 @@
-import { FilterDefinition, IAngularComposite, IAngularMetaService } from '@allors/workspace/angular/base';
+import { FilterDefinition } from '@allors/workspace/angular/base';
 import { M } from '@allors/workspace/meta/default';
 import { Sorter } from '@allors/workspace/angular/base';
 import { Composite } from '@allors/workspace/meta/system';
 
-function nav(composite: IAngularComposite, list: string, overview?: string) {
-  composite.list = list;
-  composite.overview = overview;
+function nav(composite: Composite, list: string, overview?: string) {
+  composite._.list = list;
+  composite._.overview = overview;
 }
 
-export function configure(m: M, angularMeta: IAngularMetaService) {
-  const a = (...composites: Composite[]) => composites.map((v) => angularMeta.for(v));
-
-  const [person, organisation, communicationEvent] = a(m.Person, m.Organisation, m.CommunicationEvent);
-  const [requestForQuote, productQuote, salesorder, salesinvoice] = a(m.RequestForQuote, m.ProductQuote, m.SalesOrder, m.SalesInvoice);
-  const [good, nonUnifiedGood, part, nonUnifiedPart, catalogue, productCategory, serialisedItemCharacteristic, productType, serialisedItem, unifiedGood] = a(
-    m.Good,
-    m.NonUnifiedGood,
-    m.Part,
-    m.NonUnifiedPart,
-    m.Catalogue,
-    m.ProductCategory,
-    m.SerialisedItemCharacteristic,
-    m.ProductType,
-    m.SerialisedItem,
-    m.UnifiedGood
-  );
-  const [purchaseOrder, purchaseInvoice] = a(m.PurchaseOrder, m.PurchaseInvoice);
-  const [shipment, customerShipment, purchaseShipment, carrier] = a(m.Shipment, m.CustomerShipment, m.PurchaseShipment, m.Carrier);
-  const [workEffort] = a(m.WorkEffort);
-  const [positionType, positionTypeRate] = a(m.PositionType, m.PositionTypeRate);
-  const [taskAssignment] = a(m.TaskAssignment);
-  const [exchangeRate] = a(m.ExchangeRate);
-
+export function configure(m: M) {
   // Navigation
-  nav(person, '/contacts/people', '/contacts/person/:id');
-  nav(organisation, '/contacts/organisations', '/contacts/organisation/:id');
-  nav(communicationEvent, '/contacts/communicationevents');
+  nav(m.Person, '/contacts/people', '/contacts/person/:id');
+  nav(m.Organisation, '/contacts/organisations', '/contacts/organisation/:id');
+  nav(m.CommunicationEvent, '/contacts/communicationevents');
 
-  nav(requestForQuote, '/sales/requestsforquote', '/sales/requestforquote/:id');
-  nav(productQuote, '/sales/productquotes', '/sales/productquotes/:id');
+  nav(m.RequestForQuote, '/sales/requestsforquote', '/sales/requestforquote/:id');
+  nav(m.ProductQuote, '/sales/productquotes', '/sales/productquotes/:id');
+  nav(m.SalesOrder, '/sales/salesorders', '/sales/salesorder/:id');
+  nav(m.SalesInvoice, '/sales/salesinvoices', '/sales/salesinvoice/:id');
+
+  nav(m.Good, '/products/goods');
+  nav(m.NonUnifiedGood, '/products/goods', '/products/nonunifiedgood/:id');
+  nav(m.Part, '/products/parts');
+  nav(m.NonUnifiedPart, '/products/parts', '/products/nonunifiedpart/:id');
+  nav(m.Catalogue, '/products/catalogues');
+  nav(m.ProductCategory, '/products/productcategories');
+  nav(m.SerialisedItemCharacteristic, '/products/serialiseditemcharacteristics');
+  nav(m.ProductType, '/products/producttypes');
+  nav(m.SerialisedItem, '/products/serialiseditems', '/products/serialisedItem/:id');
+  nav(m.UnifiedGood, '/products/unifiedgoods', '/products/unifiedgood/:id');
+
+  nav(m.PurchaseOrder, '/purchasing/purchaseorders', '/purchasing/purchasingpurchaseorder/:id');
+  nav(m.PurchaseInvoice, '/purchasing/purchaseinvoices', '/purchasing/purchasingpurchaseinvoice/:id');
+
+  nav(m.Shipment, '/shipment/shipments');
+  nav(m.CustomerShipment, '/shipment/shipments', '/shipment/customershipment/:id');
+  nav(m.PurchaseShipment, '/shipment/shipments', '/shipment/purchaseshipment/:id');
+  nav(m.Carrier, '/shipment/carriers');
+
+  nav(m.WorkEffort, '/workefforts/workefforts');
+  nav(m.WorkTask, '/workefforts/workefforts', '/workefforts/worktask/:id');
+
+  nav(m.PositionType, '/humanresource/positiontypes');
+  nav(m.PositionTypeRate, '/humanresource/positiontyperates');
+
+  nav(m.TaskAssignment, '/workflow/taskassignments');
+
+  nav(m.ExchangeRate, '/accounting/exchangerates');
 
   // Filter & Sort
-  person.filterDefinition = new FilterDefinition({
+  m.Person._.filterDefinition = new FilterDefinition({
     kind: 'And',
     operands: [
       {
@@ -61,13 +69,13 @@ export function configure(m: M, angularMeta: IAngularMetaService) {
       },
     ],
   });
-  person.sorter = new Sorter({
+  m.Person._.sorter = new Sorter({
     firstName: m.Person.FirstName,
     lastName: m.Person.LastName,
     email: m.Person.UserEmail,
   });
 
-  organisation.filterDefinition = new FilterDefinition({
+  m.Organisation._.filterDefinition = new FilterDefinition({
     kind: 'And',
     operands: [
       {
@@ -77,5 +85,5 @@ export function configure(m: M, angularMeta: IAngularMetaService) {
       },
     ],
   });
-  organisation.sorter = new Sorter({ name: m.Organisation.Name });
+  m.Organisation._.sorter = new Sorter({ name: m.Organisation.Name });
 }
