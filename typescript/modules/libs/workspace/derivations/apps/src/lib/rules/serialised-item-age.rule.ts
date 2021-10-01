@@ -3,7 +3,7 @@ import { M } from '@allors/workspace/meta/default';
 import { SerialisedItem } from '@allors/workspace/domain/default';
 
 export class SerialisedItemAgeRule implements IRule {
-  id: '671388a5a3ad4bb0987849ca2321614b';
+  id= '671388a5a3ad4bb0987849ca2321614b';
   patterns: IPattern[];
 
   constructor(m: M) {

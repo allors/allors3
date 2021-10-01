@@ -3,7 +3,7 @@ import { M } from '@allors/workspace/meta/default';
 import { WebAddress } from '@allors/workspace/domain/default';
 
 export class WebAddressDisplayNameRule implements IRule {
-  id: '2bca556204f7448ca779e2c5141d98fb';
+  id= '2bca556204f7448ca779e2c5141d98fb';
   patterns: IPattern[];
 
   constructor(m: M) {

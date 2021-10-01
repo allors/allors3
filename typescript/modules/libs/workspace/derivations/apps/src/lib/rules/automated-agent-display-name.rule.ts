@@ -3,7 +3,7 @@ import { M } from '@allors/workspace/meta/default';
 import { AutomatedAgent } from '@allors/workspace/domain/default';
 
 export class AutomatedAgentDisplayNameRule implements IRule {
-  id: '798e246e73024644a3bb21a6aec48fdb';
+  id = '798e246e73024644a3bb21a6aec48fdb';
   patterns: IPattern[];
 
   constructor(m: M) {

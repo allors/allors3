@@ -5,7 +5,7 @@ import { M } from '@allors/workspace/meta/default';
 import { TelecommunicationsNumber } from '@allors/workspace/domain/default';
 
 export class TelecommunicationsNumberDisplayNameRule implements IRule {
-  id: 'c44bbca39c4f4ec898a7f47751dd63c1';
+  id= 'c44bbca39c4f4ec898a7f47751dd63c1';
   patterns: IPattern[];
 
   constructor(m: M) {

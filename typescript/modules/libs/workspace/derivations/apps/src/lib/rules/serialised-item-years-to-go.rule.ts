@@ -3,7 +3,7 @@ import { M } from '@allors/workspace/meta/default';
 import { SerialisedItem, UnifiedGood } from '@allors/workspace/domain/default';
 
 export class SerialisedItemYearsToGoRule implements IRule {
-  id: '7ad8092ac8d34076bfdf02a06a492d6f';
+  id= '7ad8092ac8d34076bfdf02a06a492d6f';
   patterns: IPattern[];
 
   constructor(m: M) {

@@ -12,12 +12,15 @@ export class Engine {
 
   ruleByPattern: Map<IPattern, IRule>;
 
+  patternsByClassByRule: Map<IRule, Map<Class, IPattern[]>>;
+
   public constructor(rules: IRule[]) {
     this.classesByRule = new Map();
     this.rulesByClass = new Map();
     this.patternsByRoleTypeByClass = new Map();
     this.patternsByAssociationTypeByClass = new Map();
     this.ruleByPattern = new Map();
+    this.patternsByClassByRule = new Map();
 
     for (const rule of rules) {
       let ruleClasses = new Set<Class>();
@@ -44,6 +47,22 @@ export class Engine {
 
         if (patternClasses) {
           ruleClasses = new Set([...ruleClasses, ...patternClasses]);
+
+          let patternsByClass = this.patternsByClassByRule.get(rule);
+          if (patternsByClass == null) {
+            patternsByClass = new Map();
+            this.patternsByClassByRule.set(rule, patternsByClass);
+          }
+
+          for (const patternClass of patternClasses) {
+            let patterns = patternsByClass.get(patternClass);
+            if (patterns == null) {
+              patterns = [];
+              patternsByClass.set(patternClass, patterns);
+            }
+
+            patterns.push(pattern);
+          }
 
           switch (pattern.kind) {
             case 'RolePattern':

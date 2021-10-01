@@ -3,7 +3,7 @@ import { M } from '@allors/workspace/meta/default';
 import { Person } from '@allors/workspace/domain/default';
 
 export class PersonDisplayNameRule implements IRule {
-  id: '93d61e576fb14e898abcf0b06b8fcd34';
+  id= '93d61e576fb14e898abcf0b06b8fcd34';
   patterns: IPattern[];
 
   constructor(m: M) {

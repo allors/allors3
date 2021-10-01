@@ -3,7 +3,7 @@ import { M } from '@allors/workspace/meta/default';
 import { WorkEffortPartyAssignment } from '@allors/workspace/domain/default';
 
 export class WorkEffortPartyAssignmentDisplayNameRule implements IRule {
-  id: '32a48e168f47446599ec0030bec58084';
+  id= '32a48e168f47446599ec0030bec58084';
   patterns: IPattern[];
 
   constructor(m: M) {

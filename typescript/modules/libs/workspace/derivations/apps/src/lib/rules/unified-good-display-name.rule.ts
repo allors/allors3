@@ -3,7 +3,7 @@ import { M } from '@allors/workspace/meta/default';
 import { UnifiedGood } from '@allors/workspace/domain/default';
 
 export class UnifiedGoodDisplayNameRule implements IRule {
-  id: '6f30aa5a695e4dfa8a110dc6748404aa';
+  id= '6f30aa5a695e4dfa8a110dc6748404aa';
   patterns: IPattern[];
 
   constructor(m: M) {

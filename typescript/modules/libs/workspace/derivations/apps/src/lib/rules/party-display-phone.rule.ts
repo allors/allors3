@@ -3,7 +3,7 @@ import { M } from '@allors/workspace/meta/default';
 import { TelecommunicationsNumber, Party } from '@allors/workspace/domain/default';
 
 export class PartyDisplayPhoneRule implements IRule {
-  id: 'f27a9a776f2b4119b623e4c518f07f46';
+  id = 'f27a9a776f2b4119b623e4c518f07f46';
   patterns: IPattern[];
   m: M;
 
@@ -21,7 +21,7 @@ export class PartyDisplayPhoneRule implements IRule {
         roleType: m.PartyContactMechanism.ContactMechanism,
         tree: t.ContactMechanism({
           PartyContactMechanismsWhereContactMechanism: {
-            PartyWherePartyContactMechanism: {}
+            PartyWherePartyContactMechanism: {},
           },
         }),
       },
@@ -38,9 +38,9 @@ export class PartyDisplayPhoneRule implements IRule {
             const telecommunicationsNumber = v.ContactMechanism as TelecommunicationsNumber;
             return telecommunicationsNumber.DisplayName;
           })
-          .reduce((acc: string, cur: string) => acc + ', ' + cur);
+          .reduce((acc: string, cur: string) => acc + ', ' + cur, '');
       }
-    
+
       match.DisplayPhone = '';
     }
   }

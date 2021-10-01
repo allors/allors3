@@ -3,7 +3,7 @@ import { M } from '@allors/workspace/meta/default';
 import { ProductCategory } from '@allors/workspace/domain/default';
 
 export class ProductCategoryDisplayNameRule implements IRule {
-  id: '431d3b390dc44e88afab436b60d7752f';
+  id= '431d3b390dc44e88afab436b60d7752f';
   patterns: IPattern[];
 
   constructor(m: M) {

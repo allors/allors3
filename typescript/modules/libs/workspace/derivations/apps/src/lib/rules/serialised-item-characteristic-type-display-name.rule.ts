@@ -3,7 +3,7 @@ import { M } from '@allors/workspace/meta/default';
 import { SerialisedItemCharacteristicType } from '@allors/workspace/domain/default';
 
 export class SerialisedItemCharacteristicTypeDisplayNameRule implements IRule {
-  id: '9ddd15e0f42649539086a167438ae144';
+  id= '9ddd15e0f42649539086a167438ae144';
   patterns: IPattern[];
 
   constructor(m: M) {

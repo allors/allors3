@@ -38,15 +38,45 @@ export class Derivation implements IDerivation {
         for (const instantiated of changeSet.instantiated.values()) {
           const cls = instantiated.cls;
           const rules = this.engine.rulesByClass.get(cls);
+
           if (rules != null) {
             for (const rule of rules) {
-              let matches = matchesByRule.get(rule);
-              if (matches == null) {
-                matches = new Set();
-                matchesByRule.set(rule, matches);
-              }
+              const patternsByClass = this.engine.patternsByClassByRule.get(rule);
+              const patterns = patternsByClass?.get(cls);
+              if (patterns != null) {
+                for (const pattern of patterns) {
+                  let matches = matchesByRule.get(rule);
+                  if (matches == null) {
+                    matches = new Set();
+                    matchesByRule.set(rule, matches);
+                  }
 
-              matches.add(instantiated.object);
+                  let source: IObject[];
+
+                  if (pattern.tree != null) {
+                    if (rule.id === 'f27a9a776f2b4119b623e4c518f07f46') {
+                      console.log();
+                    }
+
+                    source = pattern.tree.reduce((acc, v) => {
+                      for (const obj of resolve(instantiated.object, v)) {
+                        acc.push(obj);
+                      }
+                      return acc;
+                    }, []);
+                  } else {
+                    source = [instantiated.object];
+                  }
+
+                  if (pattern.ofType != null) {
+                    source = source.filter((v) => pattern.ofType.isAssignableFrom(v.strategy.cls));
+                  }
+
+                  for (const obj of source) {
+                    matches.add(obj);
+                  }
+                }
+              }
             }
           }
         }
@@ -60,7 +90,7 @@ export class Derivation implements IDerivation {
             for (const pattern of patterns) {
               const rule = this.engine.ruleByPattern.get(pattern);
               let matches = matchesByRule.get(rule);
-              if (matches != null) {
+              if (matches == null) {
                 matches = new Set();
                 matchesByRule.set(rule, matches);
               }
@@ -96,7 +126,7 @@ export class Derivation implements IDerivation {
             for (const pattern of patterns) {
               const rule = this.engine.ruleByPattern.get(pattern);
               let matches = matchesByRule.get(rule);
-              if (matches != null) {
+              if (matches == null) {
                 matches = new Set();
                 matchesByRule.set(rule, matches);
               }

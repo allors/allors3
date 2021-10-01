@@ -5,7 +5,7 @@ import { M } from '@allors/workspace/meta/default';
 import { PostalAddress } from '@allors/workspace/domain/default';
 
 export class PostalAddressDisplayNameRule implements IRule {
-  id: 'b13f33e4fbf44bb5a2b4cd0c211a5ca2';
+  id= 'b13f33e4fbf44bb5a2b4cd0c211a5ca2';
   patterns: IPattern[];
 
   constructor(m: M) {

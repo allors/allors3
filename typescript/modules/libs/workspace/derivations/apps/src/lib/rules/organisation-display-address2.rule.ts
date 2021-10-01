@@ -3,7 +3,7 @@ import { M } from '@allors/workspace/meta/default';
 import { Organisation, PostalAddress } from '@allors/workspace/domain/default';
 
 export class OrganisationDisplayAddress2Rule implements IRule {
-  id: 'cbfbe6eab29e4f72a2e68c2d66c7f61c';
+  id= 'cbfbe6eab29e4f72a2e68c2d66c7f61c';
   patterns: IPattern[];
   m: M;
 

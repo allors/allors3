@@ -3,7 +3,7 @@ import { M } from '@allors/workspace/meta/default';
 import { WorkEffortInventoryAssignment } from '@allors/workspace/domain/default';
 
 export class WorkEffortInventoryAssignmentTotalSellingPriceRule implements IRule {
-  id: '4b0eb09beca54dd0b934cbeeea111e58';
+  id= '4b0eb09beca54dd0b934cbeeea111e58';
   patterns: IPattern[];
 
   constructor(m: M) {

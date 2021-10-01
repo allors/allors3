@@ -3,7 +3,7 @@ import { M } from '@allors/workspace/meta/default';
 import { EmailAddress, Person } from '@allors/workspace/domain/default';
 
 export class PersonDisplayEmailRule implements IRule {
-  id: 'ee5e33e6c1aa48749488d36ceb8b8fd1';
+  id= 'ee5e33e6c1aa48749488d36ceb8b8fd1';
   patterns: IPattern[];
   m: M;
 

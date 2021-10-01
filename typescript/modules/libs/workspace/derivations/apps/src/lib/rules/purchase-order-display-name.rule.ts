@@ -3,7 +3,7 @@ import { M } from '@allors/workspace/meta/default';
 import { PurchaseOrder } from '@allors/workspace/domain/default';
 
 export class PurchaseOrderDisplayNameRule implements IRule {
-  id: 'fa7678bb3abf4414bb2f09e30585f3aa';
+  id= 'fa7678bb3abf4414bb2f09e30585f3aa';
   patterns: IPattern[];
 
   constructor(m: M) {

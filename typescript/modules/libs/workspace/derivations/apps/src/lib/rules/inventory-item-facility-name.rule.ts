@@ -3,7 +3,7 @@ import { M } from '@allors/workspace/meta/default';
 import { InventoryItem } from '@allors/workspace/domain/default';
 
 export class InventoryItemFacilityNameRule implements IRule {
-  id: 'b3a6f2cc2ccb43d883e09cd03570c73a';
+  id= 'b3a6f2cc2ccb43d883e09cd03570c73a';
   patterns: IPattern[];
 
   constructor(m: M) {

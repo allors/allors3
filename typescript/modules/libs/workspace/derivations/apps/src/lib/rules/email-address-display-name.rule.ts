@@ -3,7 +3,7 @@ import { M } from '@allors/workspace/meta/default';
 import { EmailAddress } from '@allors/workspace/domain/default';
 
 export class EmailAddressDisplayNameRule implements IRule {
-  id: '75878728ad114ea6bda75e71abe96e3d';
+  id= '75878728ad114ea6bda75e71abe96e3d';
   patterns: IPattern[];
 
   constructor(m: M) {

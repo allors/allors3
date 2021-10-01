@@ -5,7 +5,7 @@ import { M } from '@allors/workspace/meta/default';
 import { PurchaseOrderItem } from '@allors/workspace/domain/default';
 
 export class PurchaseOrderItemDisplayNameRule implements IRule {
-  id: 'f2f1ad9c2a9d432198f63751f1bc14f6';
+  id= 'f2f1ad9c2a9d432198f63751f1bc14f6';
   patterns: IPattern[];
 
   constructor(m: M) {

@@ -3,7 +3,7 @@ import { M } from '@allors/workspace/meta/default';
 import { Organisation,  } from '@allors/workspace/domain/default';
 
 export class OrganisationDisplayClassificationRule implements IRule {
-  id: '77a836adb91a425c8556364bec3002b1';
+  id= '77a836adb91a425c8556364bec3002b1';
   patterns: IPattern[];
   m: M;
 

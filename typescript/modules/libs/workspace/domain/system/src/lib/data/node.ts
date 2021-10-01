@@ -32,7 +32,7 @@ function resolveRecursive(obj: IObject, node: Node, results: Set<IObject>): void
   if (node.propertyType.isOne) {
     const resolved = getComposite(obj.strategy, node.propertyType, node.ofType);
     if (resolved != null) {
-      if (node.nodes.length > 0) {
+      if (node.nodes?.length > 0) {
         for (const subNode of node.nodes) {
           resolveRecursive(resolved, subNode, results);
         }
@@ -43,7 +43,7 @@ function resolveRecursive(obj: IObject, node: Node, results: Set<IObject>): void
   } else {
     const resolveds = getComposites(obj.strategy, node.propertyType, node.ofType);
     if (resolveds != null) {
-      if (node.nodes.length > 0) {
+      if (node.nodes?.length > 0) {
         for (const resolved of resolveds) {
           for (const subNode of node.nodes) {
             resolveRecursive(resolved, subNode, results);
