@@ -34,15 +34,29 @@ namespace Allors.Database.Domain
             {
                 @this.Revocations = @this.TransitionalRevocations;
 
-                var revocation = new Revocations(@this.Strategy.Transaction).SalesInvoiceDeleteRevocation;
+                var deleteRevocation = new Revocations(@this.Strategy.Transaction).SalesInvoiceDeleteRevocation;
 
                 if (@this.IsDeletable)
                 {
-                    @this.RemoveRevocation(revocation);
+                    @this.RemoveRevocation(deleteRevocation);
                 }
                 else
                 {
-                    @this.AddRevocation(revocation);
+                    @this.AddRevocation(deleteRevocation);
+                }
+
+                var cancelRevocation = new Revocations(@this.Strategy.Transaction).SalesInvoiceCancelRevocation;
+
+                if (@this.SalesInvoiceState.IsNotPaid)
+                {
+                    if (@this.SalesInvoiceType.IsCreditNote)
+                    {
+                        @this.RemoveRevocation(cancelRevocation);
+                    }
+                    else
+                    {
+                        @this.AddRevocation(cancelRevocation);
+                    }
                 }
             }
         }

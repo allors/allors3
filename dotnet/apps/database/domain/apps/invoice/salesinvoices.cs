@@ -34,7 +34,7 @@ namespace Allors.Database.Domain
             var revise = this.Meta.Revise; // not implemented yet
 
             config.Deny(this.ObjectType, readyForPosting, reopen, credit, setPaid, revise, writeOff);
-            config.Deny(this.ObjectType, notPaid, send, cancelInvoice, reopen, revise, delete);
+            config.Deny(this.ObjectType, notPaid, send, reopen, revise, delete); //cancelInvoice is allowed for creditnote
             config.Deny(this.ObjectType, partiallyPaid, send, cancelInvoice, reopen, revise, delete);
             config.Deny(this.ObjectType, paid, send, writeOff, cancelInvoice, reopen, setPaid, revise, delete);
             config.Deny(this.ObjectType, writtenOff, send, cancelInvoice, writeOff, credit, setPaid, delete, revise, reopen);
