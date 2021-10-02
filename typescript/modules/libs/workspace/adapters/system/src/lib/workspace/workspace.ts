@@ -1,4 +1,4 @@
-import { IConfiguration, ISession, IWorkspace, IWorkspaceServices } from '@allors/workspace/domain/system';
+import { IConfiguration, ISession, IWorkspace } from '@allors/workspace/domain/system';
 import { Class, RelationType } from '@allors/workspace/meta/system';
 
 import { Ranges } from '../collections/ranges/ranges';
@@ -17,7 +17,7 @@ export abstract class Workspace implements IWorkspace {
 
   private readonly recordById: Map<number, WorkspaceRecord>;
 
-  constructor(public database: DatabaseConnection, public services: IWorkspaceServices) {
+  constructor(public database: DatabaseConnection) {
     this.ranges = database.ranges;
 
     this.configuration = database.configuration;

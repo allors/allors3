@@ -457,69 +457,6 @@
         }
       }
     },
-    "workspace-configuration-apps": {
-      "root": "libs/workspace/configuration/apps",
-      "sourceRoot": "libs/workspace/configuration/apps/src",
-      "projectType": "library",
-      "targets": {
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/workspace/configuration/apps/**/*.ts"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/configuration/apps"],
-          "options": {
-            "jestConfig": "libs/workspace/configuration/apps/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "workspace-configuration-base": {
-      "root": "libs/workspace/configuration/base",
-      "sourceRoot": "libs/workspace/configuration/base/src",
-      "projectType": "library",
-      "targets": {
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/workspace/configuration/base/**/*.ts"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/configuration/base"],
-          "options": {
-            "jestConfig": "libs/workspace/configuration/base/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "workspace-configuration-core": {
-      "root": "libs/workspace/configuration/core",
-      "sourceRoot": "libs/workspace/configuration/core/src",
-      "projectType": "library",
-      "targets": {
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/workspace/configuration/core/**/*.ts"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/configuration/core"],
-          "options": {
-            "jestConfig": "libs/workspace/configuration/core/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "workspace-derivations-apps": {
       "root": "libs/workspace/derivations/apps",
       "sourceRoot": "libs/workspace/derivations/apps/src",

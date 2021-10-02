@@ -2,8 +2,7 @@ import { MetaPopulation } from '@allors/workspace/meta/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
 import { ReactiveDatabaseClient, DatabaseConnection } from '@allors/workspace/adapters/json/system';
-import { Configuration, PrototypeObjectFactory } from '@allors/workspace/adapters/system';
-import { WorkspaceServices } from '@allors/workspace/adapters/system-tests';
+import { Configuration, Engine, PrototypeObjectFactory } from '@allors/workspace/adapters/system';
 import { ruleBuilder } from '@allors/workspace/derivations/core-custom';
 import { M } from '@allors/workspace/meta/default';
 
@@ -19,14 +18,20 @@ export class Fixture {
   databaseConnection: DatabaseConnection;
 
   createDatabaseConnection(): DatabaseConnection {
+    const metaPopulation = this.metaPopulation;
+    const m = metaPopulation as unknown as M;
+
     let nextId = -1;
-    return new DatabaseConnection(
-      new Configuration('Default', this.metaPopulation, new PrototypeObjectFactory(this.metaPopulation)),
-      () => nextId--,
-      () => {
-        return new WorkspaceServices(ruleBuilder(this.metaPopulation as M));
-      }
-    );
+
+    const configuration: Configuration = {
+      name: 'Default',
+      metaPopulation,
+      objectFactory: new PrototypeObjectFactory(metaPopulation),
+      idGenerator: () => nextId--,
+      engine: new Engine(ruleBuilder(m)),
+    };
+
+    return new DatabaseConnection(configuration);
   }
 
   async init(population?: string) {

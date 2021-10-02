@@ -1,3 +1,5 @@
+export { MenuItem } from './lib/menu/menu-item';
+
 // Services
 export { AuthenticationTokenRequest } from './lib/services/authentication/authentication-token-request';
 export { AuthenticationTokenResponse } from './lib/services/authentication/authentication-token-response';

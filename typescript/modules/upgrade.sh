@@ -32,10 +32,6 @@ npx nx g @nrwl/workspace:library workspace/angular/apps
 npx nx g @nrwl/workspace:library workspace/angular/base
 npx nx g @nrwl/workspace:library workspace/angular/core
 
-npx nx g @nrwl/workspace:library workspace/configuration/apps
-npx nx g @nrwl/workspace:library workspace/configuration/core
-npx nx g @nrwl/workspace:library workspace/configuration/base
-
 npx nx g @nrwl/workspace:library workspace/derivations/apps
 npx nx g @nrwl/workspace:library workspace/derivations/apps-custom
 npx nx g @nrwl/workspace:library workspace/derivations/apps-tests

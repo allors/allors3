@@ -1,5 +1,5 @@
 import { PullResponse, SyncRequest, SyncResponse, AccessRequest, AccessResponse, PermissionRequest, PermissionResponse } from '@allors/protocol/json/system';
-import { Grant, Configuration, DatabaseConnection as SystemDatabaseConnection, IdGenerator, MapMap, ServicesBuilder, Revocation } from '@allors/workspace/adapters/system';
+import { Grant, Configuration, DatabaseConnection as SystemDatabaseConnection, MapMap, Revocation } from '@allors/workspace/adapters/system';
 import { IWorkspace, Operations } from '@allors/workspace/domain/system';
 import { Class, MethodType, OperandType, RelationType } from '@allors/workspace/meta/system';
 import { DatabaseRecord } from './database-record';
@@ -17,8 +17,8 @@ export class DatabaseConnection extends SystemDatabaseConnection {
   writePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
   executePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
 
-  constructor(configuration: Configuration, idGenerator: IdGenerator, private servicesBuilder: ServicesBuilder) {
-    super(configuration, idGenerator);
+  constructor(configuration: Configuration) {
+    super(configuration);
 
     this.recordsById = new Map();
 
@@ -32,7 +32,7 @@ export class DatabaseConnection extends SystemDatabaseConnection {
   }
 
   createWorkspace(): IWorkspace {
-    return new Workspace(this, this.servicesBuilder());
+    return new Workspace(this);
   }
 
   onPullResonse(response: PullResponse): SyncRequest {

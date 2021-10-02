@@ -1,5 +1,5 @@
 import { Session as SystemSession } from '@allors/workspace/adapters/system';
-import { IObject, ISessionServices } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/workspace/domain/system';
 import { Class, Origin } from '@allors/workspace/meta/system';
 import { DatabaseConnection } from '../database/database-connection';
 import { DatabaseRecord } from '../database/database-record';
@@ -9,10 +9,9 @@ import { Strategy } from './strategy';
 export class Session extends SystemSession {
   database: DatabaseConnection;
 
-  constructor(workspace: Workspace, services: ISessionServices) {
-    super(workspace, services);
+  constructor(workspace: Workspace) {
+    super(workspace);
 
-    this.services.onInit(this);
     this.database = this.workspace.database as DatabaseConnection;
   }
 

@@ -60,11 +60,6 @@ export * from './lib/diff/icomposites-diff';
 export * from './lib/diff/idiff';
 export * from './lib/diff/iunit-diff';
 
-// services
-export * from './lib/services/isession-services';
-export * from './lib/services/iworkspace-services';
-export * from './lib/services/derivation/iderivation-service';
-
 export * from './lib/ichange-set';
 export * from './lib/iconfiguration';
 export * from './lib/iobject';

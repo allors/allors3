@@ -4,7 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { Configuration, IdGenerator, PrototypeObjectFactory, ServicesBuilder } from '@allors/workspace/adapters/system';
+import { Configuration, Engine, PrototypeObjectFactory } from '@allors/workspace/adapters/system';
 import { DatabaseConnection, ReactiveDatabaseClient } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
@@ -13,29 +13,37 @@ import { M } from '@allors/workspace/meta/default';
 import { ruleBuilder } from '@allors/workspace/derivations/core-custom';
 
 import { AngularClient } from '../allors/angular-client';
-import { WorkspaceServices } from '../allors/workspace-services';
 import { environment } from '../environments/environment';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { QueryComponent } from './query/query.component';
 import { FetchComponent } from './fetch/fetch.component';
+import { CoreContext } from '../allors/core-context';
 
 export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
   return async () => {
-    const client = new AngularClient(httpClient, environment.baseUrl, environment.authUrl);
-    await client.login('jane@example.com', '');
-    workspaceService.client = new ReactiveDatabaseClient(client);
+    const angularClient = new AngularClient(httpClient, environment.baseUrl, environment.authUrl);
+    const client = new ReactiveDatabaseClient(angularClient);
+    workspaceService.client = client;
+    workspaceService.contextBuilder = (session) => new CoreContext(session, client);
 
     const metaPopulation = new LazyMetaPopulation(data);
-    const configuration = new Configuration('Default', metaPopulation, new PrototypeObjectFactory(metaPopulation));
+    const m = metaPopulation as unknown as M;
+
     let nextId = -1;
-    const idGenerator: IdGenerator = () => nextId--;
-    const serviceBuilder: ServicesBuilder = () => {
-      return new WorkspaceServices(ruleBuilder(metaPopulation as any as M));
+
+    const configuration: Configuration = {
+      name: 'Default',
+      metaPopulation,
+      objectFactory: new PrototypeObjectFactory(metaPopulation),
+      idGenerator: () => nextId--,
+      engine: new Engine(ruleBuilder(m)),
     };
-    const database = new DatabaseConnection(configuration, idGenerator, serviceBuilder);
-    workspaceService.workspace = database.createWorkspace();
+
+    const database = new DatabaseConnection(configuration);
+    const workspace = database.createWorkspace();
+    workspaceService.workspace = workspace;
   };
 }
 

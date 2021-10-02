@@ -37,7 +37,7 @@ export async function sessionFullName() {
 
   expect(jane.SessionFullName).toBeNull();
 
-  session.services.derive();
+  session.derive();
 
   expect(jane.SessionFullName).toBe('Jane Doe');
 }

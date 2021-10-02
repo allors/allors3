@@ -1,4 +1,4 @@
-import { IChangeSet, IObject, ISession, ISessionServices, IStrategy, IWorkspaceResult } from '@allors/workspace/domain/system';
+import { IChangeSet, IObject, ISession, IStrategy, IValidation, IWorkspaceResult } from '@allors/workspace/domain/system';
 import { AssociationType, Class, Composite, Origin } from '@allors/workspace/meta/system';
 
 import { Workspace } from '../workspace/workspace';
@@ -13,6 +13,7 @@ import { ChangeSetTracker } from './trackers/change-set-tracker';
 import { PushToDatabaseTracker } from './trackers/push-to-database-tracker';
 import { PushToWorkspaceTracker } from './trackers/push-to-workspace-tracker';
 import { ChangeSet } from './change-set';
+import { Derivation } from './derivation/derivation';
 
 export function isNewId(id: number): boolean {
   return id < 0;
@@ -33,7 +34,7 @@ export abstract class Session implements ISession {
 
   private strategiesByClass: Map<Class, Set<Strategy>>;
 
-  constructor(public workspace: Workspace, public services: ISessionServices) {
+  constructor(public workspace: Workspace) {
     this.ranges = new DefaultStrategyRanges();
 
     this.strategyByWorkspaceId = new Map();
@@ -54,6 +55,12 @@ export abstract class Session implements ISession {
     }
 
     return false;
+  }
+
+  derive(): IValidation {
+    const configuration = this.workspace.database.configuration;
+    const derivation = new Derivation(this, configuration.engine, configuration.maxCycles ?? 10);
+    return derivation.execute();
   }
 
   reset(): void {
