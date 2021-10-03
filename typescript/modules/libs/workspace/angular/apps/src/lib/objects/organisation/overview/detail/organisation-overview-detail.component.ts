@@ -5,7 +5,7 @@ import { switchMap, filter } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { InternalOrganisation, Locale, Organisation, Currency, CustomOrganisationClassification, IndustryClassification, LegalForm } from '@allors/workspace/domain/default';
 import { PanelService, RefreshService, SaveService, TestScope, SingletonId } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 
@@ -13,7 +13,7 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
   // tslint:disable-next-line:component-selector
   selector: 'organisation-overview-detail',
   templateUrl: './organisation-overview-detail.component.html',
-  providers: [SessionService, PanelService],
+  providers: [ContextService, PanelService],
 })
 export class OrganisationOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -28,10 +28,10 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
   legalForms: LegalForm[];
   currencies: Currency[];
 
-  constructor(@Self() public allors: SessionService, @Self() public panel: PanelService, public saveService: SaveService, public refreshService: RefreshService, private singletonId: SingletonId, private fetcher: FetcherService) {
+  constructor(@Self() public allors: ContextService, @Self() public panel: PanelService, public saveService: SaveService, public refreshService: RefreshService, private singletonId: SingletonId, private fetcher: FetcherService) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     panel.name = 'detail';
     panel.title = 'Organisation Details';
@@ -114,7 +114,7 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
@@ -135,7 +135,7 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       window.history.back();
     }, this.saveService.errorHandler);

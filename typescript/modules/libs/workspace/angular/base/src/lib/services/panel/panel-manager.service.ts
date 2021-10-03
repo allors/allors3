@@ -2,19 +2,17 @@ import { Injectable } from '@angular/core';
 import { Params, Router, ActivatedRoute } from '@angular/router';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { ObjectType } from '@allors/workspace/meta/system';
-import { IPullResult, IReactiveDatabaseClient, ISession, Pull } from '@allors/workspace/domain/system';
-import { WorkspaceService } from '@allors/workspace/angular/core';
+import { IPullResult, Pull } from '@allors/workspace/domain/system';
 
 import { PanelService } from './panel.service';
+import { Context, WorkspaceService } from '@allors/workspace/angular/core';
 
 @Injectable()
 export class PanelManagerService {
-  session: ISession;
-
-  client: IReactiveDatabaseClient;
+  context: Context;
 
   id: number;
-  
+
   objectType: ObjectType;
 
   panels: PanelService[] = [];
@@ -28,9 +26,7 @@ export class PanelManagerService {
   }
 
   constructor(workspaceService: WorkspaceService, public router: Router, public route: ActivatedRoute) {
-    this.session = workspaceService.workspace.createSession();
-    this.client = workspaceService.client;
-
+    this.context = workspaceService.contextBuilder();
     this.on$ = this.onSubject$ = new BehaviorSubject(new Date());
   }
 

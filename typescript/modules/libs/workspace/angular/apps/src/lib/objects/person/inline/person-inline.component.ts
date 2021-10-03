@@ -2,7 +2,7 @@ import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/cor
 
 import { M } from '@allors/workspace/meta/default';
 import { Locale, Person, Enumeration } from '@allors/workspace/domain/default';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -24,8 +24,8 @@ export class PersonInlineComponent implements OnInit, OnDestroy {
   public genders: Enumeration[];
   public salutations: Enumeration[];
 
-  constructor(private allors: SessionService) {
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+  constructor(private allors: ContextService) {
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -45,12 +45,12 @@ export class PersonInlineComponent implements OnInit, OnDestroy {
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       this.locales = loaded.collection<Locale>(m.Locale);
       this.genders = loaded.collection<Enumeration>(m.Enumeration);
       this.salutations = loaded.collection<Enumeration>(m.Enumeration);
 
-      this.person = this.allors.session.create<Person>(m.Person);
+      this.person = this.allors.context.create<Person>(m.Person);
     });
   }
 

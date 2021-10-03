@@ -6,14 +6,14 @@ import { switchMap } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { ContactMechanism, Enumeration, ElectronicAddress } from '@allors/workspace/domain/default';
 import { RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './webaddress-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class WebAddressEditComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -25,7 +25,7 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: IObject,
     public dialogRef: MatDialogRef<WebAddressEditComponent>,
     public refreshService: RefreshService,
@@ -34,7 +34,7 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -50,11 +50,11 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.contactMechanismTypes = loaded.collection<Enumeration>(m.Enumeration);
 
@@ -75,7 +75,7 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.contactMechanism);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

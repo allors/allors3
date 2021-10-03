@@ -6,14 +6,14 @@ import { switchMap } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { NonUnifiedGood, Organisation, ProductIdentificationType, ProductType, Settings, Good, ProductCategory, Ownership, ProductNumber, Locale } from '@allors/workspace/domain/default';
 import { NavigationService, ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './nonunifiedgood-create.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -38,7 +38,7 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
   nonUnifiedPartsFilter: SearchFactory;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<NonUnifiedGoodCreateComponent>,
 
@@ -49,7 +49,7 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -63,11 +63,11 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
 
           this.nonUnifiedPartsFilter = Filters.nonUnifiedPartsFilter(m);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
@@ -76,10 +76,10 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
 
         this.goodNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
 
-        this.good = this.allors.session.create<NonUnifiedGood>(m.NonUnifiedGood);
+        this.good = this.allors.context.create<NonUnifiedGood>(m.NonUnifiedGood);
 
         if (!this.settings.UseProductNumberCounter) {
-          this.productNumber = this.allors.session.create<ProductNumber>(m.ProductNumber);
+          this.productNumber = this.allors.context.create<ProductNumber>(m.ProductNumber);
           this.productNumber.ProductIdentificationType = this.goodNumberType;
 
           this.good.addProductIdentification(this.productNumber);
@@ -98,7 +98,7 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
       category.addProduct(this.good);
     });
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.good);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

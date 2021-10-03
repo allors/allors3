@@ -5,7 +5,7 @@ import { formatDistance } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { SalesOrderItem, SalesOrder } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: SalesOrderItem;
@@ -25,7 +25,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'salesorderitem-overview-panel',
   templateUrl: './salesorderitem-overview-panel.component.html',
-  providers: [SessionService, PanelService],
+  providers: [ContextService, PanelService],
 })
 export class SalesOrderItemOverviewPanelComponent extends TestScope {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -53,7 +53,7 @@ export class SalesOrderItemOverviewPanelComponent extends TestScope {
   }
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
     public refreshService: RefreshService,
@@ -65,18 +65,18 @@ export class SalesOrderItemOverviewPanelComponent extends TestScope {
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     panel.name = 'salesordertitem';
     panel.title = 'Sales Order Items';
     panel.icon = 'contacts';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.client, panel.manager.session);
+    this.delete = deleteService.delete(panel.manager.context);
     this.edit = editService.edit();
-    this.cancel = methodService.create(allors.client, allors.session, this.m.SalesOrderItem.Cancel, { name: 'Cancel' });
-    this.reject = methodService.create(allors.client, allors.session, this.m.SalesOrderItem.Reject, { name: 'Reject' });
-    this.reopen = methodService.create(allors.client, allors.session, this.m.SalesOrderItem.Reopen, { name: 'Reopen' });
+    this.cancel = methodService.create(allors.context, this.m.SalesOrderItem.Cancel, { name: 'Cancel' });
+    this.reject = methodService.create(allors.context, this.m.SalesOrderItem.Reject, { name: 'Reject' });
+    this.reopen = methodService.create(allors.context, this.m.SalesOrderItem.Reopen, { name: 'Reopen' });
 
     const sort = true;
     this.table = new Table({

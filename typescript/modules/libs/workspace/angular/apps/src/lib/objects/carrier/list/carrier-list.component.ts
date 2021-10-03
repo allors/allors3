@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { Carrier } from '@allors/workspace/domain/default';
-import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
+import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
 
 interface Row extends TableRow {
@@ -15,7 +15,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './carrier-list.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class CarrierListComponent extends TestScope implements OnInit, OnDestroy {
   public title = 'Carriers';
@@ -30,7 +30,7 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
   m: M;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
@@ -51,7 +51,7 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
       this.table.selection.clear();
     });
 
-    this.delete = deleteService.delete(allors.client, allors.session);
+    this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -99,11 +99,11 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         const objects = loaded.collection<Carrier>(m.Carrier);
         this.table.total = loaded.value('Carriers_total') as number;

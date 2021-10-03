@@ -33,13 +33,13 @@ import {
   UnifiedGood,
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { And, IObject } from '@allors/workspace/domain/system';
 import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './shipmentitem-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -113,7 +113,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
   goodsFilter: SearchFactory;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<ShipmentItemEditComponent>,
     public refreshService: RefreshService,
@@ -122,7 +122,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -232,11 +232,11 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
 
           this.goodsFilter = Filters.goodsFilter(m);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.shipmentItem = loaded.object<ShipmentItem>(m.ShipmentItem);
         this.shipment = loaded.object<Shipment>(m.Shipment) || this.shipmentItem.SyncedShipment;
@@ -334,7 +334,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
 
         if (isCreate) {
           this.title = 'Add Shipment Item';
-          this.shipmentItem = this.allors.session.create<ShipmentItem>(m.ShipmentItem);
+          this.shipmentItem = this.allors.context.create<ShipmentItem>(m.ShipmentItem);
           this.selectedFacility = this.shipment.ShipToFacility;
 
           this.shipment.addShipmentItem(this.shipmentItem);
@@ -391,7 +391,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
   public save(): void {
     this.onSave();
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.shipmentItem);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
@@ -584,7 +584,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       const part = loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.Part);
 
       this.isSerialized = part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
@@ -626,7 +626,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       this.isSerialized = part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
       this.inventoryItems = loaded.collection<InventoryItem>(m.InventoryItem);
 
@@ -640,7 +640,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
   private onSave() {
     if (this.selectedSalesOrderItem) {
       if (this.orderShipment === undefined) {
-        this.orderShipment = this.allors.session.create<OrderShipment>(this.m.OrderShipment);
+        this.orderShipment = this.allors.context.create<OrderShipment>(this.m.OrderShipment);
       }
 
       this.orderShipment.OrderItem = this.selectedSalesOrderItem;

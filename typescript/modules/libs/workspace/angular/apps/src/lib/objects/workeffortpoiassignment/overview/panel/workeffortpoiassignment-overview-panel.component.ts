@@ -62,7 +62,7 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope imp
     this.panel.expandable = true;
 
     this.edit = this.editService.edit();
-    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
+    this.delete = this.deleteService.delete(this.panel.manager.context);
 
     this.table = new Table({
       selection: true,

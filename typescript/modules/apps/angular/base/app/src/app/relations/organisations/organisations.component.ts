@@ -5,7 +5,7 @@ import { scan, switchMap } from 'rxjs/operators';
 
 import { Action, DeleteService, Filter, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { Organisation } from '@allors/workspace/domain/default';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
 
 interface Row extends TableRow {
@@ -16,7 +16,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './organisations.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class OrganisationsComponent extends TestScope implements OnInit, OnDestroy {
   title = 'Organisations';
@@ -31,15 +31,15 @@ export class OrganisationsComponent extends TestScope implements OnInit, OnDestr
   private subscription: Subscription;
   m: M;
 
-  constructor(@Self() public allors: SessionService, public refreshService: RefreshService, public deleteService: DeleteService, public overviewService: OverviewService, private titleService: Title) {
+  constructor(@Self() public allors: ContextService, public refreshService: RefreshService, public deleteService: DeleteService, public overviewService: OverviewService, private titleService: Title) {
     super();
 
     this.titleService.setTitle(this.title);
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.overview = overviewService.overview();
-    this.delete = deleteService.delete(allors.client, allors.session);
+    this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -81,11 +81,11 @@ export class OrganisationsComponent extends TestScope implements OnInit, OnDestr
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
         const organisations = loaded.collection<Organisation>(m.Organisation);
         this.table.total = loaded.value('Organisations_total') as number;
         this.table.data = organisations.map((v) => {

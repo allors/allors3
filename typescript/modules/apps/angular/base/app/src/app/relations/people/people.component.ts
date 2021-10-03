@@ -11,7 +11,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { AllorsMaterialDialogService, Filter, MediaService, NavigationService, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { Person } from '@allors/workspace/domain/default';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
 
 interface Row extends TableRow {
@@ -23,7 +23,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './people.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
   public title = 'People';
@@ -44,7 +44,7 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
   m: M;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     private snackBar: MatSnackBar,
@@ -56,7 +56,7 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
 
     titleService.setTitle(this.title);
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.sort$ = new BehaviorSubject<Sort | null>(null);
     this.refresh$ = new BehaviorSubject<Date>(new Date());
@@ -88,11 +88,11 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
         this.total = loaded.value('People_Total') as number;
         const people = loaded.collection<Person>(m.Person);
 
@@ -158,7 +158,7 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
     if (methods.length > 0) {
       this.dialogService.confirm(methods.length === 1 ? { message: 'Are you sure you want to delete this person?' } : { message: 'Are you sure you want to delete these people?' }).subscribe((confirm: boolean) => {
         if (confirm) {
-          this.allors.client.invokeReactive(this.allors.session, methods).subscribe(() => {
+          this.allors.context.invoke(methods).subscribe(() => {
             this.snackBar.open('Successfully deleted.', 'close', { duration: 5000 });
             this.refresh();
           });

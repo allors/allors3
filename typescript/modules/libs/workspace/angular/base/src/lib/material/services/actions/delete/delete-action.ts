@@ -2,18 +2,18 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
 
 import { Deletable } from '@allors/workspace/domain/default';
+import { Context } from '@allors/workspace/angular/core';
 
 import { Action } from '../../../../components/actions/action';
 import { ActionTarget } from '../../../../components/actions/action-target';
 import { RefreshService } from '../../../../services/refresh/refresh.service';
 import { AllorsMaterialDialogService } from '../../dialog/dialog.service';
 import { SaveService } from '../../save/save.service';
-import { IReactiveDatabaseClient, ISession } from '@allors/workspace/domain/system';
 
 export class DeleteAction implements Action {
   name = 'delete';
 
-  constructor(refreshService: RefreshService, dialogService: AllorsMaterialDialogService, saveService: SaveService, snackBar: MatSnackBar, client: IReactiveDatabaseClient, session: ISession) {
+  constructor(refreshService: RefreshService, dialogService: AllorsMaterialDialogService, saveService: SaveService, snackBar: MatSnackBar, context: Context) {
     this.execute = (target: ActionTarget) => {
       const deletables = Array.isArray(target) ? (target as Deletable[]) : [target as Deletable];
       const methods = deletables.filter((v) => v.canExecuteDelete).map((v) => v.Delete);
@@ -23,7 +23,7 @@ export class DeleteAction implements Action {
           .confirm(methods.length === 1 ? { message: `Are you sure you want to delete this ${methods[0].object.strategy.cls.singularName}?` } : { message: `Are you sure you want to delete these objects?` })
           .subscribe((confirm: boolean) => {
             if (confirm) {
-              client.invokeReactive(session, methods).subscribe(() => {
+              context.invoke(methods).subscribe(() => {
                 snackBar.open('Successfully deleted.', 'close', { duration: 5000 });
                 refreshService.refresh();
                 this.result.next(true);

@@ -5,7 +5,7 @@ import { switchMap, filter } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Locale, Carrier, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Party, CustomerShipment, Currency, PostalAddress, Facility, ShipmentMethod } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { Filters } from '../../../../filters/filters';
@@ -16,7 +16,7 @@ import { InternalOrganisationId } from '../../../../services/state/internal-orga
   // tslint:disable-next-line:component-selector
   selector: 'customershipment-overview-detail',
   templateUrl: './customershipment-overview-detail.component.html',
-  providers: [PanelService, SessionService],
+  providers: [PanelService, ContextService],
 })
 export class CustomerShipmentOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -51,7 +51,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
   }
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panel: PanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
@@ -61,7 +61,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
     this.refresh$ = new BehaviorSubject(new Date());
 
     panel.name = 'detail';
@@ -142,11 +142,11 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
 
           this.customersFilter = Filters.customersFilter(m, this.internalOrganisationId.value);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.customerShipment = loaded.object<CustomerShipment>(m.CustomerShipment);
         this.facilities = loaded.collection<Facility>(m.Facility);
@@ -172,14 +172,14 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
     }, this.saveService.errorHandler);
   }
 
   public shipToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.customerShipment.ShipToParty as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -231,7 +231,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       if (this.customerShipment.ShipToParty !== this.previousShipToparty) {
         this.customerShipment.ShipToAddress = null;
         this.customerShipment.ShipToContactPerson = null;
@@ -270,7 +270,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
       this.shipToContacts = loaded.collection<Person>(m.Person);

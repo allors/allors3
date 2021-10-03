@@ -6,7 +6,7 @@ import { switchMap } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, OrganisationContactRelationship, Party, Facility, InternalOrganisation, SupplierRelationship, ContactMechanism, PartyContactMechanism, PostalAddress, PurchaseShipment } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -15,7 +15,7 @@ import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './purchaseshipment-create.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class PurchaseShipmentCreateComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -43,7 +43,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
   suppliersFilter: SearchFactory;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PurchaseShipmentCreateComponent>,
     private refreshService: RefreshService,
@@ -53,7 +53,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -74,14 +74,14 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
 
           this.suppliersFilter = Filters.suppliersFilter(m, this.internalOrganisationId.value);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.facilities = loaded.collection<Facility>(m.Facility);
 
-        this.shipment = this.allors.session.create<PurchaseShipment>(m.PurchaseShipment);
+        this.shipment = this.allors.context.create<PurchaseShipment>(m.PurchaseShipment);
         this.shipment.ShipToParty = this.internalOrganisation;
 
         if (this.shipment.ShipFromParty) {
@@ -103,7 +103,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
   public save(): void {
     this.shipment.ShipToFacility = this.selectedFacility;
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.shipment);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
@@ -115,7 +115,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
   }
 
   public supplierAdded(organisation: Organisation): void {
-    const supplierRelationship = this.allors.session.create<SupplierRelationship>(this.m.SupplierRelationship);
+    const supplierRelationship = this.allors.context.create<SupplierRelationship>(this.m.SupplierRelationship);
     supplierRelationship.Supplier = organisation;
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -123,7 +123,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
   }
 
   public shipFromContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.shipment.ShipFromParty as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -132,7 +132,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
   }
 
   public shipToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.shipment.ShipToParty as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -176,7 +176,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       this.shipFromContacts = loaded.collection<Person>(m.Person);
     });
   }
@@ -207,7 +207,7 @@ export class PurchaseShipmentCreateComponent extends TestScope implements OnInit
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToContacts = loaded.collection<Person>(m.Person);

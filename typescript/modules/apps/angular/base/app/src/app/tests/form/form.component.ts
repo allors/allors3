@@ -5,7 +5,7 @@ import { DateAdapter } from '@angular/material/core';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { RadioGroupOption, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { M } from '@allors/workspace/meta/default';
 import { Data, Organisation, Person, Locale } from '@allors/workspace/domain/default';
@@ -13,7 +13,7 @@ import { IPullResult } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './form.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class FormComponent extends TestScope implements OnInit, OnDestroy {
   title: string;
@@ -47,13 +47,13 @@ export class FormComponent extends TestScope implements OnInit, OnDestroy {
   private refresh$: BehaviorSubject<Date>;
   private subscription: Subscription;
 
-  constructor(@Self() public allors: SessionService, private titleService: Title, private route: ActivatedRoute, private saveService: SaveService, private dateAdapter: DateAdapter<string>) {
+  constructor(@Self() public allors: ContextService, private titleService: Title, private route: ActivatedRoute, private saveService: SaveService, private dateAdapter: DateAdapter<string>) {
     super();
 
     this.title = 'Form';
     this.titleService.setTitle(this.title);
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.organisationFilter = new SearchFactory({
       objectType: this.m.Organisation,
@@ -104,11 +104,11 @@ export class FormComponent extends TestScope implements OnInit, OnDestroy {
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded: IPullResult) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.organisations = loaded.collection<Organisation>(this.m.Organisation);
         this.people = loaded.collection<Person>(this.m.Person);
@@ -120,7 +120,7 @@ export class FormComponent extends TestScope implements OnInit, OnDestroy {
         if (datas && datas.length > 0) {
           this.data = datas[0];
         } else {
-          this.data = this.allors.session.create(this.m.Data);
+          this.data = this.allors.context.create(this.m.Data);
         }
       });
   }
@@ -132,8 +132,8 @@ export class FormComponent extends TestScope implements OnInit, OnDestroy {
   }
 
   reset() {
-    this.allors.session.reset();
-    this.data = this.allors.session.create(this.m.Data);
+    this.allors.context.reset();
+    this.data = this.allors.context.create(this.m.Data);
   }
 
   newDate() {
@@ -164,7 +164,7 @@ export class FormComponent extends TestScope implements OnInit, OnDestroy {
   save(): void {
     console.log('save');
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.data = null;
       this.refresh();
     }, this.saveService.errorHandler);

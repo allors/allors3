@@ -6,7 +6,7 @@ import { switchMap } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, Currency, RequestForQuote, ProductQuote, VatRegime, IrpfRegime, CustomerRelationship } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -15,7 +15,7 @@ import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './productquote-create.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class ProductQuoteCreateComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -43,7 +43,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
   currencyInitialRole: Currency;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<ProductQuoteCreateComponent>,
     private saveService: SaveService,
@@ -53,7 +53,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -67,11 +67,11 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
 
           this.customersFilter = Filters.customersFilter(m, internalOrganisationId);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.quote = loaded.object<ProductQuote>(m.ProductQuote);
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
@@ -80,7 +80,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
         this.currencies = loaded.collection<Currency>(m.Currency);
 
-        this.quote = this.allors.session.create<ProductQuote>(m.ProductQuote);
+        this.quote = this.allors.context.create<ProductQuote>(m.ProductQuote);
         this.quote.Issuer = this.internalOrganisation;
         this.quote.IssueDate = new Date();
         this.quote.ValidFromDate = new Date();
@@ -98,7 +98,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
   }
 
   public receiverAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -106,7 +106,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
   }
 
   public personAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.quote.Receiver as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -127,7 +127,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.quote);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
@@ -167,7 +167,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       if (this.previousReceiver && this.quote.Receiver !== this.previousReceiver) {
         this.quote.ContactPerson = null;
         this.quote.FullfillContactMechanism = null;

@@ -6,12 +6,12 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Invoice, Order, OrderAdjustment, Quote } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './orderadjustment-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class OrderAdjustmentEditComponent extends TestScope implements OnInit, OnDestroy {
   public m: M;
@@ -24,7 +24,7 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<OrderAdjustmentEditComponent>,
 
@@ -33,7 +33,7 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -63,18 +63,18 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
             pulls.push(pull.Quote({ objectId: this.data.associationId }), pull.Order({ objectId: this.data.associationId }), pull.Invoice({ objectId: this.data.associationId }));
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, create: isCreate, cls, associationRoleType })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, create: isCreate, cls, associationRoleType })));
         })
       )
       .subscribe(({ loaded, create, cls, associationRoleType }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.container = loaded.object<Quote>(m.Quote) ?? loaded.object<Order>(m.Order) ?? loaded.object<Invoice>(m.Invoice);
         this.object = loaded.object<OrderAdjustment>(m.OrderAdjustment);
 
         if (create) {
           this.title = `Add ${cls.singularName}`;
-          this.object = this.allors.session.create<OrderAdjustment>(cls);
+          this.object = this.allors.context.create<OrderAdjustment>(cls);
           this.container.strategy.addCompositesRole(associationRoleType, this.object);
         } else {
           this.title = `Edit ${cls.singularName}`;
@@ -89,7 +89,7 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.object);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

@@ -6,7 +6,7 @@ import { switchMap } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Locale, Organisation, Party, Part, InternalOrganisation, Ownership, SerialisedItem, Enumeration, SerialisedItemState } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -15,7 +15,7 @@ import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './serialiseditem-create.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class SerialisedItemCreateComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -39,7 +39,7 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
   partiesFilter: SearchFactory;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<SerialisedItemCreateComponent>,
     private refreshService: RefreshService,
@@ -49,7 +49,7 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -85,11 +85,11 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
           this.partiesFilter = Filters.partiesFilter(m);
           this.serialisedgoodsFilter = Filters.serialisedgoodsFilter(m);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
         const externalOwner = loaded.object<Party>(m.Party);
@@ -102,7 +102,7 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
         this.ownerships = loaded.collection<Ownership>(m.Ownership);
         this.locales = loaded.collection<Locale>(m.Locale);
 
-        this.serialisedItem = this.allors.session.create<SerialisedItem>(m.SerialisedItem);
+        this.serialisedItem = this.allors.context.create<SerialisedItem>(m.SerialisedItem);
         this.serialisedItem.AvailableForSale = false;
         this.serialisedItem.OwnedBy = this.owner;
 
@@ -137,7 +137,7 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
         }),
       ];
 
-      this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+      this.allors.context.pull(pulls).subscribe((loaded) => {
         this.selectedPart = loaded.object<Part>(m.Part);
         this.serialisedItem.Name = this.selectedPart.Name;
       });
@@ -149,7 +149,7 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
   public save(): void {
     this.selectedPart.addSerialisedItem(this.serialisedItem);
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.serialisedItem);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

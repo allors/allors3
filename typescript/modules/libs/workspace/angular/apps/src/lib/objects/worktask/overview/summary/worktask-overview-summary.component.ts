@@ -144,35 +144,35 @@ export class WorkTaskOverviewSummaryComponent {
   }
 
   public cancel(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.workTask.Cancel).subscribe(() => {
+    this.panel.manager.context.invoke(this.workTask.Cancel).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public reopen(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.workTask.Reopen).subscribe(() => {
+    this.panel.manager.context.invoke(this.workTask.Reopen).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully reopened.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public revise(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.workTask.Revise).subscribe(() => {
+    this.panel.manager.context.invoke(this.workTask.Revise).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Revise successfully executed.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public complete(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.workTask.Complete).subscribe(() => {
+    this.panel.manager.context.invoke(this.workTask.Complete).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully completed.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public invoice(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.workTask.Invoice).subscribe(() => {
+    this.panel.manager.context.invoke(this.workTask.Invoice).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully invoiced.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);

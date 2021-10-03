@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { M } from '@allors/workspace/meta/default';
 import { PurchaseInvoice, PurchaseInvoiceItem } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: PurchaseInvoiceItem;
@@ -20,7 +20,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'purchaseinvoiceitem-overview-panel',
   templateUrl: './purchaseinvoiceitem-overview-panel.component.html',
-  providers: [SessionService, PanelService],
+  providers: [ContextService, PanelService],
 })
 export class PurchaseInvoiceItemOverviewPanelComponent extends TestScope {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -45,7 +45,7 @@ export class PurchaseInvoiceItemOverviewPanelComponent extends TestScope {
   }
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
 
@@ -58,14 +58,14 @@ export class PurchaseInvoiceItemOverviewPanelComponent extends TestScope {
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     panel.name = 'purchaseinvoicetitem';
     panel.title = 'Purchase Invoice Items';
     panel.icon = 'business';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.client, panel.manager.session);
+    this.delete = deleteService.delete(panel.manager.context);
     this.edit = this.editService.edit();
 
     const sort = true;

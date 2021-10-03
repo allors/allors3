@@ -7,7 +7,7 @@ import { switchMap } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { InternalOrganisation, Locale, Organisation, Currency, CustomOrganisationClassification, IndustryClassification, LegalForm, CustomerRelationship, SupplierRelationship, OrganisationRole } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope, SingletonId } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -15,7 +15,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './organisation-create.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class OrganisationCreateComponent extends TestScope implements OnInit, OnDestroy {
   public m: M;
@@ -47,7 +47,7 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
   currencies: Currency[];
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<OrganisationCreateComponent>,
 
@@ -60,7 +60,7 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
     this.refresh$ = new BehaviorSubject<Date>(undefined);
   }
 
@@ -139,7 +139,7 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
@@ -150,7 +150,7 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
           this.customerRelationship = loaded.collection<CustomerRelationship>(m.CustomerRelationship)[0];
           this.supplierRelationship = loaded.collection<SupplierRelationship>(m.SupplierRelationship)[0];
         } else {
-          this.organisation = this.allors.session.create<Organisation>(m.Organisation);
+          this.organisation = this.allors.context.create<Organisation>(m.Organisation);
           this.organisation.IsManufacturer = false;
           this.organisation.IsInternalOrganisation = false;
           this.organisation.CollectiveWorkEffortInvoice = false;
@@ -193,7 +193,7 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
 
   public save(): void {
     if (this.activeRoles.indexOf(this.customerRole) > -1 && !this.isActiveCustomer) {
-      const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
+      const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
       customerRelationship.Customer = this.organisation;
       customerRelationship.InternalOrganisation = this.internalOrganisation;
     }
@@ -207,7 +207,7 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
     }
 
     if (this.activeRoles.indexOf(this.supplierRole) > -1 && !this.isActiveSupplier) {
-      const supplierRelationship = this.allors.session.create<SupplierRelationship>(this.m.SupplierRelationship);
+      const supplierRelationship = this.allors.context.create<SupplierRelationship>(this.m.SupplierRelationship);
       supplierRelationship.Supplier = this.organisation;
       supplierRelationship.InternalOrganisation = this.internalOrganisation;
     }
@@ -220,7 +220,7 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
       this.supplierRelationship.ThroughDate = new Date();
     }
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.organisation);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

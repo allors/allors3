@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { of, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, Singleton } from '@allors/workspace/domain/default';
 import { IPullResult } from '@allors/workspace/domain/system';
@@ -28,9 +28,9 @@ export class LoginComponent extends TestScope implements OnDestroy {
   subscription: Subscription;
   m: M;
 
-  constructor(private allors: SessionService, private authService: AuthenticationService, private singletonId: SingletonId, private internalOrganisationId: InternalOrganisationId, private router: Router, public formBuilder: FormBuilder) {
+  constructor(private allors: ContextService, private authService: AuthenticationService, private singletonId: SingletonId, private internalOrganisationId: InternalOrganisationId, private router: Router, public formBuilder: FormBuilder) {
     super();
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public login() {
@@ -65,7 +65,7 @@ export class LoginComponent extends TestScope implements OnDestroy {
               }),
             ];
 
-            return this.allors.client.pullReactive(this.allors.session, pulls).pipe(
+            return this.allors.context.pull(pulls).pipe(
               map((loaded: IPullResult) => {
                 const internalOrganisations = loaded.collection<Organisation>(m.Organisation);
                 const defaultInternalOrganization = loaded.object<Organisation>(m.UserProfile.DefaultInternalOrganization);

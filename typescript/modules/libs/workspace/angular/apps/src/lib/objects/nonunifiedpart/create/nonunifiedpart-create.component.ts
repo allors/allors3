@@ -25,14 +25,14 @@ import {
   Locale
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './nonunifiedpart-create.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -68,7 +68,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<NonUnifiedPartCreateComponent>,
 
@@ -79,7 +79,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -116,11 +116,11 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         const now = new Date();
 
@@ -145,12 +145,12 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
 
         this.manufacturers = loaded.collection<Organisation>(m.Organisation);
 
-        this.part = this.allors.session.create<NonUnifiedPart>(m.NonUnifiedPart);
+        this.part = this.allors.context.create<NonUnifiedPart>(m.NonUnifiedPart);
         this.part.DefaultFacility = this.settings.DefaultFacility;
         this.part.UnitOfMeasure = piece;
 
         if (!this.settings.UsePartNumberCounter) {
-          this.partNumber = this.allors.session.create<PartNumber>(m.PartNumber);
+          this.partNumber = this.allors.context.create<PartNumber>(m.PartNumber);
           this.partNumber.ProductIdentificationType = partNumberType;
 
           this.part.addProductIdentification(this.partNumber);
@@ -185,7 +185,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe(() => {
+    this.allors.context.pull(pulls).subscribe(() => {
       this.models = this.selectedBrand.Models ? this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0)) : [];
     });
   }
@@ -199,7 +199,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
   public save(): void {
     this.onSave();
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.part);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
@@ -208,7 +208,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
   public update(): void {
     this.onSave();
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
@@ -224,7 +224,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
 
     if (this.selectedSuppliers !== undefined) {
       this.selectedSuppliers.forEach((supplier: Organisation) => {
-        const supplierOffering = this.allors.session.create<SupplierOffering>(this.m.SupplierOffering);
+        const supplierOffering = this.allors.context.create<SupplierOffering>(this.m.SupplierOffering);
         supplierOffering.Supplier = supplier;
         supplierOffering.Part = this.part;
         supplierOffering.UnitOfMeasure = this.part.UnitOfMeasure;

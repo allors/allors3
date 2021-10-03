@@ -21,7 +21,7 @@ import {
   CustomerRelationship,
 } from '@allors/workspace/domain/default';
 import { PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
@@ -31,7 +31,7 @@ import { Filters } from '../../../../filters/filters';
   // tslint:disable-next-line:component-selector
   selector: 'purchaseinvoice-overview-detail',
   templateUrl: './purchaseinvoice-overview-detail.component.html',
-  providers: [SessionService, PanelService],
+  providers: [ContextService, PanelService],
 })
 export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -94,7 +94,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   }
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panel: PanelService,
 
     public refreshService: RefreshService,
@@ -104,7 +104,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     panel.name = 'detail';
     panel.title = 'Purchase Invoice Details';
@@ -214,11 +214,11 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
           this.employeeFilter = Filters.employeeFilter(m, this.internalOrganisationId.value);
           this.suppliersFilter = Filters.suppliersFilter(m, this.internalOrganisationId.value);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
@@ -259,14 +259,14 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
     }, this.saveService.errorHandler);
   }
 
   public billedFromAdded(organisation: Organisation): void {
-    const supplierRelationship = this.allors.session.create<SupplierRelationship>(this.m.SupplierRelationship);
+    const supplierRelationship = this.allors.context.create<SupplierRelationship>(this.m.SupplierRelationship);
     supplierRelationship.Supplier = organisation;
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -274,7 +274,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   }
 
   public shipToCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -282,7 +282,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   }
 
   public billToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -290,7 +290,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   }
 
   public shipToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -298,7 +298,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   }
 
   public billedFromContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.invoice.BilledFrom as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -307,7 +307,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   }
 
   public shipToCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.invoice.BilledFrom as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -316,7 +316,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   }
 
   public billToEndCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.invoice.ShipToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -325,7 +325,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   }
 
   public shipToEndCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.invoice.ShipToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -411,7 +411,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       if (this.invoice.BilledFrom !== this.previousBilledFrom) {
         this.invoice.AssignedBilledFromContactMechanism = null;
         this.invoice.BilledFromContactPerson = null;
@@ -456,7 +456,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       if (this.invoice.ShipToCustomer !== this.previousShipToCustomer) {
         this.invoice.AssignedShipToEndCustomerAddress = null;
         this.invoice.ShipToCustomerContactPerson = null;
@@ -495,7 +495,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       if (this.invoice.BillToEndCustomer !== this.previousBillToEndCustomer) {
         this.invoice.AssignedBillToEndCustomerContactMechanism = null;
         this.invoice.BillToEndCustomerContactPerson = null;
@@ -539,7 +539,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       if (this.invoice.ShipToEndCustomer !== this.previousShipToEndCustomer) {
         this.invoice.AssignedShipToEndCustomerAddress = null;
         this.invoice.ShipToEndCustomerContactPerson = null;

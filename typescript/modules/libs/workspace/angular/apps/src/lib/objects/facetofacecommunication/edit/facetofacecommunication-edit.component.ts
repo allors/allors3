@@ -6,14 +6,14 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, CommunicationEventPurpose, CommunicationEventState, FaceToFaceCommunication } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './facetofacecommunication-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class FaceToFaceCommunicationEditComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -34,7 +34,7 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
   parties: Party[];
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<FaceToFaceCommunicationEditComponent>,
 
@@ -44,7 +44,7 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -144,11 +144,11 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
             ];
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.purposes = loaded.collection<CommunicationEventPurpose>(m.CommunicationEventPurpose);
         this.eventStates = loaded.collection<CommunicationEventState>(m.CommunicationEventState);
@@ -160,7 +160,7 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
 
         if (isCreate) {
           this.title = 'Add Meeting';
-          this.communicationEvent = this.allors.session.create<FaceToFaceCommunication>(m.FaceToFaceCommunication);
+          this.communicationEvent = this.allors.context.create<FaceToFaceCommunication>(m.FaceToFaceCommunication);
 
           this.party = this.organisation || this.person;
         } else {
@@ -225,7 +225,7 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.communicationEvent);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
@@ -233,7 +233,7 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
 
   private addContactRelationship(party: Person): void {
     if (this.organisation) {
-      const relationShip: OrganisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+      const relationShip: OrganisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
       relationShip.Contact = party;
       relationShip.Organisation = this.organisation;
     }

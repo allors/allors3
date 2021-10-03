@@ -4,7 +4,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { Organisation } from '@allors/workspace/domain/default';
 import { AllorsMaterialSideNavService, SideMenuItem } from '@allors/workspace/angular/base';
 import { M } from '@allors/workspace/meta/default';
@@ -12,7 +12,7 @@ import { M } from '@allors/workspace/meta/default';
 @Component({
   styleUrls: ['main.component.scss'],
   templateUrl: './main.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class MainComponent implements OnInit, OnDestroy {
   selectedInternalOrganisation: Organisation;
@@ -26,11 +26,11 @@ export class MainComponent implements OnInit, OnDestroy {
 
   @ViewChild('drawer', { static: true }) private sidenav: MatSidenav;
 
-  constructor(@Self() private allors: SessionService, private router: Router, private sideNavService: AllorsMaterialSideNavService) {}
+  constructor(@Self() private allors: ContextService, private router: Router, private sideNavService: AllorsMaterialSideNavService) {}
 
   public ngOnInit(): void {
-    const { workspace } = this.allors;
-    const m = workspace.configuration.metaPopulation as M;
+    const { context } = this.allors;
+    const m = context.configuration.metaPopulation as M;
     m._.menu.forEach((menuItem) => {
       const objectType = menuItem.objectType;
 

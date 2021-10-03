@@ -3,7 +3,6 @@ import { Subject } from 'rxjs';
 
 import { MethodType } from '@allors/workspace/meta/system';
 import { IObject } from '@allors/workspace/domain/system';
-import { IReactiveDatabaseClient, ISession } from '@allors/workspace/domain/system';
 
 import { Action } from '../../../../components/actions/action';
 import { RefreshService } from '../../../../services/refresh/refresh.service';
@@ -11,17 +10,18 @@ import { SaveService } from '../../save/save.service';
 import { ActionTarget } from '../../../../components/actions/action-target';
 
 import { MethodConfig } from './method-config';
+import { Context } from '@allors/workspace/angular/core';
 
 export class MethodAction implements Action {
   name = 'method';
 
-  constructor(refreshService: RefreshService, snackBar: MatSnackBar, client: IReactiveDatabaseClient, session: ISession, saveService: SaveService, public methodType: MethodType, public config?: MethodConfig) {
+  constructor(refreshService: RefreshService, snackBar: MatSnackBar, context: Context, saveService: SaveService, public methodType: MethodType, public config?: MethodConfig) {
     this.execute = (target: ActionTarget) => {
       const objects = this.resolve(target);
       const methods = objects.filter((v) => v.strategy.canExecute(methodType)).map((v) => (v as any)[methodType.name]);
 
       if (methods.length > 0) {
-        client.invokeReactive(session, methods).subscribe(() => {
+        context.invoke(methods).subscribe(() => {
           snackBar.open('Successfully executed ' + methodType.name + '.', 'close', { duration: 5000 });
           refreshService.refresh();
           this.result.next(true);

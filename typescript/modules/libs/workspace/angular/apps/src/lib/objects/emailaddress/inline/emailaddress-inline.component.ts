@@ -2,7 +2,7 @@ import { Component, Output, EventEmitter, OnInit, OnDestroy, Input } from '@angu
 
 import { M } from '@allors/workspace/meta/default';
 import { PartyContactMechanism, ContactMechanismPurpose, EmailAddress } from '@allors/workspace/domain/default';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -14,7 +14,7 @@ export class PartyContactMechanismEmailAddressInlineComponent implements OnInit,
 
   @Output() public cancelled: EventEmitter<any> = new EventEmitter();
 
-  @Input() public scope: SessionService;
+  @Input() public scope: ContextService;
 
   public contactMechanismPurposes: ContactMechanismPurpose[];
 
@@ -23,8 +23,8 @@ export class PartyContactMechanismEmailAddressInlineComponent implements OnInit,
 
   public m: M;
 
-  constructor(private allors: SessionService) {
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+  constructor(private allors: ContextService) {
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -39,12 +39,12 @@ export class PartyContactMechanismEmailAddressInlineComponent implements OnInit,
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe(
+    this.allors.context.pull(pulls).subscribe(
       (loaded) => {
         this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
 
-        this.partyContactMechanism = this.allors.session.create<PartyContactMechanism>(m.PartyContactMechanism);
-        this.emailAddress = this.allors.session.create<EmailAddress>(m.EmailAddress);
+        this.partyContactMechanism = this.allors.context.create<PartyContactMechanism>(m.PartyContactMechanism);
+        this.emailAddress = this.allors.context.create<EmailAddress>(m.EmailAddress);
         this.partyContactMechanism.ContactMechanism = this.emailAddress;
       },
       (error: any) => {

@@ -6,14 +6,14 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { InternalOrganisation, Locale, Catalogue, Singleton, ProductCategory, Scope } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './catalogue-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class CatalogueEditComponent extends TestScope implements OnInit, OnDestroy {
   public m: M;
@@ -32,7 +32,7 @@ export class CatalogueEditComponent extends TestScope implements OnInit, OnDestr
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<CatalogueEditComponent>,
 
@@ -43,7 +43,7 @@ export class CatalogueEditComponent extends TestScope implements OnInit, OnDestr
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -75,11 +75,11 @@ export class CatalogueEditComponent extends TestScope implements OnInit, OnDestr
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, create: isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, create: isCreate })));
         })
       )
       .subscribe(({ loaded, create }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.catalogue = loaded.object<Catalogue>(m.Catalogue);
         this.locales = loaded.collection<Locale>(m.Locale);
@@ -89,7 +89,7 @@ export class CatalogueEditComponent extends TestScope implements OnInit, OnDestr
 
         if (create) {
           this.title = 'Add Catalogue';
-          this.catalogue = this.allors.session.create<Catalogue>(m.Catalogue);
+          this.catalogue = this.allors.context.create<Catalogue>(m.Catalogue);
           this.catalogue.InternalOrganisation = this.internalOrganisation;
         } else {
           if (this.catalogue.canWriteCatScope) {
@@ -108,7 +108,7 @@ export class CatalogueEditComponent extends TestScope implements OnInit, OnDestr
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.catalogue);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

@@ -4,14 +4,14 @@ import { switchMap } from 'rxjs/operators';
 
 import { Person } from '@allors/workspace/domain/default';
 import { Action, EditService, ObjectService, RefreshService, UserId } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'userprofile-link',
   templateUrl: './userprofile-link.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class UserProfileLinkComponent implements OnInit, OnDestroy {
   edit: Action;
@@ -21,7 +21,7 @@ export class UserProfileLinkComponent implements OnInit, OnDestroy {
   m: M;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public editService: EditService,
@@ -29,7 +29,7 @@ export class UserProfileLinkComponent implements OnInit, OnDestroy {
   ) {
     this.edit = editService.edit();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   ngOnInit(): void {
@@ -51,11 +51,11 @@ export class UserProfileLinkComponent implements OnInit, OnDestroy {
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.user = loaded.object<Person>(m.Person);
       });

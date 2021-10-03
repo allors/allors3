@@ -2,7 +2,7 @@ import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/cor
 
 import { M } from '@allors/workspace/meta/default';
 import { PartyContactMechanism, Enumeration, ContactMechanismPurpose, ContactMechanismType, TelecommunicationsNumber } from '@allors/workspace/domain/default';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -24,8 +24,8 @@ export class PartyContactMechanismTelecommunicationsNumberInlineComponent implem
 
   public m: M;
 
-  constructor(private allors: SessionService) {
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+  constructor(private allors: ContextService) {
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -42,12 +42,12 @@ export class PartyContactMechanismTelecommunicationsNumberInlineComponent implem
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
       this.contactMechanismTypes = loaded.collection<ContactMechanismType>(m.ContactMechanismType);
 
-      this.partyContactMechanism = this.allors.session.create<PartyContactMechanism>(m.PartyContactMechanism);
-      this.telecommunicationsNumber = this.allors.session.create<TelecommunicationsNumber>(m.TelecommunicationsNumber);
+      this.partyContactMechanism = this.allors.context.create<PartyContactMechanism>(m.PartyContactMechanism);
+      this.telecommunicationsNumber = this.allors.context.create<TelecommunicationsNumber>(m.TelecommunicationsNumber);
       this.partyContactMechanism.ContactMechanism = this.telecommunicationsNumber;
     });
   }

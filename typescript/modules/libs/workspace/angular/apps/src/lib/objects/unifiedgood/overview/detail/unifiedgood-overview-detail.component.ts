@@ -24,7 +24,7 @@ import {
   UnifiedGood,
 } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 
@@ -32,7 +32,7 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
   // tslint:disable-next-line:component-selector
   selector: 'unifiedgood-overview-detail',
   templateUrl: './unifiedgood-overview-detail.component.html',
-  providers: [PanelService, SessionService],
+  providers: [PanelService, ContextService],
 })
 export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -71,7 +71,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   private refresh$: BehaviorSubject<Date>;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panel: PanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
@@ -81,7 +81,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
     this.refresh$ = new BehaviorSubject(new Date());
 
     panel.name = 'detail';
@@ -221,11 +221,11 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.good = loaded.object<UnifiedGood>(m.UnifiedGood);
         this.originalCategories = loaded.collection<ProductCategory>(m.ProductCategory);
@@ -299,7 +299,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe(() => {
+    this.allors.context.pull(pulls).subscribe(() => {
       this.models = this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
     });
   }
@@ -307,7 +307,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   public save(): void {
     this.onSave();
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
     });
@@ -318,7 +318,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
 
     this.onSave();
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
@@ -374,7 +374,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   }
 
   private newSupplierOffering(supplier: Organisation): SupplierOffering {
-    const supplierOffering = this.allors.session.create<SupplierOffering>(this.m.SupplierOffering);
+    const supplierOffering = this.allors.context.create<SupplierOffering>(this.m.SupplierOffering);
     supplierOffering.Supplier = supplier;
     supplierOffering.Part = this.good;
     supplierOffering.UnitOfMeasure = this.good.UnitOfMeasure;

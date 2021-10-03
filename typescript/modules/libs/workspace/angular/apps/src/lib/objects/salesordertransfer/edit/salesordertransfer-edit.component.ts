@@ -6,12 +6,12 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { SalesInvoice, SalesOrder, SalesTerm, TermType } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './salesordertransfer-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class SalesOrderTransferEditComponent extends TestScope implements OnInit, OnDestroy {
   public m: M;
@@ -25,7 +25,7 @@ export class SalesOrderTransferEditComponent extends TestScope implements OnInit
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<SalesOrderTransferEditComponent>,
     public refreshService: RefreshService,
@@ -33,7 +33,7 @@ export class SalesOrderTransferEditComponent extends TestScope implements OnInit
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -78,11 +78,11 @@ export class SalesOrderTransferEditComponent extends TestScope implements OnInit
             pulls.push(pull.SalesInvoice({ objectId: this.data.associationId }), pull.SalesOrder({ objectId: this.data.associationId }));
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, create: isCreate, cls, associationRoleType })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, create: isCreate, cls, associationRoleType })));
         })
       )
       .subscribe(({ loaded, create, cls, associationRoleType }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.container = loaded.object<SalesInvoice>(m.SalesInvoice) || loaded.object<SalesOrder>(m.SalesOrder);
         this.object = loaded.object<SalesTerm>(m.SalesTerm);
@@ -91,7 +91,7 @@ export class SalesOrderTransferEditComponent extends TestScope implements OnInit
 
         if (create) {
           this.title = 'Add Sales Term';
-          this.object = this.allors.session.create<SalesTerm>(cls);
+          this.object = this.allors.context.create<SalesTerm>(cls);
           this.container.strategy.addCompositesRole(associationRoleType, this.object);
         }
       });
@@ -104,7 +104,7 @@ export class SalesOrderTransferEditComponent extends TestScope implements OnInit
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.object);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

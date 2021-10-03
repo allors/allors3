@@ -54,7 +54,7 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
   }
 
   ngOnInit() {
-    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
+    this.delete = this.deleteService.delete(this.panel.manager.context);
 
     this.panel.name = 'salesinvoice';
     this.panel.title = 'Sales Invoices';

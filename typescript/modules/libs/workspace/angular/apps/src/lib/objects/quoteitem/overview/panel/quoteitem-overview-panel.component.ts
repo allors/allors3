@@ -5,7 +5,7 @@ import { formatDistance } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { ProductQuote, QuoteItem } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: QuoteItem;
@@ -23,7 +23,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'quoteitem-overview-panel',
   templateUrl: './quoteitem-overview-panel.component.html',
-  providers: [SessionService, PanelService],
+  providers: [ContextService, PanelService],
 })
 export class QuoteItemOverviewPanelComponent extends TestScope {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -52,7 +52,7 @@ export class QuoteItemOverviewPanelComponent extends TestScope {
   }
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
     public refreshService: RefreshService,
@@ -64,18 +64,18 @@ export class QuoteItemOverviewPanelComponent extends TestScope {
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     panel.name = 'quoteitem';
     panel.title = 'Quote Items';
     panel.icon = 'contacts';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.client, panel.manager.session);
+    this.delete = deleteService.delete(panel.manager.context);
     this.edit = this.editService.edit();
-    this.cancel = methodService.create(allors.client, allors.session, this.m.QuoteItem.Cancel, { name: 'Cancel' });
-    this.reject = methodService.create(allors.client, allors.session, this.m.QuoteItem.Reject, { name: 'Reject' });
-    this.submit = methodService.create(allors.client, allors.session, this.m.QuoteItem.Submit, { name: 'Submit' });
+    this.cancel = methodService.create(allors.context, this.m.QuoteItem.Cancel, { name: 'Cancel' });
+    this.reject = methodService.create(allors.context, this.m.QuoteItem.Reject, { name: 'Reject' });
+    this.submit = methodService.create(allors.context, this.m.QuoteItem.Submit, { name: 'Submit' });
 
     const sort = true;
     this.table = new Table({

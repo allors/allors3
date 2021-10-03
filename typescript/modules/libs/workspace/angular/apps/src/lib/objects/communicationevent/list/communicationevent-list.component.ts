@@ -6,7 +6,7 @@ import { format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { CommunicationEvent } from '@allors/workspace/domain/default';
 
 interface Row extends TableRow {
@@ -23,7 +23,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './communicationevent-list.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class CommunicationEventListComponent extends TestScope implements OnInit, OnDestroy {
   public title = 'Communications';
@@ -38,7 +38,7 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
   m: M;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
 
     public refreshService: RefreshService,
     public deleteService: DeleteService,
@@ -51,9 +51,9 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
 
     titleService.setTitle(this.title);
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.delete = deleteService.delete(allors.client, allors.session);
+    this.delete = deleteService.delete(allors.context);
     this.edit = editService.edit();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
@@ -107,11 +107,11 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
         const communicationEvents = loaded.collection<CommunicationEvent>(m.CommunicationEvent);
         this.table.total = loaded.value('CommunicationEvents_total') as number;
         this.table.data = communicationEvents.map((v) => {

@@ -7,7 +7,7 @@ import { formatDistance } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, InternalOrganisation, SalesOrder } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
@@ -25,7 +25,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './salesorder-list.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class SalesOrderListComponent extends TestScope implements OnInit, OnDestroy {
   public title = 'Sales Orders';
@@ -47,7 +47,7 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
   filter: Filter;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
 
     public refreshService: RefreshService,
     public overviewService: OverviewService,
@@ -65,16 +65,16 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
 
     titleService.setTitle(this.title);
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.delete = deleteService.delete(allors.client, allors.session);
+    this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
 
     this.print = printService.print();
-    this.ship = methodService.create(allors.client, allors.session, this.m.SalesOrder.Ship, { name: 'Ship' });
-    this.invoice = methodService.create(allors.client, allors.session, this.m.SalesOrder.Invoice, { name: 'Invoice' });
+    this.ship = methodService.create(allors.context, this.m.SalesOrder.Ship, { name: 'Ship' });
+    this.invoice = methodService.create(allors.context, this.m.SalesOrder.Invoice, { name: 'Invoice' });
 
     this.table = new Table({
       selection: true,
@@ -139,11 +139,11 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.user = loaded.object<Person>(m.Person);

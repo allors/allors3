@@ -6,7 +6,7 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { NonSerialisedInventoryItem } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -14,7 +14,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './nonserialisedinventoryitem-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class NonSerialisedInventoryItemEditComponent extends TestScope implements OnInit, OnDestroy {
   public m: M;
@@ -25,7 +25,7 @@ export class NonSerialisedInventoryItemEditComponent extends TestScope implement
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<NonSerialisedInventoryItemEditComponent>,
 
@@ -36,7 +36,7 @@ export class NonSerialisedInventoryItemEditComponent extends TestScope implement
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -59,11 +59,11 @@ export class NonSerialisedInventoryItemEditComponent extends TestScope implement
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.nonSerialisedInventoryItem = loaded.object<NonSerialisedInventoryItem>(m.NonSerialisedInventoryItem);
 
@@ -82,7 +82,7 @@ export class NonSerialisedInventoryItemEditComponent extends TestScope implement
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.nonSerialisedInventoryItem);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

@@ -3,14 +3,14 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
+import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 import { IPullResult, Pull } from '@allors/workspace/domain/system';
 import { Organisation } from '@allors/workspace/domain/default';
 import { M } from '@allors/workspace/meta/default';
 
 @Component({
   templateUrl: './fetch.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class FetchComponent implements OnInit, OnDestroy {
   public organisation: Organisation;
@@ -18,7 +18,7 @@ export class FetchComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(@Self() private allors: SessionService, private workspaceService: WorkspaceService, private title: Title, private route: ActivatedRoute) {}
+  constructor(@Self() private allors: ContextService, private workspaceService: WorkspaceService, private title: Title, private route: ActivatedRoute) {}
 
   public ngOnInit() {
     this.title.setTitle('Fetch');

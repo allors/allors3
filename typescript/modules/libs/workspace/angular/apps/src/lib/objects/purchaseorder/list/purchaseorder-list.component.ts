@@ -7,7 +7,7 @@ import { formatDistance } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, InternalOrganisation, PurchaseOrder } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
@@ -30,7 +30,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './purchaseorder-list.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class PurchaseOrderListComponent extends TestScope implements OnInit, OnDestroy {
   public title = 'Purchase Orders';
@@ -52,7 +52,7 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
   filter: Filter;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public printService: PrintService,
@@ -69,15 +69,15 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
 
     titleService.setTitle(this.title);
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.print = printService.print();
-    this.delete = deleteService.delete(allors.client, allors.session);
+    this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.table = new Table({
       selection: true,
@@ -156,11 +156,11 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.user = loaded.object<Person>(m.Person);

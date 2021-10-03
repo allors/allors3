@@ -6,14 +6,14 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { InternalOrganisation, Organisation, CustomerRelationship, Party } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './customerrelationship-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class CustomerRelationshipEditComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -26,7 +26,7 @@ export class CustomerRelationshipEditComponent extends TestScope implements OnIn
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<CustomerRelationshipEditComponent>,
     public refreshService: RefreshService,
@@ -36,7 +36,7 @@ export class CustomerRelationshipEditComponent extends TestScope implements OnIn
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -70,11 +70,11 @@ export class CustomerRelationshipEditComponent extends TestScope implements OnIn
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.party = loaded.object<Party>(m.Party);
@@ -82,7 +82,7 @@ export class CustomerRelationshipEditComponent extends TestScope implements OnIn
         if (isCreate) {
           this.title = 'Add Customer Relationship';
 
-          this.partyRelationship = this.allors.session.create<CustomerRelationship>(m.CustomerRelationship);
+          this.partyRelationship = this.allors.context.create<CustomerRelationship>(m.CustomerRelationship);
           this.partyRelationship.FromDate = new Date();
           this.partyRelationship.Customer = this.party;
           this.partyRelationship.InternalOrganisation = this.internalOrganisation;
@@ -105,7 +105,7 @@ export class CustomerRelationshipEditComponent extends TestScope implements OnIn
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.partyRelationship);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

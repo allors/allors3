@@ -6,13 +6,13 @@ import { switchMap } from 'rxjs/operators';
 
 import { Part, NonUnifiedPart } from '@allors/workspace/domain/default';
 import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
+import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { M } from '@allors/workspace/meta/default';
 
 @Component({
   templateUrl: './nonunifiedpart-overview.component.html',
-  providers: [PanelManagerService, SessionService],
+  providers: [PanelManagerService, ContextService],
 })
 export class NonUnifiedPartOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
   title = 'Part';
@@ -66,11 +66,11 @@ export class NonUnifiedPartOverviewComponent extends TestScope implements AfterV
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.client.pullReactive(this.panelManager.session, pulls);
+          return this.panelManager.context.pull( pulls);
         })
       )
       .subscribe((loaded) => {
-        this.panelManager.session.reset();
+        this.panelManager.context.reset();
         this.panelManager.onPulled(loaded);
 
         const part = loaded.object<NonUnifiedPart>(m.NonUnifiedPart);

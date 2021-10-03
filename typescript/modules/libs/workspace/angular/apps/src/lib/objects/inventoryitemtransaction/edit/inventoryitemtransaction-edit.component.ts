@@ -19,13 +19,13 @@ import {
   SerialisedInventoryItemState,
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './inventoryitemtransaction-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class InventoryItemTransactionEditComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -53,7 +53,7 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
   nonSerialisedInventoryItem: NonSerialisedInventoryItem;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<InventoryItemTransactionEditComponent>,
 
@@ -63,7 +63,7 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -115,11 +115,11 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded })));
         })
       )
       .subscribe(({ loaded }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.inventoryTransactionReasons = loaded.collection(m.InventoryTransactionReason);
         this.nonSerialisedInventoryItemState = loaded.collection(m.NonSerialisedInventoryItemState);
@@ -143,7 +143,7 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
           this.serialised = this.inventoryItem.Part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
         }
 
-        this.inventoryItemTransaction = this.allors.session.create<InventoryItemTransaction>(m.InventoryItemTransaction);
+        this.inventoryItemTransaction = this.allors.context.create<InventoryItemTransaction>(m.InventoryItemTransaction);
         this.inventoryItemTransaction.TransactionDate = new Date();
         this.inventoryItemTransaction.Part = this.part;
         this.inventoryItemTransaction.Cost = this.part.PartWeightedAverage?.AverageCost;
@@ -177,7 +177,7 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
   public save(): void {
     this.inventoryItemTransaction.Facility = this.selectedFacility;
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.inventoryItemTransaction);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

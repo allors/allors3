@@ -6,7 +6,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { ProductCategory } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { And, Equals } from '@allors/workspace/domain/system';
@@ -21,7 +21,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './productcategory-list.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class ProductCategoryListComponent extends TestScope implements OnInit, OnDestroy {
   public title = 'Categories';
@@ -36,7 +36,7 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
   m: M;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public editService: EditService,
@@ -50,14 +50,14 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
 
     titleService.setTitle(this.title);
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.edit = editService.edit();
     this.edit.result.subscribe(() => {
       this.table.selection.clear();
     });
 
-    this.delete = deleteService.delete(allors.client, allors.session);
+    this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -128,11 +128,11 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         const objects = loaded.collection<ProductCategory>(m.ProductCategory);
         this.table.total = loaded.value('ProductCategories_total') as number;

@@ -21,7 +21,7 @@ import {
   VatRate,
 } from '@allors/workspace/domain/default';
 import { PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
@@ -32,7 +32,7 @@ import { Filters } from '../../../../filters/filters';
   // tslint:disable-next-line:component-selector
   selector: 'purchaseorder-overview-detail',
   templateUrl: './purchaseorder-overview-detail.component.html',
-  providers: [SessionService, PanelService],
+  providers: [ContextService, PanelService],
 })
 export class PurchaseOrderOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -72,7 +72,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   showIrpf: boolean;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panel: PanelService,
 
     public refreshService: RefreshService,
@@ -82,7 +82,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     panel.name = 'detail';
     panel.title = 'Purchase Order Details';
@@ -165,11 +165,11 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
 
           this.suppliersFilter = Filters.suppliersFilter(m, this.internalOrganisationId.value);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.order = loaded.object<PurchaseOrder>(m.PurchaseOrder);
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
@@ -199,7 +199,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
     }, this.saveService.errorHandler);
@@ -211,7 +211,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public supplierAdded(organisation: Organisation): void {
-    const supplierRelationship = this.allors.session.create<SupplierRelationship>(this.m.SupplierRelationship);
+    const supplierRelationship = this.allors.context.create<SupplierRelationship>(this.m.SupplierRelationship);
     supplierRelationship.Supplier = organisation;
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -220,7 +220,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public takenViaContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.takenVia as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -235,7 +235,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public billToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -250,7 +250,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   }
 
   public shipToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -294,7 +294,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       if (this.order.TakenViaSupplier !== this.previousSupplier) {
         this.order.AssignedTakenViaContactMechanism = null;
         this.order.TakenViaContactPerson = null;
@@ -333,7 +333,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);

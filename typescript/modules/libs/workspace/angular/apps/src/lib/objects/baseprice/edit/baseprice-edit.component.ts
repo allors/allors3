@@ -6,14 +6,14 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './baseprice-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class BasepriceEditComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -28,7 +28,7 @@ export class BasepriceEditComponent extends TestScope implements OnInit, OnDestr
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<BasepriceEditComponent>,
     public refreshService: RefreshService,
@@ -38,7 +38,7 @@ export class BasepriceEditComponent extends TestScope implements OnInit, OnDestr
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -76,11 +76,11 @@ export class BasepriceEditComponent extends TestScope implements OnInit, OnDestr
             ];
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.internalOrganisation = loaded.object<InternalOrganisation>(this.m.InternalOrganisation);
         this.nonUnifiedGood = loaded.object<NonUnifiedGood>(this.m.NonUnifiedGood);
@@ -89,7 +89,7 @@ export class BasepriceEditComponent extends TestScope implements OnInit, OnDestr
         if (isCreate) {
           this.title = 'Add base price';
 
-          this.priceComponent = this.allors.session.create<PriceComponent>(this.m.BasePrice);
+          this.priceComponent = this.allors.context.create<PriceComponent>(this.m.BasePrice);
           this.priceComponent.FromDate = new Date();
           this.priceComponent.PricedBy = this.internalOrganisation;
 
@@ -119,7 +119,7 @@ export class BasepriceEditComponent extends TestScope implements OnInit, OnDestr
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.priceComponent);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

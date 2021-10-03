@@ -6,12 +6,12 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { PositionTypeRate, TimeFrequency, RateType, PositionType } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './positiontyperate-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class PositionTypeRateEditComponent extends TestScope implements OnInit, OnDestroy {
   title: string;
@@ -29,7 +29,7 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
   originalPositionTypes: PositionType[];
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PositionTypeRateEditComponent>,
     public refreshService: RefreshService,
@@ -37,7 +37,7 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -73,11 +73,11 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.rateTypes = loaded.collection<RateType>(m.RateType);
         this.timeFrequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
@@ -85,7 +85,7 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
 
         if (isCreate) {
           this.title = 'Add Position Type Rate';
-          this.positionTypeRate = this.allors.session.create<PositionTypeRate>(m.PositionTypeRate);
+          this.positionTypeRate = this.allors.context.create<PositionTypeRate>(m.PositionTypeRate);
           this.positionTypeRate.Frequency = hour;
         } else {
           this.positionTypeRate = loaded.object<PositionTypeRate>(m.PositionTypeRate);
@@ -125,7 +125,7 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
       positionType.PositionTypeRate = null;
     });
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.positionTypeRate);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

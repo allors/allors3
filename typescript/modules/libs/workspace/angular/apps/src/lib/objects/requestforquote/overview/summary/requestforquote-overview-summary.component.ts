@@ -67,35 +67,35 @@ export class RequestForQuoteOverviewSummaryComponent {
   }
 
   public cancel(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.requestForQuote.Cancel).subscribe(() => {
+    this.panel.manager.context.invoke(this.requestForQuote.Cancel).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public reject(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.requestForQuote.Reject).subscribe(() => {
+    this.panel.manager.context.invoke(this.requestForQuote.Reject).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully rejected.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public submit(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.requestForQuote.Submit).subscribe(() => {
+    this.panel.manager.context.invoke(this.requestForQuote.Submit).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully submitted.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public hold(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.requestForQuote.Hold).subscribe(() => {
+    this.panel.manager.context.invoke(this.requestForQuote.Hold).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully held.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public createQuote(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.requestForQuote.CreateQuote).subscribe(() => {
+    this.panel.manager.context.invoke(this.requestForQuote.CreateQuote).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully created a quote.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);

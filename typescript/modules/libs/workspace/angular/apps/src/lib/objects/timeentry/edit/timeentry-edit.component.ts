@@ -7,11 +7,11 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Party, WorkEffort, WorkEffortPartyAssignment, WorkEffortAssignmentRate, TimeFrequency, RateType, TimeEntry, TimeSheet, PartyRate } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   templateUrl: './timeentry-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestroy {
   title: string;
@@ -35,7 +35,7 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
   customerRate: PartyRate;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<TimeEntryEditComponent>,
     public refreshService: RefreshService,
@@ -44,7 +44,7 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -105,11 +105,11 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
             ];
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.rateTypes = loaded.collection<RateType>(m.RateType);
         this.frequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
@@ -119,7 +119,7 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
           this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
 
           this.title = 'Add Time Entry';
-          this.timeEntry = this.allors.session.create<TimeEntry>(m.TimeEntry);
+          this.timeEntry = this.allors.context.create<TimeEntry>(m.TimeEntry);
           this.timeEntry.WorkEffort = this.workEffort;
           this.timeEntry.IsBillable = true;
           this.timeEntry.BillingFrequency = hour;
@@ -172,7 +172,7 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       this.timeSheet = loaded.object<TimeSheet>(m.TimeSheet);
     });
   }
@@ -180,7 +180,7 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
   public update(): void {
     
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
@@ -191,7 +191,7 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
       this.timeSheet.addTimeEntry(this.timeEntry);
     }
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.timeEntry);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

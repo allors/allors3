@@ -5,7 +5,7 @@ import { switchMap, filter } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, Currency, RequestForQuote, Quote, CustomerRelationship } from '@allors/workspace/domain/default';
 import { PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
@@ -15,7 +15,7 @@ import { Filters } from '../../../../filters/filters';
   // tslint:disable-next-line:component-selector
   selector: 'requestforquote-overview-detail',
   templateUrl: './requestforquote-overview-detail.component.html',
-  providers: [SessionService, PanelService],
+  providers: [ContextService, PanelService],
 })
 export class RequestForQuoteOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -37,7 +37,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
   customersFilter: SearchFactory;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panel: PanelService,
     public refreshService: RefreshService,
     private saveService: SaveService,
@@ -46,7 +46,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     panel.name = 'detail';
     panel.title = 'Request For Quote Details';
@@ -135,11 +135,11 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
 
           this.customersFilter = Filters.customersFilter(m, this.internalOrganisationId.value);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.internalOrganisation = loaded.object<Organisation>(this.m.InternalOrganisation);
         this.request = loaded.object<RequestForQuote>(this.m.RequestForQuote);
@@ -159,7 +159,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
     }, this.saveService.errorHandler);
@@ -182,7 +182,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
   }
 
   public personAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.request.Originator as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -191,7 +191,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
   }
 
   public originatorAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -224,7 +224,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       if (this.request.Originator !== this.previousOriginator) {
         this.request.FullfillContactMechanism = null;
         this.request.ContactPerson = null;

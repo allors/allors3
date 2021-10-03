@@ -7,7 +7,7 @@ import { formatDistance } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { TaskAssignment } from '@allors/workspace/domain/default';
 import { Action, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, UserId } from '@allors/workspace/angular/base';
-import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
+import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 import { And } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
@@ -18,7 +18,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './taskassignment-list.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class TaskAssignmentListComponent extends TestScope implements OnInit, OnDestroy {
   public title = 'Tasks';
@@ -32,7 +32,7 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
   m: M;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     public workspaceService: WorkspaceService,
     public factoryService: ObjectService,
     public refreshService: RefreshService,
@@ -113,11 +113,11 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
         const taskAssignments = loaded.collection<TaskAssignment>(m.TaskAssignment);
         this.table.total = loaded.value('TaskAssignments_total') as number;
         this.table.data = taskAssignments.map((v) => {

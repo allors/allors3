@@ -6,7 +6,7 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, Party, SerialisedItem, WorkEffort, WorkEffortFixedAssetAssignment, Enumeration } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -14,7 +14,7 @@ import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './workeffortfixedassetassignment-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -34,7 +34,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
   workEfforts: WorkEffort[];
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<WorkEffortFixedAssetAssignmentEditComponent>,
     public refreshService: RefreshService,
@@ -43,7 +43,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -93,11 +93,11 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
 
           this.serialisedItemsFilter = Filters.serialisedItemsFilter(m);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
         this.workEfforts = loaded.collection<WorkEffort>(m.WorkEffort);
@@ -116,7 +116,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
         if (isCreate) {
           this.title = 'Add Asset Assignment';
 
-          this.workEffortFixedAssetAssignment = this.allors.session.create<WorkEffortFixedAssetAssignment>(m.WorkEffortFixedAssetAssignment);
+          this.workEffortFixedAssetAssignment = this.allors.context.create<WorkEffortFixedAssetAssignment>(m.WorkEffortFixedAssetAssignment);
 
           if (this.serialisedItem !== undefined) {
             this.workEffortFixedAssetAssignment.FixedAsset = this.serialisedItem;
@@ -145,7 +145,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.workEffortFixedAssetAssignment);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
@@ -165,7 +165,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       this.serialisedItems = loaded.collection<SerialisedItem>(m.SerialisedItem);
     });
   }

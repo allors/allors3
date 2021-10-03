@@ -2,7 +2,7 @@ import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/cor
 
 import { M } from '@allors/workspace/meta/default';
 import { PartyContactMechanism, PostalAddress, Country, ContactMechanismPurpose } from '@allors/workspace/domain/default';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -24,8 +24,8 @@ export class PartyContactMechanismPostalAddressInlineComponent implements OnInit
 
   public m: M;
 
-  constructor(private allors: SessionService) {
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+  constructor(private allors: ContextService) {
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -41,12 +41,12 @@ export class PartyContactMechanismPostalAddressInlineComponent implements OnInit
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       this.countries = loaded.collection<Country>(m.Country);
       this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
 
-      this.partyContactMechanism = this.allors.session.create<PartyContactMechanism>(m.PartyContactMechanism);
-      this.postalAddress = this.allors.session.create<PostalAddress>(m.PostalAddress);
+      this.partyContactMechanism = this.allors.context.create<PartyContactMechanism>(m.PartyContactMechanism);
+      this.postalAddress = this.allors.context.create<PostalAddress>(m.PostalAddress);
       this.partyContactMechanism.ContactMechanism = this.postalAddress;
     });
   }

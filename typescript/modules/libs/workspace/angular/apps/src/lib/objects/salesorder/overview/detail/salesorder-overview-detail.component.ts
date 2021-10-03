@@ -28,7 +28,7 @@ import {
   CustomerRelationship,
 } from '@allors/workspace/domain/default';
 import { PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
@@ -39,7 +39,7 @@ import { Filters } from '../../../../filters/filters';
   // tslint:disable-next-line:component-selector
   selector: 'salesorder-overview-detail',
   templateUrl: './salesorder-overview-detail.component.html',
-  providers: [SessionService, PanelService],
+  providers: [ContextService, PanelService],
 })
 export class SalesOrderOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -115,7 +115,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panel: PanelService,
     public refreshService: RefreshService,
     private saveService: SaveService,
@@ -125,7 +125,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     panel.name = 'detail';
     panel.title = 'Sales Order Details';
@@ -293,11 +293,11 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
 
           this.customersFilter = Filters.customersFilter(m, this.internalOrganisationId.value);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.order = loaded.object<SalesOrder>(this.m.SalesOrder);
         this.internalOrganisation = loaded.object<Organisation>(this.m.InternalOrganisation);
@@ -341,14 +341,14 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
     }, this.saveService.errorHandler);
   }
 
   public shipToCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -356,7 +356,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public billToCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -364,7 +364,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public shipToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -372,7 +372,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public billToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -380,7 +380,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public billToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.BillToCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -389,7 +389,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public billToEndCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.BillToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -398,7 +398,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public shipToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.ShipToCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -407,7 +407,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   }
 
   public shipToEndCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.order.ShipToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -489,7 +489,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       if (this.order.ShipToCustomer !== this.previousShipToCustomer) {
         this.order.AssignedShipToAddress = null;
         this.order.ShipToContactPerson = null;
@@ -539,7 +539,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       if (this.order.BillToCustomer !== this.previousBillToCustomer) {
         this.order.AssignedBillToContactMechanism = null;
         this.order.BillToContactPerson = null;
@@ -583,7 +583,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       if (this.order.BillToEndCustomer !== this.previousBillToEndCustomer) {
         this.order.AssignedBillToEndCustomerContactMechanism = null;
         this.order.BillToEndCustomerContactPerson = null;
@@ -627,7 +627,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       if (this.order.ShipToEndCustomer !== this.previousShipToEndCustomer) {
         this.order.AssignedShipToEndCustomerAddress = null;
         this.order.ShipToEndCustomerContactPerson = null;
@@ -654,7 +654,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   public update(): void {
     
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

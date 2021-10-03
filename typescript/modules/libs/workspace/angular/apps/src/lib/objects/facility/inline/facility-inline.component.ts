@@ -2,7 +2,7 @@ import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/cor
 
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, Facility, InternalOrganisation, FacilityType } from '@allors/workspace/domain/default';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
@@ -25,11 +25,11 @@ export class FacilityInlineComponent implements OnInit, OnDestroy {
   internalOrganisation: Organisation;
 
   constructor(
-    private allors: SessionService,
+    private allors: ContextService,
 
     private fetcher: FetcherService
   ) {
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -43,14 +43,14 @@ export class FacilityInlineComponent implements OnInit, OnDestroy {
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
       this.facilities = loaded.collection<Facility>(m.Facility);
 
       this.facilityTypes = loaded.collection<FacilityType>(m.FacilityType);
       const storageLocation = this.facilityTypes.find((v) => v.UniqueId === 'ff66c1ad-3048-48fd-a7d9-fbf97a090edd');
 
-      this.facility = this.allors.session.create<Facility>(m.Facility);
+      this.facility = this.allors.context.create<Facility>(m.Facility);
       this.facility.Owner = this.internalOrganisation;
       this.facility.FacilityType = storageLocation;
     });

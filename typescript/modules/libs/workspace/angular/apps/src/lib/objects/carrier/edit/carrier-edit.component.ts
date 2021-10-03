@@ -6,11 +6,11 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Carrier, SerialisedItemCharacteristicType } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   templateUrl: './carrier-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class CarrierEditComponent extends TestScope implements OnInit, OnDestroy {
   public title: string;
@@ -25,7 +25,7 @@ export class CarrierEditComponent extends TestScope implements OnInit, OnDestroy
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<CarrierEditComponent>,
 
@@ -34,7 +34,7 @@ export class CarrierEditComponent extends TestScope implements OnInit, OnDestroy
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -56,17 +56,17 @@ export class CarrierEditComponent extends TestScope implements OnInit, OnDestroy
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.characteristics = loaded.collection<SerialisedItemCharacteristicType>(m.SerialisedItemCharacteristicType);
 
         if (isCreate) {
           this.title = 'Add Carrier';
-          this.carrier = this.allors.session.create<Carrier>(m.Carrier);
+          this.carrier = this.allors.context.create<Carrier>(m.Carrier);
         } else {
           this.carrier = loaded.object<Carrier>(m.Carrier);
 
@@ -86,7 +86,7 @@ export class CarrierEditComponent extends TestScope implements OnInit, OnDestroy
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.carrier);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

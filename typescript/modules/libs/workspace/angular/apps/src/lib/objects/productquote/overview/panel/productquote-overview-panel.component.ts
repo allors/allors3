@@ -53,7 +53,7 @@ export class ProductQuoteOverviewPanelComponent extends TestScope implements OnI
   }
 
   ngOnInit() {
-    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
+    this.delete = this.deleteService.delete(this.panel.manager.context);
 
     this.panel.name = 'productquote';
     this.panel.title = 'Product Quotes';

@@ -59,7 +59,7 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
   ngOnInit() {
     const m = this.m;
 
-    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
+    this.delete = this.deleteService.delete(this.panel.manager.context);
 
     this.panel.name = 'workeffort';
     this.panel.title = 'Work Efforts';

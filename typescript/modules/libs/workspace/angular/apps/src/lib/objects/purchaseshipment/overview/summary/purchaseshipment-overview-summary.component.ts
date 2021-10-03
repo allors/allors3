@@ -86,7 +86,7 @@ export class PurchaseShipmentOverviewSummaryComponent {
   }
 
   public receive(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.shipment.Receive).subscribe(() => {
+    this.panel.manager.context.invoke(this.shipment.Receive).subscribe(() => {
       this.panel.toggle();
       this.snackBar.open('Successfully received.', 'close', { duration: 5000 });
       this.refreshService.refresh();

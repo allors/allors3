@@ -23,7 +23,7 @@ import {
   PurchaseInvoiceItem,
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { And, IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -31,7 +31,7 @@ import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './purchaseinvoiceitem-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class PurchaseInvoiceItemEditComponent extends TestScope implements OnInit, OnDestroy {
   m: M;
@@ -68,7 +68,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
   internalOrganisation: Organisation;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PurchaseInvoiceItemEditComponent>,
     private fetcher: FetcherService,
@@ -77,7 +77,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -153,11 +153,11 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
 
           this.unifiedGoodsFilter = Filters.unifiedGoodsFilter(m, treeBuilder);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
@@ -186,7 +186,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
         if (isCreate) {
           this.title = 'Add purchase invoice Item';
           this.invoice = loaded.object<PurchaseInvoice>(m.PurchaseInvoice);
-          this.invoiceItem = this.allors.session.create<PurchaseInvoiceItem>(m.PurchaseInvoiceItem);
+          this.invoiceItem = this.allors.context.create<PurchaseInvoiceItem>(m.PurchaseInvoiceItem);
           this.invoice.addPurchaseInvoiceItem(this.invoiceItem);
           this.vatRegimeInitialRole = this.invoice.DerivedVatRegime;
           this.irpfRegimeInitialRole = this.invoice.DerivedIrpfRegime;
@@ -238,7 +238,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
   public save(): void {
     this.onSave();
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.invoiceItem);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
@@ -270,7 +270,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe(() => {
+    this.allors.context.pull(pulls).subscribe(() => {
       this.serialisedItems = this.part.SerialisedItems;
       this.serialised = this.part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
     });
@@ -310,7 +310,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       this.part = (loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.Part)) as Part;
       this.serialised = part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 

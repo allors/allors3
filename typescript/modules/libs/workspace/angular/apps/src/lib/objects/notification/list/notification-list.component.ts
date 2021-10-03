@@ -6,7 +6,7 @@ import { formatDistance } from 'date-fns';
 
 import { Notification } from '@allors/workspace/domain/default';
 import { Action, Filter, FilterDefinition, MediaService, MethodService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, UserId } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
 import { And } from '@allors/workspace/domain/system';
 
@@ -19,7 +19,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './notification-list.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class NotificationListComponent extends TestScope implements OnInit, OnDestroy {
   public title = 'Notifications';
@@ -35,7 +35,7 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
   m: M;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public methodService: MethodService,
@@ -46,12 +46,12 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
     const m = this.m;
 
     titleService.setTitle(this.title);
 
-    this.confirm = methodService.create(allors.client, allors.session, m.Notification.Confirm, { name: 'Confirm' });
+    this.confirm = methodService.create(allors.context, m.Notification.Confirm, { name: 'Confirm' });
 
     this.table = new Table({
       selection: true,
@@ -101,11 +101,11 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
         const notifications = loaded.collection<Notification>(m.Notification);
         this.table.total = loaded.value('Notifications_total') as number;
         this.table.data = notifications.map((v) => {

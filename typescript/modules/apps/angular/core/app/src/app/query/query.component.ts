@@ -2,14 +2,14 @@ import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 
-import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
+import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 import { IPullResult, Pull } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation } from '@allors/workspace/domain/default';
 
 @Component({
   templateUrl: './query.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class QueryComponent implements OnInit, OnDestroy {
   public organisations: Organisation[];
@@ -20,7 +20,7 @@ export class QueryComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(@Self() private allors: SessionService, private workspaceService: WorkspaceService, private title: Title) {}
+  constructor(@Self() private allors: ContextService, private workspaceService: WorkspaceService, private title: Title) {}
 
   public ngOnInit() {
     this.title.setTitle('Query');

@@ -64,7 +64,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
     this.panel.icon = 'contacts';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
+    this.delete = this.deleteService.delete(this.panel.manager.context);
     this.edit = this.editService.edit();
 
     const sort = true;

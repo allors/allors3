@@ -7,7 +7,7 @@ import { switchMap } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Locale, Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, WorkTask } from '@allors/workspace/domain/default';
 import { NavigationService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -16,7 +16,7 @@ import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './worktask-create.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -42,7 +42,7 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
   subContractorsFilter: SearchFactory;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<WorkTaskCreateComponent>,
     public navigationService: NavigationService,
@@ -54,7 +54,7 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
     this.refresh$ = new BehaviorSubject<Date>(undefined);
   }
 
@@ -78,17 +78,17 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
           this.organisationsFilter = Filters.organisationsFilter(m);
           this.subContractorsFilter = Filters.subContractorsFilter(m, this.internalOrganisationId.value);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.locales = loaded.collection<Locale>(m.Locale);
         this.organisations = loaded.collection<Organisation>(m.Organisation);
 
-        this.workTask = this.allors.session.create<WorkTask>(m.WorkTask);
+        this.workTask = this.allors.context.create<WorkTask>(m.WorkTask);
         this.workTask.TakenBy = this.internalOrganisation as Organisation;
       });
   }
@@ -123,7 +123,7 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
 
@@ -132,7 +132,7 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
   }
 
   public contactPersonAdded(contact: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.workTask.Customer as Organisation;
     organisationContactRelationship.Contact = contact;
 
@@ -153,7 +153,7 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.workTask);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

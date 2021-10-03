@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { TestScope } from '@allors/workspace/angular/base';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation } from '@allors/workspace/domain/default';
@@ -13,7 +13,7 @@ import { IPullResult } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './organisation-overview.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class OrganisationOverviewComponent extends TestScope implements OnInit, OnDestroy {
   public title: string;
@@ -25,13 +25,13 @@ export class OrganisationOverviewComponent extends TestScope implements OnInit, 
 
   private subscription: Subscription;
 
-  constructor(@Self() private allors: SessionService, private titleService: Title, private route: ActivatedRoute) {
+  constructor(@Self() private allors: ContextService, private titleService: Title, private route: ActivatedRoute) {
     super();
 
     this.title = 'Organisation Overview';
     this.titleService.setTitle(this.title);
 
-    this.m = allors.workspace.configuration.metaPopulation as M;
+    this.m = allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -53,9 +53,9 @@ export class OrganisationOverviewComponent extends TestScope implements OnInit, 
             }),
           ];
 
-          this.allors.session.reset();
+          this.allors.context.reset();
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((result: IPullResult) => {

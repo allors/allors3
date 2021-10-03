@@ -68,7 +68,7 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
     panel.icon = 'contacts';
     panel.expandable = true;
 
-    this.delete = deleteService.delete(panel.manager.client, panel.manager.session);
+    this.delete = deleteService.delete(panel.manager.context);
     this.edit = this.editService.edit();
 
     const sort = true;

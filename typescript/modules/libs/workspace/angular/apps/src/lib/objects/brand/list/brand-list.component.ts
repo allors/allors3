@@ -6,7 +6,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Brand } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, Filter, FilterDefinition, MediaService, NavigationService, OverviewService, RefreshService, Sorter, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { And } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
@@ -16,7 +16,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './brand-list.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class BrandsOverviewComponent extends TestScope implements OnInit, OnDestroy {
   public title = 'Brands';
@@ -31,7 +31,7 @@ export class BrandsOverviewComponent extends TestScope implements OnInit, OnDest
   m: M;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
 
     public refreshService: RefreshService,
     public overviewService: OverviewService,
@@ -45,14 +45,14 @@ export class BrandsOverviewComponent extends TestScope implements OnInit, OnDest
 
     titleService.setTitle(this.title);
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.edit = editService.edit();
     this.edit.result.subscribe(() => {
       this.table.selection.clear();
     });
 
-    this.delete = deleteService.delete(allors.client, allors.session);
+    this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -105,11 +105,11 @@ export class BrandsOverviewComponent extends TestScope implements OnInit, OnDest
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         const objects = loaded.collection<Brand>(m.Brand);
         this.table.total = loaded.value('Brands_total') as number;

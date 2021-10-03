@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { Person } from '@allors/workspace/domain/default';
 import { IPullResult } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
@@ -13,7 +13,7 @@ import { assert } from '@allors/workspace/meta/system';
 
 @Component({
   templateUrl: './person-overview.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class PersonOverviewComponent extends TestScope implements OnInit, OnDestroy {
   public title: string;
@@ -23,12 +23,12 @@ export class PersonOverviewComponent extends TestScope implements OnInit, OnDest
   public locales: Locale[];
   private subscription: Subscription;
 
-  constructor(@Self() private allors: SessionService, private titleService: Title, private route: ActivatedRoute) {
+  constructor(@Self() private allors: ContextService, private titleService: Title, private route: ActivatedRoute) {
     super();
 
     this.title = 'Person Overview';
     this.titleService.setTitle(this.title);
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -49,9 +49,9 @@ export class PersonOverviewComponent extends TestScope implements OnInit, OnDest
             }),
           ];
 
-          this.allors.session.reset();
+          this.allors.context.reset();
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded: IPullResult) => {

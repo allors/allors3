@@ -39,7 +39,7 @@ import {
   SingletonId,
   Sorter,
 } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
@@ -62,7 +62,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './nonunifiedpart-list.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
   public title = 'Parts';
@@ -84,7 +84,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
   m: M;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
@@ -101,11 +101,11 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
   ) {
     titleService.setTitle(this.title);
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.print = printService.print();
 
-    this.delete = deleteService.delete(allors.client, allors.session);
+    this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -307,11 +307,11 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.user = loaded.object<Person>(m.Person);
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
@@ -375,7 +375,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
     this.nonUnifiedPartBarcodePrint.Facility = this.internalOrganisation.FacilitiesWhereOwner[0];
     this.nonUnifiedPartBarcodePrint.Locale = this.user.Locale;
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       const m = this.m;
       const { pullBuilder: pull } = m;
       const x = {};
@@ -395,8 +395,8 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
         }),
       ];
 
-      this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
-        this.allors.session.reset();
+      this.allors.context.pull(pulls).subscribe((loaded) => {
+        this.allors.context.reset();
 
         this.nonUnifiedPartBarcodePrint = loaded.object<NonUnifiedPartBarcodePrint>(m.NonUnifiedPartBarcodePrint);
 

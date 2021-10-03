@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, Output, EventEmitter } from '@angular/cor
 
 import { M } from '@allors/workspace/meta/default';
 import { Brand } from '@allors/workspace/domain/default';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -18,12 +18,12 @@ export class InlineBrandComponent implements OnInit, OnDestroy {
 
   public m: M;
 
-  constructor(private allors: SessionService) {
-    this.m = allors.workspace.configuration.metaPopulation as M;
+  constructor(private allors: ContextService) {
+    this.m = allors.context.configuration.metaPopulation as M;
   }
 
   ngOnInit(): void {
-    this.brand = this.allors.session.create<Brand>(this.m.Brand);
+    this.brand = this.allors.context.create<Brand>(this.m.Brand);
   }
 
   public ngOnDestroy(): void {

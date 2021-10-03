@@ -7,13 +7,13 @@ import { switchMap } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { RequestForQuote, Quote } from '@allors/workspace/domain/default';
 import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
+import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './requestforquote-overview.component.html',
-  providers: [PanelManagerService, SessionService],
+  providers: [PanelManagerService, ContextService],
 })
 export class RequestForQuoteOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
   title = 'Request For Quote';
@@ -84,11 +84,11 @@ export class RequestForQuoteOverviewComponent extends TestScope implements After
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.client.pullReactive(this.panelManager.session, pulls);
+          return this.panelManager.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.panelManager.session.reset();
+        this.panelManager.context.reset();
 
         this.panelManager.onPulled(loaded);
 

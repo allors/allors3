@@ -6,14 +6,14 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { ProductQuoteApproval } from '@allors/workspace/domain/default';
 import { Action, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IResult } from '@allors/workspace/domain/system';
 
 import { PrintService } from '../../../actions/print/print.service';
 
 @Component({
   templateUrl: './productquoteapproval-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class ProductQuoteApprovalEditComponent extends TestScope implements OnInit, OnDestroy {
   title: string;
@@ -28,7 +28,7 @@ export class ProductQuoteApprovalEditComponent extends TestScope implements OnIn
   print: Action;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<ProductQuoteApprovalEditComponent>,
     public printService: PrintService,
@@ -37,7 +37,7 @@ export class ProductQuoteApprovalEditComponent extends TestScope implements OnIn
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.print = printService.print(this.m.ProductQuoteApproval.ProductQuote);
   }
@@ -61,11 +61,11 @@ export class ProductQuoteApprovalEditComponent extends TestScope implements OnIn
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => loaded));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => loaded));
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
         this.productQuoteApproval = loaded.object<ProductQuoteApproval>(m.ProductQuoteApproval);
 
         this.title = this.productQuoteApproval.Title;
@@ -79,25 +79,25 @@ export class ProductQuoteApprovalEditComponent extends TestScope implements OnIn
   }
 
   approve(): void {
-    this.saveAndInvoke(() => this.allors.client.invokeReactive(this.allors.session, this.productQuoteApproval.Approve));
+    this.saveAndInvoke(() => this.allors.context.invoke(this.productQuoteApproval.Approve));
   }
 
   reject(): void {
-    this.saveAndInvoke(() => this.allors.client.invokeReactive(this.allors.session, this.productQuoteApproval.Reject));
+    this.saveAndInvoke(() => this.allors.context.invoke(this.productQuoteApproval.Reject));
   }
 
   saveAndInvoke(methodCall: () => Observable<IResult>): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    this.allors.client
-      .pushReactive(this.allors.session)
+    this.allors.context
+      .push()
       .pipe(
         switchMap(() => {
-          return this.allors.client.pullReactive(this.allors.session, [pull.ProductQuoteApproval({ objectId: this.data.id })]);
+          return this.allors.context.pull([pull.ProductQuoteApproval({ objectId: this.data.id })]);
         }),
         switchMap(() => {
-          this.allors.session.reset();
+          this.allors.context.reset();
           return methodCall();
         })
       )

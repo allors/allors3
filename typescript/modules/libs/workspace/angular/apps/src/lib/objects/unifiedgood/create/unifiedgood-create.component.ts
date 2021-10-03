@@ -6,14 +6,14 @@ import { switchMap } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { ProductIdentificationType, InventoryItemKind, ProductType, Settings, Good, ProductNumber, UnifiedGood } from '@allors/workspace/domain/default';
 import { NavigationService, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './unifiedgood-create.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class UnifiedGoodCreateComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -31,7 +31,7 @@ export class UnifiedGoodCreateComponent extends TestScope implements OnInit, OnD
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<UnifiedGoodCreateComponent>,
     private refreshService: RefreshService,
@@ -41,7 +41,7 @@ export class UnifiedGoodCreateComponent extends TestScope implements OnInit, OnD
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -53,11 +53,11 @@ export class UnifiedGoodCreateComponent extends TestScope implements OnInit, OnD
         switchMap(() => {
           const pulls = [this.fetcher.Settings, pull.InventoryItemKind({}), pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }), pull.ProductIdentificationType({})];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
         this.productTypes = loaded.collection<ProductType>(m.ProductType);
@@ -66,10 +66,10 @@ export class UnifiedGoodCreateComponent extends TestScope implements OnInit, OnD
 
         this.goodNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
 
-        this.good = this.allors.session.create<UnifiedGood>(m.UnifiedGood);
+        this.good = this.allors.context.create<UnifiedGood>(m.UnifiedGood);
 
         if (!this.settings.UseProductNumberCounter) {
-          this.productNumber = this.allors.session.create<ProductNumber>(m.ProductNumber);
+          this.productNumber = this.allors.context.create<ProductNumber>(m.ProductNumber);
           this.productNumber.ProductIdentificationType = this.goodNumberType;
 
           this.good.addProductIdentification(this.productNumber);
@@ -84,7 +84,7 @@ export class UnifiedGoodCreateComponent extends TestScope implements OnInit, OnD
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.good);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

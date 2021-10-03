@@ -7,13 +7,13 @@ import { ActivatedRoute } from '@angular/router';
 import { M } from '@allors/workspace/meta/default';
 import { PurchaseOrder, PurchaseOrderItem } from '@allors/workspace/domain/default';
 import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService, WorkspaceService } from '@allors/workspace/angular/core';
+import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './purchaseorder-overview.component.html',
-  providers: [PanelManagerService, SessionService],
+  providers: [PanelManagerService, ContextService],
 })
 export class PurchaseOrderOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
   title = 'Purchase Order';
@@ -69,11 +69,11 @@ export class PurchaseOrderOverviewComponent extends TestScope implements AfterVi
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.client.pullReactive(this.panelManager.session, pulls);
+          return this.panelManager.context.pull( pulls);
         })
       )
       .subscribe((loaded) => {
-        this.panelManager.session.reset();
+        this.panelManager.context.reset();
 
         this.panelManager.onPulled(loaded);
 

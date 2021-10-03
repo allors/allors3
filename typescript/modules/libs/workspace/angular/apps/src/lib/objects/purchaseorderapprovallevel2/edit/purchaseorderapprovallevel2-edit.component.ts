@@ -6,14 +6,14 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { PurchaseOrderApprovalLevel2 } from '@allors/workspace/domain/default';
 import { Action, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject, IResult } from '@allors/workspace/domain/system';
 
 import { PrintService } from '../../../actions/print/print.service';
 
 @Component({
   templateUrl: './purchaseorderapprovallevel2-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class PurchaseOrderApprovalLevel2EditComponent extends TestScope implements OnInit, OnDestroy {
   title: string;
@@ -28,7 +28,7 @@ export class PurchaseOrderApprovalLevel2EditComponent extends TestScope implemen
   print: Action;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PurchaseOrderApprovalLevel2EditComponent>,
     public printService: PrintService,
@@ -37,7 +37,7 @@ export class PurchaseOrderApprovalLevel2EditComponent extends TestScope implemen
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.print = printService.print(this.m.PurchaseOrderApprovalLevel2.PurchaseOrder);
   }
@@ -61,11 +61,11 @@ export class PurchaseOrderApprovalLevel2EditComponent extends TestScope implemen
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => loaded));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => loaded));
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
         this.purchaseOrderApproval = loaded.object<PurchaseOrderApprovalLevel2>(m.PurchaseOrderApprovalLevel2);
 
         this.title = this.purchaseOrderApproval.Title;
@@ -79,23 +79,25 @@ export class PurchaseOrderApprovalLevel2EditComponent extends TestScope implemen
   }
 
   approve(): void {
-    this.saveAndInvoke(() => this.allors.client.invokeReactive(this.allors.session, this.purchaseOrderApproval.Approve));
+    this.saveAndInvoke(() => this.allors.context.invoke(this.purchaseOrderApproval.Approve));
   }
 
   reject(): void {
-    this.saveAndInvoke(() => this.allors.client.invokeReactive(this.allors.session, (this.purchaseOrderApproval.Reject)));
+    this.saveAndInvoke(() => this.allors.context.invoke(this.purchaseOrderApproval.Reject));
   }
 
   saveAndInvoke(methodCall: () => Observable<IResult>): void {
-    const m = this.m; const { pullBuilder: pull } = m;
+    const m = this.m;
+    const { pullBuilder: pull } = m;
 
-    this.allors.client.pushReactive(this.allors.session)
+    this.allors.context
+      .push()
       .pipe(
         switchMap(() => {
-          return this.allors.client.pullReactive(this.allors.session, [pull.PurchaseOrderApprovalLevel2({ objectId: this.data.id })]);
+          return this.allors.context.pull([pull.PurchaseOrderApprovalLevel2({ objectId: this.data.id })]);
         }),
         switchMap(() => {
-          this.allors.session.reset();
+          this.allors.context.reset();
           return methodCall();
         })
       )

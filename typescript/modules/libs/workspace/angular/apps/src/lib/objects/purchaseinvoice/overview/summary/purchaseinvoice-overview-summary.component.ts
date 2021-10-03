@@ -104,56 +104,56 @@ export class PurchasInvoiceOverviewSummaryComponent {
   }
 
   public confirm(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.invoice.Confirm).subscribe(() => {
+    this.panel.manager.context.invoke(this.invoice.Confirm).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully confirmed.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public cancel(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.invoice.Cancel).subscribe(() => {
+    this.panel.manager.context.invoke(this.invoice.Cancel).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public reopen(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.invoice.Reopen).subscribe(() => {
+    this.panel.manager.context.invoke(this.invoice.Reopen).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully reopened.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public revise(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.invoice.Revise).subscribe(() => {
+    this.panel.manager.context.invoke(this.invoice.Revise).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully reopened.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public finishRevising(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.invoice.FinishRevising).subscribe(() => {
+    this.panel.manager.context.invoke(this.invoice.FinishRevising).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully finished revising.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public approve(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.invoice.Approve).subscribe(() => {
+    this.panel.manager.context.invoke(this.invoice.Approve).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully approved.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public reject(): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, this.invoice.Reject).subscribe(() => {
+    this.panel.manager.context.invoke(this.invoice.Reject).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully rejected.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
   }
 
   public createSalesInvoice(invoice: PurchaseInvoice): void {
-    this.panel.manager.client.invokeReactive(this.panel.manager.session, invoice.CreateSalesInvoice).subscribe(() => {
+    this.panel.manager.context.invoke(invoice.CreateSalesInvoice).subscribe(() => {
       this.snackBar.open('Successfully created a sales invoice.', 'close', { duration: 5000 });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

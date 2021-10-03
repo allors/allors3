@@ -6,7 +6,7 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Locale, UnitOfMeasure, TimeFrequency, Singleton, SerialisedItemCharacteristicType, IUnitOfMeasure } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -14,7 +14,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './serialiseditemcharacteristic-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class SerialisedItemCharacteristicEditComponent extends TestScope implements OnInit, OnDestroy {
   public title: string;
@@ -33,7 +33,7 @@ export class SerialisedItemCharacteristicEditComponent extends TestScope impleme
   locales: Locale[];
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<SerialisedItemCharacteristicEditComponent>,
     public refreshService: RefreshService,
@@ -43,7 +43,7 @@ export class SerialisedItemCharacteristicEditComponent extends TestScope impleme
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -88,11 +88,11 @@ export class SerialisedItemCharacteristicEditComponent extends TestScope impleme
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.singleton = loaded.collection<Singleton>(m.Singleton)[0];
         this.uoms = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
@@ -103,7 +103,7 @@ export class SerialisedItemCharacteristicEditComponent extends TestScope impleme
         if (isCreate) {
           this.title = 'Add Product Characteristic';
 
-          this.productCharacteristic = this.allors.session.create<SerialisedItemCharacteristicType>(m.SerialisedItemCharacteristicType);
+          this.productCharacteristic = this.allors.context.create<SerialisedItemCharacteristicType>(m.SerialisedItemCharacteristicType);
           this.productCharacteristic.IsActive = true;
         } else {
           this.productCharacteristic = loaded.object<SerialisedItemCharacteristicType>(m.SerialisedItemCharacteristicType);
@@ -124,7 +124,7 @@ export class SerialisedItemCharacteristicEditComponent extends TestScope impleme
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.productCharacteristic);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

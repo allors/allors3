@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, PurchaseOrder, PurchaseOrderItem, InvoiceItemType, PurchaseInvoice, OrderItemBilling, PurchaseInvoiceItem } from '@allors/workspace/domain/default';
 import { Action, DeleteService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, SaveService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { PrintService } from '../../../../actions/print/print.service';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
@@ -24,7 +24,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'purchaseorderinvoice-overview-panel',
   templateUrl: './purchaseorderinvoice-overview-panel.component.html',
-  providers: [SessionService, PanelService],
+  providers: [ContextService, PanelService],
 })
 export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
   internalOrganisation: Organisation;
@@ -56,7 +56,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
   }
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
     public factoryService: ObjectService,
@@ -72,7 +72,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     const m = this.m;
     const { pullBuilder: pull } = m;
@@ -83,7 +83,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
     this.panel.icon = 'message';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
+    this.delete = this.deleteService.delete(this.panel.manager.context);
 
     this.addToInvoice = {
       name: 'addtoinvoice',
@@ -234,14 +234,13 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
   }
 
   public addFromPurchaseOrder(panelPurchaseOrder: PurchaseOrder): void {
-    const { session } = this.allors;
 
-    const purchaseInvoice = session.instantiate<PurchaseInvoice>(this.purchaseInvoice.id);
-    const purchaseOrder = session.instantiate<PurchaseOrder>(panelPurchaseOrder.id);
+    const purchaseInvoice = this.allors.context.instantiate<PurchaseInvoice>(this.purchaseInvoice.id);
+    const purchaseOrder = this.allors.context.instantiate<PurchaseOrder>(panelPurchaseOrder.id);
 
     purchaseOrder.ValidOrderItems.forEach((purchaseOrderItem: PurchaseOrderItem) => {
       if (purchaseOrderItem.CanInvoice) {
-        const invoiceItem = session.create<PurchaseInvoiceItem>(this.m.PurchaseInvoiceItem);
+        const invoiceItem = this.allors.context.create<PurchaseInvoiceItem>(this.m.PurchaseInvoiceItem);
         invoiceItem.AssignedUnitPrice = purchaseOrderItem.UnitPrice;
         invoiceItem.Part = purchaseOrderItem.Part;
         invoiceItem.Quantity = purchaseOrderItem.QuantityOrdered;
@@ -261,7 +260,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
 
         purchaseInvoice.addPurchaseInvoiceItem(invoiceItem);
 
-        const orderItemBilling = session.create<OrderItemBilling>(this.m.OrderItemBilling);
+        const orderItemBilling = this.allors.context.create<OrderItemBilling>(this.m.OrderItemBilling);
         orderItemBilling.Quantity = purchaseOrderItem.QuantityOrdered;
         orderItemBilling.Amount = purchaseOrderItem.TotalBasePrice;
         orderItemBilling.OrderItem = purchaseOrderItem;
@@ -269,23 +268,23 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
       }
     });
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
-      session.reset();
+    this.allors.context.push().subscribe(() => {
+      this.allors.context.reset();
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
 
   public removeFromPurchaseOrder(panelPurchaseOrder: PurchaseOrder): void {
-    const { client, session } = this.allors;
+    const { context } = this.allors;
 
-    const purchaseOrder = session.instantiate<PurchaseOrder>(panelPurchaseOrder.id);
+    const purchaseOrder = context.instantiate<PurchaseOrder>(panelPurchaseOrder.id);
 
     purchaseOrder.ValidOrderItems.forEach((purchaseOrderItem: PurchaseOrderItem) => {
       const orderItemBilling = this.orderItemBillings.find((v) => v.OrderItem.id === purchaseOrderItem.id);
       if (orderItemBilling) {
-        client.invokeReactive(session, orderItemBilling.InvoiceItem.Delete).subscribe(() => {
-          session.reset();
+        context.invoke(orderItemBilling.InvoiceItem.Delete).subscribe(() => {
+          context.reset();
           this.refreshService.refresh();
           this.snackBar.open('Successfully removed from invoice.', 'close', { duration: 5000 });
         }, this.saveService.errorHandler);

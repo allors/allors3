@@ -20,7 +20,7 @@ import {
   CustomerRelationship,
 } from '@allors/workspace/domain/default';
 import { PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
@@ -31,7 +31,7 @@ import { Filters } from '../../../../filters/filters';
   // tslint:disable-next-line:component-selector
   selector: 'productquote-overview-detail',
   templateUrl: './productquote-overview-detail.component.html',
-  providers: [SessionService, PanelService],
+  providers: [ContextService, PanelService],
 })
 export class ProductQuoteOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -61,7 +61,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
   }
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panel: PanelService,
     public refreshService: RefreshService,
     private saveService: SaveService,
@@ -70,7 +70,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     panel.name = 'detail';
     panel.title = 'ProductQuote Details';
@@ -163,11 +163,11 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
 
           this.customersFilter = Filters.customersFilter(m, this.internalOrganisationId.value);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
@@ -190,14 +190,14 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
     }, this.saveService.errorHandler);
   }
 
   public personAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
     organisationContactRelationship.Organisation = this.productQuote.Receiver as Organisation;
     organisationContactRelationship.Contact = person;
 
@@ -218,7 +218,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
   }
 
   public receiverAdded(party: Party): void {
-    const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -251,7 +251,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       if (this.productQuote.Receiver !== this.previousReceiver) {
         this.productQuote.ContactPerson = null;
         this.productQuote.FullfillContactMechanism = null;

@@ -4,14 +4,14 @@ import { switchMap } from 'rxjs/operators';
 
 import { Notification, Person } from '@allors/workspace/domain/default';
 import { NavigationService, ObjectService, RefreshService, UserId } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'notification-link',
   templateUrl: './notification-link.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class NotificationLinkComponent implements OnInit, OnDestroy {
   notifications: Notification[];
@@ -34,8 +34,8 @@ export class NotificationLinkComponent implements OnInit, OnDestroy {
     return '?';
   }
 
-  constructor(@Self() public allors: SessionService, public factoryService: ObjectService, public refreshService: RefreshService, public navigation: NavigationService, private userId: UserId) {
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+  constructor(@Self() public allors: ContextService, public factoryService: ObjectService, public refreshService: RefreshService, public navigation: NavigationService, private userId: UserId) {
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   ngOnInit(): void {
@@ -57,11 +57,11 @@ export class NotificationLinkComponent implements OnInit, OnDestroy {
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         const user = loaded.object<Person>(m.Person);
         this.notifications = user.NotificationList.UnconfirmedNotifications;

@@ -32,7 +32,7 @@ import {
   Product,
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -40,7 +40,7 @@ import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './quoteitem-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -109,7 +109,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
   showIrpf: boolean;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<QuoteItemEditComponent>,
     private saveService: SaveService,
@@ -120,7 +120,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -215,11 +215,11 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
 
           this.goodsFilter = Filters.goodsFilter(m);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, create })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, create })));
         })
       )
       .subscribe(({ loaded, create }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
@@ -287,7 +287,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
         if (create) {
           this.title = 'Add Quote Item';
           this.quote = loaded.object<ProductQuote>(m.ProductQuote);
-          this.quoteItem = this.allors.session.create<QuoteItem>(m.QuoteItem);
+          this.quoteItem = this.allors.context.create<QuoteItem>(m.QuoteItem);
           this.quoteItem.UnitOfMeasure = piece;
           this.quote.addQuoteItem(this.quoteItem);
           this.vatRegimeInitialRole = this.quote.DerivedVatRegime;
@@ -402,7 +402,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.quoteItem);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
@@ -482,7 +482,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       this.part = (loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.Part)) as Part;
       this.serialisedItems = this.part.SerialisedItems.filter((v) => v.AvailableForSale === true);
 

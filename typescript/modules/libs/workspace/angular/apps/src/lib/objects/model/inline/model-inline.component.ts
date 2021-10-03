@@ -2,7 +2,7 @@ import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/cor
 
 import { M } from '@allors/workspace/meta/default';
 import { Model } from '@allors/workspace/domain/default';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -18,12 +18,12 @@ export class InlineModelComponent implements OnInit, OnDestroy {
 
   public m: M;
 
-  constructor(private allors: SessionService) {
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+  constructor(private allors: ContextService) {
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   ngOnInit(): void {
-    this.model = this.allors.session.create<Model>(this.m.Model);
+    this.model = this.allors.context.create<Model>(this.m.Model);
   }
 
   public ngOnDestroy(): void {

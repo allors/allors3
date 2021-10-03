@@ -131,7 +131,7 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
     const angularClient = new AngularClient(httpClient, environment.baseUrl, environment.authUrl);
     const client = new ReactiveDatabaseClient(angularClient);
     workspaceService.client = client;
-    workspaceService.contextBuilder = (session) => new BaseContext(session, client);
+    workspaceService.contextBuilder = () => new BaseContext(workspaceService);
 
     const metaPopulation = new LazyMetaPopulation(data);
     const m = metaPopulation as unknown as M;

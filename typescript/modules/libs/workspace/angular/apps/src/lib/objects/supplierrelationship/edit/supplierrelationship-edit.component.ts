@@ -6,7 +6,7 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, InternalOrganisation, SupplierRelationship } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -14,7 +14,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './supplierrelationship-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class SupplierRelationshipEditComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -27,7 +27,7 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<SupplierRelationshipEditComponent>,
     public refreshService: RefreshService,
@@ -37,7 +37,7 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public canCreate(createData: ObjectData) {
@@ -80,11 +80,11 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.organisation = loaded.object<Organisation>(m.Organisation);
@@ -96,7 +96,7 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
 
           this.title = 'Add Supplier Relationship';
 
-          this.partyRelationship = this.allors.session.create<SupplierRelationship>(m.SupplierRelationship);
+          this.partyRelationship = this.allors.context.create<SupplierRelationship>(m.SupplierRelationship);
           this.partyRelationship.FromDate = new Date();
           this.partyRelationship.Supplier = this.organisation;
           this.partyRelationship.InternalOrganisation = this.internalOrganisation;
@@ -120,7 +120,7 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.partyRelationship);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

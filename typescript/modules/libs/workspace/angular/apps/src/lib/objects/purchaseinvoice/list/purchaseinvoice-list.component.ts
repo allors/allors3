@@ -8,7 +8,7 @@ import { format, formatDistance } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, Receipt, PaymentApplication, PurchaseInvoice, Disbursement } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, ActionTarget, AllorsMaterialDialogService } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { And, Equals } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -30,7 +30,7 @@ interface Row extends TableRow {
 }
 @Component({
   templateUrl: './purchaseinvoice-list.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class PurchaseInvoiceListComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -55,7 +55,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
   filter: Filter;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
 
     public refreshService: RefreshService,
     public navigation: NavigationService,
@@ -75,16 +75,16 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
 
     titleService.setTitle(this.title);
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
     const m = this.m;
 
-    this.approve = methodService.create(allors.client, allors.session, this.m.PurchaseInvoice.Approve, { name: 'Approve' });
-    this.reject = methodService.create(allors.client, allors.session, this.m.PurchaseInvoice.Reject, { name: 'Reject' });
-    this.cancel = methodService.create(allors.client, allors.session, this.m.PurchaseInvoice.Cancel, { name: 'Cancel' });
-    this.reopen = methodService.create(allors.client, allors.session, this.m.PurchaseInvoice.Reopen, { name: 'Reopen' });
+    this.approve = methodService.create(allors.context, this.m.PurchaseInvoice.Approve, { name: 'Approve' });
+    this.reject = methodService.create(allors.context, this.m.PurchaseInvoice.Reject, { name: 'Reject' });
+    this.cancel = methodService.create(allors.context, this.m.PurchaseInvoice.Cancel, { name: 'Cancel' });
+    this.reopen = methodService.create(allors.context, this.m.PurchaseInvoice.Reopen, { name: 'Reopen' });
     this.print = printService.print();
 
-    this.delete = deleteService.delete(allors.client, allors.session);
+    this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -114,13 +114,13 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
                 const amountToPay = parseFloat(purchaseInvoice.TotalIncVat) - parseFloat(purchaseInvoice.AmountPaid);
 
                 if (purchaseInvoice.PurchaseInvoiceType.UniqueId === 'd08f0309-a4cb-4ab7-8f75-3bb11dcf3783' || purchaseInvoice.PurchaseInvoiceType.UniqueId === '0187d927-81f5-4d6a-9847-58b674ad3e6a') {
-                  const paymentApplication = this.allors.session.create<PaymentApplication>(m.PaymentApplication);
+                  const paymentApplication = this.allors.context.create<PaymentApplication>(m.PaymentApplication);
                   paymentApplication.Invoice = purchaseInvoice;
                   paymentApplication.AmountApplied = amountToPay.toString();
 
                   // purchase invoice
                   if (purchaseInvoice.PurchaseInvoiceType.UniqueId === 'd08f0309-a4cb-4ab7-8f75-3bb11dcf3783') {
-                    const disbursement = this.allors.session.create<Disbursement>(m.Disbursement);
+                    const disbursement = this.allors.context.create<Disbursement>(m.Disbursement);
                     disbursement.Amount = amountToPay.toString();
                     disbursement.EffectiveDate = paymentDate;
                     disbursement.Sender = purchaseInvoice.BilledFrom;
@@ -129,7 +129,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
 
                   // purchase return
                   if (purchaseInvoice.PurchaseInvoiceType.UniqueId === '0187d927-81f5-4d6a-9847-58b674ad3e6a') {
-                    const receipt = this.allors.session.create<Receipt>(m.Receipt);
+                    const receipt = this.allors.context.create<Receipt>(m.Receipt);
                     receipt.Amount = amountToPay.toString();
                     receipt.EffectiveDate = paymentDate;
                     receipt.Sender = purchaseInvoice.BilledFrom;
@@ -138,7 +138,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
                 }
               });
 
-              this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+              this.allors.context.push().subscribe(() => {
                 snackBar.open('Successfully set to fully paid.', 'close', { duration: 5000 });
                 refreshService.refresh();
               });
@@ -226,11 +226,11 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.user = loaded.object<Person>(m.Person);

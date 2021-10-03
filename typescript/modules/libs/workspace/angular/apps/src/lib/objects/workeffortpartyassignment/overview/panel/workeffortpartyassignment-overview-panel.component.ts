@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffort, WorkEffortPartyAssignment } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: WorkEffortPartyAssignment;
@@ -20,7 +20,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'workeffortpartyassignment-overview-panel',
   templateUrl: './workeffortpartyassignment-overview-panel.component.html',
-  providers: [PanelService, SessionService],
+  providers: [PanelService, ContextService],
 })
 export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope implements OnInit {
   workEffort: WorkEffort;
@@ -47,7 +47,7 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
   }
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panel: PanelService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
@@ -56,16 +56,16 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.delete = deleteService.delete(allors.client, allors.session);
+    this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
   }
 
   ngOnInit() {
-    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
+    this.delete = this.deleteService.delete(this.panel.manager.context);
     this.edit = this.editService.edit();
 
     this.panel.name = 'workeffortpartyassignment';

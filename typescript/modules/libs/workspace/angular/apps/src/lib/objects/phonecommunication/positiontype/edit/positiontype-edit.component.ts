@@ -4,13 +4,13 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { PositionType } from '@allors/workspace/domain/default';
 
 @Component({
   templateUrl: './positiontype-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class PositionTypeEditComponent extends TestScope implements OnInit, OnDestroy {
   public title: string;
@@ -23,7 +23,7 @@ export class PositionTypeEditComponent extends TestScope implements OnInit, OnDe
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PositionTypeEditComponent>,
 
@@ -32,7 +32,7 @@ export class PositionTypeEditComponent extends TestScope implements OnInit, OnDe
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -54,15 +54,15 @@ export class PositionTypeEditComponent extends TestScope implements OnInit, OnDe
             );
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         if (isCreate) {
           this.title = 'Add Position Type';
-          this.positionType = this.allors.session.create<PositionType>(m.PositionType);
+          this.positionType = this.allors.context.create<PositionType>(m.PositionType);
         } else {
           this.positionType = loaded.object<PositionType>(m.PositionType);
 
@@ -82,7 +82,7 @@ export class PositionTypeEditComponent extends TestScope implements OnInit, OnDe
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.positionType);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

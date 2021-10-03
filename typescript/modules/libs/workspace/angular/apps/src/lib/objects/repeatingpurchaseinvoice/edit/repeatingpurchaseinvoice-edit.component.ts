@@ -6,14 +6,14 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, TimeFrequency, DayOfWeek, RepeatingPurchaseInvoice } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './repeatingpurchaseinvoice-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class RepeatingPurchaseInvoiceEditComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -28,7 +28,7 @@ export class RepeatingPurchaseInvoiceEditComponent extends TestScope implements 
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<RepeatingPurchaseInvoiceEditComponent>,
     private saveService: SaveService,
@@ -37,7 +37,7 @@ export class RepeatingPurchaseInvoiceEditComponent extends TestScope implements 
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -79,11 +79,11 @@ export class RepeatingPurchaseInvoiceEditComponent extends TestScope implements 
             pulls.push(pull.Organisation({ objectId: this.data.associationId }));
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.supplier = loaded.object<Organisation>(m.Organisation);
         this.repeatinginvoice = loaded.object<RepeatingPurchaseInvoice>(m.RepeatingPurchaseInvoice);
@@ -93,7 +93,7 @@ export class RepeatingPurchaseInvoiceEditComponent extends TestScope implements 
 
         if (isCreate) {
           this.title = 'Create Repeating Purchase Invoice';
-          this.repeatinginvoice = this.allors.session.create<RepeatingPurchaseInvoice>(m.RepeatingPurchaseInvoice);
+          this.repeatinginvoice = this.allors.context.create<RepeatingPurchaseInvoice>(m.RepeatingPurchaseInvoice);
           this.repeatinginvoice.Supplier = this.supplier;
         } else {
           if (this.repeatinginvoice.canWriteFrequency) {
@@ -112,7 +112,7 @@ export class RepeatingPurchaseInvoiceEditComponent extends TestScope implements 
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.repeatinginvoice);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

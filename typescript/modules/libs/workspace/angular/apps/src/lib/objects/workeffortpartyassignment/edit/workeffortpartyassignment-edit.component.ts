@@ -6,14 +6,14 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Person, Party, WorkEffort, WorkEffortPartyAssignment, Employment } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './workeffortpartyassignment-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class WorkEffortPartyAssignmentEditComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -31,7 +31,7 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
   employees: Person[];
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<WorkEffortPartyAssignmentEditComponent>,
     public refreshService: RefreshService,
@@ -40,7 +40,7 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -91,16 +91,16 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
             ];
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         if (isCreate) {
           this.title = 'Add Party Assignment';
 
-          this.workEffortPartyAssignment = this.allors.session.create<WorkEffortPartyAssignment>(m.WorkEffortPartyAssignment);
+          this.workEffortPartyAssignment = this.allors.context.create<WorkEffortPartyAssignment>(m.WorkEffortPartyAssignment);
           this.party = loaded.object<Party>(m.Party);
           this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
 
@@ -144,7 +144,7 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.workEffortPartyAssignment);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

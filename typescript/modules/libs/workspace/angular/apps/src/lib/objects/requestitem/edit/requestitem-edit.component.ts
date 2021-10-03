@@ -7,13 +7,13 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Part, UnitOfMeasure, Good, SerialisedItem, UnifiedGood, Request, RequestItemState, RequestState, QuoteItemState, QuoteState, SalesOrderItemState, SalesOrderState, ShipmentItemState, ShipmentState, RequestItem, Product } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './requestitem-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class RequestItemEditComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -71,7 +71,7 @@ export class RequestItemEditComponent extends TestScope implements OnInit, OnDes
   goodsFilter: SearchFactory;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<RequestItemEditComponent>,
     private saveService: SaveService,
@@ -80,7 +80,7 @@ export class RequestItemEditComponent extends TestScope implements OnInit, OnDes
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -129,11 +129,11 @@ export class RequestItemEditComponent extends TestScope implements OnInit, OnDes
 
           this.goodsFilter = Filters.goodsFilter(m);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.requestItem = loaded.object<RequestItem>(m.RequestItem);
         this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
@@ -206,7 +206,7 @@ export class RequestItemEditComponent extends TestScope implements OnInit, OnDes
         if (isCreate) {
           this.title = 'Create Request Item';
           this.request = loaded.object<Request>(m.Request);
-          this.requestItem = this.allors.session.create<RequestItem>(m.RequestItem);
+          this.requestItem = this.allors.context.create<RequestItem>(m.RequestItem);
           this.requestItem.UnitOfMeasure = piece;
           this.request.addRequestItem(this.requestItem);
         } else {
@@ -315,7 +315,7 @@ export class RequestItemEditComponent extends TestScope implements OnInit, OnDes
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.requestItem);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
@@ -393,7 +393,7 @@ export class RequestItemEditComponent extends TestScope implements OnInit, OnDes
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       this.part = loaded.object<UnifiedGood>(m.UnifiedGood);
       if (this.part) {
         if (this.part.SerialisedItems) {

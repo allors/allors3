@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { filter, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 import { IObject } from '@allors/workspace/domain/system';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { FilterFieldDefinition } from '../../../../components/filter/filter-field-definition';
 
@@ -32,7 +32,7 @@ export class AllorsMaterialFilterFieldSearchComponent implements OnInit {
   // TODO: Fix this
   private nothingDisplay = () => '';
 
-  constructor(public allors: SessionService) {}
+  constructor(public allors: ContextService) {}
 
   ngOnInit() {
     this.display = this.filterFieldDefinition.options?.display ?? this.nothingDisplay;

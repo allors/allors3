@@ -18,14 +18,14 @@ import {
   TelecommunicationsNumber,
 } from '@allors/workspace/domain/default';
 import { NavigationService, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './phonecommunication-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class PhoneCommunicationEditComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -50,7 +50,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
   parties: Party[];
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PhoneCommunicationEditComponent>,
     public refreshService: RefreshService,
@@ -60,7 +60,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -146,11 +146,11 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
             ];
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.purposes = loaded.collection<CommunicationEventPurpose>(m.CommunicationEventPurpose);
         this.eventStates = loaded.collection<CommunicationEventState>(m.CommunicationEventState);
@@ -163,7 +163,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
 
         if (isCreate) {
           this.title = 'Add Phone call';
-          this.communicationEvent = this.allors.session.create<PhoneCommunication>(m.PhoneCommunication);
+          this.communicationEvent = this.allors.context.create<PhoneCommunication>(m.PhoneCommunication);
 
           this.party = this.organisation || this.person;
         } else {
@@ -254,7 +254,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
 
   private addContactRelationship(party: Person): void {
     if (this.organisation) {
-      const relationShip: OrganisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+      const relationShip: OrganisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
       relationShip.Contact = party;
       relationShip.Organisation = this.organisation;
     }
@@ -286,7 +286,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.fromPhonenumbers = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.TelecommunicationsNumber).map((v) => v.ContactMechanism);
     });
@@ -318,14 +318,14 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
       this.toPhonenumbers = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.TelecommunicationsNumber).map((v) => v.ContactMechanism);
     });
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.communicationEvent);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

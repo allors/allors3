@@ -6,14 +6,14 @@ import { switchMap } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Party, PartyContactMechanism, Enumeration, TelecommunicationsNumber } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './telecommunicationsnumber-create.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class TelecommunicationsNumberCreateComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -29,7 +29,7 @@ export class TelecommunicationsNumberCreateComponent extends TestScope implement
   partyContactMechanism: PartyContactMechanism;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<TelecommunicationsNumberCreateComponent>,
     public refreshService: RefreshService,
@@ -38,7 +38,7 @@ export class TelecommunicationsNumberCreateComponent extends TestScope implement
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -62,19 +62,19 @@ export class TelecommunicationsNumberCreateComponent extends TestScope implement
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.contactMechanismTypes = loaded.collection<Enumeration>(m.Enumeration);
         this.contactMechanismPurposes = loaded.collection<Enumeration>(m.Enumeration);
         this.party = loaded.object<Party>(m.Party);
 
-        this.contactMechanism = this.allors.session.create<TelecommunicationsNumber>(m.TelecommunicationsNumber);
+        this.contactMechanism = this.allors.context.create<TelecommunicationsNumber>(m.TelecommunicationsNumber);
 
-        this.partyContactMechanism = this.allors.session.create<PartyContactMechanism>(m.PartyContactMechanism);
+        this.partyContactMechanism = this.allors.context.create<PartyContactMechanism>(m.PartyContactMechanism);
         this.partyContactMechanism.UseAsDefault = true;
         this.partyContactMechanism.ContactMechanism = this.contactMechanism;
 
@@ -89,7 +89,7 @@ export class TelecommunicationsNumberCreateComponent extends TestScope implement
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.contactMechanism);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

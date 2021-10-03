@@ -6,14 +6,14 @@ import { switchMap } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { WorkTask, PartyContactMechanism, Party, EmailAddress, ElectronicAddress, Enumeration } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './emailaddress-create.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class EmailAddressCreateComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -29,7 +29,7 @@ export class EmailAddressCreateComponent extends TestScope implements OnInit, On
   contactMechanismPurposes: Enumeration[];
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<EmailAddressCreateComponent>,
 
@@ -39,7 +39,7 @@ export class EmailAddressCreateComponent extends TestScope implements OnInit, On
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -59,18 +59,18 @@ export class EmailAddressCreateComponent extends TestScope implements OnInit, On
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.party = loaded.object<Party>(m.Party);
         this.contactMechanismPurposes = loaded.collection<Enumeration>(m.Enumeration);
 
-        this.contactMechanism = this.allors.session.create<EmailAddress>(m.EmailAddress);
+        this.contactMechanism = this.allors.context.create<EmailAddress>(m.EmailAddress);
 
-        this.partyContactMechanism = this.allors.session.create<PartyContactMechanism>(m.PartyContactMechanism);
+        this.partyContactMechanism = this.allors.context.create<PartyContactMechanism>(m.PartyContactMechanism);
         this.partyContactMechanism.UseAsDefault = true;
         this.partyContactMechanism.ContactMechanism = this.contactMechanism;
 
@@ -85,7 +85,7 @@ export class EmailAddressCreateComponent extends TestScope implements OnInit, On
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.contactMechanism);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

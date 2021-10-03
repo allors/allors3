@@ -3,7 +3,7 @@ import { Component, Self, HostBinding } from '@angular/core';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, InternalOrganisation, PurchaseOrder } from '@allors/workspace/domain/default';
 import { Action, DeleteService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { PrintService } from '../../../../actions/print/print.service';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
@@ -23,7 +23,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'purchaseorder-overview-panel',
   templateUrl: './purchaseorder-overview-panel.component.html',
-  providers: [SessionService, PanelService],
+  providers: [ContextService, PanelService],
 })
 export class PurchaseOrderOverviewPanelComponent extends TestScope {
   internalOrganisation: Organisation;
@@ -49,7 +49,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
   }
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panel: PanelService,
     public objectService: ObjectService,
     public methodService: MethodService,
@@ -62,7 +62,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
     const m = this.m;
     const { pullBuilder: pull, treeBuilder: tree } = m;
     const x = {};
@@ -72,8 +72,8 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
     this.panel.icon = 'message';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
-    this.invoice = methodService.create(allors.client, allors.session, this.m.PurchaseOrder.Invoice, { name: 'Invoice' });
+    this.delete = this.deleteService.delete(this.panel.manager.context);
+    this.invoice = methodService.create(allors.context, this.m.PurchaseOrder.Invoice, { name: 'Invoice' });
 
     const sort = true;
     this.table = new Table({

@@ -7,7 +7,7 @@ import { formatDistance } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { Person } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: Person;
@@ -20,7 +20,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './person-list.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class PersonListComponent extends TestScope implements OnInit, OnDestroy {
   public title = 'People';
@@ -34,7 +34,7 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
   m: M;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
@@ -47,9 +47,9 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
 
     titleService.setTitle(this.title);
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.delete = deleteService.delete(allors.client, allors.session);
+    this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -112,6 +112,9 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
         })
       )
       .subscribe((loaded) => {
+
+        this.allors.context.reset();
+
         const people = loaded.collection<Person>(m.Person);
         this.table.total = loaded.value('People_total') as number;
         this.table.data = people.map((v) => {

@@ -7,7 +7,7 @@ import { formatDistance } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { ProductCategory, UnifiedGood } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: UnifiedGood;
@@ -21,7 +21,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './unifiedgood-list.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDestroy {
   public title = 'Unified Goods';
@@ -35,7 +35,7 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
   m: M;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
@@ -48,9 +48,9 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
 
     titleService.setTitle(this.title);
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.delete = deleteService.delete(allors.client, allors.session);
+    this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -117,11 +117,11 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         const goods = loaded.collection<UnifiedGood>(m.UnifiedGood);
         const productCategories = loaded.collection<ProductCategory>(m.ProductCategory);

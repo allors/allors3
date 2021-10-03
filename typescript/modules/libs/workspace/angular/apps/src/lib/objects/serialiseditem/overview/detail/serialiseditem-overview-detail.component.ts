@@ -6,7 +6,7 @@ import { switchMap, filter } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Locale, Organisation, Part, Facility, InternalOrganisation, SerialisedInventoryItem, SerialisedItem, Enumeration } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
@@ -16,7 +16,7 @@ import { Filters } from '../../../../filters/filters';
   // tslint:disable-next-line:component-selector
   selector: 'serialiseditem-overview-detail',
   templateUrl: './serialiseditem-overview-detail.component.html',
-  providers: [PanelService, SessionService],
+  providers: [PanelService, ContextService],
 })
 export class SerialisedItemOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -37,7 +37,7 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
   partiesFilter: SearchFactory;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panel: PanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
@@ -48,7 +48,7 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     panel.name = 'detail';
     panel.title = 'Serialised Asset data';
@@ -180,11 +180,11 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
           this.internalOrganisationsFilter = Filters.internalOrganisationsFilter(m);
           this.partiesFilter = Filters.partiesFilter(m);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.currentSuppliers = loaded.collection<Organisation>(m.Organisation);
 
@@ -218,7 +218,7 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
   public save(): void {
     // this.onSave();
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
     }, this.saveService.errorHandler);
@@ -227,7 +227,7 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
   public update(): void {
     this.onSave();
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

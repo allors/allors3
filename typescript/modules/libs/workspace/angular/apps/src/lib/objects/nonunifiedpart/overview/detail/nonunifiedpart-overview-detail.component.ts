@@ -6,14 +6,14 @@ import { switchMap, filter } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, Part, PriceComponent, ProductIdentificationType, Facility, InventoryItemKind, ProductType, Brand, Model, PartNumber, UnitOfMeasure, Settings, PartCategory, Locale } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'nonunifiedpart-overview-detail',
   templateUrl: './nonunifiedpart-overview-detail.component.html',
-  providers: [PanelService, SessionService],
+  providers: [PanelService, ContextService],
 })
 export class NonUnifiedPartOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -47,7 +47,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panel: PanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
@@ -57,7 +57,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     panel.name = 'detail';
     panel.title = 'Part Details';
@@ -176,11 +176,11 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.part = loaded.object<Part>(m.Part);
         this.originalCategories = loaded.collection<PartCategory>(m.PartCategory);
@@ -246,7 +246,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe(() => {
+    this.allors.context.pull(pulls).subscribe(() => {
       this.models = this.selectedBrand?.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
     });
   }
@@ -254,7 +254,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
   public save(): void {
     this.onSave();
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.panel.toggle();
     }, this.saveService.errorHandler);
   }
@@ -262,7 +262,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
   public update(): void {
     this.onSave();
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

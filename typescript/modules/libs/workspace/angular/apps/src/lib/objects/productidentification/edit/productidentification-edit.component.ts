@@ -6,12 +6,12 @@ import { switchMap, map } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { ProductIdentificationType, ProductIdentification, Part, Good } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './productidentification-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class ProductIdentificationEditComponent extends TestScope implements OnInit, OnDestroy {
   public m: M;
@@ -25,7 +25,7 @@ export class ProductIdentificationEditComponent extends TestScope implements OnI
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<ProductIdentificationEditComponent>,
     public refreshService: RefreshService,
@@ -33,7 +33,7 @@ export class ProductIdentificationEditComponent extends TestScope implements OnI
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -72,11 +72,11 @@ export class ProductIdentificationEditComponent extends TestScope implements OnI
             pulls.push(pull.Good({ objectId: this.data.associationId }), pull.Part({ objectId: this.data.associationId }));
           }
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, create: isCreate, cls, associationRoleType })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, create: isCreate, cls, associationRoleType })));
         })
       )
       .subscribe(({ loaded, create, cls, associationRoleType }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.container = loaded.object<Good>(m.Good) || loaded.object<Part>(m.Part);
         this.object = loaded.object<ProductIdentification>(m.ProductIdentification);
@@ -84,7 +84,7 @@ export class ProductIdentificationEditComponent extends TestScope implements OnI
 
         if (create) {
           this.title = 'Add Identification';
-          this.object = this.allors.session.create<ProductIdentification>(cls);
+          this.object = this.allors.context.create<ProductIdentification>(cls);
           this.container.strategy.addCompositesRole(associationRoleType, this.object);
         }
       });
@@ -97,7 +97,7 @@ export class ProductIdentificationEditComponent extends TestScope implements OnI
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.object);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

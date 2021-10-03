@@ -5,7 +5,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Action, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IResult } from '@allors/workspace/domain/system';
 
 import { PrintService } from '../../../actions/print/print.service';
@@ -13,7 +13,7 @@ import { PurchaseInvoiceApproval } from '@allors/workspace/domain/default';
 
 @Component({
   templateUrl: './purchaseinvoiceapproval-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class PurchaseInvoiceApprovalEditComponent extends TestScope implements OnInit, OnDestroy {
   title: string;
@@ -28,7 +28,7 @@ export class PurchaseInvoiceApprovalEditComponent extends TestScope implements O
   print: Action;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PurchaseInvoiceApprovalEditComponent>,
     public printService: PrintService,
@@ -37,7 +37,7 @@ export class PurchaseInvoiceApprovalEditComponent extends TestScope implements O
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.print = printService.print(this.m.PurchaseInvoiceApproval.PurchaseInvoice);
   }
@@ -61,11 +61,11 @@ export class PurchaseInvoiceApprovalEditComponent extends TestScope implements O
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => loaded));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => loaded));
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
         this.purchaseInvoiceApproval = loaded.object<PurchaseInvoiceApproval>(m.PurchaseInvoiceApproval);
 
         this.title = this.purchaseInvoiceApproval.Title;
@@ -79,24 +79,25 @@ export class PurchaseInvoiceApprovalEditComponent extends TestScope implements O
   }
 
   approve(): void {
-    this.saveAndInvoke(() => this.allors.client.invokeReactive(this.allors.session, (this.purchaseInvoiceApproval.Approve)));
+    this.saveAndInvoke(() => this.allors.context.invoke(this.purchaseInvoiceApproval.Approve));
   }
 
   reject(): void {
-    this.saveAndInvoke(() => this.allors.client.invokeReactive(this.allors.session, (this.purchaseInvoiceApproval.Reject)));
+    this.saveAndInvoke(() => this.allors.context.invoke(this.purchaseInvoiceApproval.Reject));
   }
 
   saveAndInvoke(methodCall: () => Observable<IResult>): void {
-    const m = this.m; const { pullBuilder: pull } = m;
-    const { client, session} = this.allors;
+    const m = this.m;
+    const { pullBuilder: pull } = m;
 
-    client.pushReactive(session)
+    this.allors.context
+      .push()
       .pipe(
         switchMap(() => {
-          return this.allors.client.pullReactive(this.allors.session, [pull.PurchaseInvoiceApproval({ objectId: this.data.id })]);
+          return this.allors.context.pull([pull.PurchaseInvoiceApproval({ objectId: this.data.id })]);
         }),
         switchMap(() => {
-          this.allors.session.reset();
+          this.allors.context.reset();
           return methodCall();
         })
       )

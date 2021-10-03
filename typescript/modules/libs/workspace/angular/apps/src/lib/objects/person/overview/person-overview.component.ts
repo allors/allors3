@@ -5,7 +5,7 @@ import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 
 import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { Person, Employment } from '@allors/workspace/domain/default';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -13,7 +13,7 @@ import { M } from '@allors/workspace/meta/default';
 
 @Component({
   templateUrl: './person-overview.component.html',
-  providers: [PanelManagerService, SessionService],
+  providers: [PanelManagerService, ContextService],
 })
 export class PersonOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
   title = 'Person';
@@ -25,7 +25,7 @@ export class PersonOverviewComponent extends TestScope implements AfterViewInit,
   m: M;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panelManager: PanelManagerService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
@@ -36,7 +36,7 @@ export class PersonOverviewComponent extends TestScope implements AfterViewInit,
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     titleService.setTitle(this.title);
   }
@@ -69,11 +69,11 @@ export class PersonOverviewComponent extends TestScope implements AfterViewInit,
 
           this.panelManager.onPull(pulls);
 
-          return this.allors.client.pullReactive(this.panelManager.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.panelManager.session.reset();
+        this.panelManager.context.reset();
         this.panelManager.onPulled(loaded);
 
         this.person = loaded.object<Person>(m.Person);

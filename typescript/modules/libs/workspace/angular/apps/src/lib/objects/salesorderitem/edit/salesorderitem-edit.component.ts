@@ -32,7 +32,7 @@ import {
   UnifiedGood,
 } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -40,7 +40,7 @@ import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './salesorderitem-edit.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class SalesOrderItemEditComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -112,7 +112,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
   irpfRegimeInitialRole: IrpfRegime;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<SalesOrderItemEditComponent>,
     public refreshService: RefreshService,
@@ -122,7 +122,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
@@ -218,11 +218,11 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
 
           this.goodsFilter = Filters.goodsFilter(m);
 
-          return this.allors.client.pullReactive(this.allors.session, pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
@@ -293,7 +293,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
         if (isCreate) {
           this.title = 'Add Order Item';
           this.order = loaded.object<SalesOrder>(m.SalesOrder);
-          this.orderItem = this.allors.session.create<SalesOrderItem>(m.SalesOrderItem);
+          this.orderItem = this.allors.context.create<SalesOrderItem>(m.SalesOrderItem);
           this.order.addSalesOrderItem(this.orderItem);
           this.vatRegimeInitialRole = this.order.DerivedVatRegime;
           this.irpfRegimeInitialRole = this.order.DerivedIrpfRegime;
@@ -329,7 +329,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
   public save(): void {
     this.onSave();
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.orderItem);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
@@ -414,7 +414,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
   }
 
   public update(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
@@ -502,7 +502,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
       }),
     ];
 
-    this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((loaded) => {
       this.part = (loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.Part)) as Part;
       this.serialisedItems = this.part.SerialisedItems;
 

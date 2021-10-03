@@ -8,7 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, InternalOrganisation, SalesInvoice, Disbursement, Receipt, PaymentApplication } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, ActionTarget, AllorsMaterialDialogService } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
@@ -32,7 +32,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './salesinvoice-list.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -59,7 +59,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
   filter: Filter;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     public methodService: MethodService,
     public printService: PrintService,
     public overviewService: OverviewService,
@@ -77,18 +77,18 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
     super();
 
     titleService.setTitle(this.title);
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
     const m = this.m;
 
     this.print = printService.print();
-    this.send = methodService.create(allors.client, allors.session, this.m.SalesInvoice.Send, { name: 'Send' });
-    this.cancel = methodService.create(allors.client, allors.session, this.m.SalesInvoice.CancelInvoice, { name: 'Cancel' });
-    this.writeOff = methodService.create(allors.client, allors.session, this.m.SalesInvoice.WriteOff, { name: 'WriteOff' });
-    this.copy = methodService.create(allors.client, allors.session, this.m.SalesInvoice.Copy, { name: 'Copy' });
-    this.credit = methodService.create(allors.client, allors.session, this.m.SalesInvoice.Credit, { name: 'Credit' });
-    this.reopen = methodService.create(allors.client, allors.session, this.m.SalesInvoice.Reopen, { name: 'Reopen' });
+    this.send = methodService.create(allors.context, this.m.SalesInvoice.Send, { name: 'Send' });
+    this.cancel = methodService.create(allors.context, this.m.SalesInvoice.CancelInvoice, { name: 'Cancel' });
+    this.writeOff = methodService.create(allors.context, this.m.SalesInvoice.WriteOff, { name: 'WriteOff' });
+    this.copy = methodService.create(allors.context, this.m.SalesInvoice.Copy, { name: 'Copy' });
+    this.credit = methodService.create(allors.context, this.m.SalesInvoice.Credit, { name: 'Credit' });
+    this.reopen = methodService.create(allors.context, this.m.SalesInvoice.Reopen, { name: 'Reopen' });
 
-    this.delete = deleteService.delete(allors.client, allors.session);
+    this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -118,13 +118,13 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
                 const amountToPay = parseFloat(salesinvoice.TotalIncVat) - parseFloat(salesinvoice.AmountPaid);
 
                 if (salesinvoice.SalesInvoiceType.UniqueId === '92411bf1-835e-41f8-80af-6611efce5b32' || salesinvoice.SalesInvoiceType.UniqueId === 'ef5b7c52-e782-416d-b46f-89c8c7a5c24d') {
-                  const paymentApplication = this.allors.session.create<PaymentApplication>(m.PaymentApplication);
+                  const paymentApplication = this.allors.context.create<PaymentApplication>(m.PaymentApplication);
                   paymentApplication.Invoice = salesinvoice;
                   paymentApplication.AmountApplied = amountToPay.toString();
 
                   // sales invoice
                   if (salesinvoice.SalesInvoiceType.UniqueId === '92411bf1-835e-41f8-80af-6611efce5b32') {
-                    const receipt = this.allors.session.create<Receipt>(m.Receipt);
+                    const receipt = this.allors.context.create<Receipt>(m.Receipt);
                     receipt.Amount = amountToPay.toString();
                     receipt.EffectiveDate = paymentDate;
                     receipt.Sender = salesinvoice.BilledFrom;
@@ -133,7 +133,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
 
                   // credit note
                   if (salesinvoice.SalesInvoiceType.UniqueId === 'ef5b7c52-e782-416d-b46f-89c8c7a5c24d') {
-                    const disbursement = this.allors.session.create<Disbursement>(m.Disbursement);
+                    const disbursement = this.allors.context.create<Disbursement>(m.Disbursement);
                     disbursement.Amount = amountToPay.toString();
                     disbursement.EffectiveDate = paymentDate;
                     disbursement.Sender = salesinvoice.BilledFrom;
@@ -142,7 +142,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
                 }
               });
 
-              this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+              this.allors.context.push().subscribe(() => {
                 snackBar.open('Successfully set to fully paid.', 'close', { duration: 5000 });
                 refreshService.refresh();
               });
@@ -228,11 +228,11 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
         this.user = loaded.object<Person>(m.Person);

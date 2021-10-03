@@ -5,14 +5,14 @@ import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { SearchFactory, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 import { Organisation, Person } from '@allors/workspace/domain/default';
 import { IObject, IPullResult } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 
 @Component({
   templateUrl: './organisation.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class OrganisationComponent extends TestScope implements OnInit, OnDestroy {
   title: string;
@@ -27,13 +27,13 @@ export class OrganisationComponent extends TestScope implements OnInit, OnDestro
 
   private refresh$: BehaviorSubject<Date>;
 
-  constructor(@Self() public allors: SessionService, private titleService: Title, private route: ActivatedRoute) {
+  constructor(@Self() public allors: ContextService, private titleService: Title, private route: ActivatedRoute) {
     super();
 
     this.title = 'Organisation';
     this.titleService.setTitle(this.title);
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.peopleFilter = new SearchFactory({ objectType: this.m.Person, roleTypes: [this.m.Person.UserName] });
 
@@ -58,13 +58,13 @@ export class OrganisationComponent extends TestScope implements OnInit, OnDestro
             p.Person({}),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded: IPullResult) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
-        this.organisation = loaded.object<Organisation>(this.m.Organisation) ?? this.allors.session.create(this.m.Organisation);
+        this.organisation = loaded.object<Organisation>(this.m.Organisation) ?? this.allors.context.create(this.m.Organisation);
         this.people = loaded.collection<Person>(this.m.Person);
       });
   }
@@ -80,13 +80,13 @@ export class OrganisationComponent extends TestScope implements OnInit, OnDestro
   }
 
   public togglecanWrite() {
-    this.allors.client.invokeReactive(this.allors.session, this.organisation.ToggleCanWrite).subscribe(() => {
+    this.allors.context.invoke(this.organisation.ToggleCanWrite).subscribe(() => {
       this.refresh();
     });
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.goBack();
     });
   }

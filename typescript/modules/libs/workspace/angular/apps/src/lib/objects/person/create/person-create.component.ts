@@ -7,14 +7,14 @@ import { switchMap } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { InternalOrganisation, Locale, Person, Organisation, OrganisationContactRelationship, Currency, Enumeration, CustomerRelationship, Employment, PersonRole, OrganisationContactKind } from '@allors/workspace/domain/default';
 import { NavigationService, ObjectData, RefreshService, SaveService, SingletonId, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './person-create.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class PersonCreateComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -46,7 +46,7 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
   currencies: Currency[];
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PersonCreateComponent>,
     public navigationService: NavigationService,
@@ -59,7 +59,7 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
     this.refresh$ = new BehaviorSubject<Date>(undefined);
   }
 
@@ -112,11 +112,11 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.person = loaded.object<Person>(m.Person);
         this.organisation = loaded.object<Organisation>(m.Organisation);
@@ -132,7 +132,7 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
         this.customerRole = this.roles.find((v: PersonRole) => v.UniqueId === 'b29444ef-0950-4d6f-ab3e-9c6dc44c050f');
         this.employeeRole = this.roles.find((v: PersonRole) => v.UniqueId === 'db06a3e1-6146-4c18-a60d-dd10e19f7243');
 
-        this.person = this.allors.session.create<Person>(m.Person);
+        this.person = this.allors.context.create<Person>(m.Person);
         this.person.CollectiveWorkEffortInvoice = false;
         this.person.PreferredCurrency = this.internalOrganisation.PreferredCurrency;
       });
@@ -146,25 +146,25 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
 
   public save(): void {
     if (this.selectedRoles.indexOf(this.customerRole) > -1) {
-      const customerRelationship = this.allors.session.create<CustomerRelationship>(this.m.CustomerRelationship);
+      const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
       customerRelationship.Customer = this.person;
       customerRelationship.InternalOrganisation = this.internalOrganisation;
     }
 
     if (this.selectedRoles.indexOf(this.employeeRole) > -1) {
-      const employment = this.allors.session.create<Employment>(this.m.Employment);
+      const employment = this.allors.context.create<Employment>(this.m.Employment);
       employment.Employee = this.person;
       employment.Employer = this.internalOrganisation;
     }
 
     if (this.organisation !== undefined) {
-      const organisationContactRelationship = this.allors.session.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+      const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
       organisationContactRelationship.Contact = this.person;
       organisationContactRelationship.Organisation = this.organisation;
       organisationContactRelationship.ContactKinds = this.selectedContactKinds;
     }
 
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.person);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);

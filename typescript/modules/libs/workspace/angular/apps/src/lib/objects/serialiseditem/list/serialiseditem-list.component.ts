@@ -6,7 +6,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { SerialisedItem } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: SerialisedItem;
@@ -22,7 +22,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './serialiseditem-list.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class SerialisedItemListComponent extends TestScope implements OnInit, OnDestroy {
   public title = 'Serialised Assets';
@@ -36,7 +36,7 @@ export class SerialisedItemListComponent extends TestScope implements OnInit, On
   m: M;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
@@ -49,9 +49,9 @@ export class SerialisedItemListComponent extends TestScope implements OnInit, On
 
     titleService.setTitle(this.title);
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.delete = deleteService.delete(allors.client, allors.session);
+    this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -118,11 +118,11 @@ export class SerialisedItemListComponent extends TestScope implements OnInit, On
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         const objects = loaded.collection<SerialisedItem>(m.SerialisedItem);
 

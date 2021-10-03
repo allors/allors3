@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { PositionTypeRate, PositionType } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: PositionTypeRate;
@@ -21,7 +21,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './positiontyperate-list.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class PositionTypeRatesOverviewComponent extends TestScope implements OnInit, OnDestroy {
   public title = 'Position Type Rates';
@@ -37,7 +37,7 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
   m: M;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public editService: EditService,
@@ -50,14 +50,14 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
 
     titleService.setTitle(this.title);
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.edit = editService.edit();
     this.edit.result.subscribe(() => {
       this.table.selection.clear();
     });
 
-    this.delete = deleteService.delete(allors.client, allors.session);
+    this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -116,11 +116,11 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.positionTypes = loaded.collection<PositionType>(m.PositionType);
         const objects = loaded.collection<PositionTypeRate>(m.PositionTypeRate);

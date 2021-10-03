@@ -7,7 +7,7 @@ import { formatDistance } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffort } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
@@ -28,7 +28,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './workeffort-list.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class WorkEffortListComponent extends TestScope implements OnInit, OnDestroy {
   public title = 'Work Orders';
@@ -42,7 +42,7 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
   m: M;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
 
     public factoryService: ObjectService,
     public refreshService: RefreshService,
@@ -58,9 +58,9 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
 
     titleService.setTitle(this.title);
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.delete = deleteService.delete(allors.client, allors.session);
+    this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -141,11 +141,11 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
         const workEfforts = loaded.collection<WorkEffort>(m.WorkEffort);
         this.table.total = loaded.value('WorkTasks_total') as number;
         this.table.data = workEfforts

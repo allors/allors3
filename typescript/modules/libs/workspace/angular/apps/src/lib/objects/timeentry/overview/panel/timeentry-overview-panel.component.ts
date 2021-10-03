@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffort, TimeEntry } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
   object: TimeEntry;
@@ -18,7 +18,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'timeentry-overview-panel',
   templateUrl: './timeentry-overview-panel.component.html',
-  providers: [PanelService, SessionService],
+  providers: [PanelService, ContextService],
 })
 export class TimeEntryOverviewPanelComponent extends TestScope {
   workEffort: WorkEffort;
@@ -42,7 +42,7 @@ export class TimeEntryOverviewPanelComponent extends TestScope {
   }
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panel: PanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
@@ -51,7 +51,7 @@ export class TimeEntryOverviewPanelComponent extends TestScope {
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
     const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
@@ -61,7 +61,7 @@ export class TimeEntryOverviewPanelComponent extends TestScope {
     this.panel.icon = 'timer';
     this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.client, this.panel.manager.session);
+    this.delete = this.deleteService.delete(this.panel.manager.context);
     this.edit = this.editService.edit();
 
     this.table = new Table({

@@ -2,7 +2,7 @@ import { Component, Self, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { Organisation } from '@allors/workspace/domain/default';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { M } from '@allors/workspace/meta/default';
@@ -11,7 +11,7 @@ import { M } from '@allors/workspace/meta/default';
   // tslint:disable-next-line:component-selector
   selector: 'internalorganisation-select',
   templateUrl: './internalorganisation-select.component.html',
-  providers: [SessionService],
+  providers: [ContextService],
 })
 export class SelectInternalOrganisationComponent implements OnInit, OnDestroy {
   m: any;
@@ -29,11 +29,11 @@ export class SelectInternalOrganisationComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     private internalOrganisationId: InternalOrganisationId
   ) {
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   ngOnInit(): void {
@@ -47,7 +47,7 @@ export class SelectInternalOrganisationComponent implements OnInit, OnDestroy {
       }),
     ];
 
-    this.subscription = this.allors.client.pullReactive(this.allors.session, pulls).subscribe((loaded) => {
+    this.subscription = this.allors.context.pull(pulls).subscribe((loaded) => {
       this.internalOrganisations = loaded.collection<Organisation>(m.Organisation);
     });
   }

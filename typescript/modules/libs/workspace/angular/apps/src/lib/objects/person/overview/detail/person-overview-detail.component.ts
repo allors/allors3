@@ -5,7 +5,7 @@ import { switchMap, filter } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Currency, Enumeration, InternalOrganisation, Locale, Organisation, Person } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService, SingletonId, TestScope } from '@allors/workspace/angular/base';
-import { SessionService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 
@@ -13,7 +13,7 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
   // tslint:disable-next-line:component-selector
   selector: 'person-overview-detail',
   templateUrl: './person-overview-detail.component.html',
-  providers: [PanelService, SessionService],
+  providers: [PanelService, ContextService],
 })
 export class PersonOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
   readonly m: M;
@@ -29,7 +29,7 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
   currencies: Currency[];
 
   constructor(
-    @Self() public allors: SessionService,
+    @Self() public allors: ContextService,
     @Self() public panel: PanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
@@ -39,7 +39,7 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
   ) {
     super();
 
-    this.m = this.allors.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     panel.name = 'detail';
     panel.title = 'Personal Data';
@@ -136,11 +136,11 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
             }),
           ];
 
-          return this.allors.client.pullReactive(this.allors.session, pulls);
+          return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.session.reset();
+        this.allors.context.reset();
 
         this.person = loaded.object<Person>(m.Person);
         this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
@@ -158,7 +158,7 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
   }
 
   public save(): void {
-    this.allors.client.pushReactive(this.allors.session).subscribe(() => {
+    this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
     }, this.saveService.errorHandler);
