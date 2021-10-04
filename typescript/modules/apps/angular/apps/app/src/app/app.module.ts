@@ -324,6 +324,7 @@ import {
   WorkTaskOverviewSummaryComponent,
   PrintService,
   PrintConfig,
+  InternalOrganisationId,
 } from '@allors/workspace/angular/apps';
 
 import { LoginComponent } from './auth/login.component';
@@ -334,7 +335,7 @@ import { ErrorComponent } from './error/error.component';
 import { configure } from './configure';
 import { AppsContext } from '../allors/apps-context';
 
-export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
+export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient, internalOrganisationId: InternalOrganisationId) {
   return async () => {
     const angularClient = new AngularClient(httpClient, environment.baseUrl, environment.authUrl);
     const client = new ReactiveDatabaseClient(angularClient);
@@ -358,7 +359,7 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
     const workspace = database.createWorkspace();
     workspaceService.workspace = workspace;
 
-    configure(m);
+    configure(m, internalOrganisationId);
   };
 }
 
