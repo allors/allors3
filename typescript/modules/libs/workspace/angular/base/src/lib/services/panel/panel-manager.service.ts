@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Params, Router, ActivatedRoute } from '@angular/router';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { ObjectType } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/workspace/meta/system';
 import { IPullResult, Pull } from '@allors/workspace/domain/system';
 
 import { PanelService } from './panel.service';
@@ -13,7 +13,7 @@ export class PanelManagerService {
 
   id: number;
 
-  objectType: ObjectType;
+  objectType: Composite;
 
   panels: PanelService[] = [];
   expanded: string;

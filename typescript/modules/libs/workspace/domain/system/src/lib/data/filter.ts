@@ -1,11 +1,11 @@
-import { ObjectType } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/workspace/meta/system';
 import { Predicate } from './predicate';
 import { Sort } from './sort';
 
 export interface Filter {
   kind: 'Filter';
 
-  objectType: ObjectType;
+  objectType: Composite;
 
   predicate?: Predicate;
 
