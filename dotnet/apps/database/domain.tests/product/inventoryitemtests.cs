@@ -46,24 +46,4 @@ namespace Allors.Database.Domain.Tests
             Assert.Contains(part.SearchString, inventoryItem.SearchString);
         }
     }
-
-    public class InventoryItemPartDisplayNameRuleTests : DomainTest, IClassFixture<Fixture>
-    {
-        public InventoryItemPartDisplayNameRuleTests(Fixture fixture) : base(fixture) { }
-
-        [Fact]
-        public void ChangedPartDerivePartDisplayName()
-        {
-            var part = new NonUnifiedPartBuilder(this.Transaction).Build();
-            this.Derive();
-
-            var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction).Build();
-            this.Derive();
-
-            inventoryItem.Part = part;
-            this.Derive();
-
-            Assert.Contains(part.DisplayName, inventoryItem.PartDisplayName);
-        }
-    }
 }
