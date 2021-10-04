@@ -1,7 +1,7 @@
 import { ProviderSymbol } from '../ngast/provider-symbol';
-import { PathResolver } from '../Helpers';
+import { PathResolver } from '../helpers';
 
-import { Reference } from './Reference';
+import { Reference } from './reference';
 
 export class Provider {
   tokenIdentifier: Reference;

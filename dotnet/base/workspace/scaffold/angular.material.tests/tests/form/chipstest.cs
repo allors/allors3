@@ -5,11 +5,7 @@
 
 namespace Tests
 {
-    using System.Linq;
-    using Allors.Domain;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.custom.src.tests.form;
     using Xunit;
 
     [Collection("Test collection")]
@@ -17,7 +13,7 @@ namespace Tests
     {
         private readonly FormComponent page;
 
-        public ChipsTest(TestFixture fixture)
+        public ChipsTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -27,17 +23,17 @@ namespace Tests
         [Fact]
         public void AddOne()
         {
-            var jane = new Users(this.Session).GetUser("jane@example.com");
-            var before = new Datas(this.Session).Extent().ToArray();
+            var jane = new Users(this.Transaction).GetUser("jane@example.com");
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.Chips.Add("jane", "jane@example.com");
 
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -49,9 +45,9 @@ namespace Tests
         [Fact]
         public void AddTwo()
         {
-            var jane = new Users(this.Session).GetUser("jane@example.com");
-            var john = new Users(this.Session).GetUser("john@example.com");
-            var before = new Datas(this.Session).Extent().ToArray();
+            var jane = new Users(this.Transaction).GetUser("jane@example.com");
+            var john = new Users(this.Transaction).GetUser("john@example.com");
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.Chips.Add("jane", "jane@example.com");
 
@@ -60,9 +56,9 @@ namespace Tests
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -75,7 +71,7 @@ namespace Tests
         [Fact]
         public void RemoveOne()
         {
-            var before = new Datas(this.Session).Extent().ToArray();
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.Chips.Add("jane", "jane@example.com");
 
@@ -86,9 +82,9 @@ namespace Tests
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 

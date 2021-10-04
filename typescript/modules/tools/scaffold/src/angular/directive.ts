@@ -1,9 +1,9 @@
 import { Program } from 'typescript';
 import { DirectiveSymbol } from '../ngast/directive-symbol';
-import { PathResolver } from '../Helpers';
-import { Class } from '../typescript/Class';
+import { PathResolver } from '../helpers';
+import { Class } from '../typescript/class';
 
-import { Template } from './Template';
+import { Template } from './template';
 
 export class Directive {
   name: string;

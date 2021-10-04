@@ -5,11 +5,7 @@
 
 namespace Tests
 {
-    using System.Linq;
-    using Allors.Domain;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.custom.src.tests.form;
     using Xunit;
 
     [Collection("Test collection")]
@@ -17,7 +13,7 @@ namespace Tests
     {
         private readonly FormComponent page;
 
-        public AutoCompleteFilterTest(TestFixture fixture)
+        public AutoCompleteFilterTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -27,17 +23,17 @@ namespace Tests
         [Fact]
         public void Full()
         {
-            var jane = new Users(this.Session).GetUser("jane@example.com");
-            var before = new Datas(this.Session).Extent().ToArray();
+            var jane = new Users(this.Transaction).GetUser("jane@example.com");
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.AutocompleteFilter.Select("jane@example.com");
 
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -50,17 +46,17 @@ namespace Tests
         [Fact]
         public void PartialWithSelection()
         {
-            var jane = new Users(this.Session).GetUser("jane@example.com");
-            var before = new Datas(this.Session).Extent().ToArray();
+            var jane = new Users(this.Transaction).GetUser("jane@example.com");
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.AutocompleteFilter.Select("jane", "jane@example.com");
 
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 

@@ -5,12 +5,8 @@
 
 namespace Tests
 {
-    using System.Linq;
-    using Allors;
-    using Allors.Domain;
-    using Allors.Meta;
+    using Allors.Database.Meta;
     using Components;
-    using libs.angular.material.custom.src.tests.form;
     using Xunit;
 
     [Collection("Test collection")]
@@ -22,34 +18,34 @@ namespace Tests
         private readonly Person jane;
         private readonly Person jenny;
 
-        public SelectDerivedTest(TestFixture fixture)
+        public SelectDerivedTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
             this.page = this.Sidenav.NavigateToForm();
 
-            this.john = (Person)new Users(this.Session).GetUser("john@example.com");
-            this.jane = (Person)new Users(this.Session).GetUser("jane@example.com");
-            this.jenny = (Person)new Users(this.Session).GetUser("jenny@example.com");
+            this.john = (Person)new Users(this.Transaction).GetUser("john@example.com");
+            this.jane = (Person)new Users(this.Transaction).GetUser("jane@example.com");
+            this.jenny = (Person)new Users(this.Transaction).GetUser("jenny@example.com");
 
-            var singleton = this.Session.GetSingleton();
+            var singleton = this.Transaction.GetSingleton();
             singleton.SelectDefault = john;
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
         }
 
         [Fact]
         public void Empty()
         {
-            var before = new Datas(this.Session).Extent().ToArray();
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -62,16 +58,16 @@ namespace Tests
         [Fact]
         public void UseInitialForAssigned()
         {
-            var before = new Datas(this.Session).Extent().ToArray();
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.SelectDerived.Select(this.jane);
 
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -84,16 +80,16 @@ namespace Tests
         [Fact]
         public void UseOtherForAssigned()
         {
-            var before = new Datas(this.Session).Extent().ToArray();
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.SelectDerived.Select(this.jenny);
 
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 

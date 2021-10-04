@@ -1,6 +1,6 @@
 import * as compiler from '@angular/compiler';
 
-import { Node } from './Node';
+import { Node } from './node';
 
 export class Comment implements Node {
   value: string;

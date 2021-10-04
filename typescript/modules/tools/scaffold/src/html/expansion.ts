@@ -1,7 +1,7 @@
 import * as compiler from '@angular/compiler';
 
-import { Node } from './Node';
-import { ExpansionCase } from './ExpansionCase';
+import { Node } from './node';
+import { ExpansionCase } from './expansion-case';
 
 export class Expansion implements Node {
   switchValue: string;

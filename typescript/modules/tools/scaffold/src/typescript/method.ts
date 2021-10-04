@@ -1,7 +1,7 @@
 import { MethodDeclaration } from 'typescript';
 
-import { Member } from './Member';
-import { Parameter } from './Parameter';
+import { Member } from './member';
+import { Parameter } from './parameter';
 
 export class Method implements Member {
   name: string;

@@ -18,11 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Platform\Database\Adapters\Allors.Database.Adapters.SqlClient\Allors.Database.Adapters.SqlClient.csproj" />
+    <ProjectReference Include="..\..\..\..\system\database\adapters\allors.database.adapters.sql.sqlclient\Allors.Database.Adapters.Sql.SqlClient.csproj" />
     <ProjectReference Include="..\..\..\database\domain\Domain.csproj" />
-    <ProjectReference Include="..\..\..\Database\Meta\Meta.csproj" />
-    <ProjectReference Include="..\..\..\Database\Resources\Resources.csproj" />
-    <ProjectReference Include="..\..\..\Database\Services\Services.csproj" />
+    <ProjectReference Include="..\..\..\database\configuration\Configuration.csproj" />
+    <ProjectReference Include="..\..\..\database\meta\Meta.csproj" />
   </ItemGroup>
 
   <ItemGroup>

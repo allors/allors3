@@ -1,8 +1,8 @@
 import { CompileTemplateMetadata } from '@angular/compiler';
-import { PathResolver } from '../Helpers';
-import { Node, nodeFactory } from '../Html/Node';
+import { PathResolver } from '../helpers';
+import { Node, nodeFactory } from '../html/node';
 
-import { Directive } from './Directive';
+import { Directive } from './directive';
 
 export class Template {
   url: string;

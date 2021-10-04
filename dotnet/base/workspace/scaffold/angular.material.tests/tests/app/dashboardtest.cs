@@ -10,7 +10,7 @@ namespace Tests
     [Collection("Test collection")]
     public class DashboardTest : Test
     {
-        public DashboardTest(TestFixture fixture)
+        public DashboardTest(Fixture fixture)
             : base(fixture)
         {
         }

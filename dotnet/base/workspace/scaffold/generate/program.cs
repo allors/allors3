@@ -8,8 +8,8 @@ namespace Allors
     using System;
     using System.IO;
     using Allors.Development.Repository.Tasks;
-    using Allors.Workspace.Meta;
     using Autotest;
+    using Workspace.Meta.Lazy;
 
     internal class Program
     {
@@ -57,12 +57,13 @@ namespace Allors
             {
                 var model = new Model
                 {
-                    MetaPopulation = MetaPopulation.Instance,
+                    MetaPopulation = new MetaBuilder().Build(),
                 };
 
-                model.LoadMetaExtensions(new FileInfo("./Workspace/Typescript/dist/scaffold/meta.json"));
-                model.LoadProject(new FileInfo("./Workspace/Typescript/dist/scaffold/project.json"));
-                model.LoadMenu(new FileInfo("./Workspace/Typescript/dist/scaffold/menu.json"));
+                const string location = "../../typescript/modules/dist/base";
+                model.LoadMetaExtensions(new FileInfo($"{location}/meta.json"));
+                model.LoadProject(new FileInfo($"{location}/project.json"));
+                model.LoadMenu(new FileInfo($"{location}/menu.json"));
 
                 switch (args.Length)
                 {

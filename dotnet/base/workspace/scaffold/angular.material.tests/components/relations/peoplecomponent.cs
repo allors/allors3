@@ -5,7 +5,6 @@
 
 namespace libs.angular.material.custom.src.relations.people
 {
-    using Allors.Domain;
     using Components;
     using person;
 

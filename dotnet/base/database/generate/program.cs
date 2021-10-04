@@ -25,6 +25,7 @@ namespace Allors.Database
             string[,] workspace =
             {
                 { "../Core/Workspace/CSharp/Templates/meta.cs.stg", "Workspace/CSharp/Meta/generated" },
+                { "../Core/Workspace/Csharp/Templates/meta.lazy.cs.stg", "Workspace/CSharp/Meta.Lazy/generated" },
                 { "../Core/Workspace/CSharp/Templates/domain.cs.stg", "Workspace/CSharp/Domain/generated" },
 
                 { "../../typescript/modules/templates/workspace.meta.ts.stg", "../../typescript/modules/libs/workspace/meta/base/src/lib/generated" },

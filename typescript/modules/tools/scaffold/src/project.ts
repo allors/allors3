@@ -1,11 +1,11 @@
 import { Program } from 'typescript';
 import { ProjectSymbols } from './ngast/project-symbols';
 
-import { PathResolver, ResourceResolver } from './Helpers';
-import { Module } from './Angular/Module';
-import { Pipe } from './Angular/Pipe';
-import { Provider } from './Angular/Provider';
-import { Directive } from './Angular/Directive';
+import { PathResolver, ResourceResolver } from './helpers';
+import { Module } from './angular/module';
+import { Pipe } from './angular/pipe';
+import { Provider } from './angular/provider';
+import { Directive } from './angular/directive';
 
 export class Project {
   modules: Module[];

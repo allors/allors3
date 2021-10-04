@@ -6,11 +6,7 @@
 namespace Tests
 {
     using System.Globalization;
-    using System.Linq;
-    using Allors;
-    using Allors.Domain;
     using Components;
-    using libs.angular.material.custom.src.tests.form;
     using Xunit;
 
     [Collection("Test collection")]
@@ -18,7 +14,7 @@ namespace Tests
     {
         private readonly FormComponent page;
 
-        public DatepickerTest(TestFixture fixture)
+        public DatepickerTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -30,17 +26,17 @@ namespace Tests
         {
             CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
 
-            var before = new Datas(this.Session).Extent().ToArray();
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
-            var date = this.Session.Now();
+            var date = this.Transaction.Now();
             this.page.Date.Value = date;
 
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(before.Length + 1, after.Length);
 

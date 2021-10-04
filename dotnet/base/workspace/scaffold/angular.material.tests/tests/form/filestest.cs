@@ -5,10 +5,7 @@
 
 namespace Tests
 {
-    using System.Linq;
-    using Allors.Domain;
     using Components;
-    using libs.angular.material.custom.src.tests.form;
     using Xunit;
 
     [Collection("Test collection")]
@@ -16,7 +13,7 @@ namespace Tests
     {
         private readonly FormComponent page;
 
-        public FilesTest(TestFixture fixture)
+        public FilesTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -26,16 +23,16 @@ namespace Tests
         [Fact]
         public void UploadOne()
         {
-            var before = new Datas(this.Session).Extent().ToArray();
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.MultipleFiles.Upload("logo.png");
 
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -47,7 +44,7 @@ namespace Tests
         [Fact]
         public void UploadTwo()
         {
-            var before = new Datas(this.Session).Extent().ToArray();
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.MultipleFiles.Upload("logo.png");
 
@@ -56,9 +53,9 @@ namespace Tests
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -71,7 +68,7 @@ namespace Tests
         [Fact]
         public void Remove()
         {
-            var before = new Datas(this.Session).Extent().ToArray();
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.MultipleFiles.Upload("logo.png");
 
@@ -82,9 +79,9 @@ namespace Tests
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
