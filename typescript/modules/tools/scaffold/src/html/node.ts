@@ -1,9 +1,9 @@
 import * as compiler from '@angular/compiler';
 
-import { Element } from './Element';
-import { Text } from './Text';
-import { Attribute } from './Attribute';
-import { Comment } from './Comment';
+import { Element } from './element';
+import { Text } from './text';
+import { Attribute } from './attribute';
+import { Comment } from './comment';
 
 export function nodeFactory(node: compiler.Node): Node {
   if (node instanceof compiler.Element) {

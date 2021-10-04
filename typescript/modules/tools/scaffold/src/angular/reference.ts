@@ -1,5 +1,5 @@
 import { Symbol } from '../ngast/symbol';
-import { PathResolver } from '../Helpers';
+import { PathResolver } from '../helpers';
 
 export type StaticSymbol = {
   name: string;

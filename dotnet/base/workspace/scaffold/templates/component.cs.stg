@@ -2,7 +2,7 @@ delimiters "$", "$"
 
 TemplateId() ::= <<AD9BA86D-0F33-44C7-933C-00D9D3527715>>
 TemplateName() ::= <<Component>>
-TemplateVersion() ::= <<1.0.1>>
+TemplateVersion() ::= <<1.0.2>>
 TemplateConfiguration(model) ::= <<
 $!
 Copyright 2002-2019 Allors bvba.
@@ -102,7 +102,7 @@ $elseif(tester.IsAMatList)$
 $elseif(tester.IsAllorsMaterialSideMenuComponent)$
         public Tests.Sidenav Sidenav => new Tests.Sidenav(this.Driver);
 $elseif(tester.IsRoleFieldTester)$
-        public Components.$tester.Type$<$directive.Reference.Name$> $tester.Name$ => this.$tester.Type$(Allors.Meta.M.$tester.RoleType.AssociationType.ObjectType.Name$.$tester.RoleType.Name$$tester.Scopes:{scope|, "$scope$"}$);
+        public Components.$tester.Type$<$directive.Reference.Name$> $tester.Name$ => this.$tester.Type$(Allors.Meta.M.$tester.RoleType.AssociationType.ObjectType.SingularName$.$tester.RoleType.Name$$tester.Scopes:{scope|, "$scope$"}$);
 $elseif(tester.Element.Component && tester.Element.Scope)$
         public $tester.Element.Component.Reference.Namespace$.$tester.Element.Component.Reference.Name$ $tester.Name$ => new $tester.Element.Component.Reference.Namespace$.$tester.Element.Component.Reference.Name$(this.Driver, $tester.Selector$);
 $endif$

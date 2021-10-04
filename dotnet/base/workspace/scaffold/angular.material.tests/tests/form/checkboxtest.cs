@@ -5,11 +5,7 @@
 
 namespace Tests
 {
-    using System.Linq;
-    using Allors.Domain;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.custom.src.tests.form;
     using Xunit;
 
     [Collection("Test collection")]
@@ -17,7 +13,7 @@ namespace Tests
     {
         private readonly FormComponent page;
 
-        public CheckboxTest(TestFixture fixture)
+        public CheckboxTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -27,16 +23,16 @@ namespace Tests
         [Fact]
         public void Initial()
         {
-            var before = new Datas(this.Session).Extent().ToArray();
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.Checkbox.Value = true;
 
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 

@@ -6,10 +6,7 @@
 namespace Tests
 {
     using System;
-    using System.Linq;
-    using Allors.Domain;
     using Components;
-    using libs.angular.material.custom.src.tests.form;
     using Xunit;
 
     [Collection("Test collection")]
@@ -17,7 +14,7 @@ namespace Tests
     {
         private FormComponent page;
 
-        public DatetimepickerTest(TestFixture fixture)
+        public DatetimepickerTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -27,12 +24,12 @@ namespace Tests
         [Fact]
         public void Populated()
         {
-            var data = new DataBuilder(this.Session).Build();
+            var data = new DataBuilder(this.Transaction).Build();
             {
                 // Wintertime
                 var expected = new DateTime(2018, 1, 1, 12, 0, 0, DateTimeKind.Utc);
                 data.DateTime = expected;
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 this.Sidenav.NavigateToHome();
                 this.page = this.Sidenav.NavigateToForm();
@@ -45,7 +42,7 @@ namespace Tests
                 // Summertime
                 var expected = new DateTime(2018, 6, 1, 12, 0, 0, DateTimeKind.Utc);
                 data.DateTime = expected;
-                this.Session.Commit();
+                this.Transaction.Commit();
 
                 this.Sidenav.NavigateToHome();
                 this.page = this.Sidenav.NavigateToForm();
@@ -58,7 +55,7 @@ namespace Tests
         [Fact]
         public void Initial()
         {
-            var before = new Datas(this.Session).Extent().ToArray();
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             var date = new DateTime(2018, 1, 1, 12, 0, 0, DateTimeKind.Utc);
             this.page.DateTime.Value = date;
@@ -66,9 +63,9 @@ namespace Tests
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -81,7 +78,7 @@ namespace Tests
         [Fact]
         public void Change()
         {
-            var before = new Datas(this.Session).Extent().ToArray();
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             var date = new DateTime(2019, 1, 1, 12, 0, 0, DateTimeKind.Utc);
             this.page.DateTime.Value = date;
@@ -94,9 +91,9 @@ namespace Tests
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 

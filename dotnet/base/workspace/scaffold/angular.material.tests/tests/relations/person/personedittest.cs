@@ -5,11 +5,8 @@
 
 namespace Tests.Relations
 {
-    using System.Linq;
-    using Allors.Domain;
     using Components;
     using libs.angular.material.custom.src.relations.people;
-    using libs.angular.material.custom.src.relations.people.person;
     using Xunit;
 
     [Collection("Test collection")]
@@ -17,7 +14,7 @@ namespace Tests.Relations
     {
         private readonly PeopleComponent people;
 
-        public PersonEditTest(TestFixture fixture)
+        public PersonEditTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -35,7 +32,7 @@ namespace Tests.Relations
         public void Add()
         {
             this.people.AddNew.Click();
-            var before = new People(this.Session).Extent().ToArray();
+            var before = new People(this.Transaction).Extent().ToArray();
 
             var personEditPage = new PersonComponent(this.Driver);
 
@@ -44,9 +41,9 @@ namespace Tests.Relations
                           .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new People(this.Session).Extent().ToArray();
+            var after = new People(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -59,7 +56,7 @@ namespace Tests.Relations
         [Fact]
         public void Edit()
         {
-            var before = new People(this.Session).Extent().ToArray();
+            var before = new People(this.Transaction).Extent().ToArray();
             var person = before.First(v => v.FullName == "John Doe");
 
             var page = this.people.Select(person).EditAndNavigate();
@@ -69,9 +66,9 @@ namespace Tests.Relations
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new People(this.Session).Extent().ToArray();
+            var after = new People(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length);
 

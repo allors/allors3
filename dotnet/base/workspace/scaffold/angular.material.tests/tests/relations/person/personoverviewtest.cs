@@ -5,8 +5,6 @@
 
 namespace Tests.Relations
 {
-    using Allors.Domain;
-    using Allors.Meta;
     using libs.angular.material.custom.src.relations.people;
     using Xunit;
 
@@ -15,7 +13,7 @@ namespace Tests.Relations
     {
         private readonly PeopleComponent people;
 
-        public PersonOverviewTest(TestFixture fixture)
+        public PersonOverviewTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -25,7 +23,7 @@ namespace Tests.Relations
         [Fact]
         public void Title()
         {
-            var person = new People(this.Session).FindBy(M.Person.UserName, "john@example.com");
+            var person = new People(this.Transaction).FindBy(M.Person.UserName, "john@example.com");
             this.people.Select(person);
             Assert.Equal("Person Overview", this.Driver.Title);
         }

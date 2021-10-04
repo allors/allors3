@@ -23,7 +23,6 @@ interface MenuInfo {
 describe('Scaffold', () => {
   it('meta and menu', () => {
     const metaPopulation = new LazyMetaPopulation(data);
-
     const m: M = metaPopulation as unknown as M;
 
     configure(m);
@@ -38,7 +37,7 @@ describe('Scaffold', () => {
 
     const menuMapper = (v: MenuItem) => {
       return {
-        tag: v.objectType.tag,
+        tag: v.objectType?.tag,
         link: v.link,
         title: v.title,
         icon: v.icon,
@@ -48,8 +47,8 @@ describe('Scaffold', () => {
 
     const menu: MenuInfo[] = m._.menu.map(menuMapper);
 
-    fs.mkdirSync('./dist/scaffold', { recursive: true } as any);
-    fs.writeFileSync('./dist/scaffold/meta.json', JSON.stringify(meta));
-    fs.writeFileSync('./dist/scaffold/menu.json', JSON.stringify(menu));
+    fs.mkdirSync('./dist/base', { recursive: true } as any);
+    fs.writeFileSync('./dist/base/meta.json', JSON.stringify(meta));
+    fs.writeFileSync('./dist/base/menu.json', JSON.stringify(menu));
   });
 });

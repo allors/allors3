@@ -1,4 +1,4 @@
-﻿// <copyright file="Model.cs" company="Allors bvba">
+// <copyright file="Model.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -15,9 +15,9 @@ namespace Autotest
 
     public partial class Model
     {
-        public MetaPopulation MetaPopulation { get; set; }
+        public M MetaPopulation { get; set; }
 
-        public Dictionary<Guid, MetaExtension> MetaExtensions { get; } = new Dictionary<Guid, MetaExtension>();
+        public Dictionary<string, MetaExtension> MetaExtensions { get; } = new Dictionary<string, MetaExtension>();
 
         public Project Project { get; set; }
 

@@ -8,18 +8,21 @@ namespace Tests
     using System;
     using System.Globalization;
     using System.IO;
-    using Allors;
-    using Allors.Database.Adapters.SqlClient;
-    using Allors.Domain;
-    using Allors.Meta;
-    using Allors.Services;
+    using Allors.Database;
+    using Allors.Database.Adapters.Sql;
+    using Allors.Database.Configuration;
+    using Allors.Database.Configuration.Derivations.Default;
+    using Allors.Database.Domain;
+    using Allors.Database.Meta;
     using libs.angular.material.custom.src.auth;
-    using libs.angular.material.custom.src.dashboard;
-    using libs.angular.material.custom.src.main;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using OpenQA.Selenium;
-    using ObjectFactory = Allors.ObjectFactory;
+    using C1 = Allors.Database.Domain.C1;
+    using Database = Allors.Database.Adapters.Sql.SqlClient.Database;
+    using ObjectFactory = Microsoft.Extensions.DependencyInjection.ObjectFactory;
+    using User = Allors.Database.Meta.User;
 
     public abstract class Test : IDisposable
     {
@@ -29,7 +32,7 @@ namespace Tests
         public static readonly string DatabaseInithUrl = $"{ServerUrl}/Test/Init";
         public static readonly string DatabaseTimeShiftUrl = $"{ServerUrl}/Test/TimeShift";
 
-        protected Test(TestFixture fixture)
+        protected Test(Fixture fixture)
         {
             // Start Driver
             this.DriverManager = new DriverManager();
@@ -48,39 +51,40 @@ namespace Tests
             configurationBuilder.AddCrossPlatform(root);
             configurationBuilder.AddCrossPlatform(Path.Combine(root, "commands"));
             configurationBuilder.AddEnvironmentVariables();
-            var appConfiguration = configurationBuilder.Build();
+            var configuration = configurationBuilder.Build();
 
-            var objectFactory = new ObjectFactory(MetaPopulation.Instance, typeof(User));
+            var metaPopulation = new MetaBuilder().Build();
+            var rules = Rules.Create(metaPopulation);
+            var engine = new Engine(rules);
+            var database = new Database(
+                new DefaultDatabaseServices(engine),
+                new Configuration
+                {
+                    ConnectionString = configuration["ConnectionStrings:DefaultConnection"],
+                    ObjectFactory = new Allors.Database.ObjectFactory(metaPopulation, typeof(C1)),
+                });
 
-            var services = new ServiceCollection();
-            services.AddAllors();
-            var serviceProvider = services.BuildServiceProvider();
-
-            var configuration = new Configuration
-            {
-                ConnectionString = appConfiguration["ConnectionStrings:DefaultConnection"],
-                ObjectFactory = objectFactory,
-            };
-
-            var database = new Database(serviceProvider, configuration);
+            this.M = database.MetaPopulation as MetaPopulation;
 
             database.Init();
-            this.Session = database.CreateSession();
 
             var config = new Config();
-            new Setup(this.Session, config).Apply();
-            this.Session.Commit();
+            new Setup(database, config).Apply();
 
-            new Population(this.Session, null).Execute();
+            this.Transaction = database.CreateTransaction();
 
-            this.Session.Commit();
+            new Population(this.Transaction, null).Execute();
+
+            this.Transaction.Commit();
         }
+
+        public MetaPopulation M { get; set; }
 
         public IWebDriver Driver => this.DriverManager.Driver;
 
         public DriverManager DriverManager { get; }
 
-        public ISession Session { get; set; }
+        public ITransaction Transaction { get; set; }
 
         public Sidenav Sidenav => new MainComponent(this.Driver).Sidenav;
 

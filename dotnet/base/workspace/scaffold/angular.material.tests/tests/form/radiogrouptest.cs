@@ -5,11 +5,7 @@
 
 namespace Tests
 {
-    using System.Linq;
-    using Allors.Domain;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.custom.src.tests.form;
     using Xunit;
 
     [Collection("Test collection")]
@@ -17,7 +13,7 @@ namespace Tests
     {
         private readonly FormComponent page;
 
-        public RadioGroupTest(TestFixture fixture)
+        public RadioGroupTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -29,16 +25,16 @@ namespace Tests
         {
             this.Driver.WaitForAngular();
 
-            var before = new Datas(this.Session).Extent().ToArray();
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.RadioGroup.Select("one");
 
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(before.Length + 1, after.Length);
 
@@ -52,16 +48,16 @@ namespace Tests
         {
             this.Driver.WaitForAngular();
 
-            var before = new Datas(this.Session).Extent().ToArray();
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.RadioGroup.Select("two");
 
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(before.Length + 1, after.Length);
 

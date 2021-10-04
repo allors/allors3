@@ -8,10 +8,12 @@ namespace Autotest.Angular
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using Allors.Workspace.Meta;
     using Autotest.Html;
     using Autotest.Testers;
     using Autotest.Typescript;
     using Newtonsoft.Json.Linq;
+    using Class = Typescript.Class;
 
     public partial class Directive
     {
@@ -47,7 +49,7 @@ namespace Autotest.Angular
 
         public Tester[] Testers { get; set; }
 
-        public Class Type { get; set; }
+        public Autotest.Typescript.Class Type { get; set; }
 
         public string Scope { get; set; }
 

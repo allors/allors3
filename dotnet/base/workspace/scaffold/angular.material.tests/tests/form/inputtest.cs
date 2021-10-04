@@ -5,10 +5,7 @@
 
 namespace Tests
 {
-    using System.Linq;
-    using Allors.Domain;
     using Components;
-    using libs.angular.material.custom.src.tests.form;
     using Xunit;
 
     [Collection("Test collection")]
@@ -16,7 +13,7 @@ namespace Tests
     {
         private readonly FormComponent page;
 
-        public InputTest(TestFixture fixture)
+        public InputTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -26,16 +23,16 @@ namespace Tests
         [Fact]
         public void String()
         {
-            var before = new Datas(this.Session).Extent().ToArray();
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.String.Value = "Hello";
 
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -47,16 +44,16 @@ namespace Tests
         [Fact]
         public void Decimal()
         {
-            var before = new Datas(this.Session).Extent().ToArray();
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.Decimal.Value = 100.50m;
 
             this.page.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Datas(this.Session).Extent().ToArray();
+            var after = new Datas(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 

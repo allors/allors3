@@ -1,4 +1,4 @@
-﻿// <copyright file="MenuItem.cs" company="Allors bvba">
+// <copyright file="MenuItem.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -14,7 +14,7 @@ namespace Autotest
 
     public partial class MenuItem
     {
-        public Guid? Id { get; set; }
+        public string Tag { get; set; }
 
         public string AssignedTitle { get; set; }
 
@@ -28,9 +28,9 @@ namespace Autotest
 
         public Model Model => this.Menu.Model;
 
-        public string PropertyName => this.Title.Dehumanize();
+        public string PropertyName => this.Title?.Dehumanize();
 
-        public ObjectType ObjectType => (ObjectType)(this.Id.HasValue ? this.Model.MetaPopulation.Find(this.Id.Value) : null);
+        public IObjectType ObjectType => this.Tag != null ? (IObjectType)this.Model.MetaPopulation.FindByTag(this.Tag) : null;
 
         public MetaExtension MetaExtension
         {
@@ -38,7 +38,7 @@ namespace Autotest
             {
                 if (this.ObjectType != null)
                 {
-                    this.Model.MetaExtensions.TryGetValue(this.ObjectType.Id, out var metaExtension);
+                    this.Model.MetaExtensions.TryGetValue(this.ObjectType.Tag, out var metaExtension);
                     return metaExtension;
                 }
 
@@ -62,12 +62,7 @@ namespace Autotest
 
         public void BaseLoadMenu(JObject json)
         {
-            if (json["id"] != null)
-            {
-                Guid.TryParse(json["id"].Value<string>(), out var id);
-                this.Id = id;
-            }
-
+            this.Tag = json["id"]?.Value<string>();
             this.AssignedTitle = json["title"]?.Value<string>();
             this.AssignedLink = json["link"]?.Value<string>();
 

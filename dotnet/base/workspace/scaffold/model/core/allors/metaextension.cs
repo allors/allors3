@@ -1,4 +1,4 @@
-﻿// <copyright file="MetaExtension.cs" company="Allors bvba">
+// <copyright file="MetaExtension.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -11,7 +11,7 @@ namespace Autotest
 
     public partial class MetaExtension
     {
-        public Guid Id { get; set; }
+        public string Tag { get; set; }
 
         public string List { get; set; }
 
@@ -21,18 +21,23 @@ namespace Autotest
 
         public string Edit { get; set; }
 
-        public static void Load(Dictionary<Guid, MetaExtension> metaExtensions, JArray jsonMetaExtensions, Action<MetaExtension, JToken> setter)
+        public static void Load(Dictionary<string, MetaExtension> metaExtensions, JArray jsonMetaExtensions, Action<MetaExtension, JToken> setter)
         {
             foreach (var json in jsonMetaExtensions)
             {
                 if (json["id"] != null)
                 {
-                    Guid.TryParse(json["id"].Value<string>(), out var id);
+                    var id = json["id"].Value<string>();
+                    if (id == null)
+                    {
+                        throw new ArgumentException("id is not a string: " + json["id"].Value<object>());
+                    }
+
                     if (!metaExtensions.TryGetValue(id, out var metaExtension))
                     {
                         metaExtension = new MetaExtension
                         {
-                            Id = id,
+                            Tag = id,
                         };
                         metaExtensions.Add(id, metaExtension);
                     }

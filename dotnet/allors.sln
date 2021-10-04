@@ -3,19 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "System", "system", "{D494C3BD-C224-4F0B-9F80-E557C5004D34}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "System", "System", "{D494C3BD-C224-4F0B-9F80-E557C5004D34}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "apps", "{3248ECB3-BF45-40F2-9286-C4E526312CFB}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{3248ECB3-BF45-40F2-9286-C4E526312CFB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "core", "{E69B1E1F-8643-47FD-A195-69CD912E3550}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{E69B1E1F-8643-47FD-A195-69CD912E3550}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "repository", "{3FE56C6E-7BA5-43FE-8F63-EDCCE0E9320B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "Repository", "{3FE56C6E-7BA5-43FE-8F63-EDCCE0E9320B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Repository", "system\repository\Allors.repository\Allors.Repository.csproj", "{1ABE8E67-974F-4F03-A342-FFF0326A5B33}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generate", "system\repository\generate\Generate.csproj", "{426E293B-83D5-4D88-9CBF-E8A7F8C598B3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "database", "{583954BC-1E23-4E62-B539-131CF3FBC96E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{583954BC-1E23-4E62-B539-131CF3FBC96E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generate", "core\database\generate\Generate.csproj", "{BAFA46B3-EADB-4A05-AF24-0D47062B90B6}"
 EndProject
@@ -33,25 +33,25 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resources", "core\database\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "core\database\server\Server.csproj", "{C8D4E18C-9EE0-4F18-A37B-E18B2834357D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "repository", "{794822B4-6156-4038-AAEE-D20C67D58A7A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "Repository", "{794822B4-6156-4038-AAEE-D20C67D58A7A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "core\repository\domain\Repository.csproj", "{583634CE-2977-4238-AA90-164E9BDD4198}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workspace", "workspace", "{38DA0455-9724-498A-83EF-B4285EB00AD1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workspace", "Workspace", "{38DA0455-9724-498A-83EF-B4285EB00AD1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp", "csharp", "{50A1B7BA-85A8-4AD0-B90C-829A756CC0E5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp", "CSharp", "{50A1B7BA-85A8-4AD0-B90C-829A756CC0E5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Meta", "core\workspace\csharp\meta\Workspace.Meta.csproj", "{EC4AF4C3-EC56-491A-A5B3-2D54938D32B1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "database", "{3E9C6582-CCF0-4A7C-B501-9F1308F04A7B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{3E9C6582-CCF0-4A7C-B501-9F1308F04A7B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "repository", "{894A3D33-CFB7-4A72-9E1F-C08CE0F76340}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "Repository", "{894A3D33-CFB7-4A72-9E1F-C08CE0F76340}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "database", "{9C68988B-09AE-4C63-A5AB-4EE71649283D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{9C68988B-09AE-4C63-A5AB-4EE71649283D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database", "system\database\allors.database\Allors.Database.csproj", "{E3A3553B-2050-499A-8E33-DB6C93C579E4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapters", "adapters", "{6F829382-0804-4D82-8679-C69B14230287}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapters", "Adapters", "{6F829382-0804-4D82-8679-C69B14230287}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Adapters.Memory", "system\database\adapters\allors.database.adapters.memory\Allors.Database.Adapters.Memory.csproj", "{2E51588E-5B68-4567-89BC-D5BF23477533}"
 EndProject
@@ -91,11 +91,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "apps\database\ser
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestPopulation", "apps\database\testpopulation\TestPopulation.csproj", "{07512AC4-AE1E-410F-B511-444984CB5AAD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base", "base", "{A9CD030C-AAAF-4FDA-8C89-800752926480}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base", "Base", "{A9CD030C-AAAF-4FDA-8C89-800752926480}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "database", "{BF224751-0EE7-4C58-ABB9-4072587F1C01}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{BF224751-0EE7-4C58-ABB9-4072587F1C01}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "repository", "{59FDA499-E9D8-476E-B5D5-00AFF392EB5E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "Repository", "{59FDA499-E9D8-476E-B5D5-00AFF392EB5E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Commands", "base\database\commands\Commands.csproj", "{6DC3B68C-2F6A-4C4D-9779-E17A84E26E9C}"
 EndProject
@@ -113,9 +113,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "base\database\ser
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "base\repository\domain\Repository.csproj", "{31D8A69E-FAA8-4AD5-8A1B-9F453E4F153B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workspace", "workspace", "{F3F8D54B-E896-4081-8F6B-EDD896CB51D0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workspace", "Workspace", "{F3F8D54B-E896-4081-8F6B-EDD896CB51D0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp", "csharp", "{C7219A25-8825-457E-AF0C-28972F59C010}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp", "CSharp", "{C7219A25-8825-457E-AF0C-28972F59C010}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Domain", "base\workspace\csharp\domain\Workspace.Domain.csproj", "{660741E6-C32F-45DD-AD4F-8B51489EB6AC}"
 EndProject
@@ -133,9 +133,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server.Local.Tests", "core\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server.Remote.Tests", "core\database\server.remote.tests\Server.Remote.Tests.csproj", "{BEEAAEC6-16AC-4F5D-A9F8-463739223F40}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workspace", "workspace", "{F0CFA0DB-205F-4914-8D96-33D1D500A0CC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workspace", "Workspace", "{F0CFA0DB-205F-4914-8D96-33D1D500A0CC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Protocol", "protocol", "{B1490308-D849-4F0A-B5AC-5FCB271EE949}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Protocol", "Protocol", "{B1490308-D849-4F0A-B5AC-5FCB271EE949}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Protocol.Json", "system\protocol\allors.protocol.json\Allors.Protocol.Json.csproj", "{38817927-B042-4924-8368-97C0906CC2E7}"
 EndProject
@@ -157,7 +157,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuration.Tests", "core
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Meta.Lazy", "core\workspace\csharp\meta.lazy\Workspace.Meta.Lazy.csproj", "{9146BA6A-CF8A-470F-8270-45C000FAADC9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp", "csharp", "{DD3FE7E0-FA32-442B-869E-2554424B3BAC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp", "CSharp", "{DD3FE7E0-FA32-442B-869E-2554424B3BAC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Workspace.Meta.Lazy", "system\workspace\csharp\Allors.Workspace.Meta.Lazy\Allors.Workspace.Meta.Lazy.csproj", "{F1A0D5E0-B6BE-4554-A1EB-CA7F9034291D}"
 EndProject
@@ -169,11 +169,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Shared", "system\sha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Shared.Tests", "system\shared.tests\Allors.Shared.Tests.csproj", "{E7D466E3-5915-4489-B1EC-A03200E1967A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Legacy", "legacy", "{4A3C28C2-773D-4512-918A-228BF249BFE2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Legacy", "Legacy", "{4A3C28C2-773D-4512-918A-228BF249BFE2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "database", "{7FFA1B41-2280-4BB5-8B1B-8C48214B99B9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{7FFA1B41-2280-4BB5-8B1B-8C48214B99B9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "repository", "{4CE2E97A-5967-4C99-A78E-A70DEBDB2E46}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "Repository", "{4CE2E97A-5967-4C99-A78E-A70DEBDB2E46}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "legacy\repository\domain\Repository.csproj", "{D0BC23E9-DCD4-4F94-B8BA-49C60BD44159}"
 EndProject
@@ -199,7 +199,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Adapters.Sq
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Adapters.Sql.SqlClient", "system\database\adapters\allors.database.adapters.sql.sqlclient\Allors.Database.Adapters.Sql.SqlClient.csproj", "{2848F034-C0E1-4934-AD2C-982A23BB940C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapters", "adapters", "{49B4B74D-15DE-4F38-8BFF-9F29068C895B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapters", "Adapters", "{49B4B74D-15DE-4F38-8BFF-9F29068C895B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Workspace.Adapters", "system\workspace\csharp\adapters\allors.workspace.adapters\Allors.Workspace.Adapters.csproj", "{7B5A738C-88CB-4AFC-93FD-9B34316661C2}"
 EndProject
@@ -219,7 +219,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Tests.Remote.Json
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Tests.Remote.Json.SystemText", "core\workspace\csharp\tests.remote.json.systemtext\Workspace.Tests.Remote.Json.SystemText.csproj", "{41F9151D-F84D-4FFF-87AE-E36139573228}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Blazor", "blazor", "{6FCC3859-CF8A-4A58-8D3C-0EDCB67EF987}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Blazor", "Blazor", "{6FCC3859-CF8A-4A58-8D3C-0EDCB67EF987}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor", "core\workspace\csharp\Blazor\Blazor.csproj", "{3BBA0160-312D-4A85-821C-B50E7FA9F7E2}"
 EndProject
@@ -246,6 +246,16 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Workspace", "system\database\allors.database.workspace\Allors.Database.Workspace.csproj", "{FC7300E2-7C54-4602-A258-AA69AD6496E9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "attributes", "system\repository\attributes\attributes.csproj", "{A921FD06-EF02-456B-8E01-4537C58C2F3A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scaffold", "Scaffold", "{1188DD69-D6C7-48FD-9CA4-CE4151F950D3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Angular.Material.Tests", "base\workspace\scaffold\angular.material.tests\Angular.Material.Tests.csproj", "{1FB097CC-314F-4B16-826B-F8254A68BCBB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generate", "base\workspace\scaffold\generate\Generate.csproj", "{DEBE7339-2272-4AF5-86AD-6D9FC13BCFE2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "base\workspace\scaffold\model\Model.csproj", "{00FB458C-CAF8-495C-9F64-31E01B78E68D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Meta.Lazy", "base\workspace\csharp\meta.lazy\Workspace.Meta.Lazy.csproj", "{58DAFCAF-BD94-4BDA-AD8E-D1F0931518C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -637,6 +647,22 @@ Global
 		{A921FD06-EF02-456B-8E01-4537C58C2F3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A921FD06-EF02-456B-8E01-4537C58C2F3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A921FD06-EF02-456B-8E01-4537C58C2F3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FB097CC-314F-4B16-826B-F8254A68BCBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FB097CC-314F-4B16-826B-F8254A68BCBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FB097CC-314F-4B16-826B-F8254A68BCBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FB097CC-314F-4B16-826B-F8254A68BCBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEBE7339-2272-4AF5-86AD-6D9FC13BCFE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEBE7339-2272-4AF5-86AD-6D9FC13BCFE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEBE7339-2272-4AF5-86AD-6D9FC13BCFE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEBE7339-2272-4AF5-86AD-6D9FC13BCFE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00FB458C-CAF8-495C-9F64-31E01B78E68D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00FB458C-CAF8-495C-9F64-31E01B78E68D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00FB458C-CAF8-495C-9F64-31E01B78E68D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00FB458C-CAF8-495C-9F64-31E01B78E68D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58DAFCAF-BD94-4BDA-AD8E-D1F0931518C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58DAFCAF-BD94-4BDA-AD8E-D1F0931518C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58DAFCAF-BD94-4BDA-AD8E-D1F0931518C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58DAFCAF-BD94-4BDA-AD8E-D1F0931518C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -759,6 +785,11 @@ Global
 		{5E08595C-5937-46C1-B50C-F0827C7548ED} = {9C68988B-09AE-4C63-A5AB-4EE71649283D}
 		{FC7300E2-7C54-4602-A258-AA69AD6496E9} = {9C68988B-09AE-4C63-A5AB-4EE71649283D}
 		{A921FD06-EF02-456B-8E01-4537C58C2F3A} = {3FE56C6E-7BA5-43FE-8F63-EDCCE0E9320B}
+		{1188DD69-D6C7-48FD-9CA4-CE4151F950D3} = {F3F8D54B-E896-4081-8F6B-EDD896CB51D0}
+		{1FB097CC-314F-4B16-826B-F8254A68BCBB} = {1188DD69-D6C7-48FD-9CA4-CE4151F950D3}
+		{DEBE7339-2272-4AF5-86AD-6D9FC13BCFE2} = {1188DD69-D6C7-48FD-9CA4-CE4151F950D3}
+		{00FB458C-CAF8-495C-9F64-31E01B78E68D} = {1188DD69-D6C7-48FD-9CA4-CE4151F950D3}
+		{58DAFCAF-BD94-4BDA-AD8E-D1F0931518C1} = {C7219A25-8825-457E-AF0C-28972F59C010}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00D78C3D-8536-4549-B1EE-C19BD0C50387}

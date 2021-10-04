@@ -22,7 +22,7 @@ namespace Autotest.Testers
 
         public override string PropertyName => "Factory";
 
-        public Composite ObjectType
+        public IComposite ObjectType
         {
             get
             {
@@ -33,7 +33,7 @@ namespace Autotest.Testers
                     var objectTypeName = parts[parts.Length - 1];
 
                     var metaPopulation = this.Model.MetaPopulation;
-                    var objectType = metaPopulation.Composites.FirstOrDefault(v => string.Equals(v.Name, objectTypeName, StringComparison.OrdinalIgnoreCase));
+                    var objectType = metaPopulation.Composites.FirstOrDefault(v => string.Equals(v.SingularName, objectTypeName, StringComparison.OrdinalIgnoreCase));
 
                     return objectType;
                 }
@@ -46,7 +46,7 @@ namespace Autotest.Testers
         {
             get
             {
-                var classes = this.ObjectType.Classes.Where(v => this.Model.MetaExtensions[v.Id].Create != null);
+                var classes = this.ObjectType.Classes.Where(v => this.Model.MetaExtensions[v.Tag].Create != null);
                 return classes.Select(v => new Factory(this, v)).ToArray();
             }
         }
@@ -59,7 +59,7 @@ namespace Autotest.Testers
 
         public class Factory
         {
-            public Factory(AllorsMaterialFactoryFabTester tester, Class @class)
+            public Factory(AllorsMaterialFactoryFabTester tester, IClass @class)
             {
                 this.Tester = tester;
                 this.Class = @class;
@@ -67,13 +67,13 @@ namespace Autotest.Testers
 
             public AllorsMaterialFactoryFabTester Tester { get; }
 
-            public Class Class { get; }
+            public IClass Class { get; }
 
             public Directive Component
             {
                 get
                 {
-                    var metaExtension = this.Tester.Model.MetaExtensions[this.Class.Id];
+                    var metaExtension = this.Tester.Model.MetaExtensions[this.Class.Tag];
                     var component = metaExtension.Create;
                     if (component != null)
                     {

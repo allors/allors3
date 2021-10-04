@@ -5,9 +5,6 @@
 
 namespace libs.angular.material.custom.src.auth
 {
-    using Components;
-    using libs.angular.material.custom.src.dashboard;
-
     public partial class LoginComponent
     {
         public DashboardComponent Login(string userName = "administrator")

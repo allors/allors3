@@ -5,8 +5,6 @@
 
 namespace Tests.Relations
 {
-    using Allors.Domain;
-    using Allors.Meta;
     using libs.angular.material.custom.src.relations.people;
     using Xunit;
 
@@ -15,7 +13,7 @@ namespace Tests.Relations
     {
         private readonly PeopleComponent page;
 
-        public PersonListTest(TestFixture fixture)
+        public PersonListTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -28,7 +26,7 @@ namespace Tests.Relations
         [Fact]
         public void Table()
         {
-            var person = new People(this.Session).FindBy(M.Person.FirstName, "John");
+            var person = new People(this.Transaction).FindBy(M.Person.FirstName, "John");
             var row = this.page.Table.FindRow(person);
             var cell = row.FindCell("firstName");
             cell.Click();

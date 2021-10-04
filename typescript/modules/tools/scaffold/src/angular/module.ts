@@ -1,9 +1,9 @@
 import { StaticSymbol } from '@angular/compiler';
 import { ModuleSymbol } from '../ngast/module-symbol';
 
-import { PathResolver } from '../Helpers';
-import { Route } from './Route';
-import { Reference } from './Reference';
+import { PathResolver } from '../helpers';
+import { Route } from './route';
+import { Reference } from './reference';
 
 export class Module {
   name: string;

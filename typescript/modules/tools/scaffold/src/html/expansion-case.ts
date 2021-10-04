@@ -1,6 +1,6 @@
 import * as compiler from '@angular/compiler';
 
-import { Node, nodeFactory } from './Node';
+import { Node, nodeFactory } from './node';
 
 export class ExpansionCase implements Node {
   expression: Node[];

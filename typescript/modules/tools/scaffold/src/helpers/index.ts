@@ -1,2 +1,2 @@
-export * from './PathResolver';
-export * from './ResourceResolver';
+export * from './path-resolver';
+export * from './resource-resolver';

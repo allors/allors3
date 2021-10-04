@@ -1,6 +1,6 @@
 import { PropertyDeclaration } from 'typescript';
 
-import { Member } from './Member';
+import { Member } from './member';
 
 export class Property implements Member {
   name: string;

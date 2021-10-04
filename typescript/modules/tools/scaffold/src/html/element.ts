@@ -1,7 +1,7 @@
 import * as compiler from '@angular/compiler';
 
-import { Node, nodeFactory } from './Node';
-import { Attribute } from './Attribute';
+import { Node, nodeFactory } from './node';
+import { Attribute } from './attribute';
 
 export class Element implements Node {
   name: string;

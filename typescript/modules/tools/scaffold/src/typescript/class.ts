@@ -1,10 +1,10 @@
 import { ClassDeclaration, isPropertyDeclaration, PropertyDeclaration, ClassElement, isMethodDeclaration, MethodDeclaration, Program, TypeChecker } from 'typescript';
 import * as tsutils from 'tsutils';
 
-import { Property } from './Property';
-import { Member } from './Member';
-import { Method } from './Method';
-import { PathResolver } from '../Helpers';
+import { Property } from './property';
+import { Member } from './member';
+import { Method } from './method';
+import { PathResolver } from '../helpers';
 
 export class Class {
   name: string;

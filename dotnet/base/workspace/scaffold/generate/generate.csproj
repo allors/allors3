@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\csharp\meta.lazy\Workspace.Meta.Lazy.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
   </ItemGroup>
 </Project>

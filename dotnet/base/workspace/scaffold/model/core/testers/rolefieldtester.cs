@@ -32,7 +32,7 @@ namespace Autotest.Testers
             }
         }
 
-        public RoleType RoleType
+        public IRoleType RoleType
         {
             get
             {
@@ -45,8 +45,8 @@ namespace Autotest.Testers
 
                     var metaPopulation = this.Element.Template.Directive.Project.Model.MetaPopulation;
 
-                    var objectType = metaPopulation.Composites.FirstOrDefault(v => string.Equals(v.Name, objectTypeName, StringComparison.OrdinalIgnoreCase));
-                    var roleType = objectType?.RoleTypes.FirstOrDefault(v => string.Equals(v.PropertyName, roleTypeName, StringComparison.OrdinalIgnoreCase));
+                    var objectType = metaPopulation.Composites.FirstOrDefault(v => string.Equals(v.SingularName, objectTypeName, StringComparison.OrdinalIgnoreCase));
+                    var roleType = objectType?.RoleTypes.FirstOrDefault(v => string.Equals(v.Name, roleTypeName, StringComparison.OrdinalIgnoreCase));
 
                     if (roleType == null)
                     {
@@ -66,7 +66,7 @@ namespace Autotest.Testers
         {
             get
             {
-                if (this.Element.Template.Directive?.Type?.Name == "ProductQuoteCreateComponent" && this.RoleType.PropertyName == "Comment")
+                if (this.Element.Template.Directive?.Type?.Name == "ProductQuoteCreateComponent" && this.RoleType.Name == "Comment")
                 {
                     Console.WriteLine();
                 }
@@ -78,31 +78,11 @@ namespace Autotest.Testers
 
                 if (this.RoleType != null)
                 {
-                    var propertyName = this.RoleType.PropertyName;
+                    var propertyName = this.RoleType.Name;
 
                     var samePropertyName = this.Element.Template.Directive.Testers
                         .OfType<RoleFieldTester>()
-                        .Any(v =>
-                        {
-                            if (v != this)
-                            {
-                                if (v.RoleType != null)
-                                {
-                                    if (v.RoleType.PropertyName == propertyName)
-                                    {
-                                        if (v.Element.InScope == this.Element.InScope)
-                                        {
-                                            if (!v[IsAMatStaticKey])
-                                            {
-                                                return true;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            return false;
-                        });
+                        .Any(v => v != this && v.RoleType != null && v.RoleType.Name == propertyName && v.Element.InScope == this.Element.InScope && !v[IsAMatStaticKey]);
 
                     if (samePropertyName)
                     {
@@ -111,10 +91,10 @@ namespace Autotest.Testers
                             return propertyName + "Static";
                         }
 
-                        return this.RoleType.AssociationType.ObjectType.Name + propertyName;
+                        return this.RoleType.AssociationType.ObjectType.SingularName + propertyName;
                     }
 
-                    return this.RoleType?.PropertyName;
+                    return this.RoleType?.Name;
                 }
 
                 return null;

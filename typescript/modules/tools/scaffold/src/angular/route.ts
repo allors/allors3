@@ -1,6 +1,6 @@
-import { PathResolver } from '../Helpers';
+import { PathResolver } from '../helpers';
 
-import { Reference } from './Reference';
+import { Reference } from './reference';
 
 export class Route {
   path: string;
