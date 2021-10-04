@@ -15,7 +15,7 @@ namespace Allors.Database.Data
 
         bool IPredicate.ShouldTreeShake(IArguments arguments) => this.HasMissingDependencies(arguments) || this.Operand == null || this.Operand.ShouldTreeShake(arguments);
 
-        bool IPredicate.HasMissingArguments(IArguments arguments) => this.Operand != null && this.Operand.HasMissingArguments(arguments);
+        bool IPredicate.HasMissingArguments(IArguments arguments) => this.Operand?.HasMissingArguments(arguments) == true;
 
         void IPredicateContainer.AddPredicate(IPredicate predicate) => this.Operand = predicate;
 

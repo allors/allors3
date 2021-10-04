@@ -23,7 +23,7 @@ namespace Allors.Database.Data
 
         bool IPredicate.ShouldTreeShake(IArguments arguments) => this.HasMissingDependencies(arguments) || ((IPredicate)this).HasMissingArguments(arguments);
 
-        bool IPredicate.HasMissingArguments(IArguments arguments) => this.Parameter != null && (arguments == null || !arguments.HasArgument(this.Parameter));
+        bool IPredicate.HasMissingArguments(IArguments arguments) => this.Parameter != null && (arguments?.HasArgument(this.Parameter) != true);
 
         void IPredicate.Build(ITransaction transaction, IArguments arguments, Database.ICompositePredicate compositePredicate)
         {
