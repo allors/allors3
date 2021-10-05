@@ -10,7 +10,7 @@
               class="col-md"
               [object]="quote"
               [roleType]="m.ProductQuote.Receiver"
-              [filter]="customersFilter.create(allors)"
+              [filter]="customersFilter.create(allors.context)"
               display="displayName"
               (changed)="receiverSelected($event)"
               label="To"

@@ -10,7 +10,7 @@
               class="col-md"
               [object]="purchaseReturn"
               [roleType]="m.PurchaseReturn.ShipToParty"
-              [filter]="suppliersFilter.create(allors)"
+              [filter]="suppliersFilter.create(allors.context)"
               display="displayName"
               (changed)="supplierSelected($event)"
               label="Supplier"

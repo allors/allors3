@@ -27,7 +27,7 @@
                 class="col-md"
                 [object]="purchaseShipment"
                 [roleType]="m.PurchaseShipment.ShipFromParty"
-                [filter]="suppliersFilter.create(allors)"
+                [filter]="suppliersFilter.create(allors.context)"
                 display="displayName"
                 (changed)="supplierSelected($event)"
                 label="Supplier"

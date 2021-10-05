@@ -33,7 +33,7 @@
                     class="col-md"
                     [object]="order"
                     [roleType]="m.PurchaseOrder.TakenViaSupplier"
-                    [filter]="suppliersFilter.create(allors)"
+                    [filter]="suppliersFilter.create(allors.context)"
                     display="displayName"
                     (changed)="supplierSelected($event)"
                     label="Supplier"
