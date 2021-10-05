@@ -47,6 +47,13 @@ export class Fixture {
     return new DatabaseConnection(configuration);
   }
 
+  createExclusiveWorkspace(): IWorkspace {
+    return this.databaseConnection.createWorkspace();
+  }
+  createWorkspace(): IWorkspace {
+    return this.createDatabaseConnection().createWorkspace();
+  }
+
   async init(population?: string) {
     this.jsonClient = new FetchClient(BASE_URL, AUTH_URL);
     this.client = new DatabaseClient(this.jsonClient);

@@ -23,6 +23,8 @@ let multipleSessionContext: MultipleSessionContext;
 beforeEach(async () => {
   fixture = new Fixture();
   await fixture.init();
+  singleSessionContext = new SingleSessionContext(fixture, 'Single shared');
+  multipleSessionContext = new MultipleSessionContext(fixture, 'Multiple shared');
 });
 
 test('databaseManyToOneSetRole', async () => {
