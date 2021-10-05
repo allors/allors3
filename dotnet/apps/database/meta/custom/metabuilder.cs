@@ -54,15 +54,15 @@ namespace Allors.Database.Meta
             AddWorkspace(meta.WorkTask, "Default");
 
             // Classes
-            // TODO: Optimize
-            foreach (Class @class in meta.Classes)
+            var classes = meta.Classes.Where(@class =>
+                @class.RoleTypes.Any(v => v.AssignedWorkspaceNames.Contains("Default")) ||
+                @class.AssociationTypes.Any(v => v.AssignedWorkspaceNames.Contains("Default")) ||
+                @class.MethodTypes.Any(v => v.AssignedWorkspaceNames.Contains("Default")))
+                .ToArray();
+
+            foreach (Class @class in classes)
             {
-                if (@class.RoleTypes.Any(v => v.AssignedWorkspaceNames.Contains("Default")) ||
-                      @class.AssociationTypes.Any(v => v.AssignedWorkspaceNames.Contains("Default")) ||
-                      @class.MethodTypes.Any(v => v.AssignedWorkspaceNames.Contains("Default")))
-                {
-                    AddWorkspace(@class, "Default");
-                }
+                AddWorkspace(@class, "Default");
             }
         }
     }
