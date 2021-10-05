@@ -34,7 +34,7 @@ test('unit', async () => {
     ],
   };
 
-  const result = await client.pullAsync(session, [pull]);
+  const result = await client.pull(session, [pull]);
 
   const c2s = result.collection('C2s');
 

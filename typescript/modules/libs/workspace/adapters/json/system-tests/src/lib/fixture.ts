@@ -75,7 +75,7 @@ export class Fixture {
       },
     };
 
-    const result = await client.pullAsync(session, [pull]);
+    const result = await client.pull(session, [pull]);
     return result.collection<C1>(m.C1)[0];
   }
 
@@ -94,7 +94,7 @@ export class Fixture {
       },
     };
 
-    const result = await client.pullAsync(session, [pull]);
+    const result = await client.pull(session, [pull]);
     return result.collection<C2>(m.C2)[0];
   }
 

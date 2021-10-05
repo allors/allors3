@@ -34,7 +34,7 @@ test('databaseGetOne2Many', async () => {
     ],
   };
 
-  const result = await client.pullAsync(session, [pull]);
+  const result = await client.pull(session, [pull]);
 
   const c2s = result.collection('C2s');
 
@@ -71,7 +71,7 @@ test('databaseGetOne2One', async () => {
     ],
   };
 
-  const result = await client.pullAsync(session, [pull]);
+  const result = await client.pull(session, [pull]);
 
   const c2s = result.collection('C2s');
 

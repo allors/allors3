@@ -16,7 +16,7 @@ test('withAccessControl', async () => {
   const session = workspace.createSession();
 
   const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
-  const result = await client.pullAsync(session, pull);
+  const result = await client.pull(session, pull);
 
   const c1s = result.collection<C1>(m.C1);
 
@@ -35,7 +35,7 @@ test('withoutAccessControl', async () => {
   const session = workspace.createSession();
 
   const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
-  const result = await client.pullAsync(session, pull);
+  const result = await client.pull(session, pull);
 
   const c1s = result.collection<C1>(m.C1);
   for (const c1 of c1s) {
@@ -58,7 +58,7 @@ test('withoutPermissions', async () => {
   const session = workspace.createSession();
 
   const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
-  const result = await client.pullAsync(session, pull);
+  const result = await client.pull(session, pull);
 
   const c1s = result.collection<C1>(m.C1);
   for (const c1 of c1s) {
@@ -79,7 +79,7 @@ test('deniedPermissions', async () => {
   const session = workspace.createSession();
 
   const pull: Pull = { extent: { kind: 'Filter', objectType: m.Denied } };
-  const result = await client.pullAsync(session, pull);
+  const result = await client.pull(session, pull);
 
   const denieds = result.collection<Denied>(m.Denied);
   for (const denied of denieds) {

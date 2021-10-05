@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { Configuration, Engine, PrototypeObjectFactory } from '@allors/workspace/adapters/system';
-import { DatabaseConnection, ReactiveDatabaseClient } from '@allors/workspace/adapters/json/system';
+import { DatabaseConnection, DatabaseClient } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -24,9 +24,9 @@ import { CoreContext } from '../allors/core-context';
 export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
   return async () => {
     const angularClient = new AngularClient(httpClient, environment.baseUrl, environment.authUrl);
-    const client = new ReactiveDatabaseClient(angularClient);
+    const client = new DatabaseClient(angularClient);
     workspaceService.client = client;
-    workspaceService.contextBuilder = (session) => new CoreContext(session, client);
+    workspaceService.contextBuilder = () => new CoreContext(workspaceService);
 
     const metaPopulation = new LazyMetaPopulation(data);
     const m = metaPopulation as unknown as M;

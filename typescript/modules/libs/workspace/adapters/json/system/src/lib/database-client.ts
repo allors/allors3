@@ -15,7 +15,7 @@ import { DatabaseConnection } from './database/database-connection';
 export class DatabaseClient implements IDatabaseClient {
   constructor(public client: IDatabaseJsonClient) {}
 
-  async invokeAsync(session: ISession, methodOrMethods: Method | Method[], options?: InvokeOptions): Promise<IInvokeResult> {
+  async invoke(session: ISession, methodOrMethods: Method | Method[], options?: InvokeOptions): Promise<IInvokeResult> {
     const methods = Array.isArray(methodOrMethods) ? methodOrMethods : [methodOrMethods];
     const invokeRequest: InvokeRequest = {
       l: methods.map((v) => {
@@ -38,7 +38,7 @@ export class DatabaseClient implements IDatabaseClient {
     return new InvokeResult(session, invokeResponse);
   }
 
-  async pullAsync(session: ISession, pullOrPulls: Pull | Pull[]): Promise<IPullResult> {
+  async pull(session: ISession, pullOrPulls: Pull | Pull[]): Promise<IPullResult> {
     const pulls = Array.isArray(pullOrPulls) ? pullOrPulls : [pullOrPulls];
 
     for (const pull of pulls) {
@@ -59,7 +59,7 @@ export class DatabaseClient implements IDatabaseClient {
     return await this.onPull(session as Session, pullResponse);
   }
 
-  async callAsync(session: ISession, procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult> {
+  async call(session: ISession, procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult> {
     const pullRequest: PullRequest = {
       p: procedureToJson(procedure),
       l: pulls.map((v) => pullToJson(v)),
@@ -69,7 +69,7 @@ export class DatabaseClient implements IDatabaseClient {
     return await this.onPull(session as Session, pullResponse);
   }
 
-  async pushAsync(session: ISession): Promise<IPushResult> {
+  async push(session: ISession): Promise<IPushResult> {
     const pushToDatabaseTracker = (session as Session).pushToDatabaseTracker;
 
     const pushRequest: PushRequest = {};

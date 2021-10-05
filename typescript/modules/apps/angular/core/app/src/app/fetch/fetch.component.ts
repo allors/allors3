@@ -31,7 +31,7 @@ export class FetchComponent implements OnInit, OnDestroy {
     }
 
     const { client, workspace } = this.workspaceService;
-    const { session } = this.allors;
+    const { context } = this.allors;
     const m = workspace.configuration.metaPopulation as M;
     const { pullBuilder: p } = m;
 
@@ -57,7 +57,7 @@ export class FetchComponent implements OnInit, OnDestroy {
       }),
     ];
 
-    this.subscription = client.pullReactive(session, pulls).subscribe(
+    this.subscription = context.pull(pulls).subscribe(
       (result: IPullResult) => {
         this.organisation = result.object<Organisation>(m.Organisation);
         this.organisations = result.collection<Organisation>(m.Person.OrganisationsWhereOwner);

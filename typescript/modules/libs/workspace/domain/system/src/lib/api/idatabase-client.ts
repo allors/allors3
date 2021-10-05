@@ -9,11 +9,11 @@ import { Pull } from './pull/pull';
 import { IPushResult } from './push/ipush-result';
 
 export interface IDatabaseClient {
-  invokeAsync(session: ISession, methodOrMethods: Method | Method[], options?: InvokeOptions): Promise<IInvokeResult>;
+  invoke(session: ISession, methodOrMethods: Method | Method[], options?: InvokeOptions): Promise<IInvokeResult>;
 
-  callAsync(session: ISession, procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult>;
+  call(session: ISession, procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult>;
 
-  pullAsync(session: ISession, pulls: Pull | Pull[]): Promise<IPullResult>;
+  pull(session: ISession, pulls: Pull | Pull[]): Promise<IPullResult>;
 
-  pushAsync(session: ISession): Promise<IPushResult>;
+  push(session: ISession): Promise<IPushResult>;
 }

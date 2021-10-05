@@ -20,7 +20,7 @@ test('testUnitSamplesWithNulls', async () => {
     values: { step: '0' },
   };
 
-  const result = await client.callAsync(session, procedure);
+  const result = await client.call(session, procedure);
 
   expect(result.hasErrors).toBeFalsy();
 
@@ -45,7 +45,7 @@ test('testUnitSamplesWithValues', async () => {
     values: { step: '1' },
   };
 
-  const result = await client.callAsync(session, procedure);
+  const result = await client.call(session, procedure);
 
   expect(result.hasErrors).toBeFalsy();
 
@@ -70,6 +70,6 @@ test('nonExistingProcedure', async () => {
     values: { step: '2' },
   };
 
-  const result = await client.callAsync(session, procedure);
+  const result = await client.call(session, procedure);
   expect(result.hasErrors).toBeTruthy();
 });

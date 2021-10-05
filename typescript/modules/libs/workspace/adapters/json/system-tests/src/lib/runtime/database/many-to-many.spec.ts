@@ -25,35 +25,12 @@ test('databaseManyToManySetRole', async () => {
     expect(c1a.C1C1Many2Manies).toEqual([c1b]);
     expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
 
-    await client.pushAsync(session);
+    await client.push(session);
 
     expect(c1a.C1C1Many2Manies).toEqual([c1b]);
     expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
 
-    await client.pullAsync(session, { object: c1a });
-
-    expect(c1a.C1C1Many2Manies).toEqual([c1b]);
-    expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
-  }
-
-  {
-    const { m, client, workspace } = fixture;
-    const session = workspace.createSession();
-
-    const c1a = session.create<C1>(m.C1);
-    const c1b = session.create<C1>(m.C1);
-
-    c1a.addC1C1Many2Many(c1b);
-
-    expect(c1a.C1C1Many2Manies).toEqual([c1b]);
-    expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
-
-    await client.pushAsync(session);
-
-    expect(c1a.C1C1Many2Manies).toEqual([c1b]);
-    expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
-
-    await client.pullAsync(session, { object: c1b });
+    await client.pull(session, { object: c1a });
 
     expect(c1a.C1C1Many2Manies).toEqual([c1b]);
     expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
@@ -71,12 +48,35 @@ test('databaseManyToManySetRole', async () => {
     expect(c1a.C1C1Many2Manies).toEqual([c1b]);
     expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
 
-    await client.pushAsync(session);
+    await client.push(session);
 
     expect(c1a.C1C1Many2Manies).toEqual([c1b]);
     expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
 
-    await client.pullAsync(session, [{ object: c1a }, { object: c1b }]);
+    await client.pull(session, { object: c1b });
+
+    expect(c1a.C1C1Many2Manies).toEqual([c1b]);
+    expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
+  }
+
+  {
+    const { m, client, workspace } = fixture;
+    const session = workspace.createSession();
+
+    const c1a = session.create<C1>(m.C1);
+    const c1b = session.create<C1>(m.C1);
+
+    c1a.addC1C1Many2Many(c1b);
+
+    expect(c1a.C1C1Many2Manies).toEqual([c1b]);
+    expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
+
+    await client.push(session);
+
+    expect(c1a.C1C1Many2Manies).toEqual([c1b]);
+    expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
+
+    await client.pull(session, [{ object: c1a }, { object: c1b }]);
 
     expect(c1a.C1C1Many2Manies).toEqual([c1b]);
     expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
@@ -90,7 +90,7 @@ test('databaseManyToManySetRole', async () => {
 
     const c1a = session.create<C1>(m.C1);
 
-    await client.pushAsync(session);
+    await client.push(session);
 
     const c1b = session.create<C1>(m.C1);
 
@@ -100,7 +100,7 @@ test('databaseManyToManySetRole', async () => {
     expect(c1a.C1C1Many2Manies).toEqual([]);
     expect(c1b.C1sWhereC1C1Many2Many).toEqual([]);
 
-    await client.pushAsync(session);
+    await client.push(session);
 
     expect(c1a.C1C1Many2Manies).toEqual([]);
     expect(c1b.C1sWhereC1C1Many2Many).toEqual([]);
@@ -114,8 +114,8 @@ test('databaseManyToManySetRole', async () => {
 
     const c1a = session.create<C1>(m.C1);
 
-    await client.pushAsync(session);
-    await client.pullAsync(session, { object: c1a });
+    await client.push(session);
+    await client.pull(session, { object: c1a });
 
     const c1b = session.create<C1>(m.C1);
 
@@ -124,7 +124,7 @@ test('databaseManyToManySetRole', async () => {
     expect(c1a.C1C1Many2Manies).toEqual([c1b]);
     expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
 
-    await client.pushAsync(session);
+    await client.push(session);
 
     expect(c1a.C1C1Many2Manies).toEqual([c1b]);
     expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
@@ -138,7 +138,7 @@ test('databaseManyToManySetRole', async () => {
 
     const c1b = session.create<C1>(m.C1);
 
-    await client.pushAsync(session);
+    await client.push(session);
 
     const c1a = session.create<C1>(m.C1);
 
@@ -147,7 +147,7 @@ test('databaseManyToManySetRole', async () => {
     expect(c1a.C1C1Many2Manies).toEqual([c1b]);
     expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
 
-    await client.pushAsync(session);
+    await client.push(session);
 
     expect(c1a.C1C1Many2Manies).toEqual([c1b]);
     expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
@@ -162,7 +162,7 @@ test('databaseManyToManySetRole', async () => {
     const c1a = session.create<C1>(m.C1);
     const c1b = session.create<C1>(m.C1);
 
-    await client.pushAsync(session);
+    await client.push(session);
 
     expect(c1a.canWriteC1C1Many2Manies).toBeFalsy();
     c1a.addC1C1Many2Many(c1b);
@@ -170,7 +170,7 @@ test('databaseManyToManySetRole', async () => {
     expect(c1a.C1C1Many2Manies).toEqual([]);
     expect(c1b.C1sWhereC1C1Many2Many).toEqual([]);
 
-    await client.pushAsync(session);
+    await client.push(session);
 
     expect(c1a.C1C1Many2Manies).toEqual([]);
     expect(c1b.C1sWhereC1C1Many2Many).toEqual([]);
@@ -185,15 +185,15 @@ test('databaseManyToManySetRole', async () => {
     const c1a = session.create<C1>(m.C1);
     const c1b = session.create<C1>(m.C1);
 
-    await client.pushAsync(session);
-    await client.pullAsync(session, [{ object: c1a }, { object: c1a }]);
+    await client.push(session);
+    await client.pull(session, [{ object: c1a }, { object: c1a }]);
 
     c1a.addC1C1Many2Many(c1b);
 
     expect(c1a.C1C1Many2Manies).toEqual([c1b]);
     expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
 
-    await client.pushAsync(session);
+    await client.push(session);
 
     expect(c1a.C1C1Many2Manies).toEqual([c1b]);
     expect(c1b.C1sWhereC1C1Many2Many).toEqual([c1a]);
@@ -211,8 +211,8 @@ test('databaseManyToManySetRole', async () => {
     const c1a_2 = session2.create<C1>(m.C1);
     const c1b_1 = session1.create<C1>(m.C1);
 
-    await client.pushAsync(session2);
-    await client.pullAsync(session1, { object: c1a_2 });
+    await client.push(session2);
+    await client.pull(session1, { object: c1a_2 });
 
     const c1a_1 = session1.instantiate(c1a_2);
 
@@ -221,7 +221,7 @@ test('databaseManyToManySetRole', async () => {
     expect(c1a_1.C1C1Many2Manies).toEqual([c1b_1]);
     expect(c1b_1.C1sWhereC1C1Many2Many).toEqual([c1a_1]);
 
-    await client.pushAsync(session1);
+    await client.push(session1);
 
     expect(c1a_1.C1C1Many2Manies).toEqual([c1b_1]);
     expect(c1b_1.C1sWhereC1C1Many2Many).toEqual([c1a_1]);
@@ -236,8 +236,8 @@ test('databaseManyToManySetRole', async () => {
     const c1a_1 = session1.create<C1>(m.C1);
     const c1b_2 = session2.create<C1>(m.C1);
 
-    await client.pushAsync(session2);
-    await client.pullAsync(session1, { object: c1b_2 });
+    await client.push(session2);
+    await client.pull(session1, { object: c1b_2 });
 
     const c1b_1 = session1.instantiate(c1b_2);
 
@@ -246,7 +246,7 @@ test('databaseManyToManySetRole', async () => {
     expect(c1a_1.C1C1Many2Manies).toEqual([c1b_1]);
     expect(c1b_1.C1sWhereC1C1Many2Many).toEqual([c1a_1]);
 
-    await client.pushAsync(session1);
+    await client.push(session1);
 
     expect(c1a_1.C1C1Many2Manies).toEqual([c1b_1]);
     expect(c1b_1.C1sWhereC1C1Many2Many).toEqual([c1a_1]);
@@ -261,8 +261,8 @@ test('databaseManyToManySetRole', async () => {
     const c1a_2 = session2.create<C1>(m.C1);
     const c1b_2 = session2.create<C1>(m.C1);
 
-    await client.pushAsync(session2);
-    await client.pullAsync(session1, [{ object: c1a_2 }, { object: c1b_2 }]);
+    await client.push(session2);
+    await client.pull(session1, [{ object: c1a_2 }, { object: c1b_2 }]);
 
     const c1a_1 = session1.instantiate(c1a_2);
     const c1b_1 = session1.instantiate(c1b_2);
@@ -272,7 +272,7 @@ test('databaseManyToManySetRole', async () => {
     expect(c1a_1.C1C1Many2Manies).toEqual([c1b_1]);
     expect(c1b_1.C1sWhereC1C1Many2Many).toEqual([c1a_1]);
 
-    await client.pushAsync(session1);
+    await client.push(session1);
 
     expect(c1a_1.C1C1Many2Manies).toEqual([c1b_1]);
     expect(c1b_1.C1sWhereC1C1Many2Many).toEqual([c1a_1]);

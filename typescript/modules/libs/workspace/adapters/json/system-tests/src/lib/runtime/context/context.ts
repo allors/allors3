@@ -37,26 +37,26 @@ export abstract class Context {
           return session.create<T>(cls);
         case DatabaseMode.Push: {
           const pushObject = session.create<T>(cls);
-          await this.client.pushAsync(session);
+          await this.client.push(session);
           return pushObject;
         }
         case DatabaseMode.PushAndPull: {
           const pushAndPullObject = session.create<T>(cls);
-          const result = await this.client.pushAsync(session);
+          const result = await this.client.push(session);
           if (result.hasErrors) throw new Error();
-          await this.client.pullAsync(session, { object: pushAndPullObject });
+          await this.client.pull(session, { object: pushAndPullObject });
           return pushAndPullObject;
         }
         case DatabaseMode.SharedDatabase: {
           const sharedDatabaseObject = this.sharedDatabaseSession.create<T>(cls);
-          await this.client.pushAsync(this.sharedDatabaseSession);
-          const sharedResult = await this.client.pullAsync(session, { object: sharedDatabaseObject });
+          await this.client.push(this.sharedDatabaseSession);
+          const sharedResult = await this.client.pull(session, { object: sharedDatabaseObject });
           return sharedResult.objects.values().next().value;
         }
         case DatabaseMode.ExclusiveDatabase: {
           const exclusiveDatabaseObject = this.exclusiveDatabaseSession.create<T>(cls);
-          await this.client.pushAsync(this.exclusiveDatabaseSession);
-          const exclusiveResult = await this.client.pullAsync(session, { object: exclusiveDatabaseObject });
+          await this.client.push(this.exclusiveDatabaseSession);
+          const exclusiveResult = await this.client.pull(session, { object: exclusiveDatabaseObject });
           return exclusiveResult.objects.values().next().value;
         }
         default:

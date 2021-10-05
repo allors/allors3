@@ -30,7 +30,7 @@ test('sessionPullOtherSessionShouldThrowError', async () => {
 
   let hasErrors = false;
   try {
-    await client.pullAsync(session2, { object: objectSession1 });
+    await client.pull(session2, { object: objectSession1 });
   } catch {
     hasErrors = true;
   }

@@ -27,18 +27,18 @@ test('databaseMergeError', async () => {
     },
   };
 
-  let result = await client.pullAsync(session1, [pull]);
+  let result = await client.pull(session1, [pull]);
   const c1a_1 = result.collection<C1>('C1s')[0];
 
-  result = await client.pullAsync(session2, [pull]);
+  result = await client.pull(session2, [pull]);
   const c1a_2 = result.collection<C1>('C1s')[0];
 
   c1a_1.C1AllorsString = 'X';
   c1a_2.C1AllorsString = 'Y';
 
-  await client.pushAsync(session2);
+  await client.push(session2);
 
-  result = await client.pullAsync(session1, [pull]);
+  result = await client.pull(session1, [pull]);
 
   expect(result.hasErrors).toBeTruthy();
   expect(result.mergeErrors.length).toBe(1);

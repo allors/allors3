@@ -27,14 +27,14 @@ test('databaseUnitDiff', async () => {
     },
   };
 
-  let result = await client.pullAsync(session, [pull]);
+  let result = await client.pull(session, [pull]);
   const c1a_1 = result.collection<C1>('C1s')[0];
 
   c1a_1.C1AllorsString = 'X';
 
-  await client.pushAsync(session);
+  await client.push(session);
 
-  result = await client.pullAsync(session, [pull]);
+  result = await client.pull(session, [pull]);
   const c1a_2 = result.collection<C1>('C1s')[0];
 
   c1a_2.C1AllorsString = 'Y';
@@ -66,14 +66,14 @@ test('databaseUnitDiffAfterReset', async () => {
     },
   };
 
-  let result = await client.pullAsync(session, [pull]);
+  let result = await client.pull(session, [pull]);
   const c1a_1 = result.collection<C1>('C1s')[0];
 
   c1a_1.C1AllorsString = 'X';
 
-  await client.pushAsync(session);
+  await client.push(session);
 
-  result = await client.pullAsync(session, [pull]);
+  result = await client.pull(session, [pull]);
   const c1a_2 = result.collection<C1>('C1s')[0];
 
   c1a_2.C1AllorsString = 'Y';
@@ -101,14 +101,14 @@ test('databaseUnitDiffAfterDoubleReset', async () => {
     },
   };
 
-  let result = await client.pullAsync(session, [pull]);
+  let result = await client.pull(session, [pull]);
   const c1a_1 = result.collection<C1>('C1s')[0];
 
   c1a_1.C1AllorsString = 'X';
 
-  await client.pushAsync(session);
+  await client.push(session);
 
-  result = await client.pullAsync(session, [pull]);
+  result = await client.pull(session, [pull]);
   const c1a_2 = result.collection<C1>('C1s')[0];
 
   c1a_2.C1AllorsString = 'Y';
@@ -137,15 +137,15 @@ test('databaseMultipleUnitDiff', async () => {
     },
   };
 
-  let result = await client.pullAsync(session, [pull]);
+  let result = await client.pull(session, [pull]);
   const c1a_1 = result.collection<C1>('C1s')[0];
 
   c1a_1.C1AllorsString = 'X';
   c1a_1.C1AllorsInteger = 1;
 
-  await client.pushAsync(session);
+  await client.push(session);
 
-  result = await client.pullAsync(session, [pull]);
+  result = await client.pull(session, [pull]);
   const c1a_2 = result.collection<C1>('C1s')[0];
 
   c1a_2.C1AllorsString = 'Y';
@@ -182,7 +182,7 @@ test('workspaceUnitDiff', async () => {
     },
   };
 
-  const result = await client.pullAsync(session, [pull]);
+  const result = await client.pull(session, [pull]);
   const c1a = result.collection<C1>('C1s')[0];
 
   c1a.WorkspaceAllorsString = 'X';
@@ -219,7 +219,7 @@ test('workspaceUnitDiffAfterReset', async () => {
     },
   };
 
-  const result = await client.pullAsync(session, [pull]);
+  const result = await client.pull(session, [pull]);
   const c1a = result.collection<C1>('C1s')[0];
 
   c1a.WorkspaceAllorsString = 'X';

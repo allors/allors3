@@ -29,7 +29,7 @@ test('resetUnitAfterPush', async () => {
 
   c1a.C1AllorsString = 'X';
 
-  await client.pushAsync(session);
+  await client.push(session);
 
   c1a.strategy.reset();
 
@@ -44,12 +44,12 @@ test('resetUnitAfterDoublePush', async () => {
 
   c1a.C1AllorsString = 'X';
 
-  await client.pushAsync(session);
-  await client.pullAsync(session, { object: c1a });
+  await client.push(session);
+  await client.pull(session, { object: c1a });
 
   c1a.C1AllorsString = 'Y';
 
-  await client.pushAsync(session);
+  await client.push(session);
 
   c1a.strategy.reset();
 
@@ -83,7 +83,7 @@ test('resetOne2OneAfterPush', async () => {
 
   c1a.C1C1One2One = null;
 
-  await client.pushAsync(session);
+  await client.push(session);
 
   c1a.strategy.reset();
 
@@ -99,12 +99,12 @@ test('resetOne2OneRemoveAfterPush', async () => {
 
   c1a.C1C1One2One = c1b;
 
-  await client.pushAsync(session);
-  await client.pullAsync(session, { object: c1a });
+  await client.push(session);
+  await client.pull(session, { object: c1a });
 
   c1a.C1C1One2One = null;
 
-  await client.pushAsync(session);
+  await client.push(session);
 
   c1a.strategy.reset();
 
@@ -134,7 +134,7 @@ test('resetMany2OneAfterPush', async () => {
 
   c1a.C1C1Many2One = c1b;
 
-  await client.pushAsync(session);
+  await client.push(session);
 
   c1a.strategy.reset();
 
@@ -150,12 +150,12 @@ test('resetMany2OneRemoveAfterPush', async () => {
 
   c1a.C1C1Many2One = c1b;
 
-  await client.pushAsync(session);
-  await client.pullAsync(session, { object: c1a });
+  await client.push(session);
+  await client.pull(session, { object: c1a });
 
   c1a.C1C1Many2One = null;
 
-  await client.pushAsync(session);
+  await client.push(session);
 
   c1a.strategy.reset();
 
@@ -185,7 +185,7 @@ test('resetOne2ManyAfterPush', async () => {
 
   c1a.addC1C1One2Many(c1b);
 
-  await client.pushAsync(session);
+  await client.push(session);
 
   c1a.strategy.reset();
 
@@ -201,8 +201,8 @@ test('resetOne2ManyRemoveAfterPush', async () => {
 
   c1a.addC1C1One2Many(c1b);
 
-  await client.pushAsync(session);
-  await client.pullAsync(session, { object: c1a });
+  await client.push(session);
+  await client.pull(session, { object: c1a });
 
   c1a.removeC1C1One2Many(c1b);
 
@@ -235,7 +235,7 @@ test('resetMany2ManyAfterPush', async () => {
 
   c1a.addC1C1Many2Many(c1b);
 
-  await client.pushAsync(session);
+  await client.push(session);
 
   c1a.strategy.reset();
 
@@ -251,12 +251,12 @@ test('resetMany2ManyRemoveAfterPush', async () => {
 
   c1a.addC1C1Many2Many(c1b);
 
-  await client.pushAsync(session);
-  await client.pullAsync(session, { object: c1a });
+  await client.push(session);
+  await client.pull(session, { object: c1a });
 
   c1a.removeC1C1Many2Many(c1b);
 
-  await client.pushAsync(session);
+  await client.push(session);
 
   c1a.strategy.reset();
 

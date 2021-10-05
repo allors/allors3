@@ -6,7 +6,7 @@ import '../../../../matchers';
 const pushes = [
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   async () => {},
-  async (session) => await fixture.client.pushAsync(session),
+  async (session) => await fixture.client.push(session),
 ];
 
 function* contextFactories() {
@@ -40,15 +40,15 @@ test('databaseOneToOneSetRole', async () => {
           expect(c1x_1).toBeDefined();
           expect(c1y_2).toBeDefined();
 
-          await client.pushAsync(session2);
-          const result = await client.pullAsync(session1, { object: c1y_2 });
+          await client.push(session2);
+          const result = await client.pull(session1, { object: c1y_2 });
 
           const c1y_1 = result.objects.values().next().value as C1;
 
           expect(c1y_1).toBeDefined();
 
           if (!c1x_1.canWriteC1C1One2One) {
-            await client.pullAsync(session1, { object: c1x_1 });
+            await client.pull(session1, { object: c1x_1 });
           }
 
           c1x_1.C1C1One2One = c1y_1;
@@ -81,15 +81,15 @@ test('databaseOneToOneRemoveRole', async () => {
           expect(c1x_1).toBeDefined();
           expect(c1y_2).toBeDefined();
 
-          await client.pushAsync(session2);
-          const result = await client.pullAsync(session1, { object: c1y_2 });
+          await client.push(session2);
+          const result = await client.pull(session1, { object: c1y_2 });
 
           const c1y_1 = result.objects.values().next().value as C1;
 
           expect(c1y_1).toBeDefined();
 
           if (!c1x_1.canWriteC1C1One2Manies) {
-            await client.pullAsync(session1, { object: c1x_1 });
+            await client.pull(session1, { object: c1x_1 });
           }
 
           c1x_1.C1C1One2One = c1y_1;
@@ -97,7 +97,7 @@ test('databaseOneToOneRemoveRole', async () => {
           await push(session1);
 
           if (!c1x_1.canWriteC1C1One2Manies) {
-            await client.pullAsync(session1, { object: c1x_1 });
+            await client.pull(session1, { object: c1x_1 });
           }
 
           c1x_1.C1C1One2One = null;

@@ -25,7 +25,7 @@ test('sessionFullName', async () => {
     },
   };
 
-  const result = await client.pullAsync(session, [pull]);
+  const result = await client.pull(session, [pull]);
   const jane = result.collection<Person>('People')[0];
 
   expect(jane.SessionFullName).toBeNull();

@@ -17,7 +17,7 @@ test('pushNewObject', async () => {
 
   const newObject = session.create<C1>(m.C1);
 
-  const pushResult = await client.pushAsync(session);
+  const pushResult = await client.push(session);
 
   expect(pushResult.hasErrors).toBeFalsy();
 
@@ -43,11 +43,11 @@ test('pushAndPullNewObject', async () => {
 
   const newObject = session.create<C1>(m.C1);
 
-  const pushResult = await client.pushAsync(session);
+  const pushResult = await client.push(session);
 
   expect(pushResult.hasErrors).toBeFalsy();
 
-  await client.pullAsync(session, [{ object: newObject }]);
+  await client.pull(session, [{ object: newObject }]);
 
   for (const roleType of m.C1.roleTypes) {
     const x = newObject.strategy.canRead(roleType);
@@ -77,11 +77,11 @@ test('pushNewObjectWithChangedRoles', async () => {
   const newObject = session.create<C1>(m.C1);
   newObject.C1AllorsString = 'A new object';
 
-  const pushResult = await client.pushAsync(session);
+  const pushResult = await client.push(session);
 
   expect(pushResult.hasErrors).toBeFalsy();
 
-  await client.pullAsync(session, [{ object: newObject }]);
+  await client.pull(session, [{ object: newObject }]);
 
   expect(newObject.C1AllorsString).toBe('A new object');
 });
@@ -94,11 +94,11 @@ test('pushExistingObjectWithChangedRoles', async () => {
 
   c1a.C1AllorsString = 'X';
 
-  const pushResult = await client.pushAsync(session);
+  const pushResult = await client.push(session);
 
   expect(pushResult.hasErrors).toBeFalsy();
 
-  await client.pullAsync(session, [{ object: c1a }]);
+  await client.pull(session, [{ object: c1a }]);
 
   expect(c1a.C1AllorsString).toBe('X');
 });
@@ -116,11 +116,11 @@ test('changesBeforeCheckpointShouldBePushed', async () => {
 
   expect(changeSet.associationsByRoleType.size).toBe(1);
 
-  const pushResult = await client.pushAsync(session1);
+  const pushResult = await client.push(session1);
 
   expect(pushResult.hasErrors).toBeFalsy();
 
-  const result = await client.pullAsync(session2, [{ object: c1a_1 }]);
+  const result = await client.pull(session2, [{ object: c1a_1 }]);
   const c1a_2 = result.object<C1>(m.C1);
 
   expect(c1a_2.C1AllorsString).toBe('X');
@@ -136,7 +136,7 @@ test('pushShouldUpdateId', async () => {
 
   expect(person.id < 0);
 
-  const pushResult = await client.pushAsync(session);
+  const pushResult = await client.push(session);
 
   expect(pushResult.hasErrors).toBeFalsy();
 
@@ -153,7 +153,7 @@ test('pushShouldNotUpdateVersion', async () => {
 
   expect(person.strategy.version).toBe(WorkspaceInitialVersion);
 
-  const pushResult = await client.pushAsync(session);
+  const pushResult = await client.push(session);
 
   expect(pushResult.hasErrors).toBeFalsy();
 
@@ -168,11 +168,11 @@ test('pushShouldDerive', async () => {
   person.FirstName = 'Johny';
   person.LastName = 'Doey';
 
-  const pushResult = await client.pushAsync(session);
+  const pushResult = await client.push(session);
 
   expect(pushResult.hasErrors).toBeFalsy();
 
-  await client.pullAsync(session, [{ object: person }]);
+  await client.pull(session, [{ object: person }]);
 
   expect(person.DomainFullName).toBe('Johny Doey');
 });
@@ -185,11 +185,11 @@ test('pushTwice', async () => {
   const c1y = session.create<C1>(m.C1);
   c1x.C1C1Many2One = c1y;
 
-  let pushResult = await client.pushAsync(session);
+  let pushResult = await client.push(session);
 
   expect(pushResult.hasErrors).toBeFalsy();
 
-  pushResult = await client.pushAsync(session);
+  pushResult = await client.push(session);
 
   expect(pushResult.hasErrors).toBeFalsy();
 });

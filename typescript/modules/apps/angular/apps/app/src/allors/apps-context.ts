@@ -1,8 +1,8 @@
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { Context, WorkspaceService } from '@allors/workspace/angular/core';
-import { IConfiguration, IInvokeResult, InvokeOptions, IObject, IPullResult, IReactiveDatabaseClient, IResult, ISession, IWorkspace, Method, Pull } from '@allors/workspace/domain/system';
+import { IConfiguration, IInvokeResult, InvokeOptions, IObject, IPullResult, IDatabaseClient, IResult, ISession, IWorkspace, Method, Pull } from '@allors/workspace/domain/system';
 import { Class, Composite } from '@allors/workspace/meta/system';
 
 export class AppsContext implements Context {
@@ -15,7 +15,7 @@ export class AppsContext implements Context {
 
   workspace: IWorkspace;
 
-  client: IReactiveDatabaseClient;
+  client: IDatabaseClient;
 
   configuration: IConfiguration;
 
@@ -42,14 +42,14 @@ export class AppsContext implements Context {
   }
 
   pull(pulls: Pull[]): Observable<IPullResult> {
-    return this.client.pullReactive(this.session, pulls).pipe(tap(() => this.session.derive()));
+    return from(this.client.pull(this.session, pulls)).pipe(tap(() => this.session.derive()));
   }
 
   push(): Observable<IResult> {
-    return this.client.pushReactive(this.session);
+    return from(this.client.push(this.session));
   }
 
   invoke(methods: Method | Method[], options?: InvokeOptions): Observable<IInvokeResult> {
-    return this.client.invokeReactive(this.session, methods, options);
+    return from(this.client.invoke(this.session, methods, options));
   }
 }

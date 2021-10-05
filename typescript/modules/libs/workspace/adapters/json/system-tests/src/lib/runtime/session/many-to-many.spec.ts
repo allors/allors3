@@ -20,12 +20,12 @@ test('sessionManyToManySetRole', async () => {
   expect(c1a.SessionC1Many2Manies).toEqual([c1b]);
   expect(c1b.C1sWhereSessionC1Many2Many).toEqual([c1a]);
 
-  await client.pushAsync(session);
+  await client.push(session);
 
   expect(c1a.SessionC1Many2Manies).toEqual([c1b]);
   expect(c1b.C1sWhereSessionC1Many2Many).toEqual([c1a]);
 
-  await client.pullAsync(session, { object: c1a });
+  await client.pull(session, { object: c1a });
 
   expect(c1a.SessionC1Many2Manies).toEqual([c1b]);
   expect(c1b.C1sWhereSessionC1Many2Many).toEqual([c1a]);
