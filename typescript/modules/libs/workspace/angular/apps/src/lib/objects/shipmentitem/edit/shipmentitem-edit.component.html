@@ -11,7 +11,7 @@
           [roleType]="m.ShipmentItem.Good"
           display="Name"
           (changed)="goodSelected($event)"
-          [filter]="goodsFilter.create(allors)"
+          [filter]="goodsFilter.create(allors.context)"
         ></a-mat-autocomplete>
         <a-mat-static class="col-md" *ngIf="selectedSalesOrderItem || !shipmentItem.strategy.isNew" [object]="shipmentItem" [roleType]="m.ShipmentItem.Good" display="Name"></a-mat-static>
         <a-mat-select
@@ -42,7 +42,7 @@
           *ngIf="shipmentItem.strategy.isNew && !selectedPurchaseOrderItem && !goodIsSelected"
           [object]="shipmentItem"
           [roleType]="m.ShipmentItem.Part"
-          [filter]="supplierPartsFilter.create(allors)"
+          [filter]="supplierPartsFilter.create(allors.context)"
           display="Name"
           (changed)="partSelected($event)"
         ></a-mat-autocomplete>
@@ -57,7 +57,7 @@
           [roleType]="m.ShipmentItem.Part"
           display="Name"
           (changed)="goodSelected($event)"
-          [filter]="goodsFilter.create(allors)"
+          [filter]="goodsFilter.create(allors.context)"
           label="Product"
         ></a-mat-autocomplete>
         <a-mat-select

@@ -31,7 +31,7 @@
                 class="col-md"
                 [object]="request"
                 [roleType]="m.Request.Originator"
-                [filter]="customersFilter.create(allors)"
+                [filter]="customersFilter.create(allors.context)"
                 display="displayName"
                 (changed)="originatorSelected($event)"
                 label="From"

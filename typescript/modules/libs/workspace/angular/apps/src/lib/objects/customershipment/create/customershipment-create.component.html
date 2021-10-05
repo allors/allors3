@@ -10,7 +10,7 @@
               class="col-md"
               [object]="customerShipment"
               [roleType]="m.CustomerShipment.ShipToParty"
-              [filter]="customersFilter.create(allors)"
+              [filter]="customersFilter.create(allors.context)"
               display="displayName"
               (changed)="customerSelected($event)"
               label="Customer"

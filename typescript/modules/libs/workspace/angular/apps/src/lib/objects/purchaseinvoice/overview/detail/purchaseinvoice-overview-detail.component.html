@@ -34,7 +34,7 @@
                     class="col-md"
                     [object]="invoice"
                     [roleType]="m.PurchaseInvoice.BilledFrom"
-                    [filter]="suppliersFilter.create(allors)"
+                    [filter]="suppliersFilter.create(allors.context)"
                     display="displayName"
                     (changed)="billedFromSelected($event)"
                   ></a-mat-autocomplete>
@@ -105,7 +105,7 @@
                 class="col-md"
                 [object]="invoice"
                 [roleType]="m.PurchaseInvoice.BilledToContactPerson"
-                [filter]="employeeFilter.create(allors)"
+                [filter]="employeeFilter.create(allors.context)"
                 display="displayName"
                 label="Billed to Contact Person"
               ></a-mat-autocomplete>
@@ -118,7 +118,7 @@
                     class="col-md"
                     [object]="invoice"
                     [roleType]="m.PurchaseInvoice.ShipToCustomer"
-                    [filter]="customersFilter.create(allors)"
+                    [filter]="customersFilter.create(allors.context)"
                     display="displayName"
                     (changed)="shipToCustomerSelected($event)"
                   ></a-mat-autocomplete>
@@ -199,7 +199,7 @@
                     class="col-md"
                     [object]="invoice"
                     [roleType]="m.PurchaseInvoice.BillToEndCustomer"
-                    [filter]="customersFilter.create(allors)"
+                    [filter]="customersFilter.create(allors.context)"
                     display="displayName"
                     (changed)="billToEndCustomerSelected($event)"
                   ></a-mat-autocomplete>
@@ -291,7 +291,7 @@
                     class="col-md"
                     [object]="invoice"
                     [roleType]="m.PurchaseInvoice.ShipToEndCustomer"
-                    [filter]="customersFilter.create(allors)"
+                    [filter]="customersFilter.create(allors.context)"
                     display="displayName"
                     (changed)="shipToEndCustomerSelected($event)"
                   ></a-mat-autocomplete>

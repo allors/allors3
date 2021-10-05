@@ -3,14 +3,14 @@ import { map } from 'rxjs/operators';
 
 import { RoleType } from '@allors/workspace/meta/system';
 import { IObject, And, Or, TypeForParameter, IPullResult, Like, Pull } from '@allors/workspace/domain/system';
-import { ContextService } from '@allors/workspace/angular/core';
+import { Context, ContextService } from '@allors/workspace/angular/core';
 
 import { SearchOptions } from './search-options';
 
 export class SearchFactory {
   constructor(private options: SearchOptions) {}
 
-  public create(sessionService: ContextService): (search: string, parameters?: { [id: string]: TypeForParameter }) => Observable<IObject[]> {
+  public create(context: Context): (search: string, parameters?: { [id: string]: TypeForParameter }) => Observable<IObject[]> {
     return (search: string, parameters?: { [id: string]: TypeForParameter }) => {
       if (search === undefined || search === null || !search.trim) {
         return EMPTY;
@@ -60,8 +60,6 @@ export class SearchFactory {
           arguments: parameters,
         },
       ];
-
-      const { context } = sessionService;
 
       return context.pull(pulls).pipe(
         map((loaded: IPullResult) => {

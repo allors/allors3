@@ -1,4 +1,4 @@
-import { ObjectType } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/workspace/meta/system';
 import { Extent } from '../../data/extent';
 import { Result } from '../../data/result';
 import { IObject } from '../../iobject';
@@ -9,7 +9,7 @@ export interface Pull {
 
   extent?: Extent;
 
-  objectType?: ObjectType;
+  objectType?: Composite;
 
   object?: IObject;
 
