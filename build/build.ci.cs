@@ -51,13 +51,9 @@ partial class Build
         .DependsOn(TypescriptInstall)
         .DependsOn(TypescriptWorkspaceTest);
 
-    private Target CiTypescriptWorkspaceAsyncTest => _ => _
+    private Target CiTypescriptWorkspaceAdaptersJsonTest => _ => _
         .DependsOn(TypescriptInstall)
-        .DependsOn(TypescriptWorkspaceAsyncTest);
-
-    private Target CiTypescriptWorkspaceReactiveTest => _ => _
-        .DependsOn(TypescriptInstall)
-        .DependsOn(TypescriptWorkspaceReactiveTest);
+        .DependsOn(TypescriptWorkspaceAdaptersJsonTest);
     
     private Target CiDemosTest => _ => _
         .DependsOn(DemosDerivationTest)

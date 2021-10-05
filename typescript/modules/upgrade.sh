@@ -23,8 +23,7 @@ npx nx g @nrwl/angular:application angular/core/app --routing=true --style=scss 
 npx nx g @nrwl/workspace:library protocol/json/system
 
 npx nx g @nrwl/workspace:library workspace/adapters/json/system
-npx nx g @nrwl/workspace:library workspace/adapters/json/system-tests-async
-npx nx g @nrwl/workspace:library workspace/adapters/json/system-tests-reactive
+npx nx g @nrwl/workspace:library workspace/adapters/json/system-tests
 npx nx g @nrwl/workspace:library workspace/adapters/system
 npx nx g @nrwl/workspace:library workspace/adapters/system-tests
 
