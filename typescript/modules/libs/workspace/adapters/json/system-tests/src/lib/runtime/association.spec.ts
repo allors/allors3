@@ -10,7 +10,7 @@ beforeEach(async () => {
 });
 
 test('databaseGetOne2Many', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -34,7 +34,7 @@ test('databaseGetOne2Many', async () => {
     ],
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   const c2s = result.collection('C2s');
 
@@ -47,7 +47,7 @@ test('databaseGetOne2Many', async () => {
 });
 
 test('databaseGetOne2One', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -71,7 +71,7 @@ test('databaseGetOne2One', async () => {
     ],
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   const c2s = result.collection('C2s');
 

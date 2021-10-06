@@ -7,5 +7,4 @@ export * from './lib/session/session';
 
 export * from './lib/workspace/workspace';
 
-export * from './lib/database-client';
 export * from './lib/idatabase-json-client';

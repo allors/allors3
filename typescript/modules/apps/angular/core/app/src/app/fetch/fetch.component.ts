@@ -30,9 +30,8 @@ export class FetchComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe();
     }
 
-    const { client, workspace } = this.workspaceService;
     const { context } = this.allors;
-    const m = workspace.configuration.metaPopulation as M;
+    const m = context.configuration.metaPopulation as M;
     const { pullBuilder: p } = m;
 
     const id = this.route.snapshot.paramMap.get('id');

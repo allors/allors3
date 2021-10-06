@@ -10,14 +10,14 @@ beforeEach(async () => {
 });
 
 test('pullSameSessionNotPushedException', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const c1 = session.create<C1>(m.C1);
 
   let hasErrors = false;
   try {
-    await client.pull(session, { object: c1 });
+    await session.pull({ object: c1 });
   } catch {
     hasErrors = true;
   }
@@ -26,7 +26,7 @@ test('pullSameSessionNotPushedException', async () => {
 });
 
 test('databasPullOtherSessionNotPushedException', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session1 = workspace.createSession();
   const session2 = workspace.createSession();
 
@@ -34,7 +34,7 @@ test('databasPullOtherSessionNotPushedException', async () => {
 
   let hasErrors = false;
   try {
-    await client.pull(session2, { object: c1 });
+    await session2.pull({ object: c1 });
   } catch {
     hasErrors = true;
   }
@@ -43,7 +43,7 @@ test('databasPullOtherSessionNotPushedException', async () => {
 });
 
 test('databaseStrategyHasChanges', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   // New Object with Unit Role
@@ -63,7 +63,7 @@ test('databaseStrategyHasChanges', async () => {
 
     c1.C1AllorsString = 'I am changed!';
 
-    await client.push(session);
+    await session.push();
 
     expect(c1.strategy.hasChanged(m.C1.C1AllorsString)).toBeTruthy();
   }
@@ -74,8 +74,8 @@ test('databaseStrategyHasChanges', async () => {
 
     c1.C1AllorsString = 'I am changed!';
 
-    await client.push(session);
-    await client.pull(session, { object: c1 });
+    await session.push();
+    await session.pull({ object: c1 });
 
     expect(c1.strategy.hasChanged(m.C1.C1AllorsString)).toBeFalsy();
   }
@@ -98,7 +98,7 @@ test('databaseStrategyHasChanges', async () => {
 
     c1.C1C2One2One = c2;
 
-    await client.push(session);
+    await session.push();
 
     expect(c1.strategy.hasChanged(m.C1.C1C2One2One)).toBeTruthy();
   }
@@ -110,8 +110,8 @@ test('databaseStrategyHasChanges', async () => {
 
     c1.C1C2One2One = c2;
 
-    await client.push(session);
-    await client.pull(session, { object: c1 });
+    await session.push();
+    await session.pull({ object: c1 });
 
     expect(c1.strategy.hasChanged(m.C1.C1C2One2One)).toBeFalsy();
   }
@@ -134,7 +134,7 @@ test('databaseStrategyHasChanges', async () => {
 
     c1.C1C2One2One = c2;
 
-    await client.push(session);
+    await session.push();
 
     expect(c1.strategy.hasChanged(m.C1.C1C2One2One)).toBeTruthy();
   }
@@ -146,8 +146,8 @@ test('databaseStrategyHasChanges', async () => {
 
     c1.C1C2One2One = c2;
 
-    await client.push(session);
-    await client.pull(session, { object: c1 });
+    await session.push();
+    await session.pull({ object: c1 });
 
     expect(c1.strategy.hasChanged(m.C1.C1C2One2One)).toBeFalsy();
   }
@@ -170,7 +170,7 @@ test('databaseStrategyHasChanges', async () => {
 
     c1.C1C2One2One = c2;
 
-    await client.push(session);
+    await session.push();
 
     expect(c1.strategy.hasChanged(m.C1.C1C2One2One)).toBeTruthy();
   }
@@ -182,8 +182,8 @@ test('databaseStrategyHasChanges', async () => {
 
     c1.C1C2One2One = c2;
 
-    await client.push(session);
-    await client.pull(session, { object: c1 });
+    await session.push();
+    await session.pull({ object: c1 });
 
     expect(c1.strategy.hasChanged(m.C1.C1C2One2One)).toBeFalsy();
   }

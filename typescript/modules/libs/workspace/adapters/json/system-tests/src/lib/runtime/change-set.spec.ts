@@ -10,7 +10,7 @@ beforeEach(async () => {
 });
 
 test('changeSetConstruction', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const changeSet = session.checkpoint();
@@ -19,7 +19,7 @@ test('changeSetConstruction', async () => {
 });
 
 test('changeSetInstantiated', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -34,7 +34,7 @@ test('changeSetInstantiated', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
   const c1s = result.collection<C1>('C1s');
   const c1a = c1s[0];
 
@@ -46,7 +46,7 @@ test('changeSetInstantiated', async () => {
 });
 
 test('changeSetAfterPush', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -61,13 +61,13 @@ test('changeSetAfterPush', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
   const c1s = result.collection<C1>('C1s');
   const c1a = c1s[0];
 
   c1a.C1AllorsString = 'X';
 
-  await client.push(session);
+  await session.push();
 
   const changeSet = session.checkpoint();
 
@@ -77,7 +77,7 @@ test('changeSetAfterPush', async () => {
 });
 
 test('changeSetPushChangeNoPush', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -92,12 +92,12 @@ test('changeSetPushChangeNoPush', async () => {
     },
   };
 
-  let result = await client.pull(session, [pull]);
+  let result = await session.pull([pull]);
   const c1a_1 = result.collection<C1>('C1s')[0];
 
   c1a_1.C1AllorsString = 'X';
 
-  await client.push(session);
+  await session.push();
 
   let changeSet = session.checkpoint();
 
@@ -105,7 +105,7 @@ test('changeSetPushChangeNoPush', async () => {
   let changed = changeSet.associationsByRoleType.get(m.C1.C1AllorsString);
   expect(changed).toBeDefined();
 
-  result = await client.pull(session, [pull]);
+  result = await session.pull([pull]);
 
   const c1a_2 = result.collection<C1>('C1s')[0];
 
@@ -119,7 +119,7 @@ test('changeSetPushChangeNoPush', async () => {
 });
 
 test('changeSetPushChangePush', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -134,12 +134,12 @@ test('changeSetPushChangePush', async () => {
     },
   };
 
-  let result = await client.pull(session, [pull]);
+  let result = await session.pull([pull]);
   const c1a_1 = result.collection<C1>('C1s')[0];
 
   c1a_1.C1AllorsString = 'X';
 
-  await client.push(session);
+  await session.push();
 
   let changeSet = session.checkpoint();
 
@@ -147,13 +147,13 @@ test('changeSetPushChangePush', async () => {
   let changed = changeSet.associationsByRoleType.get(m.C1.C1AllorsString);
   expect(changed).toBeDefined();
 
-  result = await client.pull(session, [pull]);
+  result = await session.pull([pull]);
 
   const c1a_2 = result.collection<C1>('C1s')[0];
 
   c1a_2.C1AllorsString = 'Y';
 
-  await client.push(session);
+  await session.push();
 
   changeSet = session.checkpoint();
 
@@ -163,12 +163,12 @@ test('changeSetPushChangePush', async () => {
 });
 
 test('changeSetAfterPushWithNoChanges', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const c1a = session.create<C1>(m.C1);
 
-  await client.push(session);
+  await session.push();
 
   let changeSet = session.checkpoint();
 
@@ -177,7 +177,7 @@ test('changeSetAfterPushWithNoChanges', async () => {
   expect(created).toBeDefined();
   expect(created).toBe(c1a.strategy);
 
-  await client.push(session);
+  await session.push();
 
   changeSet = session.checkpoint();
 
@@ -185,7 +185,7 @@ test('changeSetAfterPushWithNoChanges', async () => {
 });
 
 test('changeSetAfterPushWithPull', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -200,14 +200,14 @@ test('changeSetAfterPushWithPull', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
   const c1a = result.collection<C1>('C1s')[0];
 
   c1a.C1AllorsString = 'X';
 
-  await client.push(session);
+  await session.push();
 
-  await client.pull(session, [pull]);
+  await session.pull([pull]);
 
   const changeSet = session.checkpoint();
 
@@ -217,7 +217,7 @@ test('changeSetAfterPushWithPull', async () => {
 });
 
 test('changeSetAfterPushWithPullWithNoChanges', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -232,18 +232,18 @@ test('changeSetAfterPushWithPullWithNoChanges', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
   const c1a = result.collection<C1>('C1s')[0];
 
-  await client.push(session);
-  await client.pull(session, [pull]);
+  await session.push();
+  await session.pull([pull]);
 
   let changeSet = session.checkpoint();
 
   expect(changeSet.created.size).toBe(0);
   expect(changeSet.associationsByRoleType.size).toBe(0);
 
-  await client.push(session);
+  await session.push();
   changeSet = session.checkpoint();
 
   expect(changeSet.created.size).toBe(0);
@@ -251,7 +251,7 @@ test('changeSetAfterPushWithPullWithNoChanges', async () => {
 });
 
 test('changeSetAfterPushOne2One', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -266,13 +266,13 @@ test('changeSetAfterPushOne2One', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
   const c1a = result.collection<C1>('C1s')[0];
   const c1x = session.create<C1>(m.C1);
 
   c1a.C1C1One2One = c1x;
 
-  await client.push(session);
+  await session.push();
 
   let changeSet = session.checkpoint();
 
@@ -288,7 +288,7 @@ test('changeSetAfterPushOne2One', async () => {
   expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).values().next().value).toBe(c1a.strategy);
   expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).values().next().value).toBe(c1x.strategy);
 
-  await client.push(session);
+  await session.push();
   changeSet = session.checkpoint();
 
   expect(changeSet.created.size).toBe(0);
@@ -297,7 +297,7 @@ test('changeSetAfterPushOne2One', async () => {
 });
 
 test('changeSetIncludeAfterPushOne2One', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -313,14 +313,14 @@ test('changeSetIncludeAfterPushOne2One', async () => {
     results: [{ include: [{ propertyType: m.C1.C1C1One2One }] }],
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
   const c1a = result.collection<C1>('C1s')[0];
   const c1b = c1a.C1C1One2One;
   const c1x = session.create<C1>(m.C1);
 
   c1a.C1C1One2One = c1x;
 
-  await client.push(session);
+  await session.push();
 
   let changeSet = session.checkpoint();
 
@@ -340,7 +340,7 @@ test('changeSetIncludeAfterPushOne2One', async () => {
   expect(roles).toContain(c1b.strategy);
   expect(roles).toContain(c1x.strategy);
 
-  await client.push(session);
+  await session.push();
   changeSet = session.checkpoint();
 
   expect(changeSet.created.size).toBe(0);
@@ -349,7 +349,7 @@ test('changeSetIncludeAfterPushOne2One', async () => {
 });
 
 test('changeSetAfterPushOne2OneWithPreviousIncluded', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -373,14 +373,14 @@ test('changeSetAfterPushOne2OneWithPreviousIncluded', async () => {
     ],
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
   const c1a = result.collection<C1>('C1s')[0];
   const c1b = session.create<C1>(m.C1);
   const previous = c1a.C1C1One2One;
 
   c1a.C1C1One2One = c1b;
 
-  await client.push(session);
+  await session.push();
 
   let changeSet = session.checkpoint();
 
@@ -396,7 +396,7 @@ test('changeSetAfterPushOne2OneWithPreviousIncluded', async () => {
   expect(associationsC1C1One2One).toEqual([c1a.strategy]);
   expect(rolesC1C1One2One).toEqual([previous.strategy, c1b.strategy]);
 
-  await client.push(session);
+  await session.push();
   changeSet = session.checkpoint();
 
   expect(changeSet.created.size).toBe(0);
@@ -405,7 +405,7 @@ test('changeSetAfterPushOne2OneWithPreviousIncluded', async () => {
 });
 
 test('changeSetAfterPushOne2OneRemove', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -420,19 +420,19 @@ test('changeSetAfterPushOne2OneRemove', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
   const c1a = result.collection<C1>('C1s')[0];
   const c1b = session.create<C1>(m.C1);
 
   c1a.C1C1One2One = c1b;
 
-  await client.push(session);
-  await client.pull(session, [pull]);
+  await session.push();
+  await session.pull([pull]);
   session.checkpoint();
 
   c1a.C1C1One2One = null;
 
-  await client.push(session);
+  await session.push();
 
   const changeSet = session.checkpoint();
 
@@ -444,7 +444,7 @@ test('changeSetAfterPushOne2OneRemove', async () => {
 });
 
 test('changeSetAfterPushMany2One', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -459,13 +459,13 @@ test('changeSetAfterPushMany2One', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
   const c1a = result.collection<C1>('C1s')[0];
   const c1b = session.create<C1>(m.C1);
 
   c1a.C1C1Many2One = c1b;
 
-  await client.push(session);
+  await session.push();
 
   let changeSet = session.checkpoint();
 
@@ -477,7 +477,7 @@ test('changeSetAfterPushMany2One', async () => {
   expect(changeSet.associationsByRoleType.get(m.C1.C1C1Many2One).values().next().value).toBe(c1a.strategy);
   expect(changeSet.rolesByAssociationType.get(m.C1.C1C1Many2One.associationType).values().next().value).toBe(c1b.strategy);
 
-  await client.push(session);
+  await session.push();
   changeSet = session.checkpoint();
 
   expect(changeSet.created.size).toBe(0);
@@ -486,7 +486,7 @@ test('changeSetAfterPushMany2One', async () => {
 });
 
 test('changeSetAfterPushMany2OneRemove', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -501,19 +501,19 @@ test('changeSetAfterPushMany2OneRemove', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
   const c1a = result.collection<C1>('C1s')[0];
   const c1b = session.create<C1>(m.C1);
 
   c1a.C1C1Many2One = c1b;
 
-  await client.push(session);
-  await client.pull(session, [pull]);
+  await session.push();
+  await session.pull([pull]);
   session.checkpoint();
 
   c1a.C1C1Many2One = null;
 
-  await client.push(session);
+  await session.push();
 
   const changeSet = session.checkpoint();
 
@@ -525,7 +525,7 @@ test('changeSetAfterPushMany2OneRemove', async () => {
 });
 
 test('changeSetAfterPushOne2Many', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -540,13 +540,13 @@ test('changeSetAfterPushOne2Many', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
   const c1a = result.collection<C1>('C1s')[0];
   const c1b = session.create<C1>(m.C1);
 
   c1a.addC1C1One2Many(c1b);
 
-  await client.push(session);
+  await session.push();
 
   let changeSet = session.checkpoint();
 
@@ -558,7 +558,7 @@ test('changeSetAfterPushOne2Many', async () => {
   expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2Manies).values().next().value).toBe(c1a.strategy);
   expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2Manies.associationType).values().next().value).toBe(c1b.strategy);
 
-  await client.push(session);
+  await session.push();
   changeSet = session.checkpoint();
 
   expect(changeSet.created.size).toBe(0);
@@ -567,7 +567,7 @@ test('changeSetAfterPushOne2Many', async () => {
 });
 
 test('changeSetAfterPushOne2ManyRemove', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -582,19 +582,19 @@ test('changeSetAfterPushOne2ManyRemove', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
   const c1a = result.collection<C1>('C1s')[0];
   const c1b = session.create<C1>(m.C1);
 
   c1a.addC1C1One2Many(c1b);
 
-  await client.push(session);
-  await client.pull(session, [pull]);
+  await session.push();
+  await session.pull([pull]);
   session.checkpoint();
 
   c1a.C1C1One2Manies = null;
 
-  await client.push(session);
+  await session.push();
 
   const changeSet = session.checkpoint();
 
@@ -606,7 +606,7 @@ test('changeSetAfterPushOne2ManyRemove', async () => {
 });
 
 test('changeSetAfterPushMany2Many', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -621,13 +621,13 @@ test('changeSetAfterPushMany2Many', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
   const c1a = result.collection<C1>('C1s')[0];
   const c1b = session.create<C1>(m.C1);
 
   c1a.addC1C1Many2Many(c1b);
 
-  await client.push(session);
+  await session.push();
 
   let changeSet = session.checkpoint();
 
@@ -639,7 +639,7 @@ test('changeSetAfterPushMany2Many', async () => {
   expect(changeSet.associationsByRoleType.get(m.C1.C1C1Many2Manies).values().next().value).toBe(c1a.strategy);
   expect(changeSet.rolesByAssociationType.get(m.C1.C1C1Many2Manies.associationType).values().next().value).toBe(c1b.strategy);
 
-  await client.push(session);
+  await session.push();
   changeSet = session.checkpoint();
 
   expect(changeSet.created.size).toBe(0);
@@ -648,7 +648,7 @@ test('changeSetAfterPushMany2Many', async () => {
 });
 
 test('changeSetAfterPushMany2ManyRemove', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -663,19 +663,19 @@ test('changeSetAfterPushMany2ManyRemove', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
   const c1a = result.collection<C1>('C1s')[0];
   const c1b = session.create<C1>(m.C1);
 
   c1a.addC1C1Many2Many(c1b);
 
-  await client.push(session);
-  await client.pull(session, [pull]);
+  await session.push();
+  await session.pull([pull]);
   session.checkpoint();
 
   c1a.C1C1Many2Manies = null;
 
-  await client.push(session);
+  await session.push();
 
   const changeSet = session.checkpoint();
 
@@ -687,10 +687,10 @@ test('changeSetAfterPushMany2ManyRemove', async () => {
 });
 
 test('changeSetAfterPullInNewSessionButNoPush', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
-  await client.pull(session, []);
+  await session.pull([]);
 
   const changeSet = session.checkpoint();
 
@@ -701,14 +701,14 @@ test('changeSetAfterPullInNewSessionButNoPush', async () => {
 });
 
 test('changeSetBeforeAndAfterResetWithSessionObject', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const sc1a = session.create<SC1>(m.SC1);
 
   sc1a.SessionAllorsString = 'X';
 
-  await client.push(session);
+  await session.push();
 
   let changeSet = session.checkpoint();
 
@@ -730,14 +730,14 @@ test('changeSetBeforeAndAfterResetWithSessionObject', async () => {
 });
 
 test('changeSetBeforeAndAfterResetWithChangeSessionObject', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const sc1a = session.create<SC1>(m.SC1);
 
   sc1a.SessionAllorsString = 'X';
 
-  await client.push(session);
+  await session.push();
 
   let changeSet = session.checkpoint();
 
@@ -758,7 +758,7 @@ test('changeSetBeforeAndAfterResetWithChangeSessionObject', async () => {
 });
 
 test('changeSetAfterDoubleReset', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -773,20 +773,20 @@ test('changeSetAfterDoubleReset', async () => {
     },
   };
 
-  let result = await client.pull(session, [pull]);
+  let result = await session.pull([pull]);
   const c1a_1 = result.collection<C1>('C1s')[0];
 
   session.checkpoint();
 
   c1a_1.C1AllorsString = 'X';
 
-  await client.push(session);
-  result = await client.pull(session, [pull]);
+  await session.push();
+  result = await session.pull([pull]);
   const c1a_2 = result.collection<C1>('C1s')[0];
 
   c1a_2.C1AllorsString = 'Y';
 
-  await client.push(session);
+  await session.push();
 
   c1a_2.strategy.reset();
   c1a_2.strategy.reset();

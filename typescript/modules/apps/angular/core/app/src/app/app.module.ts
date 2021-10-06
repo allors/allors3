@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { Configuration, Engine, PrototypeObjectFactory } from '@allors/workspace/adapters/system';
-import { DatabaseConnection, DatabaseClient } from '@allors/workspace/adapters/json/system';
+import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -24,9 +24,6 @@ import { CoreContext } from '../allors/core-context';
 export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
   return async () => {
     const angularClient = new AngularClient(httpClient, environment.baseUrl, environment.authUrl);
-    const client = new DatabaseClient(angularClient);
-    workspaceService.client = client;
-    workspaceService.contextBuilder = () => new CoreContext(workspaceService);
 
     const metaPopulation = new LazyMetaPopulation(data);
     const m = metaPopulation as unknown as M;
@@ -41,9 +38,11 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
       engine: new Engine(ruleBuilder(m)),
     };
 
-    const database = new DatabaseConnection(configuration);
+    const database = new DatabaseConnection(configuration, angularClient);
     const workspace = database.createWorkspace();
     workspaceService.workspace = workspace;
+
+    workspaceService.contextBuilder = () => new CoreContext(workspaceService);
   };
 }
 

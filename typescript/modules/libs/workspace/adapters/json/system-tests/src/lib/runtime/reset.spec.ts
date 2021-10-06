@@ -22,14 +22,14 @@ test('resetUnitWithoutPush', async () => {
 });
 
 test('resetUnitAfterPush', async () => {
-  const { client, workspace } = fixture;
+  const { workspace } = fixture;
   const session = workspace.createSession();
 
   const c1a = await fixture.pullC1(session, name_c1A);
 
   c1a.C1AllorsString = 'X';
 
-  await client.push(session);
+  await session.push();
 
   c1a.strategy.reset();
 
@@ -37,19 +37,19 @@ test('resetUnitAfterPush', async () => {
 });
 
 test('resetUnitAfterDoublePush', async () => {
-  const { client, workspace } = fixture;
+  const { workspace } = fixture;
   const session = workspace.createSession();
 
   const c1a = await fixture.pullC1(session, name_c1A);
 
   c1a.C1AllorsString = 'X';
 
-  await client.push(session);
-  await client.pull(session, { object: c1a });
+  await session.push();
+  await session.pull({ object: c1a });
 
   c1a.C1AllorsString = 'Y';
 
-  await client.push(session);
+  await session.push();
 
   c1a.strategy.reset();
 
@@ -71,7 +71,7 @@ test('resetOne2OneWithoutPush', async () => {
 });
 
 test('resetOne2OneAfterPush', async () => {
-  const { client, workspace } = fixture;
+  const { workspace } = fixture;
   const session = workspace.createSession();
 
   const c1a = await fixture.pullC1(session, name_c1A);
@@ -83,7 +83,7 @@ test('resetOne2OneAfterPush', async () => {
 
   c1a.C1C1One2One = null;
 
-  await client.push(session);
+  await session.push();
 
   c1a.strategy.reset();
 
@@ -91,7 +91,7 @@ test('resetOne2OneAfterPush', async () => {
 });
 
 test('resetOne2OneRemoveAfterPush', async () => {
-  const { client, workspace } = fixture;
+  const { workspace } = fixture;
   const session = workspace.createSession();
 
   const c1a = await fixture.pullC1(session, name_c1A);
@@ -99,12 +99,12 @@ test('resetOne2OneRemoveAfterPush', async () => {
 
   c1a.C1C1One2One = c1b;
 
-  await client.push(session);
-  await client.pull(session, { object: c1a });
+  await session.push();
+  await session.pull({ object: c1a });
 
   c1a.C1C1One2One = null;
 
-  await client.push(session);
+  await session.push();
 
   c1a.strategy.reset();
 
@@ -126,7 +126,7 @@ test('resetMany2OneWithoutPush', async () => {
 });
 
 test('resetMany2OneAfterPush', async () => {
-  const { client, workspace } = fixture;
+  const { workspace } = fixture;
   const session = workspace.createSession();
 
   const c1a = await fixture.pullC1(session, name_c1A);
@@ -134,7 +134,7 @@ test('resetMany2OneAfterPush', async () => {
 
   c1a.C1C1Many2One = c1b;
 
-  await client.push(session);
+  await session.push();
 
   c1a.strategy.reset();
 
@@ -142,7 +142,7 @@ test('resetMany2OneAfterPush', async () => {
 });
 
 test('resetMany2OneRemoveAfterPush', async () => {
-  const { client, workspace } = fixture;
+  const { workspace } = fixture;
   const session = workspace.createSession();
 
   const c1a = await fixture.pullC1(session, name_c1A);
@@ -150,12 +150,12 @@ test('resetMany2OneRemoveAfterPush', async () => {
 
   c1a.C1C1Many2One = c1b;
 
-  await client.push(session);
-  await client.pull(session, { object: c1a });
+  await session.push();
+  await session.pull({ object: c1a });
 
   c1a.C1C1Many2One = null;
 
-  await client.push(session);
+  await session.push();
 
   c1a.strategy.reset();
 
@@ -177,7 +177,7 @@ test('resetOne2ManyWithoutPush', async () => {
 });
 
 test('resetOne2ManyAfterPush', async () => {
-  const { client, workspace } = fixture;
+  const { workspace } = fixture;
   const session = workspace.createSession();
 
   const c1a = await fixture.pullC1(session, name_c1A);
@@ -185,7 +185,7 @@ test('resetOne2ManyAfterPush', async () => {
 
   c1a.addC1C1One2Many(c1b);
 
-  await client.push(session);
+  await session.push();
 
   c1a.strategy.reset();
 
@@ -193,7 +193,7 @@ test('resetOne2ManyAfterPush', async () => {
 });
 
 test('resetOne2ManyRemoveAfterPush', async () => {
-  const { client, workspace } = fixture;
+  const { workspace } = fixture;
   const session = workspace.createSession();
 
   const c1a = await fixture.pullC1(session, name_c1A);
@@ -201,8 +201,8 @@ test('resetOne2ManyRemoveAfterPush', async () => {
 
   c1a.addC1C1One2Many(c1b);
 
-  await client.push(session);
-  await client.pull(session, { object: c1a });
+  await session.push();
+  await session.pull({ object: c1a });
 
   c1a.removeC1C1One2Many(c1b);
 
@@ -227,7 +227,7 @@ test('resetMany2ManyWithoutPush', async () => {
 });
 
 test('resetMany2ManyAfterPush', async () => {
-  const { client, workspace } = fixture;
+  const { workspace } = fixture;
   const session = workspace.createSession();
 
   const c1a = await fixture.pullC1(session, name_c1A);
@@ -235,7 +235,7 @@ test('resetMany2ManyAfterPush', async () => {
 
   c1a.addC1C1Many2Many(c1b);
 
-  await client.push(session);
+  await session.push();
 
   c1a.strategy.reset();
 
@@ -243,7 +243,7 @@ test('resetMany2ManyAfterPush', async () => {
 });
 
 test('resetMany2ManyRemoveAfterPush', async () => {
-  const { client, workspace } = fixture;
+  const { workspace } = fixture;
   const session = workspace.createSession();
 
   const c1a = await fixture.pullC1(session, name_c1A);
@@ -251,12 +251,12 @@ test('resetMany2ManyRemoveAfterPush', async () => {
 
   c1a.addC1C1Many2Many(c1b);
 
-  await client.push(session);
-  await client.pull(session, { object: c1a });
+  await session.push();
+  await session.pull({ object: c1a });
 
   c1a.removeC1C1Many2Many(c1b);
 
-  await client.push(session);
+  await session.push();
 
   c1a.strategy.reset();
 

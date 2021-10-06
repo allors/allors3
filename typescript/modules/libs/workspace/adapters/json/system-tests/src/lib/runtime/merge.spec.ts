@@ -11,7 +11,7 @@ beforeEach(async () => {
 });
 
 test('databaseMergeError', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session1 = workspace.createSession();
   const session2 = workspace.createSession();
 
@@ -27,18 +27,18 @@ test('databaseMergeError', async () => {
     },
   };
 
-  let result = await client.pull(session1, [pull]);
+  let result = await session1.pull([pull]);
   const c1a_1 = result.collection<C1>('C1s')[0];
 
-  result = await client.pull(session2, [pull]);
+  result = await session2.pull([pull]);
   const c1a_2 = result.collection<C1>('C1s')[0];
 
   c1a_1.C1AllorsString = 'X';
   c1a_2.C1AllorsString = 'Y';
 
-  await client.push(session2);
+  await session2.push();
 
-  result = await client.pull(session1, [pull]);
+  result = await session1.pull([pull]);
 
   expect(result.hasErrors).toBeTruthy();
   expect(result.mergeErrors.length).toBe(1);

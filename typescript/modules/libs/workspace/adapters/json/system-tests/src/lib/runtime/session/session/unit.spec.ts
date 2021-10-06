@@ -9,7 +9,7 @@ beforeEach(async () => {
 });
 
 test('sessionUnit', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   expect(true).toBeTruthy();

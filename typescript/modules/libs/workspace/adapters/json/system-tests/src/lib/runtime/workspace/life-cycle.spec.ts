@@ -28,7 +28,7 @@ test('workspaceInstantiateOtherSession', async () => {
 });
 
 test('workspacePullOtherSessionShouldThrowError', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session1 = workspace.createSession();
   const session2 = workspace.createSession();
 
@@ -36,7 +36,7 @@ test('workspacePullOtherSessionShouldThrowError', async () => {
 
   let hasErrors = false;
   try {
-    await client.pull(session2, { object: objectSession1 });
+    await session2.pull({ object: objectSession1 });
   } catch {
     hasErrors = true;
   }
@@ -45,7 +45,7 @@ test('workspacePullOtherSessionShouldThrowError', async () => {
 });
 
 test('workspaceCrossSession', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session1 = workspace.createSession();
   const session2 = workspace.createSession();
 

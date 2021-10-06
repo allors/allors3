@@ -10,7 +10,7 @@ beforeEach(async () => {
 });
 
 test('unit', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -34,7 +34,7 @@ test('unit', async () => {
     ],
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   const c2s = result.collection('C2s');
 

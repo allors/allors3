@@ -1,4 +1,4 @@
-import { IConfiguration, ISession, IWorkspace } from '@allors/workspace/domain/system';
+import { IConfiguration, IRule, ISession, IWorkspace } from '@allors/workspace/domain/system';
 import { Class, RelationType } from '@allors/workspace/meta/system';
 
 import { Ranges } from '../collections/ranges/ranges';
@@ -25,6 +25,9 @@ export abstract class Workspace implements IWorkspace {
     this.workspaceIdsByWorkspaceClass = new Map();
 
     this.recordById = new Map();
+  }
+  get rules(): Readonly<IRule[]> {
+    return this.database.configuration.engine.rules;
   }
 
   abstract createSession(): ISession;

@@ -2,7 +2,7 @@ import { MetaPopulation } from '@allors/workspace/meta/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
 import { ruleBuilder } from '@allors/workspace/derivations/core-custom';
-import { DatabaseClient, DatabaseConnection } from '@allors/workspace/adapters/json/system';
+import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
 import { Configuration, Engine, PrototypeObjectFactory } from '@allors/workspace/adapters/system';
 import { M } from '@allors/workspace/meta/default';
 
@@ -24,7 +24,6 @@ export const name_c2D = 'c2D';
 
 export class Fixture {
   jsonClient: FetchClient;
-  client: DatabaseClient;
   metaPopulation: MetaPopulation;
   databaseConnection: DatabaseConnection;
   m: M;
@@ -44,7 +43,7 @@ export class Fixture {
       engine: new Engine(ruleBuilder(this.m)),
     };
 
-    return new DatabaseConnection(configuration);
+    return new DatabaseConnection(configuration, this.jsonClient);
   }
 
   createExclusiveWorkspace(): IWorkspace {
@@ -56,7 +55,6 @@ export class Fixture {
 
   async init(population?: string) {
     this.jsonClient = new FetchClient(BASE_URL, AUTH_URL);
-    this.client = new DatabaseClient(this.jsonClient);
 
     await this.jsonClient.setup(population);
     await this.jsonClient.login('jane@example.com', '');
@@ -68,7 +66,7 @@ export class Fixture {
   }
 
   async pullC1(session: ISession, name: string): Promise<C1> {
-    const { client, m } = this;
+    const { m } = this;
 
     const pull: Pull = {
       extent: {
@@ -82,12 +80,12 @@ export class Fixture {
       },
     };
 
-    const result = await client.pull(session, [pull]);
+    const result = await session.pull([pull]);
     return result.collection<C1>(m.C1)[0];
   }
 
   async pullC2(session: ISession, name: string): Promise<C2> {
-    const { client, m } = this;
+    const { m } = this;
 
     const pull: Pull = {
       extent: {
@@ -101,7 +99,7 @@ export class Fixture {
       },
     };
 
-    const result = await client.pull(session, [pull]);
+    const result = await session.pull([pull]);
     return result.collection<C2>(m.C2)[0];
   }
 

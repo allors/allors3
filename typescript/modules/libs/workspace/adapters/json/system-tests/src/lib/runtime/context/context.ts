@@ -23,10 +23,6 @@ export abstract class Context {
 
   exclusiveDatabaseSession: ISession;
 
-  get client() {
-    return this.fixture.client;
-  }
-
   async create<T extends IObject>(session: ISession, cls: Class, mode: DatabaseMode): Promise<T> {
     if (cls.origin === Origin.Database) {
       switch (mode as DatabaseMode) {
@@ -34,14 +30,14 @@ export abstract class Context {
           return session.create<T>(cls);
         case DatabaseMode.Push: {
           const pushObject = session.create<T>(cls);
-          await this.client.push(session);
+          await session.push();
           return pushObject;
         }
         case DatabaseMode.PushAndPull: {
           const pushAndPullObject = session.create<T>(cls);
-          const result = await this.client.push(session);
+          const result = await session.push();
           if (result.hasErrors) throw new Error();
-          await this.client.pull(session, { object: pushAndPullObject });
+          await session.pull({ object: pushAndPullObject });
           return pushAndPullObject;
         }
         // case DatabaseMode.SharedDatabase: {

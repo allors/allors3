@@ -12,7 +12,7 @@ beforeEach(async () => {
 });
 
 test('testUnitSamplesWithNulls', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const procedure: Procedure = {
@@ -20,7 +20,7 @@ test('testUnitSamplesWithNulls', async () => {
     values: { step: '0' },
   };
 
-  const result = await client.call(session, procedure);
+  const result = await session.call(procedure);
 
   expect(result.hasErrors).toBeFalsy();
 
@@ -37,7 +37,7 @@ test('testUnitSamplesWithNulls', async () => {
 });
 
 test('testUnitSamplesWithValues', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const procedure: Procedure = {
@@ -45,7 +45,7 @@ test('testUnitSamplesWithValues', async () => {
     values: { step: '1' },
   };
 
-  const result = await client.call(session, procedure);
+  const result = await session.call(procedure);
 
   expect(result.hasErrors).toBeFalsy();
 
@@ -62,7 +62,7 @@ test('testUnitSamplesWithValues', async () => {
 });
 
 test('nonExistingProcedure', async () => {
-  const { client, workspace } = fixture;
+  const { workspace } = fixture;
   const session = workspace.createSession();
 
   const procedure: Procedure = {
@@ -70,6 +70,6 @@ test('nonExistingProcedure', async () => {
     values: { step: '2' },
   };
 
-  const result = await client.call(session, procedure);
+  const result = await session.call(procedure);
   expect(result.hasErrors).toBeTruthy();
 });

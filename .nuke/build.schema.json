@@ -96,8 +96,7 @@
               "CiDotnetSystemAdaptersTestNpgsql",
               "CiDotnetSystemAdaptersTestSqlClient",
               "CiDotnetSystemWorkspaceTest",
-              "CiTypescriptWorkspaceAsyncTest",
-              "CiTypescriptWorkspaceReactiveTest",
+              "CiTypescriptWorkspaceAdaptersJsonTest",
               "CiTypescriptWorkspaceTest",
               "Clean",
               "Default",
@@ -169,12 +168,10 @@
               "Install",
               "PostgresDocker",
               "TypescriptInstall",
-              "TypescriptWorkspaceAdaptersJsonSystemAsync",
-              "TypescriptWorkspaceAdaptersJsonSystemReactive",
+              "TypescriptWorkspaceAdaptersJsonSystem",
+              "TypescriptWorkspaceAdaptersJsonTest",
               "TypescriptWorkspaceAdaptersSystem",
-              "TypescriptWorkspaceAsyncTest",
               "TypescriptWorkspaceMetaJsonSystem",
-              "TypescriptWorkspaceReactiveTest",
               "TypescriptWorkspaceTest"
             ]
           }
@@ -199,8 +196,7 @@
               "CiDotnetSystemAdaptersTestNpgsql",
               "CiDotnetSystemAdaptersTestSqlClient",
               "CiDotnetSystemWorkspaceTest",
-              "CiTypescriptWorkspaceAsyncTest",
-              "CiTypescriptWorkspaceReactiveTest",
+              "CiTypescriptWorkspaceAdaptersJsonTest",
               "CiTypescriptWorkspaceTest",
               "Clean",
               "Default",
@@ -272,12 +268,10 @@
               "Install",
               "PostgresDocker",
               "TypescriptInstall",
-              "TypescriptWorkspaceAdaptersJsonSystemAsync",
-              "TypescriptWorkspaceAdaptersJsonSystemReactive",
+              "TypescriptWorkspaceAdaptersJsonSystem",
+              "TypescriptWorkspaceAdaptersJsonTest",
               "TypescriptWorkspaceAdaptersSystem",
-              "TypescriptWorkspaceAsyncTest",
               "TypescriptWorkspaceMetaJsonSystem",
-              "TypescriptWorkspaceReactiveTest",
               "TypescriptWorkspaceTest"
             ]
           }

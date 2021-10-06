@@ -142,7 +142,7 @@ namespace Allors.Repository
         [Derived]
         [Workspace(Default)]
         public bool JustDidItDerived { get; set; }
-        
+
         #region Allors
         [Id("3F73377A-C2F5-4560-B493-B6F23B69F2DA")]
         #endregion
@@ -154,6 +154,15 @@ namespace Allors.Repository
         #endregion
         [Required]
         public bool PostDeriveTriggered { get; set; }
+
+        #region Allors
+        [Id("030DD8E2-0953-462F-95D9-8B7706AAE1C4")]
+        [Size(256)]
+        #endregion
+        [Workspace(Default)]
+        [Origin(Origin.Session)]
+        [Derived]
+        public string DisplayName { get; set; }
 
         [Id("1869873F-F2F0-4D03-A0F9-7DC73491C117")]
         [Workspace(Default)]

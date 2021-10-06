@@ -10,7 +10,7 @@ beforeEach(async () => {
 });
 
 test('sessionInstantiateOtherSession', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session1 = workspace.createSession();
   const session2 = workspace.createSession();
 
@@ -22,7 +22,7 @@ test('sessionInstantiateOtherSession', async () => {
 });
 
 test('sessionPullOtherSessionShouldThrowError', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session1 = workspace.createSession();
   const session2 = workspace.createSession();
 
@@ -30,7 +30,7 @@ test('sessionPullOtherSessionShouldThrowError', async () => {
 
   let hasErrors = false;
   try {
-    await client.pull(session2, { object: objectSession1 });
+    await session2.pull({ object: objectSession1 });
   } catch {
     hasErrors = true;
   }
@@ -39,7 +39,7 @@ test('sessionPullOtherSessionShouldThrowError', async () => {
 });
 
 test('sessionCrossSessionShouldThrowError', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session1 = workspace.createSession();
   const session2 = workspace.createSession();
 

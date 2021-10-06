@@ -12,11 +12,11 @@ beforeEach(async () => {
 });
 
 test('withAccessControl', async () => {
-  const { workspace, client, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
-  const result = await client.pull(session, pull);
+  const result = await session.pull(pull);
 
   const c1s = result.collection<C1>(m.C1);
 
@@ -31,11 +31,11 @@ test('withAccessControl', async () => {
 test('withoutAccessControl', async () => {
   await fixture.login('noacl');
 
-  const { workspace, client, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
-  const result = await client.pull(session, pull);
+  const result = await session.pull(pull);
 
   const c1s = result.collection<C1>(m.C1);
   for (const c1 of c1s) {
@@ -54,11 +54,11 @@ test('withoutAccessControl', async () => {
 test('withoutPermissions', async () => {
   await fixture.login('noperm');
 
-  const { workspace, client, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = { extent: { kind: 'Filter', objectType: m.C1 } };
-  const result = await client.pull(session, pull);
+  const result = await session.pull(pull);
 
   const c1s = result.collection<C1>(m.C1);
   for (const c1 of c1s) {
@@ -75,11 +75,11 @@ test('withoutPermissions', async () => {
 });
 
 test('deniedPermissions', async () => {
-  const { workspace, client, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = { extent: { kind: 'Filter', objectType: m.Denied } };
-  const result = await client.pull(session, pull);
+  const result = await session.pull(pull);
 
   const denieds = result.collection<Denied>(m.Denied);
   for (const denied of denieds) {

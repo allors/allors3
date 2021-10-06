@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IWorkspace, IDatabaseClient } from '@allors/workspace/domain/system';
+import { IWorkspace } from '@allors/workspace/domain/system';
 import { Context } from '../context/context';
 
 @Injectable({
@@ -7,8 +7,6 @@ import { Context } from '../context/context';
 })
 export class WorkspaceService {
   workspace: IWorkspace;
-
-  client: IDatabaseClient;
 
   contextBuilder: () => Context;
 }

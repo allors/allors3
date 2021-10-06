@@ -1,3 +1,4 @@
+import { C1 } from '@allors/workspace/domain/default';
 import { Fixture } from '../../fixture';
 import '../../matchers';
 
@@ -9,7 +10,7 @@ beforeEach(async () => {
 });
 
 test('sessionManyToManySetRole', async () => {
-  const { m, client, workspace } = fixture;
+  const { m, workspace } = fixture;
   const session = workspace.createSession();
 
   const c1a = session.create<C1>(m.C1);
@@ -20,12 +21,12 @@ test('sessionManyToManySetRole', async () => {
   expect(c1a.SessionC1Many2Manies).toEqual([c1b]);
   expect(c1b.C1sWhereSessionC1Many2Many).toEqual([c1a]);
 
-  await client.push(session);
+  await session.push();
 
   expect(c1a.SessionC1Many2Manies).toEqual([c1b]);
   expect(c1b.C1sWhereSessionC1Many2Many).toEqual([c1a]);
 
-  await client.pull(session, { object: c1a });
+  await session.pull({ object: c1a });
 
   expect(c1a.SessionC1Many2Manies).toEqual([c1b]);
   expect(c1b.C1sWhereSessionC1Many2Many).toEqual([c1a]);

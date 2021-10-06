@@ -11,7 +11,7 @@ beforeEach(async () => {
 });
 
 test('andGreaterThanLessThan', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   //  Class
@@ -37,7 +37,7 @@ test('andGreaterThanLessThan', async () => {
     },
   };
 
-  let result = await client.pull(session, [pull]);
+  let result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -70,7 +70,7 @@ test('andGreaterThanLessThan', async () => {
     },
   };
 
-  result = await client.pull(session, [pull]);
+  result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -81,7 +81,7 @@ test('andGreaterThanLessThan', async () => {
 });
 
 test('associationMany2ManyContainedIn', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   //  Empty
@@ -105,7 +105,7 @@ test('associationMany2ManyContainedIn', async () => {
     },
   };
 
-  let result = await client.pull(session, [pull]);
+  let result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(0);
   expect(result.objects.size).toBe(0);
@@ -127,7 +127,7 @@ test('associationMany2ManyContainedIn', async () => {
     },
   };
 
-  result = await client.pull(session, [pull]);
+  result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -158,7 +158,7 @@ test('associationMany2ManyContainedIn', async () => {
     },
   };
 
-  result = await client.pull(session, [pull]);
+  result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -170,7 +170,7 @@ test('associationMany2ManyContainedIn', async () => {
 });
 
 test('associationMany2ManyContains', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const c1c = await fixture.pullC1(session, name_c1C);
@@ -188,7 +188,7 @@ test('associationMany2ManyContains', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -200,7 +200,7 @@ test('associationMany2ManyContains', async () => {
 });
 
 test('associationMany2ManyExists', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   //  Full
@@ -215,7 +215,7 @@ test('associationMany2ManyExists', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -227,7 +227,7 @@ test('associationMany2ManyExists', async () => {
 });
 
 test('associationMany2OneContainedIn', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   //  Full
@@ -251,7 +251,7 @@ test('associationMany2OneContainedIn', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -263,7 +263,7 @@ test('associationMany2OneContainedIn', async () => {
 });
 
 test('associationMany2OneContains', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const c1c = await fixture.pullC1(session, name_c1C);
@@ -281,7 +281,7 @@ test('associationMany2OneContains', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -293,7 +293,7 @@ test('associationMany2OneContains', async () => {
 });
 
 test('associationOne2ManyContainedIn', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   //  Full
@@ -317,7 +317,7 @@ test('associationOne2ManyContainedIn', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -329,7 +329,7 @@ test('associationOne2ManyContainedIn', async () => {
 });
 
 test('associationOne2ManyEquals', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const c1b = await fixture.pullC1(session, name_c1B);
@@ -347,7 +347,7 @@ test('associationOne2ManyEquals', async () => {
     },
   };
 
-  let result = await client.pull(session, [pull]);
+  let result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -369,7 +369,7 @@ test('associationOne2ManyEquals', async () => {
     },
   };
 
-  result = await client.pull(session, [pull]);
+  result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -381,7 +381,7 @@ test('associationOne2ManyEquals', async () => {
 });
 
 test('associationOne2ManyExists', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   //  Class
@@ -396,7 +396,7 @@ test('associationOne2ManyExists', async () => {
     },
   };
 
-  let result = await client.pull(session, [pull]);
+  let result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -418,7 +418,7 @@ test('associationOne2ManyExists', async () => {
     },
   };
 
-  result = await client.pull(session, [pull]);
+  result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -430,7 +430,7 @@ test('associationOne2ManyExists', async () => {
 });
 
 test('associationOne2ManyInstanceof', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   //  Full
@@ -446,7 +446,7 @@ test('associationOne2ManyInstanceof', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -458,7 +458,7 @@ test('associationOne2ManyInstanceof', async () => {
 });
 
 test('associationOne2OneContainedIn', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   //  Full
@@ -482,7 +482,7 @@ test('associationOne2OneContainedIn', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -494,7 +494,7 @@ test('associationOne2OneContainedIn', async () => {
 });
 
 test('associationOne2OneEquals', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const c1b = await fixture.pullC1(session, name_c1B);
@@ -512,7 +512,7 @@ test('associationOne2OneEquals', async () => {
     },
   };
 
-  let result = await client.pull(session, [pull]);
+  let result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -534,7 +534,7 @@ test('associationOne2OneEquals', async () => {
     },
   };
 
-  result = await client.pull(session, [pull]);
+  result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -546,7 +546,7 @@ test('associationOne2OneEquals', async () => {
 });
 
 test('associationOne2OneExists', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   //  Class
@@ -561,7 +561,7 @@ test('associationOne2OneExists', async () => {
     },
   };
 
-  let result = await client.pull(session, [pull]);
+  let result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -583,7 +583,7 @@ test('associationOne2OneExists', async () => {
     },
   };
 
-  result = await client.pull(session, [pull]);
+  result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -595,7 +595,7 @@ test('associationOne2OneExists', async () => {
 });
 
 test('associationOne2OneInstanceof', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   // Class
@@ -611,7 +611,7 @@ test('associationOne2OneInstanceof', async () => {
     },
   };
 
-  let result = await client.pull(session, [pull]);
+  let result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -634,7 +634,7 @@ test('associationOne2OneInstanceof', async () => {
     },
   };
 
-  result = await client.pull(session, [pull]);
+  result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -646,7 +646,7 @@ test('associationOne2OneInstanceof', async () => {
 });
 
 test('objectEquals', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const c1c = await fixture.pullC1(session, name_c1C);
@@ -663,7 +663,7 @@ test('objectEquals', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -675,7 +675,7 @@ test('objectEquals', async () => {
 });
 
 test('extentInterface', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -685,7 +685,7 @@ test('extentInterface', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -697,7 +697,7 @@ test('extentInterface', async () => {
 });
 
 test('instanceof', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -711,7 +711,7 @@ test('instanceof', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -723,7 +723,7 @@ test('instanceof', async () => {
 });
 
 test('notEquals', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const c1c = await fixture.pullC1(session, name_c1C);
@@ -742,7 +742,7 @@ test('notEquals', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -754,7 +754,7 @@ test('notEquals', async () => {
 });
 
 test('orEquals', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const c1b = await fixture.pullC1(session, name_c1B);
@@ -780,7 +780,7 @@ test('orEquals', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -792,7 +792,7 @@ test('orEquals', async () => {
 });
 
 test('operatorExcept', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -815,7 +815,7 @@ test('operatorExcept', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -827,7 +827,7 @@ test('operatorExcept', async () => {
 });
 
 test('operatorIntersect', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -850,7 +850,7 @@ test('operatorIntersect', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -862,7 +862,7 @@ test('operatorIntersect', async () => {
 });
 
 test('operatorUnion', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -891,7 +891,7 @@ test('operatorUnion', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -903,7 +903,7 @@ test('operatorUnion', async () => {
 });
 
 test('roleDateTimeBetweenPath', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -918,7 +918,7 @@ test('roleDateTimeBetweenPath', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -930,7 +930,7 @@ test('roleDateTimeBetweenPath', async () => {
 });
 
 test('roleDateTimeBetweenValue', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -945,7 +945,7 @@ test('roleDateTimeBetweenValue', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -957,7 +957,7 @@ test('roleDateTimeBetweenValue', async () => {
 });
 
 test('roleDateTimeGreaterThanPath', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -972,7 +972,7 @@ test('roleDateTimeGreaterThanPath', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -984,7 +984,7 @@ test('roleDateTimeGreaterThanPath', async () => {
 });
 
 test('roleDateTimeGreaterThanValue', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -999,7 +999,7 @@ test('roleDateTimeGreaterThanValue', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1011,7 +1011,7 @@ test('roleDateTimeGreaterThanValue', async () => {
 });
 
 test('roleDateTimeLessThanPath', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1026,7 +1026,7 @@ test('roleDateTimeLessThanPath', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1038,7 +1038,7 @@ test('roleDateTimeLessThanPath', async () => {
 });
 
 test('roleDateTimeLessThanValue', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1053,7 +1053,7 @@ test('roleDateTimeLessThanValue', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1065,7 +1065,7 @@ test('roleDateTimeLessThanValue', async () => {
 });
 
 test('roleDateTimeEquals', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1080,7 +1080,7 @@ test('roleDateTimeEquals', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1092,7 +1092,7 @@ test('roleDateTimeEquals', async () => {
 });
 
 test('roleDecimalBetweenPath', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1107,7 +1107,7 @@ test('roleDecimalBetweenPath', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1119,7 +1119,7 @@ test('roleDecimalBetweenPath', async () => {
 });
 
 test('roleDecimalBetweenValue', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1134,7 +1134,7 @@ test('roleDecimalBetweenValue', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1146,7 +1146,7 @@ test('roleDecimalBetweenValue', async () => {
 });
 
 test('roleDecimalGreaterThanPath', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1161,7 +1161,7 @@ test('roleDecimalGreaterThanPath', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1173,7 +1173,7 @@ test('roleDecimalGreaterThanPath', async () => {
 });
 
 test('roleDecimalGreaterThanValue', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1188,7 +1188,7 @@ test('roleDecimalGreaterThanValue', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1200,7 +1200,7 @@ test('roleDecimalGreaterThanValue', async () => {
 });
 
 test('roleDecimalLessThanPath', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1215,7 +1215,7 @@ test('roleDecimalLessThanPath', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1227,7 +1227,7 @@ test('roleDecimalLessThanPath', async () => {
 });
 
 test('roleDecimalLessThanValue', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1242,7 +1242,7 @@ test('roleDecimalLessThanValue', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1254,7 +1254,7 @@ test('roleDecimalLessThanValue', async () => {
 });
 
 test('roleDecimalEquals', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1269,7 +1269,7 @@ test('roleDecimalEquals', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1281,7 +1281,7 @@ test('roleDecimalEquals', async () => {
 });
 
 test('roleDoubleBetweenPath', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1296,7 +1296,7 @@ test('roleDoubleBetweenPath', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1308,7 +1308,7 @@ test('roleDoubleBetweenPath', async () => {
 });
 
 test('roleDoubleBetweenValue', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1323,7 +1323,7 @@ test('roleDoubleBetweenValue', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1335,7 +1335,7 @@ test('roleDoubleBetweenValue', async () => {
 });
 
 test('roleDoubleGreaterThanPath', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1350,7 +1350,7 @@ test('roleDoubleGreaterThanPath', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1362,7 +1362,7 @@ test('roleDoubleGreaterThanPath', async () => {
 });
 
 test('roleDoubleGreaterThanValue', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1377,7 +1377,7 @@ test('roleDoubleGreaterThanValue', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1389,7 +1389,7 @@ test('roleDoubleGreaterThanValue', async () => {
 });
 
 test('roleDoubleLessThanPath', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1404,7 +1404,7 @@ test('roleDoubleLessThanPath', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1416,7 +1416,7 @@ test('roleDoubleLessThanPath', async () => {
 });
 
 test('roleDoubleLessThanValue', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1431,7 +1431,7 @@ test('roleDoubleLessThanValue', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1443,7 +1443,7 @@ test('roleDoubleLessThanValue', async () => {
 });
 
 test('roleDoubleEquals', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1458,7 +1458,7 @@ test('roleDoubleEquals', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1470,7 +1470,7 @@ test('roleDoubleEquals', async () => {
 });
 
 test('roleIntegerBetweenPath', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1485,7 +1485,7 @@ test('roleIntegerBetweenPath', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1497,7 +1497,7 @@ test('roleIntegerBetweenPath', async () => {
 });
 
 test('roleIntegerBetweenValue', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1512,7 +1512,7 @@ test('roleIntegerBetweenValue', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1524,7 +1524,7 @@ test('roleIntegerBetweenValue', async () => {
 });
 
 test('roleIntegerGreaterThanPath', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1539,7 +1539,7 @@ test('roleIntegerGreaterThanPath', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1551,7 +1551,7 @@ test('roleIntegerGreaterThanPath', async () => {
 });
 
 test('roleIntegerGreaterThanValue', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1566,7 +1566,7 @@ test('roleIntegerGreaterThanValue', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1578,7 +1578,7 @@ test('roleIntegerGreaterThanValue', async () => {
 });
 
 test('roleIntegerLessThanPath', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1593,7 +1593,7 @@ test('roleIntegerLessThanPath', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1605,7 +1605,7 @@ test('roleIntegerLessThanPath', async () => {
 });
 
 test('roleIntegerLessThanValue', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1620,7 +1620,7 @@ test('roleIntegerLessThanValue', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1632,7 +1632,7 @@ test('roleIntegerLessThanValue', async () => {
 });
 
 test('roleIntegerEquals', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1647,7 +1647,7 @@ test('roleIntegerEquals', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1659,7 +1659,7 @@ test('roleIntegerEquals', async () => {
 });
 
 test('roleIntegerExist', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1673,7 +1673,7 @@ test('roleIntegerExist', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1685,7 +1685,7 @@ test('roleIntegerExist', async () => {
 });
 
 test('roleStringEqualsPath', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1700,7 +1700,7 @@ test('roleStringEqualsPath', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1712,7 +1712,7 @@ test('roleStringEqualsPath', async () => {
 });
 
 test('roleStringEqualsValue', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1727,7 +1727,7 @@ test('roleStringEqualsValue', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1739,7 +1739,7 @@ test('roleStringEqualsValue', async () => {
 });
 
 test('roleStringLike', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1754,7 +1754,7 @@ test('roleStringLike', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1766,7 +1766,7 @@ test('roleStringLike', async () => {
 });
 
 test('roleUniqueEquals', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1781,7 +1781,7 @@ test('roleUniqueEquals', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1793,7 +1793,7 @@ test('roleUniqueEquals', async () => {
 });
 
 test('roleMany2ManyContainedIn', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   //  Empty
@@ -1817,7 +1817,7 @@ test('roleMany2ManyContainedIn', async () => {
     },
   };
 
-  let result = await client.pull(session, [pull]);
+  let result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(0);
   expect(result.objects.size).toBe(0);
@@ -1839,7 +1839,7 @@ test('roleMany2ManyContainedIn', async () => {
     },
   };
 
-  result = await client.pull(session, [pull]);
+  result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1870,7 +1870,7 @@ test('roleMany2ManyContainedIn', async () => {
     },
   };
 
-  result = await client.pull(session, [pull]);
+  result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1882,7 +1882,7 @@ test('roleMany2ManyContainedIn', async () => {
 });
 
 test('roleMany2ManyContains', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const c2c = await fixture.pullC2(session, name_c2C);
@@ -1900,7 +1900,7 @@ test('roleMany2ManyContains', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1912,7 +1912,7 @@ test('roleMany2ManyContains', async () => {
 });
 
 test('roleOne2ManyContainedIn', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1935,7 +1935,7 @@ test('roleOne2ManyContainedIn', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1947,7 +1947,7 @@ test('roleOne2ManyContainedIn', async () => {
 });
 
 test('roleOne2ManyContains', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const c2d = await fixture.pullC2(session, name_c2D);
@@ -1964,7 +1964,7 @@ test('roleOne2ManyContains', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -1976,7 +1976,7 @@ test('roleOne2ManyContains', async () => {
 });
 
 test('roleMany2OneContainedIn', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -1999,7 +1999,7 @@ test('roleMany2OneContainedIn', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -2011,7 +2011,7 @@ test('roleMany2OneContainedIn', async () => {
 });
 
 test('roleOne2OneContainedIn', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -2034,7 +2034,7 @@ test('roleOne2OneContainedIn', async () => {
     },
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -2046,7 +2046,7 @@ test('roleOne2OneContainedIn', async () => {
 });
 
 test('withResultName', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -2066,7 +2066,7 @@ test('withResultName', async () => {
     ],
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);
@@ -2078,7 +2078,7 @@ test('withResultName', async () => {
 });
 
 test('pullWithObjectId', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const c1a_1 = await fixture.pullC1(session, name_c1A);
@@ -2087,7 +2087,7 @@ test('pullWithObjectId', async () => {
     objectId: c1a_1.id,
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(0);
   expect(result.objects.size).toBe(1);
@@ -2099,7 +2099,7 @@ test('pullWithObjectId', async () => {
 });
 
 test('pullWithInclude', async () => {
-  const { client, workspace, m } = fixture;
+  const { workspace, m } = fixture;
   const session = workspace.createSession();
 
   const pull: Pull = {
@@ -2118,7 +2118,7 @@ test('pullWithInclude', async () => {
     ],
   };
 
-  const result = await client.pull(session, [pull]);
+  const result = await session.pull([pull]);
 
   expect(result.collections.size).toBe(1);
   expect(result.objects.size).toBe(0);

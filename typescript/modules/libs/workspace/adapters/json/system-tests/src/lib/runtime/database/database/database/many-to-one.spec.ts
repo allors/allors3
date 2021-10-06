@@ -6,7 +6,7 @@ import '../../../../matchers';
 const pushes = [
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   async () => {},
-  async (session) => await fixture.client.push(session),
+  async (session) => await session.push(),
 ];
 
 function* contextFactories() {
@@ -34,7 +34,7 @@ test('databaseManyToOneSetRole', async () => {
         for (const contextFactory of contextFactories()) {
           const ctx = contextFactory();
           const { session1, session2 } = ctx;
-          const { m, client } = fixture;
+          const { m } = fixture;
 
           const c1x_1 = await ctx.create<C1>(session1, m.C1, mode1);
           const c1y_2 = await ctx.create<C1>(session2, m.C1, mode2);
@@ -42,15 +42,15 @@ test('databaseManyToOneSetRole', async () => {
           expect(c1x_1).toBeDefined();
           expect(c1y_2).toBeDefined();
 
-          await client.push(session2);
-          const result = await client.pull(session1, { object: c1y_2 });
+          await session2.push();
+          const result = await session1.pull({ object: c1y_2 });
 
           const c1y_1 = result.objects.values().next().value as C1;
 
           expect(c1y_1).toBeDefined();
 
           if (!c1x_1.canWriteC1C1Many2Manies) {
-            await client.pull(session1, { object: c1x_1 });
+            await session1.pull({ object: c1x_1 });
           }
 
           c1x_1.C1C1Many2One = c1y_1;
@@ -77,7 +77,7 @@ test('databaseManyToOneRemoveRole', async () => {
         for (const contextFactory of contextFactories()) {
           const ctx = contextFactory();
           const { session1, session2 } = ctx;
-          const { m, client } = fixture;
+          const { m } = fixture;
 
           const c1x_1 = await ctx.create<C1>(session1, m.C1, mode1);
           const c1y_2 = await ctx.create<C1>(session2, m.C1, mode2);
@@ -85,15 +85,15 @@ test('databaseManyToOneRemoveRole', async () => {
           expect(c1x_1).toBeDefined();
           expect(c1y_2).toBeDefined();
 
-          await client.push(session2);
-          const result = await client.pull(session1, { object: c1y_2 });
+          await session2.push();
+          const result = await session1.pull({ object: c1y_2 });
 
           const c1y_1 = result.objects.values().next().value as C1;
 
           expect(c1y_1).toBeDefined();
 
           if (!c1x_1.canWriteC1C1Many2One) {
-            await client.pull(session1, { object: c1x_1 });
+            await session1.pull({ object: c1x_1 });
           }
 
           c1x_1.C1C1Many2One = c1y_1;
@@ -101,7 +101,7 @@ test('databaseManyToOneRemoveRole', async () => {
           await push(session1);
 
           if (!c1x_1.canWriteC1C1Many2One) {
-            await client.pull(session1, { object: c1x_1 });
+            await session1.pull({ object: c1x_1 });
           }
 
           c1x_1.C1C1Many2One = null;
