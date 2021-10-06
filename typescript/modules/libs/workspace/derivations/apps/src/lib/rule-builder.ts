@@ -4,6 +4,7 @@ import { M } from '@allors/workspace/meta/default';
 import { AutomatedAgentDisplayNameRule } from './rules/automated-agent-display-name.rule';
 import { EmailAddressDisplayNameRule } from './rules/email-address-display-name.rule';
 import { InventoryItemFacilityNameRule } from './rules/inventory-item-facility-name.rule';
+import { InventoryItemPartDisplayNameRule } from './rules/inventory-item-part-display-name.rule';
 import { OrganisationDisplayAddressRule } from './rules/organisation-display-address.rule';
 import { OrganisationDisplayAddress2Rule } from './rules/organisation-display-address2.rule';
 import { OrganisationDisplayAddress3Rule } from './rules/organisation-display-address3.rule';
@@ -32,6 +33,7 @@ export function ruleBuilder(m: M): IRule[] {
     new AutomatedAgentDisplayNameRule(m),
     new EmailAddressDisplayNameRule(m),
     new InventoryItemFacilityNameRule(m),
+    new InventoryItemPartDisplayNameRule(m),
     new OrganisationDisplayAddressRule(m),
     new OrganisationDisplayAddress2Rule(m),
     new OrganisationDisplayAddress3Rule(m),
