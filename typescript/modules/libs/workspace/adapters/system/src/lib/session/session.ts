@@ -1,4 +1,4 @@
-import { IChangeSet, IObject, ISession, IStrategy, IValidation, IWorkspaceResult } from '@allors/workspace/domain/system';
+import { IChangeSet, IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, IResult, IRule, ISession, IStrategy, IValidation, IWorkspaceResult, Method, Procedure, Pull } from '@allors/workspace/domain/system';
 import { AssociationType, Class, Composite, Origin } from '@allors/workspace/meta/system';
 
 import { Workspace } from '../workspace/workspace';
@@ -34,6 +34,8 @@ export abstract class Session implements ISession {
 
   private strategiesByClass: Map<Class, Set<Strategy>>;
 
+  private activeRules: Set<IRule>;
+
   constructor(public workspace: Workspace) {
     this.ranges = new DefaultStrategyRanges();
 
@@ -44,6 +46,20 @@ export abstract class Session implements ISession {
     this.changeSetTracker = new ChangeSetTracker();
     this.pushToDatabaseTracker = new PushToDatabaseTracker();
     this.pushToWorkspaceTracker = new PushToWorkspaceTracker();
+  }
+  activate(rules: IRule[]): void {
+    if (rules == null) {
+      return;
+    }
+
+    if (this.activeRules == null) {
+      this.activeRules = new Set(rules);
+      return;
+    }
+
+    for (const rule of rules) {
+      this.activeRules.add(rule);
+    }
   }
 
   get hasChanges(): boolean {
@@ -58,8 +74,12 @@ export abstract class Session implements ISession {
   }
 
   derive(): IValidation {
+    if (this.activeRules == null) {
+      return { errors: ['No active rules'] };
+    }
+
     const configuration = this.workspace.database.configuration;
-    const derivation = new Derivation(this, configuration.engine, configuration.maxCycles ?? 10);
+    const derivation = new Derivation(this, configuration.engine, this.activeRules, configuration.maxCycles ?? 10);
     return derivation.execute();
   }
 
@@ -285,6 +305,14 @@ export abstract class Session implements ISession {
 
     return strategies;
   }
+
+  abstract invoke(methodOrMethods: Method | Method[], options?: InvokeOptions): Promise<IInvokeResult>;
+
+  abstract call(procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult>;
+
+  abstract pull(pulls: Pull | Pull[]): Promise<IPullResult>;
+
+  abstract push(): Promise<IPushResult>;
 
   abstract instantiateWorkspaceStrategy(id: number): Strategy;
 }

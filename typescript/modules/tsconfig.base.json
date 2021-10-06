@@ -17,8 +17,7 @@
     "paths": {
       "@allors/protocol/json/system": ["libs/protocol/json/system/src/index.ts"],
       "@allors/workspace/adapters/json/system": ["libs/workspace/adapters/json/system/src/index.ts"],
-      "@allors/workspace/adapters/json/system-tests-async": ["libs/workspace/adapters/json/system-tests-async/src/index.ts"],
-      "@allors/workspace/adapters/json/system-tests-reactive": ["libs/workspace/adapters/json/system-tests-reactive/src/index.ts"],
+      "@allors/workspace/adapters/json/system-tests": ["libs/workspace/adapters/json/system-tests/src/index.ts"],
       "@allors/workspace/adapters/system": ["libs/workspace/adapters/system/src/index.ts"],
       "@allors/workspace/adapters/system-tests": ["libs/workspace/adapters/system-tests/src/index.ts"],
       "@allors/workspace/angular/apps": ["libs/workspace/angular/apps/src/index.ts"],

@@ -10,7 +10,7 @@ import { enGB } from 'date-fns/locale';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { Configuration, Engine, PrototypeObjectFactory } from '@allors/workspace/adapters/system';
-import { DatabaseConnection, ReactiveDatabaseClient } from '@allors/workspace/adapters/json/system';
+import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
 import { M } from '@allors/workspace/meta/default';
@@ -129,9 +129,6 @@ import { BaseContext } from '../allors/base-context';
 export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
   return async () => {
     const angularClient = new AngularClient(httpClient, environment.baseUrl, environment.authUrl);
-    const client = new ReactiveDatabaseClient(angularClient);
-    workspaceService.client = client;
-    workspaceService.contextBuilder = () => new BaseContext(workspaceService);
 
     const metaPopulation = new LazyMetaPopulation(data);
     const m = metaPopulation as unknown as M;
@@ -146,9 +143,11 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
       engine: new Engine(ruleBuilder(m)),
     };
 
-    const database = new DatabaseConnection(configuration);
+    const database = new DatabaseConnection(configuration, angularClient);
     const workspace = database.createWorkspace();
     workspaceService.workspace = workspace;
+
+    workspaceService.contextBuilder = () => new BaseContext(workspaceService);
 
     configure(m);
   };

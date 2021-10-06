@@ -1,94 +1,36 @@
-import { Observable } from 'rxjs';
-
 import { AccessRequest, AccessResponse, InvokeRequest, PermissionRequest, PermissionResponse, PullRequest, PullResponse, PushRequest, PushResponse, Response, SyncRequest, SyncResponse } from '@allors/protocol/json/system';
-import { IReactiveDatabaseJsonClient } from '@allors/workspace/adapters/json/system';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { IDatabaseJsonClient } from '@allors/workspace/adapters/json/system';
+import { HttpClient } from '@angular/common/http';
 
-interface AuthenticationTokenRequest {
-  /** login */
-  l: string;
-
-  /** password */
-  p: string;
-}
-
-interface AuthenticationTokenResponse {
-  /** Authenticated */
-  a: boolean;
-
-  /** User id */
-  u: number;
-
-  /** Token */
-  t: string;
-}
-
-export class AngularClient implements IReactiveDatabaseJsonClient {
-  userId: number;
-  jwtToken: string;
-  httpHeaders: HttpHeaders;
-
+export class AngularClient implements IDatabaseJsonClient {
   constructor(public httpClient: HttpClient, public baseUrl: string, public authUrl: string) {}
 
-  pull(pullRequest: PullRequest): Observable<PullResponse> {
-    return this.post<PullResponse>('pull', pullRequest);
+  async pull(pullRequest: PullRequest): Promise<PullResponse> {
+    return await this.post('pull', pullRequest);
   }
 
-  sync(syncRequest: SyncRequest): Observable<SyncResponse> {
-    return this.post<SyncResponse>('sync', syncRequest);
+  async sync(syncRequest: SyncRequest): Promise<SyncResponse> {
+    return await this.post('sync', syncRequest);
   }
 
-  push(pushRequest: PushRequest): Observable<PushResponse> {
-    return this.post<PushResponse>('push', pushRequest);
+  async push(pushRequest: PushRequest): Promise<PushResponse> {
+    return await this.post('push', pushRequest);
   }
 
-  invoke(invokeRequest: InvokeRequest): Observable<Response> {
-    return this.post<Response>('invoke', invokeRequest);
+  async invoke(invokeRequest: InvokeRequest): Promise<Response> {
+    return await this.post('invoke', invokeRequest);
   }
 
-  access(accessRequest: AccessRequest): Observable<AccessResponse> {
-    return this.post<AccessResponse>('access', accessRequest);
+  async access(accessRequest: AccessRequest): Promise<AccessResponse> {
+    return await this.post('access', accessRequest);
   }
 
-  permission(permissionRequest: PermissionRequest): Observable<PermissionResponse> {
-    return this.post<PermissionResponse>('permission', permissionRequest);
+  async permission(permissionRequest: PermissionRequest): Promise<PermissionResponse> {
+    return await this.post('permission', permissionRequest);
   }
 
-  post<T>(relativeUrl: string, data: any): Observable<T> {
-    return this.httpClient.post<T>(`${this.baseUrl}${relativeUrl}`, data);
-  }
-
-  async login(login: string, password?: string): Promise<boolean> {
-    const tokenRequest: Partial<AuthenticationTokenRequest> = {
-      l: login,
-      p: password,
-    };
-
-    const response = await this.httpClient
-      .post(`${this.baseUrl}${this.authUrl}`, tokenRequest, {
-        headers: new HttpHeaders({
-          'Content-Type': 'application/json',
-        }),
-      })
-      .toPromise();
-
-    const tokenResponse = response as AuthenticationTokenResponse;
-
-    if (tokenResponse.a) {
-      this.userId = tokenResponse.u;
-      this.jwtToken = tokenResponse.t;
-      this.httpHeaders = new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.jwtToken}`,
-      });
-
-      return true;
-    }
-
-    this.userId = null;
-    this.jwtToken = null;
-    this.httpHeaders = null;
-    return false;
+  async post<T>(relativeUrl: string, data: any): Promise<T> {
+    return this.httpClient.post<T>(`${this.baseUrl}${relativeUrl}`, data).toPromise();
   }
 
   async setup(population = 'full') {

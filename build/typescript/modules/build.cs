@@ -29,7 +29,7 @@ partial class Build
             .SetProcessWorkingDirectory(Paths.TypescriptModules)
             .SetCommand("test:workspace-adapters-system")));
 
-    private Target TypescriptWorkspaceAdaptersJsonSystemAsync => _ => _
+    private Target TypescriptWorkspaceAdaptersJsonSystem => _ => _
         .After(DotnetCoreInstall)
         .After(TypescriptInstall)
         .DependsOn(EnsureDirectories)
@@ -45,26 +45,7 @@ partial class Build
             NpmRun(s => s
                 .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
                 .SetProcessWorkingDirectory(Paths.TypescriptModules)
-                .SetCommand("test:workspace-adapters-json-system-async"));
-        });
-
-    private Target TypescriptWorkspaceAdaptersJsonSystemReactive => _ => _
-        .After(DotnetCoreInstall)
-        .After(TypescriptInstall)
-        .DependsOn(EnsureDirectories)
-        .DependsOn(DotnetCoreGenerate)
-        .DependsOn(DotnetCorePublishServer)
-        .DependsOn(DotnetCorePublishCommands)
-        .DependsOn(DotnetCoreResetDatabase)
-        .Executes(async () =>
-        {
-            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
-            using var server = new Server(Paths.ArtifactsCoreServer);
-            await server.Ready();
-            NpmRun(s => s
-                .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-                .SetProcessWorkingDirectory(Paths.TypescriptModules)
-                .SetCommand("test:workspace-adapters-json-system-reactive"));
+                .SetCommand("test:workspace-adapters-json-system"));
         });
 
     private Target TypescriptWorkspaceTest => _ => _
@@ -72,12 +53,7 @@ partial class Build
          .DependsOn(TypescriptWorkspaceMetaJsonSystem)
          .DependsOn(TypescriptWorkspaceAdaptersSystem);
 
-    private Target TypescriptWorkspaceAsyncTest => _ => _
+    private Target TypescriptWorkspaceAdaptersJsonTest => _ => _
         .After(TypescriptInstall)
-        .DependsOn(TypescriptWorkspaceAdaptersJsonSystemAsync);
-
-    private Target TypescriptWorkspaceReactiveTest => _ => _
-        .After(TypescriptInstall)
-        .DependsOn(TypescriptWorkspaceAdaptersJsonSystemReactive);
-
+        .DependsOn(TypescriptWorkspaceAdaptersJsonSystem);
 }

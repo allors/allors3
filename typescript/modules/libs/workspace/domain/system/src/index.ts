@@ -13,8 +13,6 @@ export * from './lib/api/pull/invoke-options';
 
 export * from './lib/api/push/ipush-result';
 
-export * from './lib/api/iasync-database-client';
-export * from './lib/api/ireactive-database-client';
 export * from './lib/api/iresult';
 export * from './lib/api/result-error';
 

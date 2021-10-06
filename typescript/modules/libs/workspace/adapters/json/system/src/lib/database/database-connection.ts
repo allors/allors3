@@ -5,6 +5,7 @@ import { Class, MethodType, OperandType, RelationType } from '@allors/workspace/
 import { DatabaseRecord } from './database-record';
 import { ResponseContext } from './security/response-context';
 import { Workspace } from '../workspace/workspace';
+import { IDatabaseJsonClient } from '../idatabase-json-client';
 
 export class DatabaseConnection extends SystemDatabaseConnection {
   private recordsById: Map<number, DatabaseRecord>;
@@ -17,7 +18,7 @@ export class DatabaseConnection extends SystemDatabaseConnection {
   writePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
   executePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
 
-  constructor(configuration: Configuration) {
+  constructor(configuration: Configuration, public client: IDatabaseJsonClient) {
     super(configuration);
 
     this.recordsById = new Map();

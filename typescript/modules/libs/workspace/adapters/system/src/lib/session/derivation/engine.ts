@@ -14,7 +14,8 @@ export class Engine {
 
   patternsByClassByRule: Map<IRule, Map<Class, IPattern[]>>;
 
-  public constructor(rules: IRule[]) {
+  public constructor(public rules: Readonly<IRule[]>) {
+    Object.freeze(this.rules);
     this.classesByRule = new Map();
     this.rulesByClass = new Map();
     this.patternsByRoleTypeByClass = new Map();

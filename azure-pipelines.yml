@@ -36,10 +36,8 @@ stages:
           target: 'CiDotnetAppsDatabaseTest'
         typescript_workspace:
           target: 'CiTypescriptWorkspaceTest'
-        typescript_workspace_async:
-          target: 'CiTypescriptWorkspaceAsyncTest'
-        typescript_workspace_reactive:
-          target: 'CiTypescriptWorkspaceReactiveTest'
+        typescript_workspace_adapters_json:
+          target: 'CiTypescriptWorkspaceAdaptersJsonTest'
         demos:
           target: 'CiDemosTest'
 
@@ -59,6 +57,8 @@ stages:
         version: 5.0.x
         installationPath: $(Agent.ToolsDirectory)/dotnet
     - task: PowerShell@2
+      env:
+        NODE_OPTIONS: --max_old_space_size=16384
       inputs:
         targetType: 'filePath'
         filePath: 'build.ps1'

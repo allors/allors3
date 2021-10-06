@@ -36,14 +36,14 @@
         </div>
 
         <div class="row">
-          <a-mat-autocomplete class="col-md" [object]="data" [roleType]="m.Data.AutocompleteFilter" [filter]="peopleFilter.create(allors)" display="UserName" hint="With filter"></a-mat-autocomplete>
+          <a-mat-autocomplete class="col-md" [object]="data" [roleType]="m.Data.AutocompleteFilter" [filter]="peopleFilter.create(allors.context)" display="UserName" hint="With filter"></a-mat-autocomplete>
           <a-mat-autocomplete
             class="col-md"
             [object]="data"
             [roleType]="m.Data.AutocompleteDerivedFilter"
             [assignedRoleType]="m.Data.AutocompleteAssignedFilter"
             [derivedInitialRole]="jane"
-            [filter]="peopleFilter.create(allors)"
+            [filter]="peopleFilter.create(allors.context)"
             display="UserName"
             hint="With filter"
           ></a-mat-autocomplete>
@@ -100,8 +100,8 @@
         <div class="row">
           <div class="col-md">
             <h4>Organisation Where Jane is Manager</h4>
-            <a-mat-association-autocomplete [object]="jane" [associationType]="m.Person.OrganisationWhereManager" [filter]="organisationFilter.create(allors)" display="Name"></a-mat-association-autocomplete>
-            <a-mat-association-autocomplete [object]="jane" [associationType]="m.Person.OrganisationWhereManager" [filter]="organisationFilter.create(allors)" display="Name"></a-mat-association-autocomplete>
+            <a-mat-association-autocomplete [object]="jane" [associationType]="m.Person.OrganisationWhereManager" [filter]="organisationFilter.create(allors.context)" display="Name"></a-mat-association-autocomplete>
+            <a-mat-association-autocomplete [object]="jane" [associationType]="m.Person.OrganisationWhereManager" [filter]="organisationFilter.create(allors.context)" display="Name"></a-mat-association-autocomplete>
           </div>
           <div class="col-md">
             <h4>Organisations with Managers ({{ organisationsWithManagers?.length }})</h4>
@@ -116,8 +116,8 @@
         <div class="row">
           <div class="col-md">
             <h4>Organisation Where Jane is Employee</h4>
-            <a-mat-association-autocomplete [object]="jane" [associationType]="m.Person.OrganisationWhereEmployee" [filter]="organisationFilter.create(allors)" display="Name"></a-mat-association-autocomplete>
-            <a-mat-association-autocomplete [object]="jane" [associationType]="m.Person.OrganisationWhereEmployee" [filter]="organisationFilter.create(allors)" display="Name"></a-mat-association-autocomplete>
+            <a-mat-association-autocomplete [object]="jane" [associationType]="m.Person.OrganisationWhereEmployee" [filter]="organisationFilter.create(allors.context)" display="Name"></a-mat-association-autocomplete>
+            <a-mat-association-autocomplete [object]="jane" [associationType]="m.Person.OrganisationWhereEmployee" [filter]="organisationFilter.create(allors.context)" display="Name"></a-mat-association-autocomplete>
           </div>
           <div class="col-md">
             <h4>Organisations with Empoyees ({{ organisationsWithEmployees?.length }})</h4>
