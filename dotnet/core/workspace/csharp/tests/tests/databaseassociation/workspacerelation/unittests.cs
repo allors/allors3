@@ -55,8 +55,8 @@ namespace Tests.Workspace.DatabaseAssociation.WorkspaceRelation
             this.contextFactories = new Func<Context>[]
             {
                 () => singleSessionContext,
-                () => new SingleSessionContext(this, "Single"),
-                () => multipleSessionContext,
+                //() => new SingleSessionContext(this, "Single"),
+                //() => multipleSessionContext,
                 () => new MultipleSessionContext(this, "Multiple"),
             };
         }

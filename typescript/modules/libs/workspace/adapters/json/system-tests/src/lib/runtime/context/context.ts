@@ -2,7 +2,6 @@ import { IObject, ISession, IWorkspace } from '@allors/workspace/domain/system';
 import { Class, Origin } from '@allors/workspace/meta/system';
 import { Fixture } from '../../fixture';
 import { DatabaseMode } from './modes/database-mode';
-import { WorkspaceMode } from './modes/workspace-mode';
 
 export abstract class Context {
   constructor(public fixture: Fixture, public name: string) {
@@ -28,9 +27,7 @@ export abstract class Context {
     return this.fixture.client;
   }
 
-  async create<T extends IObject>(session: ISession, cls: Class, mode: DatabaseMode): Promise<T>;
-  async create<T extends IObject>(session: ISession, cls: Class, mode: WorkspaceMode): Promise<T>;
-  async create<T extends IObject>(session: ISession, cls: Class, mode: DatabaseMode | WorkspaceMode): Promise<T> {
+  async create<T extends IObject>(session: ISession, cls: Class, mode: DatabaseMode): Promise<T> {
     if (cls.origin === Origin.Database) {
       switch (mode as DatabaseMode) {
         case DatabaseMode.NoPush:
@@ -47,36 +44,18 @@ export abstract class Context {
           await this.client.pull(session, { object: pushAndPullObject });
           return pushAndPullObject;
         }
-        case DatabaseMode.SharedDatabase: {
-          const sharedDatabaseObject = this.sharedDatabaseSession.create<T>(cls);
-          await this.client.push(this.sharedDatabaseSession);
-          const sharedResult = await this.client.pull(session, { object: sharedDatabaseObject });
-          return sharedResult.objects.values().next().value;
-        }
-        case DatabaseMode.ExclusiveDatabase: {
-          const exclusiveDatabaseObject = this.exclusiveDatabaseSession.create<T>(cls);
-          await this.client.push(this.exclusiveDatabaseSession);
-          const exclusiveResult = await this.client.pull(session, { object: exclusiveDatabaseObject });
-          return exclusiveResult.objects.values().next().value;
-        }
-        default:
-          throw new Error(mode.toString());
-      }
-    } else {
-      switch (mode as WorkspaceMode) {
-        case WorkspaceMode.NoPush:
-          return session.create<T>(cls);
-        case WorkspaceMode.Push: {
-          const pushObject = session.create<T>(cls);
-          session.pushToWorkspace();
-          return pushObject;
-        }
-        case WorkspaceMode.PushAndPull: {
-          const pushAndPullObject = session.create<T>(cls);
-          session.pushToWorkspace();
-          session.pullFromWorkspace();
-          return pushAndPullObject;
-        }
+        // case DatabaseMode.SharedDatabase: {
+        //   const sharedDatabaseObject = this.sharedDatabaseSession.create<T>(cls);
+        //   await this.client.push(this.sharedDatabaseSession);
+        //   const sharedResult = await this.client.pull(session, { object: sharedDatabaseObject });
+        //   return sharedResult.objects.values().next().value;
+        // }
+        // case DatabaseMode.ExclusiveDatabase: {
+        //   const exclusiveDatabaseObject = this.exclusiveDatabaseSession.create<T>(cls);
+        //   await this.client.push(this.exclusiveDatabaseSession);
+        //   const exclusiveResult = await this.client.pull(session, { object: exclusiveDatabaseObject });
+        //   return exclusiveResult.objects.values().next().value;
+        // }
         default:
           throw new Error(mode.toString());
       }

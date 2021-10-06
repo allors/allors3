@@ -11,9 +11,9 @@ const pushes = [
 
 function* contextFactories() {
   yield () => singleSessionContext;
-  yield () => new SingleSessionContext(fixture, 'Single');
+  // yield () => new SingleSessionContext(fixture, 'Single');
   yield () => multipleSessionContext;
-  yield () => new MultipleSessionContext(fixture, 'Multiple');
+  // yield () => new MultipleSessionContext(fixture, 'Multiple');
 }
 
 let fixture: Fixture;
