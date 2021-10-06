@@ -1,6 +1,7 @@
 export { AutomatedAgentDisplayNameRule } from './lib/rules/automated-agent-display-name.rule';
 export { EmailAddressDisplayNameRule } from './lib/rules/email-address-display-name.rule';
 export { InventoryItemFacilityNameRule } from './lib/rules/inventory-item-facility-name.rule';
+export { InventoryItemPartDisplayNameRule } from './lib/rules/inventory-item-part-display-name.rule';
 export { OrganisationDisplayAddressRule } from './lib/rules/organisation-display-address.rule';
 export { OrganisationDisplayAddress2Rule } from './lib/rules/organisation-display-address2.rule';
 export { OrganisationDisplayAddress3Rule } from './lib/rules/organisation-display-address3.rule';
