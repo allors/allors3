@@ -55,7 +55,7 @@ namespace Allors.Repository
         [Id("8fc60462-287d-47df-a6d2-6ac857f2afbb")]
         #endregion
         [Derived]
-        [Size(-1)]
+        [Origin(Origin.Session)]
         [Workspace(Default)]
         public string PartDisplayName { get; set; }
 
