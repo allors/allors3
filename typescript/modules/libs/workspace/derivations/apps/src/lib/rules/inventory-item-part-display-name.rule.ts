@@ -1,9 +1,10 @@
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { InventoryItem } from '@allors/workspace/domain/default';
+import { InventoryItemsWherePart } from '../../../../../meta/apps/src/lib/generated/m.g';
 
-export class InventoryItemFacilityNameRule implements IRule {
-  id= 'b3a6f2cc2ccb43d883e09cd03570c73a';
+export class InventoryItemPartDisplayNameRule implements IRule {
+  id= '3d754fffc68a425b8fa94ba60e6b38e0';
   patterns: IPattern[];
 
   constructor(m: M) {
@@ -12,13 +13,9 @@ export class InventoryItemFacilityNameRule implements IRule {
     this.patterns = [
       {
         kind: 'RolePattern',
-        roleType: m.InventoryItem.Facility,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.Facility.Name,
-        tree: t.Facility({
-          InventoryItemsWhereFacility: {},
+        roleType: m.Part.Name,
+        tree: t.Part({
+          InventoryItemsWherePart: {},
         }),
       },
     ];
@@ -26,7 +23,7 @@ export class InventoryItemFacilityNameRule implements IRule {
 
   derive(cycle: ICycle, matches: InventoryItem[]) {
     for (const match of matches) {
-      match.FacilityName = match.Facility?.Name ?? '';
+      match.PartDisplayName = match.Part?.Name ?? '';
     }
   }
 }

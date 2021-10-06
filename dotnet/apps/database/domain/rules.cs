@@ -236,7 +236,6 @@ namespace Allors.Database.Domain
                 new PartSyncInventoryItemsRule(m),
                 new InventoryItemTransactionRule(m),
                 new InventoryItemRule(m),
-                new InventoryItemPartDisplayNameRule(m),
                 new InventoryItemSearchStringRule(m),
                 new CatalogueImageRule(m),
                 new CatalogueLocalisedDescriptionsRule(m),
