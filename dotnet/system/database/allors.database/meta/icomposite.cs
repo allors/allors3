@@ -13,6 +13,8 @@ namespace Allors.Database.Meta
     {
         IEnumerable<IInterface> Supertypes { get; }
 
+        IEnumerable<IComposite> Subtypes { get; }
+
         IEnumerable<IClass> Classes { get; }
 
         bool ExistExclusiveClass { get; }

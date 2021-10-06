@@ -3,10 +3,14 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Domain
+namespace Allors.Database.Services
 {
-    public interface IDependencyService
-    {
+    using Meta;
 
+    public interface IDependencySet
+    {
+        IPropertyType[] GetDependencies(IComposite composite);
+
+        void Add(IComposite composite, IPropertyType propertyType);
     }
 }

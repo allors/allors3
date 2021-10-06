@@ -26,11 +26,12 @@ export abstract class Workspace implements IWorkspace {
 
     this.recordById = new Map();
   }
+
   get rules(): Readonly<IRule[]> {
     return this.database.configuration.engine.rules;
   }
 
-  abstract createSession(): ISession;
+  abstract createSession(dependencyId?: string): ISession;
 
   getRecord(id: number): WorkspaceRecord | undefined {
     return this.recordById.get(id);

@@ -66,7 +66,6 @@ namespace Allors.Database.Meta
         }
 
         IEnumerable<IInterface> IComposite.Supertypes => this.Supertypes;
-
         /// <summary>
         /// Gets the super types.
         /// </summary>
@@ -165,6 +164,7 @@ namespace Allors.Database.Meta
             }
         }
 
+        IEnumerable<IComposite> IComposite.Subtypes => this.Subtypes;
         IEnumerable<IComposite> ICompositeBase.Subtypes => this.Subtypes;
         public abstract IEnumerable<ICompositeBase> Subtypes { get; }
 
@@ -338,7 +338,7 @@ namespace Allors.Database.Meta
 
             this.derivedMethodTypes = new HashSet<IMethodTypeBase>(methodTypes);
         }
-        
+
         /// <summary>
         /// Derive super types recursively.
         /// </summary>

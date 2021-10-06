@@ -70,7 +70,7 @@ test('personDisplayNameNotActivated', async () => {
 
 test('organisationDisplayName', async () => {
   const { workspace, m } = fixture;
-  const session = workspace.createSession();
+  const session = workspace.createSession('organisationDisplayName');
 
   const rules = workspace.rules.filter((v) => v.id === '000c900fc851453285519f3601758e6f');
   session.activate(rules);

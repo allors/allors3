@@ -36,7 +36,7 @@ export abstract class Session implements ISession {
 
   private activeRules: Set<IRule>;
 
-  constructor(public workspace: Workspace) {
+  constructor(public workspace: Workspace, public dependencyId?: string) {
     this.ranges = new DefaultStrategyRanges();
 
     this.strategyByWorkspaceId = new Map();

@@ -11,6 +11,8 @@ namespace Allors.Database.Meta
     {
         new IEnumerable<IInterfaceBase> Supertypes { get; }
 
+        new IEnumerable<IComposite> Subtypes { get; }
+
         new IEnumerable<IClassBase> Classes { get; }
 
         new IEnumerable<IMethodTypeBase> MethodTypes { get; }
@@ -24,8 +26,6 @@ namespace Allors.Database.Meta
         IEnumerable<IRoleType> ExclusiveRoleTypes { get; }
 
         IEnumerable<IInterface> DirectSupertypes { get; }
-
-        IEnumerable<IComposite> Subtypes { get; }
 
         void DeriveDirectSupertypes(HashSet<IInterfaceBase> sharedInterfaces);
 

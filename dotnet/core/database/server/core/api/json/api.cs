@@ -42,6 +42,7 @@ namespace Allors.Database.Protocol.Json
             this.PreparedExtents = databaseServices.Get<IPreparedExtents>();
             this.Build = @class => DefaultObjectBuilder.Build(transaction, @class);
             this.Derive = () => this.Transaction.Derive(false);
+            this.DependencyService = databaseServices.Get<IDependencyService>();
 
             this.UnitConvert = new UnitConvert();
         }
@@ -70,6 +71,8 @@ namespace Allors.Database.Protocol.Json
 
         public UnitConvert UnitConvert { get; }
 
+        public IDependencyService DependencyService { get; }
+
         public InvokeResponse Invoke(InvokeRequest invokeRequest)
         {
             var invokeResponseBuilder = new InvokeResponseBuilder(this.Transaction, this.Derive, this.AccessControl, this.AllowedClasses);
@@ -78,7 +81,7 @@ namespace Allors.Database.Protocol.Json
 
         public PullResponse Pull(PullRequest pullRequest)
         {
-            var response = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges);
+            var response = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, this.DependencyService);
             return response.Build(pullRequest);
         }
 
@@ -125,6 +128,6 @@ namespace Allors.Database.Protocol.Json
         }
 
         // TODO: Delete
-        public PullResponseBuilder CreatePullResponseBuilder() => new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges);
+        public PullResponseBuilder CreatePullResponseBuilder() => new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, this.DependencyService);
     }
 }
