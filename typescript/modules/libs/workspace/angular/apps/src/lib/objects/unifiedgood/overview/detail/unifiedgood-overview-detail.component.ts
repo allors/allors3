@@ -228,19 +228,18 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
         this.allors.context.reset();
 
         this.good = loaded.object<UnifiedGood>(m.UnifiedGood);
-        this.originalCategories = loaded.collection<ProductCategory>(m.ProductCategory);
+        this.originalCategories = loaded.collection<ProductCategory>('OriginalCategories');
         this.selectedCategories = this.originalCategories;
 
         this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
         this.productTypes = loaded.collection<ProductType>(m.ProductType);
         this.brands = loaded.collection<Brand>(m.Brand);
-        this.locales = loaded.collection<Locale>(m.Locale);
+        this.locales = loaded.collection<Locale>(m.Singleton.AdditionalLocales);
         this.facilities = loaded.collection<Facility>(m.Facility);
         this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
         this.manufacturers = loaded.collection<Organisation>(m.Organisation);
         this.settings = loaded.object<Settings>(m.Settings);
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
-        this.locales = loaded.collection<Locale>(m.Locale);
         this.manufacturers = loaded.collection<Organisation>(m.Organisation);
         this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
 
