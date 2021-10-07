@@ -27,6 +27,10 @@ export abstract class Workspace implements IWorkspace {
     this.recordById = new Map();
   }
 
+  rule(cls: any): IRule {
+    return this.rules.find((v) => v instanceof cls);
+  }
+
   get rules(): Readonly<IRule[]> {
     return this.database.configuration.engine.rules;
   }

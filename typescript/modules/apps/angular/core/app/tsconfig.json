@@ -26,12 +26,14 @@
       "@allors/workspace/configuration/core": ["libs/workspace/configuration/core/src/index.ts"],
       "@allors/workspace/derivations/core": ["libs/workspace/derivations/core/src/index.ts"],
       "@allors/workspace/derivations/core-custom": ["libs/workspace/derivations/core-custom/src/index.ts"],
-      "@allors/workspace/domain/default": ["libs/workspace/domain/core/src/index.ts"],
       "@allors/workspace/domain/system": ["libs/workspace/domain/system/src/index.ts"],
-      "@allors/workspace/meta/default": ["libs/workspace/meta/core/src/index.ts"],
-      "@allors/workspace/meta/json/default": ["libs/workspace/meta/json/core/src/index.ts"],
       "@allors/workspace/meta/json/system": ["libs/workspace/meta/json/system/src/index.ts"],
-      "@allors/workspace/meta/system": ["libs/workspace/meta/system/src/index.ts"]
+      "@allors/workspace/meta/system": ["libs/workspace/meta/system/src/index.ts"],
+      // Default
+      "@allors/workspace/domain/default": ["libs/workspace/domain/core/src/index.ts"],
+      "@allors/workspace/derivations/default": ["libs/workspace/domain/derivations/src/index.ts"],
+      "@allors/workspace/meta/default": ["libs/workspace/meta/core/src/index.ts"],
+      "@allors/workspace/meta/json/default": ["libs/workspace/meta/json/core/src/index.ts"]
     }
   },
   "angularCompilerOptions": {

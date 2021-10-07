@@ -7,5 +7,7 @@ export interface IWorkspace {
 
   rules: Readonly<IRule[]>;
 
+  rule(cls: any): IRule;
+
   createSession(): ISession;
 }
