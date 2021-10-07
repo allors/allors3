@@ -20,21 +20,21 @@ namespace Allors.Database.Protocol.Json
     {
         private readonly IUnitConvert unitConvert;
         private readonly IRanges<long> ranges;
-        private readonly IDependencyService dependencyService;
+        private readonly IDependencies dependencies;
 
         private readonly Dictionary<string, ISet<IObject>> collectionsByName = new Dictionary<string, ISet<IObject>>();
         private readonly Dictionary<string, IObject> objectByName = new Dictionary<string, IObject>();
         private readonly Dictionary<string, object> valueByName = new Dictionary<string, object>();
 
-        private readonly HashSet<IObject> objects;
+        private readonly PullResponseObjects pullResponseObjects;
 
         private List<IValidation> errors;
 
-        public PullResponseBuilder(ITransaction transaction, IAccessControl accessControl, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IUnitConvert unitConvert, IRanges<long> ranges, IDependencyService dependencyService)
+        public PullResponseBuilder(ITransaction transaction, IAccessControl accessControl, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IUnitConvert unitConvert, IRanges<long> ranges, IDependencies dependencies)
         {
             this.unitConvert = unitConvert;
             this.ranges = ranges;
-            this.dependencyService = dependencyService;
+            this.dependencies = dependencies;
             this.Transaction = transaction;
 
             this.AccessControl = accessControl;
@@ -42,7 +42,7 @@ namespace Allors.Database.Protocol.Json
             this.PreparedSelects = preparedSelects;
             this.PreparedExtents = preparedExtents;
 
-            this.objects = new HashSet<IObject>();
+            this.pullResponseObjects = new PullResponseObjects(this.dependencies);
         }
 
         public ITransaction Transaction { get; }
@@ -93,28 +93,12 @@ namespace Allors.Database.Protocol.Json
 
         public void AddObject(string name, IObject @object)
         {
-            if (@object != null)
-            {
-                this.AddObject(name, @object, null);
-            }
+            this.AddObjectInternal(name, @object);
         }
 
         public void AddObject(string name, IObject @object, Node[] tree)
         {
-            if (@object != null && this.AllowedClasses?.Contains(@object.Strategy.Class) == true)
-            {
-                if (tree != null)
-                {
-                    // Prefetch
-                    var transaction = @object.Strategy.Transaction;
-                    var prefetcher = tree.BuildPrefetchPolicy();
-                    transaction.Prefetch(prefetcher, @object);
-                }
-
-                this.objects.Add(@object);
-                this.objectByName[name] = @object;
-                tree?.Resolve(@object, this.AccessControl, this.objects);
-            }
+            this.AddObjectInternal(name, @object, tree);
         }
 
         public void AddValue(string name, object value)
@@ -122,6 +106,25 @@ namespace Allors.Database.Protocol.Json
             if (value != null)
             {
                 this.valueByName.Add(name, value);
+            }
+        }
+
+        private void AddObjectInternal(string name, IObject @object, Node[] tree = null)
+        {
+            if (@object != null && this.AllowedClasses?.Contains(@object.Strategy.Class) == true)
+            {
+                if (tree != null)
+                {
+                    // TODO: include dependencies
+                    // Prefetch
+                    var transaction = @object.Strategy.Transaction;
+                    var prefetcher = tree.BuildPrefetchPolicy();
+                    transaction.Prefetch(prefetcher, @object);
+                }
+
+                this.pullResponseObjects.Add(@object);
+                this.objectByName[name] = @object;
+                tree?.Resolve(@object, this.AccessControl, this.pullResponseObjects.Add);
             }
         }
 
@@ -135,6 +138,7 @@ namespace Allors.Database.Protocol.Json
 
                 if (tree != null)
                 {
+                    // TODO: include dependencies
                     var prefetchPolicy = tree.BuildPrefetchPolicy();
 
                     ICollection<IObject> newCollection;
@@ -153,11 +157,11 @@ namespace Allors.Database.Protocol.Json
                         this.collectionsByName.Add(name, newSet);
                     }
 
-                    this.objects.UnionWith(newCollection);
+                    this.pullResponseObjects.Add(newCollection);
 
                     foreach (var newObject in newCollection)
                     {
-                        tree.Resolve(newObject, this.AccessControl, this.objects);
+                        tree.Resolve(newObject, this.AccessControl, this.pullResponseObjects.Add);
                     }
                 }
                 else if (existingCollection != null)
@@ -168,7 +172,7 @@ namespace Allors.Database.Protocol.Json
                 {
                     var newWorkspaceCollection = new HashSet<IObject>(filteredCollection);
                     this.collectionsByName.Add(name, newWorkspaceCollection);
-                    this.objects.UnionWith(newWorkspaceCollection);
+                    this.pullResponseObjects.Add(newWorkspaceCollection);
                 }
             }
         }
@@ -246,7 +250,7 @@ namespace Allors.Database.Protocol.Json
 
             pullResponse = new PullResponse
             {
-                p = this.objects.Select(v =>
+                p = this.pullResponseObjects.Objects.Select(v =>
                 {
                     var accessControlList = this.AccessControl[v];
 

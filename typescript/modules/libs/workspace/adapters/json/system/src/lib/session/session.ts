@@ -15,8 +15,8 @@ import { Strategy } from './strategy';
 export class Session extends SystemSession {
   database: DatabaseConnection;
 
-  constructor(workspace: Workspace, dependencyId?: string) {
-    super(workspace, dependencyId);
+  constructor(workspace: Workspace) {
+    super(workspace);
 
     this.database = this.workspace.database as DatabaseConnection;
   }
@@ -84,7 +84,7 @@ export class Session extends SystemSession {
 
   async call(procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult> {
     const pullRequest: PullRequest = {
-      d: this.dependencyId,
+      d: this.dependencies,
       p: procedureToJson(procedure),
       l: pulls.map((v) => pullToJson(v)),
     };
@@ -107,7 +107,7 @@ export class Session extends SystemSession {
     }
 
     const pullRequest: PullRequest = {
-      d: this.dependencyId,
+      d: this.dependencies,
       l: pulls.map((v) => pullToJson(v)),
     };
 

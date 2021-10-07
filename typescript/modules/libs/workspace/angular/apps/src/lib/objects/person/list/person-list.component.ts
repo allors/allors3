@@ -20,7 +20,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './person-list.component.html',
-  providers: [ContextService],
+  providers: [{ provide: 'dependencies', useValue: 'person-list' }, ContextService],
 })
 export class PersonListComponent extends TestScope implements OnInit, OnDestroy {
   public title = 'People';
@@ -44,6 +44,10 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
     titleService: Title
   ) {
     super();
+
+    const { session, workspace } = this.allors.context;
+    session.dependencies = 'person-list';
+    session.activate([workspace.rules.find((v) => v.id === '93d61e576fb14e898abcf0b06b8fcd34')]);
 
     titleService.setTitle(this.title);
 
@@ -112,7 +116,6 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
         })
       )
       .subscribe((loaded) => {
-
         this.allors.context.reset();
 
         const people = loaded.collection<Person>(m.Person);

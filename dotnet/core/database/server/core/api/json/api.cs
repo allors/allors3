@@ -81,7 +81,8 @@ namespace Allors.Database.Protocol.Json
 
         public PullResponse Pull(PullRequest pullRequest)
         {
-            var response = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, this.DependencyService);
+            var dependencies = this.DependencyService.GetDependencies(pullRequest.d);
+            var response = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, dependencies);
             return response.Build(pullRequest);
         }
 
@@ -128,6 +129,10 @@ namespace Allors.Database.Protocol.Json
         }
 
         // TODO: Delete
-        public PullResponseBuilder CreatePullResponseBuilder() => new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, this.DependencyService);
+        public PullResponseBuilder CreatePullResponseBuilder(string dependencyId = null)
+        {
+            var dependencies = this.DependencyService.GetDependencies(dependencyId);
+            return new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, dependencies);
+        }
     }
 }

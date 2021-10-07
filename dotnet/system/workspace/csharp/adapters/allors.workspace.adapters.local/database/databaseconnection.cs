@@ -99,7 +99,7 @@ namespace Allors.Workspace.Adapters.Local
         }
 
         internal IEnumerable<IObject> ObjectsToSync(Pull pull) =>
-            pull.DatabaseObjects.Where(v =>
+            pull.DatabaseObjects.Objects.Where(v =>
             {
                 if (this.recordsById.TryGetValue(v.Id, out var databaseRoles))
                 {

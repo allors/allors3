@@ -30,6 +30,9 @@ namespace Allors.Workspace.Adapters
             this.Services.OnInit(this);
         }
 
+        // TODO:
+        public string Dependencies { get; }
+
         public ISessionServices Services { get; }
 
         IWorkspace ISession.Workspace => this.Workspace;

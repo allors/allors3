@@ -39,7 +39,11 @@ export class AppsContext implements Context {
   }
 
   pull(pulls: Pull[]): Observable<IPullResult> {
-    return from(this.session.pull(pulls)).pipe(tap(() => this.session.derive()));
+    return from(this.session.pull(pulls)).pipe(
+      tap(() => {
+        this.session.derive();
+      })
+    );
   }
 
   push(): Observable<IResult> {

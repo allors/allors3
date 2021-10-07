@@ -7,7 +7,7 @@ namespace Allors.Database.Services
 {
     using Meta;
 
-    public interface IDependencySet
+    public interface IDependencies
     {
         IPropertyType[] GetDependencies(IComposite composite);
 

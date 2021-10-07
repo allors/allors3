@@ -31,7 +31,7 @@ export abstract class Workspace implements IWorkspace {
     return this.database.configuration.engine.rules;
   }
 
-  abstract createSession(dependencyId?: string): ISession;
+  abstract createSession(): ISession;
 
   getRecord(id: number): WorkspaceRecord | undefined {
     return this.recordById.get(id);

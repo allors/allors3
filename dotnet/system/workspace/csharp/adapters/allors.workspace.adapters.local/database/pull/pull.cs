@@ -27,22 +27,28 @@ namespace Allors.Workspace.Adapters.Local
             var database = this.Workspace.DatabaseConnection.Database;
             this.Transaction = database.CreateTransaction();
 
-            this.AllowedClasses = database.Services.Get<IMetaCache>().GetWorkspaceClasses(this.Workspace.DatabaseConnection.Configuration.Name);
+            this.AllowedClasses = database.Services.Get<IMetaCache>()
+                .GetWorkspaceClasses(this.Workspace.DatabaseConnection.Configuration.Name);
             this.PreparedSelects = database.Services.Get<IPreparedSelects>();
             this.PreparedExtents = database.Services.Get<IPreparedExtents>();
 
-            this.AccessControl = this.Transaction.Services.Get<IWorkspaceAclsService>().Create(this.Workspace.DatabaseConnection.Configuration.Name);
+            this.AccessControl = this.Transaction.Services.Get<IWorkspaceAclsService>()
+                .Create(this.Workspace.DatabaseConnection.Configuration.Name);
 
-            this.DatabaseObjects = new HashSet<Database.IObject>();
+            var dependencyService = database.Services.Get<IDependencyService>();
+            var dependencies = dependencyService.GetDependencies(session.Dependencies);
+            this.DatabaseObjects = new PullDatabaseObjects(dependencies);
         }
 
         public IAccessControl AccessControl { get; }
 
-        public HashSet<Database.IObject> DatabaseObjects { get; }
+        public PullDatabaseObjects DatabaseObjects { get; }
 
-        private Dictionary<string, ISet<Database.IObject>> DatabaseCollectionsByName { get; } = new Dictionary<string, ISet<Database.IObject>>();
+        private Dictionary<string, ISet<Database.IObject>> DatabaseCollectionsByName { get; } =
+            new Dictionary<string, ISet<Database.IObject>>();
 
-        private Dictionary<string, Database.IObject> DatabaseObjectByName { get; } = new Dictionary<string, Database.IObject>();
+        private Dictionary<string, Database.IObject> DatabaseObjectByName { get; } =
+            new Dictionary<string, Database.IObject>();
 
         private Dictionary<string, object> ValueByName { get; } = new Dictionary<string, object>();
 
@@ -71,23 +77,9 @@ namespace Allors.Workspace.Adapters.Local
 
         public void AddObject(string name, Database.IObject @object, Node[] tree)
         {
-            if (@object == null || this.AllowedClasses?.Contains(@object.Strategy.Class) != true)
-            {
-                return;
-            }
-
-            if (tree != null)
-            {
-                // Prefetch
-                var session = @object.Strategy.Transaction;
-                var prefetcher = tree.BuildPrefetchPolicy();
-                session.Prefetch(prefetcher, @object);
-            }
-
-            this.DatabaseObjects.Add(@object);
-            this.DatabaseObjectByName[name] = @object;
-            tree?.Resolve(@object, this.AccessControl, this.DatabaseObjects);
+            this.AddObjectInternal(name, @object, tree);
         }
+
 
         public void AddValue(string name, object value)
         {
@@ -153,12 +145,14 @@ namespace Allors.Workspace.Adapters.Local
             {
                 if (pull.Object != null)
                 {
-                    var pullInstantiate = new PullInstantiate(this.Transaction, pull, this.AccessControl, this.PreparedSelects);
+                    var pullInstantiate =
+                        new PullInstantiate(this.Transaction, pull, this.AccessControl, this.PreparedSelects);
                     pullInstantiate.Execute(this);
                 }
                 else
                 {
-                    var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControl, this.PreparedSelects, this.PreparedExtents);
+                    var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControl, this.PreparedSelects,
+                        this.PreparedExtents);
                     pullExtent.Execute(this);
                 }
             }
@@ -169,10 +163,28 @@ namespace Allors.Workspace.Adapters.Local
 
         public void AddObject(string name, Database.IObject @object)
         {
-            if (@object != null)
+            this.AddObjectInternal(name, @object, null);
+        }
+
+        private void AddObjectInternal(string name, Database.IObject @object, Node[] tree)
+        {
+            if (@object == null || this.AllowedClasses?.Contains(@object.Strategy.Class) != true)
             {
-                this.AddObject(name, @object, null);
+                return;
             }
+
+            if (tree != null)
+            {
+                // TODO: include dependencies
+                // Prefetch
+                var session = @object.Strategy.Transaction;
+                var prefetcher = tree.BuildPrefetchPolicy();
+                session.Prefetch(prefetcher, @object);
+            }
+
+            this.DatabaseObjects.Add(@object);
+            this.DatabaseObjectByName[name] = @object;
+            tree?.Resolve(@object, this.AccessControl, this.DatabaseObjects.Add);
         }
 
         private void AddCollectionInternal(string name, in ICollection<Database.IObject> collection, Node[] tree)
@@ -186,6 +198,7 @@ namespace Allors.Workspace.Adapters.Local
 
                 if (tree != null)
                 {
+                    // TODO: include dependencies
                     var prefetchPolicy = tree.BuildPrefetchPolicy();
 
                     ICollection<Database.IObject> newCollection;
@@ -204,11 +217,11 @@ namespace Allors.Workspace.Adapters.Local
                         this.DatabaseCollectionsByName.Add(name, newSet);
                     }
 
-                    this.DatabaseObjects.UnionWith(newCollection);
+                    this.DatabaseObjects.Add(newCollection);
 
                     foreach (var newObject in newCollection)
                     {
-                        tree.Resolve(newObject, this.AccessControl, this.DatabaseObjects);
+                        tree.Resolve(newObject, this.AccessControl, this.DatabaseObjects.Add);
                     }
                 }
                 else if (existingCollection != null)
@@ -219,7 +232,7 @@ namespace Allors.Workspace.Adapters.Local
                 {
                     var newWorkspaceCollection = new HashSet<Database.IObject>(filteredCollection);
                     this.DatabaseCollectionsByName.Add(name, newWorkspaceCollection);
-                    this.DatabaseObjects.UnionWith(newWorkspaceCollection);
+                    this.DatabaseObjects.Add(newWorkspaceCollection);
                 }
             }
         }

@@ -5,18 +5,18 @@
 
 namespace Allors.Database.Data
 {
-    using System.Collections.Generic;
+    using System;
     using Security;
 
     public static class NodesExtensions
     {
-        public static void Resolve(this Node[] treeNodes, IObject @object, IAccessControl acls, ISet<IObject> objects)
+        public static void Resolve(this Node[] treeNodes, IObject @object, IAccessControl acls, Action<IObject> add)
         {
             if (@object != null)
             {
                 foreach (var node in treeNodes)
                 {
-                    node.Resolve(@object, acls, objects);
+                    node.Resolve(@object, acls, add);
                 }
             }
         }

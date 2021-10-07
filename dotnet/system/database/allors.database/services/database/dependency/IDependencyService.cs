@@ -7,7 +7,7 @@ namespace Allors.Database.Services
 {
     public interface IDependencyService
     {
-        IDependencySet GetDependencySet(string id);
+        IDependencies GetDependencies(string id);
     }
 
 }

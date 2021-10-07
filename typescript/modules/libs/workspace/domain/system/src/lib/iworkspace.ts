@@ -7,5 +7,5 @@ export interface IWorkspace {
 
   rules: Readonly<IRule[]>;
 
-  createSession(dependencyId?: string): ISession;
+  createSession(): ISession;
 }

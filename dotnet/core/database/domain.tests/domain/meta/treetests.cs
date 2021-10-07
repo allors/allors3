@@ -34,19 +34,22 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             var tree = new[] { new Node(this.M.C1.C1C2One2Manies) };
+            {
+                var resolved = new HashSet<IObject>();
+                tree.Resolve(c1A, this.AclsMock.Object, v => resolved.Add(v));
 
-            var resolved = new HashSet<IObject>();
-            tree.Resolve(c1A, this.AclsMock.Object, resolved);
+                Assert.Single(resolved);
+                Assert.Contains(c2A, resolved);
+            }
 
-            Assert.Single(resolved);
-            Assert.Contains(c2A, resolved);
+            {
+                var resolved = new HashSet<IObject>();
+                tree.Resolve(c1B, this.AclsMock.Object, v => resolved.Add(v));
 
-            resolved = new HashSet<IObject>();
-            tree.Resolve(c1B, this.AclsMock.Object, resolved);
-
-            Assert.Equal(2, resolved.Count);
-            Assert.Contains(c2B, resolved);
-            Assert.Contains(c2C, resolved);
+                Assert.Equal(2, resolved.Count);
+                Assert.Contains(c2B, resolved);
+                Assert.Contains(c2C, resolved);
+            }
         }
 
         [Fact]
@@ -85,28 +88,31 @@ namespace Allors.Database.Domain.Tests
             };
 
             var prefetchPolicy = tree.BuildPrefetchPolicy();
+            {
+                var resolved = new HashSet<IObject>();
 
-            var resolved = new HashSet<IObject>();
+                this.Transaction.Prefetch(prefetchPolicy, c1A);
 
-            this.Transaction.Prefetch(prefetchPolicy, c1A);
+                tree.Resolve(c1A, this.AclsMock.Object, v => resolved.Add(v));
 
-            tree.Resolve(c1A, this.AclsMock.Object, resolved);
+                Assert.Equal(2, resolved.Count);
+                Assert.Contains(c1C, resolved);
+                Assert.Contains(c1D, resolved);
+            }
 
-            Assert.Equal(2, resolved.Count);
-            Assert.Contains(c1C, resolved);
-            Assert.Contains(c1D, resolved);
+            {
+                var resolved = new HashSet<IObject>();
 
-            resolved = new HashSet<IObject>();
+                this.Transaction.Prefetch(prefetchPolicy, c1B);
+                tree.Resolve(c1B, this.AclsMock.Object, v => resolved.Add(v));
 
-            this.Transaction.Prefetch(prefetchPolicy, c1B);
-            tree.Resolve(c1B, this.AclsMock.Object, resolved);
-
-            Assert.Equal(5, resolved.Count);
-            Assert.Contains(c1E, resolved);
-            Assert.Contains(c2A, resolved);
-            Assert.Contains(c2B, resolved);
-            Assert.Contains(c2C, resolved);
-            Assert.Contains(c2D, resolved);
+                Assert.Equal(5, resolved.Count);
+                Assert.Contains(c1E, resolved);
+                Assert.Contains(c2A, resolved);
+                Assert.Contains(c2B, resolved);
+                Assert.Contains(c2C, resolved);
+                Assert.Contains(c2D, resolved);
+            }
         }
 
         [Fact]

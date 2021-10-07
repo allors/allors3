@@ -12,6 +12,8 @@ namespace Allors.Workspace
     {
         IWorkspace Workspace { get; }
 
+        string Dependencies { get; }
+
         ISessionServices Services { get; }
 
         IWorkspaceResult PullFromWorkspace();

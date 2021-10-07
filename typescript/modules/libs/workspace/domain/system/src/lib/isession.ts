@@ -17,7 +17,7 @@ import { IPushResult } from './api/push/ipush-result';
 export interface ISession {
   workspace: IWorkspace;
 
-  dependencyId?: string;
+  dependencies?: string;
 
   hasChanges: boolean;
 

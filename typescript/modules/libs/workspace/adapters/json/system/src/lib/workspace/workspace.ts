@@ -8,7 +8,7 @@ export class Workspace extends SystemWorkspace {
     super(database);
   }
 
-  createSession(dependencyId?: string): ISession {
-    return new Session(this, dependencyId);
+  createSession(): ISession {
+    return new Session(this);
   }
 }

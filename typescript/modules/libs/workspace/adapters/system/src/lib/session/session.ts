@@ -20,6 +20,9 @@ export function isNewId(id: number): boolean {
 }
 
 export abstract class Session implements ISession {
+
+  dependencies: string
+  
   changeSetTracker: ChangeSetTracker;
 
   pushToDatabaseTracker: PushToDatabaseTracker;
@@ -36,7 +39,7 @@ export abstract class Session implements ISession {
 
   private activeRules: Set<IRule>;
 
-  constructor(public workspace: Workspace, public dependencyId?: string) {
+  constructor(public workspace: Workspace) {
     this.ranges = new DefaultStrategyRanges();
 
     this.strategyByWorkspaceId = new Map();

@@ -12,11 +12,11 @@ namespace Allors.Database.Configuration
     using Meta;
     using Services;
 
-    public class DependencySet : IDependencySet
+    public class Dependencies : IDependencies
     {
         private readonly Dictionary<IComposite, IPropertyType[]> dependenciesByComposite;
 
-        internal DependencySet() => this.dependenciesByComposite = new Dictionary<IComposite, IPropertyType[]>();
+        internal Dependencies() => this.dependenciesByComposite = new Dictionary<IComposite, IPropertyType[]>();
 
         public IPropertyType[] GetDependencies(IComposite composite)
         {

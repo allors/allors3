@@ -61,6 +61,8 @@ namespace Allors.Database.Configuration
 
         private IProcedures procedures;
 
+        private IDependencyService dependencyService;
+
         private Faker faker;
 
         protected DatabaseServices(Engine engine, IHttpContextAccessor httpContextAccessor = null)
@@ -90,6 +92,7 @@ namespace Allors.Database.Configuration
                 { } type when type == typeof(MetaPopulation) => (T)(object)this.M,
                 { } type when type == typeof(IRanges<long>) => (T)(this.ranges ??= new DefaultStructRanges<long>()),
                 { } type when type == typeof(IClassById) => (T)(this.classById ??= new ClassById()),
+                { } type when type == typeof(IDependencyService) => (T)(this.dependencyService ??= this.CreateDependencyService()),
                 { } type when type == typeof(IVersionedIdByStrategy) => (T)(this.versionedIdByStrategy ??= new VersionedIdByStrategy()),
                 { } type when type == typeof(IPrefetchPolicyCache) => (T)(this.prefetchPolicyCache ??= new PrefetchPolicyCache(this.database)),
                 { } type when type == typeof(IPreparedSelects) => (T)(this.preparedSelects ??= new PreparedSelects(this.database)),
@@ -117,5 +120,12 @@ namespace Allors.Database.Configuration
         protected Engine Engine { get; }
 
         public void Dispose() { }
+
+        private DependencyService CreateDependencyService()
+        {
+            var service = new DependencyService();
+            Allors.Database.Domain.Dependencies.Create(service, this.M);
+            return service;
+        }
     }
 }

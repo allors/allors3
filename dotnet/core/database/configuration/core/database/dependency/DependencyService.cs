@@ -6,23 +6,27 @@
 namespace Allors.Database.Configuration
 {
     using System.Collections.Generic;
-    using Domain;
     using Services;
 
     public class DependencyService : IDependencyService
     {
-        private readonly Dictionary<string, DependencySet> dependencySetById;
+        private readonly Dictionary<string, Dependencies> dependencySetById;
 
-        public DependencyService() => this.dependencySetById = new Dictionary<string, DependencySet>();
+        public DependencyService() => this.dependencySetById = new Dictionary<string, Dependencies>();
 
-        public IDependencySet GetDependencySet(string id)
+        public IDependencies GetDependencies(string id)
         {
+            if (id == null)
+            {
+                return null;
+            }
+
             if (this.dependencySetById.TryGetValue(id, out var dependencySet))
             {
                 return dependencySet;
             }
 
-            dependencySet = new DependencySet();
+            dependencySet = new Dependencies();
             this.dependencySetById.Add(id, dependencySet);
             return dependencySet;
         }

@@ -94,5 +94,5 @@ test('organisationDisplayName', async () => {
 
   session.derive();
 
-  expect(acme.DisplayName).toBe('Jane Doe');
+  expect(acme.DisplayName).toBe('Acme owned by Jane');
 });

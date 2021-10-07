@@ -63,11 +63,13 @@ test('resetOne2OneWithoutPush', async () => {
   const c1a = await fixture.pullC1(session, name_c1A);
   const c1b = await fixture.pullC1(session, name_c1B);
 
-  c1a.C1C1One2One = c1b;
+  expect(c1a.C1C1One2One).toBe(c1b);
+
+  c1a.C1C1One2One = null;
 
   c1a.strategy.reset();
 
-  expect(c1a.C1C1One2One).toBeNull();
+  expect(c1a.C1C1One2One).toBe(c1b);
 });
 
 test('resetOne2OneAfterPush', async () => {

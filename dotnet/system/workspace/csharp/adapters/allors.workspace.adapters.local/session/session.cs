@@ -5,8 +5,6 @@
 
 namespace Allors.Workspace.Adapters.Local
 {
-    using System;
-    using System.Threading.Tasks;
     using Meta;
 
     public class Session : Adapters.Session
@@ -14,7 +12,7 @@ namespace Allors.Workspace.Adapters.Local
         internal Session(Adapters.Workspace workspace, ISessionServices sessionServices) : base(workspace, sessionServices) => this.Services.OnInit(this);
 
         public new Workspace Workspace => (Workspace)base.Workspace;
-        
+
         public override T Create<T>(IClass @class)
         {
             var workspaceId = this.Workspace.DatabaseConnection.NextId();

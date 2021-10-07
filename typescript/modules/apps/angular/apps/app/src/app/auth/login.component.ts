@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, Self } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { of, Subscription } from 'rxjs';
@@ -13,6 +13,7 @@ import { InternalOrganisationId } from '@allors/workspace/angular/apps';
 
 @Component({
   templateUrl: './login.component.html',
+  providers: [ContextService],
 })
 export class LoginComponent extends TestScope implements OnDestroy {
   public loginFormGhost = this.formBuilder.group({
@@ -28,8 +29,20 @@ export class LoginComponent extends TestScope implements OnDestroy {
   subscription: Subscription;
   m: M;
 
-  constructor(private allors: ContextService, private authService: AuthenticationService, private singletonId: SingletonId, private internalOrganisationId: InternalOrganisationId, private router: Router, public formBuilder: FormBuilder) {
+  constructor(
+    @Self() private allors: ContextService,
+    private authService: AuthenticationService,
+    private singletonId: SingletonId,
+    private internalOrganisationId: InternalOrganisationId,
+    private router: Router,
+    public formBuilder: FormBuilder
+  ) {
     super();
+
+    const { session, workspace } = this.allors.context;
+    session.dependencies = 'login';
+    session.activate([workspace.rules.find((v) => v.id === 'c2cfecbd3b4f437198c53b9c5b206f0c')]);
+
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 

@@ -5,13 +5,13 @@
 
 namespace Allors.Database.Data
 {
-    using System.Collections.Generic;
+    using System;
     using Meta;
     using Security;
 
     public static class NodeExtensions
     {
-        public static void Resolve(this Node @this, IObject @object, IAccessControl acls, ISet<IObject> objects)
+        public static void Resolve(this Node @this, IObject @object, IAccessControl acls, Action<IObject> add)
         {
             if (@object != null)
             {
@@ -28,10 +28,10 @@ namespace Allors.Database.Data
                                 var role = @object.Strategy.GetCompositeRole(roleType);
                                 if (role != null)
                                 {
-                                    objects.Add(role);
+                                    add(role);
                                     foreach (var node in @this.Nodes)
                                     {
-                                        node.Resolve(role, acls, objects);
+                                        node.Resolve(role, acls, add);
                                     }
                                 }
                             }
@@ -39,10 +39,10 @@ namespace Allors.Database.Data
                             {
                                 foreach (var role in @object.Strategy.GetCompositesRole<IObject>(roleType))
                                 {
-                                    objects.Add(role);
+                                    add(role);
                                     foreach (var node in @this.Nodes)
                                     {
-                                        node.Resolve(role, acls, objects);
+                                        node.Resolve(role, acls, add);
                                     }
                                 }
                             }
@@ -55,10 +55,10 @@ namespace Allors.Database.Data
                             var association = @object.Strategy.GetCompositeAssociation(associationType);
                             if (association != null)
                             {
-                                objects.Add(association);
+                                add(association);
                                 foreach (var node in @this.Nodes)
                                 {
-                                    node.Resolve(association, acls, objects);
+                                    node.Resolve(association, acls, add);
                                 }
                             }
                         }
@@ -66,17 +66,16 @@ namespace Allors.Database.Data
                         {
                             foreach (var association in @object.Strategy.GetCompositesAssociation<IObject>(associationType))
                             {
-                                objects.Add(association);
+                                add(association);
                                 foreach (var node in @this.Nodes)
                                 {
-                                    node.Resolve(association, acls, objects);
+                                    node.Resolve(association, acls, add);
                                 }
                             }
                         }
                     }
                 }
             }
-
         }
     }
 }
