@@ -14,7 +14,7 @@ import { LazyResultBuilder } from './builders/lazy-result-builder';
 import { LazyUnit } from './lazy-unit';
 import { LazyInterface } from './lazy-interface';
 import { LazyClass } from './lazy-class';
-import { MetaObject, MethodType, ObjectType, RelationType, Unit } from '@allors/workspace/meta/system';
+import { Composite, Dependency, MetaObject, MethodType, ObjectType, PropertyType, RelationType, Unit } from '@allors/workspace/meta/system';
 
 export class LazyMetaPopulation implements InternalMetaPopulation {
   readonly kind = 'MetaPopulation';
@@ -26,6 +26,8 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
   composites = new Set<InternalComposite>();
   relationTypes: Set<RelationType>;
   methodTypes: Set<MethodType>;
+
+  dependency: <T extends Composite>(objectType: T, propertyType: (objectType: T) => PropertyType) => Dependency;
 
   constructor(data: MetaData) {
     const lookup = new Lookup(data);
@@ -43,6 +45,7 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
     this.composites.forEach((v) => v.deriveOriginRoleType());
     this.composites.forEach((v) => v.derivePropertyTypeByPropertyName());
     this.classes.forEach((v) => v.deriveOverridden(lookup));
+    this.composites.forEach((v) => v.deriveDependencies());
 
     this['treeBuilder'] = new LazyTreeBuilder(this);
 
@@ -51,6 +54,10 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
     this['pullBuilder'] = new LazyPullBuilder(this);
 
     this['resultBuilder'] = new LazyResultBuilder(this);
+
+    this.dependency = (objectType, propertyType) => {
+      return objectType.dependencyByPropertyType.get(propertyType(objectType));
+    };
   }
 
   onNew(metaObject: MetaObject) {

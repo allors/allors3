@@ -53,8 +53,6 @@ namespace Allors.Database.Configuration
 
         private IProcedures procedures;
 
-        private IDependencyService dependencyService;
-
         protected DatabaseServices(Engine engine, IHttpContextAccessor httpContextAccessor = null)
         {
             this.Engine = engine;
@@ -81,7 +79,6 @@ namespace Allors.Database.Configuration
                 // Core
                 { } type when type == typeof(MetaPopulation) => (T)(object)this.M,
                 { } type when type == typeof(IRanges<long>) => (T)(this.ranges ??= new DefaultStructRanges<long>()),
-                { } type when type == typeof(IDependencyService) => (T)(this.dependencyService ??= this.CreateDependencyService()),
                 { } type when type == typeof(IClassById) => (T)(this.classById ??= new ClassById()),
                 { } type when type == typeof(IVersionedIdByStrategy) => (T)(this.versionedIdByStrategy ??= new VersionedIdByStrategy()),
                 { } type when type == typeof(IPrefetchPolicyCache) => (T)(this.prefetchPolicyCache ??= new PrefetchPolicyCache(this.database)),
@@ -103,12 +100,5 @@ namespace Allors.Database.Configuration
         protected Engine Engine { get; }
 
         public void Dispose() { }
-
-        private DependencyService CreateDependencyService()
-        {
-            var service = new DependencyService();
-            Database.Domain.Dependencies.Create(service, this.M);
-            return service;
-        }
     }
 }

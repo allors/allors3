@@ -1,13 +1,14 @@
+import { Dependency } from '@allors/workspace/meta/system';
 import { Organisation } from '@allors/workspace/domain/default';
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 
 export class OrganisationDisplayNameRule implements IRule {
-  id = '000c900fc851453285519f3601758e6f';
   patterns: IPattern[];
+  dependencies: Dependency[];
 
   constructor(m: M) {
-    const { treeBuilder: t } = m;
+    const { treeBuilder: t, dependency: d } = m;
 
     this.patterns = [
       {
@@ -22,6 +23,8 @@ export class OrganisationDisplayNameRule implements IRule {
         }),
       },
     ];
+
+    this.dependencies = [d(m.Organisation, (v) => v.Owner)];
   }
 
   derive(cycle: ICycle, matches: Organisation[]) {

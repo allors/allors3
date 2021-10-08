@@ -5,6 +5,8 @@ import { MethodType } from './method-type';
 import { Unit } from './unit';
 import { RelationType } from './relation-type';
 import { Composite } from './composite';
+import { Dependency } from './dependencies/dependency';
+import { PropertyType } from './property-type';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface MetaPopulationExtension {}
@@ -18,5 +20,7 @@ export interface MetaPopulation {
   classes: Set<Class>;
   composites: Set<Composite>;
   relationTypes: Set<RelationType>;
-   methodTypes: Set<MethodType>;
+  methodTypes: Set<MethodType>;
+
+  dependency: <T extends Composite>(objectType: T, propertyType: (objectType: T) => PropertyType) => Dependency;
 }

@@ -1,5 +1,6 @@
 import { Organisation, Person } from '@allors/workspace/domain/default';
 import { Pull } from '@allors/workspace/domain/system';
+import { OrganisationDisplayNameRule } from '@allors/workspace/derivations/core-custom';
 import { Fixture } from '../fixture';
 import '../matchers';
 
@@ -14,7 +15,7 @@ test('personDisplayName', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();
 
-  const rules = workspace.rules.filter((v) => v.id === '63fd1d4973ee4e7ab170f39a5e71a917');
+  const rules = workspace.rules.filter((v) => v instanceof OrganisationDisplayNameRule);
   session.activate(rules);
 
   const pull: Pull = {
@@ -70,9 +71,8 @@ test('personDisplayNameNotActivated', async () => {
 
 test('organisationDisplayName', async () => {
   const { workspace, m } = fixture;
-  const session = workspace.createSession('organisationDisplayName');
-
-  const rules = workspace.rules.filter((v) => v.id === '000c900fc851453285519f3601758e6f');
+  const session = workspace.createSession();
+  const rules = workspace.rules.filter((v) => v instanceof OrganisationDisplayNameRule);
   session.activate(rules);
 
   const pull: Pull = {

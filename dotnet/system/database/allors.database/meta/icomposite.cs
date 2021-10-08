@@ -45,6 +45,8 @@ namespace Allors.Database.Meta
 
         IClass ExclusiveDatabaseClass { get; }
 
+        IDictionary<IPropertyType, IDependency> DependencyByPropertyType { get; }
+
         bool ExistSupertype(IInterface @interface);
 
         bool ExistAssociationType(IAssociationType association);

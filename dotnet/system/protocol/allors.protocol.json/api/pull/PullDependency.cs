@@ -5,23 +5,21 @@
 
 namespace Allors.Protocol.Json.Api.Pull
 {
-    using Data;
-
-    public class PullRequest
+    public class PullDependency
     {
         /// <summary>
-        /// Dependencies
+        /// ObjectType
         /// </summary>
-        public PullDependency[] d { get; set; }
+        public string o { get; set; }
 
         /// <summary>
-        /// List of Pulls
+        /// AssociationType
         /// </summary>
-        public Pull[] l { get; set; }
+        public string a { get; set; }
 
         /// <summary>
-        /// Procedure
+        /// RoleType
         /// </summary>
-        public Procedure p { get; set; }
+        public string r { get; set; }
     }
 }

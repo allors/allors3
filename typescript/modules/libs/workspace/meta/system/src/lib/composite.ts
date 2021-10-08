@@ -1,5 +1,6 @@
 import { AssociationType } from './association-type';
 import { Class } from './class';
+import { Dependency } from './dependencies/dependency';
 import { Interface } from './interface';
 import { MethodType } from './method-type';
 import { ObjectType, ObjectTypeExtension } from './object-type';
@@ -25,6 +26,8 @@ export interface Composite extends ObjectType {
 
   databaseOriginRoleTypes: Set<RoleType>;
   workspaceOriginRoleTypes: Set<RoleType>;
+
+  dependencyByPropertyType: Map<PropertyType, Dependency>;
 
   isAssignableFrom(objectType: Composite): boolean;
 }

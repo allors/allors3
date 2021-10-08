@@ -7,7 +7,7 @@ import { DatabaseRecord } from '../database/database-record';
 import { InvokeResult } from '../database/invoke/invoke-result';
 import { PullResult } from '../database/pull/pull-result';
 import { PushResult } from '../database/push/push-result';
-import { procedureToJson, pullToJson } from '../json/to-json';
+import { dependenciesToJson, procedureToJson, pullToJson } from '../json/to-json';
 import { Workspace } from '../workspace/workspace';
 import { DatabaseOriginState } from './originstate/database-origin-state';
 import { Strategy } from './strategy';
@@ -84,7 +84,7 @@ export class Session extends SystemSession {
 
   async call(procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult> {
     const pullRequest: PullRequest = {
-      d: this.dependencies,
+      d: dependenciesToJson(this.dependencies),
       p: procedureToJson(procedure),
       l: pulls.map((v) => pullToJson(v)),
     };
@@ -107,7 +107,7 @@ export class Session extends SystemSession {
     }
 
     const pullRequest: PullRequest = {
-      d: this.dependencies,
+      d: dependenciesToJson(this.dependencies),
       l: pulls.map((v) => pullToJson(v)),
     };
 

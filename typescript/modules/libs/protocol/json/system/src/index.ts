@@ -14,6 +14,7 @@ export * from './lib/api/permission/permission-response';
 export * from './lib/api/permission/permission-response-permission';
 
 export * from './lib/api/pull/pull-args';
+export * from './lib/api/pull/pull-dependency';
 export * from './lib/api/pull/pull-request';
 export * from './lib/api/pull/pull-response';
 export * from './lib/api/pull/pull-response-object';

@@ -1,6 +1,7 @@
 export * from './lib/association-type';
 export * from './lib/class';
 export * from './lib/composite';
+export * from './lib/dependency';
 export * from './lib/interface';
 export * from './lib/meta-object';
 export * from './lib/meta-population';

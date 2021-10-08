@@ -1,5 +1,5 @@
 import { IChangeSet, IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, IResult, IRule, ISession, IStrategy, IValidation, IWorkspaceResult, Method, Procedure, Pull } from '@allors/workspace/domain/system';
-import { AssociationType, Class, Composite, Origin } from '@allors/workspace/meta/system';
+import { AssociationType, Class, Composite, Dependency, Origin } from '@allors/workspace/meta/system';
 
 import { Workspace } from '../workspace/workspace';
 import { WorkspaceResult } from '../workspace/workspace-result';
@@ -20,9 +20,6 @@ export function isNewId(id: number): boolean {
 }
 
 export abstract class Session implements ISession {
-
-  dependencies: string
-  
   changeSetTracker: ChangeSetTracker;
 
   pushToDatabaseTracker: PushToDatabaseTracker;
@@ -38,6 +35,8 @@ export abstract class Session implements ISession {
   private strategiesByClass: Map<Class, Set<Strategy>>;
 
   private activeRules: Set<IRule>;
+
+  protected dependencies: Set<Dependency>;
 
   constructor(public workspace: Workspace) {
     this.ranges = new DefaultStrategyRanges();
@@ -56,12 +55,15 @@ export abstract class Session implements ISession {
     }
 
     if (this.activeRules == null) {
-      this.activeRules = new Set(rules);
-      return;
+      this.activeRules = new Set();
+      this.dependencies = new Set();
     }
 
     for (const rule of rules) {
       this.activeRules.add(rule);
+      for (const dependency of rule.dependencies) {
+        this.dependencies.add(dependency);
+      }
     }
   }
 

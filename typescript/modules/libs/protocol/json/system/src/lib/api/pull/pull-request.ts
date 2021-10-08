@@ -1,9 +1,10 @@
 import { Procedure } from '../../data/procedure';
 import { Pull } from '../../data/pull';
+import { PullDependency } from './pull-dependency';
 
 export interface PullRequest {
-  /** Dependency Id */
-  d?: string;
+  /** Dependencies */
+  d?: PullDependency[];
 
   /** List of Pulls */
   l?: Pull[];

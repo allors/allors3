@@ -7,14 +7,13 @@ namespace Allors.Database.Protocol.Json
 {
     using System.Collections.Generic;
     using Meta;
-    using Services;
 
     public class PullResponseObjects
     {
-        private readonly IDependencies dependencies;
+        private readonly IDictionary<IClass, IPropertyType[]> dependencies;
         private readonly HashSet<IObject> objects;
 
-        public PullResponseObjects(IDependencies dependencies)
+        public PullResponseObjects(IDictionary<IClass, IPropertyType[]> dependencies)
         {
             this.dependencies = dependencies;
             this.objects = new HashSet<IObject>();
@@ -40,11 +39,11 @@ namespace Allors.Database.Protocol.Json
             if (!this.objects.Contains(objectToAdd))
             {
                 this.objects.Add(objectToAdd);
-                if (this.dependencies != null)
+                if (this.dependencies != null && this.dependencies.TryGetValue(objectToAdd.Strategy.Class, out var propertyTypes))
                 {
-                    foreach (var dependency in this.dependencies.GetDependencies(objectToAdd.Strategy.Class))
+                    foreach (var propertyType in propertyTypes)
                     {
-                        if (dependency is IRoleType roleType)
+                        if (propertyType is IRoleType roleType)
                         {
                             if (roleType.IsOne)
                             {
@@ -57,7 +56,7 @@ namespace Allors.Database.Protocol.Json
                         }
                         else
                         {
-                            var associationType = (IAssociationType)dependency;
+                            var associationType = (IAssociationType)propertyType;
                             if (associationType.IsOne)
                             {
                                 this.Add(objectToAdd.Strategy.GetCompositeAssociation(associationType));

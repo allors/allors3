@@ -1,4 +1,4 @@
-import { AssociationType, ObjectType, PropertyType, RoleType } from '@allors/workspace/meta/system';
+import { AssociationType, Dependency, ObjectType, PropertyType, RoleType } from '@allors/workspace/meta/system';
 import {
   IUnit,
   TypeForParameter,
@@ -12,7 +12,7 @@ import {
   Node as DataNode,
   IObject,
 } from '@allors/workspace/domain/system';
-import { Extent, ExtentKind, Predicate, Procedure, Pull, Result, Select, Sort, Node, PredicateKind } from '@allors/protocol/json/system';
+import { Extent, ExtentKind, Predicate, Procedure, Pull, Result, Select, Sort, Node, PredicateKind, PullDependency } from '@allors/protocol/json/system';
 
 export function unitToJson(from: unknown): IUnit {
   if (from == null) {
@@ -31,6 +31,31 @@ export function unitToJson(from: unknown): IUnit {
   }
 
   throw new Error(`Unsupported value: ${from}`);
+}
+
+export function dependenciesToJson(from: Set<Dependency>): PullDependency[] {
+  if (from == null) {
+    return null;
+  }
+
+  return [...from].map((v) => dependencyToJson(v));
+}
+
+function dependencyToJson(from: Dependency): PullDependency {
+  if (from == null) {
+    return null;
+  }
+
+  if (from.propertyType.isAssociationType) {
+    return {
+      o: objectTypeToJson(from.objectType),
+      a: asAssociationTypeToJson(from.propertyType),
+    };
+    } else {
+      return {
+        o: objectTypeToJson(from.objectType),
+        r: asRoleTypeToJson(from.propertyType),
+    }
 }
 
 export function procedureToJson(from: DataProcedure): Procedure {

@@ -1,4 +1,4 @@
-import { AssociationType, MethodType, Origin, pluralize, PropertyType, RoleType } from '@allors/workspace/meta/system';
+import { AssociationType, Dependency, MethodType, Origin, pluralize, PropertyType, RoleType } from '@allors/workspace/meta/system';
 import { ObjectTypeData } from '@allors/protocol/json/system';
 
 import { frozenEmptySet } from './utils/frozen-empty-set';
@@ -11,6 +11,8 @@ import { InternalMetaPopulation } from './internal/internal-meta-population';
 
 import { LazyRelationType } from './lazy-relation-type';
 import { LazyMethodType } from './lazy-method-type';
+import { LazyAssociationDependency } from './dependencies/lazy-association-dependency';
+import { LazyRoleDependency } from './dependencies/lazy-role-dependency';
 
 export abstract class LazyComposite implements InternalComposite {
   readonly _ = {};
@@ -34,6 +36,8 @@ export abstract class LazyComposite implements InternalComposite {
 
   databaseOriginRoleTypes: Set<RoleType>;
   workspaceOriginRoleTypes: Set<RoleType>;
+
+  dependencyByPropertyType: Map<PropertyType, Dependency>;
 
   abstract isInterface: boolean;
   abstract isClass: boolean;
@@ -107,6 +111,18 @@ export abstract class LazyComposite implements InternalComposite {
   }
 
   abstract derivePropertyTypeByPropertyName();
+
+  deriveDependencies(): void {
+    this.dependencyByPropertyType = new Map();
+
+    for (const associationType of this.associationTypes) {
+      this.dependencyByPropertyType.set(associationType, new LazyAssociationDependency(this, associationType));
+    }
+
+    for (const roleType of this.roleTypes) {
+      this.dependencyByPropertyType.set(roleType, new LazyRoleDependency(this, roleType));
+    }
+  }
 
   *supertypeGenerator(): IterableIterator<InternalInterface> {
     if (this.supertypes) {

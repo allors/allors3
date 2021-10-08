@@ -42,7 +42,6 @@ namespace Allors.Database.Protocol.Json
             this.PreparedExtents = databaseServices.Get<IPreparedExtents>();
             this.Build = @class => DefaultObjectBuilder.Build(transaction, @class);
             this.Derive = () => this.Transaction.Derive(false);
-            this.DependencyService = databaseServices.Get<IDependencyService>();
 
             this.UnitConvert = new UnitConvert();
         }
@@ -71,8 +70,6 @@ namespace Allors.Database.Protocol.Json
 
         public UnitConvert UnitConvert { get; }
 
-        public IDependencyService DependencyService { get; }
-
         public InvokeResponse Invoke(InvokeRequest invokeRequest)
         {
             var invokeResponseBuilder = new InvokeResponseBuilder(this.Transaction, this.Derive, this.AccessControl, this.AllowedClasses);
@@ -81,7 +78,7 @@ namespace Allors.Database.Protocol.Json
 
         public PullResponse Pull(PullRequest pullRequest)
         {
-            var dependencies = this.DependencyService.GetDependencies(pullRequest.d);
+            var dependencies = this.ToDependencies(pullRequest.d);
             var response = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, dependencies);
             return response.Build(pullRequest);
         }
@@ -131,8 +128,21 @@ namespace Allors.Database.Protocol.Json
         // TODO: Delete
         public PullResponseBuilder CreatePullResponseBuilder(string dependencyId = null)
         {
-            var dependencies = this.DependencyService.GetDependencies(dependencyId);
-            return new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, dependencies);
+            // TODO: Dependencies
+            return new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, null);
+        }
+
+        private IDictionary<IClass, IPropertyType[]> ToDependencies(PullDependency[] pullDependencies)
+        {
+            var dependencies = pullDependencies.Select(v =>
+            {
+                var objectType = (IComposite)this.M.FindByTag(v.o);
+                var propertyType = (IPropertyType)this.M.FindByTag(v.a ?? v.r);
+                return objectType.DependencyByPropertyType[propertyType];
+            });
+
+            // TODO: Koen
+            return null;
         }
     }
 }

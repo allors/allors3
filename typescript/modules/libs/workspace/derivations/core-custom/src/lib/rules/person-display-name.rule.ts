@@ -1,10 +1,11 @@
+import { Dependency } from '@allors/workspace/meta/system';
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { Person } from '@allors/workspace/domain/default';
 
 export class PersonDisplayNameRule implements IRule {
-  id = '63fd1d4973ee4e7ab170f39a5e71a917';
   patterns: IPattern[];
+  dependencies: Dependency[];
 
   constructor(m: M) {
     this.patterns = [

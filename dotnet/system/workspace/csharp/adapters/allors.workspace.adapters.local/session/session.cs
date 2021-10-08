@@ -62,7 +62,7 @@ namespace Allors.Workspace.Adapters.Local
             var syncObjects = this.Workspace.DatabaseConnection.ObjectsToSync(pull);
             this.Workspace.DatabaseConnection.Sync(syncObjects, pull.AccessControl);
 
-            foreach (var databaseObject in pull.DatabaseObjects)
+            foreach (var databaseObject in pull.DatabaseObjects.Objects)
             {
                 if (this.StrategyByWorkspaceId.TryGetValue(databaseObject.Id, out var strategy))
                 {

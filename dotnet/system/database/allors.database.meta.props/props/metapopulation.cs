@@ -363,7 +363,7 @@ namespace Allors.Database.Meta
                     this.isDeriving = true;
 
                     var sharedDomains = new HashSet<Domain>();
-                    var sharedCompositeTypes = new HashSet<ICompositeBase>();
+                    var sharedComposites = new HashSet<ICompositeBase>();
                     var sharedInterfaces = new HashSet<IInterfaceBase>();
                     var sharedClasses = new HashSet<IClassBase>();
                     var sharedAssociationTypes = new HashSet<IAssociationTypeBase>();
@@ -395,7 +395,7 @@ namespace Allors.Database.Meta
                     // DirectSubtypes
                     foreach (var type in this.interfaces)
                     {
-                        type.DeriveDirectSubtypes(sharedCompositeTypes);
+                        type.DeriveDirectSubtypes(sharedComposites);
                     }
 
                     // Supertypes
@@ -407,7 +407,7 @@ namespace Allors.Database.Meta
                     // Subtypes
                     foreach (var type in this.interfaces)
                     {
-                        type.DeriveSubtypes(sharedCompositeTypes);
+                        type.DeriveSubtypes(sharedComposites);
                     }
 
                     // Subclasses
@@ -473,6 +473,12 @@ namespace Allors.Database.Meta
                     {
                         @class.DeriveRequiredRoleTypes();
                         @class.DeriveUniqueRoleTypes();
+                    }
+
+                    // Dependencies
+                    foreach (var type in this.derivedComposites)
+                    {
+                        type.DeriveDependencies();
                     }
 
                     // WorkspaceNames
