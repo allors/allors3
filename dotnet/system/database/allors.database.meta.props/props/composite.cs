@@ -219,7 +219,7 @@ namespace Allors.Database.Meta
 
         public IClass ExclusiveDatabaseClass => this.ExistExclusiveDatabaseClass ? this.DatabaseClasses.Single() : null;
 
-        IEnumerable<IClass> IComposite.Classes { get; }
+        IEnumerable<IClass> IComposite.Classes => this.Classes;
 
         public bool ExistSupertype(IInterface @interface)
         {

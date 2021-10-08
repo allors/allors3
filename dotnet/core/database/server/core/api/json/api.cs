@@ -132,17 +132,41 @@ namespace Allors.Database.Protocol.Json
             return new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, null);
         }
 
-        private IDictionary<IClass, IPropertyType[]> ToDependencies(PullDependency[] pullDependencies)
+        private IDictionary<IClass, ISet<IPropertyType>> ToDependencies(PullDependency[] pullDependencies)
         {
             var dependencies = pullDependencies.Select(v =>
             {
                 var objectType = (IComposite)this.M.FindByTag(v.o);
-                var propertyType = (IPropertyType)this.M.FindByTag(v.a ?? v.r);
+                IPropertyType propertyType;
+                if (v.a != null)
+                {
+                    propertyType = ((IRelationType)this.M.FindByTag(v.a)).AssociationType;
+                }
+                else
+                {
+                    propertyType = ((IRelationType)this.M.FindByTag(v.r)).RoleType;
+                }
+
                 return objectType.DependencyByPropertyType[propertyType];
             });
 
-            // TODO: Koen
-            return null;
+            var classDependencies = new Dictionary<IClass, ISet<IPropertyType>>();
+
+            foreach (var dependency in dependencies)
+            {
+                foreach (var @class in dependency.ObjectType.Classes)
+                {
+                    if (!classDependencies.TryGetValue(@class, out var classDependency))
+                    {
+                        classDependency = new HashSet<IPropertyType>();
+                        classDependencies.Add(@class, classDependency);
+                    }
+
+                    classDependency.Add(dependency.PropertyType);
+                }
+            }
+
+            return classDependencies;
         }
     }
 }

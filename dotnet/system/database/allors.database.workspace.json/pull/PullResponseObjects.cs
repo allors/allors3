@@ -10,10 +10,10 @@ namespace Allors.Database.Protocol.Json
 
     public class PullResponseObjects
     {
-        private readonly IDictionary<IClass, IPropertyType[]> dependencies;
+        private readonly IDictionary<IClass, ISet<IPropertyType>> dependencies;
         private readonly HashSet<IObject> objects;
 
-        public PullResponseObjects(IDictionary<IClass, IPropertyType[]> dependencies)
+        public PullResponseObjects(IDictionary<IClass, ISet<IPropertyType>> dependencies)
         {
             this.dependencies = dependencies;
             this.objects = new HashSet<IObject>();

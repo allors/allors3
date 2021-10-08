@@ -11,8 +11,7 @@ import { InternalMetaPopulation } from './internal/internal-meta-population';
 
 import { LazyRelationType } from './lazy-relation-type';
 import { LazyMethodType } from './lazy-method-type';
-import { LazyAssociationDependency } from './dependencies/lazy-association-dependency';
-import { LazyRoleDependency } from './dependencies/lazy-role-dependency';
+import { LazyDependency } from './lazy-dependency';
 
 export abstract class LazyComposite implements InternalComposite {
   readonly _ = {};
@@ -116,11 +115,11 @@ export abstract class LazyComposite implements InternalComposite {
     this.dependencyByPropertyType = new Map();
 
     for (const associationType of this.associationTypes) {
-      this.dependencyByPropertyType.set(associationType, new LazyAssociationDependency(this, associationType));
+      this.dependencyByPropertyType.set(associationType, new LazyDependency(this, associationType));
     }
 
     for (const roleType of this.roleTypes) {
-      this.dependencyByPropertyType.set(roleType, new LazyRoleDependency(this, roleType));
+      this.dependencyByPropertyType.set(roleType, new LazyDependency(this, roleType));
     }
   }
 

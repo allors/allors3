@@ -41,7 +41,7 @@ export function dependenciesToJson(from: Set<Dependency>): PullDependency[] {
   return [...from].map((v) => dependencyToJson(v));
 }
 
-function dependencyToJson(from: Dependency): PullDependency {
+export function dependencyToJson(from: Dependency): PullDependency {
   if (from == null) {
     return null;
   }
@@ -51,11 +51,12 @@ function dependencyToJson(from: Dependency): PullDependency {
       o: objectTypeToJson(from.objectType),
       a: asAssociationTypeToJson(from.propertyType),
     };
-    } else {
-      return {
-        o: objectTypeToJson(from.objectType),
-        r: asRoleTypeToJson(from.propertyType),
-    }
+  } else {
+    return {
+      o: objectTypeToJson(from.objectType),
+      r: asRoleTypeToJson(from.propertyType),
+    };
+  }
 }
 
 export function procedureToJson(from: DataProcedure): Procedure {

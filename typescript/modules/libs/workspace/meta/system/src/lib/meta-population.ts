@@ -5,8 +5,8 @@ import { MethodType } from './method-type';
 import { Unit } from './unit';
 import { RelationType } from './relation-type';
 import { Composite } from './composite';
-import { Dependency } from './dependencies/dependency';
 import { PropertyType } from './property-type';
+import { Dependency } from './dependency';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface MetaPopulationExtension {}

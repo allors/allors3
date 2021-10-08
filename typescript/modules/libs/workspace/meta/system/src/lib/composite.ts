@@ -1,6 +1,6 @@
 import { AssociationType } from './association-type';
 import { Class } from './class';
-import { Dependency } from './dependencies/dependency';
+import { Dependency } from './dependency';
 import { Interface } from './interface';
 import { MethodType } from './method-type';
 import { ObjectType, ObjectTypeExtension } from './object-type';

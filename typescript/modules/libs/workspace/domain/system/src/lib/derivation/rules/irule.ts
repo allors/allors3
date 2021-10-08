@@ -1,5 +1,5 @@
+import { Dependency } from '@allors/workspace/meta/system';
 import { IObject } from '../../iobject';
-import { Dependency } from '../dependencies/dependency';
 import { ICycle } from './icycle';
 import { IPattern } from './ipattern';
 

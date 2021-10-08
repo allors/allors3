@@ -20,7 +20,7 @@ namespace Allors.Database.Protocol.Json
     {
         private readonly IUnitConvert unitConvert;
         private readonly IRanges<long> ranges;
-        private readonly IDictionary<IClass, IPropertyType[]> dependencies;
+        private readonly IDictionary<IClass, ISet<IPropertyType>> dependencies;
 
         private readonly Dictionary<string, ISet<IObject>> collectionsByName = new Dictionary<string, ISet<IObject>>();
         private readonly Dictionary<string, IObject> objectByName = new Dictionary<string, IObject>();
@@ -30,7 +30,7 @@ namespace Allors.Database.Protocol.Json
 
         private List<IValidation> errors;
 
-        public PullResponseBuilder(ITransaction transaction, IAccessControl accessControl, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IUnitConvert unitConvert, IRanges<long> ranges, IDictionary<IClass, IPropertyType[]> dependencies)
+        public PullResponseBuilder(ITransaction transaction, IAccessControl accessControl, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IUnitConvert unitConvert, IRanges<long> ranges, IDictionary<IClass, ISet<IPropertyType>> dependencies)
         {
             this.unitConvert = unitConvert;
             this.ranges = ranges;
