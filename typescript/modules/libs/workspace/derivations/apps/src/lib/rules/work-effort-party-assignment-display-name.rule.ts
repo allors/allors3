@@ -1,13 +1,14 @@
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffortPartyAssignment } from '@allors/workspace/domain/default';
+import { Dependency } from '@allors/workspace/meta/system';
 
 export class WorkEffortPartyAssignmentDisplayNameRule implements IRule {
-  id= '32a48e168f47446599ec0030bec58084';
   patterns: IPattern[];
-
+  dependencies: Dependency[];
+  
   constructor(m: M) {
-    const { treeBuilder: t } = m;
+    const { treeBuilder: t, dependency: d } = m;
 
     this.patterns = [
       {
@@ -15,6 +16,8 @@ export class WorkEffortPartyAssignmentDisplayNameRule implements IRule {
         roleType: m.WorkEffortPartyAssignment.Party,
       },
     ];
+
+    this.dependencies = [d(m.WorkEffortPartyAssignment, (v) => v.Party)];
   }
 
   derive(cycle: ICycle, matches: WorkEffortPartyAssignment[]) {

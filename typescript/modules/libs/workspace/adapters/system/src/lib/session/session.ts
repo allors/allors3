@@ -49,6 +49,7 @@ export abstract class Session implements ISession {
     this.pushToDatabaseTracker = new PushToDatabaseTracker();
     this.pushToWorkspaceTracker = new PushToWorkspaceTracker();
   }
+
   activate(rules: IRule[]): void {
     if (rules == null) {
       return;
@@ -61,8 +62,10 @@ export abstract class Session implements ISession {
 
     for (const rule of rules) {
       this.activeRules.add(rule);
-      for (const dependency of rule.dependencies) {
-        this.dependencies.add(dependency);
+      if (rule.dependencies != null) {
+        for (const dependency of rule.dependencies) {
+          this.dependencies.add(dependency);
+        }
       }
     }
   }

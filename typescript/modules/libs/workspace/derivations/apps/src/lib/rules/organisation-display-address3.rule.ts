@@ -1,15 +1,17 @@
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, PostalAddress } from '@allors/workspace/domain/default';
+import { Dependency } from '@allors/workspace/meta/system';
 
 export class OrganisationDisplayAddress3Rule implements IRule {
-  id= '84d7e301671749959a4acac3d9d145ef';
   patterns: IPattern[];
+  dependencies: Dependency[];
+
   m: M;
 
   constructor(m: M) {
     this.m = m;
-    const { treeBuilder: t } = m;
+    const { treeBuilder: t, dependency: d } = m;
 
     this.patterns = [
       {
@@ -24,6 +26,8 @@ export class OrganisationDisplayAddress3Rule implements IRule {
         }),
       },
     ];
+
+    this.dependencies = [d(m.Organisation, (v) => v.GeneralCorrespondence)];
   }
 
   derive(cycle: ICycle, matches: Organisation[]) {
@@ -32,7 +36,7 @@ export class OrganisationDisplayAddress3Rule implements IRule {
         const postalAddress = match.GeneralCorrespondence as PostalAddress;
         match.DisplayAddress3 = `${postalAddress.Country ? postalAddress.Country.Name : ''}`;
       }
-    
+
       match.DisplayAddress3 = '';
     }
   }

@@ -1,14 +1,13 @@
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { SerialisedItem } from '@allors/workspace/domain/default';
+import { Dependency } from '@allors/workspace/meta/system';
 
 export class SerialisedItemAgeRule implements IRule {
-  id= '671388a5a3ad4bb0987849ca2321614b';
   patterns: IPattern[];
+  dependencies: Dependency[];
 
   constructor(m: M) {
-    const { treeBuilder: t } = m;
-
     this.patterns = [
       {
         kind: 'RolePattern',
@@ -22,8 +21,8 @@ export class SerialisedItemAgeRule implements IRule {
       if (match.canReadPurchasePrice && match.ManufacturingYear != null) {
         match.Age = new Date().getFullYear() - match.ManufacturingYear;
       } else {
-        match.Age =  0;
-      }    
+        match.Age = 0;
+      }
     }
   }
 }

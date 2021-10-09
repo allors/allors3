@@ -7,16 +7,15 @@ namespace Allors.Workspace.Adapters.Local
 {
     using System.Collections.Generic;
     using Database.Meta;
-    using Database.Services;
 
     using IObject = Database.IObject;
 
     public class PullDatabaseObjects
     {
-        private readonly IDependencies dependencies;
+        private readonly IDictionary<IClass, ISet<IPropertyType>> dependencies;
         private readonly HashSet<IObject> objects;
 
-        public PullDatabaseObjects(IDependencies dependencies)
+        public PullDatabaseObjects(IDictionary<IClass, ISet<IPropertyType>> dependencies)
         {
             this.dependencies = dependencies;
             this.objects = new HashSet<IObject>();
@@ -42,11 +41,11 @@ namespace Allors.Workspace.Adapters.Local
             if (!this.objects.Contains(objectToAdd))
             {
                 this.objects.Add(objectToAdd);
-                if (this.dependencies != null)
+                if (this.dependencies != null && this.dependencies.TryGetValue(objectToAdd.Strategy.Class, out var propertyTypes))
                 {
-                    foreach (var dependency in this.dependencies.GetDependencies(objectToAdd.Strategy.Class))
+                    foreach (var propertyType in propertyTypes)
                     {
-                        if (dependency is IRoleType roleType)
+                        if (propertyType is IRoleType roleType)
                         {
                             if (roleType.IsOne)
                             {
@@ -59,7 +58,7 @@ namespace Allors.Workspace.Adapters.Local
                         }
                         else
                         {
-                            var associationType = (IAssociationType)dependency;
+                            var associationType = (IAssociationType)propertyType;
                             if (associationType.IsOne)
                             {
                                 this.Add(objectToAdd.Strategy.GetCompositeAssociation(associationType));

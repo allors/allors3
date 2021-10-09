@@ -8,6 +8,7 @@ namespace Allors.Workspace.Adapters
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Collections;
     using Meta;
 
     public abstract class Session : ISession
@@ -30,8 +31,8 @@ namespace Allors.Workspace.Adapters
             this.Services.OnInit(this);
         }
 
-        // TODO:
-        public string Dependencies { get; }
+        // TODO: push to concrete classes and implement
+        public ISet<IDependency> Dependencies => EmptySet<IDependency>.Instance;
 
         public ISessionServices Services { get; }
 

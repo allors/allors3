@@ -12,7 +12,7 @@ namespace Allors.Workspace
     {
         IWorkspace Workspace { get; }
 
-        string Dependencies { get; }
+        ISet<IDependency> Dependencies { get; }
 
         ISessionServices Services { get; }
 

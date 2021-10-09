@@ -10,11 +10,15 @@ namespace Allors.Workspace.Adapters.Local
     using System.Linq;
     using Database;
     using Database.Data;
-    using Database.Meta;
     using Database.Security;
     using Database.Services;
+    using Meta;
     using Protocol.Direct;
+    using IClass = Database.Meta.IClass;
+    using IComposite = Database.Meta.IComposite;
     using IObject = IObject;
+    using IPropertyType = Database.Meta.IPropertyType;
+    using IRelationType = Database.Meta.IRelationType;
 
     public class Pull : Result, IPullResultInternals, IProcedureOutput
     {
@@ -35,8 +39,7 @@ namespace Allors.Workspace.Adapters.Local
             this.AccessControl = this.Transaction.Services.Get<IWorkspaceAclsService>()
                 .Create(this.Workspace.DatabaseConnection.Configuration.Name);
 
-            var dependencyService = database.Services.Get<IDependencyService>();
-            var dependencies = dependencyService.GetDependencies(session.Dependencies);
+            var dependencies = this.ToDependencies(session.Dependencies);
             this.DatabaseObjects = new PullDatabaseObjects(dependencies);
         }
 
@@ -236,5 +239,40 @@ namespace Allors.Workspace.Adapters.Local
                 }
             }
         }
+
+        private IDictionary<IClass, ISet<IPropertyType>> ToDependencies(ISet<IDependency> pullDependencies)
+        {
+            var classDependencies = new Dictionary<IClass, ISet<IPropertyType>>();
+
+            var m = this.Workspace.DatabaseConnection.Database.MetaPopulation;
+            foreach (var pullDependency in pullDependencies)
+            {
+                var objectType = (IComposite)m.FindByTag(pullDependency.ObjectType.Tag);
+                IPropertyType propertyType;
+                if (pullDependency.PropertyType is IAssociationType associationType)
+                {
+                    propertyType = ((IRelationType)m.FindByTag(associationType.RelationType.Tag)).AssociationType;
+                }
+                else
+                {
+                    var roleType = (IRoleType)pullDependency.PropertyType;
+                    propertyType = ((IRelationType)m.FindByTag(roleType.RelationType.Tag)).RoleType;
+                }
+
+                foreach (var @class in objectType.Classes)
+                {
+                    if (!classDependencies.TryGetValue(@class, out var classDependency))
+                    {
+                        classDependency = new HashSet<IPropertyType>();
+                        classDependencies.Add(@class, classDependency);
+                    }
+
+                    classDependency.Add(propertyType);
+                }
+            }
+
+            return classDependencies;
+        }
+
     }
 }

@@ -22,8 +22,6 @@ namespace Allors.Database.Meta
         private HashSet<IAssociationTypeBase> derivedDatabaseAssociationTypes;
         private HashSet<IRoleTypeBase> derivedDatabaseRoleTypes;
 
-        private IDictionary<IPropertyType, IDependency> derivedDependencyByPropertyType;
-
         protected Composite(IMetaPopulationBase metaPopulation, Guid id, string tag) : base(metaPopulation, id, tag) => this.AssignedOrigin = Origin.Database;
 
         //public Dictionary<string, bool> Workspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
@@ -153,17 +151,7 @@ namespace Allors.Database.Meta
         public IEnumerable<IRoleTypeBase> InheritedDatabaseRoleTypes => this.InheritedRoleTypes.Where(v => v.Origin == Origin.Database);
 
         public IEnumerable<IAssociationTypeBase> InheritedDatabaseAssociationTypes => this.InheritedAssociationTypes.Where(v => v.Origin == Origin.Database);
-
-        public IDictionary<IPropertyType, IDependency> DependencyByPropertyType
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedDependencyByPropertyType;
-            }
-        }
-
-
+        
         #region Workspace
 
         public IEnumerable<IRoleTypeBase> ExclusiveCompositeRoleTypes
@@ -364,24 +352,6 @@ namespace Allors.Database.Meta
                     superTypes.Add(directSupertype);
                     directSupertype.DeriveSupertypesRecursively(type, superTypes);
                 }
-            }
-        }
-
-        public void DeriveDependencies()
-        {
-            var propertyTypes = this.derivedAssociationTypes.Cast<IPropertyType>().Union(this.derivedRoleTypes);
-
-            if (this.derivedDependencyByPropertyType == null)
-            {
-                this.derivedDependencyByPropertyType = propertyTypes.ToDictionary(v => v, v => (IDependency)new Dependency(this, v));
-            }
-            else
-            {
-                this.derivedDependencyByPropertyType = propertyTypes.ToDictionary(v => v, v =>
-                {
-                    this.derivedDependencyByPropertyType.TryGetValue(v, out var dependency);
-                    return dependency ?? new Dependency(this, v);
-                });
             }
         }
     }

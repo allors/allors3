@@ -6,7 +6,7 @@ import { data } from '@allors/workspace/meta/json/core';
 describe('TreeBuilder', () => {
   const metaPopulation = new LazyMetaPopulation(data) as MetaPopulation;
   const m = metaPopulation as M;
-  const { treeBuilder: t } = m;
+  const { treeBuilder: t, dependency: d } = m;
 
   describe('with metadata', () => {
     it('should return nodes', () => {

@@ -1,13 +1,14 @@
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { SerialisedItemCharacteristicType } from '@allors/workspace/domain/default';
+import { Dependency } from '@allors/workspace/meta/system';
 
 export class SerialisedItemCharacteristicTypeDisplayNameRule implements IRule {
-  id= '9ddd15e0f42649539086a167438ae144';
   patterns: IPattern[];
+  dependencies: Dependency[];
 
   constructor(m: M) {
-    const { treeBuilder: t } = m;
+    const { treeBuilder: t, dependency: d } = m;
 
     this.patterns = [
       {
@@ -19,6 +20,8 @@ export class SerialisedItemCharacteristicTypeDisplayNameRule implements IRule {
         roleType: m.SerialisedItemCharacteristicType.Name,
       },
     ];
+
+    this.dependencies = [d(m.SerialisedItemCharacteristicType, (v) => v.UnitOfMeasure)];
   }
 
   derive(cycle: ICycle, matches: SerialisedItemCharacteristicType[]) {

@@ -1,10 +1,11 @@
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { AutomatedAgent } from '@allors/workspace/domain/default';
+import { Dependency } from '@allors/workspace/meta/system';
 
 export class AutomatedAgentDisplayNameRule implements IRule {
-  id = '798e246e73024644a3bb21a6aec48fdb';
   patterns: IPattern[];
+  dependencies: Dependency[];
 
   constructor(m: M) {
     this.patterns = [

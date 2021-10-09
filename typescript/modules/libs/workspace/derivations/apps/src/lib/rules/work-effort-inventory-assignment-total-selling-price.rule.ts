@@ -1,14 +1,13 @@
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffortInventoryAssignment } from '@allors/workspace/domain/default';
+import { Dependency } from '@allors/workspace/meta/system';
 
 export class WorkEffortInventoryAssignmentTotalSellingPriceRule implements IRule {
-  id= '4b0eb09beca54dd0b934cbeeea111e58';
   patterns: IPattern[];
+  dependencies: Dependency[];
 
   constructor(m: M) {
-    const { treeBuilder: t } = m;
-
     this.patterns = [
       {
         kind: 'RolePattern',
@@ -27,7 +26,6 @@ export class WorkEffortInventoryAssignmentTotalSellingPriceRule implements IRule
 
   derive(cycle: ICycle, matches: WorkEffortInventoryAssignment[]) {
     for (const match of matches) {
-
       if (match.canReadUnitSellingPrice) {
         const quantity = match.DerivedBillableQuantity ? match.DerivedBillableQuantity : match.Quantity ? match.Quantity : '0';
         const unitSellingPrice = match.UnitSellingPrice ? match.UnitSellingPrice : '0';

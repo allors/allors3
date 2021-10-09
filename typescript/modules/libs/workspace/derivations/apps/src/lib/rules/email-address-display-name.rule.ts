@@ -1,10 +1,11 @@
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { EmailAddress } from '@allors/workspace/domain/default';
+import { Dependency } from '@allors/workspace/meta/system';
 
 export class EmailAddressDisplayNameRule implements IRule {
-  id= '75878728ad114ea6bda75e71abe96e3d';
   patterns: IPattern[];
+  dependencies: Dependency[];
 
   constructor(m: M) {
     this.patterns = [

@@ -1,14 +1,13 @@
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { WebAddress } from '@allors/workspace/domain/default';
+import { Dependency } from '@allors/workspace/meta/system';
 
 export class WebAddressDisplayNameRule implements IRule {
-  id= '2bca556204f7448ca779e2c5141d98fb';
   patterns: IPattern[];
+  dependencies: Dependency[];
 
   constructor(m: M) {
-    const { treeBuilder: t } = m;
-
     this.patterns = [
       {
         kind: 'RolePattern',

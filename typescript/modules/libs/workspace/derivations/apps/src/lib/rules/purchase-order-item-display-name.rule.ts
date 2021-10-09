@@ -3,13 +3,14 @@ import { inlineLists } from 'common-tags';
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { PurchaseOrderItem } from '@allors/workspace/domain/default';
+import { Dependency } from '@allors/workspace/meta/system';
 
 export class PurchaseOrderItemDisplayNameRule implements IRule {
-  id= 'f2f1ad9c2a9d432198f63751f1bc14f6';
   patterns: IPattern[];
+  dependencies: Dependency[];
 
   constructor(m: M) {
-    const { treeBuilder: t } = m;
+    const { treeBuilder: t, dependency: d } = m;
 
     this.patterns = [
       {
@@ -42,12 +43,13 @@ export class PurchaseOrderItemDisplayNameRule implements IRule {
         roleType: m.Organisation.PartyName,
         tree: t.Organisation({
           PurchaseOrdersWhereTakenViaSupplier: {
-            PurchaseOrderItems: {}
+            PurchaseOrderItems: {},
           },
         }),
       },
-
     ];
+
+    this.dependencies = [d(m.PurchaseOrderItem, (v) => v.PurchaseOrderWherePurchaseOrderItem), d(m.PurchaseOrder, (v) => v.TakenViaSupplier), d(m.PurchaseOrderItem, (v) => v.Part)];
   }
 
   derive(cycle: ICycle, matches: PurchaseOrderItem[]) {

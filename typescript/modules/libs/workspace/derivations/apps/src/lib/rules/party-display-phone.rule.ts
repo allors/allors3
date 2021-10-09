@@ -1,15 +1,17 @@
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { TelecommunicationsNumber, Party } from '@allors/workspace/domain/default';
+import { Dependency } from '@allors/workspace/meta/system';
 
 export class PartyDisplayPhoneRule implements IRule {
-  id = 'f27a9a776f2b4119b623e4c518f07f46';
   patterns: IPattern[];
+  dependencies: Dependency[];
+
   m: M;
 
   constructor(m: M) {
     this.m = m;
-    const { treeBuilder: t } = m;
+    const { treeBuilder: t, dependency: d } = m;
 
     this.patterns = [
       {
@@ -26,6 +28,8 @@ export class PartyDisplayPhoneRule implements IRule {
         }),
       },
     ];
+
+    this.dependencies = [d(m.Party, (v) => v.PartyContactMechanisms)];
   }
 
   derive(cycle: ICycle, matches: Party[]) {

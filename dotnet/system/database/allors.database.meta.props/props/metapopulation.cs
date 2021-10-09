@@ -475,12 +475,6 @@ namespace Allors.Database.Meta
                         @class.DeriveUniqueRoleTypes();
                     }
 
-                    // Dependencies
-                    foreach (var type in this.derivedComposites)
-                    {
-                        type.DeriveDependencies();
-                    }
-
                     // WorkspaceNames
                     var workspaceNames = new HashSet<string>();
                     foreach (var @class in this.classes)

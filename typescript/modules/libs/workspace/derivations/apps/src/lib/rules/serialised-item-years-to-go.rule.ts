@@ -1,13 +1,14 @@
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { SerialisedItem, UnifiedGood } from '@allors/workspace/domain/default';
+import { Dependency } from '@allors/workspace/meta/system';
 
 export class SerialisedItemYearsToGoRule implements IRule {
-  id= '7ad8092ac8d34076bfdf02a06a492d6f';
   patterns: IPattern[];
+  dependencies: Dependency[];
 
   constructor(m: M) {
-    const { treeBuilder: t } = m;
+    const { treeBuilder: t, dependency: d } = m;
 
     this.patterns = [
       {
@@ -22,10 +23,12 @@ export class SerialisedItemYearsToGoRule implements IRule {
         kind: 'RolePattern',
         roleType: m.UnifiedGood.LifeTime,
         tree: t.UnifiedGood({
-          SerialisedItems:{}
-        })
+          SerialisedItems: {},
+        }),
       },
     ];
+
+    this.dependencies = [d(m.SerialisedItem, (v) => v.PartWhereSerialisedItem)];
   }
 
   derive(cycle: ICycle, matches: SerialisedItem[]) {

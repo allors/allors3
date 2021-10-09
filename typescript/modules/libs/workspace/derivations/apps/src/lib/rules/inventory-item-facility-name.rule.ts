@@ -1,13 +1,14 @@
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { InventoryItem } from '@allors/workspace/domain/default';
+import { Dependency } from '@allors/workspace/meta/system';
 
 export class InventoryItemFacilityNameRule implements IRule {
-  id= 'b3a6f2cc2ccb43d883e09cd03570c73a';
   patterns: IPattern[];
+  dependencies: Dependency[];
 
   constructor(m: M) {
-    const { treeBuilder: t } = m;
+    const { treeBuilder: t, dependency: d } = m;
 
     this.patterns = [
       {
@@ -22,6 +23,8 @@ export class InventoryItemFacilityNameRule implements IRule {
         }),
       },
     ];
+
+    this.dependencies = [d(m.InventoryItem, (v) => v.Facility)];
   }
 
   derive(cycle: ICycle, matches: InventoryItem[]) {

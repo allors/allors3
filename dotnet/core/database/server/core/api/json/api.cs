@@ -134,27 +134,27 @@ namespace Allors.Database.Protocol.Json
 
         private IDictionary<IClass, ISet<IPropertyType>> ToDependencies(PullDependency[] pullDependencies)
         {
-            var dependencies = pullDependencies.Select(v =>
+            if (pullDependencies == null)
             {
-                var objectType = (IComposite)this.M.FindByTag(v.o);
-                IPropertyType propertyType;
-                if (v.a != null)
-                {
-                    propertyType = ((IRelationType)this.M.FindByTag(v.a)).AssociationType;
-                }
-                else
-                {
-                    propertyType = ((IRelationType)this.M.FindByTag(v.r)).RoleType;
-                }
-
-                return objectType.DependencyByPropertyType[propertyType];
-            });
+                return null;
+            }
 
             var classDependencies = new Dictionary<IClass, ISet<IPropertyType>>();
 
-            foreach (var dependency in dependencies)
+            foreach (var pullDependency in pullDependencies)
             {
-                foreach (var @class in dependency.ObjectType.Classes)
+                var objectType = (IComposite)this.M.FindByTag(pullDependency.o);
+                IPropertyType propertyType;
+                if (pullDependency.a != null)
+                {
+                    propertyType = ((IRelationType)this.M.FindByTag(pullDependency.a)).AssociationType;
+                }
+                else
+                {
+                    propertyType = ((IRelationType)this.M.FindByTag(pullDependency.r)).RoleType;
+                }
+
+                foreach (var @class in objectType.Classes)
                 {
                     if (!classDependencies.TryGetValue(@class, out var classDependency))
                     {
@@ -162,7 +162,7 @@ namespace Allors.Database.Protocol.Json
                         classDependencies.Add(@class, classDependency);
                     }
 
-                    classDependency.Add(dependency.PropertyType);
+                    classDependency.Add(propertyType);
                 }
             }
 

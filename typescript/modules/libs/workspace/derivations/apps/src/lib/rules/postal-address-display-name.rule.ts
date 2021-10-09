@@ -3,12 +3,15 @@ import { stripIndents, oneLine, inlineLists } from 'common-tags';
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { PostalAddress } from '@allors/workspace/domain/default';
+import { Dependency } from '@allors/workspace/meta/system';
 
 export class PostalAddressDisplayNameRule implements IRule {
-  id= 'b13f33e4fbf44bb5a2b4cd0c211a5ca2';
   patterns: IPattern[];
+  dependencies: Dependency[];
 
   constructor(m: M) {
+    const { treeBuilder: t, dependency: d } = m;
+
     this.patterns = [
       {
         kind: 'RolePattern',
@@ -35,6 +38,8 @@ export class PostalAddressDisplayNameRule implements IRule {
         roleType: m.PostalAddress.Country,
       },
     ];
+
+    this.dependencies = [d(m.PostalAddress, (v) => v.Country)];
   }
 
   derive(cycle: ICycle, matches: PostalAddress[]) {
@@ -43,7 +48,7 @@ export class PostalAddressDisplayNameRule implements IRule {
       ${[match.Address1, match.Address2, match.Address3].filter((v) => v).map((v) => oneLine`${v}`)}
       ${inlineLists`${[match.PostalCode, match.Locality].filter((v) => v)}`}
       ${match.Country?.Name ?? ''}
-      `;    
+      `;
     }
   }
 }

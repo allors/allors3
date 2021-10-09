@@ -39,10 +39,6 @@ export class LoginComponent extends TestScope implements OnDestroy {
   ) {
     super();
 
-    const { session, workspace } = this.allors.context;
-    session.dependencies = 'login';
-    session.activate([workspace.rules.find((v) => v.id === 'c2cfecbd3b4f437198c53b9c5b206f0c')]);
-
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 

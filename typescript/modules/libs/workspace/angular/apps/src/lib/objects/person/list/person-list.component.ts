@@ -50,7 +50,6 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
       context: { session, workspace: w },
     } = this.allors;
 
-    session.dependencies = 'person-list';
     const rules = [w.rule(PersonDisplayNameRule)];
     session.activate(rules);
 

@@ -1,18 +1,23 @@
 import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { PartCategory } from '@allors/workspace/domain/default';
+import { Dependency } from '@allors/workspace/meta/system';
 
 export class PartCategoryDisplayNameRule implements IRule {
-  id= '354610b3405d410dbec4e2322bb3149e';
   patterns: IPattern[];
+  dependencies: Dependency[];
 
   constructor(m: M) {
+    const { treeBuilder: t, dependency: d } = m;
+
     this.patterns = [
       {
         kind: 'RolePattern',
         roleType: m.PartCategory.PrimaryParent,
       },
     ];
+
+    this.dependencies = [d(m.PartCategory, (v) => v.PrimaryParent)];
   }
 
   derive(cycle: ICycle, matches: PartCategory[]) {
@@ -23,7 +28,7 @@ export class PartCategoryDisplayNameRule implements IRule {
         selfAndPrimaryAncestors.push(ancestor);
         ancestor = ancestor.PrimaryParent;
       }
-    
+
       selfAndPrimaryAncestors.reverse();
       match.DisplayName = selfAndPrimaryAncestors.map((v) => v.Name).join('/');
     }
