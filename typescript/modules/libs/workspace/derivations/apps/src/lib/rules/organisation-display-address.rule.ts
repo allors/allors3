@@ -1,4 +1,4 @@
-import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
+import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, PostalAddress } from '@allors/workspace/domain/default';
 import { Dependency } from '@allors/workspace/meta/system';
@@ -14,31 +14,10 @@ export class OrganisationDisplayAddressRule implements IRule {
     const { treeBuilder: t, dependency: d } = m;
 
     this.patterns = [
-      {
-        kind: 'RolePattern',
-        roleType: m.Organisation.GeneralCorrespondence,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.PostalAddress.Address1,
-        tree: t.ContactMechanism({
-          PartiesWhereGeneralCorrespondence: {},
-        }),
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.PostalAddress.Address2,
-        tree: t.ContactMechanism({
-          PartiesWhereGeneralCorrespondence: {},
-        }),
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.PostalAddress.Address3,
-        tree: t.ContactMechanism({
-          PartiesWhereGeneralCorrespondence: {},
-        }),
-      },
+      p(m.Organisation, (v) => v.GeneralCorrespondence),
+      p(m.PostalAddress, (v) => v.Address1, t.ContactMechanism({ PartiesWhereGeneralCorrespondence: {} }), m.Organisation),
+      p(m.PostalAddress, (v) => v.Address2, t.ContactMechanism({ PartiesWhereGeneralCorrespondence: {} }), m.Organisation),
+      p(m.PostalAddress, (v) => v.Address3, t.ContactMechanism({ PartiesWhereGeneralCorrespondence: {} }), m.Organisation),
     ];
 
     this.dependencies = [d(m.Organisation, (v) => v.GeneralCorrespondence)];

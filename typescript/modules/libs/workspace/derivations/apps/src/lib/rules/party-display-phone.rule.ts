@@ -1,4 +1,4 @@
-import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
+import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { TelecommunicationsNumber, Party } from '@allors/workspace/domain/default';
 import { Dependency } from '@allors/workspace/meta/system';
@@ -14,10 +14,7 @@ export class PartyDisplayPhoneRule implements IRule {
     const { treeBuilder: t, dependency: d } = m;
 
     this.patterns = [
-      {
-        kind: 'RolePattern',
-        roleType: m.Party.PartyContactMechanisms,
-      },
+      p(m.Party, (v) => v.PartyContactMechanisms),
       {
         kind: 'RolePattern',
         roleType: m.PartyContactMechanism.ContactMechanism,
@@ -29,11 +26,13 @@ export class PartyDisplayPhoneRule implements IRule {
       },
     ];
 
-    this.dependencies = [d(m.Party, (v) => v.PartyContactMechanisms)];
+    this.dependencies = [d(m.Party, (v) => v.PartyContactMechanisms), d(m.PartyContactMechanism, (v) => v.ContactMechanism)];
   }
 
   derive(cycle: ICycle, matches: Party[]) {
     for (const match of matches) {
+      const clsName = match.strategy.cls.singularName;
+
       const telecommunicationsNumbers = match.PartyContactMechanisms.filter((v) => v.ContactMechanism?.strategy.cls === this.m.TelecommunicationsNumber);
 
       if (telecommunicationsNumbers.length > 0) {

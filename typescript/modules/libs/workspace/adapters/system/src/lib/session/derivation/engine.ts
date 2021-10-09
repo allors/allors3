@@ -14,7 +14,7 @@ export class Engine {
 
   patternsByClassByRule: Map<IRule, Map<Class, IPattern[]>>;
 
-  public constructor(public rules: Readonly<IRule[]>) {
+  public constructor(public rules: IRule[]) {
     Object.freeze(this.rules);
     this.classesByRule = new Map();
     this.rulesByClass = new Map();
@@ -40,8 +40,8 @@ export class Engine {
             }
             break;
           case 'AssociationPattern':
-            if (pattern.AssociationType.roleType.objectType.isComposite) {
-              ruleClasses = new Set([...ruleClasses, ...(pattern.AssociationType.roleType.objectType as Composite).classes]);
+            if (pattern.associationType.roleType.objectType.isComposite) {
+              ruleClasses = new Set([...ruleClasses, ...(pattern.associationType.roleType.objectType as Composite).classes]);
             }
             break;
         }
@@ -95,7 +95,7 @@ export class Engine {
                   this.patternsByAssociationTypeByClass.set(patternClass, patternsByAssociationType);
                 }
 
-                const AssociationType = pattern.AssociationType;
+                const AssociationType = pattern.associationType;
 
                 let patterns = patternsByAssociationType.get(AssociationType);
                 if (patterns == null) {

@@ -31,7 +31,7 @@ export abstract class Workspace implements IWorkspace {
     return this.rules.find((v) => v instanceof cls);
   }
 
-  get rules(): Readonly<IRule[]> {
+  get rules(): IRule[] {
     return this.database.configuration.engine.rules;
   }
 

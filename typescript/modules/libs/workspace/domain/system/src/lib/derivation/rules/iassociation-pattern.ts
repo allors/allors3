@@ -4,5 +4,5 @@ import { IPatternBase } from './ipattern';
 export interface IAssociationPattern extends IPatternBase {
   kind: 'AssociationPattern';
 
-  AssociationType: AssociationType;
+  associationType: AssociationType;
 }

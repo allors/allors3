@@ -2,7 +2,7 @@ import { from, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { Context, WorkspaceService } from '@allors/workspace/angular/core';
-import { IConfiguration, IInvokeResult, InvokeOptions, IObject, IPullResult, IResult, ISession, IWorkspace, Method, Pull } from '@allors/workspace/domain/system';
+import { IConfiguration, IInvokeResult, InvokeOptions, IObject, IPullResult, IResult, IRule, ISession, IWorkspace, Method, Pull } from '@allors/workspace/domain/system';
 import { Class, Composite } from '@allors/workspace/meta/system';
 
 export class CoreContext implements Context {
@@ -17,6 +17,15 @@ export class CoreContext implements Context {
   configuration: IConfiguration;
 
   session: ISession;
+
+  activate(ruleClasses: (new (...args: any[]) => IRule)[]) {
+    if (ruleClasses == null) {
+      return;
+    }
+
+    const rules = ruleClasses.map((v) => this.workspace.rule(v));
+    this.session.activate(rules);
+  }
 
   create<T extends IObject>(cls: Class): T {
     return this.session.create<T>(cls);

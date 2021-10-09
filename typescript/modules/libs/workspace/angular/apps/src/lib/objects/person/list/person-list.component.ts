@@ -8,7 +8,6 @@ import { M } from '@allors/workspace/meta/default';
 import { Person } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { PersonDisplayNameRule } from '@allors/workspace/derivations/default';
 
 interface Row extends TableRow {
   object: Person;
@@ -46,12 +45,11 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
   ) {
     super();
 
-    const {
-      context: { session, workspace: w },
-    } = this.allors;
+    const { context } = this.allors;
 
-    const rules = [w.rule(PersonDisplayNameRule)];
-    session.activate(rules);
+    // const rules = [PersonDisplayNameRule, PersonDisplayEmailRule];
+    // context.activate(rules);
+    context.session.activate(context.workspace.rules);
 
     titleService.setTitle(this.title);
 

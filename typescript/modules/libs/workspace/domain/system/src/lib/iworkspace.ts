@@ -5,9 +5,9 @@ import { ISession } from './isession';
 export interface IWorkspace {
   configuration: IConfiguration;
 
-  rules: Readonly<IRule[]>;
+  rules: IRule[];
 
-  rule(cls: any): IRule;
+  rule(cls: new (...args: any[]) => IRule): IRule;
 
   createSession(): ISession;
 }

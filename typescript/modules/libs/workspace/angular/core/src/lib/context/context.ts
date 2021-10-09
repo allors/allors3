@@ -12,6 +12,8 @@ export interface Context {
 
   configuration: IConfiguration;
 
+  activate(rules: { new (...args: any[]): any }[]): void;
+
   create<T extends IObject>(cls: Class): T;
 
   instantiate<T extends IObject>(id: number): T;

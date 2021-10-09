@@ -11,7 +11,6 @@ namespace Allors.Database.Protocol.Json
     using Data;
     using Security;
     using Services;
-    using Extent = Extent;
 
     public class PullExtent
     {
@@ -21,8 +20,7 @@ namespace Allors.Database.Protocol.Json
         private readonly IPreparedExtents preparedExtents;
         private readonly IPreparedSelects preparedSelects;
 
-        public PullExtent(ITransaction transaction, Pull pull, IAccessControl acls, IPreparedSelects preparedSelects,
-            IPreparedExtents preparedExtents)
+        public PullExtent(ITransaction transaction, Pull pull, IAccessControl acls, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents)
         {
             this.transaction = transaction;
             this.pull = pull;
