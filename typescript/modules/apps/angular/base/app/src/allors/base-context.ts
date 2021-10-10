@@ -10,6 +10,9 @@ export class BaseContext implements Context {
     this.workspace = this.workspaceService.workspace;
     this.configuration = this.workspace.configuration;
     this.session = this.workspace.createSession();
+
+    // Auto activate
+    this.session.activate(this.workspace.rules);
   }
 
   workspace: IWorkspace;
@@ -26,7 +29,7 @@ export class BaseContext implements Context {
     const rules = ruleClasses.map((v) => this.workspace.rule(v));
     this.session.activate(rules);
   }
-  
+
   create<T extends IObject>(cls: Class): T {
     return this.session.create<T>(cls);
   }

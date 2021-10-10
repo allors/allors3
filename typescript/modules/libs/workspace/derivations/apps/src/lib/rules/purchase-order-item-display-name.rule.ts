@@ -1,6 +1,6 @@
 import { inlineLists } from 'common-tags';
 
-import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
+import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { PurchaseOrderItem } from '@allors/workspace/domain/default';
 import { Dependency } from '@allors/workspace/meta/system';
@@ -13,40 +13,37 @@ export class PurchaseOrderItemDisplayNameRule implements IRule {
     const { treeBuilder: t, dependency: d } = m;
 
     this.patterns = [
-      {
-        kind: 'RolePattern',
-        roleType: m.PurchaseOrderItem.Part,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.Part.Name,
-        tree: t.Part({
+      p(m.PurchaseOrderItem, (v) => v.Part),
+      p(
+        m.Part,
+        (v) => v.Name,
+        t.Part({
           PurchaseOrderItemsWherePart: {},
-        }),
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.PurchaseOrder.OrderNumber,
-        tree: t.PurchaseOrder({
+        })
+      ),
+      p(
+        m.PurchaseOrder,
+        (v) => v.OrderNumber,
+        t.PurchaseOrder({
           PurchaseOrderItems: {},
-        }),
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.PurchaseOrder.TakenViaSupplier,
-        tree: t.PurchaseOrder({
+        })
+      ),
+      p(
+        m.PurchaseOrder,
+        (v) => v.TakenViaSupplier,
+        t.PurchaseOrder({
           PurchaseOrderItems: {},
-        }),
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.Organisation.PartyName,
-        tree: t.Organisation({
+        })
+      ),
+      p(
+        m.Organisation,
+        (v) => v.PartyName,
+        t.Organisation({
           PurchaseOrdersWhereTakenViaSupplier: {
             PurchaseOrderItems: {},
           },
-        }),
-      },
+        })
+      ),
     ];
 
     this.dependencies = [d(m.PurchaseOrderItem, (v) => v.PurchaseOrderWherePurchaseOrderItem), d(m.PurchaseOrder, (v) => v.TakenViaSupplier), d(m.PurchaseOrderItem, (v) => v.Part)];

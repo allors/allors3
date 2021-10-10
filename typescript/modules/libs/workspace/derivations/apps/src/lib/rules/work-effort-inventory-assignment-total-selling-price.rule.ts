@@ -1,4 +1,4 @@
-import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
+import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffortInventoryAssignment } from '@allors/workspace/domain/default';
 import { Dependency } from '@allors/workspace/meta/system';
@@ -8,20 +8,7 @@ export class WorkEffortInventoryAssignmentTotalSellingPriceRule implements IRule
   dependencies: Dependency[];
 
   constructor(m: M) {
-    this.patterns = [
-      {
-        kind: 'RolePattern',
-        roleType: m.WorkEffortInventoryAssignment.DerivedBillableQuantity,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.WorkEffortInventoryAssignment.Quantity,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.WorkEffortInventoryAssignment.UnitSellingPrice,
-      },
-    ];
+    this.patterns = [p(m.WorkEffortInventoryAssignment, (v) => v.DerivedBillableQuantity), p(m.WorkEffortInventoryAssignment, (v) => v.Quantity), p(m.WorkEffortInventoryAssignment, (v) => v.UnitSellingPrice)];
   }
 
   derive(cycle: ICycle, matches: WorkEffortInventoryAssignment[]) {

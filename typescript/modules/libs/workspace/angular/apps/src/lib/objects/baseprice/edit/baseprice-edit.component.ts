@@ -38,17 +38,12 @@ export class BasepriceEditComponent extends TestScope implements OnInit, OnDestr
   ) {
     super();
 
-    const { context } = this.allors;
-
-    // const rules = [PersonDisplayNameRule, PersonDisplayEmailRule];
-    // context.activate(rules);
-    context.session.activate(context.workspace.rules);
-
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
   public ngOnInit(): void {
-    const m = this.m; const { pullBuilder: pull } = m;
+    const m = this.m;
+    const { pullBuilder: pull } = m;
     const x = {};
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])

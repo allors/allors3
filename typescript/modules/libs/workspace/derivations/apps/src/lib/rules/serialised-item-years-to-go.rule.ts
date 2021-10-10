@@ -1,4 +1,4 @@
-import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
+import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { SerialisedItem, UnifiedGood } from '@allors/workspace/domain/default';
 import { Dependency } from '@allors/workspace/meta/system';
@@ -11,21 +11,15 @@ export class SerialisedItemYearsToGoRule implements IRule {
     const { treeBuilder: t, dependency: d } = m;
 
     this.patterns = [
-      {
-        kind: 'RolePattern',
-        roleType: m.SerialisedItem.ManufacturingYear,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.SerialisedItem.Age,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.UnifiedGood.LifeTime,
-        tree: t.UnifiedGood({
+      p(m.SerialisedItem, (v) => v.ManufacturingYear),
+      p(m.SerialisedItem, (v) => v.Age),
+      p(
+        m.UnifiedGood,
+        (v) => v.LifeTime,
+        t.UnifiedGood({
           SerialisedItems: {},
-        }),
-      },
+        })
+      ),
     ];
 
     this.dependencies = [d(m.SerialisedItem, (v) => v.PartWhereSerialisedItem)];

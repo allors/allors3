@@ -15,22 +15,22 @@ export class OrganisationDisplayAddress2Rule implements IRule {
 
     this.patterns = [
       p(m.Organisation, (v) => v.GeneralCorrespondence),
-      {
-        kind: 'RolePattern',
-        roleType: m.PostalAddress.PostalCode,
-        tree: t.ContactMechanism({
+      p(
+        m.PostalAddress,
+        (v) => v.PostalCode,
+        t.ContactMechanism({
           PartiesWhereGeneralCorrespondence: {},
         }),
-        ofType: m.Organisation,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.PostalAddress.Locality,
-        tree: t.ContactMechanism({
+        m.Organisation
+      ),
+      p(
+        m.PostalAddress,
+        (v) => v.Locality,
+        t.ContactMechanism({
           PartiesWhereGeneralCorrespondence: {},
         }),
-        ofType: m.Organisation,
-      },
+        m.Organisation
+      ),
     ];
 
     this.dependencies = [d(m.Organisation, (v) => v.GeneralCorrespondence)];

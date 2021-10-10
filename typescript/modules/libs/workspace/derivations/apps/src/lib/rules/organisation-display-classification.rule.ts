@@ -1,4 +1,4 @@
-import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
+import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation } from '@allors/workspace/domain/default';
 import { Dependency } from '@allors/workspace/meta/system';
@@ -14,17 +14,14 @@ export class OrganisationDisplayClassificationRule implements IRule {
     const { treeBuilder: t, dependency: d } = m;
 
     this.patterns = [
-      {
-        kind: 'RolePattern',
-        roleType: m.Organisation.CustomClassifications,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.CustomOrganisationClassification.Name,
-        tree: t.CustomOrganisationClassification({
+      p(m.Organisation, (v) => v.CustomClassifications),
+      p(
+        m.CustomOrganisationClassification,
+        (v) => v.Name,
+        t.CustomOrganisationClassification({
           OrganisationsWhereCustomClassification: {},
-        }),
-      },
+        })
+      ),
     ];
 
     this.dependencies = [d(m.Organisation, (v) => v.CustomClassifications)];

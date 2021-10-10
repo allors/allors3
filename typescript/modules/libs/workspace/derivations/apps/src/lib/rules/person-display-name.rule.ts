@@ -1,4 +1,4 @@
-import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
+import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { Person } from '@allors/workspace/domain/default';
 import { Dependency } from '@allors/workspace/meta/system';
@@ -8,16 +8,7 @@ export class PersonDisplayNameRule implements IRule {
   dependencies: Dependency[];
 
   constructor(m: M) {
-    this.patterns = [
-      {
-        kind: 'RolePattern',
-        roleType: m.Person.FirstName,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.Person.LastName,
-      },
-    ];
+    this.patterns = [p(m.Person, (v) => v.FirstName), p(m.Person, (v) => v.LastName)];
   }
 
   derive(cycle: ICycle, matches: Person[]) {

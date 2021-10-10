@@ -1,4 +1,4 @@
-import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
+import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { ProductCategory } from '@allors/workspace/domain/default';
 import { Dependency } from '@allors/workspace/meta/system';
@@ -10,12 +10,7 @@ export class ProductCategoryDisplayNameRule implements IRule {
   constructor(m: M) {
     const { treeBuilder: t, dependency: d } = m;
 
-    this.patterns = [
-      {
-        kind: 'RolePattern',
-        roleType: m.ProductCategory.PrimaryParent,
-      },
-    ];
+    this.patterns = [p(m.ProductCategory, (v) => v.PrimaryParent)];
 
     this.dependencies = [d(m.ProductCategory, (v) => v.PrimaryParent)];
   }

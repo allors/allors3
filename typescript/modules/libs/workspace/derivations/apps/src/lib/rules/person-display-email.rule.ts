@@ -1,4 +1,4 @@
-import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
+import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { EmailAddress, Person } from '@allors/workspace/domain/default';
 import { Dependency } from '@allors/workspace/meta/system';
@@ -14,14 +14,16 @@ export class PersonDisplayEmailRule implements IRule {
     this.m = m;
 
     this.patterns = [
-      {
-        kind: 'RolePattern',
-        roleType: m.Person.FirstName,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.Person.LastName,
-      },
+      p(m.Party, (v) => v.PartyContactMechanisms),
+      p(
+        m.PartyContactMechanism,
+        (v) => v.ContactMechanism,
+        t.ContactMechanism({
+          PartyContactMechanismsWhereContactMechanism: {
+            PartyWherePartyContactMechanism: {},
+          },
+        })
+      ),
     ];
 
     this.dependencies = [d(m.Person, (v) => v.PartyContactMechanisms)];

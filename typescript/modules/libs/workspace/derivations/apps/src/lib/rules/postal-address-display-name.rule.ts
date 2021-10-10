@@ -1,6 +1,6 @@
 import { stripIndents, oneLine, inlineLists } from 'common-tags';
 
-import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
+import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { PostalAddress } from '@allors/workspace/domain/default';
 import { Dependency } from '@allors/workspace/meta/system';
@@ -13,30 +13,12 @@ export class PostalAddressDisplayNameRule implements IRule {
     const { treeBuilder: t, dependency: d } = m;
 
     this.patterns = [
-      {
-        kind: 'RolePattern',
-        roleType: m.PostalAddress.Address1,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.PostalAddress.Address2,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.PostalAddress.Address3,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.PostalAddress.PostalCode,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.PostalAddress.Locality,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.PostalAddress.Country,
-      },
+      p(m.PostalAddress, (v) => v.Address1),
+      p(m.PostalAddress, (v) => v.Address2),
+      p(m.PostalAddress, (v) => v.Address3),
+      p(m.PostalAddress, (v) => v.PostalCode),
+      p(m.PostalAddress, (v) => v.Locality),
+      p(m.PostalAddress, (v) => v.Country),
     ];
 
     this.dependencies = [d(m.PostalAddress, (v) => v.Country)];

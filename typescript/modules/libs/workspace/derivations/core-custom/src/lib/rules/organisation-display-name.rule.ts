@@ -1,6 +1,6 @@
 import { Dependency } from '@allors/workspace/meta/system';
 import { Organisation } from '@allors/workspace/domain/default';
-import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
+import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 
 export class OrganisationDisplayNameRule implements IRule {

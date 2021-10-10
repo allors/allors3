@@ -10,6 +10,9 @@ export class CoreContext implements Context {
     this.workspace = this.workspaceService.workspace;
     this.configuration = this.workspace.configuration;
     this.session = this.workspace.createSession();
+
+    // Auto activate
+    this.session.activate(this.workspace.rules);
   }
 
   workspace: IWorkspace;

@@ -15,15 +15,15 @@ export class PartyDisplayPhoneRule implements IRule {
 
     this.patterns = [
       p(m.Party, (v) => v.PartyContactMechanisms),
-      {
-        kind: 'RolePattern',
-        roleType: m.PartyContactMechanism.ContactMechanism,
-        tree: t.ContactMechanism({
+      p(
+        m.PartyContactMechanism,
+        (v) => v.ContactMechanism,
+        t.ContactMechanism({
           PartyContactMechanismsWhereContactMechanism: {
             PartyWherePartyContactMechanism: {},
           },
-        }),
-      },
+        })
+      ),
     ];
 
     this.dependencies = [d(m.Party, (v) => v.PartyContactMechanisms), d(m.PartyContactMechanism, (v) => v.ContactMechanism)];

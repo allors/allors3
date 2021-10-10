@@ -59,12 +59,6 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
   ) {
     super();
 
-    const { context } = this.allors;
-
-    // const rules = [PersonDisplayNameRule, PersonDisplayEmailRule];
-    // context.activate(rules);
-    context.session.activate(context.workspace.rules);
-
     this.m = this.allors.context.configuration.metaPopulation as M;
     this.refresh$ = new BehaviorSubject<Date>(undefined);
   }

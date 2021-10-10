@@ -1,4 +1,4 @@
-import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
+import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { InventoryItem } from '@allors/workspace/domain/default';
 import { Dependency } from '@allors/workspace/meta/system';
@@ -11,17 +11,14 @@ export class InventoryItemFacilityNameRule implements IRule {
     const { treeBuilder: t, dependency: d } = m;
 
     this.patterns = [
-      {
-        kind: 'RolePattern',
-        roleType: m.InventoryItem.Facility,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.Facility.Name,
-        tree: t.Facility({
+      p(m.InventoryItem, (v) => v.Facility),
+      p(
+        m.Facility,
+        (v) => v.Name,
+        t.Facility({
           InventoryItemsWhereFacility: {},
-        }),
-      },
+        })
+      ),
     ];
 
     this.dependencies = [d(m.InventoryItem, (v) => v.Facility)];

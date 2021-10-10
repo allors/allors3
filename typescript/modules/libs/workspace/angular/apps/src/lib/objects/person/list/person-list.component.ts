@@ -45,12 +45,6 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
   ) {
     super();
 
-    const { context } = this.allors;
-
-    // const rules = [PersonDisplayNameRule, PersonDisplayEmailRule];
-    // context.activate(rules);
-    context.session.activate(context.workspace.rules);
-
     titleService.setTitle(this.title);
 
     this.m = this.allors.context.configuration.metaPopulation as M;

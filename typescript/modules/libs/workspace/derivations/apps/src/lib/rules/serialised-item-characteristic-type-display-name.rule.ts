@@ -1,4 +1,4 @@
-import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
+import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { SerialisedItemCharacteristicType } from '@allors/workspace/domain/default';
 import { Dependency } from '@allors/workspace/meta/system';
@@ -11,14 +11,8 @@ export class SerialisedItemCharacteristicTypeDisplayNameRule implements IRule {
     const { treeBuilder: t, dependency: d } = m;
 
     this.patterns = [
-      {
-        kind: 'RolePattern',
-        roleType: m.SerialisedItemCharacteristicType.UnitOfMeasure,
-      },
-      {
-        kind: 'RolePattern',
-        roleType: m.SerialisedItemCharacteristicType.Name,
-      },
+      p(m.SerialisedItemCharacteristicType, (v) => v.UnitOfMeasure),
+      p(m.SerialisedItemCharacteristicType, (v) => v.Name),
     ];
 
     this.dependencies = [d(m.SerialisedItemCharacteristicType, (v) => v.UnitOfMeasure)];

@@ -1,5 +1,5 @@
 import { Dependency } from '@allors/workspace/meta/system';
-import { ICycle, IRule, IPattern } from '@allors/workspace/domain/system';
+import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { Person } from '@allors/workspace/domain/default';
 

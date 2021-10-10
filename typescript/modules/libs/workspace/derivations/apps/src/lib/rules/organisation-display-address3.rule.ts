@@ -15,14 +15,14 @@ export class OrganisationDisplayAddress3Rule implements IRule {
 
     this.patterns = [
       p(m.Organisation, (v) => v.GeneralCorrespondence),
-      {
-        kind: 'RolePattern',
-        roleType: m.PostalAddress.Country,
-        tree: t.ContactMechanism({
+      p(
+        m.Organisation,
+        (v) => v.GeneralCorrespondence,
+        t.ContactMechanism({
           PartiesWhereGeneralCorrespondence: {},
         }),
-        ofType: m.Organisation,
-      },
+        m.Organisation
+      ),
     ];
 
     this.dependencies = [d(m.Organisation, (v) => v.GeneralCorrespondence)];
