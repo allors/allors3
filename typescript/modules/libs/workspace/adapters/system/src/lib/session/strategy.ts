@@ -24,7 +24,7 @@ export abstract class Strategy implements IStrategy {
   delete() {
     throw new Error('Method not implemented.');
   }
-  
+
   get version(): number {
     switch (this.cls.origin) {
       case Origin.Session:
@@ -386,6 +386,10 @@ export abstract class Strategy implements IStrategy {
   }
 
   assertUnit(roleType: RoleType, value: unknown) {
+    if (value == null) {
+      return;
+    }
+
     let error = false;
 
     switch (roleType.objectType.tag) {

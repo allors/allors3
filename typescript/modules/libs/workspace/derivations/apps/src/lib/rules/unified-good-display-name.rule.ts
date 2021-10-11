@@ -17,7 +17,7 @@ export class UnifiedGoodDisplayNameRule implements IRule {
 
   derive(cycle: ICycle, matches: UnifiedGood[]) {
     for (const match of matches) {
-      match.DisplayName = match.ProductCategoriesWhereProduct.map((v) => v.DisplayName).join(', ');
+      match.DisplayName = match.ProductCategoriesWhereProduct?.map((v) => v.DisplayName).join(', ');
     }
   }
 }

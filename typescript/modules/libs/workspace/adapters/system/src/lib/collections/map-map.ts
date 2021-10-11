@@ -37,7 +37,7 @@ export class MapMap<k1, k2, v> {
 
   remove(key1: k1, key2: k2) {
     const map = this.mapMap.get(key1);
-    map.delete(key2);
+    map?.delete(key2);
     return this;
   }
 }

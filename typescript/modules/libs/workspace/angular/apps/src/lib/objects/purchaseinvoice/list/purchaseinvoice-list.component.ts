@@ -200,7 +200,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
         switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          internalOrganisationPredicate.value = internalOrganisationId;
+          internalOrganisationPredicate.objectId = internalOrganisationId;
 
           const pulls = [
             this.fetcher.internalOrganisation,
