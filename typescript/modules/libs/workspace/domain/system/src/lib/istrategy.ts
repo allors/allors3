@@ -32,7 +32,7 @@ export interface IStrategy {
   canExecute(methodType: MethodType): boolean;
 
   existRole(roleType: RoleType): boolean;
-  
+
   hasChanged(roleType: RoleType): boolean;
 
   restoreRole(assignedRoleType: RoleType): void;
@@ -41,9 +41,9 @@ export interface IStrategy {
 
   getUnitRole(roleType: RoleType): IUnit;
 
-  getCompositeRole<T extends IObject>(roleType: RoleType): T;
+  getCompositeRole<T extends IObject>(roleType: RoleType, skipMissing?: boolean): T;
 
-  getCompositesRole<T extends IObject>(roleType: RoleType): ReadonlyArray<T>;
+  getCompositesRole<T extends IObject>(roleType: RoleType, skipMissing?: boolean): ReadonlyArray<T>;
 
   setRole(roleType: RoleType, value: unknown): void;
 

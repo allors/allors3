@@ -129,27 +129,27 @@ export abstract class Strategy implements IStrategy {
     }
   }
 
-  getCompositeRole<T extends IObject>(roleType: RoleType): T {
+  getCompositeRole<T extends IObject>(roleType: RoleType, skipMissing?: boolean): T {
     switch (roleType.origin) {
       case Origin.Session:
         return (this.session.sessionOriginState.getCompositeRole(this, roleType)?.object as T) ?? null;
       case Origin.Workspace:
         return (this.WorkspaceOriginState?.getCompositeRole(roleType)?.object as T) ?? null;
       case Origin.Database:
-        return this.canRead(roleType) ? (this.DatabaseOriginState?.getCompositeRole(roleType)?.object as T) ?? null : null;
+        return this.canRead(roleType) ? (this.DatabaseOriginState?.getCompositeRole(roleType, skipMissing)?.object as T) ?? null : null;
       default:
         throw new Error('Unknown origin');
     }
   }
 
-  getCompositesRole<T extends IObject>(roleType: RoleType): T[] {
+  getCompositesRole<T extends IObject>(roleType: RoleType, skipMissing?: boolean): T[] {
     switch (roleType.origin) {
       case Origin.Session:
         return this.session.sessionOriginState.getCompositesRole(this, roleType)?.map((v) => v.object as T) ?? (frozenEmptyArray as T[]);
       case Origin.Workspace:
         return (this.WorkspaceOriginState?.getCompositesRole(roleType)?.map((v) => v.object) as T[]) ?? (frozenEmptyArray as T[]);
       case Origin.Database:
-        return this.canRead(roleType) ? (this.DatabaseOriginState?.getCompositesRole(roleType)?.map((v) => v.object) as T[]) ?? (frozenEmptyArray as T[]) : (frozenEmptyArray as T[]);
+        return this.canRead(roleType) ? (this.DatabaseOriginState?.getCompositesRole(roleType, skipMissing)?.map((v) => v.object) as T[]) ?? (frozenEmptyArray as T[]) : (frozenEmptyArray as T[]);
       default:
         throw new Error('Unknown origin');
     }

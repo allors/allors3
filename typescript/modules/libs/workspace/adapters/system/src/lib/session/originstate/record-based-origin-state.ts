@@ -35,7 +35,7 @@ export abstract class RecordBasedOriginState {
     this.setChangedRole(roleType, role);
   }
 
-  getCompositeRole(roleType: RoleType): Strategy {
+  getCompositeRole(roleType: RoleType, skipMissing?: boolean): Strategy {
     if (this.changedRoleByRelationType != null && this.changedRoleByRelationType.has(roleType.relationType)) {
       return this.changedRoleByRelationType.get(roleType.relationType) as Strategy;
     }
@@ -47,7 +47,11 @@ export abstract class RecordBasedOriginState {
     }
 
     const strategy = this.session.getStrategy(role);
-    this.assertStrategy(strategy);
+
+    if (!skipMissing) {
+      this.assertStrategy(strategy);
+    }
+
     return strategy;
   }
 
@@ -70,7 +74,7 @@ export abstract class RecordBasedOriginState {
     }
   }
 
-  getCompositesRole(roleType: RoleType): IRange<Strategy> {
+  getCompositesRole(roleType: RoleType, skipMissing?: boolean): IRange<Strategy> {
     if (this.changedRoleByRelationType != null && this.changedRoleByRelationType.has(roleType.relationType)) {
       return this.changedRoleByRelationType.get(roleType.relationType) as IRange<Strategy>;
     }
@@ -81,11 +85,25 @@ export abstract class RecordBasedOriginState {
       return frozenEmptyArray as Strategy[];
     }
 
-    const strategies = role.map((v) => {
-      const strategy = this.session.getStrategy(v);
-      this.assertStrategy(strategy);
-      return strategy;
-    });
+    let strategies: Strategy[];
+
+    if (skipMissing) {
+      strategies = role
+        .map((v) => {
+          const strategy = this.session.getStrategy(v);
+          if (!skipMissing) {
+            this.assertStrategy(strategy);
+          }
+          return strategy;
+        })
+        .filter((v) => v != null);
+    } else {
+      strategies = role.map((v) => {
+        const strategy = this.session.getStrategy(v);
+        this.assertStrategy(strategy);
+        return strategy;
+      });
+    }
 
     return strategies;
   }

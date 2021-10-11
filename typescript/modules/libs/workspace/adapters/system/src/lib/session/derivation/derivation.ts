@@ -46,7 +46,7 @@ export class Derivation implements IDerivation {
 
                   if (pattern.tree != null) {
                     source = pattern.tree.reduce((acc, v) => {
-                      for (const obj of resolve(instantiated.object, v)) {
+                      for (const obj of resolve(instantiated.object, v, true)) {
                         acc.push(obj);
                       }
                       return acc;
@@ -91,7 +91,7 @@ export class Derivation implements IDerivation {
 
               if (pattern.tree != null) {
                 source = pattern.tree.reduce((acc, v) => {
-                  acc.push(resolve(association.object, v));
+                  acc.push(resolve(association.object, v, true));
                   return acc;
                 }, []);
               } else {
@@ -131,7 +131,7 @@ export class Derivation implements IDerivation {
 
               if (pattern.tree != null) {
                 source = pattern.tree.reduce((acc, v) => {
-                  acc.push(resolve(association.object, v));
+                  acc.push(resolve(association.object, v, true));
                   return acc;
                 }, []);
               } else {
