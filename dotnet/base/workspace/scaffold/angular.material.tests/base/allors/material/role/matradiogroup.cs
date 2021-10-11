@@ -12,8 +12,8 @@ namespace Components
 
     public class MatRadioGroup : SelectorComponent
     {
-        public MatRadioGroup(IWebDriver driver, RoleType roleType, params string[] scopes)
-            : base(driver) =>
+        public MatRadioGroup(IWebDriver driver, MetaPopulation m, RoleType roleType, params string[] scopes)
+            : base(driver, m) =>
             this.Selector = By.XPath($".//a-mat-radiogroup{this.ByScopesPredicate(scopes)}//*[@data-allors-roletype='{roleType.RelationType.Tag}']");
 
         public override By Selector { get; }
@@ -30,10 +30,10 @@ namespace Components
     }
 
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
-    public class MatRadiogroup<T> : MatRadioGroup where T : Component
+    public class MatRadioGroup<T> : MatRadioGroup where T : Component
     {
-        public MatRadiogroup(T page, RoleType roleType, params string[] scopes)
-            : base(page.Driver, roleType, scopes) =>
+        public MatRadioGroup(T page, MetaPopulation m, RoleType roleType, params string[] scopes)
+            : base(page.Driver, m, roleType, scopes) =>
             this.Page = page;
 
         public T Page { get; }

@@ -12,8 +12,8 @@ namespace Components
 
     public class MatChips : SelectorComponent
     {
-        public MatChips(IWebDriver driver, RoleType roleType, params string[] scopes)
-            : base(driver) =>
+        public MatChips(IWebDriver driver, MetaPopulation m, RoleType roleType, params string[] scopes)
+            : base(driver, m) =>
             this.Selector = By.XPath($".//a-mat-chips{this.ByScopesPredicate(scopes)}//*[@data-allors-roletype='{roleType.RelationType.Tag}']");
 
         public override By Selector { get; }
@@ -49,8 +49,8 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class MatChips<T> : MatChips where T : Component
     {
-        public MatChips(T page, RoleType roleType, params string[] scopes)
-            : base(page.Driver, roleType, scopes) =>
+        public MatChips(T page, MetaPopulation m, RoleType roleType, params string[] scopes)
+            : base(page.Driver, m, roleType, scopes) =>
             this.Page = page;
 
         public T Page { get; }

@@ -7,13 +7,15 @@ namespace Components
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using Allors.Database;
+    using Allors.Database.Meta;
     using OpenQA.Selenium;
     using OpenQA.Selenium.Support.PageObjects;
 
     public class MatTable : SelectorComponent
     {
-        public MatTable(IWebDriver driver, By selector = null)
-            : base(driver) =>
+        public MatTable(IWebDriver driver, MetaPopulation m, By selector = null)
+            : base(driver, m) =>
             this.Selector = selector;
 
         public override By Selector { get; }
@@ -62,7 +64,7 @@ namespace Components
             var cell = row.FindCell("menu");
             cell.Click();
 
-            var menu = new MatMenu(this.Driver);
+            var menu = new MatMenu(this.Driver, this.M);
             menu.Select(action);
         }
 
@@ -79,8 +81,8 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class MatTable<T> : MatTable where T : Component
     {
-        public MatTable(T page, By selector = null)
-            : base(page.Driver, selector) =>
+        public MatTable(T page, MetaPopulation m, By selector = null)
+            : base(page.Driver, m, selector) =>
             this.Page = page;
 
         public T Page { get; }

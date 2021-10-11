@@ -21,25 +21,25 @@ namespace Autotest
 
         public string Edit { get; set; }
 
-        public static void Load(Dictionary<string, MetaExtension> metaExtensions, JArray jsonMetaExtensions, Action<MetaExtension, JToken> setter)
+        public static void Load(Dictionary<string, MetaExtension> metaExtensionByTag, JArray jsonMetaExtensions, Action<MetaExtension, JToken> setter)
         {
             foreach (var json in jsonMetaExtensions)
             {
-                if (json["id"] != null)
+                if (json["tag"] != null)
                 {
-                    var id = json["id"].Value<string>();
-                    if (id == null)
+                    var tag = json["tag"].Value<string>();
+                    if (tag == null)
                     {
-                        throw new ArgumentException("id is not a string: " + json["id"].Value<object>());
+                        throw new ArgumentException("tag is not a string: " + json["tag"].Value<object>());
                     }
 
-                    if (!metaExtensions.TryGetValue(id, out var metaExtension))
+                    if (!metaExtensionByTag.TryGetValue(tag, out var metaExtension))
                     {
                         metaExtension = new MetaExtension
                         {
-                            Tag = id,
+                            Tag = tag,
                         };
-                        metaExtensions.Add(id, metaExtension);
+                        metaExtensionByTag.Add(tag, metaExtension);
                     }
 
                     setter(metaExtension, json);

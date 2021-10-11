@@ -6,17 +6,18 @@
 namespace Components
 {
     using System.Diagnostics.CodeAnalysis;
+    using Allors.Database.Meta;
     using OpenQA.Selenium;
     using OpenQA.Selenium.Support.PageObjects;
 
     public class Button : SelectorComponent
     {
-        public Button(IWebDriver driver, params By[] selectors)
-        : base(driver) =>
+        public Button(IWebDriver driver, MetaPopulation m, params By[] selectors)
+        : base(driver, m) =>
             this.Selector = selectors.Length == 1 ? selectors[0] : new ByChained(selectors);
 
-        public Button(IWebDriver driver, string kind, string value, params string[] scopes)
-            : base(driver)
+        public Button(IWebDriver driver, MetaPopulation m, string kind, string value, params string[] scopes)
+            : base(driver, m)
         {
             switch (kind.ToLowerInvariant())
             {
@@ -44,8 +45,8 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class Button<T> : Button where T : Component
     {
-        public Button(T page, params By[] selectors)
-            : base(page.Driver, selectors) =>
+        public Button(T page, MetaPopulation m, params By[] selectors)
+            : base(page.Driver, m, selectors) =>
             this.Page = page;
 
         public T Page { get; }

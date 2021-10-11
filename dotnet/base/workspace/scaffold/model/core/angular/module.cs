@@ -5,9 +5,11 @@
 
 namespace Autotest.Angular
 {
+    using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
-    using Autotest.Html;
+    using Html;
     using Newtonsoft.Json.Linq;
 
     public partial class Module
@@ -52,7 +54,7 @@ namespace Autotest.Angular
                     var route = new Route(this, v);
                     route.BaseLoad();
                     return route;
-                }).ToArray() : new Route[0];
+                }).ToArray() : Array.Empty<Route>();
 
             var pathByRedirectTo = new Dictionary<string, string>();
             foreach (var route in this.Routes)
@@ -60,14 +62,14 @@ namespace Autotest.Angular
                 route.CreateFullPath("/", pathByRedirectTo);
             }
 
-            var bootstrapComponentIds = Angular.Reference.ParseIds(this.Json["bootstrapComponents"]);
-            var entryComponentIds = Angular.Reference.ParseIds(this.Json["entryComponents"]);
-            var declaredDirectiveIds = Angular.Reference.ParseIds(this.Json["declaredDirectives"]);
-            var exportedDirectiveIds = Angular.Reference.ParseIds(this.Json["exportedDirectives"]);
-            var exportedPipeIds = Angular.Reference.ParseIds(this.Json["exportedPipes"]);
-            var declaredPipeIds = Angular.Reference.ParseIds(this.Json["declaredPipes"]);
-            var importedModuleIds = Angular.Reference.ParseIds(this.Json["importedModules"]);
-            var exportedModuleIds = Angular.Reference.ParseIds(this.Json["exportedModules"]);
+            var bootstrapComponentIds = Reference.ParseIds(this.Json["bootstrapComponents"]);
+            var entryComponentIds = Reference.ParseIds(this.Json["entryComponents"]);
+            var declaredDirectiveIds = Reference.ParseIds(this.Json["declaredDirectives"]);
+            var exportedDirectiveIds = Reference.ParseIds(this.Json["exportedDirectives"]);
+            var exportedPipeIds = Reference.ParseIds(this.Json["exportedPipes"]);
+            var declaredPipeIds = Reference.ParseIds(this.Json["declaredPipes"]);
+            var importedModuleIds = Reference.ParseIds(this.Json["importedModules"]);
+            var exportedModuleIds = Reference.ParseIds(this.Json["exportedModules"]);
 
             this.BootstrapComponents = bootstrapComponentIds.Select(v => this.Project.DirectiveById[v]).ToArray();
             this.EntryComponents = entryComponentIds.Select(v => this.Project.DirectiveById[v]).ToArray();
@@ -96,11 +98,9 @@ namespace Autotest.Angular
             {
                 return new[] { component };
             }
-            else
-            {
-                var attributeNames = element.Attributes.Select(v => $"{element}[{v.Name}]");
-                return this.Directives.Where(v => attributeNames.Any(w => v.Selector?.Contains(w) ?? false)).ToArray();
-            }
+
+            var attributeNames = element.Attributes.Select(v => $"{element}[{v.Name}]");
+            return this.Directives.Where(v => attributeNames.Any(w => v.Selector?.Contains(w) ?? false)).ToArray();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace src.app.dashboard
 
     public partial class DashboardComponent : Components.RoutedComponent
     {
-        public DashboardComponent(IWebDriver driver) : base(driver)
+        public DashboardComponent(IWebDriver driver, Allors.Database.Meta.MetaPopulation m) : base(driver, m)
         {
         }
 

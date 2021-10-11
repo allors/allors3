@@ -11,7 +11,7 @@ namespace Components
 
     public class MatMenu : SelectorComponent
     {
-        public MatMenu(IWebDriver driver, params string[] scopes) : base(driver) => this.Selector = By.CssSelector($"button[data-allors-action]");
+        public MatMenu(IWebDriver driver, MetaPopulation m, params string[] scopes) : base(driver, m) => this.Selector = By.CssSelector($"button[data-allors-action]");
 
         public override By Selector { get; }
 
@@ -27,8 +27,8 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class MatMenu<T> : MatSelect where T : Component
     {
-        public MatMenu(T page, RoleType roleType, params string[] scopes)
-            : base(page.Driver, roleType, scopes) =>
+        public MatMenu(T page, MetaPopulation m, RoleType roleType, params string[] scopes)
+            : base(page.Driver, m, roleType, scopes) =>
             this.Page = page;
 
         public T Page { get; }

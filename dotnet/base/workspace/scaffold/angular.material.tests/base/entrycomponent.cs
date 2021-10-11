@@ -5,11 +5,12 @@
 
 namespace Components
 {
+    using Allors.Database.Meta;
     using OpenQA.Selenium;
 
     public abstract class EntryComponent : Component
     {
-        protected EntryComponent(IWebDriver driver) : base(driver)
+        protected EntryComponent(IWebDriver driver, MetaPopulation m) : base(driver, m)
         {
         }
     }

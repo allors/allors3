@@ -8,7 +8,7 @@ namespace Autotest.Testers
     using System;
     using System.Linq;
     using Allors.Workspace.Meta;
-    using Autotest.Html;
+    using Html;
     using Humanizer;
 
     public partial class RoleFieldTester : Tester
@@ -59,6 +59,10 @@ namespace Autotest.Testers
                 return null;
             }
         }
+
+        public string MetaObjectTypeName => this.RoleType.AssociationType.ObjectType.SingularName;
+
+        public string MetaName => this.RoleType.Name;
 
         public string NameAttributeValue => this.Element.Attributes.FirstOrDefault(v => v.Name?.ToLowerInvariant() == NameAttribute)?.Value;
 

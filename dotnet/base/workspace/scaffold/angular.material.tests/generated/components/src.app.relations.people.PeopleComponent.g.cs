@@ -7,11 +7,11 @@ namespace src.app.relations.people
 
     public partial class PeopleComponent : Components.RoutedComponent
     {
-        public PeopleComponent(IWebDriver driver) : base(driver)
+        public PeopleComponent(IWebDriver driver, Allors.Database.Meta.MetaPopulation m) : base(driver, m)
         {
         }
 
-        public Components.Button Clouddownload => new Components.Button(this.Driver, "InnerText", @"cloud_download", "PeopleComponent");
+        public Components.Button Clouddownload => new Components.Button(this.Driver, this.M, "InnerText", @"cloud_download", "PeopleComponent");
 
 
 
@@ -19,20 +19,20 @@ namespace src.app.relations.people
 
 
 
-        public Components.Button Morevert => new Components.Button(this.Driver, "InnerText", @"more_vert", "PeopleComponent");
+        public Components.Button Morevert => new Components.Button(this.Driver, this.M, "InnerText", @"more_vert", "PeopleComponent");
 
 
 
 
-        public Components.Anchor Details => new Components.Anchor(this.Driver, "InnerText", @"Details", "PeopleComponent");
+        public Components.Anchor Details => new Components.Anchor(this.Driver, this.M, "InnerText", @"Details", "PeopleComponent");
 
 
-        public Components.Button Delete => new Components.Button(this.Driver, "InnerText", @"Delete", "PeopleComponent");
+        public Components.Button Delete => new Components.Button(this.Driver, this.M, "InnerText", @"Delete", "PeopleComponent");
 
 
 
 
-        public Components.Anchor AddNew => new Components.Anchor(this.Driver, "InnerText", @"Add New", "PeopleComponent");
+        public Components.Anchor AddNew => new Components.Anchor(this.Driver, this.M, "InnerText", @"Add New", "PeopleComponent");
 
     }
 }

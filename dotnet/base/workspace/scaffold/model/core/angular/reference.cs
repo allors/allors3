@@ -36,8 +36,7 @@ namespace Autotest.Angular
                 {
                     var path = this.Path.Substring(0, this.Path.LastIndexOf("/")).Replace("/", ".");
                     var eatLeadingDots = EatLeadingDots.Replace(path, "");
-                    var escaped = string.Join(".", eatLeadingDots.Split('.').Select(v => v.EscapeReservedKeyword()));
-                    return escaped;
+                    return string.Join(".", eatLeadingDots.Split('.').Select(v => v.EscapeReservedKeyword()));
                 }
 
                 return string.Empty;

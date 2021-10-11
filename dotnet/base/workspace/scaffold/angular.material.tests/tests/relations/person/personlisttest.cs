@@ -5,7 +5,8 @@
 
 namespace Tests.Relations
 {
-    using libs.angular.material.custom.src.relations.people;
+    using Allors.Database.Domain;
+    using src.app.relations.people;
     using Xunit;
 
     [Collection("Test collection")]

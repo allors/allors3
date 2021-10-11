@@ -7,34 +7,34 @@ namespace src.app.relations.organisations.organisation
 
     public partial class OrganisationComponent : Components.RoutedComponent
     {
-        public OrganisationComponent(IWebDriver driver) : base(driver)
+        public OrganisationComponent(IWebDriver driver, Allors.Database.Meta.MetaPopulation m) : base(driver, m)
         {
         }
 
-        public Components.MatInput<OrganisationComponent> Name => this.MatInput(Allors.Meta.M.., "OrganisationComponent");
+        public Components.MatInput<OrganisationComponent> Name => this.MatInput(this.M.Organisation.Name, "OrganisationComponent");
 
 
-        public Components.MatAutocomplete<OrganisationComponent> OrganisationOwner_1 => this.MatAutocomplete(Allors.Meta.M.., "OrganisationComponent");
+        public Components.MatAutocomplete<OrganisationComponent> OrganisationOwner_1 => this.MatAutocomplete(this.M.Organisation.Owner, "OrganisationComponent");
 
 
-        public Components.MatAutocomplete<OrganisationComponent> OrganisationOwner_2 => this.MatAutocomplete(Allors.Meta.M.., "OrganisationComponent");
+        public Components.MatAutocomplete<OrganisationComponent> OrganisationOwner_2 => this.MatAutocomplete(this.M.Organisation.Owner, "OrganisationComponent");
 
 
-        public Components.MatSelect<OrganisationComponent> OrganisationEmployees_1 => this.MatSelect(Allors.Meta.M.., "OrganisationComponent");
+        public Components.MatSelect<OrganisationComponent> OrganisationEmployees_1 => this.MatSelect(this.M.Organisation.Employees, "OrganisationComponent");
 
 
-        public Components.MatChips<OrganisationComponent> OrganisationEmployees_2 => this.MatChips(Allors.Meta.M.., "OrganisationComponent");
+        public Components.MatChips<OrganisationComponent> OrganisationEmployees_2 => this.MatChips(this.M.Organisation.Employees, "OrganisationComponent");
 
 
 
 
-        public Components.Button TOGGLECANWRITE => new Components.Button(this.Driver, "InnerText", @"TOGGLE CANWRITE", "OrganisationComponent");
+        public Components.Button TOGGLECANWRITE => new Components.Button(this.Driver, this.M, "InnerText", @"TOGGLE CANWRITE", "OrganisationComponent");
 
 
-        public Components.Button SAVE => new Components.Button(this.Driver, "InnerText", @"SAVE", "OrganisationComponent");
+        public Components.Button SAVE => new Components.Button(this.Driver, this.M, "InnerText", @"SAVE", "OrganisationComponent");
 
 
-        public Components.Button CANCEL => new Components.Button(this.Driver, "InnerText", @"CANCEL", "OrganisationComponent");
+        public Components.Button CANCEL => new Components.Button(this.Driver, this.M, "InnerText", @"CANCEL", "OrganisationComponent");
 
     }
 }

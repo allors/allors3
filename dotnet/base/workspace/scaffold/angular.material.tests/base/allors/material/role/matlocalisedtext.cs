@@ -11,8 +11,8 @@ namespace Components
 
     public class MatLocalisedText : SelectorComponent
     {
-        public MatLocalisedText(IWebDriver driver, RoleType roleType, params string[] scopes)
-        : base(driver) =>
+        public MatLocalisedText(IWebDriver driver, MetaPopulation m, RoleType roleType, params string[] scopes)
+        : base(driver, m) =>
             this.Selector = By.XPath($".//a-mat-localised-text{this.ByScopesPredicate(scopes)}//*[@data-allors-roletype='{roleType.RelationType.Tag}']");
 
         public override By Selector { get; }
@@ -48,8 +48,8 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class MatLocalisedText<T> : MatTextarea where T : Component
     {
-        public MatLocalisedText(T page, RoleType roleType, params string[] scopes)
-            : base(page.Driver, roleType, scopes) =>
+        public MatLocalisedText(T page, MetaPopulation m, RoleType roleType, params string[] scopes)
+            : base(page.Driver, m, roleType, scopes) =>
             this.Page = page;
 
         public T Page { get; }

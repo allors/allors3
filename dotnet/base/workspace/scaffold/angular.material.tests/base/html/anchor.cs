@@ -6,17 +6,17 @@
 namespace Components
 {
     using System.Diagnostics.CodeAnalysis;
-
+    using Allors.Database.Meta;
     using OpenQA.Selenium;
 
     public class Anchor : SelectorComponent
     {
-        public Anchor(IWebDriver driver, By selector)
-        : base(driver) =>
+        public Anchor(IWebDriver driver, MetaPopulation m, By selector)
+        : base(driver, m) =>
             this.Selector = selector;
 
-        public Anchor(IWebDriver driver, string kind, string value, params string[] scopes)
-            : base(driver)
+        public Anchor(IWebDriver driver, MetaPopulation m, string kind, string value, params string[] scopes)
+            : base(driver, m)
         {
             switch (kind.ToLowerInvariant())
             {
@@ -50,8 +50,8 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class Anchor<T> : Anchor where T : Component
     {
-        public Anchor(T page, By selector)
-            : base(page.Driver, selector) =>
+        public Anchor(T page, MetaPopulation m, By selector)
+            : base(page.Driver, m, selector) =>
             this.Page = page;
 
         public T Page { get; }

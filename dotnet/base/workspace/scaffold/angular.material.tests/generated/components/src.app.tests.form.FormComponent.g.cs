@@ -7,98 +7,98 @@ namespace src.app.tests.form
 
     public partial class FormComponent : Components.RoutedComponent
     {
-        public FormComponent(IWebDriver driver) : base(driver)
+        public FormComponent(IWebDriver driver, Allors.Database.Meta.MetaPopulation m) : base(driver, m)
         {
         }
 
-        public Components.MatInput<FormComponent> String => this.MatInput(Allors.Meta.M.., "FormComponent");
+        public Components.MatInput<FormComponent> String => this.MatInput(this.M.Data.String, "FormComponent");
 
 
-        public Components.MatInput<FormComponent> Decimal => this.MatInput(Allors.Meta.M.., "FormComponent");
+        public Components.MatInput<FormComponent> Decimal => this.MatInput(this.M.Data.Decimal, "FormComponent");
 
 
-        public Components.MatDatepicker<FormComponent> Date => this.MatDatepicker(Allors.Meta.M.., "FormComponent");
+        public Components.MatDatepicker<FormComponent> Date => this.MatDatepicker(this.M.Data.Date, "FormComponent");
 
 
-        public Components.Button NewDate => new Components.Button(this.Driver, "InnerText", @"New Date", "FormComponent");
+        public Components.Button NewDate => new Components.Button(this.Driver, this.M, "InnerText", @"New Date", "FormComponent");
 
 
-        public Components.MatDatetimepicker<FormComponent> DateTime => this.MatDatetimepicker(Allors.Meta.M.., "FormComponent");
+        public Components.MatDatetimepicker<FormComponent> DateTime => this.MatDatetimepicker(this.M.Data.DateTime, "FormComponent");
 
 
-        public Components.Button NewDateTime => new Components.Button(this.Driver, "InnerText", @"New DateTime", "FormComponent");
+        public Components.Button NewDateTime => new Components.Button(this.Driver, this.M, "InnerText", @"New DateTime", "FormComponent");
 
 
-        public Components.MatDatetimepicker<FormComponent> DateTime2 => this.MatDatetimepicker(Allors.Meta.M.., "FormComponent");
+        public Components.MatDatetimepicker<FormComponent> DateTime2 => this.MatDatetimepicker(this.M.Data.DateTime2, "FormComponent");
 
 
-        public Components.Button NewDateTime2 => new Components.Button(this.Driver, "InnerText", @"New DateTime2", "FormComponent");
+        public Components.Button NewDateTime2 => new Components.Button(this.Driver, this.M, "InnerText", @"New DateTime2", "FormComponent");
 
 
-        public Components.MatAutocomplete<FormComponent> AutocompleteFilter => this.MatAutocomplete(Allors.Meta.M.., "FormComponent");
+        public Components.MatAutocomplete<FormComponent> AutocompleteFilter => this.MatAutocomplete(this.M.Data.AutocompleteFilter, "FormComponent");
 
 
-        public Components.MatAutocomplete<FormComponent> AutocompleteDerivedFilter => this.MatAutocomplete(Allors.Meta.M.., "FormComponent");
+        public Components.MatAutocomplete<FormComponent> AutocompleteDerivedFilter => this.MatAutocomplete(this.M.Data.AutocompleteDerivedFilter, "FormComponent");
 
 
-        public Components.MatAutocomplete<FormComponent> AutocompleteOptions => this.MatAutocomplete(Allors.Meta.M.., "FormComponent");
+        public Components.MatAutocomplete<FormComponent> AutocompleteOptions => this.MatAutocomplete(this.M.Data.AutocompleteOptions, "FormComponent");
 
 
-        public Components.MatAutocomplete<FormComponent> AutocompleteDerivedOptions => this.MatAutocomplete(Allors.Meta.M.., "FormComponent");
+        public Components.MatAutocomplete<FormComponent> AutocompleteDerivedOptions => this.MatAutocomplete(this.M.Data.AutocompleteDerivedOptions, "FormComponent");
 
 
-        public Components.MatSelect<FormComponent> Select => this.MatSelect(Allors.Meta.M.., "FormComponent");
+        public Components.MatSelect<FormComponent> Select => this.MatSelect(this.M.Data.Select, "FormComponent");
 
 
-        public Components.MatSelect<FormComponent> SelectDerived => this.MatSelect(Allors.Meta.M.., "FormComponent");
+        public Components.MatSelect<FormComponent> SelectDerived => this.MatSelect(this.M.Data.SelectDerived, "FormComponent");
 
 
-        public Components.MatCheckbox<FormComponent> Checkbox => this.MatCheckbox(Allors.Meta.M.., "FormComponent");
+        public Components.MatCheckbox<FormComponent> Checkbox => this.MatCheckbox(this.M.Data.Checkbox, "FormComponent");
 
 
-        public Components.MatChips<FormComponent> Chips => this.MatChips(Allors.Meta.M.., "FormComponent");
+        public Components.MatChips<FormComponent> Chips => this.MatChips(this.M.Data.Chips, "FormComponent");
 
 
-        public Components.MatFile<FormComponent> File => this.MatFile(Allors.Meta.M.., "FormComponent");
+        public Components.MatFile<FormComponent> File => this.MatFile(this.M.Data.File, "FormComponent");
 
 
-        public Components.MatFiles<FormComponent> MultipleFiles => this.MatFiles(Allors.Meta.M.., "FormComponent");
+        public Components.MatFiles<FormComponent> MultipleFiles => this.MatFiles(this.M.Data.MultipleFiles, "FormComponent");
 
 
-        public Components.MatRadioGroup<FormComponent> RadioGroup => this.MatRadioGroup(Allors.Meta.M.., "FormComponent");
+        public Components.MatRadioGroup<FormComponent> RadioGroup => this.MatRadioGroup(this.M.Data.RadioGroup, "FormComponent");
 
 
-        public Components.MatSlider<FormComponent> Slider => this.MatSlider(Allors.Meta.M.., "FormComponent");
+        public Components.MatSlider<FormComponent> Slider => this.MatSlider(this.M.Data.Slider, "FormComponent");
 
 
-        public Components.MatSlidetoggle<FormComponent> SlideToggle => this.MatSlidetoggle(Allors.Meta.M.., "FormComponent");
+        public Components.MatSlidetoggle<FormComponent> SlideToggle => this.MatSlidetoggle(this.M.Data.SlideToggle, "FormComponent");
 
 
-        public Components.MatTextarea<FormComponent> PlainText => this.MatTextarea(Allors.Meta.M.., "FormComponent");
+        public Components.MatTextarea<FormComponent> PlainText => this.MatTextarea(this.M.Data.PlainText, "FormComponent");
 
 
-        public Components.MatMarkdown<FormComponent> Markdown => this.MatMarkdown(Allors.Meta.M.., "FormComponent");
+        public Components.MatMarkdown<FormComponent> Markdown => this.MatMarkdown(this.M.Data.Markdown, "FormComponent");
 
 
-        public Components.MatLocalisedText<FormComponent> LocalisedTexts => this.MatLocalisedText(Allors.Meta.M.., "FormComponent");
+        public Components.MatLocalisedText<FormComponent> LocalisedTexts => this.MatLocalisedText(this.M.Data.LocalisedTexts, "FormComponent");
 
 
-        public Components.MatLocalisedMarkdown<FormComponent> LocalisedMarkdowns => this.MatLocalisedMarkdown(Allors.Meta.M.., "FormComponent");
-
-
-
+        public Components.MatLocalisedMarkdown<FormComponent> LocalisedMarkdowns => this.MatLocalisedMarkdown(this.M.Data.LocalisedMarkdowns, "FormComponent");
 
 
 
 
 
-        public Components.Button CANCEL => new Components.Button(this.Driver, "InnerText", @"CANCEL", "FormComponent");
 
 
-        public Components.Button SAVE => new Components.Button(this.Driver, "InnerText", @"SAVE", "FormComponent");
+
+        public Components.Button CANCEL => new Components.Button(this.Driver, this.M, "InnerText", @"CANCEL", "FormComponent");
 
 
-        public Components.Button RESET => new Components.Button(this.Driver, "InnerText", @"RESET", "FormComponent");
+        public Components.Button SAVE => new Components.Button(this.Driver, this.M, "InnerText", @"SAVE", "FormComponent");
+
+
+        public Components.Button RESET => new Components.Button(this.Driver, this.M, "InnerText", @"RESET", "FormComponent");
 
     }
 }

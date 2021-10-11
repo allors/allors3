@@ -5,6 +5,7 @@
 
 namespace Autotest.Typescript
 {
+    using System;
     using System.Linq;
     using Newtonsoft.Json.Linq;
 
@@ -31,7 +32,7 @@ namespace Autotest.Typescript
             var jsonDecorators = this.Json["decorators"];
             this.Decorators = jsonDecorators != null
                 ? jsonDecorators.Select(v => v.Value<string>()).ToArray()
-                : new string[0];
+                : Array.Empty<string>();
         }
     }
 }

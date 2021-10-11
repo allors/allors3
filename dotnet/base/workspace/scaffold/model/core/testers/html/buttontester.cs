@@ -5,7 +5,7 @@
 
 namespace Autotest.Testers
 {
-    using Autotest.Html;
+    using Html;
 
     public partial class ButtonTester : Tester
     {

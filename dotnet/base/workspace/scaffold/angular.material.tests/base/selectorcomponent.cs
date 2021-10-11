@@ -7,6 +7,7 @@ namespace Components
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Allors.Database.Meta;
     using OpenQA.Selenium;
 
     public abstract class SelectorComponent : Component
@@ -14,7 +15,7 @@ namespace Components
         private static readonly char[] CssEscapeCharacters = new char[] { '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '`', '{', '|', '}', '~' };
         private static readonly IDictionary<char, string> CssReplacements = CssEscapeCharacters.ToDictionary(v => v, v => $"\\{v}");
 
-        protected SelectorComponent(IWebDriver driver) : base(driver)
+        protected SelectorComponent(IWebDriver driver, MetaPopulation m) : base(driver, m)
         {
         }
 

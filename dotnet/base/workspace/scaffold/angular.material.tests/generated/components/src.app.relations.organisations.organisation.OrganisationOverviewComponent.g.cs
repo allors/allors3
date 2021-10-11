@@ -7,18 +7,18 @@ namespace src.app.relations.organisations.organisation
 
     public partial class OrganisationOverviewComponent : Components.RoutedComponent
     {
-        public OrganisationOverviewComponent(IWebDriver driver) : base(driver)
+        public OrganisationOverviewComponent(IWebDriver driver, Allors.Database.Meta.MetaPopulation m) : base(driver, m)
         {
         }
 
-        public Components.MatStatic<OrganisationOverviewComponent> Name => this.MatStatic(Allors.Meta.M.., "OrganisationOverviewComponent");
+        public Components.MatStatic<OrganisationOverviewComponent> Name => this.MatStatic(this.M.Organisation.Name, "OrganisationOverviewComponent");
 
 
-        public Components.MatStatic<OrganisationOverviewComponent> Owner => this.MatStatic(Allors.Meta.M.., "OrganisationOverviewComponent");
+        public Components.MatStatic<OrganisationOverviewComponent> Owner => this.MatStatic(this.M.Organisation.Owner, "OrganisationOverviewComponent");
 
 
 
-        public Components.Button Edit => new Components.Button(this.Driver, "InnerText", @"Edit", "OrganisationOverviewComponent");
+        public Components.Button Edit => new Components.Button(this.Driver, this.M, "InnerText", @"Edit", "OrganisationOverviewComponent");
 
     }
 }

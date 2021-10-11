@@ -7,6 +7,7 @@ namespace Allors
 {
     using System;
     using System.IO;
+    using System.Linq;
     using Allors.Development.Repository.Tasks;
     using Autotest;
     using Workspace.Meta.Lazy;
@@ -15,6 +16,9 @@ namespace Allors
     {
         private static int Default(Model model)
         {
+            var directive = model.Project.Directives.First(v => v.Type?.Name == "FormComponent");
+
+
             try
             {
                 string[,] config =

@@ -5,11 +5,10 @@
 
 namespace Autotest
 {
-    using System;
     using System.Collections.Generic;
     using System.IO;
     using Allors.Workspace.Meta;
-    using Autotest.Angular;
+    using Angular;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
@@ -17,7 +16,7 @@ namespace Autotest
     {
         public M MetaPopulation { get; set; }
 
-        public Dictionary<string, MetaExtension> MetaExtensions { get; } = new Dictionary<string, MetaExtension>();
+        public Dictionary<string, MetaExtension> MetaExtensionByTag { get; } = new Dictionary<string, MetaExtension>();
 
         public Project Project { get; set; }
 
@@ -38,7 +37,7 @@ namespace Autotest
                     metaExtension.Overview = json["overview"]?.Value<string>();
                 }
 
-                MetaExtension.Load(this.MetaExtensions, jsonMetaExtensions, Setter);
+                MetaExtension.Load(this.MetaExtensionByTag, jsonMetaExtensions, Setter);
             }
         }
 
@@ -87,14 +86,14 @@ namespace Autotest
                     metaExtension.Create = json["component"]?.Value<string>();
                 }
 
-                MetaExtension.Load(this.MetaExtensions, create, CreateSetter);
+                MetaExtension.Load(this.MetaExtensionByTag, create, CreateSetter);
 
                 void EditSetter(MetaExtension metaExtension, JToken json)
                 {
                     metaExtension.Edit = json["component"]?.Value<string>();
                 }
 
-                MetaExtension.Load(this.MetaExtensions, edit, EditSetter);
+                MetaExtension.Load(this.MetaExtensionByTag, edit, EditSetter);
             }
         }
     }

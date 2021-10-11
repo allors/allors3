@@ -7,13 +7,14 @@ namespace Components
 {
     using System.Diagnostics.CodeAnalysis;
     using Allors.Database;
+    using Allors.Database.Meta;
     using OpenQA.Selenium;
     using OpenQA.Selenium.Support.PageObjects;
 
     public class MatList : SelectorComponent
     {
-        public MatList(IWebDriver driver, By selector = null)
-            : base(driver) =>
+        public MatList(IWebDriver driver, MetaPopulation m, By selector = null)
+            : base(driver, m) =>
             this.Selector = selector;
 
         public override By Selector { get; }
@@ -39,8 +40,8 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class MatList<T> : MatList where T : Component
     {
-        public MatList(T page, By selector = null)
-            : base(page.Driver, selector) =>
+        public MatList(T page, MetaPopulation m, By selector = null)
+            : base(page.Driver, m, selector) =>
             this.Page = page;
 
         public T Page { get; }

@@ -5,7 +5,7 @@
 
 namespace Autotest.Html
 {
-    using Autotest.Angular;
+    using Angular;
 
     public interface INode
     {

@@ -3,14 +3,15 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace libs.angular.material.custom.src.relations.people
+namespace src.app.relations.people
 {
+    using Allors.Database.Domain;
     using Components;
     using person;
 
     public partial class PeopleComponent
     {
-        public MatTable Table => new MatTable(this.Driver);
+        public MatTable Table => new MatTable(this.Driver, this.M);
 
         public PersonOverviewComponent Select(Person person)
         {
@@ -18,7 +19,7 @@ namespace libs.angular.material.custom.src.relations.people
             var cell = row.FindCell("firstName");
             cell.Click();
 
-            return new PersonOverviewComponent(this.Driver);
+            return new PersonOverviewComponent(this.Driver, this.M);
         }
     }
 }

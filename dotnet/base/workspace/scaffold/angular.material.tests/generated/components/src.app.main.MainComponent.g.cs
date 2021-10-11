@@ -7,11 +7,11 @@ namespace src.app.main
 
     public partial class MainComponent : Components.RoutedComponent
     {
-        public MainComponent(IWebDriver driver) : base(driver)
+        public MainComponent(IWebDriver driver, Allors.Database.Meta.MetaPopulation m) : base(driver, m)
         {
         }
 
-        public Tests.Sidenav Sidenav => new Tests.Sidenav(this.Driver);
+        public Tests.Sidenav Sidenav => new Tests.Sidenav(this.Driver, this.M);
 
 
 

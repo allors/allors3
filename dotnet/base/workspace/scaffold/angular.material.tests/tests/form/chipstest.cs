@@ -5,7 +5,10 @@
 
 namespace Tests
 {
+    using System.Linq;
+    using Allors.Database.Domain;
     using Components;
+    using src.app.tests.form;
     using Xunit;
 
     [Collection("Test collection")]
@@ -23,7 +26,7 @@ namespace Tests
         [Fact]
         public void AddOne()
         {
-            var jane = new Users(this.Transaction).GetUser("jane@example.com");
+            var jane = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "jane@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.Chips.Add("jane", "jane@example.com");
@@ -45,8 +48,8 @@ namespace Tests
         [Fact]
         public void AddTwo()
         {
-            var jane = new Users(this.Transaction).GetUser("jane@example.com");
-            var john = new Users(this.Transaction).GetUser("john@example.com");
+            var jane = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "jane@example.com");
+            var john = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "john@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.Chips.Add("jane", "jane@example.com");

@@ -6,7 +6,7 @@
 namespace Autotest.Testers
 {
     using System.Linq;
-    using Autotest.Html;
+    using Html;
 
     public partial class InputTester : Tester
     {

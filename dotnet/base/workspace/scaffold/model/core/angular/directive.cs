@@ -5,13 +5,13 @@
 
 namespace Autotest.Angular
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
-    using Allors.Workspace.Meta;
-    using Autotest.Html;
-    using Autotest.Testers;
-    using Autotest.Typescript;
+    using Html;
+    using Testers;
+    using Typescript;
     using Newtonsoft.Json.Linq;
     using Class = Typescript.Class;
 
@@ -49,7 +49,7 @@ namespace Autotest.Angular
 
         public Tester[] Testers { get; set; }
 
-        public Autotest.Typescript.Class Type { get; set; }
+        public Class Type { get; set; }
 
         public string Scope { get; set; }
 
@@ -107,7 +107,7 @@ namespace Autotest.Angular
                     this.AttributeDirectivesByElement.TryGetValue(element, out var attributeDirectives);
 
                     element.Directives = new[] { component }
-                        .Concat(attributeDirectives ?? new Directive[0])
+                        .Concat(attributeDirectives ?? Array.Empty<Directive>())
                         .Where(v => v != null)
                         .ToArray();
                 }

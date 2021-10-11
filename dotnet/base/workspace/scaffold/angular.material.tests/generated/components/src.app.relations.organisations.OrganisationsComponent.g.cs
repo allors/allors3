@@ -7,28 +7,28 @@ namespace src.app.relations.organisations
 
     public partial class OrganisationsComponent : Components.RoutedComponent
     {
-        public OrganisationsComponent(IWebDriver driver) : base(driver)
+        public OrganisationsComponent(IWebDriver driver, Allors.Database.Meta.MetaPopulation m) : base(driver, m)
         {
         }
 
-        public Components.Button Clouddownload => new Components.Button(this.Driver, "InnerText", @"cloud_download", "OrganisationsComponent");
+        public Components.Button Clouddownload => new Components.Button(this.Driver, this.M, "InnerText", @"cloud_download", "OrganisationsComponent");
 
 
 
 
 
 
-        public Components.Button Delete => new Components.Button(this.Driver, "InnerText", @"delete", "OrganisationsComponent");
+        public Components.Button Delete => new Components.Button(this.Driver, this.M, "InnerText", @"delete", "OrganisationsComponent");
 
 
 
 
-        public Components.MatTable Table => new Components.MatTable(this.Driver, By.XPath(@".//a-mat-table[ancestor::*[@data-test-scope][1]/@data-test-scope='OrganisationsComponent']"));
+        public Components.MatTable Table => new Components.MatTable(this.Driver, this.M, By.XPath(@".//a-mat-table[ancestor::*[@data-test-scope][1]/@data-test-scope='OrganisationsComponent']"));
 
 
 
 
-        public Components.Anchor AddNew => new Components.Anchor(this.Driver, "InnerText", @"Add New", "OrganisationsComponent");
+        public Components.Anchor AddNew => new Components.Anchor(this.Driver, this.M, "InnerText", @"Add New", "OrganisationsComponent");
 
     }
 }

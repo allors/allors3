@@ -13,8 +13,8 @@ namespace Components
     public class MatSlideToggle
     : SelectorComponent
     {
-        public MatSlideToggle(IWebDriver driver, RoleType roleType, params string[] scopes)
-        : base(driver)
+        public MatSlideToggle(IWebDriver driver, MetaPopulation m, RoleType roleType, params string[] scopes)
+        : base(driver, m)
         {
             this.Selector = By.XPath($".//mat-slide-toggle[@data-allors-roletype='{roleType.RelationType.Tag}'{this.ByScopesAnd(scopes)}]");
             this.InputSelector = new ByChained(this.Selector, By.XPath($".//input"));
@@ -46,12 +46,9 @@ namespace Components
                         container.Click();
                     }
                 }
-                else
+                else if (value)
                 {
-                    if (value)
-                    {
-                        container.Click();
-                    }
+                    container.Click();
                 }
             }
         }
@@ -60,8 +57,8 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class MatSlidetoggle<T> : MatSlideToggle where T : Component
     {
-        public MatSlidetoggle(T page, RoleType roleType, params string[] scopes)
-            : base(page.Driver, roleType, scopes) =>
+        public MatSlidetoggle(T page, MetaPopulation m, RoleType roleType, params string[] scopes)
+            : base(page.Driver, m, roleType, scopes) =>
             this.Page = page;
 
         public T Page { get; }

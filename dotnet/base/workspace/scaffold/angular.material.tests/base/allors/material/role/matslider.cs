@@ -13,8 +13,8 @@ namespace Components
     public class MatSlider
     : SelectorComponent
     {
-        public MatSlider(IWebDriver driver, RoleType roleType, params string[] scopes)
-        : base(driver) =>
+        public MatSlider(IWebDriver driver, MetaPopulation m, RoleType roleType, params string[] scopes)
+        : base(driver, m) =>
             this.Selector = By.XPath($".//a-mat-slider{this.ByScopesPredicate(scopes)}//*[@data-allors-roletype='{roleType.RelationType.Tag}']//mat-slider");
 
         public override By Selector { get; }
@@ -37,8 +37,8 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class MatSlider<T> : MatSlider where T : Component
     {
-        public MatSlider(T page, RoleType roleType, params string[] scopes)
-            : base(page.Driver, roleType, scopes) =>
+        public MatSlider(T page, MetaPopulation m, RoleType roleType, params string[] scopes)
+            : base(page.Driver, m, roleType, scopes) =>
             this.Page = page;
 
         public T Page { get; }

@@ -6,13 +6,13 @@
 namespace Components
 {
     using System.Diagnostics.CodeAnalysis;
-
+    using Allors.Database.Meta;
     using OpenQA.Selenium;
 
     public class Element : SelectorComponent
     {
-        public Element(IWebDriver driver, By selector)
-        : base(driver) =>
+        public Element(IWebDriver driver, MetaPopulation m, By selector)
+        : base(driver, m) =>
             this.Selector = selector;
 
         public override By Selector { get; }
@@ -31,8 +31,8 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class Element<T> : Element where T : Component
     {
-        public Element(T page, By selector)
-            : base(page.Driver, selector) =>
+        public Element(T page, MetaPopulation m, By selector)
+            : base(page.Driver, m, selector) =>
             this.Page = page;
 
         public T Page { get; }

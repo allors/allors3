@@ -6,7 +6,10 @@
 namespace Tests
 {
     using System;
+    using System.Linq;
+    using Allors.Database.Domain;
     using Components;
+    using src.app.tests.form;
     using Xunit;
 
     [Collection("Test collection")]

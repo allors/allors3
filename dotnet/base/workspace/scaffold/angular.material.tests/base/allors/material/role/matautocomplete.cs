@@ -12,8 +12,8 @@ namespace Components
 
     public class MatAutocomplete : SelectorComponent
     {
-        public MatAutocomplete(IWebDriver driver, RoleType roleType, params string[] scopes)
-        : base(driver) =>
+        public MatAutocomplete(IWebDriver driver, MetaPopulation m, RoleType roleType, params string[] scopes)
+        : base(driver, m) =>
             this.Selector = By.XPath($".//a-mat-autocomplete{this.ByScopesPredicate(scopes)}//*[@data-allors-roletype='{roleType.RelationType.Tag}']");
 
         public IWebElement Input => this.Driver.FindElement(new ByChained(this.Selector, By.CssSelector("input")));
@@ -39,8 +39,8 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class MatAutocomplete<T> : MatAutocomplete where T : Component
     {
-        public MatAutocomplete(T page, RoleType roleType, params string[] scopes)
-            : base(page.Driver, roleType, scopes) =>
+        public MatAutocomplete(T page, MetaPopulation m, RoleType roleType, params string[] scopes)
+            : base(page.Driver, m, roleType, scopes) =>
             this.Page = page;
 
         public T Page { get; }

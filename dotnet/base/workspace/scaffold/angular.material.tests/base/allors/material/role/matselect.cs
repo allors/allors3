@@ -13,7 +13,7 @@ namespace Components
 
     public class MatSelect : SelectorComponent
     {
-        public MatSelect(IWebDriver driver, RoleType roleType, params string[] scopes) : base(driver)
+        public MatSelect(IWebDriver driver, MetaPopulation m, RoleType roleType, params string[] scopes) : base(driver, m)
         {
             this.Selector = By.XPath($".//a-mat-select{this.ByScopesPredicate(scopes)}");
             this.ArrowSelector = new ByChained(this.Selector, By.XPath($".//mat-select[@data-allors-roletype='{roleType.RelationType.Tag}']//*[contains(@class,'mat-select-arrow')]"));
@@ -86,8 +86,8 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class MatSelect<T> : MatSelect where T : Component
     {
-        public MatSelect(T page, RoleType roleType, params string[] scopes)
-            : base(page.Driver, roleType, scopes) =>
+        public MatSelect(T page, MetaPopulation m, RoleType roleType, params string[] scopes)
+            : base(page.Driver, m, roleType, scopes) =>
             this.Page = page;
 
         public T Page { get; }

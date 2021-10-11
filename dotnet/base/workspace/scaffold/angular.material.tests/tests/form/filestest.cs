@@ -5,7 +5,10 @@
 
 namespace Tests
 {
+    using System.Linq;
+    using Allors.Database.Domain;
     using Components;
+    using src.app.tests.form;
     using Xunit;
 
     [Collection("Test collection")]
@@ -62,7 +65,7 @@ namespace Tests
             var data = after.Except(before).First();
 
             Assert.True(data.ExistMultipleFiles);
-            Assert.Equal(2, data.MultipleFiles.Count);
+            Assert.Equal(2, data.MultipleFiles.Count());
         }
 
         [Fact]

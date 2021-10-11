@@ -13,8 +13,8 @@ namespace Components
     public class MatDatetimepicker
     : SelectorComponent
     {
-        public MatDatetimepicker(IWebDriver driver, RoleType roleType, params string[] scopes)
-        : base(driver) =>
+        public MatDatetimepicker(IWebDriver driver, MetaPopulation m, RoleType roleType, params string[] scopes)
+        : base(driver, m) =>
             this.Selector = By.XPath($".//a-mat-datetimepicker{this.ByScopesPredicate(scopes)}//*[@data-allors-roletype='{roleType.RelationType.Tag}']//input");
 
         public override By Selector { get; }
@@ -106,8 +106,8 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class MatDatetimepicker<T> : MatDatetimepicker where T : Component
     {
-        public MatDatetimepicker(T page, RoleType roleType, params string[] scopes)
-            : base(page.Driver, roleType, scopes) =>
+        public MatDatetimepicker(T page, MetaPopulation m, RoleType roleType, params string[] scopes)
+            : base(page.Driver, m, roleType, scopes) =>
             this.Page = page;
 
         public T Page { get; }

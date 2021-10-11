@@ -6,17 +6,18 @@
 namespace Components
 {
     using System.Diagnostics.CodeAnalysis;
+    using Allors.Database.Meta;
     using OpenQA.Selenium;
     using OpenQA.Selenium.Support.PageObjects;
 
     public class Input : SelectorComponent
     {
-        public Input(IWebDriver driver, params By[] selectors)
-            : base(driver) =>
+        public Input(IWebDriver driver, MetaPopulation m, params By[] selectors)
+            : base(driver, m) =>
             this.Selector = selectors.Length == 1 ? selectors[0] : new ByChained(selectors);
 
-        public Input(IWebDriver driver, string kind, string value, params string[] scopes)
-            : base(driver)
+        public Input(IWebDriver driver, MetaPopulation m, string kind, string value, params string[] scopes)
+            : base(driver, m)
         {
             switch (kind.ToLowerInvariant())
             {

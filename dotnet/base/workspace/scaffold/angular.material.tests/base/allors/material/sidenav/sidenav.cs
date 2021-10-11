@@ -5,19 +5,20 @@
 
 namespace Tests
 {
+    using Allors.Database.Meta;
     using Components;
     using OpenQA.Selenium;
     using OpenQA.Selenium.Support.PageObjects;
 
     public partial class Sidenav : SelectorComponent
     {
-        public Sidenav(IWebDriver driver)
-        : base(driver) =>
+        public Sidenav(IWebDriver driver, MetaPopulation m)
+        : base(driver, m) =>
             this.Selector = By.CssSelector("mat-sidenav");
 
         public override By Selector { get; }
 
-        public Button Toggle => new Button(this.Driver, By.CssSelector(@"button[aria-label=""Toggle sidenav""]"));
+        public Button Toggle => new Button(this.Driver, this.M, By.CssSelector(@"button[aria-label=""Toggle sidenav""]"));
 
         private void Navigate(Anchor link)
         {
@@ -55,9 +56,9 @@ namespace Tests
             this.Driver.WaitForAngular();
         }
 
-        private Element Group(string name) => new Element(this.Driver, new ByChained(this.Selector, By.XPath($".//span[contains(text(), '{name}')]")));
+        private Element Group(string name) => new Element(this.Driver, this.M, new ByChained(this.Selector, By.XPath($".//span[contains(text(), '{name}')]")));
 
-        private Anchor Link(string href) => new Anchor(this.Driver, this.ByHref(href));
+        private Anchor Link(string href) => new Anchor(this.Driver, this.M, this.ByHref(href));
 
         private By ByHref(string href) => new ByChained(this.Selector, By.CssSelector($"a[href='{href}']"));
     }

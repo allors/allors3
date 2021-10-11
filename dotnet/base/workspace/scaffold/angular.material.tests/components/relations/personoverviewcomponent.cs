@@ -3,14 +3,14 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace libs.angular.material.custom.src.relations.people.person
+namespace src.app.relations.people.person
 {
     public partial class PersonOverviewComponent
     {
         public PersonComponent EditAndNavigate()
         {
             this.Edit.Click();
-            return new PersonComponent(this.Driver);
+            return new PersonComponent(this.Driver, this.M);
         }
     }
 }

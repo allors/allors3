@@ -16,15 +16,15 @@ namespace Components
 
     public class MatInput : SelectorComponent
     {
-        public MatInput(IWebDriver driver, RoleType roleType, params string[] scopes)
-        : base(driver)
+        public MatInput(IWebDriver driver, MetaPopulation m, RoleType roleType, params string[] scopes)
+        : base(driver, m)
         {
             this.Selector = By.XPath($".//a-mat-input{this.ByScopesPredicate(scopes)}//*[@data-allors-roletype='{roleType.RelationType.Tag}']//input");
             this.RoleType = roleType;
         }
 
-        public MatInput(IWebDriver driver, By selector, RoleType roleType)
-            : base(driver)
+        public MatInput(IWebDriver driver, MetaPopulation m, By selector, RoleType roleType)
+            : base(driver, m)
         {
             this.Selector = selector;
             this.RoleType = roleType;
@@ -93,7 +93,7 @@ namespace Components
 
             set
             {
-                if(value is string stringValue)
+                if (value is string stringValue)
                 {
                     this.Text = stringValue;
                     return;
@@ -139,8 +139,8 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class MatInput<T> : MatInput where T : Component
     {
-        public MatInput(T page, RoleType roleType, params string[] scopes)
-            : base(page.Driver, roleType, scopes) =>
+        public MatInput(T page, MetaPopulation m, RoleType roleType, params string[] scopes)
+            : base(page.Driver, m, roleType, scopes) =>
             this.Page = page;
 
         public T Page { get; }

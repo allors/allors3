@@ -6,7 +6,7 @@
 namespace Autotest.Angular
 {
     using System.Collections.Generic;
-    using Autotest.Html;
+    using Html;
 
     public partial class Scope
     {

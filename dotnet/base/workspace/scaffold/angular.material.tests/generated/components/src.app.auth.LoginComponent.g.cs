@@ -7,24 +7,24 @@ namespace src.app.auth
 
     public partial class LoginComponent : Components.RoutedComponent
     {
-        public LoginComponent(IWebDriver driver) : base(driver)
+        public LoginComponent(IWebDriver driver, Allors.Database.Meta.MetaPopulation m) : base(driver, m)
         {
         }
 
-        public Components.Input Hidden_Username => new Components.Input(this.Driver, "Name", @"username", "hidden", "LoginComponent");
+        public Components.Input Hidden_Username => new Components.Input(this.Driver, this.M, "Name", @"username", "hidden", "LoginComponent");
 
 
 
 
-        public Components.Input Username => new Components.Input(this.Driver, "Name", @"username", "LoginComponent");
+        public Components.Input Username => new Components.Input(this.Driver, this.M, "Name", @"username", "LoginComponent");
 
 
 
-        public Components.Input Password => new Components.Input(this.Driver, "Name", @"password", "LoginComponent");
+        public Components.Input Password => new Components.Input(this.Driver, this.M, "Name", @"password", "LoginComponent");
 
 
 
-        public Components.Button SignIn => new Components.Button(this.Driver, "InnerText", @"Sign In", "LoginComponent");
+        public Components.Button SignIn => new Components.Button(this.Driver, this.M, "InnerText", @"Sign In", "LoginComponent");
 
     }
 }

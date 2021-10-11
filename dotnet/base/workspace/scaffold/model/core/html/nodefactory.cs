@@ -6,7 +6,7 @@
 namespace Autotest.Html
 {
     using System;
-    using Autotest.Angular;
+    using Angular;
     using Newtonsoft.Json.Linq;
 
     public static class NodeFactory

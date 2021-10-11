@@ -5,6 +5,7 @@
 
 namespace Autotest.Angular
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -53,7 +54,7 @@ namespace Autotest.Angular
                     };
                     route.BaseLoad();
                     return route;
-                }).ToArray() : new Route[0];
+                }).ToArray() : Array.Empty<Route>();
 
             this.Path = this.Json["path"]?.Value<string>();
             this.PathMatch = this.Json["pathMatch"]?.Value<string>();
@@ -61,7 +62,7 @@ namespace Autotest.Angular
             this.Outlet = this.Json["outlet"]?.Value<string>();
             this.Data = this.Json["data"]?.Value<string>();
 
-            var componentId = Angular.Reference.ParseId(this.Json["component"]);
+            var componentId = Reference.ParseId(this.Json["component"]);
             this.Component = componentId != null ? this.Module.Project.DirectiveById[componentId] : null;
         }
 
@@ -72,7 +73,7 @@ namespace Autotest.Angular
             if (this.RedirectTo != null)
             {
                 pathByRedirectTo[this.RedirectTo] = path;
-                this.FullPaths = new string[0];
+                this.FullPaths = Array.Empty<string>();
             }
             else
             {
@@ -84,7 +85,7 @@ namespace Autotest.Angular
                 }
                 else
                 {
-                    this.FullPaths = new string[0];
+                    this.FullPaths = Array.Empty<string>();
                 }
             }
 

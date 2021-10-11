@@ -5,8 +5,9 @@
 
 namespace Autotest.Angular
 {
+    using System;
     using System.Linq;
-    using Autotest.Html;
+    using Html;
     using Newtonsoft.Json.Linq;
 
     public partial class Template
@@ -37,7 +38,7 @@ namespace Autotest.Angular
                     var node = NodeFactory.Create(v, this, null);
                     node.BaseLoad();
                     return node;
-                }).ToArray() : new INode[0];
+                }).ToArray() : Array.Empty<INode>();
 
             this.FlattenedElements = this.Html.OfType<Element>().SelectMany(v => v.FlattenedElements).ToArray();
         }

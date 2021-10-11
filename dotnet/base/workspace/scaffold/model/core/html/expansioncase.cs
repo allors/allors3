@@ -5,8 +5,9 @@
 
 namespace Autotest.Html
 {
+    using System;
     using System.Linq;
-    using Autotest.Angular;
+    using Angular;
     using Newtonsoft.Json.Linq;
 
     public partial class ExpansionCase : INode
@@ -40,7 +41,7 @@ namespace Autotest.Html
                     var node = NodeFactory.Create(v, this.Template, this);
                     node.BaseLoad();
                     return node;
-                }).ToArray() : new INode[0];
+                }).ToArray() : Array.Empty<INode>();
         }
 
         public void SetInScope(Scope scope)

@@ -3,8 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace libs.angular.material.custom.src.auth
+namespace src.app.auth
 {
+    using Components;
+    using dashboard;
+
     public partial class LoginComponent
     {
         public DashboardComponent Login(string userName = "administrator")
@@ -14,7 +17,7 @@ namespace libs.angular.material.custom.src.auth
 
             this.Driver.WaitForAngular();
 
-            return new DashboardComponent(this.Driver);
+            return new DashboardComponent(this.Driver, this.M);
         }
     }
 }

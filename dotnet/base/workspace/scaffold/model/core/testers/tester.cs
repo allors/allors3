@@ -7,7 +7,7 @@ namespace Autotest.Testers
 {
     using System;
     using System.Linq;
-    using Autotest.Html;
+    using Html;
 
     public abstract partial class Tester
     {

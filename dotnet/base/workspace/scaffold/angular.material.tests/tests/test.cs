@@ -14,15 +14,13 @@ namespace Tests
     using Allors.Database.Configuration.Derivations.Default;
     using Allors.Database.Domain;
     using Allors.Database.Meta;
-    using libs.angular.material.custom.src.auth;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
     using OpenQA.Selenium;
+    using src.app.auth;
+    using src.app.dashboard;
+    using src.app.main;
     using C1 = Allors.Database.Domain.C1;
     using Database = Allors.Database.Adapters.Sql.SqlClient.Database;
-    using ObjectFactory = Microsoft.Extensions.DependencyInjection.ObjectFactory;
-    using User = Allors.Database.Meta.User;
 
     public abstract class Test : IDisposable
     {
@@ -86,7 +84,7 @@ namespace Tests
 
         public ITransaction Transaction { get; set; }
 
-        public Sidenav Sidenav => new MainComponent(this.Driver).Sidenav;
+        public Sidenav Sidenav => new MainComponent(this.Driver, this.M).Sidenav;
 
         public virtual void Dispose() => this.DriverManager.Stop();
 
@@ -94,7 +92,7 @@ namespace Tests
         {
             this.Driver.Navigate().GoToUrl(Test.ClientUrl + "/login");
 
-            var page = new LoginComponent(this.Driver);
+            var page = new LoginComponent(this.Driver, this.M);
             return page.Login();
         }
     }

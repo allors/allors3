@@ -7,31 +7,31 @@ namespace src.app.relations.people.person
 
     public partial class PersonComponent : Components.RoutedComponent
     {
-        public PersonComponent(IWebDriver driver) : base(driver)
+        public PersonComponent(IWebDriver driver, Allors.Database.Meta.MetaPopulation m) : base(driver, m)
         {
         }
 
-        public Components.MatInput<PersonComponent> FirstName => this.MatInput(Allors.Meta.M.., "PersonComponent");
+        public Components.MatInput<PersonComponent> FirstName => this.MatInput(this.M.Person.FirstName, "PersonComponent");
 
 
-        public Components.MatInput<PersonComponent> MiddleName => this.MatInput(Allors.Meta.M.., "PersonComponent");
+        public Components.MatInput<PersonComponent> MiddleName => this.MatInput(this.M.Person.MiddleName, "PersonComponent");
 
 
-        public Components.MatInput<PersonComponent> LastName => this.MatInput(Allors.Meta.M.., "PersonComponent");
+        public Components.MatInput<PersonComponent> LastName => this.MatInput(this.M.Person.LastName, "PersonComponent");
 
 
-        public Components.MatFile<PersonComponent> Photo => this.MatFile(Allors.Meta.M.., "PersonComponent");
+        public Components.MatFile<PersonComponent> Photo => this.MatFile(this.M.Person.Photo, "PersonComponent");
 
 
-        public Components.MatFiles<PersonComponent> Pictures => this.MatFiles(Allors.Meta.M.., "PersonComponent");
+        public Components.MatFiles<PersonComponent> Pictures => this.MatFiles(this.M.Person.Pictures, "PersonComponent");
 
 
 
 
-        public Components.Button CANCEL => new Components.Button(this.Driver, "InnerText", @"CANCEL", "PersonComponent");
+        public Components.Button CANCEL => new Components.Button(this.Driver, this.M, "InnerText", @"CANCEL", "PersonComponent");
 
 
-        public Components.Button SAVE => new Components.Button(this.Driver, "InnerText", @"SAVE", "PersonComponent");
+        public Components.Button SAVE => new Components.Button(this.Driver, this.M, "InnerText", @"SAVE", "PersonComponent");
 
     }
 }

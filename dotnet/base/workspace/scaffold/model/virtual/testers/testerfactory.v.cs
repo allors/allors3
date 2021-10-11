@@ -5,7 +5,7 @@
 
 namespace Autotest.Testers
 {
-    using Autotest.Html;
+    using Html;
 
     public static partial class TesterFactory
     {

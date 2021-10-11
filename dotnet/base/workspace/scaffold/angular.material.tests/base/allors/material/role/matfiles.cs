@@ -13,8 +13,8 @@ namespace Components
 
     public class MatFiles : SelectorComponent
     {
-        public MatFiles(IWebDriver driver, RoleType roleType, params string[] scopes)
-            : base(driver) =>
+        public MatFiles(IWebDriver driver, MetaPopulation m, RoleType roleType, params string[] scopes)
+            : base(driver, m) =>
             this.Selector = By.XPath($".//a-mat-files{this.ByScopesPredicate(scopes)}//*[@data-allors-roletype='{roleType.RelationType.Tag}']");
 
         public override By Selector { get; }
@@ -43,8 +43,8 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FilesMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class MatFiles<T> : MatFiles where T : Component
     {
-        public MatFiles(T page, RoleType roleType, params string[] scopes)
-            : base(page.Driver, roleType, scopes) =>
+        public MatFiles(T page, MetaPopulation m, RoleType roleType, params string[] scopes)
+            : base(page.Driver, m, roleType, scopes) =>
             this.Page = page;
 
         public T Page { get; }

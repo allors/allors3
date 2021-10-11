@@ -12,8 +12,8 @@ namespace Components
 
     public class MatFactoryFab : SelectorComponent
     {
-        public MatFactoryFab(IWebDriver driver, Composite composite, By selector)
-            : base(driver)
+        public MatFactoryFab(IWebDriver driver, MetaPopulation m, Composite composite, By selector)
+            : base(driver, m)
         {
             this.Composite = composite;
             this.Selector = selector;

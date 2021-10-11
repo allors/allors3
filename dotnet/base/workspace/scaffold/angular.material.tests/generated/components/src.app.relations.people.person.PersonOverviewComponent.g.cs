@@ -7,24 +7,24 @@ namespace src.app.relations.people.person
 
     public partial class PersonOverviewComponent : Components.RoutedComponent
     {
-        public PersonOverviewComponent(IWebDriver driver) : base(driver)
+        public PersonOverviewComponent(IWebDriver driver, Allors.Database.Meta.MetaPopulation m) : base(driver, m)
         {
         }
 
-        public Components.MatStatic<PersonOverviewComponent> FirstName => this.MatStatic(Allors.Meta.M.., "PersonOverviewComponent");
+        public Components.MatStatic<PersonOverviewComponent> FirstName => this.MatStatic(this.M.Person.FirstName, "PersonOverviewComponent");
 
 
-        public Components.MatStatic<PersonOverviewComponent> MiddleName => this.MatStatic(Allors.Meta.M.., "PersonOverviewComponent");
+        public Components.MatStatic<PersonOverviewComponent> MiddleName => this.MatStatic(this.M.Person.MiddleName, "PersonOverviewComponent");
 
 
-        public Components.MatStatic<PersonOverviewComponent> LastName => this.MatStatic(Allors.Meta.M.., "PersonOverviewComponent");
+        public Components.MatStatic<PersonOverviewComponent> LastName => this.MatStatic(this.M.Person.LastName, "PersonOverviewComponent");
 
 
-        public Components.MatStatic<PersonOverviewComponent> Photo => this.MatStatic(Allors.Meta.M.., "PersonOverviewComponent");
+        public Components.MatStatic<PersonOverviewComponent> Photo => this.MatStatic(this.M.Person.Photo, "PersonOverviewComponent");
 
 
 
-        public Components.Button Edit => new Components.Button(this.Driver, "InnerText", @"Edit", "PersonOverviewComponent");
+        public Components.Button Edit => new Components.Button(this.Driver, this.M, "InnerText", @"Edit", "PersonOverviewComponent");
 
     }
 }

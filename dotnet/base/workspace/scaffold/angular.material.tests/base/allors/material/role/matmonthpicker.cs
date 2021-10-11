@@ -13,8 +13,8 @@ namespace Components
     public class MatMonthpicker
     : SelectorComponent
     {
-        public MatMonthpicker(IWebDriver driver, RoleType roleType, params string[] scopes)
-        : base(driver) =>
+        public MatMonthpicker(IWebDriver driver, MetaPopulation m, RoleType roleType, params string[] scopes)
+        : base(driver, m) =>
             this.Selector = By.XPath($".//a-mat-monthpicker{this.ByScopesPredicate(scopes)}//*[@data-allors-roletype='{roleType.RelationType.Tag}']//input");
 
         public override By Selector { get; }
@@ -60,8 +60,8 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class MatMonthpicker<T> : MatDatepicker where T : Component
     {
-        public MatMonthpicker(T page, RoleType roleType, params string[] scopes)
-            : base(page.Driver, roleType, scopes) =>
+        public MatMonthpicker(T page, MetaPopulation m, RoleType roleType, params string[] scopes)
+            : base(page.Driver, m, roleType, scopes) =>
             this.Page = page;
 
         public T Page { get; }

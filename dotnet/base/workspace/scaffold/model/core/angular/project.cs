@@ -49,51 +49,35 @@ namespace Autotest.Angular
         private void BaseLoad(JObject jsonProject)
         {
             var jsonModules = jsonProject["modules"];
-            this.Modules = jsonModules != null ? jsonModules.Select(v =>
-                {
-                    var module = new Module
-                    {
-                        Json = v,
-                        Project = this,
-                        Reference = new Reference(v),
-                    };
-                    return module;
-                }).ToArray() : new Module[0];
+            this.Modules = jsonModules != null ? jsonModules.Select(v => new Module
+            {
+                Json = v,
+                Project = this,
+                Reference = new Reference(v),
+            }).ToArray() : Array.Empty<Module>();
 
             var jsonPipes = jsonProject["pipes"];
-            this.Pipes = jsonPipes != null ? jsonPipes.Select(v =>
-                {
-                    var pipe = new Pipe
-                    {
-                        Json = v,
-                        Project = this,
-                        Reference = new Reference(v),
-                    };
-                    return pipe;
-                }).ToArray() : new Pipe[0];
+            this.Pipes = jsonPipes != null ? jsonPipes.Select(v => new Pipe
+            {
+                Json = v,
+                Project = this,
+                Reference = new Reference(v),
+            }).ToArray() : Array.Empty<Pipe>();
 
             var jsonDirectives = jsonProject["directives"];
-            this.Directives = jsonDirectives != null ? jsonDirectives.Select(v =>
-                {
-                    var directive = new Directive
-                    {
-                        Json = v,
-                        Project = this,
-                        Reference = new Reference(v),
-                    };
-                    return directive;
-                }).ToArray() : new Directive[0];
+            this.Directives = jsonDirectives != null ? jsonDirectives.Select(v => new Directive
+            {
+                Json = v,
+                Project = this,
+                Reference = new Reference(v),
+            }).ToArray() : Array.Empty<Directive>();
 
             var jsonProviders = jsonProject["providers"];
-            this.Providers = jsonProviders != null ? jsonProviders.Select(v =>
-                {
-                    var provider = new Provider
-                    {
-                        Json = v,
-                        Project = this,
-                    };
-                    return provider;
-                }).ToArray() : new Provider[0];
+            this.Providers = jsonProviders != null ? jsonProviders.Select(v => new Provider
+            {
+                Json = v,
+                Project = this,
+            }).ToArray() : Array.Empty<Provider>();
 
             this.ModuleById = this.Modules.ToDictionary(v => v.Reference.Id);
             this.PipeById = this.Pipes.ToDictionary(v => v.Reference.Id);
@@ -116,11 +100,6 @@ namespace Autotest.Angular
 
             foreach (var directive in this.Directives)
             {
-                if (directive.Type?.Name == "PersonOverviewSummaryComponent")
-                {
-                    Console.WriteLine();
-                }
-
                 directive.BaseLoadTemplate();
             }
 

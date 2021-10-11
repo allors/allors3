@@ -17,13 +17,25 @@ namespace Tests
         // Contacts
         public Components.Element ContactsGroup => this.Group("Contacts");
 
-        // 
-        public Components.Anchor  => this.Link("");
+        // People
+        public Components.Anchor People => this.Link("/contacts/people");
+
+        public src.app.relations.people.PeopleComponent NavigateToPeople()
+        {
+            this.Navigate(this.ContactsGroup, this.People);
+            return new src.app.relations.people.PeopleComponent(this.Driver);
+        }
 
 	
 
-        // 
-        public Components.Anchor  => this.Link("");
+        // Organisations
+        public Components.Anchor Organisations => this.Link("/contacts/organisations");
+
+        public src.app.relations.organisations.OrganisationsComponent NavigateToOrganisations()
+        {
+            this.Navigate(this.ContactsGroup, this.Organisations);
+            return new src.app.relations.organisations.OrganisationsComponent(this.Driver);
+        }
 
 	
 	

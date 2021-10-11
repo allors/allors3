@@ -8,8 +8,8 @@ namespace Autotest.Testers
     using System;
     using System.Linq;
     using Allors.Workspace.Meta;
-    using Autotest.Angular;
-    using Autotest.Html;
+    using Angular;
+    using Html;
 
     public partial class AllorsMaterialFactoryFabTester : Tester
     {
@@ -33,9 +33,7 @@ namespace Autotest.Testers
                     var objectTypeName = parts[parts.Length - 1];
 
                     var metaPopulation = this.Model.MetaPopulation;
-                    var objectType = metaPopulation.Composites.FirstOrDefault(v => string.Equals(v.SingularName, objectTypeName, StringComparison.OrdinalIgnoreCase));
-
-                    return objectType;
+                    return metaPopulation.Composites.FirstOrDefault(v => string.Equals(v.SingularName, objectTypeName, StringComparison.OrdinalIgnoreCase));
                 }
 
                 return null;
@@ -46,7 +44,7 @@ namespace Autotest.Testers
         {
             get
             {
-                var classes = this.ObjectType.Classes.Where(v => this.Model.MetaExtensions[v.Tag].Create != null);
+                var classes = this.ObjectType.Classes.Where(v => this.Model.MetaExtensionByTag[v.Tag].Create != null);
                 return classes.Select(v => new Factory(this, v)).ToArray();
             }
         }
@@ -73,7 +71,7 @@ namespace Autotest.Testers
             {
                 get
                 {
-                    var metaExtension = this.Tester.Model.MetaExtensions[this.Class.Tag];
+                    var metaExtension = this.Tester.Model.MetaExtensionByTag[this.Class.Tag];
                     var component = metaExtension.Create;
                     if (component != null)
                     {

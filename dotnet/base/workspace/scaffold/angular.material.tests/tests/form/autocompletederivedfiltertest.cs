@@ -5,8 +5,10 @@
 
 namespace Tests
 {
-    using Allors.Database.Meta;
+    using System.Linq;
+    using Allors.Database.Domain;
     using Components;
+    using src.app.tests.form;
     using Xunit;
 
     [Collection("Test collection")]
@@ -24,12 +26,13 @@ namespace Tests
             this.Login();
             this.page = this.Sidenav.NavigateToForm();
 
-            this.john = (Person)new Users(this.Transaction).GetUser("john@example.com");
-            this.jane = (Person)new Users(this.Transaction).GetUser("jane@example.com");
-            this.jenny = (Person)new Users(this.Transaction).GetUser("jenny@example.com");
+            this.john = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "john@example.com");
+            this.jane = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "jane@example.com");
+            this.jenny = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "jenny@example.com");
 
             var singleton = this.Transaction.GetSingleton();
-            singleton.AutocompleteDefault = john;
+            // TODO:
+            //singleton.AutocompleteDefault = john;
 
             this.Transaction.Derive();
             this.Transaction.Commit();

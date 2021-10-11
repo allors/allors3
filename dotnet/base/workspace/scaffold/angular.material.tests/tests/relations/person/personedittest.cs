@@ -5,8 +5,11 @@
 
 namespace Tests.Relations
 {
+    using System.Linq;
+    using Allors.Database.Domain;
     using Components;
-    using libs.angular.material.custom.src.relations.people;
+    using src.app.relations.people;
+    using src.app.relations.people.person;
     using Xunit;
 
     [Collection("Test collection")]

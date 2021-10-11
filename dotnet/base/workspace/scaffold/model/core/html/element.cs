@@ -5,9 +5,10 @@
 
 namespace Autotest.Html
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Autotest.Angular;
+    using Angular;
     using Humanizer;
     using Newtonsoft.Json.Linq;
 
@@ -55,7 +56,7 @@ namespace Autotest.Html
                 var parentElement = (Element)this.Parent;
                 return parentElement != null
                     ? new[] { parentElement }.Concat(parentElement.Ancestors).ToArray()
-                    : new Element[0];
+                    : Array.Empty<Element>();
             }
         }
 
@@ -75,7 +76,7 @@ namespace Autotest.Html
                     node.BaseLoad();
                     return node;
                 }).ToArray()
-                : new INode[0];
+                : Array.Empty<INode>();
 
             var jsonAttributes = this.Json["attributes"];
             this.Attributes = jsonAttributes != null
@@ -85,7 +86,7 @@ namespace Autotest.Html
                     attribute.BaseLoad();
                     return attribute;
                 }).ToArray()
-                : new Attribute[0];
+                : Array.Empty<Attribute>();
         }
 
         public void SetInScope(Scope scope)

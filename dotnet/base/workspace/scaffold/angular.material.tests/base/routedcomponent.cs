@@ -5,11 +5,12 @@
 
 namespace Components
 {
+    using Allors.Database.Meta;
     using OpenQA.Selenium;
 
     public abstract class RoutedComponent : Component
     {
-        protected RoutedComponent(IWebDriver driver) : base(driver)
+        protected RoutedComponent(IWebDriver driver, MetaPopulation m) : base(driver, m)
         {
         }
     }

@@ -5,8 +5,9 @@
 
 namespace Autotest.Typescript
 {
+    using System;
     using System.Linq;
-    using Autotest.Angular;
+    using Angular;
     using Newtonsoft.Json.Linq;
 
     public class Class
@@ -37,7 +38,7 @@ namespace Autotest.Typescript
             var jsonDecorators = this.Json["decorators"];
             this.Decorators = jsonDecorators != null
                 ? jsonDecorators.Select(v => v.Value<string>()).ToArray()
-                : new string[0];
+                : Array.Empty<string>();
 
             var jsonMembers = this.Json["members"];
             this.Members = jsonMembers != null
@@ -47,7 +48,7 @@ namespace Autotest.Typescript
                     member.BaseLoad();
                     return member;
                 }).ToArray()
-                : new IMember[0];
+                : Array.Empty<IMember>();
         }
     }
 }

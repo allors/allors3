@@ -6,14 +6,21 @@
 namespace Components
 {
     using System.Linq;
+    using Allors.Database.Meta;
     using OpenQA.Selenium;
     using OpenQA.Selenium.Interactions;
 
     public abstract class Component
     {
-        protected Component(IWebDriver driver) => this.Driver = driver;
+        protected Component(IWebDriver driver, MetaPopulation m)
+        {
+            this.Driver = driver;
+            this.M = m;
+        }
 
         public IWebDriver Driver { get; }
+
+        public MetaPopulation M { get; set; }
 
         public static string[] ByScopesExpressions(params string[] scopes) => scopes.Select((v, i) => $"ancestor::*[@data-test-scope][{i + 1}]/@data-test-scope='{v}'").ToArray();
 

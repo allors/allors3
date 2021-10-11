@@ -5,10 +5,9 @@
 
 namespace Autotest
 {
-    using System;
     using System.Linq;
     using Allors.Workspace.Meta;
-    using Autotest.Angular;
+    using Angular;
     using Humanizer;
     using Newtonsoft.Json.Linq;
 
@@ -38,7 +37,7 @@ namespace Autotest
             {
                 if (this.ObjectType != null)
                 {
-                    this.Model.MetaExtensions.TryGetValue(this.ObjectType.Tag, out var metaExtension);
+                    this.Model.MetaExtensionByTag.TryGetValue(this.ObjectType.Tag, out var metaExtension);
                     return metaExtension;
                 }
 
@@ -62,7 +61,7 @@ namespace Autotest
 
         public void BaseLoadMenu(JObject json)
         {
-            this.Tag = json["id"]?.Value<string>();
+            this.Tag = json["tag"]?.Value<string>();
             this.AssignedTitle = json["title"]?.Value<string>();
             this.AssignedLink = json["link"]?.Value<string>();
 

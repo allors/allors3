@@ -6,8 +6,8 @@
 namespace Autotest.Testers
 {
     using System.Linq;
-    using Autotest.Html;
-    using Autotest.Typescript;
+    using Html;
+    using Typescript;
 
     public partial class AllorsMaterialTableTester : Tester
     {

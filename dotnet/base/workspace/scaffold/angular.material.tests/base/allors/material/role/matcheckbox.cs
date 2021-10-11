@@ -12,8 +12,8 @@ namespace Components
 
     public class MatCheckbox : SelectorComponent
     {
-        public MatCheckbox(IWebDriver driver, RoleType roleType, params string[] scopes)
-        : base(driver) =>
+        public MatCheckbox(IWebDriver driver, MetaPopulation m, RoleType roleType, params string[] scopes)
+        : base(driver, m) =>
             this.Selector = By.XPath($".//a-mat-checkbox{this.ByScopesPredicate(scopes)}//*[@data-allors-roletype='{roleType.RelationType.Tag}']");
 
         public override By Selector { get; }
@@ -42,12 +42,9 @@ namespace Components
                         this.Label.Click();
                     }
                 }
-                else
+                else if (value)
                 {
-                    if (value)
-                    {
-                        this.Label.Click();
-                    }
+                    this.Label.Click();
                 }
             }
         }
@@ -56,8 +53,8 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class MatCheckbox<T> : MatCheckbox where T : Component
     {
-        public MatCheckbox(T page, RoleType roleType, params string[] scopes)
-            : base(page.Driver, roleType, scopes) =>
+        public MatCheckbox(T page, MetaPopulation m, RoleType roleType, params string[] scopes)
+            : base(page.Driver, m, roleType, scopes) =>
             this.Page = page;
 
         public T Page { get; }
