@@ -14,7 +14,7 @@ namespace Components
     {
         public MatRadioGroup(IWebDriver driver, MetaPopulation m, RoleType roleType, params string[] scopes)
             : base(driver, m) =>
-            this.Selector = By.XPath($".//a-mat-radiogroup{this.ByScopesPredicate(scopes)}//*[@data-allors-roletype='{roleType.RelationType.Tag}']");
+            this.Selector = By.XPath($".//a-mat-radio-group{this.ByScopesPredicate(scopes)}//*[@data-allors-roletype='{roleType.RelationType.Tag}']");
 
         public override By Selector { get; }
 

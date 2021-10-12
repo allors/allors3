@@ -65,12 +65,12 @@ namespace Components
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class Input<T> : Input where T : Component
     {
-        public Input(T page, params By[] selectors)
-            : base(page.Driver, selectors) =>
+        public Input(T page, MetaPopulation m, params By[] selectors)
+            : base(page.Driver, m, selectors) =>
             this.Page = page;
 
-        public Input(T page, string kind, string value, params string[] scopes)
-            : base(page.Driver, kind, value, scopes) =>
+        public Input(T page, MetaPopulation m, string kind, string value, params string[] scopes)
+            : base(page.Driver, m, kind, value, scopes) =>
             this.Page = page;
 
         public T Page { get; }

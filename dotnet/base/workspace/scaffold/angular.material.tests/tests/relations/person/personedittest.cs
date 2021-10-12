@@ -37,7 +37,7 @@ namespace Tests.Relations
             this.people.AddNew.Click();
             var before = new People(this.Transaction).Extent().ToArray();
 
-            var personEditPage = new PersonComponent(this.Driver);
+            var personEditPage = new PersonComponent(this.Driver, this.M);
 
             personEditPage.FirstName.Set("Jos")
                           .LastName.Set("Smos")

@@ -10,7 +10,7 @@ namespace Tests
         public src.app.dashboard.DashboardComponent NavigateToHome()
         {
             this.Navigate(this.Home);
-            return new src.app.dashboard.DashboardComponent(this.Driver);
+            return new src.app.dashboard.DashboardComponent(this.Driver, this.M);
         }
 	
 
@@ -23,7 +23,7 @@ namespace Tests
         public src.app.relations.people.PeopleComponent NavigateToPeople()
         {
             this.Navigate(this.ContactsGroup, this.People);
-            return new src.app.relations.people.PeopleComponent(this.Driver);
+            return new src.app.relations.people.PeopleComponent(this.Driver, this.M);
         }
 
 	
@@ -34,7 +34,7 @@ namespace Tests
         public src.app.relations.organisations.OrganisationsComponent NavigateToOrganisations()
         {
             this.Navigate(this.ContactsGroup, this.Organisations);
-            return new src.app.relations.organisations.OrganisationsComponent(this.Driver);
+            return new src.app.relations.organisations.OrganisationsComponent(this.Driver, this.M);
         }
 
 	
@@ -49,7 +49,7 @@ namespace Tests
         public src.app.tests.form.FormComponent NavigateToForm()
         {
             this.Navigate(this.TestsGroup, this.Form);
-            return new src.app.tests.form.FormComponent(this.Driver);
+            return new src.app.tests.form.FormComponent(this.Driver, this.M);
         }
 
 	

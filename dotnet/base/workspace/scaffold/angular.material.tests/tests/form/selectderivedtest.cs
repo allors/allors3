@@ -17,7 +17,7 @@ namespace Tests
         private readonly FormComponent page;
 
         private readonly Person john;
-        private readonly Person jane;
+        private readonly Person administrator;
         private readonly Person jenny;
 
         public SelectDerivedTest(Fixture fixture)
@@ -27,7 +27,7 @@ namespace Tests
             this.page = this.Sidenav.NavigateToForm();
 
             this.john = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "john@example.com");
-            this.jane = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "jane@example.com");
+            this.administrator = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "administrator");
             this.jenny = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "jenny@example.com");
 
             var singleton = this.Transaction.GetSingleton();
@@ -63,7 +63,7 @@ namespace Tests
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            this.page.SelectDerived.Select(this.jane);
+            this.page.SelectDerived.Select(this.administrator);
 
             this.page.SAVE.Click();
 

@@ -26,10 +26,10 @@ namespace Tests
         [Fact]
         public void Full()
         {
-            var jane = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "jane@example.com");
+            var administrator = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "administrator");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            this.page.AutocompleteFilter.Select("jane@example.com");
+            this.page.AutocompleteFilter.Select("administrator");
 
             this.page.SAVE.Click();
 
@@ -42,17 +42,17 @@ namespace Tests
 
             var data = after.Except(before).First();
 
-            Assert.Equal(jane, data.AutocompleteFilter);
+            Assert.Equal(administrator, data.AutocompleteFilter);
         }
 
 
         [Fact]
         public void PartialWithSelection()
         {
-            var jane = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "jane@example.com");
+            var administrator = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "administrator");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            this.page.AutocompleteFilter.Select("jane", "jane@example.com");
+            this.page.AutocompleteFilter.Select("administrator", "administrator");
 
             this.page.SAVE.Click();
 
@@ -65,7 +65,7 @@ namespace Tests
 
             var data = after.Except(before).First();
 
-            Assert.Equal(jane, data.AutocompleteFilter);
+            Assert.Equal(administrator, data.AutocompleteFilter);
         }
     }
 }

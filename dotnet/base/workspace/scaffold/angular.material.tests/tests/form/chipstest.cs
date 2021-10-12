@@ -26,10 +26,10 @@ namespace Tests
         [Fact]
         public void AddOne()
         {
-            var jane = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "jane@example.com");
+            var administrator = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "administrator");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            this.page.Chips.Add("jane", "jane@example.com");
+            this.page.Chips.Add("administrator", "administrator");
 
             this.page.SAVE.Click();
 
@@ -42,17 +42,17 @@ namespace Tests
 
             var data = after.Except(before).First();
 
-            Assert.Contains(jane, data.Chips);
+            Assert.Contains(administrator, data.Chips);
         }
 
         [Fact]
         public void AddTwo()
         {
-            var jane = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "jane@example.com");
+            var administrator = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "administrator");
             var john = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "john@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            this.page.Chips.Add("jane", "jane@example.com");
+            this.page.Chips.Add("administrator", "administrator");
 
             this.page.Chips.Add("john", "john@example.com");
 
@@ -67,7 +67,7 @@ namespace Tests
 
             var data = after.Except(before).First();
 
-            Assert.Contains(jane, data.Chips);
+            Assert.Contains(administrator, data.Chips);
             Assert.Contains(john, data.Chips);
         }
 
@@ -76,11 +76,11 @@ namespace Tests
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            this.page.Chips.Add("jane", "jane@example.com");
+            this.page.Chips.Add("administrator", "administrator");
 
             this.page.SAVE.Click();
 
-            this.page.Chips.Remove("jane@example.com");
+            this.page.Chips.Remove("administrator");
 
             this.page.SAVE.Click();
 

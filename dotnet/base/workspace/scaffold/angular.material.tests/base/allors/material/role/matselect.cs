@@ -54,7 +54,7 @@ namespace Components
             arrow.Click();
 
             this.Driver.WaitForAngular();
-            var optionSelector = By.CssSelector($"mat-option[data-allors-option-id='{@object.Id}'] span");
+            var optionSelector = By.CssSelector($"mat-option[data-allors-option-id='{@object?.Id ?? 0}'] span");
             var option = this.Driver.FindElement(optionSelector);
             option.Click();
         }

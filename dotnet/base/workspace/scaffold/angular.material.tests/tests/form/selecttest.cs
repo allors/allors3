@@ -26,10 +26,10 @@ namespace Tests
         [Fact]
         public void Initial()
         {
-            var jane = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "jane@example.com");
+            var administrator = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "administrator");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            this.page.Select.Select(jane);
+            this.page.Select.Select(administrator);
 
             this.page.SAVE.Click();
 
@@ -42,7 +42,7 @@ namespace Tests
 
             var data = after.Except(before).First();
 
-            Assert.Equal(jane, data.Select);
+            Assert.Equal(administrator, data.Select);
         }
     }
 }

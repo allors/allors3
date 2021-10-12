@@ -5,6 +5,7 @@
 
 namespace Components
 {
+    using Allors.Database.Meta;
     using OpenQA.Selenium;
 
     public static partial class ComponentExtensions
@@ -15,9 +16,9 @@ namespace Components
 
         public static Element<T> Element<T>(this T @this, By selector) where T : Component => new Element<T>(@this, @this.M, selector);
 
-        public static Input<T> Input<T>(this T @this, params By[] selectors) where T : Component => new Input<T>(@this, selectors);
+        public static Input<T> Input<T>(this T @this, params By[] selectors) where T : Component => new Input<T>(@this, @this.M, selectors);
 
         // TODO: Remove
-        public static Input<T> Input<T>(this T @this, string formControlName) where T : Component => new Input<T>(@this, "formControlName", formControlName);
+        public static Input<T> Input<T>(this T @this, MetaPopulation m, string formControlName) where T : Component => new Input<T>(@this, m, "formControlName", formControlName);
     }
 }
