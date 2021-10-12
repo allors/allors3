@@ -104,17 +104,12 @@ export class AllorsMaterialFilterFieldDialogComponent implements OnInit {
     const objectType = this.fieldDefinition.objectType;
     const options = this.fieldDefinition.options;
 
-    let value = this.formGroup.get('value')?.value;
-    let value2 = this.formGroup.get('value2')?.value;
+    const value = this.formGroup.get('value')?.value;
+    const value2 = this.formGroup.get('value2')?.value;
 
     const inValid = value == null || (objectType.isComposite && value.objectType == null);
 
     if (!inValid) {
-      if (objectType.tag === UnitTags.DateTime) {
-        value = value ? value.toISOString() : null;
-        value2 = value2 ? value2.toISOString() : null;
-      }
-
       if (!value2) {
         this.filter.addField(
           new FilterField({

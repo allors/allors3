@@ -26,7 +26,7 @@ namespace Tests
         [Fact]
         public void Full()
         {
-            var administrator = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "administrator");
+            var administrator = new People(this.Transaction).FindBy(this.M.Person.UserName, "administrator");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.AutocompleteFilter.Select("administrator");
@@ -49,7 +49,7 @@ namespace Tests
         [Fact]
         public void PartialWithSelection()
         {
-            var administrator = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "administrator");
+            var administrator = new People(this.Transaction).FindBy(this.M.Person.UserName, "administrator");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.AutocompleteFilter.Select("administrator", "administrator");

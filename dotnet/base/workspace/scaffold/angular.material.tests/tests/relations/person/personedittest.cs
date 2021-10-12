@@ -60,7 +60,8 @@ namespace Tests.Relations
         public void Edit()
         {
             var before = new People(this.Transaction).Extent().ToArray();
-            var person = before.First(v => v.FullName == "John Doe");
+
+            var person = new People(this.Transaction).FindBy(this.M.Person.UserName, "john@example.com");
 
             var page = this.people.Select(person).EditAndNavigate();
 

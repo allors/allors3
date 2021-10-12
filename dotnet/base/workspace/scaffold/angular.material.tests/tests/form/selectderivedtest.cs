@@ -26,8 +26,8 @@ namespace Tests
             this.Login();
             this.page = this.Sidenav.NavigateToForm();
 
-            this.john = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "john@example.com");
-            this.administrator = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "administrator");
+            this.john = new People(this.Transaction).FindBy(this.M.Person.UserName, "john@example.com");
+            this.administrator = new People(this.Transaction).FindBy(this.M.Person.UserName, "administrator");
             this.jenny = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "jenny@example.com");
 
             var singleton = this.Transaction.GetSingleton();

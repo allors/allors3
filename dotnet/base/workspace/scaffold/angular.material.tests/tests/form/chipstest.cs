@@ -26,7 +26,7 @@ namespace Tests
         [Fact]
         public void AddOne()
         {
-            var administrator = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "administrator");
+            var administrator = new People(this.Transaction).FindBy(this.M.Person.UserName, "administrator");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.Chips.Add("administrator", "administrator");
@@ -48,8 +48,8 @@ namespace Tests
         [Fact]
         public void AddTwo()
         {
-            var administrator = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "administrator");
-            var john = new People(this.Transaction).FindBy(this.M.Person.UserEmail, "john@example.com");
+            var administrator = new People(this.Transaction).FindBy(this.M.Person.UserName, "administrator");
+            var john = new People(this.Transaction).FindBy(this.M.Person.UserName, "john@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             this.page.Chips.Add("administrator", "administrator");
