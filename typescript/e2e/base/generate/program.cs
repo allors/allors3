@@ -7,7 +7,6 @@ namespace Allors
 {
     using System;
     using System.IO;
-    using System.Linq;
     using Allors.Development.Repository.Tasks;
     using Autotest;
     using Workspace.Meta.Lazy;
@@ -16,18 +15,15 @@ namespace Allors
     {
         private static int Default(Model model)
         {
-            var directive = model.Project.Directives.First(v => v.Type?.Name == "FormComponent");
-
-
             try
             {
                 string[,] config =
                 {
                     {
-                        "./Workspace/Scaffold/Templates/sidenav.cs.stg", "./Workspace/Scaffold/Angular.Material.Tests/generated/sidenav",
+                        "./Templates/sidenav.cs.stg", "./Angular.Tests/generated/sidenav",
                     },
                     {
-                        "./Workspace/Scaffold/Templates/component.cs.stg", "./Workspace/Scaffold/Angular.Material.Tests/generated/components",
+                        "./Templates/component.cs.stg", "./Angular.Tests/generated/components",
                     },
                 };
 
@@ -64,7 +60,7 @@ namespace Allors
                     MetaPopulation = new MetaBuilder().Build(),
                 };
 
-                const string location = "../../typescript/modules/dist/base";
+                const string location = "../../modules/dist/base";
                 model.LoadMetaExtensions(new FileInfo($"{location}/meta.json"));
                 model.LoadProject(new FileInfo($"{location}/project.json"));
                 model.LoadMenu(new FileInfo($"{location}/menu.json"));
