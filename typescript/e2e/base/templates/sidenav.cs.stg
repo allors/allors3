@@ -30,7 +30,9 @@ menuItem(menuItem) ::= <<
         // $menuItem.PropertyName$
 $if(!menuItem.Parent)$
 $if(menuItem.Link)$
+$if(menuItem.PropertyName)$
         public Components.Anchor $menuItem.PropertyName$ => this.Link("$menuItem.Link$");
+$endif$
 
 $if(menuItem.Component)$
         public $menuItem.Component.Reference.Namespace$.$menuItem.Component.Reference.Name$ NavigateTo$menuItem.PropertyName$()
@@ -44,8 +46,9 @@ $else$
 
 $endif$
 $else$
+$if(menuItem.PropertyName)$
         public Components.Anchor $menuItem.PropertyName$ => this.Link("$menuItem.Link$");
-
+$endif$
 $if(menuItem.Component)$
         public $menuItem.component.Reference.Namespace$.$menuItem.Component.Reference.Name$ NavigateTo$menuItem.PropertyName$()
         {

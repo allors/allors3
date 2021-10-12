@@ -3,6 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+
 namespace Autotest.Testers
 {
     using System;
@@ -10,6 +11,7 @@ namespace Autotest.Testers
     using Allors.Workspace.Meta;
     using Angular;
     using Html;
+    using Model = Autotest.Model;
 
     public partial class AllorsMaterialFactoryFabTester : Tester
     {
