@@ -72,6 +72,7 @@ namespace Allors.Workspace.Meta
             this.MetaObjectByTag =
                 this.Units.Cast<IMetaObject>()
                 .Union(this.Classes)
+                .Union(this.Interfaces)
                 .Union(this.RelationTypes)
                 .Union(this.MethodTypes)
                 .ToDictionary(v => v.Tag, v => v);

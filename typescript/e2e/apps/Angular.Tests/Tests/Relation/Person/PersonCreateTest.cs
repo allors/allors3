@@ -57,7 +57,7 @@ namespace Tests.PersonTests
             Assert.Equal("Smos", person.LastName);
             Assert.Equal("CEO", person.Function);
             Assert.Equal(new GenderTypes(this.Session).Male, person.Gender);
-            Assert.Equal(this.Session.GetSingleton().AdditionalLocales.First, person.Locale);
+            Assert.Equal(this.Session.GetSingleton().AdditionalLocales.FirstOrDefault(), person.Locale);
         }
     }
 }

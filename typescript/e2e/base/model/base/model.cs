@@ -57,7 +57,7 @@ namespace Autotest
         }
 
         public void LoadMenu(FileInfo fileInfo)
-        {
+         {
             using (var file = File.OpenText(fileInfo.FullName))
             using (var reader = new JsonTextReader(file))
             {
@@ -79,7 +79,7 @@ namespace Autotest
                 var jsonDialogs = JToken.ReadFrom(reader);
 
                 var create = jsonDialogs["create"] as JArray;
-                var edit = jsonDialogs["create"] as JArray;
+                var edit = jsonDialogs["edit"] as JArray;
 
                 void CreateSetter(MetaExtension metaExtension, JToken json)
                 {

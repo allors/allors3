@@ -5,6 +5,7 @@
 
 
 using Allors.Database.Meta;
+using Allors.Domain.TestPopulation;
 
 namespace Tests
 {

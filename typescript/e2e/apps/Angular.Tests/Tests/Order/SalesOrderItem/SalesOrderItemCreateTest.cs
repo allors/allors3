@@ -5,6 +5,7 @@
 
 using libs.workspace.angular.apps.src.lib.objects.salesorder.list;
 using libs.workspace.angular.apps.src.lib.objects.salesorder.overview;
+using libs.workspace.angular.apps.src.lib.objects.salesorderitem.edit;
 
 namespace Tests.SalesOrderItemTests
 {

@@ -3,6 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.customershipment.create;
 using libs.workspace.angular.apps.src.lib.objects.shipment.list;
 
 namespace Tests.CustomerShipmentTests

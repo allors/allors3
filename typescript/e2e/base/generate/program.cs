@@ -64,6 +64,7 @@ namespace Allors
                 model.LoadMetaExtensions(new FileInfo($"{location}/meta.json"));
                 model.LoadProject(new FileInfo($"{location}/project.json"));
                 model.LoadMenu(new FileInfo($"{location}/menu.json"));
+                model.LoadDialogs(new FileInfo($"{location}/dialogs.json"));
 
                 switch (args.Length)
                 {

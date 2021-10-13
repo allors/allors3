@@ -30,7 +30,7 @@ namespace Components
 
             var offsetX = (value - 1) * width / (max - min);
             var offsetY = height / 2;
-            new Actions(this.Driver, this.M).MoveToElement(element, offsetX, offsetY).Click().Build().Perform();
+            new Actions(this.Driver).MoveToElement(element, offsetX, offsetY).Click().Build().Perform();
         }
     }
 

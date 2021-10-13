@@ -3,6 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.salesorder.create;
 using libs.workspace.angular.apps.src.lib.objects.salesorder.list;
 
 namespace Tests.SalesOrderTests

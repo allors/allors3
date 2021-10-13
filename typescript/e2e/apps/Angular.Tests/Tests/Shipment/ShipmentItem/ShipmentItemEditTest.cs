@@ -28,7 +28,7 @@ namespace Tests.ShipmentItemTests
             this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
 
             var customerShipments = new CustomerShipments(this.Session).Extent();
-            customerShipments.Filter.AddEquals(M.CustomerShipment.ShipFromParty.RoleType, internalOrganisation);
+            customerShipments.Filter.AddEquals(M.CustomerShipment.ShipFromParty, internalOrganisation);
             this.customerShipment = customerShipments.FirstOrDefault();
 
             this.Login();
@@ -41,7 +41,7 @@ namespace Tests.ShipmentItemTests
             var before = customerShipment.ShipmentItems.ToArray();
 
             var goods = new UnifiedGoods(this.Session).Extent();
-            goods.Filter.AddEquals(M.UnifiedGood.InventoryItemKind.RoleType, new InventoryItemKinds(this.Session).Serialised);
+            goods.Filter.AddEquals(M.UnifiedGood.InventoryItemKind, new InventoryItemKinds(this.Session).Serialised);
             var serializedGood = goods.FirstOrDefault();
 
             var serialisedItem = new SerialisedItemBuilder(this.Session).WithForSaleDefaults(this.internalOrganisation).Build();
@@ -81,7 +81,7 @@ namespace Tests.ShipmentItemTests
             var before = customerShipment.ShipmentItems.ToArray();
 
             var goods = new UnifiedGoods(this.Session).Extent();
-            goods.Filter.AddEquals(M.UnifiedGood.InventoryItemKind.RoleType, new InventoryItemKinds(this.Session).NonSerialised);
+            goods.Filter.AddEquals(M.UnifiedGood.InventoryItemKind, new InventoryItemKinds(this.Session).NonSerialised);
             var nonSerializedGood = goods.FirstOrDefault();
 
             this.shipmentListPage.Table.DefaultAction(customerShipment);
@@ -113,7 +113,7 @@ namespace Tests.ShipmentItemTests
             var before = customerShipment.ShipmentItems.ToArray();
 
             var goods = new UnifiedGoods(this.Session).Extent();
-            goods.Filter.AddEquals(M.UnifiedGood.InventoryItemKind.RoleType, new InventoryItemKinds(this.Session).Serialised);
+            goods.Filter.AddEquals(M.UnifiedGood.InventoryItemKind, new InventoryItemKinds(this.Session).Serialised);
             var serializedGood = goods.FirstOrDefault();
 
             var serialisedItem = new SerialisedItemBuilder(this.Session).WithForSaleDefaults(this.internalOrganisation).Build();

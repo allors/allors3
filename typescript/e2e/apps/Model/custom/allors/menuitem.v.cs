@@ -14,5 +14,10 @@ namespace Autotest
             this.BaseLoadMenu(json);
             this.CustomLoadMenu(json);
         }
+
+        public override string ToString()
+        {
+            return this.ObjectType?.SingularName ?? this.Title;
+        }
     }
 }

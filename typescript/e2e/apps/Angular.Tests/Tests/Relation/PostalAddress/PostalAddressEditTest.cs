@@ -3,6 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System.Linq;
 using libs.workspace.angular.apps.src.lib.objects.person.list;
 using libs.workspace.angular.apps.src.lib.objects.person.overview;
 using libs.workspace.angular.apps.src.lib.objects.postaladdress.edit;

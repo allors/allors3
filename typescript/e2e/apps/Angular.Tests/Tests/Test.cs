@@ -99,7 +99,7 @@ namespace Tests
                 using var session = database.CreateTransaction();
                 session.Commit();
 
-                new IntranetPopulation(session, null).Execute();
+                new IntranetPopulation(session, null, this.M).Execute();
 
                 session.Commit();
 

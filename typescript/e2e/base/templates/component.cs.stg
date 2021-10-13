@@ -110,9 +110,9 @@ $endif$
 
 factory(factory) ::= <<
 $if(factory.Component)$
-        public $factory.Component.Reference.Namespace$.$factory.Component.Reference.Name$ Create$factory.class.name$()
+        public $factory.Component.Reference.Namespace$.$factory.Component.Reference.Name$ Create$factory.class.singularName$()
         {
-            this.$factory.tester.Name$.Create(this.M.$factory.class.Name$);
+            this.$factory.tester.Name$.Create(this.M.$factory.class.singularName$);
             return new $factory.Component.Reference.Namespace$.$factory.Component.Reference.Name$(this.Driver, this.M);
         }
 $endif$
