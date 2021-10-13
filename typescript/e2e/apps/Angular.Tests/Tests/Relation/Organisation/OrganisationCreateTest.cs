@@ -3,24 +3,23 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.organisation.list;
+
 namespace Tests.OrganisationTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
     using Components;
-    using libs.angular.material.@base.src.export.objects.organisation.create;
-    using libs.angular.material.@base.src.export.objects.organisation.list;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class OrganisationCreateTest : Test
+    public class OrganisationCreateTest : Test, IClassFixture<Fixture>
     {
         private readonly OrganisationListComponent organisationListPage;
 
-        public OrganisationCreateTest(TestFixture fixture)
+        public OrganisationCreateTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();

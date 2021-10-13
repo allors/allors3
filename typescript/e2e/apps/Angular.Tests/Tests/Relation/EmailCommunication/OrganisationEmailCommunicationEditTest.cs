@@ -3,26 +3,24 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.emailcommunication.edit;
+using libs.workspace.angular.apps.src.lib.objects.organisation.list;
+using libs.workspace.angular.apps.src.lib.objects.organisation.overview;
+
 namespace Tests.EmailCommunicationTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.emailcommunication.edit;
-    using libs.angular.material.@base.src.export.objects.organisation.list;
-    using libs.angular.material.@base.src.export.objects.organisation.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class OrganisationEmailCommunicationEditTest : Test
+    public class OrganisationEmailCommunicationEditTest : Test, IClassFixture<Fixture>
     {
         private readonly OrganisationListComponent organisationListPage;
 
-        public OrganisationEmailCommunicationEditTest(TestFixture fixture)
+        public OrganisationEmailCommunicationEditTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -36,16 +34,16 @@ namespace Tests.EmailCommunicationTests
             var employee = allors.ActiveEmployees.First();
 
             var organisation = allors.ActiveCustomers.First(v => v.GetType().Name == typeof(Organisation).Name);
-            var contact = organisation.CurrentContacts.First;
+            var contact = organisation.CurrentContacts.FirstOrDefault();
 
             var employeeEmailAddress = employee.PersonalEmailAddress;
-            var personEmailAddress = organisation.CurrentContacts.First.PersonalEmailAddress;
+            var personEmailAddress = organisation.CurrentContacts.First().PersonalEmailAddress;
 
             var editCommunicationEvent = new EmailCommunicationBuilder(this.Session)
                 .WithSubject("dummy")
                 .WithFromParty(employee)
                 .WithFromEmail(employeeEmailAddress)
-                .WithToParty(organisation.CurrentContacts.First)
+                .WithToParty(organisation.CurrentContacts.FirstOrDefault())
                 .WithToEmail(personEmailAddress)
                 .WithEmailTemplate(new EmailTemplateBuilder(this.Session).Build())
                 .Build();
@@ -56,12 +54,12 @@ namespace Tests.EmailCommunicationTests
             var before = new EmailCommunications(this.Session).Extent().ToArray();
 
             this.organisationListPage.Table.DefaultAction(organisation);
-            var organisationOverview = new OrganisationOverviewComponent(this.organisationListPage.Driver);
+            var organisationOverview = new OrganisationOverviewComponent(this.organisationListPage.Driver, this.M);
 
             var communicationEventOverview = organisationOverview.CommunicationeventOverviewPanel.Click();
             communicationEventOverview.Table.DefaultAction(editCommunicationEvent);
             
-            var emailCommunicationEdit = new EmailCommunicationEditComponent(organisationOverview.Driver);
+            var emailCommunicationEdit = new EmailCommunicationEditComponent(organisationOverview.Driver, this.M);
             emailCommunicationEdit
                 .CommunicationEventState.Select(new CommunicationEventStates(this.Session).Completed)
                 .EventPurposes.Toggle(new CommunicationEventPurposes(this.Session).Inquiry)

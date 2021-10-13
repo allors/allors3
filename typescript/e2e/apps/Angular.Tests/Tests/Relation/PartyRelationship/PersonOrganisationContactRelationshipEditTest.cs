@@ -3,21 +3,20 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.organisationcontactrelationship.edit;
+using libs.workspace.angular.apps.src.lib.objects.person.list;
+using libs.workspace.angular.apps.src.lib.objects.person.overview;
+
 namespace Tests.PartyRelationshipTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
     using Components;
-    using libs.angular.material.@base.src.export.objects.organisationcontactrelationship.edit;
-    using libs.angular.material.@base.src.export.objects.person.list;
-    using libs.angular.material.@base.src.export.objects.person.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class PersonOrganisationContactRelationshipEditTest : Test
+    public class PersonOrganisationContactRelationshipEditTest : Test, IClassFixture<Fixture>
     {
         private readonly PersonListComponent people;
 
@@ -27,7 +26,7 @@ namespace Tests.PartyRelationshipTests
 
         private readonly Person contact;
 
-        public PersonOrganisationContactRelationshipEditTest(TestFixture fixture)
+        public PersonOrganisationContactRelationshipEditTest(Fixture fixture)
             : base(fixture)
         {
             this.organisation = new OrganisationBuilder(this.Session).WithName("organisation").Build();
@@ -52,7 +51,7 @@ namespace Tests.PartyRelationshipTests
             var before = new OrganisationContactRelationships(this.Session).Extent().ToArray();
 
             this.people.Table.DefaultAction(this.contact);
-            var organisationContactRelationshipEdit = new PersonOverviewComponent(this.people.Driver).PartyrelationshipOverviewPanel.Click().CreateOrganisationContactRelationship();
+            var organisationContactRelationshipEdit = new PersonOverviewComponent(this.people.Driver, this.M).PartyrelationshipOverviewPanel.Click().CreateOrganisationContactRelationship();
 
             organisationContactRelationshipEdit.FromDate.Set(DateTimeFactory.CreateDate(2018, 12, 22))
                 .ThroughDate.Set(DateTimeFactory.CreateDate(2018, 12, 22).AddYears(1))
@@ -71,7 +70,7 @@ namespace Tests.PartyRelationshipTests
 
             // Assert.Equal(DateTimeFactory.CreateDate(2018, 12, 22).Date, partyRelationship.FromDate.Date.ToUniversalTime().Date);
             // Assert.Equal(DateTimeFactory.CreateDate(2018, 12, 22).AddYears(1).Date, partyRelationship.ThroughDate.Value.Date.ToUniversalTime().Date);
-            Assert.Equal(2, partyRelationship.ContactKinds.Count);
+            Assert.Equal(2, partyRelationship.ContactKinds.Count());
             Assert.Contains(new OrganisationContactKinds(this.Session).GeneralContact, partyRelationship.ContactKinds);
             Assert.Contains(new OrganisationContactKinds(this.Session).SalesContact, partyRelationship.ContactKinds);
             Assert.Equal(this.organisation, partyRelationship.Organisation);
@@ -84,12 +83,12 @@ namespace Tests.PartyRelationshipTests
             var before = new OrganisationContactRelationships(this.Session).Extent().ToArray();
 
             this.people.Table.DefaultAction(this.contact);
-            var personOverviewPage = new PersonOverviewComponent(this.people.Driver);
+            var personOverviewPage = new PersonOverviewComponent(this.people.Driver, this.M);
 
             var partyRelationshipOverview = personOverviewPage.PartyrelationshipOverviewPanel.Click();
             partyRelationshipOverview.Table.DefaultAction(this.editPartyRelationship);
 
-            var organisationContactRelationshipEditComponent = new OrganisationContactRelationshipEditComponent(this.Driver);
+            var organisationContactRelationshipEditComponent = new OrganisationContactRelationshipEditComponent(this.Driver, this.M);
             organisationContactRelationshipEditComponent.FromDate.Set(DateTimeFactory.CreateDate(2018, 12, 22))
                 .ThroughDate.Set(DateTimeFactory.CreateDate(2018, 12, 22).AddYears(1))
                 .ContactKinds.Toggle(new OrganisationContactKinds(this.Session).GeneralContact)
@@ -106,7 +105,7 @@ namespace Tests.PartyRelationshipTests
 
             // Assert.Equal(DateTimeFactory.CreateDate(2018, 12, 22).Date, this.editPartyRelationship.FromDate.Date.ToUniversalTime().Date);
             // Assert.Equal(DateTimeFactory.CreateDate(2018, 12, 22).AddYears(1).Date, this.editPartyRelationship.ThroughDate.Value.Date.ToUniversalTime().Date);
-            Assert.Equal(2, this.editPartyRelationship.ContactKinds.Count);
+            Assert.Equal(2, this.editPartyRelationship.ContactKinds.Count());
             Assert.Contains(new OrganisationContactKinds(this.Session).SalesContact, this.editPartyRelationship.ContactKinds);
             Assert.Contains(new OrganisationContactKinds(this.Session).SupplierContact, this.editPartyRelationship.ContactKinds);
             Assert.Equal(this.organisation, this.editPartyRelationship.Organisation);

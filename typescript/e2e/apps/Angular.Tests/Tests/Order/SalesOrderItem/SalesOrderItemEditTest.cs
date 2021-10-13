@@ -3,27 +3,27 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.salesorder.list;
+using libs.workspace.angular.apps.src.lib.objects.salesorder.overview;
+using libs.workspace.angular.apps.src.lib.objects.salesorderitem.edit;
+
 namespace Tests.SalesOrderItemTests
 {
     using System.Linq;
     using Allors;
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.salesorder.list;
-    using libs.angular.material.@base.src.export.objects.salesorder.overview;
-    using libs.angular.material.@base.src.export.objects.salesorderitem.edit;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Order")]
-    public class SalesOrderItemEditTest : Test
+    public class SalesOrderItemEditTest : Test, IClassFixture<Fixture>
     {
         private readonly SalesOrderListComponent salesOrderListPage;
         private readonly Organisation internalOrganisation;
 
-        public SalesOrderItemEditTest(TestFixture fixture)
+        public SalesOrderItemEditTest(Fixture fixture)
             : base(fixture)
         {
             this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
@@ -60,12 +60,12 @@ namespace Tests.SalesOrderItemTests
             var expectedAssignedUnitPrice = expected.AssignedUnitPrice;
 
             this.salesOrderListPage.Table.DefaultAction(salesOrder);
-            var salesOrderOverview = new SalesOrderOverviewComponent(this.salesOrderListPage.Driver);
+            var salesOrderOverview = new SalesOrderOverviewComponent(this.salesOrderListPage.Driver, this.M);
             var salesOrderItemOverviewPanel = salesOrderOverview.SalesorderitemOverviewPanel.Click();
 
             salesOrderItemOverviewPanel.Table.DefaultAction(salesOrderItem);
 
-            var salesOrderItemEdit = new SalesOrderItemEditComponent(this.Driver);
+            var salesOrderItemEdit = new SalesOrderItemEditComponent(this.Driver, this.M);
 
             salesOrderItemEdit.Description.Set(expected.Description);
             salesOrderItemEdit.Comment.Set(expected.Comment);
@@ -118,12 +118,12 @@ namespace Tests.SalesOrderItemTests
             var expectedAssignedUnitPrice = expected.AssignedUnitPrice;
 
             this.salesOrderListPage.Table.DefaultAction(salesOrder);
-            var salesOrderOverview = new SalesOrderOverviewComponent(this.salesOrderListPage.Driver);
+            var salesOrderOverview = new SalesOrderOverviewComponent(this.salesOrderListPage.Driver, this.M);
             var salesOrderItemOverviewPanel = salesOrderOverview.SalesorderitemOverviewPanel.Click();
 
             salesOrderItemOverviewPanel.Table.DefaultAction(salesOrderItem);
 
-            var salesOrderItemEdit = new SalesOrderItemEditComponent(this.Driver);
+            var salesOrderItemEdit = new SalesOrderItemEditComponent(this.Driver, this.M);
 
             salesOrderItemEdit.Description.Set(expected.Description);
             salesOrderItemEdit.Comment.Set(expected.Comment);

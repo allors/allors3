@@ -3,25 +3,23 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.person.list;
+using libs.workspace.angular.apps.src.lib.objects.person.overview;
+
 namespace Tests.LetterCorrespondenceTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.person.list;
-    using libs.angular.material.@base.src.export.objects.person.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class PersonLetterCorrespondenceCreateTest : Test
+    public class PersonLetterCorrespondenceCreateTest : Test, IClassFixture<Fixture>
     {
         private readonly PersonListComponent personListPage;
 
-        public PersonLetterCorrespondenceCreateTest(TestFixture fixture)
+        public PersonLetterCorrespondenceCreateTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -31,7 +29,7 @@ namespace Tests.LetterCorrespondenceTests
         [Fact]
         public void Create()
         {
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             var address = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
@@ -43,7 +41,7 @@ namespace Tests.LetterCorrespondenceTests
             person.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Session).WithContactMechanism(address).Build());
 
             var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
-            var employee = allors.ActiveEmployees.First;
+            var employee = allors.ActiveEmployees.FirstOrDefault();
 
             var employeeAddress = new PostalAddressBuilder(this.Session)
                 .WithAddress1("home sweet home")
@@ -60,7 +58,7 @@ namespace Tests.LetterCorrespondenceTests
             var before = new LetterCorrespondences(this.Session).Extent().ToArray();
 
             this.personListPage.Table.DefaultAction(person);
-            var letterCorrespondenceEdit = new PersonOverviewComponent(this.personListPage.Driver).CommunicationeventOverviewPanel.Click().CreateLetterCorrespondence();
+            var letterCorrespondenceEdit = new PersonOverviewComponent(this.personListPage.Driver, this.M).CommunicationeventOverviewPanel.Click().CreateLetterCorrespondence();
 
             letterCorrespondenceEdit
                 .CommunicationEventState.Select(new CommunicationEventStates(this.Session).Completed)

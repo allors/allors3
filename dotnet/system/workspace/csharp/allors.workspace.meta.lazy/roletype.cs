@@ -84,8 +84,8 @@ namespace Allors.Workspace.Meta
 
         IRelationTypeInternals IRoleTypeInternals.RelationType { get => this.RelationType; set => this.RelationType = value; }
         #endregion
-        
-        public override string ToString() => $"{this.AssociationType.ObjectType.SingularName}.{this.Name}";
+
+        public override string ToString() => $"{this.Name}";
 
         public void Init(string singularName = null, string pluralName = null, int? size = null, int? precision = null, int? scale = null, bool isRequired = false, bool isUnique = false, string mediaType = null)
         {

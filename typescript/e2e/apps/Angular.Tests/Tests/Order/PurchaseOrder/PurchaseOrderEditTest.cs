@@ -3,26 +3,25 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.purchaseorder.list;
+using libs.workspace.angular.apps.src.lib.objects.purchaseorder.overview;
+
 namespace Tests.PurchaseOrderTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.purchaseorder.list;
-    using libs.angular.material.@base.src.export.objects.purchaseorder.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Order")]
-    public class PurchaseOrderEditTest : Test
+    public class PurchaseOrderEditTest : Test, IClassFixture<Fixture>
     {
         private readonly PurchaseOrderListComponent purchaseOrderListPage;
         private readonly Organisation internalOrganisation;
 
-        public PurchaseOrderEditTest(TestFixture fixture)
+        public PurchaseOrderEditTest(Fixture fixture)
             : base(fixture)
         {
             this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
@@ -70,7 +69,7 @@ namespace Tests.PurchaseOrderTests
             var id = purchaseOrder.Id;
 
             this.purchaseOrderListPage.Table.DefaultAction(purchaseOrder);
-            var purchaseOrderOverview = new PurchaseOrderOverviewComponent(this.purchaseOrderListPage.Driver);
+            var purchaseOrderOverview = new PurchaseOrderOverviewComponent(this.purchaseOrderListPage.Driver, this.M);
             var purchaseOrderOverviewDetail = purchaseOrderOverview.PurchaseorderOverviewDetail.Click();
 
             purchaseOrderOverviewDetail.TakenViaSupplier.Select(expected.TakenViaSupplier.DisplayName());

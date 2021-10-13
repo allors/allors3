@@ -3,23 +3,23 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.person.list;
+using libs.workspace.angular.apps.src.lib.objects.person.overview;
+
 namespace Tests.PersonTests
 {
     using System.Linq;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
     using Components;
-    using libs.angular.material.@base.src.export.objects.person.list;
-    using libs.angular.material.@base.src.export.objects.person.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class PersonEditTest : Test
+    public class PersonEditTest : Test, IClassFixture<Fixture>
     {
         private readonly PersonListComponent people;
 
-        public PersonEditTest(TestFixture fixture)
+        public PersonEditTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -35,7 +35,7 @@ namespace Tests.PersonTests
             var id = person.Id;
 
             this.people.Table.DefaultAction(person);
-            var personOverview = new PersonOverviewComponent(this.people.Driver);
+            var personOverview = new PersonOverviewComponent(this.people.Driver, this.M);
             var personOverviewDetail = personOverview.PersonOverviewDetail.Click();
 
             personOverviewDetail.Salutation.Select(new Salutations(this.Session).Mr)
@@ -44,7 +44,7 @@ namespace Tests.PersonTests
                 .LastName.Set("Smos")
                 .Function.Set("CEO")
                 .Gender.Select(new GenderTypes(this.Session).Male)
-                .Locale.Select(this.Session.GetSingleton().AdditionalLocales.First)
+                .Locale.Select(this.Session.GetSingleton().AdditionalLocales.FirstOrDefault())
                 .Comment.Set("unpleasant person")
                 .SAVE.Click();
 

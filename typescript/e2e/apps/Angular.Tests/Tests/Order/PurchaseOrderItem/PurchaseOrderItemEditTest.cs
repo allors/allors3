@@ -3,27 +3,27 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.purchaseorder.list;
+using libs.workspace.angular.apps.src.lib.objects.purchaseorder.overview;
+using libs.workspace.angular.apps.src.lib.objects.purchaseorderitem.edit;
+
 namespace Tests.PurchaseOrderItemTests
 {
     using System.Linq;
     using Allors;
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.purchaseorder.list;
-    using libs.angular.material.@base.src.export.objects.purchaseorder.overview;
-    using libs.angular.material.@base.src.export.objects.purchaseorderitem.edit;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Order")]
-    public class PurchaseOrderItemEditTest : Test
+    public class PurchaseOrderItemEditTest : Test, IClassFixture<Fixture>
     {
         private readonly PurchaseOrderListComponent purchaseOrderListPage;
         private readonly Organisation internalOrganisation;
 
-        public PurchaseOrderItemEditTest(TestFixture fixture)
+        public PurchaseOrderItemEditTest(Fixture fixture)
             : base(fixture)
         {
             this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
@@ -60,12 +60,12 @@ namespace Tests.PurchaseOrderItemTests
             var expectedMessage = expected.Message;
 
             this.purchaseOrderListPage.Table.DefaultAction(purchaseOrder);
-            var purchaseOrderOverview = new PurchaseOrderOverviewComponent(this.purchaseOrderListPage.Driver);
+            var purchaseOrderOverview = new PurchaseOrderOverviewComponent(this.purchaseOrderListPage.Driver, this.M);
             var purchaseOrderItemOverviewPanel = purchaseOrderOverview.PurchaseorderitemOverviewPanel.Click();
 
             purchaseOrderItemOverviewPanel.Table.DefaultAction(purchaseOrderItem);
 
-            var purchaseOrderItemEdit = new PurchaseOrderItemEditComponent(this.Driver);
+            var purchaseOrderItemEdit = new PurchaseOrderItemEditComponent(this.Driver, this.M);
 
             purchaseOrderItemEdit.OrderItemDescription_1.Set(expected.Description);
             purchaseOrderItemEdit.Comment.Set(expected.Comment);
@@ -122,12 +122,12 @@ namespace Tests.PurchaseOrderItemTests
             var expectedMessage = expected.Message;
 
             this.purchaseOrderListPage.Table.DefaultAction(purchaseOrder);
-            var purchaseOrderOverview = new PurchaseOrderOverviewComponent(this.purchaseOrderListPage.Driver);
+            var purchaseOrderOverview = new PurchaseOrderOverviewComponent(this.purchaseOrderListPage.Driver, this.M);
             var purchaseOrderItemOverviewPanel = purchaseOrderOverview.PurchaseorderitemOverviewPanel.Click();
 
             purchaseOrderItemOverviewPanel.Table.DefaultAction(purchaseOrderItem);
 
-            var purchaseOrderItemEdit = new PurchaseOrderItemEditComponent(this.Driver);
+            var purchaseOrderItemEdit = new PurchaseOrderItemEditComponent(this.Driver, this.M);
 
             purchaseOrderItemEdit.Comment.Set(expected.Comment);
             purchaseOrderItemEdit.InternalComment.Set(expected.InternalComment);

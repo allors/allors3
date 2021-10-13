@@ -3,25 +3,23 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.person.list;
+using libs.workspace.angular.apps.src.lib.objects.person.overview;
+
 namespace Tests.EmailCommunicationTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.person.list;
-    using libs.angular.material.@base.src.export.objects.person.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class PersonEmailCommunicationCreateTest : Test
+    public class PersonEmailCommunicationCreateTest : Test, IClassFixture<Fixture>
     {
         private readonly PersonListComponent personListPage;
 
-        public PersonEmailCommunicationCreateTest(TestFixture fixture)
+        public PersonEmailCommunicationCreateTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -31,7 +29,7 @@ namespace Tests.EmailCommunicationTests
         [Fact]
         public void Create()
         {
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
             var employee = allors.ActiveEmployees.First();
@@ -45,7 +43,7 @@ namespace Tests.EmailCommunicationTests
             var before = new EmailCommunications(this.Session).Extent().ToArray();
 
             this.personListPage.Table.DefaultAction(person);
-            var emailCommunicationEdit = new PersonOverviewComponent(this.personListPage.Driver).CommunicationeventOverviewPanel.Click().CreateEmailCommunication();
+            var emailCommunicationEdit = new PersonOverviewComponent(this.personListPage.Driver, this.M).CommunicationeventOverviewPanel.Click().CreateEmailCommunication();
 
             emailCommunicationEdit
                 .CommunicationEventState.Select(new CommunicationEventStates(this.Session).Completed)

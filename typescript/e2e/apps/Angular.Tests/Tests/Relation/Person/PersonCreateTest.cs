@@ -3,21 +3,22 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.person.list;
+
 namespace Tests.PersonTests
 {
     using System.Linq;
     using Allors.Database.Domain;
     using Components;
-    using libs.angular.material.@base.src.export.objects.person.list;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class PersonCreateTest : Test
+    public class PersonCreateTest : Test, IClassFixture<Fixture>
     {
         private readonly PersonListComponent people;
 
-        public PersonCreateTest(TestFixture fixture)
+        public PersonCreateTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -38,7 +39,7 @@ namespace Tests.PersonTests
                 .LastName.Set("Smos")
                 .Function.Set("CEO")
                 .Gender.Select(new GenderTypes(this.Session).Male)
-                .Locale.Select(this.Session.GetSingleton().AdditionalLocales.First)
+                .Locale.Select(this.Session.GetSingleton().AdditionalLocales.FirstOrDefault())
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();

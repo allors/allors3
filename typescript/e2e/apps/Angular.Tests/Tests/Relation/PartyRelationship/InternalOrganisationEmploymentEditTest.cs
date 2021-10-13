@@ -3,26 +3,24 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.employment.edit;
+using libs.workspace.angular.apps.src.lib.objects.organisation.list;
+using libs.workspace.angular.apps.src.lib.objects.organisation.overview;
+
 namespace Tests.PartyRelationshipTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.employment.edit;
-    using libs.angular.material.@base.src.export.objects.organisation.list;
-    using libs.angular.material.@base.src.export.objects.organisation.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class InternalOrganisationEmploymentEditTest : Test
+    public class InternalOrganisationEmploymentEditTest : Test, IClassFixture<Fixture>
     {
         private readonly OrganisationListComponent organisationListPage;
 
-        public InternalOrganisationEmploymentEditTest(TestFixture fixture)
+        public InternalOrganisationEmploymentEditTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -47,7 +45,7 @@ namespace Tests.PartyRelationshipTests
             var before = new Employments(this.Session).Extent().ToArray();
 
             this.organisationListPage.Table.DefaultAction(employer);
-            var partyRelationshipEdit = new OrganisationOverviewComponent(this.organisationListPage.Driver).PartyrelationshipOverviewPanel.Click().CreateEmployment();
+            var partyRelationshipEdit = new OrganisationOverviewComponent(this.organisationListPage.Driver, this.M).PartyrelationshipOverviewPanel.Click().CreateEmployment();
 
             partyRelationshipEdit
                 .FromDate.Set(DateTimeFactory.CreateDate(2018, 12, 22))
@@ -96,12 +94,12 @@ namespace Tests.PartyRelationshipTests
             var before = new Employments(this.Session).Extent().ToArray();
 
             this.organisationListPage.Table.DefaultAction(employer);
-            var organisationOverview = new OrganisationOverviewComponent(this.organisationListPage.Driver);
+            var organisationOverview = new OrganisationOverviewComponent(this.organisationListPage.Driver, this.M);
 
             var partyRelationshipOverview = organisationOverview.PartyrelationshipOverviewPanel.Click();
             partyRelationshipOverview.Table.DefaultAction(editPartyRelationship);
 
-            var partyRelationshipEdit = new EmploymentEditComponent(organisationOverview.Driver);
+            var partyRelationshipEdit = new EmploymentEditComponent(organisationOverview.Driver, this.M);
             partyRelationshipEdit
                 .FromDate.Set(DateTimeFactory.CreateDate(2018, 12, 22))
                 .ThroughDate.Set(DateTimeFactory.CreateDate(2018, 12, 22).AddYears(1))

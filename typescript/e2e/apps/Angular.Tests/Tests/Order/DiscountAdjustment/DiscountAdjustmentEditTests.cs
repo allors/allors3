@@ -16,7 +16,6 @@ using libs.workspace.angular.apps.src.lib.objects.salesorder.overview;
 namespace Tests.OrderAdjustmentTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
     using Components;
@@ -24,14 +23,14 @@ namespace Tests.OrderAdjustmentTests
 
     [Collection("Test collection")]
     [Trait("Category", "Order")]
-    public class DiscountAdjustmentEditTests : Test
+    public class DiscountAdjustmentEditTests : Test, IClassFixture<Fixture>
     {
         private ProductQuoteListComponent quoteListPage;
         private SalesOrderListComponent salesOrderListPage;
         private SalesInvoiceListComponent salesInvoiceListPage;
         private PurchaseInvoiceListComponent purchaseInvoiceListPage;
 
-        public DiscountAdjustmentEditTests(TestFixture fixture)
+        public DiscountAdjustmentEditTests(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -42,7 +41,7 @@ namespace Tests.OrderAdjustmentTests
         {
             this.quoteListPage = this.Sidenav.NavigateToProductQuotes();
 
-            var quote = new ProductQuotes(this.Session).Extent().First;
+            var quote = new ProductQuotes(this.Session).Extent().FirstOrDefault();
             quote.AddOrderAdjustment(new DiscountAdjustmentBuilder(this.Session).WithAmountDefaults().Build());
 
             this.Session.Derive();
@@ -61,12 +60,12 @@ namespace Tests.OrderAdjustmentTests
             var expectedDescription = expected.Description;
 
             this.quoteListPage.Table.DefaultAction(quote);
-            var quoteOverview = new ProductQuoteOverviewComponent(this.quoteListPage.Driver);
+            var quoteOverview = new ProductQuoteOverviewComponent(this.quoteListPage.Driver, this.M);
             var adjustmentOverviewPanel = quoteOverview.OrderadjustmentOverviewPanel.Click();
 
             adjustmentOverviewPanel.Table.DefaultAction(discountAdjustment);
 
-            var adjustmentEdit = new OrderAdjustmentEditComponent(this.Driver);
+            var adjustmentEdit = new OrderAdjustmentEditComponent(this.Driver, this.M);
 
             adjustmentEdit.Amount.Set(expected.Amount.ToString());
             adjustmentEdit.Description.Set(expected.Description);
@@ -92,7 +91,7 @@ namespace Tests.OrderAdjustmentTests
         {
             this.salesOrderListPage = this.Sidenav.NavigateToSalesOrders();
 
-            var salesOrder = new SalesOrders(this.Session).Extent().First;
+            var salesOrder = new SalesOrders(this.Session).Extent().FirstOrDefault();
             salesOrder.AddOrderAdjustment(new DiscountAdjustmentBuilder(this.Session).WithAmountDefaults().Build());
 
             this.Session.Derive();
@@ -111,12 +110,12 @@ namespace Tests.OrderAdjustmentTests
             var expectedDescription = expected.Description;
 
             this.salesOrderListPage.Table.DefaultAction(salesOrder);
-            var salesOrderOverview = new SalesOrderOverviewComponent(this.salesOrderListPage.Driver);
+            var salesOrderOverview = new SalesOrderOverviewComponent(this.salesOrderListPage.Driver, this.M);
             var adjustmentOverviewPanel = salesOrderOverview.OrderadjustmentOverviewPanel.Click();
 
             adjustmentOverviewPanel.Table.DefaultAction(discountAdjustment);
 
-            var adjustmentEdit = new OrderAdjustmentEditComponent(this.Driver);
+            var adjustmentEdit = new OrderAdjustmentEditComponent(this.Driver, this.M);
 
             adjustmentEdit.Amount.Set(expected.Amount.ToString());
             adjustmentEdit.Description.Set(expected.Description);
@@ -142,7 +141,7 @@ namespace Tests.OrderAdjustmentTests
         {
             this.salesInvoiceListPage = this.Sidenav.NavigateToSalesInvoices();
 
-            var salesInvoice = new SalesInvoices(this.Session).Extent().First;
+            var salesInvoice = new SalesInvoices(this.Session).Extent().FirstOrDefault();
             salesInvoice.AddOrderAdjustment(new DiscountAdjustmentBuilder(this.Session).WithAmountDefaults().Build());
 
             this.Session.Derive();
@@ -161,12 +160,12 @@ namespace Tests.OrderAdjustmentTests
             var expectedDescription = expected.Description;
 
             this.salesInvoiceListPage.Table.DefaultAction(salesInvoice);
-            var salesInvoiceOverview = new SalesInvoiceOverviewComponent(this.salesInvoiceListPage.Driver);
+            var salesInvoiceOverview = new SalesInvoiceOverviewComponent(this.salesInvoiceListPage.Driver, this.M);
             var adjustmentOverviewPanel = salesInvoiceOverview.OrderadjustmentOverviewPanel.Click();
 
             adjustmentOverviewPanel.Table.DefaultAction(discountAdjustment);
 
-            var adjustmentEdit = new OrderAdjustmentEditComponent(this.Driver);
+            var adjustmentEdit = new OrderAdjustmentEditComponent(this.Driver, this.M);
 
             adjustmentEdit.Amount.Set(expected.Amount.ToString());
             adjustmentEdit.Description.Set(expected.Description);
@@ -192,7 +191,7 @@ namespace Tests.OrderAdjustmentTests
         {
             this.purchaseInvoiceListPage = this.Sidenav.NavigateToPurchaseInvoices();
 
-            var purchaseInvoice = new PurchaseInvoices(this.Session).Extent().First;
+            var purchaseInvoice = new PurchaseInvoices(this.Session).Extent().FirstOrDefault();
             purchaseInvoice.AddOrderAdjustment(new DiscountAdjustmentBuilder(this.Session).WithAmountDefaults().Build());
 
             this.Session.Derive();
@@ -211,12 +210,12 @@ namespace Tests.OrderAdjustmentTests
             var expectedDescription = expected.Description;
 
             this.purchaseInvoiceListPage.Table.DefaultAction(purchaseInvoice);
-            var purchaseInvoiceOverview = new PurchaseInvoiceOverviewComponent(this.purchaseInvoiceListPage.Driver);
+            var purchaseInvoiceOverview = new PurchaseInvoiceOverviewComponent(this.purchaseInvoiceListPage.Driver, this.M);
             var adjustmentOverviewPanel = purchaseInvoiceOverview.OrderadjustmentOverviewPanel.Click();
 
             adjustmentOverviewPanel.Table.DefaultAction(discountAdjustment);
 
-            var adjustmentEdit = new OrderAdjustmentEditComponent(this.Driver);
+            var adjustmentEdit = new OrderAdjustmentEditComponent(this.Driver, this.M);
 
             adjustmentEdit.Amount.Set(expected.Amount.ToString());
             adjustmentEdit.Description.Set(expected.Description);

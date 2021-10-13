@@ -3,26 +3,24 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.lettercorrespondence.edit;
+using libs.workspace.angular.apps.src.lib.objects.person.list;
+using libs.workspace.angular.apps.src.lib.objects.person.overview;
+
 namespace Tests.LetterCorrespondenceTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.lettercorrespondence.edit;
-    using libs.angular.material.@base.src.export.objects.person.list;
-    using libs.angular.material.@base.src.export.objects.person.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class PersonLetterCorrespondenceEditTest : Test
+    public class PersonLetterCorrespondenceEditTest : Test, IClassFixture<Fixture>
     {
         private readonly PersonListComponent personListPage;
 
-        public PersonLetterCorrespondenceEditTest(TestFixture fixture)
+        public PersonLetterCorrespondenceEditTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -32,7 +30,7 @@ namespace Tests.LetterCorrespondenceTests
         [Fact]
         public void Edit()
         {
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
             var employee = allors.ActiveEmployees.First();
@@ -70,12 +68,12 @@ namespace Tests.LetterCorrespondenceTests
             var postalAddress = (PostalAddress)person.PartyContactMechanisms.First(v => v.ContactMechanism.GetType().Name == typeof(PostalAddress).Name).ContactMechanism;
 
             this.personListPage.Table.DefaultAction(person);
-            var personOverview = new PersonOverviewComponent(this.personListPage.Driver);
+            var personOverview = new PersonOverviewComponent(this.personListPage.Driver, this.M);
 
             var communicationEventOverview = personOverview.CommunicationeventOverviewPanel.Click();
             communicationEventOverview.Table.DefaultAction(editCommunicationEvent);
 
-            var letterCorrespondenceEditComponent = new LetterCorrespondenceEditComponent(this.Driver);
+            var letterCorrespondenceEditComponent = new LetterCorrespondenceEditComponent(this.Driver, this.M);
             letterCorrespondenceEditComponent
                 .CommunicationEventState.Select(new CommunicationEventStates(this.Session).InProgress)
                 .EventPurposes.Toggle(new CommunicationEventPurposes(this.Session).Appointment)

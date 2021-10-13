@@ -3,25 +3,23 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.emailaddress.edit;
+using libs.workspace.angular.apps.src.lib.objects.person.list;
+using libs.workspace.angular.apps.src.lib.objects.person.overview;
+
 namespace Tests.ElectronicAddressTests
 {
-    using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
     using Components;
-    using libs.angular.material.@base.src.export.objects.emailaddress.edit;
-    using libs.angular.material.@base.src.export.objects.person.list;
-    using libs.angular.material.@base.src.export.objects.person.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class EmailAddressEditTest : Test
+    public class EmailAddressEditTest : Test, IClassFixture<Fixture>
     {
         private readonly PersonListComponent personListPage;
 
-        public EmailAddressEditTest(TestFixture fixture)
+        public EmailAddressEditTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -31,7 +29,7 @@ namespace Tests.ElectronicAddressTests
         [Fact]
         public void Edit()
         {
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             var electronicAddress = new EmailAddressBuilder(this.Session)
                 .WithElectronicAddressString("info@acme.com")
@@ -46,12 +44,12 @@ namespace Tests.ElectronicAddressTests
             var before = new EmailAddresses(this.Session).Extent().ToArray();
 
             this.personListPage.Table.DefaultAction(person);
-            var personOverviewComponent = new PersonOverviewComponent(this.personListPage.Driver);
+            var personOverviewComponent = new PersonOverviewComponent(this.personListPage.Driver, this.M);
 
             var contactMechanismOverviewPanel = personOverviewComponent.ContactmechanismOverviewPanel.Click();
             contactMechanismOverviewPanel.Table.DefaultAction(electronicAddress);
 
-            var emailAddressEditComponent = new EmailAddressEditComponent(this.Driver);
+            var emailAddressEditComponent = new EmailAddressEditComponent(this.Driver, this.M);
             emailAddressEditComponent
                 .ElectronicAddressString.Set("me@myself.com")
                 .Description.Set("description")

@@ -3,24 +3,23 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.good.list;
+
 namespace Tests.NonUnifiedGood
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.good.list;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Product")]
-    public class NonUnifiedGoodCreateTest : Test
+    public class NonUnifiedGoodCreateTest : Test, IClassFixture<Fixture>
     {
         private readonly GoodListComponent goods;
 
-        public NonUnifiedGoodCreateTest(TestFixture fixture)
+        public NonUnifiedGoodCreateTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -35,7 +34,7 @@ namespace Tests.NonUnifiedGood
             var internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
             var expected = new NonUnifiedGoodBuilder(this.Session).WithSerialisedDefaults(internalOrganisation).Build();
 
-            var expectedPart = new NonUnifiedParts(this.Session).Extent().First;
+            var expectedPart = new NonUnifiedParts(this.Session).Extent().FirstOrDefault();
 
             this.Session.Derive();
 

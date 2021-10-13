@@ -3,26 +3,24 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.purchaseorder.list;
+
 namespace Tests.PurchaseOrderTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.purchaseorder.create;
-    using libs.angular.material.@base.src.export.objects.purchaseorder.list;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Order")]
-    public class PurchaseOrderCreateTest : Test
+    public class PurchaseOrderCreateTest : Test, IClassFixture<Fixture>
     {
         private readonly PurchaseOrderListComponent purchaseOrderListPage;
         private readonly Organisation internalOrganisation;
 
-        public PurchaseOrderCreateTest(TestFixture fixture)
+        public PurchaseOrderCreateTest(Fixture fixture)
             : base(fixture)
         {
             this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");

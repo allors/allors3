@@ -3,7 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using Allors;
+using libs.workspace.angular.apps.src.lib.objects.good.list;
+using libs.workspace.angular.apps.src.lib.objects.nonunifiedgood.overview;
 
 namespace Tests.NonUnifiedGood
 {
@@ -11,17 +12,15 @@ namespace Tests.NonUnifiedGood
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
     using Components;
-    using libs.angular.material.@base.src.export.objects.good.list;
-    using libs.angular.material.@base.src.export.objects.nonunifiedgood.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Product")]
-    public class NonUnifiedGoodEditTest : Test
+    public class NonUnifiedGoodEditTest : Test, IClassFixture<Fixture>
     {
         private readonly GoodListComponent goods;
 
-        public NonUnifiedGoodEditTest(TestFixture fixture)
+        public NonUnifiedGoodEditTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -46,7 +45,7 @@ namespace Tests.NonUnifiedGood
             var id = nonUnifiedGood.Id;
 
             this.goods.Table.DefaultAction(nonUnifiedGood);
-            var goodDetails = new NonUnifiedGoodOverviewComponent(this.goods.Driver);
+            var goodDetails = new NonUnifiedGoodOverviewComponent(this.goods.Driver, this.M);
             var goodOverviewDetail = goodDetails.NonunifiedgoodOverviewDetail.Click();
 
             goodOverviewDetail

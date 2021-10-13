@@ -3,25 +3,25 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.facetofacecommunication.edit;
+using libs.workspace.angular.apps.src.lib.objects.person.list;
+using libs.workspace.angular.apps.src.lib.objects.person.overview;
+
 namespace Tests.FaceToFaceCommunicationTests
 {
     using System.Linq;
     using Allors;
     using Allors.Database.Domain;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.facetofacecommunication.edit;
-    using libs.angular.material.@base.src.export.objects.person.list;
-    using libs.angular.material.@base.src.export.objects.person.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class PersonFaceToFaceCommunicationEditTest : Test
+    public class PersonFaceToFaceCommunicationEditTest : Test, IClassFixture<Fixture>
     {
         private readonly PersonListComponent personListPage;
 
-        public PersonFaceToFaceCommunicationEditTest(TestFixture fixture)
+        public PersonFaceToFaceCommunicationEditTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -35,7 +35,7 @@ namespace Tests.FaceToFaceCommunicationTests
             var subject = faker.Lorem.Sentence();
             var location = faker.Address.FullAddress();
 
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
             var firstEmployee = allors.ActiveEmployees.First();
@@ -54,12 +54,12 @@ namespace Tests.FaceToFaceCommunicationTests
             var before = new FaceToFaceCommunications(this.Session).Extent().ToArray();
 
             this.personListPage.Table.DefaultAction(person);
-            var personOverview = new PersonOverviewComponent(this.personListPage.Driver);
+            var personOverview = new PersonOverviewComponent(this.personListPage.Driver, this.M);
 
             var communicationEventOverview = personOverview.CommunicationeventOverviewPanel.Click();
             communicationEventOverview.Table.DefaultAction(editCommunicationEvent);
 
-            var faceToFaceCommunicationEditComponent = new FaceToFaceCommunicationEditComponent(this.Driver);
+            var faceToFaceCommunicationEditComponent = new FaceToFaceCommunicationEditComponent(this.Driver, this.M);
 
             var scheduleStartDate = DateTimeFactory.CreateDate(2018, 12, 24);
             var scheduleEndDate = DateTimeFactory.CreateDate(2018, 12, 24);

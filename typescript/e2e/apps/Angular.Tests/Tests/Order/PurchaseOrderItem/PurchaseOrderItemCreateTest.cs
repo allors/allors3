@@ -3,21 +3,21 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.purchaseorder.list;
+using libs.workspace.angular.apps.src.lib.objects.purchaseorder.overview;
+
 namespace Tests.PurchaseOrderItemTests
 {
     using System.Linq;
     using Allors;
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.purchaseorder.list;
-    using libs.angular.material.@base.src.export.objects.purchaseorder.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Order")]
-    public class PurchaseOrderItemCreateTest : Test
+    public class PurchaseOrderItemCreateTest : Test, IClassFixture<Fixture>
     {
         private readonly PurchaseOrderListComponent purchaseOrderListPage;
         private readonly PurchaseOrder purchaseOrder;
@@ -25,7 +25,7 @@ namespace Tests.PurchaseOrderItemTests
         private readonly PurchaseOrderItem serializedPartItem;
         private readonly Organisation internalOrganisation;
 
-        public PurchaseOrderItemCreateTest(TestFixture fixture)
+        public PurchaseOrderItemCreateTest(Fixture fixture)
             : base(fixture)
         {
             this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
@@ -73,7 +73,7 @@ namespace Tests.PurchaseOrderItemTests
             var expectedMessage = expected.Message;
 
             this.purchaseOrderListPage.Table.DefaultAction(this.purchaseOrder);
-            var purchaseOrderOverview = new PurchaseOrderOverviewComponent(this.purchaseOrderListPage.Driver);
+            var purchaseOrderOverview = new PurchaseOrderOverviewComponent(this.purchaseOrderListPage.Driver, this.M);
             var purchaseOrderItemOverviewPanel = purchaseOrderOverview.PurchaseorderitemOverviewPanel.Click();
 
             var purchaseOrderItemCreate = purchaseOrderItemOverviewPanel.CreatePurchaseOrderItem();
@@ -139,7 +139,7 @@ namespace Tests.PurchaseOrderItemTests
             var expectedMessage = expected.Message;
 
             this.purchaseOrderListPage.Table.DefaultAction(this.purchaseOrder);
-            var purchaseOrderOverview = new PurchaseOrderOverviewComponent(this.purchaseOrderListPage.Driver);
+            var purchaseOrderOverview = new PurchaseOrderOverviewComponent(this.purchaseOrderListPage.Driver, this.M);
             var purchaseOrderItemOverviewPanel = purchaseOrderOverview.PurchaseorderitemOverviewPanel.Click();
 
             var purchaseOrderItemCreate = purchaseOrderItemOverviewPanel.CreatePurchaseOrderItem();

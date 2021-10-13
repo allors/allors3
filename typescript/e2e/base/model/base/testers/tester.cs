@@ -48,7 +48,7 @@ namespace Autotest.Testers
                        string.Equals($"is{elementName}", typeCheck, StringComparison.OrdinalIgnoreCase);
             }
         }
-
+        
         public override string ToString() => $"Template[{this.Element.Template.Url}] Element[{this.Element.Name}]";
     }
 }

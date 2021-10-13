@@ -3,23 +3,23 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.person.list;
+using libs.workspace.angular.apps.src.lib.objects.person.overview;
+
 namespace Tests.ElectronicAddressTests
 {
     using System.Linq;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
     using Components;
-    using libs.angular.material.@base.src.export.objects.person.list;
-    using libs.angular.material.@base.src.export.objects.person.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class WebAddressCreateTest : Test
+    public class WebAddressCreateTest : Test, IClassFixture<Fixture>
     {
         private readonly PersonListComponent personListPage;
 
-        public WebAddressCreateTest(TestFixture fixture)
+        public WebAddressCreateTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -31,10 +31,10 @@ namespace Tests.ElectronicAddressTests
         {
             var before = new WebAddresses(this.Session).Extent().ToArray();
 
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             this.personListPage.Table.DefaultAction(person);
-            var webAddressCreate = new PersonOverviewComponent(this.personListPage.Driver).ContactmechanismOverviewPanel.Click().CreateWebAddress();
+            var webAddressCreate = new PersonOverviewComponent(this.personListPage.Driver, this.M).ContactmechanismOverviewPanel.Click().CreateWebAddress();
 
             webAddressCreate
                 .ContactPurposes.Toggle(new ContactMechanismPurposes(this.Session).GeneralEmail)

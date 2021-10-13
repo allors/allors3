@@ -4,6 +4,8 @@
 // </copyright>
 
 
+using Allors.Database.Meta;
+
 namespace Tests
 {
     using System;
@@ -14,6 +16,7 @@ namespace Tests
     using Allors.Database;
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
+    using Allors.Database.Domain.TestPopulation;
 
     public class IntranetPopulation
     {
@@ -21,10 +24,13 @@ namespace Tests
 
         private readonly DirectoryInfo DataPath;
 
-        public IntranetPopulation(ITransaction session, DirectoryInfo dataPath)
+        private readonly MetaPopulation M;
+
+        public IntranetPopulation(ITransaction session, DirectoryInfo dataPath, MetaPopulation m)
         {
             this.Session = session;
             this.DataPath = dataPath;
+            this.M = m;
         }
 
         public void Execute()
@@ -48,7 +54,7 @@ namespace Tests
             var serialisedItemSoldOns = new SerialisedItemSoldOn[] { new SerialisedItemSoldOns(this.Session).SalesInvoiceSend, new SerialisedItemSoldOns(this.Session).PurchaseInvoiceConfirm };
 
             var allors = Organisations.CreateInternalOrganisation(
-                session: this.Session,
+                transaction: this.Session,
                 name: "Allors BVBA",
                 address: "Kleine Nieuwedijkstraat 4",
                 postalCode: "2800",
@@ -108,7 +114,7 @@ namespace Tests
                 workEffortSequence: new WorkEffortSequences(this.Session).EnforcedSequence);
 
             var dipu = Organisations.CreateInternalOrganisation(
-                session: this.Session,
+                transaction: this.Session,
                 name: "Dipu BVBA",
                 address: "Kleine Nieuwedijkstraat 2",
                 postalCode: "2800",
@@ -167,7 +173,7 @@ namespace Tests
                 purchaseShipmentSequence: new PurchaseShipmentSequences(this.Session).EnforcedSequence,
                 workEffortSequence: new WorkEffortSequences(this.Session).EnforcedSequence);
 
-            singleton.Settings.DefaultFacility = allors.FacilitiesWhereOwner.First;
+            singleton.Settings.DefaultFacility = allors.FacilitiesWhereOwner.FirstOrDefault();
             var faker = this.Session.Faker();
 
             allors.CreateEmployee("letmein", faker);
@@ -273,7 +279,7 @@ namespace Tests
             new SerialisedInventoryItemBuilder(this.Session)
                 .WithPart(good_2.Part)
                 .WithSerialisedItem(serialisedItem1)
-                .WithFacility(allors.StoresWhereInternalOrganisation.First.DefaultFacility)
+                .WithFacility(allors.StoresWhereInternalOrganisation.First().DefaultFacility)
                 .Build();
 
             var good_3 = new NonUnifiedGoodBuilder(this.Session).WithNonSerialisedDefaults(allors).Build();
@@ -326,7 +332,7 @@ namespace Tests
 
             new SupplierOfferingBuilder(this.Session)
                 .WithPart(good_1)
-                .WithSupplier(allors.ActiveSuppliers.First)
+                .WithSupplier(allors.ActiveSuppliers.FirstOrDefault())
                 .WithFromDate(this.Session.Now().AddMinutes(-1))
                 .WithUnitOfMeasure(new UnitsOfMeasure(this.Session).Piece)
                 .WithPrice(7)
@@ -345,7 +351,7 @@ namespace Tests
 
             var workTask = new WorkTaskBuilder(this.Session)
                 .WithTakenBy(allors)
-                .WithCustomer(allors.ActiveCustomers.First)
+                .WithCustomer(allors.ActiveCustomers.FirstOrDefault())
                 .WithName("maintenance")
                 .Build();
 
@@ -395,11 +401,9 @@ namespace Tests
             var resource = assembly.GetManifestResourceStream(manifestResourceName);
             if (resource != null)
             {
-                using (var ms = new MemoryStream())
-                {
-                    resource.CopyTo(ms);
-                    return ms.ToArray();
-                }
+                using var ms = new MemoryStream();
+                resource.CopyTo(ms);
+                return ms.ToArray();
             }
 
             return null;

@@ -3,20 +3,19 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.organisation.list;
+using libs.workspace.angular.apps.src.lib.objects.organisation.overview;
+
 namespace Tests.PhoneCommunicationTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.organisation.list;
-    using libs.angular.material.@base.src.export.objects.organisation.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class OrganisationPhoneCommunicationCreateTest : Test
+    public class OrganisationPhoneCommunicationCreateTest : Test, IClassFixture<Fixture>
     {
         private readonly OrganisationListComponent organisations;
 
@@ -24,18 +23,18 @@ namespace Tests.PhoneCommunicationTests
 
         private readonly PhoneCommunication editCommunicationEvent;
 
-        public OrganisationPhoneCommunicationCreateTest(TestFixture fixture)
+        public OrganisationPhoneCommunicationCreateTest(Fixture fixture)
             : base(fixture)
         {
             var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
             var firstEmployee = allors.ActiveEmployees.First();
-            var organisation = allors.ActiveCustomers.First;
+            var organisation = allors.ActiveCustomers.FirstOrDefault();
 
             this.editCommunicationEvent = new PhoneCommunicationBuilder(this.Session)
                 .WithSubject("dummy")
                 .WithLeftVoiceMail(true)
                 .WithFromParty(firstEmployee)
-                .WithToParty(organisation.CurrentContacts.First)
+                .WithToParty(organisation.CurrentContacts.FirstOrDefault())
                 .WithPhoneNumber(organisation.GeneralPhoneNumber)
                 .Build();
 
@@ -66,7 +65,7 @@ namespace Tests.PhoneCommunicationTests
             var contact = organisation.CurrentContacts.FirstOrDefault();
 
             this.organisations.Table.DefaultAction(organisation);
-            var phoneCommunication = new OrganisationOverviewComponent(this.organisations.Driver).CommunicationeventOverviewPanel.Click().CreatePhoneCommunication();
+            var phoneCommunication = new OrganisationOverviewComponent(this.organisations.Driver, this.M).CommunicationeventOverviewPanel.Click().CreatePhoneCommunication();
 
             phoneCommunication
                 .LeftVoiceMail.Set(true)

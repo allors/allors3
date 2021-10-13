@@ -3,25 +3,23 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.organisation.list;
+using libs.workspace.angular.apps.src.lib.objects.organisation.overview;
+
 namespace Tests.OrganisationTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.organisation.list;
-    using libs.angular.material.@base.src.export.objects.organisation.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class OrganisationEditTest : Test
+    public class OrganisationEditTest : Test, IClassFixture<Fixture>
     {
         private readonly OrganisationListComponent organisationListPage;
 
-        public OrganisationEditTest(TestFixture fixture)
+        public OrganisationEditTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -44,13 +42,13 @@ namespace Tests.OrganisationTests
             var id = organisation.Id;
 
             this.organisationListPage.Table.DefaultAction(organisation);
-            var organisationOverview = new OrganisationOverviewComponent(this.organisationListPage.Driver);
+            var organisationOverview = new OrganisationOverviewComponent(this.organisationListPage.Driver, this.M);
             var organisationOverviewDetail = organisationOverview.OrganisationOverviewDetail.Click();
             organisationOverviewDetail
                 .Name.Set("new organisation")
                 .TaxNumber.Set("BE 123 456 789 01")
                 .LegalForm.Select(legalForm)
-                .Locale.Select(this.Session.GetSingleton().AdditionalLocales.First)
+                .Locale.Select(this.Session.GetSingleton().AdditionalLocales.FirstOrDefault())
                 .IndustryClassifications.Toggle(industryClassification)
                 .CustomClassifications.Toggle(customOrganisationClassification)
                 .IsManufacturer.Set(true)

@@ -3,31 +3,28 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.person.list;
+using libs.workspace.angular.apps.src.lib.objects.person.overview;
+using libs.workspace.angular.apps.src.lib.objects.postaladdress.edit;
+
 namespace Tests.PostalAddressTests
 {
-    using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.person.list;
-    using libs.angular.material.@base.src.export.objects.person.overview;
-    using libs.angular.material.@base.src.export.objects.postaladdress.edit;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class PostalAddressEditTest : Test
+    public class PostalAddressEditTest : Test, IClassFixture<Fixture>
     {
         private readonly PersonListComponent people;
 
         private readonly PostalAddress editContactMechanism;
 
-        public PostalAddressEditTest(TestFixture fixture)
+        public PostalAddressEditTest(Fixture fixture)
             : base(fixture)
         {
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             this.editContactMechanism = new PostalAddressBuilder(this.Session)
                 .WithAddress1("Haverwerf 15")
@@ -51,19 +48,19 @@ namespace Tests.PostalAddressTests
         {
             var country = new Countries(this.Session).FindBy(M.Country.IsoCode, "NL");
 
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             var before = new PostalAddresses(this.Session).Extent().ToArray();
 
             this.people.Table.DefaultAction(person);
-            var personOverview = new PersonOverviewComponent(this.people.Driver);
+            var personOverview = new PersonOverviewComponent(this.people.Driver, this.M);
 
             var panelComponent = personOverview.ContactmechanismOverviewPanel.Click();
             var row = panelComponent.Table.FindRow(this.editContactMechanism);
             var cell = row.FindCell("contact");
             cell.Click();
 
-            var postalAddressEditComponent = new PostalAddressEditComponent(this.Driver);
+            var postalAddressEditComponent = new PostalAddressEditComponent(this.Driver, this.M);
             postalAddressEditComponent.Address1.Set("addressline 1")
                 .Address2.Set("addressline 2")
                 .Address3.Set("addressline 3")

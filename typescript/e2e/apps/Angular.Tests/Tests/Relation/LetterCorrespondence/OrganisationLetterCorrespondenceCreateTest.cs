@@ -3,25 +3,23 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.organisation.list;
+using libs.workspace.angular.apps.src.lib.objects.organisation.overview;
+
 namespace Tests.LetterCorrespondenceTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.organisation.list;
-    using libs.angular.material.@base.src.export.objects.organisation.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class OrganisationLetterCorrespondenceCreateTest : Test
+    public class OrganisationLetterCorrespondenceCreateTest : Test, IClassFixture<Fixture>
     {
         private readonly OrganisationListComponent organisationListPage;
 
-        public OrganisationLetterCorrespondenceCreateTest(TestFixture fixture)
+        public OrganisationLetterCorrespondenceCreateTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -51,7 +49,7 @@ namespace Tests.LetterCorrespondenceTests
             var before = new LetterCorrespondences(this.Session).Extent().ToArray();
 
             this.organisationListPage.Table.DefaultAction(organisation);
-            var letterCorrespondenceEdit = new OrganisationOverviewComponent(this.organisationListPage.Driver).CommunicationeventOverviewPanel.Click().CreateLetterCorrespondence();
+            var letterCorrespondenceEdit = new OrganisationOverviewComponent(this.organisationListPage.Driver, this.M).CommunicationeventOverviewPanel.Click().CreateLetterCorrespondence();
 
             letterCorrespondenceEdit
                 .CommunicationEventState.Select(new CommunicationEventStates(this.Session).Completed)

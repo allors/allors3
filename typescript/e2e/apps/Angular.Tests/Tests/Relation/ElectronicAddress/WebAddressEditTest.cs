@@ -3,30 +3,28 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.person.list;
+using libs.workspace.angular.apps.src.lib.objects.person.overview;
+using libs.workspace.angular.apps.src.lib.objects.webaddress.edit;
+
 namespace Tests.ElectronicAddressTests
 {
-    using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
     using Components;
-    using libs.angular.material.@base.src.export.objects.person.list;
-    using libs.angular.material.@base.src.export.objects.person.overview;
-    using libs.angular.material.@base.src.export.objects.webaddress.edit;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class WebAddressEditTest : Test
+    public class WebAddressEditTest : Test, IClassFixture<Fixture>
     {
         private readonly PersonListComponent personListPage;
 
         private readonly WebAddress editContactMechanism;
 
-        public WebAddressEditTest(TestFixture fixture)
+        public WebAddressEditTest(Fixture fixture)
             : base(fixture)
         {
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             this.editContactMechanism = new WebAddressBuilder(this.Session)
                 .WithElectronicAddressString("www.acme.com")
@@ -45,17 +43,17 @@ namespace Tests.ElectronicAddressTests
         [Fact]
         public void Edit()
         {
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             var before = new WebAddresses(this.Session).Extent().ToArray();
 
             this.personListPage.Table.DefaultAction(person);
-            var personOverview = new PersonOverviewComponent(this.personListPage.Driver);
+            var personOverview = new PersonOverviewComponent(this.personListPage.Driver, this.M);
 
             var contactMechanismOverview = personOverview.ContactmechanismOverviewPanel.Click();
             contactMechanismOverview.Table.DefaultAction(editContactMechanism);
 
-            var webAddressEdit = new WebAddressEditComponent(this.Driver);
+            var webAddressEdit = new WebAddressEditComponent(this.Driver, this.M);
             webAddressEdit
                 .ElectronicAddressString.Set("wwww.allors.com")
                 .Description.Set("description")

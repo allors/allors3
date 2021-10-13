@@ -3,33 +3,33 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.productquote.list;
+using libs.workspace.angular.apps.src.lib.objects.productquote.overview;
+using libs.workspace.angular.apps.src.lib.objects.purchaseinvoice.list;
+using libs.workspace.angular.apps.src.lib.objects.purchaseinvoice.overview;
+using libs.workspace.angular.apps.src.lib.objects.salesinvoice.list;
+using libs.workspace.angular.apps.src.lib.objects.salesinvoice.overview;
+using libs.workspace.angular.apps.src.lib.objects.salesorder.list;
+using libs.workspace.angular.apps.src.lib.objects.salesorder.overview;
+
 namespace Tests.OrderAdjustmentTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
     using Components;
-    using libs.angular.material.@base.src.export.objects.productquote.list;
-    using libs.angular.material.@base.src.export.objects.productquote.overview;
-    using libs.angular.material.@base.src.export.objects.purchaseinvoice.list;
-    using libs.angular.material.@base.src.export.objects.purchaseinvoice.overview;
-    using libs.angular.material.@base.src.export.objects.salesinvoice.list;
-    using libs.angular.material.@base.src.export.objects.salesinvoice.overview;
-    using libs.angular.material.@base.src.export.objects.salesorder.list;
-    using libs.angular.material.@base.src.export.objects.salesorder.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Order")]
-    public class FeeCreateTests : Test
+    public class FeeCreateTests : Test, IClassFixture<Fixture>
     {
         private ProductQuoteListComponent quoteListPage;
         private SalesOrderListComponent salesOrderListPage;
         private SalesInvoiceListComponent salesInvoiceListPage;
         private PurchaseInvoiceListComponent purchaseInvoiceListPage;
 
-        public FeeCreateTests(TestFixture fixture)
+        public FeeCreateTests(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -40,7 +40,7 @@ namespace Tests.OrderAdjustmentTests
         {
             this.quoteListPage = this.Sidenav.NavigateToProductQuotes();
 
-            var quote = new ProductQuotes(this.Session).Extent().First;
+            var quote = new ProductQuotes(this.Session).Extent().FirstOrDefault();
 
             var before = new Fees(this.Session).Extent().ToArray();
 
@@ -56,7 +56,7 @@ namespace Tests.OrderAdjustmentTests
             var expectedDescription = expected.Description;
 
             this.quoteListPage.Table.DefaultAction(quote);
-            var feeCreate = new ProductQuoteOverviewComponent(this.quoteListPage.Driver).OrderadjustmentOverviewPanel.Click().CreateFee();
+            var feeCreate = new ProductQuoteOverviewComponent(this.quoteListPage.Driver, this.M).OrderadjustmentOverviewPanel.Click().CreateFee();
 
             feeCreate
                 .Amount.Set(expectedAmount.ToString())
@@ -83,7 +83,7 @@ namespace Tests.OrderAdjustmentTests
         {
             this.quoteListPage = this.Sidenav.NavigateToProductQuotes();
 
-            var quote = new ProductQuotes(this.Session).Extent().First;
+            var quote = new ProductQuotes(this.Session).Extent().FirstOrDefault();
 
             var before = new Fees(this.Session).Extent().ToArray();
 
@@ -99,7 +99,7 @@ namespace Tests.OrderAdjustmentTests
             var expectedDescription = expected.Description;
 
             this.quoteListPage.Table.DefaultAction(quote);
-            var feeCreate = new ProductQuoteOverviewComponent(this.quoteListPage.Driver).OrderadjustmentOverviewPanel.Click().CreateFee();
+            var feeCreate = new ProductQuoteOverviewComponent(this.quoteListPage.Driver, this.M).OrderadjustmentOverviewPanel.Click().CreateFee();
 
             feeCreate
                 .Percentage.Set(expectedPercentage.ToString())
@@ -126,7 +126,7 @@ namespace Tests.OrderAdjustmentTests
         {
             this.salesOrderListPage = this.Sidenav.NavigateToSalesOrders();
 
-            var salesOrder = new SalesOrders(this.Session).Extent().First;
+            var salesOrder = new SalesOrders(this.Session).Extent().FirstOrDefault();
 
             var before = new Fees(this.Session).Extent().ToArray();
 
@@ -142,7 +142,7 @@ namespace Tests.OrderAdjustmentTests
             var expectedDescription = expected.Description;
 
             this.salesOrderListPage.Table.DefaultAction(salesOrder);
-            var feeCreate = new SalesOrderOverviewComponent(this.salesOrderListPage.Driver).OrderadjustmentOverviewPanel.Click().CreateFee();
+            var feeCreate = new SalesOrderOverviewComponent(this.salesOrderListPage.Driver, this.M).OrderadjustmentOverviewPanel.Click().CreateFee();
 
             feeCreate
                 .Amount.Set(expectedAmount.ToString())
@@ -169,7 +169,7 @@ namespace Tests.OrderAdjustmentTests
         {
             this.salesOrderListPage = this.Sidenav.NavigateToSalesOrders();
 
-            var salesOrder = new SalesOrders(this.Session).Extent().First;
+            var salesOrder = new SalesOrders(this.Session).Extent().FirstOrDefault();
 
             var before = new Fees(this.Session).Extent().ToArray();
 
@@ -185,7 +185,7 @@ namespace Tests.OrderAdjustmentTests
             var expectedDescription = expected.Description;
 
             this.salesOrderListPage.Table.DefaultAction(salesOrder);
-            var feeCreate = new SalesOrderOverviewComponent(this.salesOrderListPage.Driver).OrderadjustmentOverviewPanel.Click().CreateFee();
+            var feeCreate = new SalesOrderOverviewComponent(this.salesOrderListPage.Driver, this.M).OrderadjustmentOverviewPanel.Click().CreateFee();
 
             feeCreate
                 .Percentage.Set(expectedPercentage.ToString())
@@ -212,7 +212,7 @@ namespace Tests.OrderAdjustmentTests
         {
             this.salesInvoiceListPage = this.Sidenav.NavigateToSalesInvoices();
 
-            var salesInvoice = new SalesInvoices(this.Session).Extent().First;
+            var salesInvoice = new SalesInvoices(this.Session).Extent().FirstOrDefault();
 
             var before = new Fees(this.Session).Extent().ToArray();
 
@@ -228,7 +228,7 @@ namespace Tests.OrderAdjustmentTests
             var expectedDescription = expected.Description;
 
             this.salesInvoiceListPage.Table.DefaultAction(salesInvoice);
-            var feeCreate = new SalesInvoiceOverviewComponent(this.salesInvoiceListPage.Driver).OrderadjustmentOverviewPanel.Click().CreateFee();
+            var feeCreate = new SalesInvoiceOverviewComponent(this.salesInvoiceListPage.Driver, this.M).OrderadjustmentOverviewPanel.Click().CreateFee();
 
             feeCreate
                 .Amount.Set(expectedAmount.ToString())
@@ -255,7 +255,7 @@ namespace Tests.OrderAdjustmentTests
         {
             this.salesInvoiceListPage = this.Sidenav.NavigateToSalesInvoices();
 
-            var salesInvoice = new SalesInvoices(this.Session).Extent().First;
+            var salesInvoice = new SalesInvoices(this.Session).Extent().FirstOrDefault();
 
             var before = new Fees(this.Session).Extent().ToArray();
 
@@ -271,7 +271,7 @@ namespace Tests.OrderAdjustmentTests
             var expectedDescription = expected.Description;
 
             this.salesInvoiceListPage.Table.DefaultAction(salesInvoice);
-            var feeCreate = new SalesInvoiceOverviewComponent(this.salesInvoiceListPage.Driver).OrderadjustmentOverviewPanel.Click().CreateFee();
+            var feeCreate = new SalesInvoiceOverviewComponent(this.salesInvoiceListPage.Driver, this.M).OrderadjustmentOverviewPanel.Click().CreateFee();
 
             feeCreate
                 .Percentage.Set(expectedPercentage.ToString())
@@ -298,7 +298,7 @@ namespace Tests.OrderAdjustmentTests
         {
             this.purchaseInvoiceListPage = this.Sidenav.NavigateToPurchaseInvoices();
 
-            var purchaseInvoice = new PurchaseInvoices(this.Session).Extent().First;
+            var purchaseInvoice = new PurchaseInvoices(this.Session).Extent().FirstOrDefault();
 
             var before = new Fees(this.Session).Extent().ToArray();
 
@@ -314,7 +314,7 @@ namespace Tests.OrderAdjustmentTests
             var expectedDescription = expected.Description;
 
             this.purchaseInvoiceListPage.Table.DefaultAction(purchaseInvoice);
-            var feeCreate = new PurchaseInvoiceOverviewComponent(this.purchaseInvoiceListPage.Driver).OrderadjustmentOverviewPanel.Click().CreateFee();
+            var feeCreate = new PurchaseInvoiceOverviewComponent(this.purchaseInvoiceListPage.Driver, this.M).OrderadjustmentOverviewPanel.Click().CreateFee();
 
             feeCreate
                 .Amount.Set(expectedAmount.ToString())
@@ -341,7 +341,7 @@ namespace Tests.OrderAdjustmentTests
         {
             this.purchaseInvoiceListPage = this.Sidenav.NavigateToPurchaseInvoices();
 
-            var purchaseInvoice = new PurchaseInvoices(this.Session).Extent().First;
+            var purchaseInvoice = new PurchaseInvoices(this.Session).Extent().FirstOrDefault();
 
             var before = new Fees(this.Session).Extent().ToArray();
 
@@ -357,7 +357,7 @@ namespace Tests.OrderAdjustmentTests
             var expectedDescription = expected.Description;
 
             this.purchaseInvoiceListPage.Table.DefaultAction(purchaseInvoice);
-            var feeCreate = new PurchaseInvoiceOverviewComponent(this.purchaseInvoiceListPage.Driver).OrderadjustmentOverviewPanel.Click().CreateFee();
+            var feeCreate = new PurchaseInvoiceOverviewComponent(this.purchaseInvoiceListPage.Driver, this.M).OrderadjustmentOverviewPanel.Click().CreateFee();
 
             feeCreate
                 .Percentage.Set(expectedPercentage.ToString())

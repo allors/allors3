@@ -41,7 +41,7 @@
  
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\dotnet\apps\database\configuration\Configuration.csproj" />
+    <ProjectReference Include="..\..\..\..\dotnet\Apps\database\configuration\Configuration.csproj" />
     <ProjectReference Include="..\..\..\..\dotnet\apps\database\domain\Domain.csproj" />
     <ProjectReference Include="..\..\..\..\dotnet\apps\database\meta\meta.csproj" />
     <ProjectReference Include="..\..\..\..\dotnet\apps\database\testpopulation\TestPopulation.csproj" />

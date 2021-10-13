@@ -22,10 +22,4 @@
     <Compile Include="..\..\..\Core\Database\Configuration\Core*\**\*.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Base\Transaction\**" />
-    <EmbeddedResource Remove="Base\Transaction\**" />
-    <None Remove="Base\Transaction\**" />
-  </ItemGroup>
-
 </Project>

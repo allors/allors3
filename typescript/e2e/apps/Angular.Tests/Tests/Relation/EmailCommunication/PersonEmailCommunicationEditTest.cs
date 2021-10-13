@@ -3,26 +3,24 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.emailcommunication.edit;
+using libs.workspace.angular.apps.src.lib.objects.person.list;
+using libs.workspace.angular.apps.src.lib.objects.person.overview;
+
 namespace Tests.EmailCommunicationTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.emailcommunication.edit;
-    using libs.angular.material.@base.src.export.objects.person.list;
-    using libs.angular.material.@base.src.export.objects.person.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class PersonEmailCommunicationEditTest : Test
+    public class PersonEmailCommunicationEditTest : Test, IClassFixture<Fixture>
     {
         private readonly PersonListComponent personListPage;
 
-        public PersonEmailCommunicationEditTest(TestFixture fixture)
+        public PersonEmailCommunicationEditTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -32,7 +30,7 @@ namespace Tests.EmailCommunicationTests
         [Fact]
         public void Edit()
         {
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
             var employee = allors.ActiveEmployees.First();
@@ -55,12 +53,12 @@ namespace Tests.EmailCommunicationTests
             var before = new EmailCommunications(this.Session).Extent().ToArray();
 
             this.personListPage.Table.DefaultAction(person);
-            var personOverview = new PersonOverviewComponent(this.personListPage.Driver);
+            var personOverview = new PersonOverviewComponent(this.personListPage.Driver, this.M);
 
             var communicationEventOverview = personOverview.CommunicationeventOverviewPanel.Click();
             communicationEventOverview.Table.DefaultAction(editCommunicationEvent);
 
-            var emailCommunicationEdit = new EmailCommunicationEditComponent(this.Driver);
+            var emailCommunicationEdit = new EmailCommunicationEditComponent(this.Driver, this.M);
             emailCommunicationEdit
                 .CommunicationEventState.Select(new CommunicationEventStates(this.Session).Completed)
                 .EventPurposes.Toggle(new CommunicationEventPurposes(this.Session).Inquiry)

@@ -24,7 +24,7 @@ namespace Autotest.Testers
 
         public override string PropertyName => "Factory";
 
-        public IComposite ObjectType
+        public ObjectTypeDecorator ObjectType
         {
             get
             {
@@ -35,7 +35,8 @@ namespace Autotest.Testers
                     var objectTypeName = parts[parts.Length - 1];
 
                     var metaPopulation = this.Model.MetaPopulation;
-                    return metaPopulation.Composites.FirstOrDefault(v => string.Equals(v.SingularName, objectTypeName, StringComparison.OrdinalIgnoreCase));
+                    var objectType = metaPopulation.Composites.FirstOrDefault(v => string.Equals(v.SingularName, objectTypeName, StringComparison.OrdinalIgnoreCase));
+                    return objectType != null ? new ObjectTypeDecorator(objectType) : null;
                 }
 
                 return null;
@@ -59,7 +60,7 @@ namespace Autotest.Testers
 
         public class Factory
         {
-            public Factory(AllorsMaterialFactoryFabTester tester, IClass @class)
+            public Factory(AllorsMaterialFactoryFabTester tester, ObjectTypeDecorator @class)
             {
                 this.Tester = tester;
                 this.Class = @class;
@@ -67,7 +68,7 @@ namespace Autotest.Testers
 
             public AllorsMaterialFactoryFabTester Tester { get; }
 
-            public IClass Class { get; }
+            public ObjectTypeDecorator Class { get; }
 
             public Directive Component
             {

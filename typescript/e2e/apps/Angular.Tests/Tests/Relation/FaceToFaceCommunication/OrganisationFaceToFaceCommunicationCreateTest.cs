@@ -3,24 +3,23 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.organisation.list;
+using libs.workspace.angular.apps.src.lib.objects.organisation.overview;
+
 namespace Tests.FaceToFaceCommunicationTests
 {
     using System.Linq;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.organisation.list;
-    using libs.angular.material.@base.src.export.objects.organisation.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class OrganisationFaceToFaceCommunicationCreateTest : Test
+    public class OrganisationFaceToFaceCommunicationCreateTest : Test, IClassFixture<Fixture>
     {
         private readonly OrganisationListComponent organisationListPage;
 
-        public OrganisationFaceToFaceCommunicationCreateTest(TestFixture fixture)
+        public OrganisationFaceToFaceCommunicationCreateTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -31,15 +30,15 @@ namespace Tests.FaceToFaceCommunicationTests
         public void Create()
         {
             var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
-            var employee = allors.ActiveEmployees.First;
+            var employee = allors.ActiveEmployees.FirstOrDefault();
 
             var before = new FaceToFaceCommunications(this.Session).Extent().ToArray();
 
             var organisation = allors.ActiveCustomers.First(v => v.GetType().Name == typeof(Organisation).Name);
-            var contact = organisation.CurrentContacts.First;
+            var contact = organisation.CurrentContacts.FirstOrDefault();
 
             this.organisationListPage.Table.DefaultAction(organisation);
-            var faceToFaceCommunicationEdit = new OrganisationOverviewComponent(this.organisationListPage.Driver).CommunicationeventOverviewPanel.Click().CreateFaceToFaceCommunication();
+            var faceToFaceCommunicationEdit = new OrganisationOverviewComponent(this.organisationListPage.Driver, this.M).CommunicationeventOverviewPanel.Click().CreateFaceToFaceCommunication();
 
             faceToFaceCommunicationEdit
                 .CommunicationEventState.Select(new CommunicationEventStates(this.Session).Completed)

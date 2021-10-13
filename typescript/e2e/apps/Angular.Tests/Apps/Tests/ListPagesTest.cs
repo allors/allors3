@@ -12,11 +12,11 @@ namespace Tests.ApplicationTests
     using Xunit;
 
     [Collection("Test collection")]
-    public class ListPagesTest : Test
+    public class ListPagesTest : Test, IClassFixture<Fixture>
     {
         private readonly MethodInfo[] navigateTos;
 
-        public ListPagesTest(TestFixture fixture)
+        public ListPagesTest(Fixture fixture)
             : base(fixture)
         {
             var navigateTos = this.Sidenav.GetType()

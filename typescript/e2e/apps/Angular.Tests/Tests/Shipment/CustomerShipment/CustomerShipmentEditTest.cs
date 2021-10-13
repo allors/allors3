@@ -3,26 +3,25 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.customershipment.overview;
+using libs.workspace.angular.apps.src.lib.objects.shipment.list;
+
 namespace Tests.CustomerShipmentTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.customershipment.overview;
-    using libs.angular.material.@base.src.export.objects.shipment.list;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Shipment")]
-    public class CustomerShipmentEditTest : Test
+    public class CustomerShipmentEditTest : Test, IClassFixture<Fixture>
     {
         private readonly ShipmentListComponent shipmentListPage;
         private Organisation internalOrganisation;
 
-        public CustomerShipmentEditTest(TestFixture fixture)
+        public CustomerShipmentEditTest(Fixture fixture)
             : base(fixture)
         {
             this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
@@ -56,7 +55,7 @@ namespace Tests.CustomerShipmentTests
             var id = shipment.Id;
 
             this.shipmentListPage.Table.DefaultAction(shipment);
-            var shipmentOverview = new CustomerShipmentOverviewComponent(this.shipmentListPage.Driver);
+            var shipmentOverview = new CustomerShipmentOverviewComponent(this.shipmentListPage.Driver, this.M);
             var shipmentOverviewDetail = shipmentOverview.CustomershipmentOverviewDetail.Click();
 
             shipmentOverviewDetail
@@ -68,7 +67,7 @@ namespace Tests.CustomerShipmentTests
                 .ShipToAddress.Select(expected.ShipToAddress)
                 .ShipFromAddress.Select(expected.ShipFromParty?.ShippingAddress)
                 .ShipmentMethod.Select(expected.ShipmentMethod)
-                .ShipFromFacility.Select(((Organisation)expected.ShipFromParty)?.FacilitiesWhereOwner?.First)
+                .ShipFromFacility.Select(((Organisation)expected.ShipFromParty)?.FacilitiesWhereOwner?.FirstOrDefault())
                 .Carrier.Select(expected.Carrier)
                 .EstimatedShipDate.Set(expected.EstimatedShipDate.Value.Date)
                 .EstimatedArrivalDate.Set(expected.EstimatedArrivalDate.Value.Date)

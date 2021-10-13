@@ -3,30 +3,28 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.person.list;
+using libs.workspace.angular.apps.src.lib.objects.person.overview;
+using libs.workspace.angular.apps.src.lib.objects.telecommunicationsnumber.edit;
+
 namespace Tests.TelecommunicationsNumberTests
 {
-    using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
     using Components;
-    using libs.angular.material.@base.src.export.objects.person.list;
-    using libs.angular.material.@base.src.export.objects.person.overview;
-    using libs.angular.material.@base.src.export.objects.telecommunicationsnumber.edit;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class TelecommunicationsNumberEditTest : Test
+    public class TelecommunicationsNumberEditTest : Test, IClassFixture<Fixture>
     {
         private readonly PersonListComponent people;
 
         private readonly TelecommunicationsNumber editContactMechanism;
 
-        public TelecommunicationsNumberEditTest(TestFixture fixture)
+        public TelecommunicationsNumberEditTest(Fixture fixture)
             : base(fixture)
         {
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             this.editContactMechanism = new TelecommunicationsNumberBuilder(this.Session)
                 .WithCountryCode("0032")
@@ -47,19 +45,19 @@ namespace Tests.TelecommunicationsNumberTests
         [Fact]
         public void Edit()
         {
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             var before = new TelecommunicationsNumbers(this.Session).Extent().ToArray();
 
             this.people.Table.DefaultAction(person);
-            var personOverview = new PersonOverviewComponent(this.people.Driver);
+            var personOverview = new PersonOverviewComponent(this.people.Driver, this.M);
 
             var contactMechanismOverview = personOverview.ContactmechanismOverviewPanel.Click();
             var row = contactMechanismOverview.Table.FindRow(this.editContactMechanism);
             var cell = row.FindCell("contact");
             cell.Click();
 
-            var editComponent = new TelecommunicationsNumberEditComponent(this.Driver);
+            var editComponent = new TelecommunicationsNumberEditComponent(this.Driver, this.M);
             editComponent
                 .CountryCode.Set("111")
                 .AreaCode.Set("222")

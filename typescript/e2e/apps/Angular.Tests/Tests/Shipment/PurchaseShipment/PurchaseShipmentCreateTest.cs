@@ -3,26 +3,25 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.shipment.list;
+
 namespace Tests.PurchaseShipmentTests
 {
     using System.Linq;
     using Allors;
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.purchaseshipment.create;
-    using libs.angular.material.@base.src.export.objects.shipment.list;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Shipment")]
-    public class PurchaseShipmentCreateTest : Test
+    public class PurchaseShipmentCreateTest : Test, IClassFixture<Fixture>
     {
         private readonly ShipmentListComponent shipmentListPage;
         private Organisation internalOrganisation;
 
-        public PurchaseShipmentCreateTest(TestFixture fixture)
+        public PurchaseShipmentCreateTest(Fixture fixture)
             : base(fixture)
         {
             this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");

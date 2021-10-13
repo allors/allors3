@@ -66,7 +66,7 @@ namespace $directive.Reference.Namespace$
     {
         public $directive.Reference.Name$(IWebDriver driver, Allors.Database.Meta.MetaPopulation m, By selector) : base(driver, m)
         {
-			this.Selector = selector;
+                this.Selector = selector;
         }
 
         public override By Selector { get; }
@@ -74,7 +74,7 @@ namespace $directive.Reference.Namespace$
         public $directive.Reference.Name$ Click()
         {
             if(this.Selector != null){
-                new Element(this.Driver, this.Selector).Click();
+                new Element(this.Driver, this.M, this.Selector).Click();
             }
 
             return this;
@@ -93,7 +93,7 @@ $elseif(tester.IsButton)$
 $elseif(tester.IsA)$
         public Components.Anchor $tester.Name$ => new Components.Anchor(this.Driver, this.M, "$tester.Kind$", @"$tester.Value$"$tester.Scopes:{scope|, "$scope$"}$);
 $elseif(tester.IsAMatFactoryFab)$
-        public Components.MatFactoryFab $tester.Name$ => new Components.MatFactoryFab(this.Driver, this.M, this.M.$tester.ObjectType$.ObjectType, $tester.Selector$);
+        public Components.MatFactoryFab $tester.Name$ => new Components.MatFactoryFab(this.Driver, this.M, this.M.$tester.ObjectType.SingularName$, $tester.Selector$); // XXX
 $tester.Factories:{factory|$factory(factory)$}; separator="\n"$
 $elseif(tester.IsAMatTable)$
         public Components.MatTable $tester.Name$ => new Components.MatTable(this.Driver, this.M, $tester.Selector$);
@@ -102,7 +102,7 @@ $elseif(tester.IsAMatList)$
 $elseif(tester.IsAllorsMaterialSideMenuComponent)$
         public Tests.Sidenav Sidenav => new Tests.Sidenav(this.Driver, this.M);
 $elseif(tester.IsRoleFieldTester)$
-        public Components.$tester.Type$<$directive.Reference.Name$> $tester.Name$ => this.$tester.Type$(this.M.$tester.MetaObjectTypeName$.$tester.MetaName$$tester.Scopes:{scope|, "$scope$"}$);
+        public Components.$tester.Type$<$directive.Reference.Name$> $tester.Name$ => this.$tester.Type$(this.M.$tester.RoleType.AssociationType.ObjectType.SingularName$.$tester.RoleType.Name$$tester.Scopes:{scope|, "$scope$"}$);
 $elseif(tester.Element.Component && tester.Element.Scope)$
         public $tester.Element.Component.Reference.Namespace$.$tester.Element.Component.Reference.Name$ $tester.Name$ => new $tester.Element.Component.Reference.Namespace$.$tester.Element.Component.Reference.Name$(this.Driver, this.M, $tester.Selector$);
 $endif$

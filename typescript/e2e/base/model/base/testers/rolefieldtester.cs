@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System.Diagnostics;
+
 namespace Autotest.Testers
 {
     using System;
@@ -32,7 +34,7 @@ namespace Autotest.Testers
             }
         }
 
-        public IRoleType RoleType
+        public RoleTypeDecorator RoleType
         {
             get
             {
@@ -53,16 +55,12 @@ namespace Autotest.Testers
                         throw new Exception($"Could not find RoleType for {roleTypeAttributeValue}");
                     }
 
-                    return roleType;
+                    return new RoleTypeDecorator(roleType);
                 }
 
                 return null;
             }
         }
-
-        public string MetaObjectTypeName => this.RoleType.AssociationType.ObjectType.SingularName;
-
-        public string MetaName => this.RoleType.Name;
 
         public string NameAttributeValue => this.Element.Attributes.FirstOrDefault(v => v.Name?.ToLowerInvariant() == NameAttribute)?.Value;
 
@@ -70,11 +68,6 @@ namespace Autotest.Testers
         {
             get
             {
-                if (this.Element.Template.Directive?.Type?.Name == "ProductQuoteCreateComponent" && this.RoleType.Name == "Comment")
-                {
-                    Console.WriteLine();
-                }
-
                 if (this.NameAttributeValue != null)
                 {
                     return this.NameAttributeValue;

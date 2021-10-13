@@ -3,22 +3,20 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.person.list;
+using libs.workspace.angular.apps.src.lib.objects.person.overview;
+using libs.workspace.angular.apps.src.lib.objects.phonecommunication.edit;
+
 namespace Tests.PhoneCommunicationTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.person.list;
-    using libs.angular.material.@base.src.export.objects.person.overview;
-    using libs.angular.material.@base.src.export.objects.phonecommunication.edit;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class PersonPhoneCommunicationEditTest : Test
+    public class PersonPhoneCommunicationEditTest : Test, IClassFixture<Fixture>
     {
         private readonly PersonListComponent people;
 
@@ -26,10 +24,10 @@ namespace Tests.PhoneCommunicationTests
 
         private readonly PhoneCommunication editCommunicationEvent;
 
-        public PersonPhoneCommunicationEditTest(TestFixture fixture)
+        public PersonPhoneCommunicationEditTest(Fixture fixture)
             : base(fixture)
         {
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
             var firstEmployee = allors.ActiveEmployees.First();
@@ -60,7 +58,7 @@ namespace Tests.PhoneCommunicationTests
         [Fact]
         public void Edit()
         {
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
             var firstEmployee = allors.ActiveEmployees.First();
@@ -68,12 +66,12 @@ namespace Tests.PhoneCommunicationTests
             var before = new PhoneCommunications(this.Session).Extent().ToArray();
 
             this.people.Table.DefaultAction(person);
-            var personOverview = new PersonOverviewComponent(this.people.Driver);
+            var personOverview = new PersonOverviewComponent(this.people.Driver, this.M);
 
             var communicationEventOverview = personOverview.CommunicationeventOverviewPanel.Click();
             communicationEventOverview.Table.DefaultAction(this.editCommunicationEvent);
 
-            var phoneCommunicationEditComponent = new PhoneCommunicationEditComponent(this.Driver);
+            var phoneCommunicationEditComponent = new PhoneCommunicationEditComponent(this.Driver, this.M);
             phoneCommunicationEditComponent
                 .LeftVoiceMail.Set(false)
                 .CommunicationEventState.Select(new CommunicationEventStates(this.Session).Completed)

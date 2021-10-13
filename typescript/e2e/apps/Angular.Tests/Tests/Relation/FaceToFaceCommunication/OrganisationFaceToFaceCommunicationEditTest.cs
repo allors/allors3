@@ -3,26 +3,26 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.facetofacecommunication.edit;
+using libs.workspace.angular.apps.src.lib.objects.organisation.list;
+using libs.workspace.angular.apps.src.lib.objects.organisation.overview;
+
 namespace Tests.FaceToFaceCommunicationTests
 {
     using System.Linq;
     using Allors;
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.facetofacecommunication.edit;
-    using libs.angular.material.@base.src.export.objects.organisation.list;
-    using libs.angular.material.@base.src.export.objects.organisation.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class OrganisationFaceToFaceCommunicationEditTest : Test
+    public class OrganisationFaceToFaceCommunicationEditTest : Test, IClassFixture<Fixture>
     {
         private readonly OrganisationListComponent organisationListPage;
 
-        public OrganisationFaceToFaceCommunicationEditTest(TestFixture fixture)
+        public OrganisationFaceToFaceCommunicationEditTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -39,11 +39,11 @@ namespace Tests.FaceToFaceCommunicationTests
             this.Session.Derive();
 
             var organisation = allors.ActiveCustomers.First(v => v.GetType().Name == typeof(Organisation).Name);
-            var contact = organisation.CurrentContacts.First;
+            var contact = organisation.CurrentContacts.FirstOrDefault();
 
             var editCommunicationEvent = new FaceToFaceCommunicationBuilder(this.Session)
                 .WithSubject("dummy")
-                .WithFromParty(organisation.CurrentContacts.First)
+                .WithFromParty(organisation.CurrentContacts.FirstOrDefault())
                 .WithToParty(firstEmployee)
                 .WithLocation("old location")
                 .Build();
@@ -54,12 +54,12 @@ namespace Tests.FaceToFaceCommunicationTests
             var before = new FaceToFaceCommunications(this.Session).Extent().ToArray();
 
             this.organisationListPage.Table.DefaultAction(organisation);
-            var organisationOverview = new OrganisationOverviewComponent(this.organisationListPage.Driver);
+            var organisationOverview = new OrganisationOverviewComponent(this.organisationListPage.Driver, this.M);
 
             var communicationEventOverview = organisationOverview.CommunicationeventOverviewPanel.Click();
             communicationEventOverview.Table.DefaultAction(editCommunicationEvent);
 
-            var faceToFaceCommunicationEdit = new FaceToFaceCommunicationEditComponent(organisationOverview.Driver);
+            var faceToFaceCommunicationEdit = new FaceToFaceCommunicationEditComponent(organisationOverview.Driver, this.M);
             faceToFaceCommunicationEdit
                 .CommunicationEventState.Select(new CommunicationEventStates(this.Session).Completed)
                 .EventPurposes.Toggle(new CommunicationEventPurposes(this.Session).Conference)

@@ -3,22 +3,19 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.person.list;
+using libs.workspace.angular.apps.src.lib.objects.person.overview;
+
 namespace Tests.PhoneCommunicationTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.person.list;
-    using libs.angular.material.@base.src.export.objects.person.overview;
-    using libs.angular.material.@base.src.export.objects.phonecommunication.edit;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class PersonPhoneCommunicationCreateTest : Test
+    public class PersonPhoneCommunicationCreateTest : Test, IClassFixture<Fixture>
     {
         private readonly PersonListComponent people;
 
@@ -26,10 +23,10 @@ namespace Tests.PhoneCommunicationTests
 
         private readonly PhoneCommunication editCommunicationEvent;
 
-        public PersonPhoneCommunicationCreateTest(TestFixture fixture)
+        public PersonPhoneCommunicationCreateTest(Fixture fixture)
             : base(fixture)
         {
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
             var firstEmployee = allors.ActiveEmployees.First();
@@ -61,14 +58,14 @@ namespace Tests.PhoneCommunicationTests
         public void Create()
         {
             var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
-            var employee = allors.ActiveEmployees.First;
+            var employee = allors.ActiveEmployees.FirstOrDefault();
 
             var before = new PhoneCommunications(this.Session).Extent().ToArray();
 
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             this.people.Table.DefaultAction(person);
-            var communicationEventOverview = new PersonOverviewComponent(this.people.Driver).CommunicationeventOverviewPanel.Click();
+            var communicationEventOverview = new PersonOverviewComponent(this.people.Driver, this.M).CommunicationeventOverviewPanel.Click();
 
             communicationEventOverview
                 .CreatePhoneCommunication()

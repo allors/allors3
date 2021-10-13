@@ -3,26 +3,24 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.lettercorrespondence.edit;
+using libs.workspace.angular.apps.src.lib.objects.organisation.list;
+using libs.workspace.angular.apps.src.lib.objects.organisation.overview;
+
 namespace Tests.LetterCorrespondenceTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.lettercorrespondence.edit;
-    using libs.angular.material.@base.src.export.objects.organisation.list;
-    using libs.angular.material.@base.src.export.objects.organisation.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class OrganisationLetterCorrespondenceEditTest : Test
+    public class OrganisationLetterCorrespondenceEditTest : Test, IClassFixture<Fixture>
     {
         private readonly OrganisationListComponent organisationListPage;
 
-        public OrganisationLetterCorrespondenceEditTest(TestFixture fixture)
+        public OrganisationLetterCorrespondenceEditTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -68,12 +66,12 @@ namespace Tests.LetterCorrespondenceTests
             var before = new LetterCorrespondences(this.Session).Extent().ToArray();
 
             this.organisationListPage.Table.DefaultAction(organisation);
-            var organisationOverviewPage = new OrganisationOverviewComponent(this.organisationListPage.Driver);
+            var organisationOverviewPage = new OrganisationOverviewComponent(this.organisationListPage.Driver, this.M);
 
             var communicationEventOverview = organisationOverviewPage.CommunicationeventOverviewPanel.Click();
             communicationEventOverview.Table.DefaultAction(editCommunicationEvent);
 
-            var letterCorrespondenceEdit = new LetterCorrespondenceEditComponent(organisationOverviewPage.Driver);
+            var letterCorrespondenceEdit = new LetterCorrespondenceEditComponent(organisationOverviewPage.Driver, this.M);
             letterCorrespondenceEdit
                 .CommunicationEventState.Select(new CommunicationEventStates(this.Session).InProgress)
                 .EventPurposes.Toggle(new CommunicationEventPurposes(this.Session).Appointment)

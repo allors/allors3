@@ -3,30 +3,29 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.person.list;
+using libs.workspace.angular.apps.src.lib.objects.person.overview;
+
 namespace Tests.PostalAddressTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.person.list;
-    using libs.angular.material.@base.src.export.objects.person.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class PostalAddressCreateTest : Test
+    public class PostalAddressCreateTest : Test, IClassFixture<Fixture>
     {
         private readonly PersonListComponent people;
 
         private readonly PostalAddress editContactMechanism;
 
-        public PostalAddressCreateTest(TestFixture fixture)
+        public PostalAddressCreateTest(Fixture fixture)
             : base(fixture)
         {
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             this.editContactMechanism = new PostalAddressBuilder(this.Session)
                 .WithDefaults()
@@ -49,10 +48,10 @@ namespace Tests.PostalAddressTests
 
             var before = new PostalAddresses(this.Session).Extent().ToArray();
 
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             this.people.Table.DefaultAction(person);
-            var postalAddressEditComponent = new PersonOverviewComponent(this.people.Driver).ContactmechanismOverviewPanel.Click().CreatePostalAddress();
+            var postalAddressEditComponent = new PersonOverviewComponent(this.people.Driver, this.M).ContactmechanismOverviewPanel.Click().CreatePostalAddress();
 
             postalAddressEditComponent
                 .ContactPurposes.Toggle(new ContactMechanismPurposes(this.Session).GeneralCorrespondence)
@@ -73,7 +72,7 @@ namespace Tests.PostalAddressTests
             Assert.Equal(after.Length, before.Length + 1);
 
             var contactMechanism = after.Except(before).First();
-            var partyContactMechanism = contactMechanism.PartyContactMechanismsWhereContactMechanism.First;
+            var partyContactMechanism = contactMechanism.PartyContactMechanismsWhereContactMechanism.FirstOrDefault();
 
             Assert.Equal("addressline 1", contactMechanism.Address1);
             Assert.Equal("addressline 2", contactMechanism.Address2);

@@ -3,26 +3,23 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.organisation.list;
+using libs.workspace.angular.apps.src.lib.objects.organisation.overview;
+
 namespace Tests.EmailCommunicationTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.emailcommunication.edit;
-    using libs.angular.material.@base.src.export.objects.organisation.list;
-    using libs.angular.material.@base.src.export.objects.organisation.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class OrganisationEmailCommunicationCreateTest : Test
+    public class OrganisationEmailCommunicationCreateTest : Test, IClassFixture<Fixture>
     {
         private readonly OrganisationListComponent organisationListPage;
 
-        public OrganisationEmailCommunicationCreateTest(TestFixture fixture)
+        public OrganisationEmailCommunicationCreateTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -36,10 +33,10 @@ namespace Tests.EmailCommunicationTests
             var employee = allors.ActiveEmployees.First();
 
             var organisation = allors.ActiveCustomers.First(v => v.GetType().Name == typeof(Organisation).Name);
-            var contact = organisation.CurrentContacts.First;
+            var contact = organisation.CurrentContacts.FirstOrDefault();
 
             var employeeEmailAddress = employee.PersonalEmailAddress;
-            var personEmailAddress = organisation.CurrentContacts.First.PersonalEmailAddress;
+            var personEmailAddress = organisation.CurrentContacts.First().PersonalEmailAddress;
 
             this.Session.Derive();
             this.Session.Commit();
@@ -47,7 +44,7 @@ namespace Tests.EmailCommunicationTests
             var before = new EmailCommunications(this.Session).Extent().ToArray();
 
             this.organisationListPage.Table.DefaultAction(organisation);
-            var organisationOverview = new OrganisationOverviewComponent(this.organisationListPage.Driver);
+            var organisationOverview = new OrganisationOverviewComponent(this.organisationListPage.Driver, this.M);
             var communicationEventOverview = organisationOverview.CommunicationeventOverviewPanel.Click();
             var emailCommunicationEdit = communicationEventOverview.CreateEmailCommunication();
 

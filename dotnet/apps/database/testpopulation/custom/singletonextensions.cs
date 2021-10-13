@@ -504,7 +504,7 @@ line2")
             var workOrder = new WorkTaskBuilder(@this.Transaction())
                 .WithName("Task")
                 .WithTakenBy(allors)
-                .WithFacility(new Facilities(@this.Transaction()).Extent().First)
+                .WithFacility(new Facilities(@this.Transaction()).Extent().FirstOrDefault())
                 .WithCustomer(anOrganisation)
                 .WithWorkEffortPurpose(new WorkEffortPurposes(@this.Transaction()).Maintenance)
                 .WithSpecialTerms("Net 45 Days")
@@ -551,7 +551,7 @@ line2")
             allorsEmployee2.TimeSheetWhereWorker.AddTimeEntry(timeEntryToday2);
             allorsEmployee2.TimeSheetWhereWorker.AddTimeEntry(timeEntryTomorrow2);
 
-            var po = new PurchaseOrders(@this.Transaction()).Extent().First;
+            var po = new PurchaseOrders(@this.Transaction()).Extent().FirstOrDefault();
             foreach (var purchaseOrderItem in po.PurchaseOrderItems)
             {
                 new WorkEffortPurchaseOrderItemAssignmentBuilder(@this.Transaction())

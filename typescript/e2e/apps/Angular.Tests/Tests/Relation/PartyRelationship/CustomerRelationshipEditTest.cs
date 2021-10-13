@@ -3,26 +3,24 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.customerrelationship.edit;
+using libs.workspace.angular.apps.src.lib.objects.person.list;
+using libs.workspace.angular.apps.src.lib.objects.person.overview;
+
 namespace Tests.PartyRelationshipTests
 {
     using System.Linq;
-    using Allors;
     using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
     using Components;
-    using libs.angular.material.@base.src.export.objects.customerrelationship.edit;
-    using libs.angular.material.@base.src.export.objects.person.list;
-    using libs.angular.material.@base.src.export.objects.person.overview;
     using Xunit;
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class CustomerRelationshipEditTest : Test
+    public class CustomerRelationshipEditTest : Test, IClassFixture<Fixture>
     {
         private readonly PersonListComponent personListPage;
 
-        public CustomerRelationshipEditTest(TestFixture fixture)
+        public CustomerRelationshipEditTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -34,10 +32,10 @@ namespace Tests.PartyRelationshipTests
         {
             var before = new PartyRelationships(this.Session).Extent().ToArray();
 
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             this.personListPage.Table.DefaultAction(person);
-            var customerRelationshipEdit = new PersonOverviewComponent(this.personListPage.Driver).PartyrelationshipOverviewPanel.Click().CreateCustomerRelationship();
+            var customerRelationshipEdit = new PersonOverviewComponent(this.personListPage.Driver, this.M).PartyrelationshipOverviewPanel.Click().CreateCustomerRelationship();
 
             customerRelationshipEdit
                 .FromDate.Set(DateTimeFactory.CreateDate(2018, 12, 22))
@@ -62,7 +60,7 @@ namespace Tests.PartyRelationshipTests
         {
             var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
 
-            var person = new People(this.Session).Extent().First;
+            var person = new People(this.Session).Extent().FirstOrDefault();
 
             var editPartyRelationship = new CustomerRelationshipBuilder(this.Session)
                 .WithCustomer(person)
@@ -75,12 +73,12 @@ namespace Tests.PartyRelationshipTests
             var before = new PartyRelationships(this.Session).Extent().ToArray();
 
             this.personListPage.Table.DefaultAction(person);
-            var personOverview = new PersonOverviewComponent(this.personListPage.Driver);
+            var personOverview = new PersonOverviewComponent(this.personListPage.Driver, this.M);
 
             var partyRelationshipOverview = personOverview.PartyrelationshipOverviewPanel.Click();
             partyRelationshipOverview.Table.DefaultAction(editPartyRelationship);
 
-            var customerRelationshipEditComponent = new CustomerRelationshipEditComponent(this.Driver);
+            var customerRelationshipEditComponent = new CustomerRelationshipEditComponent(this.Driver, this.M);
             customerRelationshipEditComponent.FromDate.Set(DateTimeFactory.CreateDate(2018, 12, 22))
                 .ThroughDate.Set(DateTimeFactory.CreateDate(2018, 12, 22).AddYears(1))
                 .SAVE.Click();

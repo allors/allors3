@@ -15,11 +15,11 @@ namespace Tests.ApplicationTests
     using Xunit;
 
     [Collection("Test collection")]
-    public class OverviewPagesTest : Test
+    public class OverviewPagesTest : Test, IClassFixture<Fixture>
     {
         private readonly MethodInfo[] navigateTos;
 
-        public OverviewPagesTest(TestFixture fixture)
+        public OverviewPagesTest(Fixture fixture)
             : base(fixture)
         {
             var navigateTos = this.Sidenav.GetType()
@@ -115,7 +115,7 @@ namespace Tests.ApplicationTests
                                     var dialogElement = this.Driver.FindElement(By.CssSelector("mat-dialog-container ng-component[data-test-scope]"));
                                     var testScope = dialogElement.GetAttribute("data-test-scope");
                                     var type = Assembly.GetExecutingAssembly().GetTypes().First(v => v.Name.Equals(testScope));
-                                    var dialog = (Component)Activator.CreateInstance(type, this.Driver);
+                                    var dialog = (Component)Activator.CreateInstance(type, this.Driver, this.M);
 
                                     Cancel(dialog);
                                 }
@@ -154,7 +154,7 @@ namespace Tests.ApplicationTests
                             var dialogElement = this.Driver.FindElement(By.CssSelector("mat-sidenav-content ng-component[data-test-scope]"));
                             var testScope = dialogElement.GetAttribute("data-test-scope");
                             var type = Assembly.GetExecutingAssembly().GetTypes().First(v => v.Name.Equals(testScope));
-                            var page = (Component)Activator.CreateInstance(type, this.Driver);
+                            var page = (Component)Activator.CreateInstance(type, this.Driver, this.M);
 
                             yield return page;
                         }

@@ -3,28 +3,28 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System.Linq;
+using Allors.Database;
+using Allors.Database.Adapters.Sql;
+using Allors.Database.Configuration;
+using Allors.Database.Domain.Tests;
+using Allors.Database.Meta;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using src.app.auth;
+using src.app.main;
+using Database = Allors.Database.Adapters.Sql.SqlClient.Database;
+using ObjectFactory = Allors.Database.ObjectFactory;
+
 namespace Tests
 {
     using System;
     using System.Globalization;
     using System.IO;
     using System.Xml;
-    using Allors;
-    using Allors.Database.Adapters.SqlClient;
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
-    using Allors.Meta;
-    using Allors.Services;
-    using Bogus;
-    using libs.angular.material.custom.src.auth;
-    using libs.angular.material.custom.src.main;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
-    using NLog.Extensions.Logging;
     using OpenQA.Selenium;
-    using Database = Allors.Database.Adapters.SqlClient.Database;
-    using ObjectFactory = Allors.ObjectFactory;
 
     public abstract class Test : IDisposable
     {
@@ -45,8 +45,10 @@ namespace Tests
             populationFileInfo = new FileInfo($"population.{domainPrint}.{testPrint}.{testPopulationPrint}.xml");
         }
 
-        protected Test(TestFixture fixture)
+        protected Test(Fixture fixture)
         {
+            this.M = fixture.MetaPopulation;
+
             // Init Browser
             this.DriverManager = new DriverManager();
             this.DriverManager.Start();
@@ -57,93 +59,74 @@ namespace Tests
             CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
             CultureInfo.CurrentUICulture = CultureInfo.CurrentCulture;
 
+            NLog.LogManager.LoadConfiguration("nlog.config");
+
             // Init Allors
             var configurationBuilder = new ConfigurationBuilder();
-
-            const string root = "/config/base";
+            const string root = "/config/apps";
             configurationBuilder.AddCrossPlatform(".");
             configurationBuilder.AddCrossPlatform(root);
             configurationBuilder.AddCrossPlatform(Path.Combine(root, "server"));
             configurationBuilder.AddEnvironmentVariables();
-
             var configuration = configurationBuilder.Build();
 
-            var services = new ServiceCollection();
-            services.AddAllors();
-            services.AddSingleton<IConfiguration>(configuration);
-            services.AddSingleton<ILoggerFactory, LoggerFactory>();
-            services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
-            services.AddLogging(builder => builder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace));
-            services.AddSingleton<Faker>();
-
-            this.ServiceProvider = services.BuildServiceProvider();
-
-            var loggerFactory = this.ServiceProvider.GetService<ILoggerFactory>();
-            loggerFactory.AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
-            NLog.LogManager.LoadConfiguration("nlog.config");
-
-            this.Logger = (ILogger)this.ServiceProvider.GetService(typeof(ILogger<>).MakeGenericType(new[] { this.GetType() }));
-
-            var database = new Database(this.ServiceProvider, new Configuration
+            var objectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User));
+            var services = new DefaultDatabaseServices(fixture.Engine, null);
+            var database = new Database(services, new Configuration
             {
+                ObjectFactory = objectFactory,
                 ConnectionString = configuration["ConnectionStrings:DefaultConnection"],
-                ObjectFactory = new ObjectFactory(MetaPopulation.Instance, typeof(User)),
             });
 
-            if ((population == null) && populationFileInfo.Exists)
+            if (population == null && populationFileInfo.Exists)
             {
                 population = File.ReadAllText(populationFileInfo.FullName);
             }
 
             if (population != null)
             {
-                using (var stringReader = new StringReader(population))
-                using (var reader = XmlReader.Create(stringReader))
-                {
-                    database.Load(reader);
-                }
+                using var stringReader = new StringReader(population);
+                using var reader = XmlReader.Create(stringReader);
+                database.Load(reader);
             }
             else
             {
                 database.Init();
 
-                using (var session = database.CreateSession())
+                var config = new Config();
+                new Setup(database, config).Apply();
+
+                using var session = database.CreateTransaction();
+                session.Commit();
+
+                new IntranetPopulation(session, null).Execute();
+
+                session.Commit();
+
+                using var stringWriter = new StringWriter();
+                using (var writer = XmlWriter.Create(stringWriter))
                 {
-                    var config = new Config();
-                    new Setup(session, config).Apply();
-                    session.Commit();
-
-                    new IntranetPopulation(session, null).Execute();
-
-                    session.Commit();
-
-                    using (var stringWriter = new StringWriter())
-                    {
-                        using (var writer = XmlWriter.Create(stringWriter))
-                        {
-                            database.Save(writer);
-                        }
-
-                        population = stringWriter.ToString();
-                        File.WriteAllText(populationFileInfo.FullName, population);
-                    }
+                    database.Save(writer);
                 }
+
+                population = stringWriter.ToString();
+                File.WriteAllText(populationFileInfo.FullName, population);
             }
 
-            this.Session = database.CreateSession();
+            this.Session = database.CreateTransaction();
         }
 
-        public ServiceProvider ServiceProvider { get; set; }
+        public MetaPopulation M { get; set; }
 
         public ILogger Logger { get; set; }
 
-        public ISession Session { get; set; }
+        public ITransaction Session { get; set; }
 
         public DriverManager DriverManager { get; }
 
         public IWebDriver Driver => this.DriverManager.Driver;
 
-        public Sidenav Sidenav => new MainComponent(this.Driver).Sidenav;
+        public Sidenav Sidenav => new MainComponent(this.Driver, this.M).Sidenav;
 
         public virtual void Dispose() => this.DriverManager.Stop();
 
@@ -151,11 +134,11 @@ namespace Tests
         {
             if (string.IsNullOrEmpty(userName))
             {
-                userName = new UserGroups(this.Session).Administrators.Members.First.UserName;
+                userName = new UserGroups(this.Session).Administrators.Members.First().UserName;
             }
 
             this.Driver.Navigate().GoToUrl(Test.ClientUrl + "/login");
-            var login = new LoginComponent(this.Driver);
+            var login = new LoginComponent(this.Driver, this.M);
             login.Login(userName);
         }
     }
