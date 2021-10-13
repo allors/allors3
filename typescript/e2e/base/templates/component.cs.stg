@@ -93,7 +93,7 @@ $elseif(tester.IsButton)$
 $elseif(tester.IsA)$
         public Components.Anchor $tester.Name$ => new Components.Anchor(this.Driver, this.M, "$tester.Kind$", @"$tester.Value$"$tester.Scopes:{scope|, "$scope$"}$);
 $elseif(tester.IsAMatFactoryFab)$
-        public Components.MatFactoryFab $tester.Name$ => new Components.MatFactoryFab(this.Driver, this.M, Allors.Meta.M.$tester.ObjectType$.ObjectType, $tester.Selector$);
+        public Components.MatFactoryFab $tester.Name$ => new Components.MatFactoryFab(this.Driver, this.M, this.M.$tester.ObjectType$.ObjectType, $tester.Selector$);
 $tester.Factories:{factory|$factory(factory)$}; separator="\n"$
 $elseif(tester.IsAMatTable)$
         public Components.MatTable $tester.Name$ => new Components.MatTable(this.Driver, this.M, $tester.Selector$);
@@ -112,7 +112,7 @@ factory(factory) ::= <<
 $if(factory.Component)$
         public $factory.Component.Reference.Namespace$.$factory.Component.Reference.Name$ Create$factory.class.name$()
         {
-            this.$factory.tester.Name$.Create(Allors.Meta.M.$factory.class.Name$);
+            this.$factory.tester.Name$.Create(this.M.$factory.class.Name$);
             return new $factory.Component.Reference.Namespace$.$factory.Component.Reference.Name$(this.Driver, this.M);
         }
 $endif$

@@ -3,6 +3,16 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using libs.workspace.angular.apps.src.lib.objects.orderadjustment.edit;
+using libs.workspace.angular.apps.src.lib.objects.productquote.list;
+using libs.workspace.angular.apps.src.lib.objects.productquote.overview;
+using libs.workspace.angular.apps.src.lib.objects.purchaseinvoice.list;
+using libs.workspace.angular.apps.src.lib.objects.purchaseinvoice.overview;
+using libs.workspace.angular.apps.src.lib.objects.salesinvoice.list;
+using libs.workspace.angular.apps.src.lib.objects.salesinvoice.overview;
+using libs.workspace.angular.apps.src.lib.objects.salesorder.list;
+using libs.workspace.angular.apps.src.lib.objects.salesorder.overview;
+
 namespace Tests.OrderAdjustmentTests
 {
     using System.Linq;
@@ -10,15 +20,6 @@ namespace Tests.OrderAdjustmentTests
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
     using Components;
-    using libs.angular.material.@base.src.export.objects.orderadjustment.edit;
-    using libs.angular.material.@base.src.export.objects.productquote.list;
-    using libs.angular.material.@base.src.export.objects.productquote.overview;
-    using libs.angular.material.@base.src.export.objects.purchaseinvoice.list;
-    using libs.angular.material.@base.src.export.objects.purchaseinvoice.overview;
-    using libs.angular.material.@base.src.export.objects.salesinvoice.list;
-    using libs.angular.material.@base.src.export.objects.salesinvoice.overview;
-    using libs.angular.material.@base.src.export.objects.salesorder.list;
-    using libs.angular.material.@base.src.export.objects.salesorder.overview;
     using Xunit;
 
     [Collection("Test collection")]
