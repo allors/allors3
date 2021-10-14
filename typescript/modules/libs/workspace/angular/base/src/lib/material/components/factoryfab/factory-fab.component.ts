@@ -6,6 +6,7 @@ import { IObject } from '@allors/workspace/domain/system';
 import { ObjectData } from '../../services/object/object.data';
 import { ObjectService } from '../../services/object/object.service';
 import { WorkspaceService } from '@allors/workspace/angular/core';
+import { humanize } from '../../../../../../../meta/system/src/lib/text/humanize';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -45,5 +46,9 @@ export class FactoryFabComponent implements OnInit {
         this.created.next(v);
       }
     });
+  }
+
+  displayName(cls: Class): string {
+    return cls._.displayName ?? humanize(cls.singularName);
   }
 }

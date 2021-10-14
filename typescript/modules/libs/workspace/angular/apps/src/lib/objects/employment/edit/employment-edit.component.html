@@ -11,14 +11,14 @@
       </div>
 
       <div class="row">
-        <a-mat-static class="col-md" [object]="partyRelationship" [roleType]="m.Employment.Employer" display="displayName"></a-mat-static>
+        <a-mat-static class="col-md" [object]="partyRelationship" [roleType]="m.Employment.Employer" display="DisplayName"></a-mat-static>
       </div>
 
       <div class="row">
         <div class="col-md">
           <div class="row">
-            <a-mat-select *ngIf="!person" class="col" [object]="partyRelationship" [roleType]="m.Employment.Employee" [options]="people" display="displayName"></a-mat-select>
-            <a-mat-static *ngIf="person" class="col-md" [object]="partyRelationship" [roleType]="m.Employment.Employee" display="displayName"></a-mat-static>
+            <a-mat-select *ngIf="!person" class="col" [object]="partyRelationship" [roleType]="m.Employment.Employee" [options]="people" display="DisplayName"></a-mat-select>
+            <a-mat-static *ngIf="person" class="col-md" [object]="partyRelationship" [roleType]="m.Employment.Employee" display="DisplayName"></a-mat-static>
             <button *ngIf="!person" mat-mini-fab color="accent" type="button" (click)="addEmployee = !addEmployee">
               <mat-icon *ngIf="!addEmployee">add</mat-icon>
               <mat-icon *ngIf="addEmployee">close</mat-icon>

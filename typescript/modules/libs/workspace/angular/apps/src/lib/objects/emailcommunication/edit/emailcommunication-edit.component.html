@@ -11,7 +11,7 @@
       <div class="row">
         <div class="col-md">
           <div class="row">
-            <a-mat-select class="col" [object]="communicationEvent" [roleType]="m.CommunicationEvent.FromParty" [options]="contacts" display="displayName" (selected)="fromPartySelected($event)"></a-mat-select>
+            <a-mat-select class="col" [object]="communicationEvent" [roleType]="m.CommunicationEvent.FromParty" [options]="contacts" display="DisplayName" (selected)="fromPartySelected($event)"></a-mat-select>
             <button mat-mini-fab color="accent" type="button" [disabled]="person != null" (click)="addFromParty = !addFromParty">
               <mat-icon *ngIf="!addFromParty">add</mat-icon>
               <mat-icon *ngIf="addFromParty">close</mat-icon>
@@ -30,7 +30,7 @@
 
         <div class="col-md">
           <div class="row">
-            <a-mat-select class="col" [object]="communicationEvent" [roleType]="m.CommunicationEvent.ToParty" [options]="contacts" display="displayName" (selected)="toPartySelected($event)"></a-mat-select>
+            <a-mat-select class="col" [object]="communicationEvent" [roleType]="m.CommunicationEvent.ToParty" [options]="contacts" display="DisplayName" (selected)="toPartySelected($event)"></a-mat-select>
             <button mat-mini-fab color="accent" type="button" [disabled]="person != null" (click)="addToParty = !addToParty">
               <mat-icon *ngIf="!addToParty">add</mat-icon>
               <mat-icon *ngIf="addToParty">close</mat-icon>
@@ -51,7 +51,7 @@
       <div class="row">
         <div class="col-md">
           <div class="row">
-            <a-mat-select class="col" [object]="communicationEvent" [roleType]="m.EmailCommunication.FromEmail" [options]="fromEmails" display="displayName" label="Email" attr.data-allors-name="fromEmail"></a-mat-select>
+            <a-mat-select class="col" [object]="communicationEvent" [roleType]="m.EmailCommunication.FromEmail" [options]="fromEmails" display="DisplayName" label="Email" attr.data-allors-name="fromEmail"></a-mat-select>
             <button mat-mini-fab color="accent" type="button" (click)="addFromEmail = !addFromEmail">
               <mat-icon *ngIf="!addFromEmail">add</mat-icon>
               <mat-icon *ngIf="addFromEmail">close</mat-icon>
@@ -70,7 +70,7 @@
 
         <div class="col-md">
           <div class="row">
-            <a-mat-select class="col" [object]="communicationEvent" [roleType]="m.EmailCommunication.ToEmail" [options]="toEmails" display="displayName" label="Email" attr.data-allors-name="toEmail"></a-mat-select>
+            <a-mat-select class="col" [object]="communicationEvent" [roleType]="m.EmailCommunication.ToEmail" [options]="toEmails" display="DisplayName" label="Email" attr.data-allors-name="toEmail"></a-mat-select>
             <button mat-mini-fab color="accent" type="button" (click)="addToEmail = !addToEmail">
               <mat-icon *ngIf="!addToEmail">add</mat-icon>
               <mat-icon *ngIf="addToEmail">close</mat-icon>

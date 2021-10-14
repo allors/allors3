@@ -28,7 +28,7 @@
                 [object]="purchaseShipment"
                 [roleType]="m.PurchaseShipment.ShipFromParty"
                 [filter]="suppliersFilter.create(allors.context)"
-                display="displayName"
+                display="DisplayName"
                 (changed)="supplierSelected($event)"
                 label="Supplier"
               ></a-mat-autocomplete>
@@ -45,7 +45,7 @@
                 [object]="purchaseShipment"
                 [roleType]="m.PurchaseShipment.ShipFromContactPerson"
                 [options]="shipFromContacts"
-                display="displayName"
+                display="DisplayName"
                 label="Supplier contact person"
               ></a-mat-select>
               <button
@@ -73,7 +73,7 @@
         <div class="row">
           <div class="col-md">
             <div class="row">
-              <a-mat-select class="col" [object]="purchaseShipment" [roleType]="m.PurchaseShipment.ShipToAddress" [options]="shipToAddresses" display="displayName"></a-mat-select>
+              <a-mat-select class="col" [object]="purchaseShipment" [roleType]="m.PurchaseShipment.ShipToAddress" [options]="shipToAddresses" display="DisplayName"></a-mat-select>
               <button mat-mini-fab color="accent" [disabled]="!purchaseShipment.ShipToParty || !purchaseShipment.canWriteShipToAddress" type="button" (click)="addShipToAddress = !addShipToAddress">
                 <mat-icon *ngIf="!addShipToAddress">add</mat-icon>
                 <mat-icon *ngIf="addShipToAddress">close</mat-icon>
@@ -91,7 +91,7 @@
 
           <div class="col-md">
             <div class="row">
-              <a-mat-select class="col" [object]="purchaseShipment" [roleType]="m.PurchaseShipment.ShipToContactPerson" [options]="shipToContacts" display="displayName" label="Contact person"></a-mat-select>
+              <a-mat-select class="col" [object]="purchaseShipment" [roleType]="m.PurchaseShipment.ShipToContactPerson" [options]="shipToContacts" display="DisplayName" label="Contact person"></a-mat-select>
             </div>
           </div>
         </div>

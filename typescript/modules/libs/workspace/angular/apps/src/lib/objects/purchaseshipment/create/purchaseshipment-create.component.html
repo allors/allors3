@@ -11,7 +11,7 @@
               [object]="shipment"
               [roleType]="m.PurchaseShipment.ShipFromParty"
               [filter]="suppliersFilter.create(allors.context)"
-              display="displayName"
+              display="DisplayName"
               (changed)="supplierSelected($event)"
               label="Supplier"
             ></a-mat-autocomplete>
@@ -34,7 +34,7 @@
       <div class="row">
         <div class="col-md">
           <div class="row">
-            <a-mat-select class="col" [object]="shipment" [roleType]="m.PurchaseShipment.ShipFromContactPerson" [options]="shipFromContacts" display="displayName" label="Supplier contact person"></a-mat-select>
+            <a-mat-select class="col" [object]="shipment" [roleType]="m.PurchaseShipment.ShipFromContactPerson" [options]="shipFromContacts" display="DisplayName" label="Supplier contact person"></a-mat-select>
             <button mat-mini-fab color="accent" [disabled]="!shipment.ShipFromParty || !shipment.canWriteShipFromContactPerson" type="button" (click)="addShipFromContactPerson = !addShipFromContactPerson">
               <mat-icon *ngIf="!addShipFromContactPerson">add</mat-icon>
               <mat-icon *ngIf="addShipFromContactPerson">close</mat-icon>
@@ -54,7 +54,7 @@
       <div class="row">
         <div class="col-md">
           <div class="row">
-            <a-mat-select class="col" [object]="shipment" [roleType]="m.PurchaseShipment.ShipToAddress" [options]="shipToAddresses" display="displayName" class="col-md"></a-mat-select>
+            <a-mat-select class="col" [object]="shipment" [roleType]="m.PurchaseShipment.ShipToAddress" [options]="shipToAddresses" display="DisplayName" class="col-md"></a-mat-select>
             <button mat-mini-fab color="accent" [disabled]="!shipment.canWriteShipToAddress" type="button" (click)="addShipToAddress = !addShipToAddress">
               <mat-icon *ngIf="!addShipToAddress">add</mat-icon>
               <mat-icon *ngIf="addShipToAddress">close</mat-icon>
@@ -72,7 +72,7 @@
 
         <div class="col-md">
           <div class="row">
-            <a-mat-select class="col" [object]="shipment" [roleType]="m.PurchaseShipment.ShipToContactPerson" [options]="shipToContacts" display="displayName" label="Shipping Contact Person"></a-mat-select>
+            <a-mat-select class="col" [object]="shipment" [roleType]="m.PurchaseShipment.ShipToContactPerson" [options]="shipToContacts" display="DisplayName" label="Shipping Contact Person"></a-mat-select>
             <button mat-mini-fab color="accent" [disabled]="!shipment.canWriteShipToContactPerson" type="button" (click)="addShipToContactPerson = !addShipToContactPerson">
               <mat-icon *ngIf="!addShipToContactPerson">add</mat-icon>
               <mat-icon *ngIf="addShipToContactPerson">close</mat-icon>

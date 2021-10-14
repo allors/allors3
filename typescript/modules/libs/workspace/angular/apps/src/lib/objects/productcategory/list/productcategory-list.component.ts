@@ -104,7 +104,7 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
         switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          internalOrganisationPredicate.objectId = internalOrganisationId;
+          internalOrganisationPredicate.value = internalOrganisationId;
 
           const pulls = [
             pull.ProductCategory({

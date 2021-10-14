@@ -28,7 +28,7 @@
                 [object]="customerShipment"
                 [roleType]="m.CustomerShipment.ShipToParty"
                 [filter]="customersFilter.create(allors.context)"
-                display="displayName"
+                display="DisplayName"
                 (changed)="customerSelected($event)"
                 label="Customer"
               ></a-mat-autocomplete>
@@ -39,7 +39,7 @@
         <div class="row">
           <div class="col-md">
             <div class="row">
-              <a-mat-select class="col" [object]="customerShipment" [roleType]="m.CustomerShipment.ShipToAddress" [options]="shipToAddresses" display="displayName"></a-mat-select>
+              <a-mat-select class="col" [object]="customerShipment" [roleType]="m.CustomerShipment.ShipToAddress" [options]="shipToAddresses" display="DisplayName"></a-mat-select>
               <button mat-mini-fab color="accent" [disabled]="!customerShipment.ShipToParty || !customerShipment.canWriteShipToAddress" type="button" (click)="addShipToAddress = !addShipToAddress">
                 <mat-icon *ngIf="!addShipToAddress">add</mat-icon>
                 <mat-icon *ngIf="addShipToAddress">close</mat-icon>
@@ -63,7 +63,7 @@
                 [object]="customerShipment"
                 [roleType]="m.CustomerShipment.ShipToContactPerson"
                 [options]="shipToContacts"
-                display="displayName"
+                display="DisplayName"
                 label="Customer contact person"
               ></a-mat-select>
               <button
@@ -91,7 +91,7 @@
         <div class="row">
           <div class="col-md">
             <div class="row">
-              <a-mat-select [object]="customerShipment" [roleType]="m.CustomerShipment.ShipFromAddress" [options]="shipFromAddresses" display="displayName" class="col-md"></a-mat-select>
+              <a-mat-select [object]="customerShipment" [roleType]="m.CustomerShipment.ShipFromAddress" [options]="shipFromAddresses" display="DisplayName" class="col-md"></a-mat-select>
               <button mat-mini-fab color="accent" [disabled]="!customerShipment.canWriteShipFromAddress" type="button" (click)="addShipFromAddress = !addShipFromAddress">
                 <mat-icon *ngIf="!addShipFromAddress">add</mat-icon>
                 <mat-icon *ngIf="addShipFromAddress">close</mat-icon>

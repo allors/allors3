@@ -11,7 +11,7 @@
       <div class="row">
         <div class="col-md">
           <div class="row">
-            <a-mat-select class="col" [object]="communicationEvent" [roleType]="m.CommunicationEvent.FromParty" [options]="contacts" display="displayName" (selected)="fromPartySelected($event)"></a-mat-select>
+            <a-mat-select class="col" [object]="communicationEvent" [roleType]="m.CommunicationEvent.FromParty" [options]="contacts" display="DisplayName" (selected)="fromPartySelected($event)"></a-mat-select>
             <button mat-mini-fab color="accent" [disabled]="person != null" type="button" (click)="addFromParty = !addFromParty">
               <mat-icon *ngIf="!addFromParty">add</mat-icon>
               <mat-icon *ngIf="addFromParty">close</mat-icon>
@@ -29,7 +29,7 @@
 
         <div class="col-md">
           <div class="row">
-            <a-mat-select class="col" [object]="communicationEvent" [roleType]="m.CommunicationEvent.ToParty" [options]="contacts" display="displayName" (selected)="toPartySelected($event)"></a-mat-select>
+            <a-mat-select class="col" [object]="communicationEvent" [roleType]="m.CommunicationEvent.ToParty" [options]="contacts" display="DisplayName" (selected)="toPartySelected($event)"></a-mat-select>
             <button mat-mini-fab color="accent" [disabled]="person != null" type="button" (click)="addToParty = !addToParty">
               <mat-icon *ngIf="!addToParty">add</mat-icon>
               <mat-icon *ngIf="addToParty">close</mat-icon>
@@ -54,7 +54,7 @@
               [object]="communicationEvent"
               [roleType]="m.LetterCorrespondence.PostalAddress"
               [options]="fromPostalAddresses"
-              display="displayName"
+              display="DisplayName"
               label="Postal Address"
               attr.data-allors-name="fromPostalAddress"
             ></a-mat-select>
@@ -81,7 +81,7 @@
               [object]="communicationEvent"
               [roleType]="m.LetterCorrespondence.PostalAddress"
               [options]="toPostalAddresses"
-              display="displayName"
+              display="DisplayName"
               label="Postal Address"
               attr.data-allors-name="toPostalAddress"
             ></a-mat-select>
@@ -107,7 +107,7 @@
       </div>
 
       <div class="row">
-        <a-mat-static class="col-md" [object]="communicationEvent" [roleType]="m.LetterCorrespondence.PostalAddress" display="displayName"></a-mat-static>
+        <a-mat-static class="col-md" [object]="communicationEvent" [roleType]="m.LetterCorrespondence.PostalAddress" display="DisplayName"></a-mat-static>
       </div>
 
       <div class="row">

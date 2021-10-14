@@ -33,11 +33,11 @@
 
       <div class="row">
         <a-mat-select class="col-md" [object]="serialisedItem" [roleType]="m.SerialisedItem.Ownership" [options]="ownerships" display="Name"></a-mat-select>
-        <a-mat-autocomplete class="col-md" [object]="serialisedItem" [roleType]="m.SerialisedItem.OwnedBy" [filter]="partiesFilter.create(allors.context)" display="displayName"></a-mat-autocomplete>
+        <a-mat-autocomplete class="col-md" [object]="serialisedItem" [roleType]="m.SerialisedItem.OwnedBy" [filter]="partiesFilter.create(allors.context)" display="DisplayName"></a-mat-autocomplete>
       </div>
 
       <div class="row">
-        <a-mat-autocomplete class="col-md-6" [object]="serialisedItem" [roleType]="m.SerialisedItem.RentedBy" [filter]="partiesFilter.create(allors.context)" display="displayName"></a-mat-autocomplete>
+        <a-mat-autocomplete class="col-md-6" [object]="serialisedItem" [roleType]="m.SerialisedItem.RentedBy" [filter]="partiesFilter.create(allors.context)" display="DisplayName"></a-mat-autocomplete>
       </div>
 
       <div class="row">

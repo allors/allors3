@@ -8,6 +8,7 @@ namespace Allors.Database.Protocol.Json
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Xml;
     using Allors.Protocol.Json;
     using Allors.Protocol.Json.Data;
     using Meta;
@@ -316,13 +317,19 @@ namespace Allors.Database.Protocol.Json
 
                             if (visited.ob != null)
                             {
-                                equals.Object = visited.ob.HasValue
-                                    ? this.transaction.Instantiate(visited.ob.Value)
-                                    : null;
+                                equals.Object = this.transaction.Instantiate(visited.ob.Value);
                             }
                             else if (visited.v != null)
                             {
-                                equals.Value = this.unitConvert.FromJson(((IRoleType)propertyType).ObjectType.Tag, visited.v);
+                                if (roleType?.ObjectType.IsUnit == true)
+                                {
+                                    equals.Value = this.unitConvert.FromJson(((IRoleType)propertyType).ObjectType.Tag, visited.v);
+                                }
+                                else
+                                {
+                                    var id = XmlConvert.ToInt64(visited.v.ToString());
+                                    equals.Object = this.transaction.Instantiate(id);
+                                }
                             }
 
                             break;

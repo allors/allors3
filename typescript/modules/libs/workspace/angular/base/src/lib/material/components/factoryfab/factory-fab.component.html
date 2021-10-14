@@ -12,7 +12,7 @@
       <mat-toolbar color="accent"><span class="title">Add new</span></mat-toolbar>
       <button *ngFor="let class of classes" mat-menu-item (click)="create(class); (false)" attr.data-allors-class="{{ class.singularName }}">
         <mat-icon>{{ class._.icon }}</mat-icon
-        ><span>{{ class._.displayName }}</span>
+        ><span>{{ displayName(class) }}</span>
       </button>
     </mat-menu>
   </div>

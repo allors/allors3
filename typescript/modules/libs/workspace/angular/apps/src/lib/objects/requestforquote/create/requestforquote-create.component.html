@@ -11,7 +11,7 @@
               [object]="request"
               [roleType]="m.Request.Originator"
               [filter]="customersFilter.create(allors.context)"
-              display="displayName"
+              display="DisplayName"
               (changed)="originatorSelected($event)"
               label="From"
             ></a-mat-autocomplete>
@@ -34,7 +34,7 @@
       <div class="row">
         <div class="col-md">
           <div class="row">
-            <a-mat-select class="col" [object]="request" [roleType]="m.Request.FullfillContactMechanism" [options]="contactMechanisms" display="displayName" label="Reply to" class="col-md"></a-mat-select>
+            <a-mat-select class="col" [object]="request" [roleType]="m.Request.FullfillContactMechanism" [options]="contactMechanisms" display="DisplayName" label="Reply to" class="col-md"></a-mat-select>
             <button mat-mini-fab color="accent" [disabled]="!request.Originator || !request.canWriteRequestItems" type="button" (click)="addContactMechanism = !addContactMechanism">
               <mat-icon *ngIf="!addContactMechanism">add</mat-icon>
               <mat-icon *ngIf="addContactMechanism">close</mat-icon>
@@ -54,7 +54,7 @@
       <div class="row">
         <div class="col-md">
           <div class="row">
-            <a-mat-select [object]="request" [disabled]="originatorIsPerson" [roleType]="m.Request.ContactPerson" [options]="contacts" display="displayName" class="col-md"></a-mat-select>
+            <a-mat-select [object]="request" [disabled]="originatorIsPerson" [roleType]="m.Request.ContactPerson" [options]="contacts" display="DisplayName" class="col-md"></a-mat-select>
             <button mat-mini-fab color="accent" [disabled]="originatorIsPerson || !request.canWriteRequestItems" type="button" (click)="addContactPerson = !addContactPerson">
               <mat-icon *ngIf="!addContactPerson">add</mat-icon>
               <mat-icon *ngIf="addContactPerson">close</mat-icon>

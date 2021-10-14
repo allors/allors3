@@ -112,8 +112,8 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
         switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          fromInternalOrganisationPredicate.objectId = internalOrganisationId;
-          toInternalOrganisationPredicate.objectId = internalOrganisationId;
+          fromInternalOrganisationPredicate.value = internalOrganisationId;
+          toInternalOrganisationPredicate.value = internalOrganisationId;
 
           const pulls = [
             pull.Shipment({

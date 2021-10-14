@@ -38,7 +38,7 @@
                     [roleType]="m.SalesOrder.DerivedShipFromAddress"
                     [options]="shipFromAddresses"
                     [assignedRoleType]="m.SalesOrder.AssignedShipFromAddress"
-                    display="displayName"
+                    display="DisplayName"
                     label="Ship from Address"
                   ></a-mat-select>
                   <button mat-mini-fab color="accent" [disabled]="!order.canWriteAssignedShipFromAddress" type="button" (click)="addShipFromAddress = !addShipFromAddress">
@@ -65,7 +65,7 @@
                     [object]="order"
                     [roleType]="m.SalesOrder.ShipToCustomer"
                     [filter]="customersFilter.create(allors.context)"
-                    display="displayName"
+                    display="DisplayName"
                     (changed)="shipToCustomerSelected($event)"
                     label="Ship to"
                   ></a-mat-autocomplete>
@@ -95,7 +95,7 @@
                     [options]="shipToAddresses"
                     [assignedRoleType]="m.SalesOrder.AssignedShipToAddress"
                     label="Ship to Address"
-                    display="displayName"
+                    display="DisplayName"
                   ></a-mat-select>
                   <button mat-mini-fab color="accent" [disabled]="!order.ShipToCustomer || !order.canWriteAssignedShipToAddress" type="button" (click)="addShipToAddress = !addShipToAddress">
                     <mat-icon *ngIf="!addShipToAddress">add</mat-icon>
@@ -114,7 +114,7 @@
 
               <div class="col-md">
                 <div class="row">
-                  <a-mat-select class="col" [disabled]="shipToCustomerIsPerson" [object]="order" [roleType]="m.SalesOrder.ShipToContactPerson" [options]="shipToContacts" display="displayName" label="Shipping Contact Person"></a-mat-select>
+                  <a-mat-select class="col" [disabled]="shipToCustomerIsPerson" [object]="order" [roleType]="m.SalesOrder.ShipToContactPerson" [options]="shipToContacts" display="DisplayName" label="Shipping Contact Person"></a-mat-select>
                   <button mat-mini-fab color="accent" [disabled]="shipToCustomerIsPerson || !order.canWriteShipToContactPerson" type="button" (click)="addShipToContactPerson = !addShipToContactPerson">
                     <mat-icon *ngIf="!addShipToContactPerson">add</mat-icon>
                     <mat-icon *ngIf="addShipToContactPerson">close</mat-icon>
@@ -139,7 +139,7 @@
                     [object]="order"
                     [roleType]="m.SalesOrder.BillToCustomer"
                     [filter]="customersFilter.create(allors.context)"
-                    display="displayName"
+                    display="DisplayName"
                     (changed)="billToCustomerSelected($event)"
                     label="Bill to"
                   ></a-mat-autocomplete>
@@ -169,7 +169,7 @@
                     [options]="billToContactMechanisms"
                     [assignedRoleType]="m.SalesOrder.AssignedBillToContactMechanism"
                     label="Bill to ContactMechanism"
-                    display="displayName"
+                    display="DisplayName"
                   ></a-mat-select>
                   <button mat-mini-fab color="accent" [disabled]="!order.BillToCustomer || !order.canWriteAssignedBillToContactMechanism" type="button" (click)="addBillToContactMechanism = !addBillToContactMechanism">
                     <mat-icon *ngIf="!addBillToContactMechanism">add</mat-icon>
@@ -194,7 +194,7 @@
                     [object]="order"
                     [roleType]="m.SalesOrder.BillToContactPerson"
                     [options]="billToContacts"
-                    display="displayName"
+                    display="DisplayName"
                     label="Billing Contact Person"
                     class="col-md"
                   ></a-mat-select>
@@ -222,7 +222,7 @@
                     [object]="order"
                     [roleType]="m.SalesOrder.ShipToEndCustomer"
                     [filter]="customersFilter.create(allors.context)"
-                    display="displayName"
+                    display="DisplayName"
                     (changed)="shipToEndCustomerSelected($event)"
                     label="Ship to end customer"
                   ></a-mat-autocomplete>
@@ -252,7 +252,7 @@
                     [options]="shipToEndCustomerAddresses"
                     [assignedRoleType]="m.SalesOrder.AssignedShipToEndCustomerAddress"
                     label="Ship to EndCustomer Address"
-                    display="displayName"
+                    display="DisplayName"
                   ></a-mat-select>
                   <button mat-mini-fab color="accent" [disabled]="!order.ShipToEndCustomer || !order.canWriteAssignedShipToEndCustomerAddress" type="button" (click)="addShipToEndCustomerAddress = !addShipToEndCustomerAddress">
                     <mat-icon *ngIf="!addShipToEndCustomerAddress">add</mat-icon>
@@ -277,7 +277,7 @@
                     [object]="order"
                     [roleType]="m.SalesOrder.ShipToEndCustomerContactPerson"
                     [options]="shipToEndCustomerContacts"
-                    display="displayName"
+                    display="DisplayName"
                     label="Shipping Contact Person"
                     class="col-md"
                   ></a-mat-select>
@@ -305,7 +305,7 @@
                     [object]="order"
                     [roleType]="m.SalesOrder.BillToEndCustomer"
                     [filter]="customersFilter.create(allors.context)"
-                    display="displayName"
+                    display="DisplayName"
                     (changed)="billToCustomerSelected($event)"
                     label="Bill to end customer"
                   ></a-mat-autocomplete>
@@ -335,7 +335,7 @@
                     [options]="billToEndCustomerContactMechanisms"
                     [assignedRoleType]="m.SalesOrder.AssignedBillToEndCustomerContactMechanism"
                     label="Bill to EndCustomer ContactMechanism"
-                    display="displayName"
+                    display="DisplayName"
                   ></a-mat-select>
                   <button
                     mat-mini-fab
@@ -366,7 +366,7 @@
                     [object]="order"
                     [roleType]="m.SalesOrder.BillToEndCustomerContactPerson"
                     [options]="billToEndCustomerContacts"
-                    display="displayName"
+                    display="DisplayName"
                     label="Billing Contact Person"
                     class="col-md"
                   ></a-mat-select>

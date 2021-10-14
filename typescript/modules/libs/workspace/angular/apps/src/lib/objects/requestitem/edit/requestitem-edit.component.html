@@ -11,7 +11,7 @@
     </div>
 
     <div class="row">
-      <a-mat-select class="col-md" [object]="requestItem" [roleType]="m.RequestItem.SerialisedItem" [options]="serialisedItems" (selected)="serialisedItemSelected($event)" display="displayName"></a-mat-select>
+      <a-mat-select class="col-md" [object]="requestItem" [roleType]="m.RequestItem.SerialisedItem" [options]="serialisedItems" (selected)="serialisedItemSelected($event)" display="DisplayName"></a-mat-select>
       <a-mat-static [object]="requestItem.SerialisedItem" [roleType]="m.SerialisedItem.ExpectedSalesPrice"></a-mat-static>
     </div>
 

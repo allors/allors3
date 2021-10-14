@@ -3,7 +3,7 @@ import { map } from 'rxjs/operators';
 
 import { RoleType } from '@allors/workspace/meta/system';
 import { IObject, And, Or, TypeForParameter, IPullResult, Like, Pull } from '@allors/workspace/domain/system';
-import { Context, ContextService } from '@allors/workspace/angular/core';
+import { Context } from '@allors/workspace/angular/core';
 
 import { SearchOptions } from './search-options';
 

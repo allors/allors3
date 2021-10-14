@@ -18,14 +18,14 @@
       </div>
 
       <div class="row">
-        <a-mat-static *ngIf="serialisedItem" class="col-md" [object]="workEffortFixedAssetAssignment" [roleType]="m.WorkEffortFixedAssetAssignment.FixedAsset" display="displayName" label="Asset"></a-mat-static>
+        <a-mat-static *ngIf="serialisedItem" class="col-md" [object]="workEffortFixedAssetAssignment" [roleType]="m.WorkEffortFixedAssetAssignment.FixedAsset" display="DisplayName" label="Asset"></a-mat-static>
         <a-mat-autocomplete
           *ngIf="!serialisedItem && !externalCustomer"
           class="col-md"
           [object]="workEffortFixedAssetAssignment"
           [roleType]="m.WorkEffortFixedAssetAssignment.FixedAsset"
           [filter]="serialisedItemsFilter.create(allors.context)"
-          display="displayName"
+          display="DisplayName"
           label="Asset"
         ></a-mat-autocomplete>
         <a-mat-autocomplete
@@ -34,7 +34,7 @@
           [object]="workEffortFixedAssetAssignment"
           [roleType]="m.WorkEffortFixedAssetAssignment.FixedAsset"
           [options]="serialisedItems"
-          display="displayName"
+          display="DisplayName"
           label="Asset"
         ></a-mat-autocomplete>
       </div>

@@ -11,7 +11,7 @@
               [object]="purchaseReturn"
               [roleType]="m.PurchaseReturn.ShipToParty"
               [filter]="suppliersFilter.create(allors.context)"
-              display="displayName"
+              display="DisplayName"
               (changed)="supplierSelected($event)"
               label="Supplier"
             ></a-mat-autocomplete>
@@ -22,7 +22,7 @@
       <div class="row">
         <div class="col-md">
           <div class="row">
-            <a-mat-select class="col" [object]="purchaseReturn" [roleType]="m.PurchaseReturn.ShipToAddress" [options]="shipToAddresses" display="displayName"></a-mat-select>
+            <a-mat-select class="col" [object]="purchaseReturn" [roleType]="m.PurchaseReturn.ShipToAddress" [options]="shipToAddresses" display="DisplayName"></a-mat-select>
             <button mat-mini-fab color="accent" [disabled]="!purchaseReturn.ShipToParty || !purchaseReturn.canWriteShipToAddress" type="button" (click)="addShipToAddress = !addShipToAddress">
               <mat-icon *ngIf="!addShipToAddress">add</mat-icon>
               <mat-icon *ngIf="addShipToAddress">close</mat-icon>
@@ -40,7 +40,7 @@
 
         <div class="col-md">
           <div class="row">
-            <a-mat-select class="col" [object]="purchaseReturn" [roleType]="m.PurchaseReturn.ShipToContactPerson" [options]="shipToContacts" display="displayName" label="Supplier contact person"></a-mat-select>
+            <a-mat-select class="col" [object]="purchaseReturn" [roleType]="m.PurchaseReturn.ShipToContactPerson" [options]="shipToContacts" display="DisplayName" label="Supplier contact person"></a-mat-select>
             <button mat-mini-fab color="accent" [disabled]="!purchaseReturn.ShipToParty || !purchaseReturn.canWriteShipToContactPerson" type="button" (click)="addShipToContactPerson = !addShipToContactPerson">
               <mat-icon *ngIf="!addShipToContactPerson">add</mat-icon>
               <mat-icon *ngIf="addShipToContactPerson">close</mat-icon>
