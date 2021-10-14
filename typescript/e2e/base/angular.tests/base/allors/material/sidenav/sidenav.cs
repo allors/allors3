@@ -8,7 +8,7 @@ namespace Tests
     using Allors.Database.Meta;
     using Components;
     using OpenQA.Selenium;
-    using OpenQA.Selenium.Support.PageObjects;
+    using SeleniumExtras.PageObjects;
 
     public partial class Sidenav : SelectorComponent
     {

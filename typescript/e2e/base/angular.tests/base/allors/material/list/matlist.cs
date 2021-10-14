@@ -9,7 +9,7 @@ namespace Components
     using Allors.Database;
     using Allors.Database.Meta;
     using OpenQA.Selenium;
-    using OpenQA.Selenium.Support.PageObjects;
+    using SeleniumExtras.PageObjects;
 
     public class MatList : SelectorComponent
     {

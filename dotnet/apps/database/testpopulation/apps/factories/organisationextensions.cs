@@ -10,7 +10,7 @@ namespace Allors.Database.Domain.TestPopulation
     using Bogus;
     using Person = Person;
 
-    public static class OrganisationExtensions
+    public static partial class OrganisationExtensions
     {
         public static Person CreateEmployee(this Organisation @this, string password, Faker faker)
         {

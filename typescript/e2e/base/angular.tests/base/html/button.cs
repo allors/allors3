@@ -8,7 +8,7 @@ namespace Components
     using System.Diagnostics.CodeAnalysis;
     using Allors.Database.Meta;
     using OpenQA.Selenium;
-    using OpenQA.Selenium.Support.PageObjects;
+    using SeleniumExtras.PageObjects;
 
     public class Button : SelectorComponent
     {

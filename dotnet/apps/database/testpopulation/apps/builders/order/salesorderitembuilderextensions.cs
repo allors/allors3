@@ -65,6 +65,30 @@ namespace Allors.Database.Domain.TestPopulation
             return @this;
         }
 
+        // TODO: Martien
+        public static SalesOrderItemBuilder WithPartItemDefaults(this SalesOrderItemBuilder @this)
+        {
+            var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
+            var faker = @this.Transaction.Faker();
+            var invoiceItemType = @this.Transaction.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.PartItemId));
+
+            var unifiedGoodExtent = @this.Transaction.Extent<UnifiedGood>();
+            unifiedGoodExtent.Filter.AddEquals(m.UnifiedGood.InventoryItemKind, new InventoryItemKinds(@this.Transaction).Serialised);
+            var serializedPart = unifiedGoodExtent[0];
+
+            @this.WithDescription(faker.Lorem.Sentences(2))
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithInvoiceItemType(invoiceItemType)
+                .WithProduct(serializedPart)
+                .WithSerialisedItem(serializedPart.SerialisedItems.FirstOrDefault())
+                .WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()))
+                .WithQuantityOrdered(1)
+                .WithAssignedUnitPrice(faker.Random.UInt());
+
+            return @this;
+        }
+
         public static SalesOrderItemBuilder WithNonSerialisedPartItemDefaults(this SalesOrderItemBuilder @this)
         {
             var m = @this.Transaction.Database.Services.Get<MetaPopulation>();

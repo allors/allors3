@@ -96,12 +96,11 @@ namespace Tests
                 var config = new Config();
                 new Setup(database, config).Apply();
 
-                using var session = database.CreateTransaction();
-                session.Commit();
+                using var transaction = database.CreateTransaction();
 
-                new IntranetPopulation(session, null, this.M).Execute();
+                new IntranetPopulation(transaction, null, this.M).Execute();
 
-                session.Commit();
+                transaction.Commit();
 
                 using var stringWriter = new StringWriter();
                 using (var writer = XmlWriter.Create(stringWriter))

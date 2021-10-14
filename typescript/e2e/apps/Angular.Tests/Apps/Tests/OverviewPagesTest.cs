@@ -11,7 +11,7 @@ namespace Tests.ApplicationTests
     using System.Reflection;
     using Components;
     using OpenQA.Selenium;
-    using OpenQA.Selenium.Support.PageObjects;
+    using SeleniumExtras.PageObjects;
     using Xunit;
 
     [Collection("Test collection")]

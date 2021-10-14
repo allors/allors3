@@ -5,7 +5,6 @@
 
 
 using Allors.Database.Meta;
-using Allors.Domain.TestPopulation;
 
 namespace Tests
 {
@@ -78,7 +77,7 @@ namespace Tests
                 logo: "allors.png",
                 storeName: "Allors Store",
                 billingProcess: new BillingProcesses(this.Session).BillingForOrderItems,
-                outgoingShipmentNumberPrefix: "a-CS",
+                customerShipmentNumberPrefix: "a-CS",
                 salesInvoiceNumberPrefix: "a-SI",
                 salesOrderNumberPrefix: "a-SO",
                 purchaseOrderNumberPrefix: "a-PO",
@@ -138,7 +137,7 @@ namespace Tests
                 logo: "allors.png",
                 storeName: "Dipu Store",
                 billingProcess: new BillingProcesses(this.Session).BillingForOrderItems,
-                outgoingShipmentNumberPrefix: "d-CS",
+                customerShipmentNumberPrefix: "d-CS",
                 salesInvoiceNumberPrefix: "d-SI",
                 salesOrderNumberPrefix: "d-SO",
                 purchaseOrderNumberPrefix: "d-PO",
@@ -235,12 +234,13 @@ namespace Tests
                 .WithOwner(allors)
                 .Build();
 
-            var store = new StoreBuilder(this.Session).WithName("store")
-                .WithInternalOrganisation(allors)
-                .WithDefaultFacility(facility)
-                .WithDefaultShipmentMethod(new ShipmentMethods(this.Session).Ground)
-                .WithDefaultCarrier(new Carriers(this.Session).Fedex)
-                .Build();
+            // TODO: Martien
+            //var store = new StoreBuilder(this.Session).WithName("store")
+            //    .WithInternalOrganisation(allors)
+            //    .WithDefaultFacility(facility)
+            //    .WithDefaultShipmentMethod(new ShipmentMethods(this.Session).Ground)
+            //    .WithDefaultCarrier(new Carriers(this.Session).Fedex)
+            //    .Build();
 
             var productType = new ProductTypeBuilder(this.Session)
                 .WithName($"Gizmo Serialised")
@@ -342,11 +342,11 @@ namespace Tests
 
             var purchaseInvoicePartItem = new PurchaseInvoiceItemBuilder(this.Session).WithPartItemDefaults().Build();
 
-            var purchaseInvoiceProductItem = new PurchaseInvoiceItemBuilder(this.Session).WithProductItemDefaults().Build();
+            var purchaseInvoiceProductItem = new PurchaseInvoiceItemBuilder(this.Session).WithSerialisedProductItemDefaults().Build();
 
             var purchaseInvoiceNotPartOrProductItem = new PurchaseInvoiceItemBuilder(this.Session).WithDefaults().Build();
 
-            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(allors).Build();
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Session).WithExternalB2BInvoiceDefaults(allors).Build();
 
             allors.CreatePurchaseOrderWithBothItems(faker);
 
@@ -379,7 +379,7 @@ namespace Tests
 
             this.Session.Derive();
 
-            var salesOrderItem_1 = new SalesOrderItemBuilder(this.Session).WithNonSerialisedProductItemDefaults().Build();
+            var salesOrderItem_1 = new SalesOrderItemBuilder(this.Session).WithNonSerialisedPartItemDefaults().Build();
 
             salesOrder_2.AddSalesOrderItem(salesOrderItem_1);
 

@@ -9,7 +9,7 @@ namespace Allors.Database.Domain.TestPopulation
     using System.Linq;
     using Domain;
 
-    public static class WorkEffortExtensions
+    public static partial class WorkEffortExtensions
     {
         public static WorkEffortInventoryAssignment CreateInventoryAssignment(this WorkEffort @this, Part part, int quantity)
         {
