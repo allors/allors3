@@ -54,7 +54,8 @@ partial class Build : NukeBuild
         .DependsOn(DemosSecurityGenerate);
 
     Target Scaffold => _ => _
-        .DependsOn(TypescriptE2EBaseScaffold);
+        .DependsOn(TypescriptE2EBaseScaffold)
+        .DependsOn(TypescriptE2EAppsScaffold);
 
     private Target Default => _ => _
         .DependsOn(Install)

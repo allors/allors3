@@ -4,6 +4,9 @@ export { MenuItem } from './lib/menu/menu-item';
 export { AuthenticationTokenRequest } from './lib/services/authentication/authentication-token-request';
 export { AuthenticationTokenResponse } from './lib/services/authentication/authentication-token-response';
 export { AuthenticationService } from './lib/services/authentication/authentication.service';
+export { AuthenticationConfig } from './lib/services/authentication/authentication.config';
+export { AuthenticationInterceptor } from './lib/services/authentication/authentication.interceptor';
+export { AuthenticationServiceBase } from './lib/services/authentication/authentication.service.base';
 export { AllorsBarcodeService } from './lib/services/barcode/barcode.service';
 export { DateService } from './lib/services/date/date.service';
 export { AllorsFocusService } from './lib/services/focus/focus.service';
@@ -20,10 +23,6 @@ export { UserId } from './lib/services/state/user-id';
 export { Action } from './lib/components/actions/action';
 export { ActionResult } from './lib/components/actions/action-result';
 export { ActionTarget } from './lib/components/actions/action-target';
-
-export { AuthenticationConfig } from './lib/components/authentication/authentication.config';
-export { AuthenticationInterceptor } from './lib/components/authentication/authentication.interceptor';
-export { AuthenticationServiceBase } from './lib/components/authentication/authentication.service.base';
 
 export { AllorsBarcodeDirective } from './lib/components/barcode/barcode.directive';
 export { AllorsBarcodeServiceCore } from './lib/components/barcode/barcode.service.core';
