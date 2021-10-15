@@ -52,6 +52,10 @@ partial class Build
 
     private Target CiTypescriptWorkspaceBaseE2ETest => _ => _
         .DependsOn(TypescriptInstall)
+        .DependsOn(TypescriptE2EBaseTest);
+
+    private Target CiTypescriptWorkspaceAppsE2ETest => _ => _
+        .DependsOn(TypescriptInstall)
         .DependsOn(TypescriptE2EAppsTest);
 
     private Target CiDemosTest => _ => _
