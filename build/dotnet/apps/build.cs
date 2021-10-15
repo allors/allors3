@@ -7,7 +7,7 @@ using static Nuke.Common.Tools.Npm.NpmTasks;
 
 partial class Build
 {
-    private Target DotnetAppsResetDatabase => _ => _
+    private Target DotnetAppsResetDataapps => _ => _
         .Executes(() =>
         {
             var database = "Apps";
@@ -65,12 +65,7 @@ partial class Build
                 .SetOutput(Paths.ArtifactsAppsServer);
             DotNetPublish(dotNetPublishSettings);
         });
-
-    private Target DotnetAppsInstall => _ => _
-        .Executes(() => NpmInstall(s => s
-            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(Paths.DotnetAppsWorkspaceTypescript)));
-
+    
     private Target DotnetAppsWorkspaceTypescriptSession => _ => _
         .DependsOn(DotnetAppsGenerate)
         .DependsOn(EnsureDirectories)

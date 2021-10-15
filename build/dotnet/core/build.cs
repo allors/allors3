@@ -92,11 +92,6 @@ partial class Build
                 .SetResultsDirectory(Paths.ArtifactsTests));
         });
 
-    private Target DotnetCoreInstall => _ => _
-        .Executes(() => NpmInstall(s => s
-            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(Paths.DotnetCoreWorkspaceTypescript)));
-
     private Target DotnetCoreWorkspaceLocalTest => _ => _
         .DependsOn(DotnetCorePublishServer)
         .DependsOn(DotnetCorePublishCommands)

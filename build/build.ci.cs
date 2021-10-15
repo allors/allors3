@@ -19,32 +19,27 @@ partial class Build
         .DependsOn(DotnetCoreDatabaseTest);
 
     private Target CiDotnetCoreWorkspaceLocalTest => _ => _
-        .DependsOn(DotnetCoreInstall)
         .DependsOn(DotnetCoreWorkspaceLocalTest);
 
     private Target CiDotnetCoreWorkspaceRemoteJsonSystemTextTest => _ => _
-        .DependsOn(DotnetCoreInstall)
         .DependsOn(DotnetCoreWorkspaceRemoteJsonSystemTextTest);
 
     private Target CiDotnetCoreWorkspaceRemoteJsonRestSharpTest => _ => _
-        .DependsOn(DotnetCoreInstall)
         .DependsOn(DotnetCoreWorkspaceRemoteJsonRestSharpTest);
 
     private Target CiDotnetLegacyDatabaseTest => _ => _
         .DependsOn(DotnetLegacyDatabaseTest);
-    
+
     private Target CiDotnetBaseDatabaseTest => _ => _
         .DependsOn(DotnetBaseDatabaseTest);
 
     private Target CiDotnetBaseWorkspaceTest => _ => _
-        .DependsOn(DotnetBaseInstall)
         .DependsOn(DotnetBaseWorkspaceTest);
 
     private Target CiDotnetAppsDatabaseTest => _ => _
         .DependsOn(DotnetAppsDatabaseTest);
 
     private Target CiDotnetAppsWorkspaceTest => _ => _
-        .DependsOn(DotnetAppsInstall)
         .DependsOn(DotnetAppsWorkspaceTest);
 
     private Target CiTypescriptWorkspaceTest => _ => _
@@ -54,7 +49,11 @@ partial class Build
     private Target CiTypescriptWorkspaceAdaptersJsonTest => _ => _
         .DependsOn(TypescriptInstall)
         .DependsOn(TypescriptWorkspaceAdaptersJsonTest);
-    
+
+    private Target CiTypescriptWorkspaceBaseE2ETest => _ => _
+        .DependsOn(TypescriptInstall)
+        .DependsOn(TypescriptE2EAppsTest);
+
     private Target CiDemosTest => _ => _
         .DependsOn(DemosDerivationTest)
         .DependsOn(DemosSecurityTest);

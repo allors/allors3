@@ -6,7 +6,7 @@ import { configure } from './app/configure';
 import { M } from '@allors/workspace/meta/default';
 import { MenuItem } from '@allors/workspace/angular/base';
 
-import { create, edit } from './app/app.module';
+// import { create, edit } from './app/app.module';
 
 interface MetaInfo {
   tag: string;
@@ -49,14 +49,14 @@ describe('Scaffold', () => {
 
     const menu: MenuInfo[] = m._.menu.map(menuMapper);
 
-    const dialogs = {
-      create: Object.keys(create).map((v) => ({ tag: v, component: create[v].name })),
-      edit: Object.keys(edit).map((v) => ({ tag: v, component: edit[v].name })),
-    };
+    // const dialogs = {
+    //   create: Object.keys(create).map((v) => ({ tag: v, component: create[v].name })),
+    //   edit: Object.keys(edit).map((v) => ({ tag: v, component: edit[v].name })),
+    // };
 
     fs.mkdirSync('./dist/base', { recursive: true } as any);
     fs.writeFileSync('./dist/base/meta.json', JSON.stringify(meta));
     fs.writeFileSync('./dist/base/menu.json', JSON.stringify(menu));
-    fs.writeFileSync('./dist/base/dialogs.json', JSON.stringify(dialogs));
+    // fs.writeFileSync('./dist/base/dialogs.json', JSON.stringify(dialogs));
   });
 });

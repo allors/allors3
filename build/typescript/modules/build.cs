@@ -30,7 +30,6 @@ partial class Build
             .SetCommand("test:workspace-adapters-system")));
 
     private Target TypescriptWorkspaceAdaptersJsonSystem => _ => _
-        .After(DotnetCoreInstall)
         .After(TypescriptInstall)
         .DependsOn(EnsureDirectories)
         .DependsOn(DotnetCoreGenerate)

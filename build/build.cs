@@ -42,9 +42,6 @@ partial class Build : NukeBuild
 
 
     private Target Install => _ => _
-        .DependsOn(DotnetCoreInstall)
-        .DependsOn(DotnetBaseInstall)
-        .DependsOn(DotnetAppsInstall)
         .DependsOn(TypescriptInstall);
 
     private Target Generate => _ => _
@@ -55,6 +52,9 @@ partial class Build : NukeBuild
         .DependsOn(DotnetAppsGenerate)
         .DependsOn(DemosDerivationGenerate)
         .DependsOn(DemosSecurityGenerate);
+
+    Target Scaffold => _ => _
+        .DependsOn(TypescriptE2EBaseScaffold);
 
     private Target Default => _ => _
         .DependsOn(Install)

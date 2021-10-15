@@ -66,11 +66,6 @@ partial class Build
             DotNetPublish(dotNetPublishSettings);
         });
 
-    private Target DotnetBaseInstall => _ => _
-        .Executes(() => NpmInstall(s => s
-            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(Paths.DotnetBaseWorkspaceTypescript)));
-
     private Target DotnetBaseWorkspaceTypescriptSession => _ => _
         .DependsOn(DotnetBaseGenerate)
         .DependsOn(EnsureDirectories)

@@ -38,6 +38,10 @@ stages:
           target: 'CiTypescriptWorkspaceTest'
         typescript_workspace_adapters_json:
           target: 'CiTypescriptWorkspaceAdaptersJsonTest'
+        typescript_workspace_base_e2e:
+          target: 'CiTypescriptWorkspaceBaseE2ETest'
+        typescript_workspace_apps_e2e:
+          target: 'CiTypescriptWorkspaceAppsE2ETest'
         demos:
           target: 'CiDemosTest'
 
