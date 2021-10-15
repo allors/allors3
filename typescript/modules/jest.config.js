@@ -1,6 +1,8 @@
+const { getJestProjects } = require('@nrwl/jest');
+
 module.exports = {
   projects: [
-    ,
+    ...getJestProjects(),
     '<rootDir>/libs/workspace/adapters/json/system',
     '<rootDir>/libs/workspace/domain/core',
     '<rootDir>/libs/workspace/meta/core',
