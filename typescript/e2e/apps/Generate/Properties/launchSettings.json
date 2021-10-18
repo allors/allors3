@@ -1,7 +1,8 @@
 {
   "profiles": {
     "Generate": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\KoenVanExem\\source\\repos\\Allors\\allors3\\typescript\\e2e\\apps"
     }
   }
 }

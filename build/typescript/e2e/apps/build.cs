@@ -22,6 +22,7 @@ partial class Build
             using var angular = new Angular(Paths.TypescriptModules, "angular-apps:serve");
             await angular.Init();
             DotNetRun(s => s
+                .SetProcessWorkingDirectory(Paths.TypescriptE2EApps)
                 .SetProjectFile(Paths.TypescriptE2EAppsGenerate)
             );
         });

@@ -3,4 +3,6 @@ export const environment = {
   baseUrl: 'http://localhost:5000/allors/',
   authUrl: 'TestAuthentication/Token',
   // authUrl: 'Authentication/Token',
+  routes: [],
+  components: [],
 };

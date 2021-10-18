@@ -9,8 +9,6 @@ namespace Autotest
 {
     using System.Linq;
 
-    using Newtonsoft.Json.Linq;
-
     public partial class Menu
     {
         public Model Model { get; set; }

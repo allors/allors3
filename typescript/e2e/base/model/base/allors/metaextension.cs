@@ -5,10 +5,6 @@
 
 namespace Autotest
 {
-    using System;
-    using System.Collections.Generic;
-    using Newtonsoft.Json.Linq;
-
     public partial class MetaExtension
     {
         public string Tag { get; set; }
@@ -20,31 +16,5 @@ namespace Autotest
         public string Create { get; set; }
 
         public string Edit { get; set; }
-
-        public static void Load(Dictionary<string, MetaExtension> metaExtensionByTag, JArray jsonMetaExtensions, Action<MetaExtension, JToken> setter)
-        {
-            foreach (var json in jsonMetaExtensions)
-            {
-                if (json["tag"] != null)
-                {
-                    var tag = json["tag"].Value<string>();
-                    if (tag == null)
-                    {
-                        throw new ArgumentException("tag is not a string: " + json["tag"].Value<object>());
-                    }
-
-                    if (!metaExtensionByTag.TryGetValue(tag, out var metaExtension))
-                    {
-                        metaExtension = new MetaExtension
-                        {
-                            Tag = tag,
-                        };
-                        metaExtensionByTag.Add(tag, metaExtension);
-                    }
-
-                    setter(metaExtension, json);
-                }
-            }
-        }
     }
 }

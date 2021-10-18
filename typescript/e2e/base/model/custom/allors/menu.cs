@@ -5,11 +5,11 @@
 
 namespace Autotest
 {
-    using Newtonsoft.Json.Linq;
+    using Tests;
 
     public partial class Menu
     {
-        private void CustomLoad(JArray json)
+        private void CustomLoad(MenuInfo[] json)
         {
         }
     }

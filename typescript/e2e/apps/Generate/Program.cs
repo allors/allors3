@@ -66,14 +66,14 @@ namespace Allors
                     MetaPopulation = new MetaBuilder().Build(),
                 };
 
-                const string location = "../../../../../../modules/dist/apps";
+                const string location = "../../modules/dist/apps";
                 model.LoadProject(new FileInfo($"{location}/project.json"));
 
                 using var driverManager = new DriverManager();
                 driverManager.Start();
                 var driver = driverManager.Driver;
 
-                driver.Navigate().GoToUrl("http://localhost:4200/allors");
+                driver.Navigate().GoToUrl("http://localhost:4200/_allors");
                 var json = driver.GetGlobal("allors");
                 var info = JsonSerializer.Deserialize<AllorsInfo>(json);
                 model.LoadMetaExtensions(info);

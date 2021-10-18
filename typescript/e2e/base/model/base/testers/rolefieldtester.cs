@@ -3,13 +3,10 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using System.Diagnostics;
-
 namespace Autotest.Testers
 {
     using System;
     using System.Linq;
-    using Allors.Workspace.Meta;
     using Html;
     using Humanizer;
 

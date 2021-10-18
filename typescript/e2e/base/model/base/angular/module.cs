@@ -7,7 +7,6 @@ namespace Autotest.Angular
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
     using Html;
     using Newtonsoft.Json.Linq;

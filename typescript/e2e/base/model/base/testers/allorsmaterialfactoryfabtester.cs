@@ -8,7 +8,6 @@ namespace Autotest.Testers
 {
     using System;
     using System.Linq;
-    using Allors.Workspace.Meta;
     using Angular;
     using Html;
     using Model = Autotest.Model;

@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using Newtonsoft.Json.Linq;
+
 namespace Autotest.Html
 {
     using System;
@@ -10,7 +12,6 @@ namespace Autotest.Html
     using System.Linq;
     using Angular;
     using Humanizer;
-    using Newtonsoft.Json.Linq;
 
     public partial class Element : INode
     {

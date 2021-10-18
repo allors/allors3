@@ -10,9 +10,9 @@ namespace Autotest.Angular
     using System.Linq;
     using System.Text.RegularExpressions;
     using Html;
+    using Newtonsoft.Json.Linq;
     using Testers;
     using Typescript;
-    using Newtonsoft.Json.Linq;
     using Class = Typescript.Class;
 
     public partial class Directive
