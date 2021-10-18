@@ -3,6 +3,10 @@
 // Licensed under the LGPL v3 license.
 // </copyright>
 
+using System.Text.Json;
+using System.Threading.Tasks;
+using Tests;
+
 namespace Allors
 {
     using System;
@@ -20,10 +24,10 @@ namespace Allors
                 string[,] config =
                 {
                     {
-                        "./Templates/sidenav.cs.stg", "./Angular.Tests/generated/sidenav",
+                        "../Base/Templates/sidenav.cs.stg", "./Angular.Tests/generated/sidenav",
                     },
                     {
-                        "./Templates/component.cs.stg", "./Angular.Tests/generated/components",
+                        "../Base/Templates/component.cs.stg", "./Angular.Tests/generated/components",
                     },
                 };
 
@@ -51,8 +55,10 @@ namespace Allors
             return 0;
         }
 
-        private static int Main(string[] args)
+        private static async Task<int> Main(string[] args)
         {
+            int result;
+
             try
             {
                 var model = new Model
@@ -60,34 +66,34 @@ namespace Allors
                     MetaPopulation = new MetaBuilder().Build(),
                 };
 
-                const string location = "../../modules/dist/base";
-                model.LoadMetaExtensions(new FileInfo($"{location}/meta.json"));
+                const string location = "../../../../../../modules/dist/base";
                 model.LoadProject(new FileInfo($"{location}/project.json"));
-                model.LoadMenu(new FileInfo($"{location}/menu.json"));
 
-                var dialogsFileInfo = new FileInfo($"{location}/dialogs.json");
-                if (dialogsFileInfo.Exists)
+                using var driverManager = new DriverManager();
+                driverManager.Start();
+                var driver = driverManager.Driver;
+
+                driver.Navigate().GoToUrl("http://localhost:4200/allors");
+                var json = driver.GetGlobal("allors");
+                var info = JsonSerializer.Deserialize<AllorsInfo>(json);
+                model.LoadMetaExtensions(info);
+                model.LoadMenu(info);
+                model.LoadDialogs(info);
+
+                result = args.Length switch
                 {
-                    model.LoadDialogs(dialogsFileInfo);
-                }
-
-                switch (args.Length)
-                {
-                    case 0:
-                        return Default(model);
-
-                    case 2:
-                        return Generate.Execute(args[0], args[1], model).ErrorOccured ? 1 : 0;
-
-                    default:
-                        return 1;
-                }
+                    0 => Default(model),
+                    2 => Generate.Execute(args[0], args[1], model).ErrorOccured ? 1 : 0,
+                    _ => 1
+                };
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
-                return 1;
+                result = 1;
             }
+
+            return result;
         }
 
         private static void RemoveDirectory(string output)

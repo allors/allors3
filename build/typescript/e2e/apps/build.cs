@@ -16,10 +16,15 @@ partial class Build
 
     private Target TypescriptE2EAppsScaffold => _ => _
         .DependsOn(TypescriptE2EAppsPrepare)
-        .Executes(() => DotNetRun(s => s
-            .SetProcessWorkingDirectory(Paths.TypescriptE2EApps)
-            .SetProjectFile(Paths.TypescriptE2EAppsGenerate)
-            ));
+        .Executes(async () =>
+        {
+
+            using var angular = new Angular(Paths.TypescriptModules, "angular-apps:serve");
+            await angular.Init();
+            DotNetRun(s => s
+                .SetProjectFile(Paths.TypescriptE2EAppsGenerate)
+            );
+        });
 
     private Target TypescriptE2EAppsTest => _ => _
         .DependsOn(DotnetAppsPublishCommands)

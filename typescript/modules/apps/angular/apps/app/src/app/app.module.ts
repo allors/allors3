@@ -363,6 +363,7 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
 }
 
 export const routes: Routes = [
+  ...environment.routes,
   { path: 'login', component: LoginComponent },
   { path: 'error', component: ErrorComponent },
   {
@@ -863,6 +864,7 @@ export const edit = {
     MainComponent,
     DashboardComponent,
     AppComponent,
+    ...environment.components,
   ],
   imports: [
     BrowserModule,

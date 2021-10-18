@@ -3,6 +3,10 @@
 // Licensed under the LGPL v3 license.
 // </copyright>
 
+using System.Text.Json;
+using System.Threading.Tasks;
+using Tests;
+
 namespace Allors
 {
     using System;
@@ -51,8 +55,10 @@ namespace Allors
             return 0;
         }
 
-        private static int Main(string[] args)
+        private static async Task<int> Main(string[] args)
         {
+            int result;
+
             try
             {
                 var model = new Model
@@ -60,29 +66,34 @@ namespace Allors
                     MetaPopulation = new MetaBuilder().Build(),
                 };
 
-                const string location = "../../modules/dist/apps";
-                model.LoadMetaExtensions(new FileInfo($"{location}/meta.json"));
+                const string location = "../../../../../../modules/dist/apps";
                 model.LoadProject(new FileInfo($"{location}/project.json"));
-                model.LoadMenu(new FileInfo($"{location}/menu.json"));
-                model.LoadDialogs(new FileInfo($"{location}/dialogs.json"));
 
-                switch (args.Length)
+                using var driverManager = new DriverManager();
+                driverManager.Start();
+                var driver = driverManager.Driver;
+
+                driver.Navigate().GoToUrl("http://localhost:4200/allors");
+                var json = driver.GetGlobal("allors");
+                var info = JsonSerializer.Deserialize<AllorsInfo>(json);
+                model.LoadMetaExtensions(info);
+                model.LoadMenu(info);
+                model.LoadDialogs(info);
+
+                result = args.Length switch
                 {
-                    case 0:
-                        return Default(model);
-
-                    case 2:
-                        return Generate.Execute(args[0], args[1], model).ErrorOccured ? 1 : 0;
-
-                    default:
-                        return 1;
-                }
+                    0 => Default(model),
+                    2 => Generate.Execute(args[0], args[1], model).ErrorOccured ? 1 : 0,
+                    _ => 1
+                };
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
-                return 1;
+                result = 1;
             }
+
+            return result;
         }
 
         private static void RemoveDirectory(string output)

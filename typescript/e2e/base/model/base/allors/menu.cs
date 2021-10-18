@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using Tests;
+
 namespace Autotest
 {
     using System.Linq;
@@ -15,14 +17,15 @@ namespace Autotest
 
         public MenuItem[] MenuItems { get; set; }
 
-        public void BaseLoad(JArray jsonArray) =>
-            this.MenuItems = jsonArray?.Cast<JObject>()
+        public void BaseLoad(MenuInfo[] items) =>
+            this.MenuItems = items?
                 .Select(v =>
                 {
                     var child = new MenuItem
                     {
                         Menu = this,
                     };
+
                     child.Load(v);
                     return child;
                 }).ToArray();

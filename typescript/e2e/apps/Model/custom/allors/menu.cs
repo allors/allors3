@@ -3,13 +3,15 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using Tests;
+
 namespace Autotest
 {
     using Newtonsoft.Json.Linq;
 
     public partial class Menu
     {
-        private void CustomLoad(JArray json)
+        private void CustomLoad(MenuInfo[] json)
         {
         }
     }

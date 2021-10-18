@@ -53,22 +53,15 @@ namespace Tests
             // TODO: lower timeouts
             this.Driver.Manage().Timeouts().PageLoad = TimeSpan.FromMinutes(5);
             this.Driver.Manage().Timeouts().AsynchronousJavaScript = TimeSpan.FromMinutes(5);
-
-            // Move to monitor on the left
-            this.Driver.Manage().Window.Position = new Point(-800, 0);
-            try
-            {
-                this.Driver.Manage().Window.Maximize();
-            }
-            catch
-            {
-                // MacOS will throw an error on Maximize()
-                this.Driver.Manage().Window.FullScreen();
-            }
         }
 
         public void Stop()
         {
+            if (this.Driver == null)
+            {
+                return;
+            }
+
             try
             {
                 this.Driver.Close();

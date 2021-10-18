@@ -12,6 +12,7 @@ namespace Autotest
     using Angular;
     using Humanizer;
     using Newtonsoft.Json.Linq;
+    using Tests;
 
     public partial class MenuItem
     {
@@ -61,14 +62,14 @@ namespace Autotest
             }
         }
 
-        public void BaseLoadMenu(JObject json)
+        public void BaseLoadMenu(MenuInfo item)
         {
-            this.Tag = json["tag"]?.Value<string>();
-            this.AssignedTitle = json["title"]?.Value<string>();
-            this.AssignedLink = json["link"]?.Value<string>();
+            this.Tag = item.tag;
+            this.AssignedTitle = item.title;
+            this.AssignedLink = item.link;
 
-            this.Children = json["children"]?.Cast<JObject>()
-                .Select(v =>
+            this.Children = item.children
+                ?.Select(v =>
                 {
                     var child = new MenuItem
                     {

@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using Tests;
+
 namespace Autotest
 {
     using System.Collections.Generic;
@@ -24,23 +26,6 @@ namespace Autotest
 
         public ValidationLog Validate() => new ValidationLog();
 
-        public void LoadMetaExtensions(FileInfo fileInfo)
-        {
-            using (var file = File.OpenText(fileInfo.FullName))
-            using (var reader = new JsonTextReader(file))
-            {
-                var jsonMetaExtensions = (JArray)JToken.ReadFrom(reader);
-
-                void Setter(MetaExtension metaExtension, JToken json)
-                {
-                    metaExtension.List = json["list"]?.Value<string>();
-                    metaExtension.Overview = json["overview"]?.Value<string>();
-                }
-
-                MetaExtension.Load(this.MetaExtensionByTag, jsonMetaExtensions, Setter);
-            }
-        }
-
         public void LoadProject(FileInfo fileInfo)
         {
             using (var file = File.OpenText(fileInfo.FullName))
@@ -56,45 +41,54 @@ namespace Autotest
             }
         }
 
-        public void LoadMenu(FileInfo fileInfo)
-         {
-            using (var file = File.OpenText(fileInfo.FullName))
-            using (var reader = new JsonTextReader(file))
+        public void LoadMetaExtensions(AllorsInfo allors)
+        {
+            foreach (var metaInfo in allors.meta)
             {
-                var jsonMenu = (JArray)JToken.ReadFrom(reader);
-
-                this.Menu = new Menu
-                {
-                    Model = this,
-                };
-                this.Menu.Load(jsonMenu);
+                var extension = this.GetOrCreateExtension(metaInfo.tag);
+                extension.List = metaInfo.list;
+                extension.Overview = metaInfo.overview;
             }
         }
 
-        public void LoadDialogs(FileInfo fileInfo)
+        public void LoadMenu(AllorsInfo allors)
         {
-            using (var file = File.OpenText(fileInfo.FullName))
-            using (var reader = new JsonTextReader(file))
+            this.Menu = new Menu
             {
-                var jsonDialogs = JToken.ReadFrom(reader);
+                Model = this,
+            };
 
-                var create = jsonDialogs["create"] as JArray;
-                var edit = jsonDialogs["edit"] as JArray;
+            this.Menu.Load(allors.menu);
+        }
 
-                void CreateSetter(MetaExtension metaExtension, JToken json)
-                {
-                    metaExtension.Create = json["component"]?.Value<string>();
-                }
-
-                MetaExtension.Load(this.MetaExtensionByTag, create, CreateSetter);
-
-                void EditSetter(MetaExtension metaExtension, JToken json)
-                {
-                    metaExtension.Edit = json["component"]?.Value<string>();
-                }
-
-                MetaExtension.Load(this.MetaExtensionByTag, edit, EditSetter);
+        public void LoadDialogs(AllorsInfo allors)
+        {
+            foreach (var createInfo in allors.dialog.create)
+            {
+                var extension = this.GetOrCreateExtension(createInfo.tag);
+                extension.Create = createInfo.component;
             }
+
+            foreach (var editInfo in allors.dialog.edit)
+            {
+                var extension = this.GetOrCreateExtension(editInfo.tag);
+                extension.Edit = editInfo.component;
+            }
+        }
+
+        private MetaExtension GetOrCreateExtension(string tag)
+        {
+            if (!this.MetaExtensionByTag.TryGetValue(tag, out var metaExtension))
+            {
+                metaExtension = new MetaExtension
+                {
+                    Tag = tag,
+                };
+
+                this.MetaExtensionByTag.Add(tag, metaExtension);
+            }
+
+            return metaExtension;
         }
     }
 }
