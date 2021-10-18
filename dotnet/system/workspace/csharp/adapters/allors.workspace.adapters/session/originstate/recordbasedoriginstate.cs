@@ -7,6 +7,7 @@ namespace Allors.Workspace.Adapters
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.Design;
     using System.Linq;
     using Meta;
     using Ranges;
@@ -171,41 +172,29 @@ namespace Allors.Workspace.Adapters
             // Same record
             if (this.PreviousRecord == null || this.Record == null || this.Record.Version == this.PreviousRecord.Version)
             {
-                // No previous changed roles
-                if (this.PreviousChangedRoleByRelationType == null)
+                foreach (var kvp in this.ChangedRoleByRelationType)
                 {
-                    if (this.ChangedRoleByRelationType != null)
-                    {
-                        // Changed roles
-                        foreach (var kvp in this.ChangedRoleByRelationType)
-                        {
-                            var relationType = kvp.Key;
-                            var current = kvp.Value;
-                            var previous = this.Record?.GetRole(relationType.RoleType);
+                    var relationType = kvp.Key;
+                    var current = kvp.Value;
 
-                            if (relationType.RoleType.ObjectType.IsUnit)
-                            {
-                                changeSet.DiffUnit(this.Strategy, relationType, current, previous);
-                            }
-                            else if (relationType.RoleType.IsOne)
-                            {
-                                changeSet.DiffComposite(this.Strategy, relationType, (Strategy)current, (long?)previous);
-                            }
-                            else
-                            {
-                                changeSet.DiffComposites(this.Strategy, relationType, (IRange<Strategy>)current, (IRange<long>)previous);
-                            }
+                    if (this.PreviousChangedRoleByRelationType != null && this.PreviousChangedRoleByRelationType.TryGetValue(relationType, out var previousChangedRole))
+                    {
+                        if (relationType.RoleType.ObjectType.IsUnit)
+                        {
+                            changeSet.DiffUnit(this.Strategy, relationType, current, previousChangedRole);
+                        }
+                        else if (relationType.RoleType.IsOne)
+                        {
+                            changeSet.DiffComposite(this.Strategy, relationType, (Strategy)current, (Strategy)previousChangedRole);
+                        }
+                        else
+                        {
+                            changeSet.DiffComposites(this.Strategy, relationType, (IRange<Strategy>)current, (IRange<Strategy>)previousChangedRole);
                         }
                     }
-                }
-                // Previous changed roles
-                else
-                {
-                    foreach (var kvp in this.ChangedRoleByRelationType)
+                    else
                     {
-                        var relationType = kvp.Key;
-                        var current = kvp.Value;
-                        this.PreviousChangedRoleByRelationType.TryGetValue(relationType, out var previous);
+                        var previous = this.Record?.GetRole(relationType.RoleType);
 
                         if (relationType.RoleType.ObjectType.IsUnit)
                         {
@@ -219,6 +208,7 @@ namespace Allors.Workspace.Adapters
                         {
                             changeSet.DiffComposites(this.Strategy, relationType, (IRange<Strategy>)current, (IRange<long>)previous);
                         }
+
                     }
                 }
             }

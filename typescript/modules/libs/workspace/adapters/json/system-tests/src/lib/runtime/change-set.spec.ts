@@ -250,6 +250,58 @@ test('changeSetAfterPushWithPullWithNoChanges', async () => {
   expect(changeSet.associationsByRoleType.size).toBe(0);
 });
 
+test('changeSetOne2One', async () => {
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Equals',
+        propertyType: m.C1.Name,
+        value: 'c1A',
+      },
+    },
+  };
+
+  const result = await session.pull([pull]);
+  const c1a = result.collection<C1>('C1s')[0];
+  const c1x = session.create<C1>(m.C1);
+  const c1y = session.create<C1>(m.C1);
+
+  session.checkpoint();
+
+  c1a.C1C1One2One = c1x;
+
+  let changeSet = session.checkpoint();
+
+  expect(changeSet.created.size).toBe(0);
+  expect(changeSet.associationsByRoleType.size).toBe(1);
+  expect(changeSet.rolesByAssociationType.size).toBe(1);
+
+  expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).size).toBe(1);
+  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).size).toBe(1);
+
+  expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).values().next().value).toBe(c1a.strategy);
+  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).values().next().value).toBe(c1x.strategy);
+
+  c1a.C1C1One2One = c1y;
+
+  changeSet = session.checkpoint();
+
+  expect(changeSet.created.size).toBe(0);
+  expect(changeSet.associationsByRoleType.size).toBe(1);
+  expect(changeSet.rolesByAssociationType.size).toBe(1);
+
+  expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).size).toBe(1);
+  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).size).toBe(1);
+
+  expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).values().next().value).toBe(c1a.strategy);
+  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).values().next().value).toBe(c1y.strategy);
+});
+
 test('changeSetAfterPushOne2One', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();
@@ -603,6 +655,51 @@ test('changeSetAfterPushOne2ManyRemove', async () => {
 
   expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2Manies).values().next().value).toBe(c1a.strategy);
   expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2Manies.associationType).values().next().value).toBe(c1b.strategy);
+});
+
+test('changeSetMany2Many', async () => {
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.C1,
+      predicate: {
+        kind: 'Equals',
+        propertyType: m.C1.Name,
+        value: 'c1A',
+      },
+    },
+  };
+
+  const result = await session.pull([pull]);
+  const c1a = result.collection<C1>('C1s')[0];
+  const c1b = session.create<C1>(m.C1);
+
+  session.checkpoint();
+
+  c1a.addC1C1Many2Many(c1b);
+
+  let changeSet = session.checkpoint();
+
+  expect(changeSet.created.size).toBe(0);
+  expect(changeSet.associationsByRoleType.size).toBe(1);
+  expect(changeSet.rolesByAssociationType.size).toBe(1);
+
+  expect(changeSet.associationsByRoleType.get(m.C1.C1C1Many2Manies).values().next().value).toBe(c1a.strategy);
+  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1Many2Manies.associationType).values().next().value).toBe(c1b.strategy);
+
+  c1a.removeC1C1Many2Many(c1b);
+
+  changeSet = session.checkpoint();
+
+  expect(changeSet.created.size).toBe(0);
+  expect(changeSet.associationsByRoleType.size).toBe(1);
+  expect(changeSet.rolesByAssociationType.size).toBe(1);
+
+  expect(changeSet.associationsByRoleType.get(m.C1.C1C1Many2Manies).values().next().value).toBe(c1a.strategy);
+  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1Many2Manies.associationType).values().next().value).toBe(c1b.strategy);
 });
 
 test('changeSetAfterPushMany2Many', async () => {

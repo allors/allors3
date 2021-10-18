@@ -164,25 +164,19 @@ export abstract class RecordBasedOriginState {
   checkpoint(changeSet: ChangeSet) {
     //  Same record
     if (this.previousRecord == null || this.record == null || this.record.version == this.previousRecord.version) {
-      //  No previous changed roles
-      if (this.previousChangedRoleByRelationType == null) {
-        if (this.changedRoleByRelationType != null) {
-          //  Changed roles
-          this.changedRoleByRelationType.forEach((current, relationType) => {
-            const previous = this.record?.getRole(relationType.roleType);
+      this.changedRoleByRelationType.forEach((current, relationType) => {
+        if (this.previousChangedRoleByRelationType != null && this.previousChangedRoleByRelationType.has(relationType)) {
+          const previous = this.previousChangedRoleByRelationType.get(relationType);
 
-            if (relationType.roleType.objectType.isUnit) {
-              changeSet.diffUnit(this.strategy, relationType, current, previous);
-            } else if (relationType.roleType.isOne) {
-              changeSet.diffCompositeStrategyRecord(this.strategy, relationType, current as Strategy, previous as number);
-            } else {
-              changeSet.diffCompositesStrategyRecord(this.strategy, relationType, current as IRange<Strategy>, previous as IRange<number>);
-            }
-          });
-        }
-      } else {
-        this.changedRoleByRelationType.forEach((current, relationType) => {
-          const previous = this.previousChangedRoleByRelationType?.get(relationType);
+          if (relationType.roleType.objectType.isUnit) {
+            changeSet.diffUnit(this.strategy, relationType, current, previous);
+          } else if (relationType.roleType.isOne) {
+            changeSet.diffCompositeStrategyStrategy(this.strategy, relationType, current as Strategy, previous as Strategy);
+          } else {
+            changeSet.diffCompositesStrategyStrategy(this.strategy, relationType, current as IRange<Strategy>, previous as IRange<Strategy>);
+          }
+        } else {
+          const previous = this.record?.getRole(relationType.roleType);
 
           if (relationType.roleType.objectType.isUnit) {
             changeSet.diffUnit(this.strategy, relationType, current, previous);
@@ -191,9 +185,8 @@ export abstract class RecordBasedOriginState {
           } else {
             changeSet.diffCompositesStrategyRecord(this.strategy, relationType, current as IRange<Strategy>, previous as IRange<number>);
           }
-        });
-      }
-
+        }
+      });
       //  Previous changed roles
     } else {
       //  Different record
@@ -227,7 +220,7 @@ export abstract class RecordBasedOriginState {
     }
 
     this.previousRecord = this.record;
-    this.previousChangedRoleByRelationType = this.changedRoleByRelationType;
+    this.previousChangedRoleByRelationType = new Map(this.changedRoleByRelationType);
   }
 
   diff(diffs: IDiff[]) {
