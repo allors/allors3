@@ -7,7 +7,6 @@ namespace Tests
 {
     using System;
     using System.Diagnostics;
-    using System.Drawing;
     using System.IO;
     using System.Runtime.InteropServices;
     using OpenQA.Selenium;
@@ -46,9 +45,11 @@ namespace Tests
 
             var chromeWebDriver = Environment.GetEnvironmentVariable("ChromeWebDriver");
 
+            var runningPath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+
             this.Driver = Directory.Exists(chromeWebDriver) ?
                 new ChromeDriver(chromeWebDriver, options) :
-                new ChromeDriver(Environment.CurrentDirectory, options);
+                new ChromeDriver(runningPath, options);
 
             // TODO: lower timeouts
             this.Driver.Manage().Timeouts().PageLoad = TimeSpan.FromMinutes(5);

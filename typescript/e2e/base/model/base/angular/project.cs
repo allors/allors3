@@ -5,10 +5,10 @@
 
 namespace Autotest.Angular
 {
+    using Newtonsoft.Json.Linq;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Newtonsoft.Json.Linq;
 
     public partial class Project
     {

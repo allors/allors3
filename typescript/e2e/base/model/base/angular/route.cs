@@ -3,13 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using Newtonsoft.Json.Linq;
+
 namespace Autotest.Angular
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Newtonsoft.Json.Linq;
 
     public partial class Route
     {

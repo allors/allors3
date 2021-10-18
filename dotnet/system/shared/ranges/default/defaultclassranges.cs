@@ -6,8 +6,6 @@
 namespace Allors.Ranges
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public class DefaultClassRanges<T> : DefaultRanges<T> where T : class, IComparable<T>
     {

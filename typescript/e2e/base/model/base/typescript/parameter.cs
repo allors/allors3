@@ -3,10 +3,10 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using Newtonsoft.Json.Linq;
+
 namespace Autotest.Typescript
 {
-    using Newtonsoft.Json.Linq;
-
     public class Parameter
     {
         public Parameter(JToken json) => this.Json = json;

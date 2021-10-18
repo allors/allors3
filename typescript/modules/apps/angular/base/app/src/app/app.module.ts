@@ -154,6 +154,7 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
 }
 
 export const routes: Routes = [
+  ...environment.routes,
   { path: 'login', component: LoginComponent },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   {
@@ -246,6 +247,7 @@ export const routes: Routes = [
     FormComponent,
     // App
     AppComponent,
+    ...environment.components,
   ],
   imports: [
     BrowserModule,

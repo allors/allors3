@@ -3,15 +3,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using System.Diagnostics;
-
 namespace Autotest
 {
     using System.Linq;
     using Allors.Workspace.Meta;
     using Angular;
     using Humanizer;
-    using Newtonsoft.Json.Linq;
     using Tests;
 
     public partial class MenuItem

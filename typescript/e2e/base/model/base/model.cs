@@ -63,6 +63,11 @@ namespace Autotest
 
         public void LoadDialogs(AllorsInfo allors)
         {
+            if (allors.dialog == null)
+            {
+                return;
+            }
+
             foreach (var createInfo in allors.dialog.create)
             {
                 var extension = this.GetOrCreateExtension(createInfo.tag);

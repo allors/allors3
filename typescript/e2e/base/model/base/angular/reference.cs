@@ -5,10 +5,9 @@
 
 namespace Autotest.Angular
 {
-    using System.IO;
+    using Newtonsoft.Json.Linq;
     using System.Linq;
     using System.Text.RegularExpressions;
-    using Newtonsoft.Json.Linq;
 
     public partial class Reference
     {

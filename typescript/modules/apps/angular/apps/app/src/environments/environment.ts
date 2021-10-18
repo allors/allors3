@@ -8,7 +8,7 @@ export const environment = {
   production: false,
   baseUrl: 'http://localhost:5000/allors/',
   authUrl: 'TestAuthentication/Token',
-  routes: [{ path: 'allors', component: AllorsComponent }],
+  routes: [{ path: '_allors', component: AllorsComponent }],
   components: [AllorsComponent],
 };
 
