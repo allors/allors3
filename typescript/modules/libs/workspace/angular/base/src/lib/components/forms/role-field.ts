@@ -7,7 +7,6 @@ import { RoleType, humanize, UnitTags } from '@allors/workspace/meta/system';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { Field } from './field';
-import { DateTime } from '../../../../../../meta/apps/src/lib/generated/m.g';
 
 @Directive()
 export abstract class RoleField extends Field implements AfterViewInit, OnDestroy {
