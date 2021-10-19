@@ -164,7 +164,7 @@ export abstract class RecordBasedOriginState {
   checkpoint(changeSet: ChangeSet) {
     //  Same record
     if (this.previousRecord == null || this.record == null || this.record.version == this.previousRecord.version) {
-      this.changedRoleByRelationType.forEach((current, relationType) => {
+      this.changedRoleByRelationType?.forEach((current, relationType) => {
         if (this.previousChangedRoleByRelationType != null && this.previousChangedRoleByRelationType.has(relationType)) {
           const previous = this.previousChangedRoleByRelationType.get(relationType);
 

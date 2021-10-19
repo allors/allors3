@@ -7,6 +7,7 @@ import { RoleType, humanize, UnitTags } from '@allors/workspace/meta/system';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { Field } from './field';
+import { DateTime } from '../../../../../../meta/apps/src/lib/generated/m.g';
 
 @Directive()
 export abstract class RoleField extends Field implements AfterViewInit, OnDestroy {
@@ -88,8 +89,15 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
         value = null;
       }
 
-      if (this.roleType.objectType.tag == UnitTags.Decimal) {
-        value = (value as string)?.replace(',', '.');
+      switch (this.roleType.objectType.tag) {
+        // case UnitTags.DateTime:
+        //   if (value?.toJSDate) {
+        //     value = value.toJSDate();
+        //   }
+        //   break;
+        case UnitTags.Decimal:
+          value = (value as string)?.replace(',', '.');
+          break;
       }
 
       if (this.assignedRoleType) {

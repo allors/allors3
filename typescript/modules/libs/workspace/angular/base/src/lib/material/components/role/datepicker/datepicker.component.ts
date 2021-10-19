@@ -10,13 +10,21 @@ import { RoleField } from '../../../../components/forms/role-field';
 })
 export class AllorsMaterialDatepickerComponent extends RoleField {
   @Output()
-  public selected: EventEmitter<Date> = new EventEmitter();
+  selected: EventEmitter<Date> = new EventEmitter();
 
   constructor(@Optional() parentForm: NgForm) {
     super(parentForm);
   }
 
-  public onModelChange(selected: Date): void {
+  dateInput(event): void {
+    console.log('dateInput: ' + event);
+  }
+
+  dateChange(event): void {
+    console.log('dateChange: ' + event);
+  }
+
+  onModelChange(selected: Date): void {
     this.selected.emit(selected);
   }
 }

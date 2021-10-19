@@ -3,7 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
+import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatLuxonDateModule } from '@angular/material-luxon-adapter';
 import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { enGB } from 'date-fns/locale';
@@ -873,6 +874,7 @@ export const edit = {
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
+    MatLuxonDateModule,
     MatAutocompleteModule,
     MatBadgeModule,
     MatButtonModule,
@@ -939,22 +941,7 @@ export const edit = {
       provide: MAT_AUTOCOMPLETE_DEFAULT_OPTIONS,
       useValue: { autoActiveFirstOption: true },
     },
-    { provide: DateAdapter, useClass: NativeDateAdapter },
     { provide: MAT_DATE_LOCALE, useValue: 'nl-BE' },
-    {
-      provide: MAT_DATE_FORMATS,
-      useValue: {
-        parse: {
-          dateInput: 'dd/MM/yyyy',
-        },
-        display: {
-          dateInput: 'dd/MM/yyyy',
-          monthYearLabel: 'LLL y',
-          dateA11yLabel: 'MMMM d, y',
-          monthYearA11yLabel: 'MMMM y',
-        },
-      },
-    },
     { provide: AllorsMaterialDialogService, useClass: AllorsMaterialDialogServiceCore },
     { provide: ObjectService, useClass: ObjectServiceCore },
     { provide: SaveService, useClass: SaveServiceCore },

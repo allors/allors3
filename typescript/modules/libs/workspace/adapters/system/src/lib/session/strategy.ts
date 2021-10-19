@@ -6,6 +6,7 @@ import { WorkspaceOriginState } from './originstate/workspace-origin-state';
 import { frozenEmptyArray } from '../collections/frozen-empty-array';
 import { isNewId, Session } from './session';
 import { WorkspaceInitialVersion } from '../version';
+import { DateTime } from '../../../../../meta/apps/src/lib/generated/m.g';
 
 export abstract class Strategy implements IStrategy {
   DatabaseOriginState: DatabaseOriginState;
@@ -402,14 +403,14 @@ export abstract class Strategy implements IStrategy {
       case UnitTags.Boolean:
         error = typeof value !== 'boolean';
         break;
-      case UnitTags.DateTime:
-        error = !(value instanceof Date);
-        break;
       case UnitTags.Float:
         error = isNaN(value as number);
         break;
       case UnitTags.Integer:
         error = !Number.isInteger(value as number);
+        break;
+      case UnitTags.DateTime:
+        // No checks: 
         break;
     }
 

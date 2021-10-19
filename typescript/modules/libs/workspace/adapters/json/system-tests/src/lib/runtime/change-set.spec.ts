@@ -296,10 +296,11 @@ test('changeSetOne2One', async () => {
   expect(changeSet.rolesByAssociationType.size).toBe(1);
 
   expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).size).toBe(1);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).size).toBe(1);
+  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).size).toBe(2);
 
   expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).values().next().value).toBe(c1a.strategy);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).values().next().value).toBe(c1y.strategy);
+  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).values()).toContain(c1x.strategy);
+  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).values()).toContain(c1y.strategy);
 });
 
 test('changeSetAfterPushOne2One', async () => {

@@ -69,7 +69,7 @@ export class FormComponent extends TestScope implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const route$: Observable<UrlSegment[]> = this.route.url;
-    const combined$: Observable<[UrlSegment[], Date]> = combineLatest(route$, this.refresh$);
+    const combined$: Observable<[UrlSegment[], Date]> = combineLatest([route$, this.refresh$]);
 
     const { pullBuilder: p } = this.m;
 
