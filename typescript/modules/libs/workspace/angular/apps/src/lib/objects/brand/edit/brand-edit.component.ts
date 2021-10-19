@@ -72,7 +72,7 @@ export class BrandEditComponent extends TestScope implements OnInit, OnDestroy {
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
-        this.locales = loaded.collection<Locale>(m.Locale);
+        this.locales = this.fetcher.getAdditionalLocales(loaded);
 
         if (isCreate) {
           this.title = 'Add Brand';

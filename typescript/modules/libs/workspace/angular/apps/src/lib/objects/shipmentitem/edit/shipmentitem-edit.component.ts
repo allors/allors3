@@ -340,7 +340,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
           this.shipment.addShipmentItem(this.shipmentItem);
         } else {
           // This UI does not allow shipmentitem to be combination from multiple order items
-          const orderShipments = loaded.collection<OrderShipment>(m.OrderShipment);
+          const orderShipments = loaded.collection<OrderShipment>(m.ShipmentItem.OrderShipmentsWhereShipmentItem);
           if (orderShipments && orderShipments.length > 0) {
             this.orderShipment = orderShipments[0];
             if (this.orderShipment.OrderItem) {

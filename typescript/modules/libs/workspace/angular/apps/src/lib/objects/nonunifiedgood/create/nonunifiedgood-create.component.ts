@@ -59,7 +59,7 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-          const pulls = [this.fetcher.locales, this.fetcher.internalOrganisation, this.fetcher.Settings, pull.ProductIdentificationType({}), pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] })];
+          const pulls = [this.fetcher.locales, this.fetcher.Settings, pull.ProductIdentificationType({}), pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] })];
 
           this.nonUnifiedPartsFilter = Filters.nonUnifiedPartsFilter(m);
 
@@ -71,8 +71,8 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
 
         this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
-        this.locales = loaded.collection<Locale>(m.Locale);
-        this.settings = loaded.object<Settings>(m.Settings);
+        this.locales = this.fetcher.getAdditionalLocales(loaded);
+        this.settings = this.fetcher.getSettings(loaded);
 
         this.goodNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
 

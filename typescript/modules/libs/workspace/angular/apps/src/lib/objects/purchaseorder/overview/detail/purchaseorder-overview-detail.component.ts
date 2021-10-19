@@ -47,7 +47,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   shipToContacts: Person[] = [];
   vatRates: VatRate[];
   vatRegimes: VatRegime[];
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   facilities: Facility[];
   addFacility = false;
 
@@ -172,7 +172,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
         this.allors.context.reset();
 
         this.order = loaded.object<PurchaseOrder>(m.PurchaseOrder);
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
@@ -301,9 +301,9 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
         this.previousSupplier = this.order.TakenViaSupplier;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.takenViaContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.takenViaContacts = loaded.collection<Person>(m.Person);
+      this.takenViaContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
 
@@ -334,10 +334,10 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.billToContacts = loaded.collection<Person>(m.Person);
+      this.billToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
       this.shipToContacts = this.billToContacts;
     });
   }

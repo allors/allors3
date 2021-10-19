@@ -28,7 +28,7 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
   shipToContacts: Person[] = [];
   shipFromAddresses: PostalAddress[] = [];
   shipFromContacts: Person[] = [];
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
 
   addShipToAddress = false;
   addShipToContactPerson = false;
@@ -74,8 +74,8 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
         })
       )
       .subscribe((loaded) => {
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
-        this.facilities = loaded.collection<Facility>(m.Facility);
+         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.facilities = this.fetcher.getOwnWarehouses(loaded);
 
         this.purchaseReturn = this.allors.context.create<PurchaseReturn>(m.PurchaseReturn);
         this.purchaseReturn.ShipFromParty = this.internalOrganisation;
@@ -155,9 +155,9 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
-      this.shipToContacts = loaded.collection<Person>(m.Person);
+      this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
 
@@ -188,9 +188,9 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
-      this.shipToContacts = loaded.collection<Person>(m.Person);
+      this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
 }

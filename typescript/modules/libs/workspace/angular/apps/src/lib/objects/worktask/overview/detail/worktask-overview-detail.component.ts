@@ -160,7 +160,7 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+        const internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.employees = internalOrganisation.ActiveEmployees;
 
         this.workTask = loaded.object<WorkTask>(m.WorkTask);
@@ -234,17 +234,17 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.workEfforts = loaded.collection<WorkEffort>(m.WorkEffort);
+      this.workEfforts = loaded.collection<WorkEffort>(m.Party.WorkEffortsWhereCustomer);
       const indexMyself = this.workEfforts.indexOf(this.workTask, 0);
       if (indexMyself > -1) {
         this.workEfforts.splice(indexMyself, 1);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
 
       this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
 
-      this.contacts = loaded.collection<Person>(m.Person);
+      this.contacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
 

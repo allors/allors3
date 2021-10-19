@@ -3,7 +3,7 @@ import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Locale, Carrier, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Party, CustomerShipment, Currency, PostalAddress, Facility, ShipmentMethod } from '@allors/workspace/domain/default';
+import { Carrier, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Party, CustomerShipment, Currency, PostalAddress, Facility, ShipmentMethod, InternalOrganisation } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -28,9 +28,8 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
   shipToContacts: Person[] = [];
   shipFromAddresses: PostalAddress[] = [];
   shipFromContacts: Person[] = [];
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   facilities: Facility[];
-  locales: Locale[];
   shipmentMethods: ShipmentMethod[];
   carriers: Carrier[];
 
@@ -93,7 +92,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
         this.customerShipment = loaded.object<CustomerShipment>(pullName);
-        this.internalOrganisation = loaded.object<Organisation>(this.m.InternalOrganisation);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
       }
     };
   }
@@ -115,8 +114,6 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
           const id = this.panel.manager.id;
 
           const pulls = [
-            this.fetcher.locales,
-            this.fetcher.internalOrganisation,
             this.fetcher.ownWarehouses,
             pull.ShipmentMethod({ sorting: [{ roleType: m.ShipmentMethod.Name }] }),
             pull.Carrier({ sorting: [{ roleType: m.Carrier.Name }] }),
@@ -149,7 +146,7 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
         this.allors.context.reset();
 
         this.customerShipment = loaded.object<CustomerShipment>(m.CustomerShipment);
-        this.facilities = loaded.collection<Facility>(m.Facility);
+        this.facilities = this.fetcher.getOwnWarehouses(loaded);
         this.shipmentMethods = loaded.collection<ShipmentMethod>(m.ShipmentMethod);
         this.carriers = loaded.collection<Carrier>(m.Carrier);
 
@@ -238,9 +235,9 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
         this.previousShipToparty = this.customerShipment.ShipToParty;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
-      this.shipToContacts = loaded.collection<Person>(m.Person);
+      this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
 
@@ -271,9 +268,9 @@ export class CustomerShipmentOverviewDetailComponent extends TestScope implement
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
-      this.shipToContacts = loaded.collection<Person>(m.Person);
+      this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
 }

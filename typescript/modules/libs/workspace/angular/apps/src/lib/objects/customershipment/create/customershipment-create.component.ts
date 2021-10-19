@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Locale, Carrier, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Party, CustomerShipment, Currency, PostalAddress, Facility, ShipmentMethod, ShipmentPackage } from '@allors/workspace/domain/default';
+import { Locale, Carrier, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Party, CustomerShipment, Currency, PostalAddress, Facility, ShipmentMethod, ShipmentPackage, InternalOrganisation } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope, PanelManagerService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -28,7 +28,7 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
   shipToContacts: Person[] = [];
   shipFromAddresses: PostalAddress[] = [];
   shipFromContacts: Person[] = [];
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
 
   addShipFromAddress = false;
 
@@ -93,9 +93,9 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
-        this.locales = loaded.collection<Locale>(m.Locale);
-        this.facilities = loaded.collection<Facility>(m.Facility);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.locales = this.fetcher.getAdditionalLocales(loaded);
+        this.facilities = this.fetcher.getOwnWarehouses(loaded);
         this.shipmentMethods = loaded.collection<ShipmentMethod>(m.ShipmentMethod);
         this.carriers = loaded.collection<Carrier>(m.Carrier);
 
@@ -205,9 +205,9 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
         this.previousShipToparty = this.customerShipment.ShipToParty;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
-      this.shipToContacts = loaded.collection<Person>(m.Person);
+      this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
 
@@ -238,9 +238,9 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
-      this.shipToContacts = loaded.collection<Person>(m.Person);
+      this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
 }

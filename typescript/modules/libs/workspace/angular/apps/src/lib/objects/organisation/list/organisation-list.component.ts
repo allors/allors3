@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { Organisation } from '@allors/workspace/domain/default';
+import { InternalOrganisation, Organisation } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
@@ -35,7 +35,7 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
   delete: Action;
 
   private subscription: Subscription;
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   filter: Filter;
   m: M;
 
@@ -123,7 +123,7 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         const organisations = loaded.collection<Organisation>(m.Organisation);
 
         this.table.total = loaded.value('Organisations_total') as number;

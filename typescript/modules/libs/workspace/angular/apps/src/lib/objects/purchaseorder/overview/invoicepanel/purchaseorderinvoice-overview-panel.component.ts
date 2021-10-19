@@ -2,7 +2,7 @@ import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { M } from '@allors/workspace/meta/default';
-import { Organisation, PurchaseOrder, PurchaseOrderItem, InvoiceItemType, PurchaseInvoice, OrderItemBilling, PurchaseInvoiceItem } from '@allors/workspace/domain/default';
+import { Organisation, PurchaseOrder, PurchaseOrderItem, InvoiceItemType, PurchaseInvoice, OrderItemBilling, PurchaseInvoiceItem, InternalOrganisation } from '@allors/workspace/domain/default';
 import { Action, DeleteService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, SaveService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
@@ -27,7 +27,7 @@ interface Row extends TableRow {
   providers: [ContextService, PanelService],
 })
 export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   purchaseInvoice: PurchaseInvoice;
 
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -200,7 +200,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
     };
 
     this.panel.onPulled = (loaded) => {
-      this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+      this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
       this.purchaseInvoice = loaded.object<PurchaseInvoice>(invoicePullName);
       this.orderItemBillings = loaded.collection<OrderItemBilling>(m.OrderItemBilling);
 

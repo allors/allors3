@@ -26,7 +26,7 @@ interface Row extends TableRow {
   providers: [ContextService, PanelService],
 })
 export class PurchaseOrderOverviewPanelComponent extends TestScope {
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
 
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
@@ -124,7 +124,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
     };
 
     this.panel.onPulled = (loaded) => {
-      this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+       this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
 
       const purchaseOrders = loaded.collection<PurchaseOrder>(pullName);
       this.objects = purchaseOrders.filter((v) => v.OrderedBy === this.internalOrganisation);

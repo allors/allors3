@@ -67,7 +67,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
   billingForOrderItems: BillingProcess;
   selectedSerialisedInventoryState: string;
   inventoryItemStates: SerialisedInventoryItemState[];
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
 
   addShipFromAddress = false;
 
@@ -300,16 +300,16 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
         this.allors.context.reset();
 
         this.order = loaded.object<SalesOrder>(this.m.SalesOrder);
-        this.internalOrganisation = loaded.object<Organisation>(this.m.InternalOrganisation);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.facilities = loaded.collection<Facility>(this.m.Facility);
+        this.facilities = this.fetcher.getWarehouses(loaded);
         this.irpfRegimes = loaded.collection<IrpfRegime>(this.m.IrpfRegime);
         this.vatClauses = loaded.collection<VatClause>(this.m.VatClause);
         this.stores = loaded.collection<Store>(this.m.Store);
         this.currencies = loaded.collection<Currency>(this.m.Currency);
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.PartyContactMechanism);
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.Party.CurrentPartyContactMechanisms);
         this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === this.m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
 
         if (this.order.ShipToCustomer) {
@@ -501,9 +501,9 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
         this.updateBillToCustomer(this.order.ShipToCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.Party.CurrentPartyContactMechanisms);
       this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToContacts = loaded.collection<Person>(this.m.Person);
+      this.shipToContacts = loaded.collection<Person>(this.m.Party.CurrentContacts);
     });
   }
 
@@ -551,9 +551,9 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
         this.updateShipToCustomer(this.order.ShipToCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.Party.CurrentPartyContactMechanisms);
       this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.billToContacts = loaded.collection<Person>(this.m.Person);
+      this.billToContacts = loaded.collection<Person>(this.m.Party.CurrentContacts);
     });
   }
 
@@ -595,9 +595,9 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
         this.updateShipToEndCustomer(this.order.ShipToEndCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.Party.CurrentPartyContactMechanisms);
       this.billToEndCustomerContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.billToEndCustomerContacts = loaded.collection<Person>(this.m.Person);
+      this.billToEndCustomerContacts = loaded.collection<Person>(this.m.Party.CurrentContacts);
     });
   }
 
@@ -639,9 +639,9 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
         this.updateBillToEndCustomer(this.order.BillToEndCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.Party.CurrentPartyContactMechanisms);
       this.shipToEndCustomerAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToEndCustomerContacts = loaded.collection<Person>(this.m.Person);
+      this.shipToEndCustomerContacts = loaded.collection<Person>(this.m.Party.CurrentContacts);
     });
   }
 

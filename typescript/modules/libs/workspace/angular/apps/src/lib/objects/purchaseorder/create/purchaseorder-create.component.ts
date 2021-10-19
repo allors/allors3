@@ -46,7 +46,7 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
   shipToAddresses: ContactMechanism[] = [];
   shipToContacts: Person[] = [];
   vatRegimes: VatRegime[];
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   facilities: Facility[];
   selectedFacility: Facility;
   addFacility = false;
@@ -115,7 +115,7 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
         })
       )
       .subscribe((loaded) => {
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
@@ -247,9 +247,9 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.takenViaContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.takenViaContacts = loaded.collection<Person>(m.Person);
+      this.takenViaContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       const selectedSupplier = loaded.object<Organisation>('selectedSupplier');
       this.takenViaContactMechanismInitialRole = selectedSupplier.OrderAddress;
@@ -293,10 +293,10 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.billToContacts = loaded.collection<Person>(m.Person);
+      this.billToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
       this.shipToContacts = this.billToContacts;
 
       const selectedOrganisation = loaded.object<Organisation>('selectedOrganisation');

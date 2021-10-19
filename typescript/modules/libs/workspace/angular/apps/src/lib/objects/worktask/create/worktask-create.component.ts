@@ -84,7 +84,7 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.locales = loaded.collection<Locale>(m.Locale);
         this.organisations = loaded.collection<Organisation>(m.Organisation);
 
@@ -124,10 +124,10 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
 
-      this.contacts = loaded.collection<Person>(m.Person);
+      this.contacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
 

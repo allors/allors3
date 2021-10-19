@@ -106,7 +106,7 @@ export class CommunicationEventOverviewPanelComponent extends TestScope implemen
     };
 
     this.panel.onPulled = (loaded) => {
-      this.objects = loaded.collection(pullName) as CommunicationEvent[];
+      this.objects = loaded.collection<CommunicationEvent>(pullName);
 
       if (this.objects) {
         this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects.length) as number;

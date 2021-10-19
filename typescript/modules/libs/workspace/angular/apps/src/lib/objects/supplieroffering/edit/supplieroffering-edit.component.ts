@@ -104,7 +104,7 @@ export class SupplierOfferingEditComponent extends TestScope implements OnInit, 
         this.preferences = loaded.collection<Ordinal>(m.Ordinal);
         this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
         this.currencies = loaded.collection<Currency>(m.Currency);
-        this.settings = loaded.object<Settings>(m.Settings);
+        this.settings = this.fetcher.getSettings(loaded);
 
         if (isCreate) {
           this.title = 'Add supplier offering';

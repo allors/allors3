@@ -6,7 +6,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, Receipt, PaymentApplication, PurchaseInvoice, Disbursement } from '@allors/workspace/domain/default';
+import { Person, Organisation, Receipt, PaymentApplication, PurchaseInvoice, Disbursement, InternalOrganisation } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, ActionTarget, AllorsMaterialDialogService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { And, Equals } from '@allors/workspace/domain/system';
@@ -48,7 +48,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
   setPaid: Action;
 
   user: Person;
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   canCreate: boolean;
 
   private subscription: Subscription;
@@ -232,7 +232,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.user = loaded.object<Person>(m.Person);
 
         this.canCreate = this.internalOrganisation.canExecuteCreatePurchaseInvoice;

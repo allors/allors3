@@ -24,8 +24,8 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
   party: Party;
   person: Person;
   organisation: Organisation;
-  internalOrganisation: Organisation;
-  internalOrganisations: Organisation[];
+  internalOrganisation: InternalOrganisation;
+  internalOrganisations: InternalOrganisation[];
   title: string;
   addEmployee = false;
 
@@ -94,7 +94,8 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
         this.allors.context.reset();
 
         this.people = loaded.collection<Person>(m.Person);
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+
 
         if (isCreate) {
           this.title = 'Add Employment';

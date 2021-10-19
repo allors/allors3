@@ -139,7 +139,6 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
                 AssignedSuppliedBy: x,
               },
             }),
-            this.fetcher.internalOrganisation,
             this.fetcher.locales,
             pull.SerialisedItem({
               objectId: id,
@@ -186,16 +185,16 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.currentSuppliers = loaded.collection<Organisation>(m.Organisation);
+        this.currentSuppliers = loaded.collection<Organisation>(m.InternalOrganisation.ObsoleteCurrentSuppliers);
 
         this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
-        this.locales = loaded.collection<Locale>(m.Locale);
+        this.locales = this.fetcher.getAdditionalLocales(loaded);
         this.serialisedItemStates = loaded.collection<Enumeration>(m.Enumeration);
         this.serialisedItemAvailabilities = loaded.collection<Enumeration>(m.Enumeration);
         this.ownerships = loaded.collection<Enumeration>(m.Enumeration);
-        this.part = loaded.object<Part>(m.Part);
+        this.part = loaded.object<Part>(m.SerialisedItem.PartWhereSerialisedItem);
 
-        const serialisedInventoryItems = loaded.collection<SerialisedInventoryItem>(m.SerialisedInventoryItem);
+        const serialisedInventoryItems = loaded.collection<SerialisedInventoryItem>(m.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem);
         const inventoryItem = serialisedInventoryItems.find((v) => v.Quantity === 1);
         if (inventoryItem) {
           this.currentFacility = inventoryItem.Facility;

@@ -94,7 +94,6 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
 
           const pulls = [
             this.fetcher.internalOrganisation,
-            this.fetcher.locales,
             pull.Singleton({
               objectId: this.singletonId.value,
               select: {
@@ -120,12 +119,6 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
             }),
             pull.Person({
               objectId: id,
-              select: {
-                OrganisationContactRelationshipsWhereContact: x,
-              },
-            }),
-            pull.Person({
-              objectId: id,
               include: {
                 PreferredCurrency: x,
                 Gender: x,
@@ -143,9 +136,9 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
         this.allors.context.reset();
 
         this.person = loaded.object<Person>(m.Person);
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.currencies = loaded.collection<Currency>(m.Currency);
-        this.locales = loaded.collection<Locale>(m.Locale) || [];
+        this.locales = loaded.collection<Locale>(m.Singleton.Locales) || [];
         this.genders = loaded.collection<Enumeration>(m.Enumeration);
         this.salutations = loaded.collection<Enumeration>(m.Enumeration);
       });

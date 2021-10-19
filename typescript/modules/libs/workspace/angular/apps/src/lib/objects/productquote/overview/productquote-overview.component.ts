@@ -96,7 +96,7 @@ export class ProductQuoteOverviewComponent extends TestScope implements AfterVie
 
         this.productQuote = loaded.object<ProductQuote>(m.ProductQuote);
         this.goods = loaded.collection<Good>(m.Good);
-        this.salesOrder = loaded.object<SalesOrder>(m.SalesOrder);
+        this.salesOrder = loaded.object<SalesOrder>(m.ProductQuote.SalesOrderWhereQuote);
       });
   }
 

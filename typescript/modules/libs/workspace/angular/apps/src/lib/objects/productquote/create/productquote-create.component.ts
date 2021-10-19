@@ -34,7 +34,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
   addContactPerson = false;
   addContactMechanism = false;
   addReceiver = false;
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
 
   private subscription: Subscription;
   private previousReceiver: Party;
@@ -74,7 +74,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
         this.allors.context.reset();
 
         this.quote = loaded.object<ProductQuote>(m.ProductQuote);
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
@@ -175,9 +175,9 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
 
       this.previousReceiver = this.quote.Receiver;
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.contacts = loaded.collection<Person>(m.Person);
+      this.contacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       const selectedParty = loaded.object<Party>('selectedParty');
       this.currencyInitialRole = selectedParty.PreferredCurrency ?? this.quote.Issuer.PreferredCurrency;

@@ -78,7 +78,7 @@ export class CustomerShipmentOverviewSummaryComponent {
 
     panel.onPulled = (loaded) => {
       this.shipment = loaded.object<CustomerShipment>(shipmentPullName);
-      this.salesOrders = loaded.collection<SalesOrder>(this.m.SalesOrder);
+      this.salesOrders = loaded.collection<SalesOrder>(this.m.OrderItem.OrderWhereValidOrderItem);
     };
   }
 

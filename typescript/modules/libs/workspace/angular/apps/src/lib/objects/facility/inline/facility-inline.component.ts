@@ -22,7 +22,7 @@ export class FacilityInlineComponent implements OnInit, OnDestroy {
   public facility: Facility;
 
   facilities: Facility[];
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
 
   constructor(
     private allors: ContextService,
@@ -44,7 +44,7 @@ export class FacilityInlineComponent implements OnInit, OnDestroy {
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+       this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
       this.facilities = loaded.collection<Facility>(m.Facility);
 
       this.facilityTypes = loaded.collection<FacilityType>(m.FacilityType);

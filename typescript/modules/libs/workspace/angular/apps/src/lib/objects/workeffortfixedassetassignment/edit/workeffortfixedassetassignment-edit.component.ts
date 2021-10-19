@@ -166,7 +166,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.serialisedItems = loaded.collection<SerialisedItem>(m.SerialisedItem);
+      this.serialisedItems = loaded.collection<SerialisedItem>(m.Party.SerialisedItemsWhereOwnedBy);
     });
   }
 }

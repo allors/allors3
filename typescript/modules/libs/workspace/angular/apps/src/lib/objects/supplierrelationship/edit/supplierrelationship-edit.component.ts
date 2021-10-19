@@ -20,7 +20,7 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
   readonly m: M;
 
   partyRelationship: SupplierRelationship;
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   organisation: Organisation;
   title: string;
 
@@ -86,7 +86,7 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.organisation = loaded.object<Organisation>(m.Organisation);
 
         if (isCreate) {

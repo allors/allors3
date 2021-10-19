@@ -132,7 +132,7 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
           this.selectedWorker = this.timeEntry.Worker;
           this.workEffort = this.timeEntry.WorkEffort;
 
-          const workEffortPartyAssignments = loaded.collection<WorkEffortPartyAssignment>(m.WorkEffortPartyAssignment);
+          const workEffortPartyAssignments = loaded.collection<WorkEffortPartyAssignment>(m.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment);
           this.workers = Array.from(new Set(workEffortPartyAssignments.map((v) => v.Party)).values());
 
           if (this.timeEntry.canWriteAssignedAmountOfTime) {
@@ -173,7 +173,7 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.timeSheet = loaded.object<TimeSheet>(m.TimeSheet);
+      this.timeSheet = loaded.object<TimeSheet>(m.Person.TimeSheetWhereWorker);
     });
   }
 

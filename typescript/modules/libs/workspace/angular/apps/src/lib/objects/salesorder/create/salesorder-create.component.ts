@@ -48,7 +48,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
   shipToContacts: Person[] = [];
   shipToEndCustomerContacts: Person[] = [];
   stores: Store[];
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   currencies: Currency[];
   vatRegimes: VatRegime[];
   irpfRegimes: IrpfRegime[];
@@ -157,7 +157,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
         })
       )
       .subscribe((loaded) => {
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.stores = loaded.collection<Store>(m.Store);
@@ -167,7 +167,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
         this.order = this.allors.context.create<SalesOrder>(m.SalesOrder);
         this.order.TakenBy = this.internalOrganisation;
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
         this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
 
         if (this.stores.length === 1) {
@@ -378,9 +378,9 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
         this.updateBillToCustomer(this.order.ShipToCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToContacts = loaded.collection<Person>(m.Person);
+      this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       this.setDerivedInitialRoles();
     });
@@ -438,9 +438,9 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
         this.updateShipToCustomer(this.order.ShipToCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.billToContacts = loaded.collection<Person>(m.Person);
+      this.billToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       this.setDerivedInitialRoles();
     });
@@ -498,9 +498,9 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
         this.updateShipToEndCustomer(this.order.ShipToEndCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.billToEndCustomerContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.billToEndCustomerContacts = loaded.collection<Person>(m.Person);
+      this.billToEndCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       this.setDerivedInitialRoles();
     });
@@ -559,9 +559,9 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
         this.updateBillToEndCustomer(this.order.BillToEndCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.shipToEndCustomerAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToEndCustomerContacts = loaded.collection<Person>(m.Person);
+      this.shipToEndCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       this.setDerivedInitialRoles();
     });

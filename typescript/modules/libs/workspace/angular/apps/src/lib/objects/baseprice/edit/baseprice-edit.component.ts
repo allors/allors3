@@ -83,7 +83,7 @@ export class BasepriceEditComponent extends TestScope implements OnInit, OnDestr
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = loaded.object<InternalOrganisation>(this.m.InternalOrganisation);
+       this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.nonUnifiedGood = loaded.object<NonUnifiedGood>(this.m.NonUnifiedGood);
         this.part = loaded.object<Part>(this.m.Part);
 

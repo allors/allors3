@@ -52,7 +52,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
   setPaid: Action;
 
   user: Person;
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   canCreate: boolean;
 
   private subscription: Subscription;
@@ -234,7 +234,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.user = loaded.object<Person>(m.Person);
 
         this.canCreate = this.internalOrganisation.canExecuteCreateSalesInvoice;

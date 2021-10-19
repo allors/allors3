@@ -152,11 +152,11 @@ export class FaceToFaceCommunicationEditComponent extends TestScope implements O
 
         this.purposes = loaded.collection<CommunicationEventPurpose>(m.CommunicationEventPurpose);
         this.eventStates = loaded.collection<CommunicationEventState>(m.CommunicationEventState);
-        this.parties = loaded.collection<Party>(m.Party);
+        this.parties = loaded.collection<Party>(m.CommunicationEvent.InvolvedParties);
         const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
         this.person = loaded.object<Person>(m.Person);
-        this.organisation = loaded.object<Organisation>(m.Organisation);
+        this.organisation = loaded.object<Organisation>(m.OrganisationContactRelationship.Organisation);
 
         if (isCreate) {
           this.title = 'Add Meeting';

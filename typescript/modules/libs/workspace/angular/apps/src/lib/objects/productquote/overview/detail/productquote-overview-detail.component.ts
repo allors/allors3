@@ -42,7 +42,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
   currencies: Currency[];
   contactMechanisms: ContactMechanism[];
   contacts: Person[];
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
 
   addContactPerson = false;
   addContactMechanism = false;
@@ -121,7 +121,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
         this.productQuote = loaded.object<ProductQuote>(this.m.ProductQuote);
-        this.salesOrder = loaded.object<SalesOrder>(this.m.SalesOrder);
+        this.salesOrder = loaded.object<SalesOrder>(this.m.ProductQuote.SalesOrderWhereQuote);
       }
     };
   }
@@ -169,7 +169,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
@@ -259,9 +259,9 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
         this.previousReceiver = this.productQuote.Receiver;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.contacts = loaded.collection<Person>(m.Person);
+      this.contacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
 }

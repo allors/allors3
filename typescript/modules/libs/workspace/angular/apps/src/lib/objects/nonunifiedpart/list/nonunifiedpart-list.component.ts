@@ -20,6 +20,7 @@ import {
   NonUnifiedPartBarcodePrint,
   NonSerialisedInventoryItem,
   ProductIdentification,
+  InternalOrganisation,
 } from '@allors/workspace/domain/default';
 import {
   Action,
@@ -79,7 +80,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
   nonUnifiedPartBarcodePrint: NonUnifiedPartBarcodePrint;
   facilities: Facility[];
   user: Person;
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   filter: Filter;
   m: M;
 
@@ -314,9 +315,9 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
         this.allors.context.reset();
 
         this.user = loaded.object<Person>(m.Person);
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.facilities = loaded.collection<Facility>(m.Facility);
-        this.nonUnifiedPartBarcodePrint = loaded.object<NonUnifiedPartBarcodePrint>(m.NonUnifiedPartBarcodePrint);
+        this.nonUnifiedPartBarcodePrint = loaded.object<NonUnifiedPartBarcodePrint>(m.Singleton.NonUnifiedPartBarcodePrint);
 
         this.parts = loaded.collection<NonUnifiedPart>(m.NonUnifiedPart);
 
@@ -340,7 +341,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
         }
 
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
-        const partCategories = loaded.collection<PartCategory>(m.PartCategory);
+        const partCategories = loaded.collection<PartCategory>(m.NonUnifiedPart.PartCategoriesWherePart);
 
         this.table.total = loaded.value('NonUnifiedParts_total') as number;
 
@@ -398,7 +399,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
       this.allors.context.pull(pulls).subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.nonUnifiedPartBarcodePrint = loaded.object<NonUnifiedPartBarcodePrint>(m.NonUnifiedPartBarcodePrint);
+        this.nonUnifiedPartBarcodePrint = loaded.object<NonUnifiedPartBarcodePrint>(m.Singleton.NonUnifiedPartBarcodePrint);
 
         this.print.execute(this.nonUnifiedPartBarcodePrint);
         this.refreshService.refresh();

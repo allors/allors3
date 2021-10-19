@@ -148,12 +148,6 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
                 },
               },
             }),
-            pull.Part({
-              objectId: id,
-              select: {
-                PriceComponentsWherePart: x,
-              },
-            }),
             pull.UnitOfMeasure({}),
             pull.InventoryItemKind({}),
             pull.ProductIdentificationType({}),
@@ -183,19 +177,19 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
         this.allors.context.reset();
 
         this.part = loaded.object<Part>(m.Part);
-        this.originalCategories = loaded.collection<PartCategory>(m.PartCategory);
+        this.originalCategories = loaded.collection<PartCategory>('OriginalCategories');
         this.selectedCategories = this.originalCategories;
 
         this.suppliers = this.part.SuppliedBy.map((w) => w.PartyName).join(', ');
         this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
         this.productTypes = loaded.collection<ProductType>(m.ProductType);
         this.brands = loaded.collection<Brand>(m.Brand);
-        this.locales = loaded.collection<Locale>(m.Locale);
-        this.facilities = loaded.collection<Facility>(m.Facility);
+        this.locales = this.fetcher.getAdditionalLocales(loaded);
+        this.facilities = this.fetcher.getWarehouses(loaded);
         this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
         this.manufacturers = loaded.collection<Organisation>(m.Organisation);
         this.categories = loaded.collection<PartCategory>(m.PartCategory);
-        this.settings = loaded.object<Settings>(m.Settings);
+        this.settings = this.fetcher.getSettings(loaded);
 
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
         const partNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');

@@ -73,7 +73,6 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
         switchMap(([,]) => {
           const pulls = [
             this.fetcher.internalOrganisation,
-            this.fetcher.locales,
             pull.Singleton({
               objectId: this.singletonId.value,
               select: {
@@ -121,9 +120,9 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
         this.person = loaded.object<Person>(m.Person);
         this.organisation = loaded.object<Organisation>(m.Organisation);
         this.organisations = loaded.collection<Organisation>(m.Organisation);
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.currencies = loaded.collection<Currency>(m.Currency);
-        this.locales = loaded.collection<Locale>(m.Locale) || [];
+        this.locales = loaded.collection<Locale>(m.Singleton.Locales) || [];
         this.genders = loaded.collection<Enumeration>(m.Enumeration);
         this.salutations = loaded.collection<Enumeration>(m.Enumeration);
         this.roles = loaded.collection<PersonRole>(m.PersonRole);

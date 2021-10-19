@@ -118,7 +118,6 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
 
           const pulls = [
             this.fetcher.locales,
-            this.fetcher.internalOrganisation,
             pull.ProductIdentificationType({}),
             pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] }),
             pull.NonUnifiedGood({
@@ -179,13 +178,13 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
         this.allors.context.reset();
 
         this.good = loaded.object<NonUnifiedGood>(m.NonUnifiedGood);
-        this.originalCategories = loaded.collection<ProductCategory>(m.ProductCategory);
+        this.originalCategories = loaded.collection<ProductCategory>('OriginalCategories');
         this.selectedCategories = this.originalCategories;
 
         this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
-        this.locales = loaded.collection<Locale>(m.Locale);
-        this.productFeatureApplicabilities = loaded.collection<ProductFeatureApplicability>(m.ProductFeatureApplicability);
+        this.locales = this.fetcher.getAdditionalLocales(loaded);
+        this.productFeatureApplicabilities = loaded.collection<ProductFeatureApplicability>(m.NonUnifiedGood.ProductFeatureApplicabilitiesWhereAvailableFor);
         this.productDimensions = this.productFeatureApplicabilities.map((v) => v.ProductFeature).filter((v) => v.strategy.cls === this.m.ProductDimension) as ProductDimension[];
 
         const goodNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');

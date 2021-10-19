@@ -93,7 +93,7 @@ export class RequestForQuoteOverviewComponent extends TestScope implements After
         this.panelManager.onPulled(loaded);
 
         this.requestForQuote = loaded.object<RequestForQuote>(this.m.RequestForQuote);
-        this.quote = loaded.object<Quote>(this.m.Quote);
+        this.quote = loaded.object<Quote>(this.m.RequestForQuote.QuoteWhereRequest);
       });
   }
 

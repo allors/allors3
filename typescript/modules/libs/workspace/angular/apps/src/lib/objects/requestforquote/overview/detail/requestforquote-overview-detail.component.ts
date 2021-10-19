@@ -25,7 +25,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
   currencies: Currency[];
   contactMechanisms: ContactMechanism[] = [];
   contacts: Person[] = [];
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
 
   addContactPerson = false;
   addContactMechanism = false;
@@ -96,7 +96,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
         this.request = loaded.object<RequestForQuote>(requestForQuotePullName);
-        this.quote = loaded.object<Quote>(this.m.Quote);
+        this.quote = loaded.object<Quote>(productQuotePullName);
       }
     };
   }
@@ -141,7 +141,7 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(this.m.InternalOrganisation);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.request = loaded.object<RequestForQuote>(this.m.RequestForQuote);
         this.currencies = loaded.collection<Currency>(this.m.Currency);
 
@@ -231,9 +231,9 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
         this.previousOriginator = this.request.Originator;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.contacts = loaded.collection<Person>(m.Person);
+      this.contacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
 }

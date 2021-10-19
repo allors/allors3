@@ -23,7 +23,7 @@ export class ExchangeRateEditComponent extends TestScope implements OnInit, OnDe
   public m: M;
 
   public exchangeRate: ExchangeRate;
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   currencies: Currency[];
 
   private subscription: Subscription;
@@ -74,7 +74,7 @@ export class ExchangeRateEditComponent extends TestScope implements OnInit, OnDe
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.currencies = loaded.collection<Currency>(m.Currency);
 
         if (isCreate) {

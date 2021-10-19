@@ -19,7 +19,7 @@ export class CustomerRelationshipEditComponent extends TestScope implements OnIn
   readonly m: M;
 
   partyRelationship: CustomerRelationship;
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   party: Party;
   title: string;
 
@@ -76,7 +76,7 @@ export class CustomerRelationshipEditComponent extends TestScope implements OnIn
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.party = loaded.object<Party>(m.Party);
 
         if (isCreate) {

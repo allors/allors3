@@ -181,12 +181,6 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
                 SupplierOfferingsWherePart: x,
               },
             }),
-            pull.UnifiedGood({
-              objectId: id,
-              select: {
-                PriceComponentsWherePart: x,
-              },
-            }),
             pull.UnitOfMeasure({}),
             pull.InventoryItemKind({}),
             pull.ProductIdentificationType({}),
@@ -234,11 +228,11 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
         this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
         this.productTypes = loaded.collection<ProductType>(m.ProductType);
         this.brands = loaded.collection<Brand>(m.Brand);
-        this.locales = loaded.collection<Locale>(m.Singleton.AdditionalLocales);
+        this.locales = this.fetcher.getAdditionalLocales(loaded);
         this.facilities = loaded.collection<Facility>(m.Facility);
         this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
         this.manufacturers = loaded.collection<Organisation>(m.Organisation);
-        this.settings = loaded.object<Settings>(m.Settings);
+        this.settings = this.fetcher.getSettings(loaded);
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
         this.manufacturers = loaded.collection<Organisation>(m.Organisation);
         this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
@@ -261,7 +255,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
           this.brandSelected(this.selectedBrand);
         }
 
-        this.supplierOfferings = loaded.collection<SupplierOffering>(m.SupplierOffering);
+        this.supplierOfferings = loaded.collection<SupplierOffering>(m.UnifiedGood.SupplierOfferingsWherePart);
       });
   }
 

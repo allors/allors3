@@ -103,7 +103,6 @@ export class RepeatingPurchaseInvoiceOverviewPanelComponent extends TestScope {
     };
 
     panel.onPulled = (loaded) => {
-      this.internalOrganisation = loaded.object<Organisation>(this.m.InternalOrganisation);
 
       this.objects = loaded.collection<RepeatingPurchaseInvoice>(pullName);
 

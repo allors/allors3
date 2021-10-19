@@ -65,7 +65,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
   supplierOffering: SupplierOffering;
 
   unifiedGoodsFilter: SearchFactory;
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
 
   constructor(
     @Self() public allors: ContextService,
@@ -159,7 +159,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.invoiceItem = loaded.object<PurchaseInvoiceItem>(m.PurchaseInvoiceItem);
@@ -314,10 +314,10 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
       this.part = (loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.Part)) as Part;
       this.serialised = part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 
-      const supplierOfferings = loaded.collection<SupplierOffering>(m.SupplierOffering);
+      const supplierOfferings = loaded.collection<SupplierOffering>(m.Part.SupplierOfferingsWherePart);
       this.supplierOffering = supplierOfferings.find((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())) && v.Supplier === this.invoice.BilledFrom);
 
-      this.serialisedItems = loaded.collection<SerialisedItem>(m.SerialisedItem);
+      this.serialisedItems = loaded.collection<SerialisedItem>(m.Part.SerialisedItems);
 
       if (this.invoiceItem.SerialisedItem) {
         this.serialisedItems.push(this.invoiceItem.SerialisedItem);

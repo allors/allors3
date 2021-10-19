@@ -90,7 +90,7 @@ export class WorkEffortAssignmentRateEditComponent extends TestScope implements 
         this.allors.context.reset();
 
         this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
-        this.workEffortPartyAssignments = loaded.collection<WorkEffortPartyAssignment>(m.WorkEffortPartyAssignment);
+        this.workEffortPartyAssignments = loaded.collection<WorkEffortPartyAssignment>(m.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment);
         this.rateTypes = loaded.collection<RateType>(m.RateType);
         this.timeFrequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
         const hour = this.timeFrequencies.find((v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5');

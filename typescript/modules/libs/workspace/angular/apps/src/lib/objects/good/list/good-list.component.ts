@@ -109,7 +109,7 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
         this.allors.context.reset();
 
         const goods = loaded.collection<Good>(m.Good);
-        const productCategories = loaded.collection<ProductCategory>(m.ProductCategory);
+        const productCategories = loaded.collection<ProductCategory>(m.Good.ProductCategoriesWhereProduct);
 
         this.table.total = loaded.value('NonUnifiedGoods_total') as number;
         this.table.data = goods.map((v) => {

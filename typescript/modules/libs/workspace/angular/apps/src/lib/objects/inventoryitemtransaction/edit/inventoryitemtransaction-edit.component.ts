@@ -7,7 +7,6 @@ import { M } from '@allors/workspace/meta/default';
 import {
   Part,
   Facility,
-  InternalOrganisation,
   NonSerialisedInventoryItem,
   InventoryItem,
   InventoryItemTransaction,
@@ -33,7 +32,6 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
   title = 'Add Inventory Item Transaction';
 
   inventoryItem: InventoryItem;
-  internalOrganisation: InternalOrganisation;
   inventoryItemTransaction: InventoryItemTransaction;
   inventoryTransactionReasons: InventoryTransactionReason[];
   selectedPart: Part;
@@ -75,7 +73,6 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
       .pipe(
         switchMap(() => {
           const pulls = [
-            this.fetcher.internalOrganisation,
             pull.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
             pull.Part({}),
             pull.InventoryTransactionReason({}),
@@ -124,7 +121,7 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
         this.inventoryTransactionReasons = loaded.collection(m.InventoryTransactionReason);
         this.nonSerialisedInventoryItemState = loaded.collection(m.NonSerialisedInventoryItemState);
         this.serialisedInventoryItemState = loaded.collection(m.SerialisedInventoryItemState);
-        this.part = loaded.object(m.Part);
+        this.part = loaded.object(m.Part) || loaded.object<Part>(m.SerialisedItem.PartWhereSerialisedItem);
         this.parts = loaded.collection(m.Part);
         this.facilities = loaded.collection(m.Facility);
         this.lots = loaded.collection(m.Lot);

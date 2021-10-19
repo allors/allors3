@@ -127,11 +127,11 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
         this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
         this.productTypes = loaded.collection<ProductType>(m.ProductType);
         this.brands = loaded.collection<Brand>(m.Brand);
-        this.locales = loaded.collection<Locale>(m.Locale);
-        this.facilities = loaded.collection<Facility>(m.Facility);
+        this.locales = this.fetcher.getAdditionalLocales(loaded);
+        this.facilities = this.fetcher.getWarehouses(loaded);
         this.manufacturers = loaded.collection<Organisation>(m.Organisation);
         this.categories = loaded.collection<PartCategory>(m.PartCategory);
-        this.settings = loaded.object<Settings>(m.Settings);
+        this.settings = this.fetcher.getSettings(loaded);
 
         const supplierRelationships = loaded.collection<SupplierRelationship>(m.SupplierRelationship);
         const currentsupplierRelationships = supplierRelationships.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));

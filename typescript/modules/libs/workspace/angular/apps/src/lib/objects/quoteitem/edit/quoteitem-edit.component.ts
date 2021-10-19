@@ -105,7 +105,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
   pickedShipment: ShipmentState;
   packedShipment: ShipmentState;
   onholdShipment: ShipmentState;
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   showIrpf: boolean;
 
   constructor(
@@ -221,11 +221,11 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
       .subscribe(({ loaded, create }) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.quoteItem = loaded.object<QuoteItem>(m.QuoteItem);
-        this.requestItem = loaded.object<RequestItem>(m.RequestItem);
+        this.requestItem = loaded.object<RequestItem>(m.QuoteItem.RequestItem);
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
         this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
         const piece = this.unitsOfMeasure.find((v: UnitOfMeasure) => v.UniqueId === 'f4bbdb52-3441-4768-92d4-729c6c5d6f1b');
@@ -483,7 +483,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.part = (loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.Part)) as Part;
+      this.part = (loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.NonUnifiedGood.Part));
       this.serialisedItems = this.part.SerialisedItems.filter((v) => v.AvailableForSale === true);
 
       if (this.quoteItem.Product !== this.previousProduct) {

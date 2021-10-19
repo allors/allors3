@@ -100,35 +100,35 @@ export class SerialisedItemOverviewSummaryComponent {
       this.serialisedItem = loaded.object<SerialisedItem>(serialisedItemPullName);
       this.part = loaded.object<Part>(partPullName);
 
-      const requests = loaded.collection<RequestForQuote>(m.RequestForQuote) || [];
+      const requests = loaded.collection<RequestForQuote>(m.RequestItem.RequestWhereRequestItem) || [];
       if (requests.length > 0) {
         this.request = requests.reduce(function (a, b) {
           return a.RequestDate > b.RequestDate ? a : b;
         });
       }
 
-      const quotes = loaded.collection<ProductQuote>(m.ProductQuote) || [];
+      const quotes = loaded.collection<ProductQuote>(m.QuoteItem.QuoteWhereQuoteItem) || [];
       if (quotes.length > 0) {
         this.quote = quotes.reduce(function (a, b) {
           return a.IssueDate > b.IssueDate ? a : b;
         });
       }
 
-      const orders = loaded.collection<SalesOrder>(m.SalesOrder) || [];
+      const orders = loaded.collection<SalesOrder>(m.SalesOrderItem.SalesOrderWhereSalesOrderItem) || [];
       if (orders.length > 0) {
         this.order = orders.reduce(function (a, b) {
           return a.OrderDate > b.OrderDate ? a : b;
         });
       }
 
-      const shipments = loaded.collection<CustomerShipment>(m.CustomerShipment) || [];
+      const shipments = loaded.collection<CustomerShipment>(m.ShipmentItem.ShipmentWhereShipmentItem) || [];
       if (shipments.length > 0) {
         this.shipment = shipments.reduce(function (a, b) {
           return a.EstimatedShipDate > b.EstimatedShipDate ? a : b;
         });
       }
 
-      const invoices = loaded.collection<SalesInvoice>(m.SalesInvoice) || [];
+      const invoices = loaded.collection<SalesInvoice>(m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem) || [];
       if (invoices.length > 0) {
         this.invoice = invoices.reduce(function (a, b) {
           return a.InvoiceDate > b.InvoiceDate ? a : b;

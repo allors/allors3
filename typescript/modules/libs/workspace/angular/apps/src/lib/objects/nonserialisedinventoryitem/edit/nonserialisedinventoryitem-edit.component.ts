@@ -7,7 +7,6 @@ import { M } from '@allors/workspace/meta/default';
 import { NonSerialisedInventoryItem } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -49,7 +48,7 @@ export class NonSerialisedInventoryItemEditComponent extends TestScope implement
         switchMap(() => {
           const isCreate = this.data.id === undefined;
 
-          const pulls = [this.fetcher.locales];
+          const pulls = [];
 
           if (!isCreate) {
             pulls.push(

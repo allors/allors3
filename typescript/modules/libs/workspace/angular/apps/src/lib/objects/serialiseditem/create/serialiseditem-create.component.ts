@@ -91,7 +91,7 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        const internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         const externalOwner = loaded.object<Party>(m.Party);
         this.owner = externalOwner || internalOrganisation;
 
@@ -100,7 +100,7 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
         this.serialisedItemStates = loaded.collection<SerialisedItemState>(m.SerialisedItemState);
         this.serialisedItemAvailabilities = loaded.collection<Enumeration>(m.Enumeration);
         this.ownerships = loaded.collection<Ownership>(m.Ownership);
-        this.locales = loaded.collection<Locale>(m.Locale);
+        this.locales = this.fetcher.getAdditionalLocales(loaded);
 
         this.serialisedItem = this.allors.context.create<SerialisedItem>(m.SerialisedItem);
         this.serialisedItem.AvailableForSale = false;

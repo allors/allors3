@@ -95,7 +95,7 @@ export class TimeEntryOverviewPanelComponent extends TestScope {
 
     this.panel.onPulled = (loaded) => {
       this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
-      this.objects = loaded.collection<TimeEntry>(m.TimeEntry);
+      this.objects = loaded.collection<TimeEntry>(m.WorkEffort.ServiceEntriesWhereWorkEffort);
 
       if (this.objects) {
         this.table.total = this.objects.length;

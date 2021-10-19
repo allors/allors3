@@ -45,7 +45,7 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
   invoice: Action;
 
   user: Person;
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   canCreate: boolean;
 
   private subscription: Subscription;
@@ -162,7 +162,7 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.user = loaded.object<Person>(m.Person);
 
         this.canCreate = this.internalOrganisation.canExecuteCreatePurchaseOrder;

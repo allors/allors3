@@ -98,7 +98,7 @@ export class SerialisedItemCharacteristicEditComponent extends TestScope impleme
         this.uoms = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
         this.timeFrequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
         this.allUoms = this.uoms.concat(this.timeFrequencies).sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
-        this.locales = loaded.collection<Locale>(m.Locale);
+        this.locales = this.fetcher.getAdditionalLocales(loaded);
 
         if (isCreate) {
           this.title = 'Add Product Characteristic';

@@ -82,7 +82,7 @@ export class PartCategoryEditComponent extends TestScope implements OnInit, OnDe
 
         this.category = loaded.object<PartCategory>(m.PartCategory);
         this.categories = loaded.collection<PartCategory>(m.PartCategory);
-        this.locales = loaded.collection<Locale>(m.Locale);
+        this.locales = this.fetcher.getAdditionalLocales(loaded);
 
         if (isCreate) {
           this.title = 'Add Part Category';

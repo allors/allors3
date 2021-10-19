@@ -76,7 +76,6 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
 
           const pulls = [
             this.fetcher.internalOrganisation,
-            this.fetcher.locales,
             pull.Singleton({
               objectId: this.singletonId.value,
               select: {
@@ -144,7 +143,7 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
       )
       .subscribe((loaded) => {
         this.organisation = loaded.object<Organisation>(m.Organisation);
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
 
         if (this.organisation) {
           this.customerRelationship = loaded.collection<CustomerRelationship>(m.CustomerRelationship)[0];
@@ -158,7 +157,7 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
         }
 
         this.currencies = loaded.collection<Currency>(m.Currency);
-        this.locales = loaded.collection<Locale>(m.Locale) || [];
+        this.locales = loaded.collection<Locale>(m.Singleton.Locales) || [];
         this.classifications = loaded.collection<CustomOrganisationClassification>(m.CustomOrganisationClassification);
         this.industries = loaded.collection<IndustryClassification>(m.IndustryClassification);
         this.legalForms = loaded.collection<LegalForm>(m.LegalForm);

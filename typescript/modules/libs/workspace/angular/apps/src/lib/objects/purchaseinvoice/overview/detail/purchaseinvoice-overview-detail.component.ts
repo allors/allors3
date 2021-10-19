@@ -74,7 +74,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   private previousShipToEndCustomer: Party;
 
   private subscription: Subscription;
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
 
   customersFilter: SearchFactory;
   employeeFilter: SearchFactory;
@@ -220,7 +220,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
@@ -418,9 +418,9 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
         this.previousBilledFrom = this.invoice.BilledFrom;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.billedFromContactMechanisms = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.billedFromContacts = loaded.collection<Person>(m.Person);
+      this.billedFromContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
 
@@ -463,9 +463,9 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
         this.previousShipToCustomer = this.invoice.ShipToCustomer;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.shipToCustomerAddresses = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToCustomerContacts = loaded.collection<Person>(m.Person);
+      this.shipToCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
 
@@ -507,9 +507,9 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
         this.updateShipToEndCustomer(this.invoice.ShipToEndCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.billToEndCustomerContactMechanisms = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.billToEndCustomerContacts = loaded.collection<Person>(m.Person);
+      this.billToEndCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
 
@@ -551,9 +551,9 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
         this.updateBillToEndCustomer(this.invoice.BillToEndCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.shipToEndCustomerAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToEndCustomerContacts = loaded.collection<Person>(m.Person);
+      this.shipToEndCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
 }

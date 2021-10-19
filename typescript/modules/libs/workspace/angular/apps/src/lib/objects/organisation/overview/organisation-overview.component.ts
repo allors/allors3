@@ -78,7 +78,7 @@ export class OrganisationOverviewComponent extends TestScope implements AfterVie
         this.panelManager.onPulled(loaded);
 
         this.organisation = loaded.object<Organisation>(m.Organisation);
-        this.supplierOfferings = loaded.collection<SupplierOffering>(m.SupplierOffering);
+        this.supplierOfferings = loaded.collection<SupplierOffering>(m.Organisation.SupplierOfferingsWhereSupplier);
       });
   }
 

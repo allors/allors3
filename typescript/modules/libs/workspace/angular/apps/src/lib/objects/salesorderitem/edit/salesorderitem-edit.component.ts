@@ -106,7 +106,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
   private subscription: Subscription;
   inRent: SerialisedItemAvailability;
   goodsFilter: SearchFactory;
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   showIrpf: boolean;
   vatRegimeInitialRole: VatRegime;
   irpfRegimeInitialRole: IrpfRegime;
@@ -224,7 +224,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.quoteItem = loaded.object<QuoteItem>(m.QuoteItem);
@@ -503,7 +503,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.part = (loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.Part)) as Part;
+      this.part = (loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.NonUnifiedGood.Part));
       this.serialisedItems = this.part.SerialisedItems;
 
       if (this.orderItem.Product !== this.previousProduct) {

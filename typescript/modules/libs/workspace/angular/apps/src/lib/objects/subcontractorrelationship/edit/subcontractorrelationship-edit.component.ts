@@ -20,7 +20,7 @@ export class SubContractorRelationshipEditComponent extends TestScope implements
   readonly m: M;
 
   partyRelationship: SubContractorRelationship;
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   organisation: Organisation;
   title: string;
 
@@ -87,7 +87,7 @@ export class SubContractorRelationshipEditComponent extends TestScope implements
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.organisation = loaded.object<Organisation>(m.Organisation);
 
         if (isCreate) {

@@ -81,7 +81,7 @@ export class PurchaseShipmentOverviewSummaryComponent {
     panel.onPulled = (loaded) => {
       this.shipment = loaded.object<PurchaseShipment>(shipmentPullName);
       this.shipmentItems = loaded.collection<ShipmentItem>(shipmentPullName);
-      this.purchaseOrders = loaded.collection<PurchaseOrder>(this.m.PurchaseOrder);
+      this.purchaseOrders = loaded.collection<PurchaseOrder>(this.m.OrderItem.OrderWhereValidOrderItem);
     };
   }
 

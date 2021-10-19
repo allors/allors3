@@ -130,7 +130,7 @@ export class SalesInvoiceOverviewSummaryComponent {
     };
 
     panel.onPulled = (loaded) => {
-      this.orders = loaded.collection<SalesOrder>(m.SalesOrder);
+      this.orders = loaded.collection<SalesOrder>(salesOrderPullName);
       this.workEfforts = loaded.collection<WorkEffort>(workEffortPullName);
       this.invoice = loaded.object<SalesInvoice>(m.SalesInvoice);
       this.repeatingInvoices = loaded.collection<RepeatingSalesInvoice>(m.RepeatingSalesInvoice);

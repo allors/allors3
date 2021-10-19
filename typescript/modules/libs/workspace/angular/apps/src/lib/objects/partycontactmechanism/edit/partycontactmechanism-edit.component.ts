@@ -70,7 +70,6 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
               }),
               pull.PartyContactMechanism({
                 objectId: this.data.id,
-                name: 'test',
                 select: {
                   PartyWherePartyContactMechanism: {
                     PartyContactMechanisms: {
@@ -103,7 +102,6 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
               }),
               pull.PartyContactMechanism({
                 objectId: this.data.id,
-                name: 'test',
                 select: {
                   PartyWherePartyContactMechanism: {
                     PartyContactMechanisms: {
@@ -129,9 +127,9 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
         this.ownContactMechanisms = [];
 
         this.contactMechanismPurposes = loaded.collection<Enumeration>(m.Enumeration);
-        this.organisationContactMechanisms = loaded.collection<ContactMechanism>(m.ContactMechanism);
+        this.organisationContactMechanisms = loaded.collection<ContactMechanism>(m.Person.CurrentOrganisationContactMechanisms);
 
-        const partyContactMechanisms = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+        const partyContactMechanisms = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
         partyContactMechanisms.forEach((v) => this.ownContactMechanisms.push(v.ContactMechanism));
 
         if (this.organisationContactMechanisms !== undefined) {

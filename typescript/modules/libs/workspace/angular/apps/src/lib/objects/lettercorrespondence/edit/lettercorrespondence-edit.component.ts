@@ -174,12 +174,12 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
 
         this.purposes = loaded.collection<CommunicationEventPurpose>(m.CommunicationEventPurpose);
         this.eventStates = loaded.collection<CommunicationEventState>(m.CommunicationEventState);
-        this.parties = loaded.collection<Party>(m.Party);
+        this.parties = loaded.collection<Party>(m.CommunicationEvent.InvolvedParties);
 
         const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
         this.person = loaded.object<Person>(m.Person);
-        this.organisation = loaded.object<Organisation>(m.Organisation);
+        this.organisation = loaded.object<Organisation>(m.OrganisationContactRelationship.Organisation);
 
         if (isCreate) {
           this.title = 'Add Letter';
@@ -308,7 +308,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
       this.fromPostalAddresses = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.PostalAddress).map((v) => v.ContactMechanism);
     });
   }
@@ -340,7 +340,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
       this.toPostalAddresses = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.PostalAddress).map((v) => v.ContactMechanism);
     });
   }

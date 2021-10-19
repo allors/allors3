@@ -65,7 +65,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
   inRent: SerialisedItemAvailability;
 
   goodsFilter: SearchFactory;
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   showIrpf: boolean;
   vatRegimeInitialRole: VatRegime;
   irpfRegimeInitialRole: IrpfRegime;
@@ -175,7 +175,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.invoiceItem = loaded.object<SalesInvoiceItem>(m.SalesInvoiceItem);
@@ -183,7 +183,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
         this.parts = loaded.collection<NonUnifiedPart>(m.NonUnifiedPart);
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
         this.serialisedItemAvailabilities = loaded.collection<SerialisedItemAvailability>(m.SerialisedItemAvailability);
-        this.facilities = loaded.collection<Facility>(m.Facility);
+        this.facilities = this.fetcher.getWarehouses(loaded);
         this.invoiceItemTypes = loaded.collection<InvoiceItemType>(m.InvoiceItemType);
         this.productItemType = this.invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === '0d07f778-2735-44cb-8354-fb887ada42ad');
         this.partItemType = this.invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b');

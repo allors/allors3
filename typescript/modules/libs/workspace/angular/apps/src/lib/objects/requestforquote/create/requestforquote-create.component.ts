@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, OrganisationContactRelationship, Party, ContactMechanism, PartyContactMechanism, Currency, RequestForQuote, CustomerRelationship } from '@allors/workspace/domain/default';
+import { Person, Organisation, OrganisationContactRelationship, Party, ContactMechanism, PartyContactMechanism, Currency, RequestForQuote, CustomerRelationship, InternalOrganisation } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -26,7 +26,7 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
   currencies: Currency[];
   contactMechanisms: ContactMechanism[] = [];
   contacts: Person[] = [];
-  internalOrganisation: Organisation;
+  internalOrganisation: InternalOrganisation;
   scope: ContextService;
 
   addContactPerson = false;
@@ -69,7 +69,7 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.currencies = loaded.collection<Currency>(m.Currency);
 
         this.request = this.allors.context.create<RequestForQuote>(m.RequestForQuote);
@@ -157,9 +157,9 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
         this.previousOriginator = this.request.Originator;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
       this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.contacts = loaded.collection<Person>(m.Person);
+      this.contacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
 }

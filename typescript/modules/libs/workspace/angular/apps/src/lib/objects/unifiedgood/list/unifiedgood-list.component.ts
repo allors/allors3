@@ -124,7 +124,7 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
         this.allors.context.reset();
 
         const goods = loaded.collection<UnifiedGood>(m.UnifiedGood);
-        const productCategories = loaded.collection<ProductCategory>(m.ProductCategory);
+        const productCategories = loaded.collection<ProductCategory>(m.UnifiedGood.ProductCategoriesWhereProduct);
 
         this.table.total = loaded.value('UnifiedGoods_total') as number;
         this.table.data = goods.map((v) => {

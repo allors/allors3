@@ -23,6 +23,7 @@ import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { PartyPartyContactMechanisms } from '../../../../../../../meta/apps/src/lib/generated/m.g';
 
 @Component({
   templateUrl: './emailcommunication-edit.component.html',
@@ -170,12 +171,12 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
 
         this.purposes = loaded.collection<CommunicationEventPurpose>(m.CommunicationEventPurpose);
         this.eventStates = loaded.collection<CommunicationEventState>(m.CommunicationEventState);
-        this.parties = loaded.collection<Party>(m.Party);
+        this.parties = loaded.collection<Party>(m.CommunicationEvent.InvolvedParties);
 
-        const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        const internalOrganisation = loaded.object<InternalOrganisation>('InternalOrganisation');
 
         this.person = loaded.object<Person>(m.Person);
-        this.organisation = loaded.object<Organisation>(m.Organisation);
+        this.organisation = loaded.object<Organisation>(m.OrganisationContactRelationship.Organisation);
 
         if (isCreate) {
           this.title = 'Add Email';
@@ -310,7 +311,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
       this.fromEmails = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress).map((v) => v.ContactMechanism);
     });
   }
@@ -342,7 +343,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
       this.toEmails = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress).map((v) => v.ContactMechanism);
     });
   }

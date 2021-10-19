@@ -81,7 +81,6 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
 
           const pulls = [
             this.fetcher.internalOrganisation,
-            this.fetcher.locales,
             pull.Singleton({
               objectId: this.singletonId.value,
               select: {
@@ -119,9 +118,9 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
       )
       .subscribe((loaded) => {
         this.organisation = loaded.object<Organisation>(m.Organisation);
-        this.internalOrganisation = loaded.object<Organisation>(m.InternalOrganisation);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.currencies = loaded.collection<Currency>(m.Currency);
-        this.locales = loaded.collection<Locale>(m.Locale) || [];
+        this.locales = loaded.collection<Locale>(m.Singleton.Locales) || [];
         this.classifications = loaded.collection<CustomOrganisationClassification>(m.CustomOrganisationClassification);
         this.industries = loaded.collection<IndustryClassification>(m.IndustryClassification);
         this.legalForms = loaded.collection<LegalForm>(m.LegalForm);

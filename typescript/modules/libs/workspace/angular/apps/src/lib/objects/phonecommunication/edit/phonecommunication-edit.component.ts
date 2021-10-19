@@ -154,7 +154,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
 
         this.purposes = loaded.collection<CommunicationEventPurpose>(m.CommunicationEventPurpose);
         this.eventStates = loaded.collection<CommunicationEventState>(m.CommunicationEventState);
-        this.parties = loaded.collection<Party>(m.Party);
+        this.parties = loaded.collection<Party>(m.CommunicationEvent.InvolvedParties);
 
         const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
@@ -287,7 +287,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
       this.fromPhonenumbers = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.TelecommunicationsNumber).map((v) => v.ContactMechanism);
     });
   }
@@ -319,7 +319,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.PartyContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
       this.toPhonenumbers = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.TelecommunicationsNumber).map((v) => v.ContactMechanism);
     });
   }
