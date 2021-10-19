@@ -30,7 +30,7 @@ export function unitToJson(from: unknown): IUnit {
     return from;
   }
 
-  return from.toString();
+  throw new Error(`Unsupported value: ${from}`);
 }
 
 export function dependenciesToJson(from: Set<Dependency>): PullDependency[] {

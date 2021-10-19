@@ -47,7 +47,7 @@ export class FormComponent extends TestScope implements OnInit, OnDestroy {
   private refresh$: BehaviorSubject<Date>;
   private subscription: Subscription;
 
-  constructor(@Self() public allors: ContextService, private titleService: Title, private route: ActivatedRoute, private saveService: SaveService, private dateAdapter: DateAdapter<string>) {
+  constructor(@Self() public allors: ContextService, private titleService: Title, private route: ActivatedRoute, private saveService: SaveService) {
     super();
 
     this.title = 'Form';
@@ -138,22 +138,19 @@ export class FormComponent extends TestScope implements OnInit, OnDestroy {
 
   newDate() {
     if (this.data) {
-      const today = this.dateAdapter.today();
-      this.data.Date = new Date(today);
+      this.data.Date = new Date();
     }
   }
 
   newDateTime() {
     if (this.data) {
-      const today = this.dateAdapter.today();
-      this.data.DateTime = new Date(today);
+      this.data.DateTime = new Date();
     }
   }
 
   newDateTime2() {
     if (this.data) {
-      const today = this.dateAdapter.today();
-      this.data.DateTime2 = new Date(today);
+      this.data.DateTime2 = new Date();
     }
   }
 

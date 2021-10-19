@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
+
 namespace Tests
 {
     using System.Globalization;
@@ -45,7 +47,12 @@ namespace Tests
 
             var data = after.Except(before).First();
 
-            Assert.True(data.ExistDate);
+            Assert.True(data.Date != null);
+
+            var now = DateTime.UtcNow;
+            Assert.Equal(now.Year, data.Date.Value.Year);
+            Assert.Equal(now.Month, data.Date.Value.Month);
+            Assert.Equal(now.Day, data.Date.Value.Day);
         }
     }
 }

@@ -5,7 +5,7 @@
       [aFocusTrigger]="roleType"
       matInput
       [matDatepicker]="picker"
-      [(ngModel)]="model"
+      [(ngModel)]="shadow"
       [name]="name"
       [placeholder]="label"
       [required]="required"
@@ -19,11 +19,11 @@
   </mat-form-field>
 
   <mat-form-field class="col-2">
-    <input matInput type="number" min="0" max="23" [(ngModel)]="hours" [name]="name + '_hours'" placeholder="hours" [required]="required" [disabled]="disabled || !this.model" [readonly]="readonly" />
+    <input matInput type="number" min="0" max="23" [(ngModel)]="hour" [name]="name + '_hour'" placeholder="hour" [required]="required" [disabled]="disabled || !this.shadow" [readonly]="readonly" />
   </mat-form-field>
 
   <mat-form-field class="col-2">
-    <input matInput type="number" min="0" max="59" [(ngModel)]="minutes" [name]="name + '_minutes'" placeholder="minutes" [required]="required" [disabled]="disabled || !this.model" [readonly]="readonly" />
+    <input matInput type="number" min="0" max="59" [(ngModel)]="minute" [name]="name + '_minute'" placeholder="minute" [required]="required" [disabled]="disabled || !this.shadow" [readonly]="readonly" />
   </mat-form-field>
 </div>
 

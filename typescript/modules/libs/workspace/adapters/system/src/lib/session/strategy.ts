@@ -402,14 +402,14 @@ export abstract class Strategy implements IStrategy {
       case UnitTags.Boolean:
         error = typeof value !== 'boolean';
         break;
+      case UnitTags.DateTime:
+        error = !(value instanceof Date);
+        break;
       case UnitTags.Float:
         error = isNaN(value as number);
         break;
       case UnitTags.Integer:
         error = !Number.isInteger(value as number);
-        break;
-      case UnitTags.DateTime:
-        // No checks: 
         break;
     }
 
