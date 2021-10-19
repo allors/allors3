@@ -10,11 +10,13 @@ npm install -D @nrwl/angular
 
 npm install @angular/cdk
 npm install @angular/material
+npm install @angular/material-luxon-adapter
 npm install bootstrap@4.6.0
 npm install common-tags
 npm install date-fns
 npm install easymde
 npm install jsnlog
+npm install luxon
 
 npx nx g @nrwl/angular:application angular/apps/app --routing=true --style=scss --e2eTestRunner=none
 npx nx g @nrwl/angular:application angular/base/app --routing=true --style=scss --e2eTestRunner=none

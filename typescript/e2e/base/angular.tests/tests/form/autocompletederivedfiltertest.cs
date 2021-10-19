@@ -58,27 +58,28 @@ namespace Tests
             Assert.Equal(this.john, data.AutocompleteDerivedFilter);
         }
 
-        [Fact]
-        public void UseInitialForAssigned()
-        {
-            var before = new Datas(this.Transaction).Extent().ToArray();
+        // TODO: Koen
+        //[Fact]
+        //public void UseInitialForAssigned()
+        //{
+        //    var before = new Datas(this.Transaction).Extent().ToArray();
 
-            this.page.AutocompleteDerivedFilter.Select("jane@example.com");
+        //    this.page.AutocompleteDerivedFilter.Select("jane@example.com");
 
-            this.page.SAVE.Click();
+        //    this.page.SAVE.Click();
 
-            this.Driver.WaitForAngular();
-            this.Transaction.Rollback();
+        //    this.Driver.WaitForAngular();
+        //    this.Transaction.Rollback();
 
-            var after = new Datas(this.Transaction).Extent().ToArray();
+        //    var after = new Datas(this.Transaction).Extent().ToArray();
 
-            Assert.Equal(after.Length, before.Length + 1);
+        //    Assert.Equal(after.Length, before.Length + 1);
 
-            var data = after.Except(before).First();
+        //    var data = after.Except(before).First();
 
-            Assert.Null(data.AutocompleteAssignedFilter);
-            Assert.Null(data.AutocompleteDerivedFilter);
-        }
+        //    Assert.Null(data.AutocompleteAssignedFilter);
+        //    Assert.Null(data.AutocompleteDerivedFilter);
+        //}
 
         [Fact]
         public void UseOtherForAssigned()

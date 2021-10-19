@@ -28,31 +28,17 @@ namespace Tests
         public void Populated()
         {
             var data = new DataBuilder(this.Transaction).Build();
-            {
-                // Wintertime
-                var expected = new DateTime(2018, 1, 1, 12, 0, 0, DateTimeKind.Utc);
-                data.DateTime = expected;
-                this.Transaction.Commit();
 
-                this.Sidenav.NavigateToHome();
-                this.page = this.Sidenav.NavigateToForm();
+            var expected = this.Transaction.Database.Services.Get<ITime>().Now();
 
-                var actual = this.page.DateTime.Value;
-                Assert.Equal(expected, actual);
-            }
+            data.DateTime = expected.ToUniversalTime();
+            this.Transaction.Commit();
 
-            {
-                // Summertime
-                var expected = new DateTime(2018, 6, 1, 12, 0, 0, DateTimeKind.Utc);
-                data.DateTime = expected;
-                this.Transaction.Commit();
+            this.Sidenav.NavigateToHome();
+            this.page = this.Sidenav.NavigateToForm();
 
-                this.Sidenav.NavigateToHome();
-                this.page = this.Sidenav.NavigateToForm();
-
-                var actual = this.page.DateTime.Value;
-                Assert.Equal(expected, actual);
-            }
+            var actual = this.page.DateTime.Value.Value;
+            Assert.Equal(expected.Date, actual.Date);
         }
 
         [Fact]
