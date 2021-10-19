@@ -6,7 +6,6 @@ import { WorkspaceOriginState } from './originstate/workspace-origin-state';
 import { frozenEmptyArray } from '../collections/frozen-empty-array';
 import { isNewId, Session } from './session';
 import { WorkspaceInitialVersion } from '../version';
-import { DateTime } from '../../../../../meta/apps/src/lib/generated/m.g';
 
 export abstract class Strategy implements IStrategy {
   DatabaseOriginState: DatabaseOriginState;

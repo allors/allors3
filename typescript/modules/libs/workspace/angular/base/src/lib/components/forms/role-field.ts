@@ -89,15 +89,8 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
         value = null;
       }
 
-      switch (this.roleType.objectType.tag) {
-        // case UnitTags.DateTime:
-        //   if (value?.toJSDate) {
-        //     value = value.toJSDate();
-        //   }
-        //   break;
-        case UnitTags.Decimal:
-          value = (value as string)?.replace(',', '.');
-          break;
+      if (this.roleType.objectType.tag === UnitTags.Decimal) {
+        value = (value as string)?.replace(',', '.');
       }
 
       if (this.assignedRoleType) {
