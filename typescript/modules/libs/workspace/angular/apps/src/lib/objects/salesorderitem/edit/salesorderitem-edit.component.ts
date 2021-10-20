@@ -187,6 +187,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
                 select: {
                   SalesOrderWhereSalesOrderItem: {
                     include: {
+                      SalesOrderItems: x,
                       DerivedVatRegime: {
                         VatRates: x,
                       },
@@ -205,6 +206,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
               pull.SalesOrder({
                 objectId: this.data.associationId,
                 include: {
+                  SalesOrderItems: x,
                   DerivedVatRegime: {
                     VatRates: x,
                   },

@@ -122,6 +122,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
                 select: {
                   PurchaseInvoiceWherePurchaseInvoiceItem: {
                     include: {
+                      PurchaseInvoiceItems: x,
                       DerivedVatRegime: {
                         VatRates: x,
                       },
@@ -140,6 +141,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
               pull.PurchaseInvoice({
                 objectId: this.data.associationId,
                 include: {
+                  PurchaseInvoiceItems: x,
                   DerivedVatRegime: {
                     VatRates: x,
                   },

@@ -137,6 +137,7 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
       pull.Party({
         object: supplier,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
@@ -170,6 +171,7 @@ export class PurchaseReturnCreateComponent extends TestScope implements OnInit, 
       pull.Party({
         object: organisation,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {

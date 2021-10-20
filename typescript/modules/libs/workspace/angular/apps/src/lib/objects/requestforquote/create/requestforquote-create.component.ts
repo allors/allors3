@@ -133,6 +133,7 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
       pull.Party({
         objectId: party.id,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {

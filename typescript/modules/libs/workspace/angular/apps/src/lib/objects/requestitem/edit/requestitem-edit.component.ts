@@ -123,6 +123,7 @@ export class RequestItemEditComponent extends TestScope implements OnInit, OnDes
             pulls.push(
               pull.Request({
                 objectId: this.data.associationId,
+                include: { RequestItems: x }
               })
             );
           }

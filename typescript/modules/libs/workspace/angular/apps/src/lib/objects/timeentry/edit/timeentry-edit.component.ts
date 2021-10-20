@@ -161,13 +161,17 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
   }
 
   public workerSelected(party: Party): void {
-    const m = this.m; const { pullBuilder: pull } = m;
+    const m = this.m; 
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     const pulls = [
       pull.Party({
         objectId: party.id,
         select: {
-          Person_TimeSheetWhereWorker: {},
+          Person_TimeSheetWhereWorker: {
+            include: { TimeEntries: x }
+          },
         },
       }),
     ];

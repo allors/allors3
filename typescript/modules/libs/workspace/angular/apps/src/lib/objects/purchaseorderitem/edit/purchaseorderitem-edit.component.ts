@@ -133,6 +133,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
                 select: {
                   PurchaseOrderWherePurchaseOrderItem: {
                     include: {
+                      PurchaseOrderItems: x,
                       DerivedVatRegime: {
                         VatRates: x,
                       },
@@ -151,6 +152,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
               pull.PurchaseOrder({
                 objectId: this.data.associationId,
                 include: {
+                  PurchaseOrderItems: x,
                   DerivedVatRegime: x,
                   DerivedIrpfRegime: x,
                   TakenViaSupplier: x,

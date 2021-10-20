@@ -234,6 +234,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
       pull.Party({
         object: party,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {

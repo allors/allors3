@@ -101,11 +101,17 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
                 objectId: this.data.id,
                 include: {
                   FromParty: {
+                    PartyContactMechanisms: {
+                      ContactMechanism: x,
+                    },
                     CurrentPartyContactMechanisms: {
                       ContactMechanism: x,
                     },
                   },
                   ToParty: {
+                    PartyContactMechanisms: {
+                      ContactMechanism: x,
+                    },
                     CurrentPartyContactMechanisms: {
                       ContactMechanism: x,
                     },
@@ -130,6 +136,9 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
               pull.Organisation({
                 objectId: this.data.associationId,
                 include: {
+                  PartyContactMechanisms: {
+                    ContactMechanism: x,
+                  },
                   CurrentPartyContactMechanisms: {
                     ContactMechanism: x,
                   },
@@ -138,6 +147,9 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
               pull.Person({
                 objectId: this.data.associationId,
                 include: {
+                  PartyContactMechanisms: {
+                    ContactMechanism: x,
+                  },
                   CurrentPartyContactMechanisms: {
                     ContactMechanism: x,
                   },

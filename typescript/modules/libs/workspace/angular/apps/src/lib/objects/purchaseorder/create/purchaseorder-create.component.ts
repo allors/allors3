@@ -222,6 +222,7 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
       pull.Organisation({
         object: supplier,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
@@ -265,6 +266,7 @@ export class PurchaseOrderCreateComponent extends TestScope implements OnInit, O
       pull.Organisation({
         object: organisation,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {

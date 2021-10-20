@@ -206,6 +206,7 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
       pull.Party({
         object: party,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {

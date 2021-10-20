@@ -59,7 +59,11 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-          const pulls = [this.fetcher.locales, this.fetcher.Settings, pull.ProductIdentificationType({}), pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] })];
+          const pulls = [
+            this.fetcher.locales, 
+            this.fetcher.Settings, 
+            pull.ProductIdentificationType({}), 
+            pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] })];
 
           this.nonUnifiedPartsFilter = Filters.nonUnifiedPartsFilter(m);
 

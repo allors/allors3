@@ -63,7 +63,10 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
         switchMap(([, internalOrganisationId]) => {
-          const pulls = [this.fetcher.internalOrganisation, pull.Currency({ sorting: [{ roleType: m.Currency.Name }] }), pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] })];
+          const pulls = [
+            this.fetcher.internalOrganisation, 
+            pull.Currency({ sorting: [{ roleType: m.Currency.Name }] }), 
+            pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] })];
 
           this.customersFilter = Filters.customersFilter(m, internalOrganisationId);
 
@@ -73,8 +76,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.quote = loaded.object<ProductQuote>(m.ProductQuote);
-         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
@@ -142,6 +144,7 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
       pull.Party({
         object: party,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {

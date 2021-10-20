@@ -277,6 +277,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
       pull.Party({
         object: supplier,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
@@ -316,6 +317,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
       pull.Party({
         object: organisation,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {

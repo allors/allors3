@@ -403,6 +403,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
       pull.Party({
         object: party,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
@@ -453,6 +454,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
       pull.Party({
         object: party,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
@@ -503,6 +505,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
       pull.Party({
         object: party,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
@@ -547,6 +550,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
       pull.Party({
         object: party,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {

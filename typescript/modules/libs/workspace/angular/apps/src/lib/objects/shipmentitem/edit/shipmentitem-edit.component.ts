@@ -189,6 +189,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
               pull.Shipment({
                 objectId: this.data.associationId,
                 include: {
+                  ShipmentItems: x,
                   ShipToAddress: x,
                 },
               }),

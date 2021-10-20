@@ -52,6 +52,9 @@ export class EmailAddressCreateComponent extends TestScope implements OnInit, On
           const pulls = [
             pull.Party({
               objectId: this.data.associationId,
+              include: {
+                PartyContactMechanisms: x,
+              }
             }),
             pull.ContactMechanismPurpose({
               predicate: { kind: 'Equals', propertyType: m.ContactMechanismPurpose.IsActive, value: true },

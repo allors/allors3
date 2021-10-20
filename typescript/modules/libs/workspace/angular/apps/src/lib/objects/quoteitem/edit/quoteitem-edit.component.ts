@@ -184,6 +184,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
                 select: {
                   QuoteWhereQuoteItem: {
                     include: {
+                      QuoteItems: x,
                       DerivedVatRegime: {
                         VatRates: x,
                       },
@@ -202,6 +203,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
               pull.ProductQuote({
                 objectId: this.data.associationId,
                 include: {
+                  QuoteItems: x,
                   DerivedVatRegime: {
                     VatRates: x,
                   },

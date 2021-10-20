@@ -153,7 +153,10 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
             pull.ProductIdentificationType({}),
             pull.Ownership({ sorting: [{ roleType: m.Ownership.Name }] }),
             pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
-            pull.PartCategory({ sorting: [{ roleType: m.PartCategory.Name }] }),
+            pull.PartCategory({ 
+              include: { Parts: x },
+              sorting: [{ roleType: m.PartCategory.Name }]
+            }),
             pull.Brand({
               include: {
                 Models: x,

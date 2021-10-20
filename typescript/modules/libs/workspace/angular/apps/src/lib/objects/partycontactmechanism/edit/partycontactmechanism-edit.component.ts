@@ -89,6 +89,7 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
             pulls.push(
               pull.Party({
                 objectId: this.data.associationId,
+                include: { PartyContactMechanisms: x },
               }),
               pull.Person({
                 objectId: this.data.associationId,

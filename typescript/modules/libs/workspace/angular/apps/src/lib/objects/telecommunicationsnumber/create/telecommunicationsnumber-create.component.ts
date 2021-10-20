@@ -44,6 +44,7 @@ export class TelecommunicationsNumberCreateComponent extends TestScope implement
   public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
@@ -51,6 +52,7 @@ export class TelecommunicationsNumberCreateComponent extends TestScope implement
           const pulls = [
             pull.Party({
               objectId: this.data.associationId,
+              include: { PartyContactMechanisms: x }
             }),
             pull.ContactMechanismType({
               predicate: { kind: 'Equals', propertyType: m.ContactMechanismType.IsActive, value: true },

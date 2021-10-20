@@ -98,7 +98,10 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
             pull.InventoryItemKind({}),
             pull.ProductIdentificationType({}),
             pull.Ownership({ sorting: [{ roleType: m.Ownership.Name }] }),
-            pull.PartCategory({ sorting: [{ roleType: m.PartCategory.Name }] }),
+            pull.PartCategory({ 
+              include: { Parts: x},
+              sorting: [{ roleType: m.PartCategory.Name }]
+            }),
             pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
             pull.SupplierRelationship({
               include: {

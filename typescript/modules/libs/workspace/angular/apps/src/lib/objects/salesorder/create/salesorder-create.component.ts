@@ -335,6 +335,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
       pull.Party({
         object: party,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
@@ -395,6 +396,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
       pull.Party({
         object: party,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
@@ -455,6 +457,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
       pull.Party({
         object: party,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
@@ -515,6 +518,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
       pull.Party({
         object: party,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {

@@ -52,7 +52,10 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
           const pulls = [
             pull.CommunicationEvent({
               objectId: id,
-              include: { CommunicationEventState: x },
+              include: { 
+                WorkEfforts: x,
+                CommunicationEventState: x,
+              },
             }),
             pull.WorkTask({
               objectId: roleId,

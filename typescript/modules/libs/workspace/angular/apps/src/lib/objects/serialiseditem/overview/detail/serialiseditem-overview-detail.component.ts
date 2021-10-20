@@ -143,7 +143,9 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
             pull.SerialisedItem({
               objectId: id,
               select: {
-                PartWhereSerialisedItem: x,
+                PartWhereSerialisedItem: {
+                  include: { SerialisedItems: x },
+                }
               },
             }),
             pull.SerialisedItem({

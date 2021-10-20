@@ -119,7 +119,10 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
           const pulls = [
             this.fetcher.locales,
             pull.ProductIdentificationType({}),
-            pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] }),
+            pull.ProductCategory({ 
+              include: { Products: x},
+              sorting: [{ roleType: m.ProductCategory.Name }]
+            }),
             pull.NonUnifiedGood({
               objectId: id,
               include: {

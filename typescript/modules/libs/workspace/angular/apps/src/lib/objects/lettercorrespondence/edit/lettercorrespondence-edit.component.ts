@@ -104,11 +104,17 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
                 objectId: this.data.id,
                 include: {
                   FromParty: {
+                    PartyContactMechanisms: {
+                      ContactMechanism: x,
+                    },
                     CurrentPartyContactMechanisms: {
                       ContactMechanism: x,
                     },
                   },
                   ToParty: {
+                    PartyContactMechanisms: {
+                      ContactMechanism: x,
+                    },
                     CurrentPartyContactMechanisms: {
                       ContactMechanism: x,
                     },

@@ -187,7 +187,10 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
             pull.Facility({}),
             pull.ProductIdentificationType({}),
             pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
-            pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] }),
+            pull.ProductCategory({ 
+              include: {Products: x },
+              sorting: [{ roleType: m.ProductCategory.Name }]
+            }),
             pull.SupplierRelationship({
               include: {
                 Supplier: x,

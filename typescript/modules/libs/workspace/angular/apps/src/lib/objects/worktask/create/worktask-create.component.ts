@@ -106,6 +106,7 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
       pull.Party({
         object: party,
         select: {
+          PartyContactMechanisms: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {

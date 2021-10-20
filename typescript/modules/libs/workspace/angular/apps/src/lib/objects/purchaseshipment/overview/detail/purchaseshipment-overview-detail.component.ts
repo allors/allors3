@@ -157,7 +157,9 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
                 ShipFromParty: x,
                 ShipFromAddress: x,
                 ShipFromFacility: x,
-                ShipToParty: x,
+                ShipToParty: {
+                  PartyContactMechanisms: x,
+                },
                 ShipToContactPerson: x,
                 ShipToAddress: x,
                 ShipFromContactPerson: x,
