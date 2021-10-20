@@ -3,13 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database
+namespace Allors.Meta.Generation.Storage
 {
     using System;
     using System.IO;
-
-    using Development.Repository.Tasks;
-    using Meta;
+    using Database.Meta;
 
     class Program
     {

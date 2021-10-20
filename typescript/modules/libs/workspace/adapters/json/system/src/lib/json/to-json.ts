@@ -357,7 +357,7 @@ export function poolToJson(from: Map<IObject, number>): number[][] {
     return null;
   }
 
-  return Array.from(from, ([obj, version]) => [obj.id, version]);
+  return Array.from(from, ([object, version]) => [object.id, version]);
 }
 
 export function pathsToJson(from: RoleType[]): string[] {

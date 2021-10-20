@@ -1,9 +1,10 @@
 import { PushRequestNewObject, PushRequestObject, PushRequestRole } from '@allors/protocol/json/system';
 import { DatabaseOriginState as SystemDatabaseOriginState, DatabaseRecord, Strategy, IRange } from '@allors/workspace/adapters/system';
 import { unitToJson } from '../../json/to-json';
+import { IObject } from '@allors/workspace/domain/system';
 
 export class DatabaseOriginState extends SystemDatabaseOriginState {
-  constructor(public strategy: Strategy, record: DatabaseRecord) {
+  constructor(public object: IObject, record: DatabaseRecord) {
     super(record);
   }
 

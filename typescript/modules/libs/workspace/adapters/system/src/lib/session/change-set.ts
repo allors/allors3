@@ -1,4 +1,4 @@
-import { IChangeSet, IStrategy } from '@allors/workspace/domain/system';
+import { IChangeSet, IObject } from '@allors/workspace/domain/system';
 import { AssociationType, PropertyType, RelationType, RoleType } from '@allors/workspace/meta/system';
 
 import { MapMap } from '../collections/map-map';
@@ -6,27 +6,26 @@ import { frozenEmptySet } from '../collections/frozen-empty-set';
 import { IRange, Ranges } from '../collections/ranges/ranges';
 
 import { Session } from './session';
-import { Strategy } from './strategy';
 
 export class ChangeSet implements IChangeSet {
-  associationsByRoleType: Map<RoleType, Set<IStrategy>>;
-  rolesByAssociationType: Map<AssociationType, Set<IStrategy>>;
+  associationsByRoleType: Map<RoleType, Set<IObject>>;
+  rolesByAssociationType: Map<AssociationType, Set<IObject>>;
 
-  private ranges: Ranges<Strategy>;
+  private ranges: Ranges<IObject>;
 
-  public constructor(public session: Session, public created: Set<IStrategy>, public instantiated: Set<IStrategy>) {
+  public constructor(public session: Session, public created: Set<IObject>, public instantiated: Set<IObject>) {
     this.associationsByRoleType = new Map();
     this.rolesByAssociationType = new Map();
 
-    this.created ??= frozenEmptySet as Set<IStrategy>;
-    this.instantiated ??= frozenEmptySet as Set<IStrategy>;
+    this.created ??= frozenEmptySet as Set<IObject>;
+    this.instantiated ??= frozenEmptySet as Set<IObject>;
 
     this.ranges = this.session.ranges;
   }
 
-  public addSessionStateChanges(sessionStateChangeSet: MapMap<PropertyType, Strategy, unknown>) {
+  public addSessionStateChanges(sessionStateChangeSet: MapMap<PropertyType, IObject, unknown>) {
     for (const [propertyType, map] of sessionStateChangeSet.mapMap) {
-      const strategies = new Set<IStrategy>();
+      const strategies = new Set<IObject>();
 
       for (const [strategy] of map) {
         strategies.add(strategy);
@@ -42,19 +41,19 @@ export class ChangeSet implements IChangeSet {
     }
   }
 
-  public diffUnit(association: Strategy, relationType: RelationType, current: unknown, previous: unknown) {
+  public diffUnit(association: IObject, relationType: RelationType, current: unknown, previous: unknown) {
     if (current !== previous) {
       this.addAssociation(relationType, association);
     }
   }
 
-  public diffCompositeStrategyRecord(association: Strategy, relationType: RelationType, current: Strategy, previous: number) {
+  public diffCompositeStrategyRecord(association: IObject, relationType: RelationType, current: IObject, previous: number) {
     if (current?.id === previous) {
       return;
     }
 
     if (previous != null) {
-      const previousStrategy = (this.session as Session).getStrategy(previous);
+      const previousStrategy = (this.session as Session).getObject(previous);
       if (previousStrategy) {
         this.addRole(relationType, previousStrategy);
       }
@@ -67,23 +66,23 @@ export class ChangeSet implements IChangeSet {
     this.addAssociation(relationType, association);
   }
 
-  public diffCompositeRecordRecord(association: Strategy, relationType: RelationType, current: number, previous: number) {
+  public diffCompositeRecordRecord(association: IObject, relationType: RelationType, current: number, previous: number) {
     if (current === previous) {
       return;
     }
 
     if (previous != null) {
-      this.addRole(relationType, (this.session as Session).getStrategy(previous));
+      this.addRole(relationType, (this.session as Session).getObject(previous));
     }
 
     if (current != null) {
-      this.addRole(relationType, (this.session as Session).getStrategy(current));
+      this.addRole(relationType, (this.session as Session).getObject(current));
     }
 
     this.addAssociation(relationType, association);
   }
 
-  public diffCompositeStrategyStrategy(association: Strategy, relationType: RelationType, current: Strategy, previous: Strategy) {
+  public diffCompositeStrategyStrategy(association: IObject, relationType: RelationType, current: IObject, previous: IObject) {
     if (current === previous) {
       return;
     }
@@ -99,18 +98,18 @@ export class ChangeSet implements IChangeSet {
     this.addAssociation(relationType, association);
   }
 
-  public diffCompositesStrategyRecord(association: Strategy, relationType: RelationType, current: IRange<Strategy>, previousRange: IRange<number>) {
-    const previous: IRange<Strategy> = previousRange?.map((v) => (this.session as Session).getStrategy(v));
+  public diffCompositesStrategyRecord(association: IObject, relationType: RelationType, current: IRange<IObject>, previousRange: IRange<number>) {
+    const previous: IRange<IObject> = previousRange?.map((v) => (this.session as Session).getObject(v));
     this.diffCompositesStrategyStrategy(association, relationType, current, previous);
   }
 
-  public diffCompositesRecordRecord(association: Strategy, relationType: RelationType, currentRange: IRange<number>, previousRange: IRange<number>) {
-    const current: IRange<Strategy> = currentRange?.map((v) => (this.session as Session).getStrategy(v));
-    const previous: IRange<Strategy> = previousRange?.map((v) => (this.session as Session).getStrategy(v));
+  public diffCompositesRecordRecord(association: IObject, relationType: RelationType, currentRange: IRange<number>, previousRange: IRange<number>) {
+    const current: IRange<IObject> = currentRange?.map((v) => (this.session as Session).getObject(v));
+    const previous: IRange<IObject> = previousRange?.map((v) => (this.session as Session).getObject(v));
     this.diffCompositesStrategyStrategy(association, relationType, current, previous);
   }
 
-  public diffCompositesStrategyStrategy(association: Strategy, relationType: RelationType, current: IRange<Strategy>, previous: IRange<Strategy>) {
+  public diffCompositesStrategyStrategy(association: IObject, relationType: RelationType, current: IRange<IObject>, previous: IRange<IObject>) {
     let hasChange = false;
 
     for (const v of this.ranges.enumerate(previous)) {
@@ -132,7 +131,7 @@ export class ChangeSet implements IChangeSet {
     }
   }
 
-  private addAssociation(relationType: RelationType, association: Strategy) {
+  private addAssociation(relationType: RelationType, association: IObject) {
     const roleType = relationType.roleType;
 
     let associations = this.associationsByRoleType.get(roleType);
@@ -144,7 +143,7 @@ export class ChangeSet implements IChangeSet {
     associations.add(association);
   }
 
-  private addRole(relationType: RelationType, role: Strategy) {
+  private addRole(relationType: RelationType, role: IObject) {
     const associationType = relationType.associationType;
 
     let roles = this.rolesByAssociationType.get(associationType);

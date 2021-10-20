@@ -73,7 +73,7 @@ export class OrganisationOverviewComponent extends TestScope implements OnInit, 
     window.history.back();
   }
 
-  public checkType(obj: any): string {
-    return obj.objectType.name;
+  public checkType(object: any): string {
+    return object.objectType.name;
   }
 }

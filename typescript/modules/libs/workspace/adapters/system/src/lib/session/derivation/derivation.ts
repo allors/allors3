@@ -27,7 +27,7 @@ export class Derivation implements IDerivation {
 
       if (changeSet.instantiated != null) {
         for (const instantiated of changeSet.instantiated.values()) {
-          const cls = instantiated.cls;
+          const cls = instantiated.strategy.cls;
           const rules = this.engine.rulesByClass.get(cls)?.filter((v) => this.activeRules.has(v));
 
           if (rules != null) {
@@ -46,13 +46,13 @@ export class Derivation implements IDerivation {
 
                   if (pattern.tree != null) {
                     source = pattern.tree.reduce((acc, v) => {
-                      for (const obj of resolve(instantiated.object, v, true)) {
+                      for (const obj of resolve(instantiated, v, true)) {
                         acc.push(obj);
                       }
                       return acc;
                     }, []);
                   } else {
-                    source = [instantiated.object];
+                    source = [instantiated];
                   }
 
                   if (pattern.ofType != null) {
@@ -71,7 +71,7 @@ export class Derivation implements IDerivation {
 
       for (const [roleType, associations] of changeSet.associationsByRoleType) {
         for (const association of associations) {
-          const cls = association.cls;
+          const cls = association.strategy.cls;
           const patterns = this.engine.patternsByRoleTypeByClass.get(cls)?.get(roleType);
 
           if (patterns != null) {
@@ -91,11 +91,11 @@ export class Derivation implements IDerivation {
 
               if (pattern.tree != null) {
                 source = pattern.tree.reduce((acc, v) => {
-                  acc.push(resolve(association.object, v, true));
+                  acc.push(resolve(association, v, true));
                   return acc;
                 }, []);
               } else {
-                source = [association.object];
+                source = [association];
               }
 
               if (pattern.ofType != null) {
@@ -112,7 +112,7 @@ export class Derivation implements IDerivation {
 
       for (const [associationType, roles] of changeSet.rolesByAssociationType) {
         for (const association of roles) {
-          const cls = association.cls;
+          const cls = association.strategy.cls;
           const patterns = this.engine.patternsByAssociationTypeByClass.get(cls)?.get(associationType);
           if (patterns != null) {
             for (const pattern of patterns) {
@@ -131,11 +131,11 @@ export class Derivation implements IDerivation {
 
               if (pattern.tree != null) {
                 source = pattern.tree.reduce((acc, v) => {
-                  acc.push(resolve(association.object, v, true));
+                  acc.push(resolve(association, v, true));
                   return acc;
                 }, []);
               } else {
-                source = [association.object];
+                source = [association];
               }
 
               if (pattern.ofType != null) {

@@ -44,5 +44,28 @@ namespace Tests
 
             Assert.Equal(administrator, data.Select);
         }
+
+
+        [Fact]
+        public void EmptyOptions()
+        {
+            var administrator = new People(this.Transaction).FindBy(this.M.Person.UserName, "administrator");
+            var before = new Datas(this.Transaction).Extent().ToArray();
+
+            this.page.Select.Select(administrator);
+
+            this.page.SAVE.Click();
+
+            this.Driver.WaitForAngular();
+            this.Transaction.Rollback();
+
+            var after = new Datas(this.Transaction).Extent().ToArray();
+
+            Assert.Equal(after.Length, before.Length + 1);
+
+            var data = after.Except(before).First();
+
+            Assert.Equal(administrator, data.Select);
+        }
     }
 }

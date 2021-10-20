@@ -87,7 +87,7 @@ export abstract class DatabaseOriginState extends RecordBasedOriginState {
     const newRecord = this.session.workspace.database.getRecord(this.id);
     if (!this.isPushed) {
       if (!this.canMerge(newRecord)) {
-        pull.addMergeError(this.strategy.object);
+        pull.addMergeError(this.object);
         return;
       }
     } else {

@@ -45,7 +45,7 @@ export abstract class Ranges<T> {
     }
   }
 
-  importFrom(set?: T[]): IRange<T> {
+  importFrom(set?: T[] | ReadonlyArray<T>): IRange<T> {
     if (Array.isArray(set)) {
       return [...set].sort(this.compare);
     }

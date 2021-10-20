@@ -1,8 +1,8 @@
-import { IStrategy } from '../istrategy';
+import { IObject } from '../iobject';
 import { IDiff } from './idiff';
 
 export interface ICompositeDiff extends IDiff {
-  originalRole: IStrategy;
+  originalRole: IObject;
 
-  changedRole: IStrategy;
+  changedRole: IObject;
 }

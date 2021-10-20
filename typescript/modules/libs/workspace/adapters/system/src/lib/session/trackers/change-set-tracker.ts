@@ -1,20 +1,19 @@
-import { IStrategy } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/workspace/domain/system';
 import { DatabaseOriginState } from '../originstate/database-origin-state';
 import { WorkspaceOriginState } from '../originstate/workspace-origin-state';
-import { Strategy } from '../strategy';
 
 export class ChangeSetTracker {
-  created: Set<IStrategy>;
-  instantiated: Set<IStrategy>;
+  created: Set<IObject>;
+  instantiated: Set<IObject>;
   databaseOriginStates: Set<DatabaseOriginState>;
   workspaceOriginStates: Set<WorkspaceOriginState>;
 
-  public onCreated(strategy: Strategy) {
-    (this.created ??= new Set()).add(strategy);
+  public onCreated(object: IObject) {
+    (this.created ??= new Set()).add(object);
   }
 
-  public onInstantiated(strategy: Strategy) {
-    (this.instantiated ??= new Set()).add(strategy);
+  public onInstantiated(object: IObject) {
+    (this.instantiated ??= new Set()).add(object);
   }
 
   public onDatabaseChanged(state: DatabaseOriginState) {

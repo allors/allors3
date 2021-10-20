@@ -28,9 +28,9 @@ function getComposites(strategy: IStrategy, propertyType: PropertyType, ofType: 
   return composites.filter((v) => ofType.isAssignableFrom(v.strategy.cls));
 }
 
-function resolveRecursive(obj: IObject, node: Node, results: Set<IObject>, skipMissing?: boolean): void {
+function resolveRecursive(object: IObject, node: Node, results: Set<IObject>, skipMissing?: boolean): void {
   if (node.propertyType.isOne) {
-    const resolved = getComposite(obj.strategy, node.propertyType, node.ofType, skipMissing);
+    const resolved = getComposite(object.strategy, node.propertyType, node.ofType, skipMissing);
     if (resolved != null) {
       if (node.nodes?.length > 0) {
         for (const subNode of node.nodes) {
@@ -41,7 +41,7 @@ function resolveRecursive(obj: IObject, node: Node, results: Set<IObject>, skipM
       }
     }
   } else {
-    const resolveds = getComposites(obj.strategy, node.propertyType, node.ofType, skipMissing);
+    const resolveds = getComposites(object.strategy, node.propertyType, node.ofType, skipMissing);
     if (resolveds != null) {
       if (node.nodes?.length > 0) {
         for (const resolved of resolveds) {

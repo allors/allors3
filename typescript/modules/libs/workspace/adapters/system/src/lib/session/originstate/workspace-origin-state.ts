@@ -1,13 +1,14 @@
+import { IObject } from '@allors/workspace/domain/system';
 import { RoleType } from '@allors/workspace/meta/system';
 import { IRecord } from '../../irecord';
 import { UnknownVersion } from '../../version';
 import { WorkspaceRecord } from '../../workspace/workspace-record';
 import { WorkspaceResult } from '../../workspace/workspace-result';
-import { Strategy } from '../strategy';
+import { Session } from '../session';
 import { RecordBasedOriginState } from './record-based-origin-state';
 
 export class WorkspaceOriginState extends RecordBasedOriginState {
-  constructor(public strategy: Strategy, private workspaceRecord: WorkspaceRecord) {
+  constructor(public object: IObject, private workspaceRecord: WorkspaceRecord) {
     super();
     this.previousRecord = this.workspaceRecord;
   }
@@ -25,8 +26,8 @@ export class WorkspaceOriginState extends RecordBasedOriginState {
   }
 
   protected onChange() {
-    this.strategy.session.changeSetTracker.onWorkspaceChanged(this);
-    this.strategy.session.pushToWorkspaceTracker.onChanged(this);
+    (this.object.strategy.session as Session).changeSetTracker.onWorkspaceChanged(this);
+    (this.object.strategy.session as Session).pushToWorkspaceTracker.onChanged(this);
   }
 
   push() {
@@ -41,7 +42,7 @@ export class WorkspaceOriginState extends RecordBasedOriginState {
   onPulled(result: WorkspaceResult) {
     const newRecord = this.workspace.getRecord(this.id);
     if (!this.canMerge(newRecord)) {
-      result.addMergeError(this.strategy.object);
+      result.addMergeError(this.object);
       return;
     }
 

@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Development.Repository.Storage
+namespace Allors.Meta.Generation.Storage
 {
     using System.IO;
 
@@ -25,12 +25,7 @@ namespace Allors.Development.Repository.Storage
         public string GetRelativeOrFullName(DirectoryInfo baseDirectoryInfo)
         {
             var relativeName = this.GetRelativeName(baseDirectoryInfo);
-            if (relativeName == null)
-            {
-                return this.fileInfo.FullName;
-            }
-
-            return relativeName;
+            return relativeName ?? this.fileInfo.FullName;
         }
     }
 }

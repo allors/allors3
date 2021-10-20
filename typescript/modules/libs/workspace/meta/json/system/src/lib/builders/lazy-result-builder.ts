@@ -6,26 +6,26 @@ import { LazyTreeBuilder } from './lazy-tree-builder';
 export class LazyResultBuilder {
   constructor(metaPopulation: MetaPopulation) {
     for (const composite of metaPopulation.composites) {
-      this[composite.singularName] = (obj) => {
+      this[composite.singularName] = (object) => {
         const result: Result = {
-          selectRef: obj.selectRef,
-          name: obj.name,
-          skip: obj.skip,
-          take: obj.take,
+          selectRef: object.selectRef,
+          name: object.name,
+          skip: object.skip,
+          take: object.take,
         };
 
-        if (obj.select) {
+        if (object.select) {
           const selectBuilder = metaPopulation['selectBuilder'] as LazySelectBuilder;
-          result.select = selectBuilder[composite.singularName](obj.select);
+          result.select = selectBuilder[composite.singularName](object.select);
         }
 
-        if (obj.include) {
-          if (obj.select) {
+        if (object.include) {
+          if (object.select) {
             throw new Error('Can not add include when result already has a select.');
           }
 
           const treeBuilder = metaPopulation['treeBuilder'] as LazyTreeBuilder;
-          result.include = treeBuilder[composite.singularName](obj.include);
+          result.include = treeBuilder[composite.singularName](object.include);
         }
 
         return result;

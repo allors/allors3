@@ -1,8 +1,8 @@
-import { IStrategy } from '../istrategy';
+import { IObject } from '../iobject';
 import { IDiff } from './idiff';
 
 export interface ICompositesDiff extends IDiff {
-  originalRoles: Readonly<IStrategy[]>;
+  originalRoles: Readonly<IObject[]>;
 
-  changedRoles: Readonly<IStrategy[]>;
+  changedRoles: Readonly<IObject[]>;
 }

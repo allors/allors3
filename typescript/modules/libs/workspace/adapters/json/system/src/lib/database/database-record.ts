@@ -17,11 +17,11 @@ export class DatabaseRecord extends SystemDatabaseRecord {
   }
 
   static fromResponse(database: DatabaseConnection, ctx: ResponseContext, syncResponseObject: SyncResponseObject): DatabaseRecord {
-    const obj = new DatabaseRecord(database, database.configuration.metaPopulation.metaObjectByTag.get(syncResponseObject.c) as Class, syncResponseObject.i, syncResponseObject.v);
-    obj.syncResponseRoles = syncResponseObject.ro;
-    obj.grants = ctx.checkForMissingGrants(syncResponseObject.g);
-    obj.revocations = ctx.checkForMissingRevocations(syncResponseObject.r);
-    return obj;
+    const object = new DatabaseRecord(database, database.configuration.metaPopulation.metaObjectByTag.get(syncResponseObject.c) as Class, syncResponseObject.i, syncResponseObject.v);
+    object.syncResponseRoles = syncResponseObject.ro;
+    object.grants = ctx.checkForMissingGrants(syncResponseObject.g);
+    object.revocations = ctx.checkForMissingRevocations(syncResponseObject.r);
+    return object;
   }
 
   get roleByRelationType(): Map<RelationType, unknown> {

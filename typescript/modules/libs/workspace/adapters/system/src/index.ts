@@ -1,5 +1,5 @@
 export * from './lib/collections/ranges/default-number-ranges';
-export * from './lib/collections/ranges/default-strategy-ranges';
+export * from './lib/collections/ranges/default-object-ranges';
 export * from './lib/collections/ranges/ranges';
 export * from './lib/collections/frozen-empty-array';
 export * from './lib/collections/frozen-empty-map';

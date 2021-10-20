@@ -6,16 +6,15 @@
 //   Defines the Default type.
 // </summary>
 
-namespace Allors.Development.Repository.Generation
+namespace Allors.Meta.Generation
 {
     using System;
     using System.IO;
     using System.Xml;
-    using Storage;
-    using Database.Meta;
     using Antlr4.StringTemplate;
     using Antlr4.StringTemplate.Misc;
-    using Location = Storage.Location;
+    using Database.Meta;
+    using Storage;
 
     public class StringTemplate
     {

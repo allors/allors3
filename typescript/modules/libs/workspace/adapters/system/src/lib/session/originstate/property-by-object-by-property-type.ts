@@ -1,19 +1,19 @@
+import { IObject } from '@allors/workspace/domain/system';
 import { PropertyType } from '@allors/workspace/meta/system';
 import { MapMap } from '../../collections/map-map';
 import { IRange, Ranges } from '../../collections/ranges/ranges';
-import { Strategy } from '../strategy';
 
 export class PropertyByObjectByPropertyType {
-  private propertyByObjectByPropertyType: MapMap<PropertyType, Strategy, unknown>;
+  private propertyByObjectByPropertyType: MapMap<PropertyType, IObject, unknown>;
 
-  private changedPropertyByObjectByPropertyType: MapMap<PropertyType, Strategy, unknown>;
+  private changedPropertyByObjectByPropertyType: MapMap<PropertyType, IObject, unknown>;
 
-  public constructor(private ranges: Ranges<Strategy>) {
+  public constructor(private ranges: Ranges<IObject>) {
     this.propertyByObjectByPropertyType = new MapMap();
     this.changedPropertyByObjectByPropertyType = new MapMap();
   }
 
-  public get(object: Strategy, propertyType: PropertyType): unknown {
+  public get(object: IObject, propertyType: PropertyType): unknown {
     if (this.changedPropertyByObjectByPropertyType.has(propertyType, object)) {
       return this.changedPropertyByObjectByPropertyType.get(propertyType, object);
     }
@@ -21,17 +21,17 @@ export class PropertyByObjectByPropertyType {
     return this.propertyByObjectByPropertyType.get(propertyType, object);
   }
 
-  public set(object: Strategy, propertyType: PropertyType, newValue: unknown) {
-    const originalValue = this.propertyByObjectByPropertyType.get(propertyType, object) as IRange<Strategy>;
+  public set(object: IObject, propertyType: PropertyType, newValue: unknown) {
+    const originalValue = this.propertyByObjectByPropertyType.get(propertyType, object) as IRange<IObject>;
 
-    if (propertyType.isOne ? newValue === originalValue : this.ranges.equals(newValue as Strategy[], originalValue)) {
+    if (propertyType.isOne ? newValue === originalValue : this.ranges.equals(newValue as IObject[], originalValue)) {
       this.changedPropertyByObjectByPropertyType.remove(propertyType, object);
     } else {
       this.changedPropertyByObjectByPropertyType.set(propertyType, object, newValue);
     }
   }
 
-  public checkpoint(): MapMap<PropertyType, Strategy, unknown> {
+  public checkpoint(): MapMap<PropertyType, IObject, unknown> {
     try {
       const changeSet = this.changedPropertyByObjectByPropertyType;
 

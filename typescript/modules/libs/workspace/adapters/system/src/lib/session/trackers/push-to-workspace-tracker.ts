@@ -1,12 +1,12 @@
+import { IObject } from '@allors/workspace/domain/system';
 import { WorkspaceOriginState } from '../originstate/workspace-origin-state';
-import { Strategy } from '../strategy';
 
 export class PushToWorkspaceTracker {
-  created: Set<Strategy>;
+  created: Set<IObject>;
   changed: Set<WorkspaceOriginState>;
 
-  public onCreated(strategy: Strategy) {
-    (this.created ??= new Set<Strategy>()).add(strategy);
+  public onCreated(strategy: IObject) {
+    (this.created ??= new Set<IObject>()).add(strategy);
   }
 
   public onChanged(state: WorkspaceOriginState) {

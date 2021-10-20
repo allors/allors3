@@ -68,7 +68,7 @@ export class PersonOverviewComponent extends TestScope implements OnInit, OnDest
     window.history.back();
   }
 
-  public checkType(obj: any): string {
-    return obj.objectType.name;
+  public checkType(object: any): string {
+    return object.objectType.name;
   }
 }

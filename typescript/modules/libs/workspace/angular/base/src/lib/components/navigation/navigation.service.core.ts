@@ -32,9 +32,9 @@ export class NavigationServiceCore extends NavigationService {
     return overview != null;
   }
 
-  overview(obj: IObject) {
-    const overview = obj?.strategy.cls._.overview;
-    const url = overview?.replace(`:id`, obj.strategy.id.toString());
+  overview(object: IObject) {
+    const overview = object?.strategy.cls._.overview;
+    const url = overview?.replace(`:id`, object.strategy.id.toString());
     if (url != null) {
       this.router.navigate([url]);
     }

@@ -1,15 +1,14 @@
-import { IUnit } from '@allors/workspace/domain/system';
+import { IObject, IUnit } from '@allors/workspace/domain/system';
 import { PropertyType, RoleType } from '@allors/workspace/meta/system';
 
 import { IRange, Ranges } from '../../collections/ranges/ranges';
 import { ChangeSet } from '../change-set';
-import { Strategy } from '../strategy';
 import { PropertyByObjectByPropertyType } from './property-by-object-by-property-type';
 
 export class SessionOriginState {
   private propertyByObjectByPropertyType: PropertyByObjectByPropertyType;
 
-  public constructor(private ranges: Ranges<Strategy>) {
+  public constructor(private ranges: Ranges<IObject>) {
     this.propertyByObjectByPropertyType = new PropertyByObjectByPropertyType(ranges);
   }
 
@@ -17,33 +16,33 @@ export class SessionOriginState {
     changeSet.addSessionStateChanges(this.propertyByObjectByPropertyType.checkpoint());
   }
 
-  hasChanges(object: Strategy): boolean {
+  hasChanges(object: IObject): boolean {
     // TODO:
     return false;
   }
 
-  hasChanged(object: Strategy, roleType: RoleType) {
+  hasChanged(object: IObject, roleType: RoleType) {
     // TODO:
     return false;
   }
 
-  restoreRole(object: Strategy, roleType: RoleType) {
+  restoreRole(object: IObject, roleType: RoleType) {
     // TODO:
   }
 
-  public getUnitRole(object: Strategy, propertyType: PropertyType): IUnit {
+  public getUnitRole(object: IObject, propertyType: PropertyType): IUnit {
     return this.propertyByObjectByPropertyType.get(object, propertyType) as IUnit;
   }
 
-  public setUnitRole(association: Strategy, roleType: RoleType, role: IUnit) {
+  public setUnitRole(association: IObject, roleType: RoleType, role: IUnit) {
     this.propertyByObjectByPropertyType.set(association, roleType, role);
   }
 
-  public getCompositeRole(object: Strategy, propertyType: PropertyType): Strategy {
-    return this.propertyByObjectByPropertyType.get(object, propertyType) as Strategy;
+  public getCompositeRole(object: IObject, propertyType: PropertyType): IObject {
+    return this.propertyByObjectByPropertyType.get(object, propertyType) as IObject;
   }
 
-  public setCompositeRole(association: Strategy, roleType: RoleType, newRole: Strategy) {
+  public setCompositeRole(association: IObject, roleType: RoleType, newRole: IObject) {
     if (newRole == null) {
       if (roleType.associationType.isOne) {
         const roleId = this.getCompositeRole(association, roleType);
@@ -67,11 +66,11 @@ export class SessionOriginState {
     }
   }
 
-  public getCompositesRole(object: Strategy, propertyType: PropertyType): IRange<Strategy> {
-    return this.propertyByObjectByPropertyType.get(object, propertyType) as IRange<Strategy>;
+  public getCompositesRole(object: IObject, propertyType: PropertyType): IRange<IObject> {
+    return this.propertyByObjectByPropertyType.get(object, propertyType) as IRange<IObject>;
   }
 
-  public addCompositesRole(association: Strategy, roleType: RoleType, item: Strategy) {
+  public addCompositesRole(association: IObject, roleType: RoleType, item: IObject) {
     if (roleType.associationType.isOne) {
       this.addCompositesRoleOne2Many(association, roleType, item);
     } else {
@@ -79,7 +78,7 @@ export class SessionOriginState {
     }
   }
 
-  public removeCompositesRole(association: Strategy, roleType: RoleType, item: Strategy) {
+  public removeCompositesRole(association: IObject, roleType: RoleType, item: IObject) {
     if (roleType.associationType.isOne) {
       this.removeCompositesRoleOne2Many(association, roleType, item);
     } else {
@@ -87,7 +86,7 @@ export class SessionOriginState {
     }
   }
 
-  public setCompositesRole(association: Strategy, roleType: RoleType, newRole: IRange<Strategy>) {
+  public setCompositesRole(association: IObject, roleType: RoleType, newRole: IRange<IObject>) {
     const previousRole = this.getCompositesRole(association, roleType);
 
     const addedRoles = this.ranges.difference(newRole, previousRole);
@@ -102,7 +101,7 @@ export class SessionOriginState {
     }
   }
 
-  private setCompositeRoleOne2One(associationId: Strategy, roleType: RoleType, roleId: Strategy) {
+  private setCompositeRoleOne2One(association: IObject, roleType: RoleType, role: IObject) {
     /*  [if exist]        [then remove]        set
      *
      *  RA ----- R         RA --x-- R       RA    -- R       RA    -- R
@@ -110,10 +109,10 @@ export class SessionOriginState {
      *   A ----- PR         A --x-- PR       A --    PR       A --    PR
      */
     const associationType = roleType.associationType;
-    const previousRoleId = this.propertyByObjectByPropertyType.get(associationId, roleType) as Strategy;
+    const previousRoleId = this.propertyByObjectByPropertyType.get(association, roleType) as IObject;
 
     // R = PR
-    if (roleId == previousRoleId) {
+    if (role == previousRoleId) {
       return;
     }
 
@@ -122,7 +121,7 @@ export class SessionOriginState {
       this.propertyByObjectByPropertyType.set(previousRoleId, associationType, null);
     }
 
-    const roleAssociation = this.propertyByObjectByPropertyType.get(roleId, associationType) as Strategy;
+    const roleAssociation = this.propertyByObjectByPropertyType.get(role, associationType) as IObject;
 
     // RA --x-- R
     if (roleAssociation != null) {
@@ -130,13 +129,13 @@ export class SessionOriginState {
     }
 
     // A <---- R
-    this.propertyByObjectByPropertyType.set(roleId, associationType, associationId);
+    this.propertyByObjectByPropertyType.set(role, associationType, association);
 
     // A ----> R
-    this.propertyByObjectByPropertyType.set(associationId, roleType, roleId);
+    this.propertyByObjectByPropertyType.set(association, roleType, role);
   }
 
-  private setCompositeRoleMany2One(associationId: Strategy, roleType: RoleType, roleId: Strategy) {
+  private setCompositeRoleMany2One(association: IObject, roleType: RoleType, roleId: IObject) {
     /*  [if exist]        [then remove]        set
      *
      *  RA ----- R         RA       R       RA    -- R       RA ----- R
@@ -144,7 +143,7 @@ export class SessionOriginState {
      *   A ----- PR         A --x-- PR       A --    PR       A --    PR
      */
     const associationType = roleType.associationType;
-    const previousRoleId = this.propertyByObjectByPropertyType.get(associationId, roleType) as Strategy;
+    const previousRoleId = this.propertyByObjectByPropertyType.get(association, roleType) as IObject;
 
     // R = PR
     if (roleId == previousRoleId) {
@@ -153,32 +152,32 @@ export class SessionOriginState {
 
     // A --x-- PR
     if (previousRoleId != null) {
-      this.removeCompositeRoleMany2One(associationId, roleType, roleId);
+      this.removeCompositeRoleMany2One(association, roleType, roleId);
     }
 
     // A <---- R
     let associationIds = this.getCompositesRole(roleId, associationType);
-    associationIds = this.ranges.add(associationIds, associationId);
+    associationIds = this.ranges.add(associationIds, association);
     this.propertyByObjectByPropertyType.set(roleId, associationType, associationIds);
 
     // A ----> R
-    this.propertyByObjectByPropertyType.set(associationId, roleType, roleId);
+    this.propertyByObjectByPropertyType.set(association, roleType, roleId);
   }
 
-  private removeCompositeRoleOne2One(associationId: Strategy, roleType: RoleType, roleId: Strategy) {
+  private removeCompositeRoleOne2One(association: IObject, roleType: RoleType, role: IObject) {
     /*                        delete
      *
      *   A ----- R    ->     A       R  =   A       R
      */
 
     // A <---- R
-    this.propertyByObjectByPropertyType.set(roleId, roleType.associationType, null);
+    this.propertyByObjectByPropertyType.set(role, roleType.associationType, null);
 
     // A ----> R
-    this.propertyByObjectByPropertyType.set(associationId, roleType, null);
+    this.propertyByObjectByPropertyType.set(association, roleType, null);
   }
 
-  private removeCompositeRoleMany2One(associationId: Strategy, roleType: RoleType, roleId: Strategy) {
+  private removeCompositeRoleMany2One(association: IObject, roleType: RoleType, role: IObject) {
     /*                        delete
      *  RA --                                RA --
      *       -        ->                 =        -
@@ -187,15 +186,15 @@ export class SessionOriginState {
     const associationType = roleType.associationType;
 
     // A <---- R
-    let roleAssociations = this.getCompositesRole(roleId, associationType);
-    roleAssociations = this.ranges.remove(roleAssociations, associationId);
-    this.propertyByObjectByPropertyType.set(roleId, associationType, roleAssociations);
+    let roleAssociations = this.getCompositesRole(role, associationType);
+    roleAssociations = this.ranges.remove(roleAssociations, association);
+    this.propertyByObjectByPropertyType.set(role, associationType, roleAssociations);
 
     // A ----> R
-    this.propertyByObjectByPropertyType.set(associationId, roleType, null);
+    this.propertyByObjectByPropertyType.set(association, roleType, null);
   }
 
-  private addCompositesRoleOne2Many(associationId: Strategy, roleType: RoleType, roleId: Strategy) {
+  private addCompositesRoleOne2Many(association: IObject, roleType: RoleType, role: IObject) {
     /*  [if exist]        [then remove]        set
      *
      *  RA ----- R         RA       R       RA    -- R       RA ----- R
@@ -203,29 +202,29 @@ export class SessionOriginState {
      *   A ----- PR         A --x-- PR       A --    PR       A --    PR
      */
     const associationType = roleType.associationType;
-    const previousRoleId = this.getCompositesRole(associationId, roleType);
+    const previousRoleId = this.getCompositesRole(association, roleType);
 
     // R in PR
-    if (this.ranges.has(previousRoleId, roleId)) {
+    if (this.ranges.has(previousRoleId, role)) {
       return;
     }
 
     // A --x-- PR
-    const previousAssociationId = this.getCompositeRole(roleId, associationType);
+    const previousAssociationId = this.getCompositeRole(role, associationType);
     if (previousAssociationId != null) {
-      this.removeCompositesRoleOne2Many(previousAssociationId, roleType, roleId);
+      this.removeCompositesRoleOne2Many(previousAssociationId, roleType, role);
     }
 
     // A <---- R
-    this.propertyByObjectByPropertyType.set(roleId, associationType, roleId);
+    this.propertyByObjectByPropertyType.set(role, associationType, role);
 
     // A ----> R
-    let roleIds = this.getCompositesRole(associationId, roleType);
-    roleIds = this.ranges.add(roleIds, roleId);
-    this.propertyByObjectByPropertyType.set(associationId, roleType, roleIds);
+    let roleIds = this.getCompositesRole(association, roleType);
+    roleIds = this.ranges.add(roleIds, role);
+    this.propertyByObjectByPropertyType.set(association, roleType, roleIds);
   }
 
-  private addCompositesRoleMany2Many(associationId: Strategy, roleType: RoleType, roleId: Strategy) {
+  private addCompositesRoleMany2Many(association: IObject, roleType: RoleType, role: IObject) {
     /*  [if exist]        [no remove]         set
      *
      *  RA ----- R         RA       R       RA    -- R       RA ----- R
@@ -233,59 +232,59 @@ export class SessionOriginState {
      *   A ----- PR         A       PR       A --    PR       A --    PR
      */
     const associationType = roleType.associationType;
-    const previousRoleIds = this.getCompositesRole(associationId, roleType);
+    const previousRoleIds = this.getCompositesRole(association, roleType);
 
     // R in PR
-    if (this.ranges.has(previousRoleIds, roleId)) {
+    if (this.ranges.has(previousRoleIds, role)) {
       return;
     }
 
     // A <---- R
-    let associationIds = this.getCompositesRole(roleId, associationType);
-    associationIds = this.ranges.add(associationIds, associationId);
-    this.propertyByObjectByPropertyType.set(roleId, associationType, associationIds);
+    let associationIds = this.getCompositesRole(role, associationType);
+    associationIds = this.ranges.add(associationIds, association);
+    this.propertyByObjectByPropertyType.set(role, associationType, associationIds);
 
     // A ----> R
-    let roleIds = this.getCompositesRole(associationId, roleType);
-    roleIds = this.ranges.add(roleIds, roleId);
-    this.propertyByObjectByPropertyType.set(associationId, roleType, roleIds);
+    let roleIds = this.getCompositesRole(association, roleType);
+    roleIds = this.ranges.add(roleIds, role);
+    this.propertyByObjectByPropertyType.set(association, roleType, roleIds);
   }
 
-  private removeCompositesRoleOne2Many(associationId: Strategy, roleType: RoleType, roleId: Strategy) {
+  private removeCompositesRoleOne2Many(association: IObject, roleType: RoleType, role: IObject) {
     const associationType = roleType.associationType;
-    const previousRoleIds = this.getCompositesRole(associationId, roleType);
+    const previousRoleIds = this.getCompositesRole(association, roleType);
 
     // R not in PR
-    if (!this.ranges.has(previousRoleIds, roleId)) {
+    if (!this.ranges.has(previousRoleIds, role)) {
       return;
     }
 
     // A <---- R
-    this.propertyByObjectByPropertyType.set(roleId, associationType, null);
+    this.propertyByObjectByPropertyType.set(role, associationType, null);
 
     // A ----> R
-    let roleIds = this.getCompositesRole(associationId, roleType);
-    roleIds = this.ranges.add(roleIds, roleId);
-    this.propertyByObjectByPropertyType.set(associationId, roleType, roleIds);
+    let roleIds = this.getCompositesRole(association, roleType);
+    roleIds = this.ranges.add(roleIds, role);
+    this.propertyByObjectByPropertyType.set(association, roleType, roleIds);
   }
 
-  private removeCompositesRoleMany2Many(associationId: Strategy, roleType: RoleType, roleId: Strategy) {
+  private removeCompositesRoleMany2Many(association: IObject, roleType: RoleType, role: IObject) {
     const associationType = roleType.associationType;
-    const previousRoleIds = this.getCompositesRole(associationId, roleType);
+    const previousRoleIds = this.getCompositesRole(association, roleType);
 
     // R not in PR
-    if (!this.ranges.has(previousRoleIds, roleId)) {
+    if (!this.ranges.has(previousRoleIds, role)) {
       return;
     }
 
     // A <---- R
-    let associationIds = this.getCompositesRole(roleId, associationType);
-    associationIds = this.ranges.remove(associationIds, associationId);
-    this.propertyByObjectByPropertyType.set(roleId, associationType, associationIds);
+    let associationIds = this.getCompositesRole(role, associationType);
+    associationIds = this.ranges.remove(associationIds, association);
+    this.propertyByObjectByPropertyType.set(role, associationType, associationIds);
 
     // A ----> R
-    let roleIds = this.getCompositesRole(associationId, roleType);
-    roleIds = this.ranges.remove(roleIds, roleId);
-    this.propertyByObjectByPropertyType.set(associationId, roleType, roleIds);
+    let roleIds = this.getCompositesRole(association, roleType);
+    roleIds = this.ranges.remove(roleIds, role);
+    this.propertyByObjectByPropertyType.set(association, roleType, roleIds);
   }
 }
