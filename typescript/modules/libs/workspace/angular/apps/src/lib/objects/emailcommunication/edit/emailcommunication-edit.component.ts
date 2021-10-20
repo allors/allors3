@@ -23,7 +23,6 @@ import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
-import { PartyPartyContactMechanisms } from '../../../../../../../meta/apps/src/lib/generated/m.g';
 
 @Component({
   templateUrl: './emailcommunication-edit.component.html',
