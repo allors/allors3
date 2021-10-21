@@ -174,14 +174,17 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
         }),
         pull.OrderItemBilling({
           predicate: {
-            kind: 'And',
-            operands: [
-              {
+            kind: 'ContainedIn',
+            propertyType: m.OrderItemBilling.InvoiceItem,
+            extent: {
+              kind: 'Filter',
+              objectType: m.InvoiceItem,
+              predicate: {
                 kind: 'ContainedIn',
-                propertyType: m.OrderItemBilling.InvoiceItem,
-                extent: { kind: 'Filter', objectType: m.InvoiceItem, predicate: { kind: 'ContainedIn', propertyType: m.InvoiceItem.InvoiceWhereValidInvoiceItem, objectIds: [id] } },
+                propertyType: m.InvoiceItem.InvoiceWhereValidInvoiceItem,
+                objectIds: [id],
               },
-            ],
+            },
           },
         }),
         pull.PurchaseInvoice({
@@ -216,7 +219,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
       );
 
       if (this.objects) {
-        this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects.length) as number;;
+        this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects.length) as number;
         this.table.data = this.objects.map((v) => {
           return {
             object: v,
@@ -234,7 +237,6 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
   }
 
   public addFromPurchaseOrder(panelPurchaseOrder: PurchaseOrder): void {
-
     const purchaseInvoice = this.allors.context.instantiate<PurchaseInvoice>(this.purchaseInvoice.id);
     const purchaseOrder = this.allors.context.instantiate<PurchaseOrder>(panelPurchaseOrder.id);
 

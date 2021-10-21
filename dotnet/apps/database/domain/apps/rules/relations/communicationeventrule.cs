@@ -84,12 +84,13 @@ namespace Allors.Database.Domain
                     new CommunicationTaskBuilder(@this.Strategy.Transaction).WithCommunicationEvent(@this).Build();
                 }
 
-                var parties = new[] { @this.FromParty, @this.ToParty, @this.Owner }.Distinct().ToArray();
+                var parties = new[] { @this.FromParty, @this.ToParty, @this.Owner }.Where(v => v != null).Distinct().ToArray();
 
                 var organisation = parties.OfType<Person>()
                     .SelectMany(v => v.OrganisationContactRelationshipsWhereContact)
-                    .Where(v => @this.ExistScheduledStart && v.FromDate <= @this.ScheduledStart && (!v.ExistThroughDate || v.ThroughDate >= @this.ScheduledEnd)
-                                || @this.ExistActualStart && v.FromDate <= @this.ActualStart && (!v.ExistThroughDate || v.ThroughDate >= @this.ActualEnd))
+                    .Where(v => (@this.ExistScheduledStart && v.FromDate <= @this.ScheduledStart && (!v.ExistThroughDate || v.ThroughDate >= @this.ScheduledEnd))
+                                || (@this.ExistActualStart && v.FromDate <= @this.ActualStart && (!v.ExistThroughDate || v.ThroughDate >= @this.ActualEnd))
+                                || (!@this.ExistScheduledStart && !@this.ExistActualStart))
                     .Select(v => v.Organisation);
 
                 @this.InvolvedParties = parties.Union(organisation).ToArray();

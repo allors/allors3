@@ -24,7 +24,7 @@ namespace Tests.PurchaseOrderTests
         public PurchaseOrderCreateTest(Fixture fixture)
             : base(fixture)
         {
-            this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            this.internalOrganisation = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
 
             this.Login();
             this.purchaseOrderListPage = this.Sidenav.NavigateToPurchaseOrders();
@@ -36,9 +36,9 @@ namespace Tests.PurchaseOrderTests
         [Fact]
         public void CreateWithDefaults()
         {
-            var before = new PurchaseOrders(this.Session).Extent().ToArray();
+            var before = new PurchaseOrders(this.Transaction).Extent().ToArray();
 
-            var expected = new PurchaseOrderBuilder(this.Session).WithDefaults(this.internalOrganisation).Build();
+            var expected = new PurchaseOrderBuilder(this.Transaction).WithDefaults(this.internalOrganisation).Build();
 
             Assert.True(expected.ExistTakenViaSupplier);
             Assert.True(expected.ExistTakenViaContactPerson);
@@ -49,7 +49,7 @@ namespace Tests.PurchaseOrderTests
             Assert.True(expected.ExistDescription);
             Assert.True(expected.ExistInternalComment);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedTakenViaSupplier = expected.TakenViaSupplier;
             var expectedTakenViaContactMechanism = expected.DerivedTakenViaContactMechanism;
@@ -67,13 +67,13 @@ namespace Tests.PurchaseOrderTests
                 .CreatePurchaseOrder()
                 .BuildForDefaults(expected);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             purchaseOrderCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new PurchaseOrders(this.Session).Extent().ToArray();
+            var after = new PurchaseOrders(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 

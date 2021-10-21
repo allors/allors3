@@ -19,7 +19,7 @@ interface Row extends TableRow {
   providers: [PanelService],
 })
 export class SalesOrderTransferOverviewPanelComponent extends TestScope {
-  container: any;
+  container: SalesOrder | SalesInvoice;
 
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;

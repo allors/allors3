@@ -25,7 +25,7 @@ namespace Tests.SalesOrderTests
         public SalesOrderEditTest(Fixture fixture)
             : base(fixture)
         {
-            this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            this.internalOrganisation = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
 
             this.Login();
             this.salesOrderListPage = this.Sidenav.NavigateToSalesOrders();
@@ -37,11 +37,11 @@ namespace Tests.SalesOrderTests
         [Fact]
         public void EditWithInternalOrganisation()
         {
-            var before = new SalesOrders(this.Session).Extent().ToArray();
+            var before = new SalesOrders(this.Transaction).Extent().ToArray();
 
-            var expected = this.internalOrganisation.CreateInternalSalesOrder(this.Session.Faker());
+            var expected = this.internalOrganisation.CreateInternalSalesOrder(this.Transaction.Faker());
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedBillToCustomer = expected.BillToCustomer?.DisplayName();
             var expectedBillToContactMechanism = expected.DerivedBillToContactMechanism;
@@ -78,14 +78,14 @@ namespace Tests.SalesOrderTests
             salesOrderOverviewDetail.Description.Set(expected.Description);
             salesOrderOverviewDetail.InternalComment.Set(expected.InternalComment);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             salesOrderOverviewDetail.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new SalesOrders(this.Session).Extent().ToArray();
-            salesOrder = (SalesOrder)this.Session.Instantiate(id);
+            var after = new SalesOrders(this.Transaction).Extent().ToArray();
+            salesOrder = (SalesOrder)this.Transaction.Instantiate(id);
 
             Assert.Equal(after.Length, before.Length);
 
@@ -107,11 +107,11 @@ namespace Tests.SalesOrderTests
         [Fact]
         public void EditWithExternalOrganisation()
         {
-            var before = new SalesOrders(this.Session).Extent().ToArray();
+            var before = new SalesOrders(this.Transaction).Extent().ToArray();
 
-            var expected = this.internalOrganisation.CreateB2BSalesOrder(this.Session.Faker());
+            var expected = this.internalOrganisation.CreateB2BSalesOrder(this.Transaction.Faker());
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedBillToCustomer = expected.BillToCustomer?.DisplayName();
             var expectedBillToContactMechanism = expected.DerivedBillToContactMechanism;
@@ -148,14 +148,14 @@ namespace Tests.SalesOrderTests
             salesOrderOverviewDetail.Description.Set(expected.Description);
             salesOrderOverviewDetail.InternalComment.Set(expected.InternalComment);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             salesOrderOverviewDetail.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new SalesOrders(this.Session).Extent().ToArray();
-            salesOrder = (SalesOrder)this.Session.Instantiate(id);
+            var after = new SalesOrders(this.Transaction).Extent().ToArray();
+            salesOrder = (SalesOrder)this.Transaction.Instantiate(id);
 
             Assert.Equal(after.Length, before.Length);
 
@@ -177,11 +177,11 @@ namespace Tests.SalesOrderTests
         [Fact]
         public void EditWithExternalPerson()
         {
-            var before = new SalesOrders(this.Session).Extent().ToArray();
+            var before = new SalesOrders(this.Transaction).Extent().ToArray();
 
-            var expected = this.internalOrganisation.CreateB2CSalesOrder(this.Session.Faker());
+            var expected = this.internalOrganisation.CreateB2CSalesOrder(this.Transaction.Faker());
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedBillToCustomer = expected.BillToCustomer?.DisplayName();
             var expectedBillToContactMechanism = expected.DerivedBillToContactMechanism;
@@ -214,14 +214,14 @@ namespace Tests.SalesOrderTests
             salesOrderOverviewDetail.Description.Set(expected.Description);
             salesOrderOverviewDetail.InternalComment.Set(expected.InternalComment);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             salesOrderOverviewDetail.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new SalesOrders(this.Session).Extent().ToArray();
-            salesOrder = (SalesOrder)this.Session.Instantiate(id);
+            var after = new SalesOrders(this.Transaction).Extent().ToArray();
+            salesOrder = (SalesOrder)this.Transaction.Instantiate(id);
 
             Assert.Equal(after.Length, before.Length);
 

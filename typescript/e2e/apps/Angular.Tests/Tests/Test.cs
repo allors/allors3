@@ -112,14 +112,14 @@ namespace Tests
                 File.WriteAllText(populationFileInfo.FullName, population);
             }
 
-            this.Session = database.CreateTransaction();
+            this.Transaction = database.CreateTransaction();
         }
 
         public MetaPopulation M { get; set; }
 
         public ILogger Logger { get; set; }
 
-        public ITransaction Session { get; set; }
+        public ITransaction Transaction { get; set; }
 
         public DriverManager DriverManager { get; }
 
@@ -133,7 +133,7 @@ namespace Tests
         {
             if (string.IsNullOrEmpty(userName))
             {
-                userName = new UserGroups(this.Session).Administrators.Members.First().UserName;
+                userName = new UserGroups(this.Transaction).Administrators.Members.First().UserName;
             }
 
             this.Driver.Navigate().GoToUrl(Test.ClientUrl + "/login");

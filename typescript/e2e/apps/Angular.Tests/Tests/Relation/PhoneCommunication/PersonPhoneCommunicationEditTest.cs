@@ -27,12 +27,12 @@ namespace Tests.PhoneCommunicationTests
         public PersonPhoneCommunicationEditTest(Fixture fixture)
             : base(fixture)
         {
-            var person = new People(this.Session).Extent().FirstOrDefault();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
 
-            var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            var allors = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
             var firstEmployee = allors.ActiveEmployees.First();
 
-            this.editCommunicationEvent = new PhoneCommunicationBuilder(this.Session)
+            this.editCommunicationEvent = new PhoneCommunicationBuilder(this.Transaction)
                 .WithSubject("dummy")
                 .WithLeftVoiceMail(true)
                 .WithFromParty(person)
@@ -40,16 +40,16 @@ namespace Tests.PhoneCommunicationTests
                 .WithPhoneNumber(person.GeneralPhoneNumber)
                 .Build();
 
-            this.anotherPhoneNumber = new PartyContactMechanismBuilder(this.Session)
-                .WithContactMechanism(new TelecommunicationsNumberBuilder(this.Session).WithCountryCode("+1").WithAreaCode("111").WithContactNumber("222").Build())
-                .WithContactPurpose(new ContactMechanismPurposes(this.Session).SalesOffice)
+            this.anotherPhoneNumber = new PartyContactMechanismBuilder(this.Transaction)
+                .WithContactMechanism(new TelecommunicationsNumberBuilder(this.Transaction).WithCountryCode("+1").WithAreaCode("111").WithContactNumber("222").Build())
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice)
                 .WithUseAsDefault(false)
                 .Build();
 
             person.AddPartyContactMechanism(this.anotherPhoneNumber);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             this.Login();
             this.people = this.Sidenav.NavigateToPeople();
@@ -58,12 +58,12 @@ namespace Tests.PhoneCommunicationTests
         [Fact]
         public void Edit()
         {
-            var person = new People(this.Session).Extent().FirstOrDefault();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
 
-            var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            var allors = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
             var firstEmployee = allors.ActiveEmployees.First();
 
-            var before = new PhoneCommunications(this.Session).Extent().ToArray();
+            var before = new PhoneCommunications(this.Transaction).Extent().ToArray();
 
             this.people.Table.DefaultAction(person);
             var personOverview = new PersonOverviewComponent(this.people.Driver, this.M);
@@ -74,8 +74,8 @@ namespace Tests.PhoneCommunicationTests
             var phoneCommunicationEditComponent = new PhoneCommunicationEditComponent(this.Driver, this.M);
             phoneCommunicationEditComponent
                 .LeftVoiceMail.Set(false)
-                .CommunicationEventState.Select(new CommunicationEventStates(this.Session).Completed)
-                .EventPurposes.Toggle(new CommunicationEventPurposes(this.Session).Inquiry)
+                .CommunicationEventState.Select(new CommunicationEventStates(this.Transaction).Completed)
+                .EventPurposes.Toggle(new CommunicationEventPurposes(this.Transaction).Inquiry)
                 .FromPhoneNumber.Select(this.anotherPhoneNumber.ContactMechanism)
                 .Subject.Set("new subject")
                 .FromParty.Select(firstEmployee)
@@ -88,15 +88,15 @@ namespace Tests.PhoneCommunicationTests
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new PhoneCommunications(this.Session).Extent().ToArray();
+            var after = new PhoneCommunications(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length);
 
             Assert.False(this.editCommunicationEvent.LeftVoiceMail);
-            Assert.Equal(new CommunicationEventStates(this.Session).Completed, this.editCommunicationEvent.CommunicationEventState);
-            Assert.Contains(new CommunicationEventPurposes(this.Session).Inquiry, this.editCommunicationEvent.EventPurposes);
+            Assert.Equal(new CommunicationEventStates(this.Transaction).Completed, this.editCommunicationEvent.CommunicationEventState);
+            Assert.Contains(new CommunicationEventPurposes(this.Transaction).Inquiry, this.editCommunicationEvent.EventPurposes);
             Assert.Equal(firstEmployee, this.editCommunicationEvent.FromParty);
             Assert.Equal(person, this.editCommunicationEvent.ToParty);
             Assert.Equal(this.anotherPhoneNumber.ContactMechanism, this.editCommunicationEvent.PhoneNumber);

@@ -30,17 +30,17 @@ namespace Tests.PartyRelationshipTests
         public OrganisationOrganisationContactRelationshipEditTest(Fixture fixture)
             : base(fixture)
         {
-            this.organisation = new OrganisationBuilder(this.Session).WithName("organisation").Build();
-            this.contact = new PersonBuilder(this.Session).WithLastName("contact").Build();
+            this.organisation = new OrganisationBuilder(this.Transaction).WithName("organisation").Build();
+            this.contact = new PersonBuilder(this.Transaction).WithLastName("contact").Build();
 
-            this.editPartyRelationship = new OrganisationContactRelationshipBuilder(this.Session)
-                .WithContactKind(new OrganisationContactKinds(this.Session).GeneralContact)
+            this.editPartyRelationship = new OrganisationContactRelationshipBuilder(this.Transaction)
+                .WithContactKind(new OrganisationContactKinds(this.Transaction).GeneralContact)
                 .WithContact(this.contact)
                 .WithOrganisation(this.organisation)
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             this.Login();
             this.organisations = this.Sidenav.NavigateToOrganisations();
@@ -49,7 +49,7 @@ namespace Tests.PartyRelationshipTests
         [Fact]
         public void Create()
         {
-            var before = new OrganisationContactRelationships(this.Session).Extent().ToArray();
+            var before = new OrganisationContactRelationships(this.Transaction).Extent().ToArray();
 
             this.organisations.Table.DefaultAction(this.organisation);
             var partyRelationshipEdit = new OrganisationOverviewComponent(this.organisations.Driver, this.M).PartyrelationshipOverviewPanel.Click().CreateOrganisationContactRelationship();
@@ -57,14 +57,14 @@ namespace Tests.PartyRelationshipTests
             partyRelationshipEdit
                 .FromDate.Set(DateTimeFactory.CreateDate(2018, 12, 22))
                 .ThroughDate.Set(DateTimeFactory.CreateDate(2018, 12, 22).AddYears(1))
-                .ContactKinds.Toggle(new OrganisationContactKinds(this.Session).SalesContact)
+                .ContactKinds.Toggle(new OrganisationContactKinds(this.Transaction).SalesContact)
                 .Contact.Select(this.contact.DisplayName())
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new OrganisationContactRelationships(this.Session).Extent().ToArray();
+            var after = new OrganisationContactRelationships(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -73,8 +73,8 @@ namespace Tests.PartyRelationshipTests
             // Assert.Equal(DateTimeFactory.CreateDate(2018, 12, 22).Date, partyRelationship.FromDate.Date.ToUniversalTime().Date);
             // Assert.Equal(DateTimeFactory.CreateDate(2018, 12, 22).AddYears(1).Date, partyRelationship.ThroughDate.Value.Date.ToUniversalTime().Date);
             Assert.Equal(2, partyRelationship.ContactKinds.Count());
-            Assert.Contains(new OrganisationContactKinds(this.Session).GeneralContact, partyRelationship.ContactKinds);
-            Assert.Contains(new OrganisationContactKinds(this.Session).SalesContact, partyRelationship.ContactKinds);
+            Assert.Contains(new OrganisationContactKinds(this.Transaction).GeneralContact, partyRelationship.ContactKinds);
+            Assert.Contains(new OrganisationContactKinds(this.Transaction).SalesContact, partyRelationship.ContactKinds);
             Assert.Equal(this.organisation, partyRelationship.Organisation);
             Assert.Equal(this.contact, partyRelationship.Contact);
         }
@@ -82,7 +82,7 @@ namespace Tests.PartyRelationshipTests
         [Fact]
         public void Edit()
         {
-            var before = new OrganisationContactRelationships(this.Session).Extent().ToArray();
+            var before = new OrganisationContactRelationships(this.Transaction).Extent().ToArray();
 
             this.organisations.Table.DefaultAction(this.organisation);
             var organisationOverview = new OrganisationOverviewComponent(this.organisations.Driver, this.M);
@@ -94,23 +94,23 @@ namespace Tests.PartyRelationshipTests
             partyRelationshipEdit
                 .FromDate.Set(DateTimeFactory.CreateDate(2018, 12, 22))
                 .ThroughDate.Set(DateTimeFactory.CreateDate(2018, 12, 22).AddYears(1))
-                .ContactKinds.Toggle(new OrganisationContactKinds(this.Session).GeneralContact)
-                .ContactKinds.Toggle(new OrganisationContactKinds(this.Session).SalesContact)
-                .ContactKinds.Toggle(new OrganisationContactKinds(this.Session).SupplierContact)
+                .ContactKinds.Toggle(new OrganisationContactKinds(this.Transaction).GeneralContact)
+                .ContactKinds.Toggle(new OrganisationContactKinds(this.Transaction).SalesContact)
+                .ContactKinds.Toggle(new OrganisationContactKinds(this.Transaction).SupplierContact)
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new OrganisationContactRelationships(this.Session).Extent().ToArray();
+            var after = new OrganisationContactRelationships(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length);
 
             // Assert.Equal(DateTimeFactory.CreateDate(2018, 12, 22).Date, this.editPartyRelationship.FromDate.Date.ToUniversalTime().Date);
             // Assert.Equal(DateTimeFactory.CreateDate(2018, 12, 22).AddYears(1).Date, this.editPartyRelationship.ThroughDate.Value.Date.ToUniversalTime().Date);
             Assert.Equal(2, this.editPartyRelationship.ContactKinds.Count());
-            Assert.Contains(new OrganisationContactKinds(this.Session).SalesContact, this.editPartyRelationship.ContactKinds);
-            Assert.Contains(new OrganisationContactKinds(this.Session).SupplierContact, this.editPartyRelationship.ContactKinds);
+            Assert.Contains(new OrganisationContactKinds(this.Transaction).SalesContact, this.editPartyRelationship.ContactKinds);
+            Assert.Contains(new OrganisationContactKinds(this.Transaction).SupplierContact, this.editPartyRelationship.ContactKinds);
             Assert.Equal(this.organisation, this.editPartyRelationship.Organisation);
             Assert.Equal(this.contact, this.editPartyRelationship.Contact);
         }

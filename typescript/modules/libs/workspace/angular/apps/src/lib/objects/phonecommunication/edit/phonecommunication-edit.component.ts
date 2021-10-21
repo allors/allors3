@@ -136,6 +136,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
               pull.Organisation({
                 objectId: this.data.associationId,
                 include: {
+                  CurrentContacts: x,
                   PartyContactMechanisms: {
                     ContactMechanism: x,
                   },

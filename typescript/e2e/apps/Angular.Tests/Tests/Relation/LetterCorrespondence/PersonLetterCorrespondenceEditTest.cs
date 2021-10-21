@@ -30,40 +30,40 @@ namespace Tests.LetterCorrespondenceTests
         [Fact]
         public void Edit()
         {
-            var person = new People(this.Session).Extent().FirstOrDefault();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
 
-            var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            var allors = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
             var employee = allors.ActiveEmployees.First();
 
-            var address = new PostalAddressBuilder(this.Session)
+            var address = new PostalAddressBuilder(this.Transaction)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("city")
                 .WithPostalCode("1111")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Transaction).FindBy(M.Country.IsoCode, "BE"))
                 .Build();
 
-            person.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Session).WithContactMechanism(address).Build());
+            person.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(address).Build());
 
-            var employeeAddress = new PostalAddressBuilder(this.Session)
+            var employeeAddress = new PostalAddressBuilder(this.Transaction)
                 .WithAddress1("home sweet home")
                 .WithLocality("suncity")
                 .WithPostalCode("0000")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Transaction).FindBy(M.Country.IsoCode, "BE"))
                 .Build();
 
-            employee.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Session).WithContactMechanism(employeeAddress).Build());
+            employee.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(employeeAddress).Build());
 
-            var editCommunicationEvent = new LetterCorrespondenceBuilder(this.Session)
+            var editCommunicationEvent = new LetterCorrespondenceBuilder(this.Transaction)
                 .WithSubject("dummy")
                 .WithFromParty(employee)
                 .WithToParty(person)
                 .WithPostalAddress(address)
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var before = new LetterCorrespondences(this.Session).Extent().ToArray();
+            var before = new LetterCorrespondences(this.Transaction).Extent().ToArray();
 
             var postalAddress = (PostalAddress)person.PartyContactMechanisms.First(v => v.ContactMechanism.GetType().Name == typeof(PostalAddress).Name).ContactMechanism;
 
@@ -75,8 +75,8 @@ namespace Tests.LetterCorrespondenceTests
 
             var letterCorrespondenceEditComponent = new LetterCorrespondenceEditComponent(this.Driver, this.M);
             letterCorrespondenceEditComponent
-                .CommunicationEventState.Select(new CommunicationEventStates(this.Session).InProgress)
-                .EventPurposes.Toggle(new CommunicationEventPurposes(this.Session).Appointment)
+                .CommunicationEventState.Select(new CommunicationEventStates(this.Transaction).InProgress)
+                .EventPurposes.Toggle(new CommunicationEventPurposes(this.Transaction).Appointment)
                 .FromParty.Select(person)
                 .ToParty.Select(employee)
                 .FromPostalAddress.Select(postalAddress)
@@ -89,14 +89,14 @@ namespace Tests.LetterCorrespondenceTests
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new LetterCorrespondences(this.Session).Extent().ToArray();
+            var after = new LetterCorrespondences(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length);
 
-            Assert.Equal(new CommunicationEventStates(this.Session).InProgress, editCommunicationEvent.CommunicationEventState);
-            Assert.Contains(new CommunicationEventPurposes(this.Session).Appointment, editCommunicationEvent.EventPurposes);
+            Assert.Equal(new CommunicationEventStates(this.Transaction).InProgress, editCommunicationEvent.CommunicationEventState);
+            Assert.Contains(new CommunicationEventPurposes(this.Transaction).Appointment, editCommunicationEvent.EventPurposes);
             Assert.Equal(person, editCommunicationEvent.FromParty);
             Assert.Equal(employee, editCommunicationEvent.ToParty);
             Assert.Equal(postalAddress, editCommunicationEvent.PostalAddress);

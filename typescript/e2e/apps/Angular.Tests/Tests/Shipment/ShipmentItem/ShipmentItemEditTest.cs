@@ -25,9 +25,9 @@ namespace Tests.ShipmentItemTests
         public ShipmentItemEditTest(Fixture fixture)
             : base(fixture)
         {
-            this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            this.internalOrganisation = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
 
-            var customerShipments = new CustomerShipments(this.Session).Extent();
+            var customerShipments = new CustomerShipments(this.Transaction).Extent();
             customerShipments.Filter.AddEquals(M.CustomerShipment.ShipFromParty, internalOrganisation);
             this.customerShipment = customerShipments.FirstOrDefault();
 
@@ -40,15 +40,15 @@ namespace Tests.ShipmentItemTests
         {
             var before = customerShipment.ShipmentItems.ToArray();
 
-            var goods = new UnifiedGoods(this.Session).Extent();
-            goods.Filter.AddEquals(M.UnifiedGood.InventoryItemKind, new InventoryItemKinds(this.Session).Serialised);
+            var goods = new UnifiedGoods(this.Transaction).Extent();
+            goods.Filter.AddEquals(M.UnifiedGood.InventoryItemKind, new InventoryItemKinds(this.Transaction).Serialised);
             var serializedGood = goods.FirstOrDefault();
 
-            var serialisedItem = new SerialisedItemBuilder(this.Session).WithForSaleDefaults(this.internalOrganisation).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithForSaleDefaults(this.internalOrganisation).Build();
             serializedGood.AddSerialisedItem(serialisedItem);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             this.shipmentListPage.Table.DefaultAction(customerShipment);
             var shipmentOverview = new CustomerShipmentOverviewComponent(this.shipmentListPage.Driver, this.M);
@@ -58,11 +58,11 @@ namespace Tests.ShipmentItemTests
             shipmentItemCreate
                 .Good.Select(serializedGood.Name)
                 .ShipmentItemSerialisedItem_1.Select(serialisedItem)
-                .NextSerialisedItemAvailability.Select(new SerialisedItemAvailabilities(this.Session).Sold)
+                .NextSerialisedItemAvailability.Select(new SerialisedItemAvailabilities(this.Transaction).Sold)
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             var after = customerShipment.ShipmentItems.ToArray();
 
@@ -80,8 +80,8 @@ namespace Tests.ShipmentItemTests
         {
             var before = customerShipment.ShipmentItems.ToArray();
 
-            var goods = new UnifiedGoods(this.Session).Extent();
-            goods.Filter.AddEquals(M.UnifiedGood.InventoryItemKind, new InventoryItemKinds(this.Session).NonSerialised);
+            var goods = new UnifiedGoods(this.Transaction).Extent();
+            goods.Filter.AddEquals(M.UnifiedGood.InventoryItemKind, new InventoryItemKinds(this.Transaction).NonSerialised);
             var nonSerializedGood = goods.FirstOrDefault();
 
             this.shipmentListPage.Table.DefaultAction(customerShipment);
@@ -95,7 +95,7 @@ namespace Tests.ShipmentItemTests
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             var after = customerShipment.ShipmentItems.ToArray();
 
@@ -112,15 +112,15 @@ namespace Tests.ShipmentItemTests
         {
             var before = customerShipment.ShipmentItems.ToArray();
 
-            var goods = new UnifiedGoods(this.Session).Extent();
-            goods.Filter.AddEquals(M.UnifiedGood.InventoryItemKind, new InventoryItemKinds(this.Session).Serialised);
+            var goods = new UnifiedGoods(this.Transaction).Extent();
+            goods.Filter.AddEquals(M.UnifiedGood.InventoryItemKind, new InventoryItemKinds(this.Transaction).Serialised);
             var serializedGood = goods.FirstOrDefault();
 
-            var serialisedItem = new SerialisedItemBuilder(this.Session).WithForSaleDefaults(this.internalOrganisation).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithForSaleDefaults(this.internalOrganisation).Build();
             serializedGood.AddSerialisedItem(serialisedItem);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             this.shipmentListPage.Table.DefaultAction(customerShipment);
             var shipmentOverview = new CustomerShipmentOverviewComponent(this.shipmentListPage.Driver, this.M);
@@ -130,11 +130,11 @@ namespace Tests.ShipmentItemTests
             shipmentItemCreate
                 .Good.Select(serializedGood.Name)
                 .ShipmentItemSerialisedItem_1.Select(serialisedItem)
-                .NextSerialisedItemAvailability.Select(new SerialisedItemAvailabilities(this.Session).Sold)
+                .NextSerialisedItemAvailability.Select(new SerialisedItemAvailabilities(this.Transaction).Sold)
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             var after = customerShipment.ShipmentItems.ToArray();
 

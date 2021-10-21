@@ -25,17 +25,17 @@ namespace Tests.ElectronicAddressTests
         public WebAddressEditTest(Fixture fixture)
             : base(fixture)
         {
-            var person = new People(this.Session).Extent().FirstOrDefault();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
 
-            this.editContactMechanism = new WebAddressBuilder(this.Session)
+            this.editContactMechanism = new WebAddressBuilder(this.Transaction)
                 .WithElectronicAddressString("www.acme.com")
                 .Build();
 
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session).WithContactMechanism(editContactMechanism).Build();
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(editContactMechanism).Build();
             person.AddPartyContactMechanism(partyContactMechanism);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             this.Login();
             this.personListPage = this.Sidenav.NavigateToPeople();
@@ -44,9 +44,9 @@ namespace Tests.ElectronicAddressTests
         [Fact]
         public void Edit()
         {
-            var person = new People(this.Session).Extent().FirstOrDefault();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new WebAddresses(this.Session).Extent().ToArray();
+            var before = new WebAddresses(this.Transaction).Extent().ToArray();
 
             this.personListPage.Table.DefaultAction(person);
             var personOverview = new PersonOverviewComponent(this.personListPage.Driver, this.M);
@@ -61,9 +61,9 @@ namespace Tests.ElectronicAddressTests
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new WebAddresses(this.Session).Extent().ToArray();
+            var after = new WebAddresses(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length);
 

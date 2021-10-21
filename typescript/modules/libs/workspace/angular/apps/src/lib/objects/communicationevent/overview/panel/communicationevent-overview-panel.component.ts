@@ -74,7 +74,7 @@ export class CommunicationEventOverviewPanelComponent extends TestScope implemen
         { name: 'type', sort },
         { name: 'description', sort },
         { name: 'involved', sort },
-        { name: 'state', sort },
+        { name: 'status', sort },
         { name: 'purpose', sort },
       ],
       actions: [this.edit, this.delete],

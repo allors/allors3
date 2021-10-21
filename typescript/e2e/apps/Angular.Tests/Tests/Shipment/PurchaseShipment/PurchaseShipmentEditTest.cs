@@ -25,11 +25,11 @@ namespace Tests.PurchaseShipmentTests
         public PurchaseShipmentEditTest(Fixture fixture)
             : base(fixture)
         {
-            this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            this.internalOrganisation = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
 
             for (var i = 0; i < 10; i++)
             {
-                this.internalOrganisation.CreateSupplier(this.Session.Faker());
+                this.internalOrganisation.CreateSupplier(this.Transaction.Faker());
             }
 
             this.Login();
@@ -39,11 +39,11 @@ namespace Tests.PurchaseShipmentTests
         [Fact]
         public void Edit()
         {
-            var before = new PurchaseShipments(this.Session).Extent().ToArray();
+            var before = new PurchaseShipments(this.Transaction).Extent().ToArray();
 
-            var expected = new PurchaseShipmentBuilder(this.Session).WithDefaults(this.internalOrganisation).Build();
+            var expected = new PurchaseShipmentBuilder(this.Transaction).WithDefaults(this.internalOrganisation).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedShipToAddressDisplayName = expected.ShipToAddress.DisplayName();
             var expectedShipToContactPersonPartyName = expected.ShipToContactPerson.DisplayName();
@@ -63,14 +63,14 @@ namespace Tests.PurchaseShipmentTests
                 .ShipToAddress.Select(expected.ShipToAddress)
                 .ShipToContactPerson.Select(expected.ShipToContactPerson);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             shipmentOverviewDetail.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new PurchaseShipments(this.Session).Extent().ToArray();
-            shipment = (PurchaseShipment)this.Session.Instantiate(id);
+            var after = new PurchaseShipments(this.Transaction).Extent().ToArray();
+            shipment = (PurchaseShipment)this.Transaction.Instantiate(id);
 
             Assert.Equal(after.Length, before.Length);
 

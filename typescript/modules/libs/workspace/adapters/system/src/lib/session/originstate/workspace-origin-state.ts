@@ -1,5 +1,6 @@
 import { IObject } from '@allors/workspace/domain/system';
-import { RoleType } from '@allors/workspace/meta/system';
+import { RelationType, RoleType } from '@allors/workspace/meta/system';
+import { IRange } from '../../collections/ranges/ranges';
 import { IRecord } from '../../irecord';
 import { UnknownVersion } from '../../version';
 import { WorkspaceRecord } from '../../workspace/workspace-record';
@@ -8,6 +9,8 @@ import { Session } from '../session';
 import { RecordBasedOriginState } from './record-based-origin-state';
 
 export class WorkspaceOriginState extends RecordBasedOriginState {
+  protected cachedRoleByRelationType: Map<RelationType, IRange<IObject>>;
+
   constructor(public object: IObject, private workspaceRecord: WorkspaceRecord) {
     super();
     this.previousRecord = this.workspaceRecord;
@@ -37,6 +40,7 @@ export class WorkspaceOriginState extends RecordBasedOriginState {
 
     this.workspaceRecord = this.workspace.getRecord(this.id);
     this.changedRoleByRelationType = null;
+    this.cachedRoleByRelationType = null;
   }
 
   onPulled(result: WorkspaceResult) {
@@ -48,5 +52,6 @@ export class WorkspaceOriginState extends RecordBasedOriginState {
 
     this.workspaceRecord = newRecord;
     this.changedRoleByRelationType = null;
+    this.cachedRoleByRelationType = null;
   }
 }

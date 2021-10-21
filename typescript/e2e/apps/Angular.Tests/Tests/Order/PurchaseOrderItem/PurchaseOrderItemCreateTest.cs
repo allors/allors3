@@ -28,14 +28,14 @@ namespace Tests.PurchaseOrderItemTests
         public PurchaseOrderItemCreateTest(Fixture fixture)
             : base(fixture)
         {
-            this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            this.internalOrganisation = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
 
-            this.purchaseOrder = this.internalOrganisation.CreatePurchaseOrderWithBothItems(this.Session.Faker());
+            this.purchaseOrder = this.internalOrganisation.CreatePurchaseOrderWithBothItems(this.Transaction.Faker());
             this.nonSerializedPartItem = this.purchaseOrder.PurchaseOrderItems.First(v => !v.ExistSerialisedItem);
             this.serializedPartItem = this.purchaseOrder.PurchaseOrderItems.First(v => v.ExistSerialisedItem);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             this.Login();
             this.purchaseOrderListPage = this.Sidenav.NavigateToPurchaseOrders();
@@ -47,12 +47,12 @@ namespace Tests.PurchaseOrderItemTests
         [Fact]
         public void CreateWithNonSerializedPartDefaults()
         {
-            var before = new PurchaseOrderItems(this.Session).Extent().ToArray();
+            var before = new PurchaseOrderItems(this.Transaction).Extent().ToArray();
 
-            var expected = new PurchaseOrderItemBuilder(this.Session).WithNonSerializedPartDefaults(this.nonSerializedPartItem.Part, this.internalOrganisation).Build();
+            var expected = new PurchaseOrderItemBuilder(this.Transaction).WithNonSerializedPartDefaults(this.nonSerializedPartItem.Part, this.internalOrganisation).Build();
             this.purchaseOrder.AddPurchaseOrderItem(expected);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(expected.ExistDescription);
             Assert.True(expected.ExistComment);
@@ -87,13 +87,13 @@ namespace Tests.PurchaseOrderItemTests
             purchaseOrderItemCreate.AssignedUnitPrice.Set(expected.AssignedUnitPrice.ToString());
             purchaseOrderItemCreate.Message.Set(expected.Message);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             purchaseOrderItemCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new PurchaseOrderItems(this.Session).Extent().ToArray();
+            var after = new PurchaseOrderItems(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -115,12 +115,12 @@ namespace Tests.PurchaseOrderItemTests
         [Fact]
         public void CreateWithSerializedPartDefaults()
         {
-            var before = new PurchaseOrderItems(this.Session).Extent().ToArray();
+            var before = new PurchaseOrderItems(this.Transaction).Extent().ToArray();
 
-            var expected = new PurchaseOrderItemBuilder(this.Session).WithSerializedPartDefaults(this.serializedPartItem.Part, this.serializedPartItem.SerialisedItem, this.internalOrganisation).Build();
+            var expected = new PurchaseOrderItemBuilder(this.Transaction).WithSerializedPartDefaults(this.serializedPartItem.Part, this.serializedPartItem.SerialisedItem, this.internalOrganisation).Build();
             this.purchaseOrder.AddPurchaseOrderItem(expected);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(expected.ExistComment);
             Assert.True(expected.ExistInternalComment);
@@ -151,13 +151,13 @@ namespace Tests.PurchaseOrderItemTests
             purchaseOrderItemCreate.AssignedUnitPrice.Set(expected.AssignedUnitPrice.ToString());
             purchaseOrderItemCreate.Message.Set(expected.Message);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             purchaseOrderItemCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new PurchaseOrderItems(this.Session).Extent().ToArray();
+            var after = new PurchaseOrderItems(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
