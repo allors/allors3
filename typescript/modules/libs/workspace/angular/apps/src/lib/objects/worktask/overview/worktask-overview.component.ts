@@ -27,7 +27,7 @@ export class WorkTaskOverviewComponent extends TestScope implements AfterViewIni
     @Self() public panelManager: PanelManagerService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
-    public navigation: NavigationService,
+    public navigationService: NavigationService,
     private route: ActivatedRoute,
     public injector: Injector,
     private internalOrganistationId: InternalOrganisationId,

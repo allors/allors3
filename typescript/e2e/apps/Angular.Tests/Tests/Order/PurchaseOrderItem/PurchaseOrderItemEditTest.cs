@@ -26,7 +26,7 @@ namespace Tests.PurchaseOrderItemTests
         public PurchaseOrderItemEditTest(Fixture fixture)
             : base(fixture)
         {
-            this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            this.internalOrganisation = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
 
             this.Login();
             this.purchaseOrderListPage = this.Sidenav.NavigateToPurchaseOrders();
@@ -38,17 +38,17 @@ namespace Tests.PurchaseOrderItemTests
         [Fact]
         public void EditWithNonSerializedPartDefaults()
         {
-            var purchaseOrder = new PurchaseOrders(this.Session).Extent().FirstOrDefault();
+            var purchaseOrder = new PurchaseOrders(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new PurchaseOrderItems(this.Session).Extent().ToArray();
+            var before = new PurchaseOrderItems(this.Transaction).Extent().ToArray();
 
-            var disposablePurchaseOrder = this.internalOrganisation.CreatePurchaseOrderWithNonSerializedItem(this.Session.Faker());
+            var disposablePurchaseOrder = this.internalOrganisation.CreatePurchaseOrderWithNonSerializedItem(this.Transaction.Faker());
             var expected = disposablePurchaseOrder.PurchaseOrderItems.First(v => v.InvoiceItemType.IsPartItem);
 
             var purchaseOrderItem = purchaseOrder.PurchaseOrderItems.First(v => v.InvoiceItemType.IsPartItem);
             var id = purchaseOrderItem.Id;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedDescription = expected.Description;
             var expectedComment = expected.Comment;
@@ -74,15 +74,15 @@ namespace Tests.PurchaseOrderItemTests
             purchaseOrderItemEdit.AssignedUnitPrice.Set(expected.AssignedUnitPrice.ToString());
             purchaseOrderItemEdit.Message.Set(expected.Message);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             purchaseOrderItemEdit.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new PurchaseOrderItems(this.Session).Extent().ToArray();
+            var after = new PurchaseOrderItems(this.Transaction).Extent().ToArray();
 
-            var actual = (PurchaseOrderItem)this.Session.Instantiate(id);
+            var actual = (PurchaseOrderItem)this.Transaction.Instantiate(id);
 
             Assert.Equal(after.Length, before.Length);
 
@@ -101,9 +101,9 @@ namespace Tests.PurchaseOrderItemTests
         [Fact]
         public void EditWithSerialisedPartDefaults()
         {
-            var purchaseOrder = new PurchaseOrders(this.Session).Extent().FirstOrDefault();
+            var purchaseOrder = new PurchaseOrders(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new PurchaseOrderItems(this.Session).Extent().ToArray();
+            var before = new PurchaseOrderItems(this.Transaction).Extent().ToArray();
 
             var disposablePurchaseOrder = this.internalOrganisation.CreatePurchaseOrderWithSerializedItem();
             var expected = disposablePurchaseOrder.PurchaseOrderItems.First(v => v.InvoiceItemType.IsProductItem);
@@ -111,7 +111,7 @@ namespace Tests.PurchaseOrderItemTests
             var purchaseOrderItem = purchaseOrder.PurchaseOrderItems.First(v => v.InvoiceItemType.IsProductItem);
             var id = purchaseOrderItem.Id;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedComment = expected.Comment;
             var expectedInternalComment = expected.InternalComment;
@@ -134,15 +134,15 @@ namespace Tests.PurchaseOrderItemTests
             purchaseOrderItemEdit.AssignedUnitPrice.Set(expected.AssignedUnitPrice.ToString());
             purchaseOrderItemEdit.Message.Set(expected.Message);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             purchaseOrderItemEdit.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new PurchaseOrderItems(this.Session).Extent().ToArray();
+            var after = new PurchaseOrderItems(this.Transaction).Extent().ToArray();
 
-            var actual = (PurchaseOrderItem)this.Session.Instantiate(id);
+            var actual = (PurchaseOrderItem)this.Transaction.Instantiate(id);
 
             Assert.Equal(after.Length, before.Length);
 

@@ -24,7 +24,7 @@
     </div>
   </div>
 
-  <div *ngIf="fromWorkEffort && workEffort.canWriteWorkDone">
+  <div *ngIf="workEffort?.canWriteWorkDone">
     <a-mat-factory-fab [objectType]="m.WorkEffortPartyAssignment" [createData]="createData" (created)="this.refreshService.refresh()"></a-mat-factory-fab>
   </div>
 

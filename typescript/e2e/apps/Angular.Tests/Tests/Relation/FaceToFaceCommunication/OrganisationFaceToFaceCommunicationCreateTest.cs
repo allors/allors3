@@ -29,10 +29,10 @@ namespace Tests.FaceToFaceCommunicationTests
         [Fact]
         public void Create()
         {
-            var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            var allors = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
             var employee = allors.ActiveEmployees.FirstOrDefault();
 
-            var before = new FaceToFaceCommunications(this.Session).Extent().ToArray();
+            var before = new FaceToFaceCommunications(this.Transaction).Extent().ToArray();
 
             var organisation = allors.ActiveCustomers.First(v => v.GetType().Name == typeof(Organisation).Name);
             var contact = organisation.CurrentContacts.FirstOrDefault();
@@ -41,8 +41,8 @@ namespace Tests.FaceToFaceCommunicationTests
             var faceToFaceCommunicationEdit = new OrganisationOverviewComponent(this.organisationListPage.Driver, this.M).CommunicationeventOverviewPanel.Click().CreateFaceToFaceCommunication();
 
             faceToFaceCommunicationEdit
-                .CommunicationEventState.Select(new CommunicationEventStates(this.Session).Completed)
-                .EventPurposes.Toggle(new CommunicationEventPurposes(this.Session).Appointment)
+                .CommunicationEventState.Select(new CommunicationEventStates(this.Transaction).Completed)
+                .EventPurposes.Toggle(new CommunicationEventPurposes(this.Transaction).Appointment)
                 .Location.Set("location")
                 .Subject.Set("subject")
                 .FromParty.Select(employee)
@@ -54,16 +54,16 @@ namespace Tests.FaceToFaceCommunicationTests
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new FaceToFaceCommunications(this.Session).Extent().ToArray();
+            var after = new FaceToFaceCommunications(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
             var communicationEvent = after.Except(before).First();
 
-            Assert.Equal(new CommunicationEventStates(this.Session).Completed, communicationEvent.CommunicationEventState);
-            Assert.Contains(new CommunicationEventPurposes(this.Session).Appointment, communicationEvent.EventPurposes);
+            Assert.Equal(new CommunicationEventStates(this.Transaction).Completed, communicationEvent.CommunicationEventState);
+            Assert.Contains(new CommunicationEventPurposes(this.Transaction).Appointment, communicationEvent.EventPurposes);
             Assert.Equal(employee, communicationEvent.FromParty);
             Assert.Equal(contact, communicationEvent.ToParty);
             Assert.Equal("location", communicationEvent.Location);

@@ -87,6 +87,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
             pulls.push(
               pull.WorkEffort({
                 objectId: this.data.associationId,
+                include: { Customer: x }
               })
             );
           }

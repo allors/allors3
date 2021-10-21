@@ -8,6 +8,5 @@ export interface ContainedIn extends ParameterizablePredicateBase {
   propertyType: PropertyType;
   extent?: Extent;
   objects?: Array<IObject>;
-
-  objectIds?: Array<number> | Array<string>;
+  objectIds?: Array<number>;
 }

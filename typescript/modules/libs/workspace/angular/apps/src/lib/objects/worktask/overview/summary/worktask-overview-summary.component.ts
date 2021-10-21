@@ -36,8 +36,9 @@ export class WorkTaskOverviewSummaryComponent {
     private saveService: SaveService,
     public snackBar: MatSnackBar
   ) {
-    const m = this.workspaceService.workspace.configuration.metaPopulation as M;
-
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    const m = this.m;
+    
     this.print = printService.print();
     this.printForWorker = {
       name: 'printforworker',

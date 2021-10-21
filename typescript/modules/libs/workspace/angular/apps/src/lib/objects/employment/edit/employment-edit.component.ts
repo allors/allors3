@@ -30,6 +30,7 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
   addEmployee = false;
 
   private subscription: Subscription;
+  canSave: boolean;
 
   constructor(
     @Self() public allors: ContextService,
@@ -42,6 +43,7 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
   ) {
     super();
 
+    this.canSave = true;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
@@ -115,7 +117,8 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
             this.organisation = this.party as Organisation;
 
             if (!this.organisation.IsInternalOrganisation) {
-              this.dialogRef.close();
+              this.canSave = false;
+              // this.dialogRef.close();
             }
           }
         } else {

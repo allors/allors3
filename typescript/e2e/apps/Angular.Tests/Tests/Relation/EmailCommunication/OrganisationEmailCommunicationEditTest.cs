@@ -30,7 +30,7 @@ namespace Tests.EmailCommunicationTests
         [Fact]
         public void Edit()
         {
-            var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            var allors = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
             var employee = allors.ActiveEmployees.First();
 
             var organisation = allors.ActiveCustomers.First(v => v.GetType().Name == typeof(Organisation).Name);
@@ -39,19 +39,19 @@ namespace Tests.EmailCommunicationTests
             var employeeEmailAddress = employee.PersonalEmailAddress;
             var personEmailAddress = organisation.CurrentContacts.First().PersonalEmailAddress;
 
-            var editCommunicationEvent = new EmailCommunicationBuilder(this.Session)
+            var editCommunicationEvent = new EmailCommunicationBuilder(this.Transaction)
                 .WithSubject("dummy")
                 .WithFromParty(employee)
                 .WithFromEmail(employeeEmailAddress)
                 .WithToParty(organisation.CurrentContacts.FirstOrDefault())
                 .WithToEmail(personEmailAddress)
-                .WithEmailTemplate(new EmailTemplateBuilder(this.Session).Build())
+                .WithEmailTemplate(new EmailTemplateBuilder(this.Transaction).Build())
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var before = new EmailCommunications(this.Session).Extent().ToArray();
+            var before = new EmailCommunications(this.Transaction).Extent().ToArray();
 
             this.organisationListPage.Table.DefaultAction(organisation);
             var organisationOverview = new OrganisationOverviewComponent(this.organisationListPage.Driver, this.M);
@@ -61,8 +61,8 @@ namespace Tests.EmailCommunicationTests
             
             var emailCommunicationEdit = new EmailCommunicationEditComponent(organisationOverview.Driver, this.M);
             emailCommunicationEdit
-                .CommunicationEventState.Select(new CommunicationEventStates(this.Session).Completed)
-                .EventPurposes.Toggle(new CommunicationEventPurposes(this.Session).Inquiry)
+                .CommunicationEventState.Select(new CommunicationEventStates(this.Transaction).Completed)
+                .EventPurposes.Toggle(new CommunicationEventPurposes(this.Transaction).Inquiry)
                 .FromParty.Select(contact)
                 .FromEmail.Select(personEmailAddress)
                 .ToParty.Select(employee)
@@ -76,14 +76,14 @@ namespace Tests.EmailCommunicationTests
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new EmailCommunications(this.Session).Extent().ToArray();
+            var after = new EmailCommunications(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length);
 
-            Assert.Equal(new CommunicationEventStates(this.Session).Completed, editCommunicationEvent.CommunicationEventState);
-            Assert.Contains(new CommunicationEventPurposes(this.Session).Inquiry, editCommunicationEvent.EventPurposes);
+            Assert.Equal(new CommunicationEventStates(this.Transaction).Completed, editCommunicationEvent.CommunicationEventState);
+            Assert.Contains(new CommunicationEventPurposes(this.Transaction).Inquiry, editCommunicationEvent.EventPurposes);
             Assert.Equal(contact, editCommunicationEvent.FromParty);
             Assert.Equal(personEmailAddress, editCommunicationEvent.FromEmail);
             Assert.Equal(employee, editCommunicationEvent.ToParty);

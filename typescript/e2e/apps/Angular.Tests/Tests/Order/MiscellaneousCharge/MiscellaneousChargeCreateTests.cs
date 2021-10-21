@@ -40,14 +40,14 @@ namespace Tests.OrderAdjustmentTests
         {
             this.quoteListPage = this.Sidenav.NavigateToProductQuotes();
 
-            var quote = new ProductQuotes(this.Session).Extent().FirstOrDefault();
+            var quote = new ProductQuotes(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new MiscellaneousCharges(this.Session).Extent().ToArray();
+            var before = new MiscellaneousCharges(this.Transaction).Extent().ToArray();
 
-            var expected = new MiscellaneousChargeBuilder(this.Session).WithAmountDefaults().Build();
+            var expected = new MiscellaneousChargeBuilder(this.Transaction).WithAmountDefaults().Build();
             quote.AddOrderAdjustment(expected);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(expected.ExistAmount);
             Assert.True(expected.ExistDescription);
@@ -62,13 +62,13 @@ namespace Tests.OrderAdjustmentTests
                 .Amount.Set(expectedAmount.ToString())
                 .Description.Set(expectedDescription);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             miscellaneousChargeCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new MiscellaneousCharges(this.Session).Extent().ToArray();
+            var after = new MiscellaneousCharges(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -83,14 +83,14 @@ namespace Tests.OrderAdjustmentTests
         {
             this.quoteListPage = this.Sidenav.NavigateToProductQuotes();
 
-            var quote = new ProductQuotes(this.Session).Extent().FirstOrDefault();
+            var quote = new ProductQuotes(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new MiscellaneousCharges(this.Session).Extent().ToArray();
+            var before = new MiscellaneousCharges(this.Transaction).Extent().ToArray();
 
-            var expected = new MiscellaneousChargeBuilder(this.Session).WithPercentageDefaults().Build();
+            var expected = new MiscellaneousChargeBuilder(this.Transaction).WithPercentageDefaults().Build();
             quote.AddOrderAdjustment(expected);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(expected.ExistPercentage);
             Assert.True(expected.ExistDescription);
@@ -105,13 +105,13 @@ namespace Tests.OrderAdjustmentTests
                 .Percentage.Set(expectedPercentage.ToString())
                 .Description.Set(expectedDescription);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             miscellaneousChargeCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new MiscellaneousCharges(this.Session).Extent().ToArray();
+            var after = new MiscellaneousCharges(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -126,14 +126,14 @@ namespace Tests.OrderAdjustmentTests
         {
             this.salesOrderListPage = this.Sidenav.NavigateToSalesOrders();
 
-            var salesOrder = new SalesOrders(this.Session).Extent().FirstOrDefault();
+            var salesOrder = new SalesOrders(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new MiscellaneousCharges(this.Session).Extent().ToArray();
+            var before = new MiscellaneousCharges(this.Transaction).Extent().ToArray();
 
-            var expected = new MiscellaneousChargeBuilder(this.Session).WithAmountDefaults().Build();
+            var expected = new MiscellaneousChargeBuilder(this.Transaction).WithAmountDefaults().Build();
             salesOrder.AddOrderAdjustment(expected);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(expected.ExistAmount);
             Assert.True(expected.ExistDescription);
@@ -148,13 +148,13 @@ namespace Tests.OrderAdjustmentTests
                 .Amount.Set(expectedAmount.ToString())
                 .Description.Set(expectedDescription);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             miscellaneousChargeCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new MiscellaneousCharges(this.Session).Extent().ToArray();
+            var after = new MiscellaneousCharges(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -169,14 +169,14 @@ namespace Tests.OrderAdjustmentTests
         {
             this.salesOrderListPage = this.Sidenav.NavigateToSalesOrders();
 
-            var salesOrder = new SalesOrders(this.Session).Extent().FirstOrDefault();
+            var salesOrder = new SalesOrders(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new MiscellaneousCharges(this.Session).Extent().ToArray();
+            var before = new MiscellaneousCharges(this.Transaction).Extent().ToArray();
 
-            var expected = new MiscellaneousChargeBuilder(this.Session).WithPercentageDefaults().Build();
+            var expected = new MiscellaneousChargeBuilder(this.Transaction).WithPercentageDefaults().Build();
             salesOrder.AddOrderAdjustment(expected);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(expected.ExistPercentage);
             Assert.True(expected.ExistDescription);
@@ -191,13 +191,13 @@ namespace Tests.OrderAdjustmentTests
                 .Percentage.Set(expectedPercentage.ToString())
                 .Description.Set(expectedDescription);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             miscellaneousChargeCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new MiscellaneousCharges(this.Session).Extent().ToArray();
+            var after = new MiscellaneousCharges(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -212,14 +212,14 @@ namespace Tests.OrderAdjustmentTests
         {
             this.salesInvoiceListPage = this.Sidenav.NavigateToSalesInvoices();
 
-            var salesInvoice = new SalesInvoices(this.Session).Extent().FirstOrDefault();
+            var salesInvoice = new SalesInvoices(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new MiscellaneousCharges(this.Session).Extent().ToArray();
+            var before = new MiscellaneousCharges(this.Transaction).Extent().ToArray();
 
-            var expected = new MiscellaneousChargeBuilder(this.Session).WithAmountDefaults().Build();
+            var expected = new MiscellaneousChargeBuilder(this.Transaction).WithAmountDefaults().Build();
             salesInvoice.AddOrderAdjustment(expected);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(expected.ExistAmount);
             Assert.True(expected.ExistDescription);
@@ -234,13 +234,13 @@ namespace Tests.OrderAdjustmentTests
                 .Amount.Set(expectedAmount.ToString())
                 .Description.Set(expectedDescription);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             miscellaneousChargeCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new MiscellaneousCharges(this.Session).Extent().ToArray();
+            var after = new MiscellaneousCharges(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -255,14 +255,14 @@ namespace Tests.OrderAdjustmentTests
         {
             this.salesInvoiceListPage = this.Sidenav.NavigateToSalesInvoices();
 
-            var salesInvoice = new SalesInvoices(this.Session).Extent().FirstOrDefault();
+            var salesInvoice = new SalesInvoices(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new MiscellaneousCharges(this.Session).Extent().ToArray();
+            var before = new MiscellaneousCharges(this.Transaction).Extent().ToArray();
 
-            var expected = new MiscellaneousChargeBuilder(this.Session).WithPercentageDefaults().Build();
+            var expected = new MiscellaneousChargeBuilder(this.Transaction).WithPercentageDefaults().Build();
             salesInvoice.AddOrderAdjustment(expected);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(expected.ExistPercentage);
             Assert.True(expected.ExistDescription);
@@ -277,13 +277,13 @@ namespace Tests.OrderAdjustmentTests
                 .Percentage.Set(expectedPercentage.ToString())
                 .Description.Set(expectedDescription);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             miscellaneousChargeCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new MiscellaneousCharges(this.Session).Extent().ToArray();
+            var after = new MiscellaneousCharges(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -298,14 +298,14 @@ namespace Tests.OrderAdjustmentTests
         {
             this.purchaseInvoiceListPage = this.Sidenav.NavigateToPurchaseInvoices();
 
-            var purchaseInvoice = new PurchaseInvoices(this.Session).Extent().FirstOrDefault();
+            var purchaseInvoice = new PurchaseInvoices(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new MiscellaneousCharges(this.Session).Extent().ToArray();
+            var before = new MiscellaneousCharges(this.Transaction).Extent().ToArray();
 
-            var expected = new MiscellaneousChargeBuilder(this.Session).WithAmountDefaults().Build();
+            var expected = new MiscellaneousChargeBuilder(this.Transaction).WithAmountDefaults().Build();
             purchaseInvoice.AddOrderAdjustment(expected);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(expected.ExistAmount);
             Assert.True(expected.ExistDescription);
@@ -320,13 +320,13 @@ namespace Tests.OrderAdjustmentTests
                 .Amount.Set(expectedAmount.ToString())
                 .Description.Set(expectedDescription);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             miscellaneousChargeCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new MiscellaneousCharges(this.Session).Extent().ToArray();
+            var after = new MiscellaneousCharges(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -341,14 +341,14 @@ namespace Tests.OrderAdjustmentTests
         {
             this.purchaseInvoiceListPage = this.Sidenav.NavigateToPurchaseInvoices();
 
-            var purchaseInvoice = new PurchaseInvoices(this.Session).Extent().FirstOrDefault();
+            var purchaseInvoice = new PurchaseInvoices(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new MiscellaneousCharges(this.Session).Extent().ToArray();
+            var before = new MiscellaneousCharges(this.Transaction).Extent().ToArray();
 
-            var expected = new MiscellaneousChargeBuilder(this.Session).WithPercentageDefaults().Build();
+            var expected = new MiscellaneousChargeBuilder(this.Transaction).WithPercentageDefaults().Build();
             purchaseInvoice.AddOrderAdjustment(expected);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(expected.ExistPercentage);
             Assert.True(expected.ExistDescription);
@@ -363,13 +363,13 @@ namespace Tests.OrderAdjustmentTests
                 .Percentage.Set(expectedPercentage.ToString())
                 .Description.Set(expectedDescription);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             miscellaneousChargeCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new MiscellaneousCharges(this.Session).Extent().ToArray();
+            var after = new MiscellaneousCharges(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 

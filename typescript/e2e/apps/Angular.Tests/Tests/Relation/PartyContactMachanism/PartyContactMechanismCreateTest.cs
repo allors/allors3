@@ -22,20 +22,20 @@ namespace Tests.PartyContactMachanismTests
         public PartyContactMechanismCreateTest(Fixture fixture)
             : base(fixture)
         {
-            var person = new People(this.Session).Extent().FirstOrDefault();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
 
-            var postalAddress = new PostalAddressBuilder(this.Session)
+            var postalAddress = new PostalAddressBuilder(this.Transaction)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("city")
                 .WithPostalCode("1111")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Transaction).FindBy(M.Country.IsoCode, "BE"))
                 .Build();
 
-            this.editPartyContactMechanism = new PartyContactMechanismBuilder(this.Session).WithContactMechanism(postalAddress).Build();
+            this.editPartyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(postalAddress).Build();
             person.AddPartyContactMechanism(this.editPartyContactMechanism);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             this.Login();
             this.people = this.Sidenav.NavigateToPeople();

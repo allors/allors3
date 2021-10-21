@@ -25,20 +25,20 @@ namespace Tests.PostalAddressTests
         public PostalAddressEditTest(Fixture fixture)
             : base(fixture)
         {
-            var person = new People(this.Session).Extent().FirstOrDefault();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
 
-            this.editContactMechanism = new PostalAddressBuilder(this.Session)
+            this.editContactMechanism = new PostalAddressBuilder(this.Transaction)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("city")
                 .WithPostalCode("1111")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Transaction).FindBy(M.Country.IsoCode, "BE"))
                 .Build();
 
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session).WithContactMechanism(this.editContactMechanism).Build();
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(this.editContactMechanism).Build();
             person.AddPartyContactMechanism(partyContactMechanism);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             this.Login();
             this.people = this.Sidenav.NavigateToPeople();
@@ -47,11 +47,11 @@ namespace Tests.PostalAddressTests
         [Fact]
         public void Edit()
         {
-            var country = new Countries(this.Session).FindBy(M.Country.IsoCode, "NL");
+            var country = new Countries(this.Transaction).FindBy(M.Country.IsoCode, "NL");
 
-            var person = new People(this.Session).Extent().FirstOrDefault();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new PostalAddresses(this.Session).Extent().ToArray();
+            var before = new PostalAddresses(this.Transaction).Extent().ToArray();
 
             this.people.Table.DefaultAction(person);
             var personOverview = new PersonOverviewComponent(this.people.Driver, this.M);
@@ -72,9 +72,9 @@ namespace Tests.PostalAddressTests
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new PostalAddresses(this.Session).Extent().ToArray();
+            var after = new PostalAddresses(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length);
 

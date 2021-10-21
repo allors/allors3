@@ -25,17 +25,17 @@ namespace Tests.PostalAddressTests
         public PostalAddressCreateTest(Fixture fixture)
             : base(fixture)
         {
-            var person = new People(this.Session).Extent().FirstOrDefault();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
 
-            this.editContactMechanism = new PostalAddressBuilder(this.Session)
+            this.editContactMechanism = new PostalAddressBuilder(this.Transaction)
                 .WithDefaults()
                 .Build();
 
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session).WithContactMechanism(this.editContactMechanism).Build();
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(this.editContactMechanism).Build();
             person.AddPartyContactMechanism(partyContactMechanism);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             this.Login();
             this.people = this.Sidenav.NavigateToPeople();
@@ -44,17 +44,17 @@ namespace Tests.PostalAddressTests
         [Fact]
         public void Create()
         {
-            var country = new Countries(this.Session).FindBy(M.Country.IsoCode, "BE");
+            var country = new Countries(this.Transaction).FindBy(M.Country.IsoCode, "BE");
 
-            var before = new PostalAddresses(this.Session).Extent().ToArray();
+            var before = new PostalAddresses(this.Transaction).Extent().ToArray();
 
-            var person = new People(this.Session).Extent().FirstOrDefault();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
 
             this.people.Table.DefaultAction(person);
             var postalAddressEditComponent = new PersonOverviewComponent(this.people.Driver, this.M).ContactmechanismOverviewPanel.Click().CreatePostalAddress();
 
             postalAddressEditComponent
-                .ContactPurposes.Toggle(new ContactMechanismPurposes(this.Session).GeneralCorrespondence)
+                .ContactPurposes.Toggle(new ContactMechanismPurposes(this.Transaction).GeneralCorrespondence)
                 .Address1.Set("addressline 1")
                 .Address2.Set("addressline 2")
                 .Address3.Set("addressline 3")
@@ -65,9 +65,9 @@ namespace Tests.PostalAddressTests
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new PostalAddresses(this.Session).Extent().ToArray();
+            var after = new PostalAddresses(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 

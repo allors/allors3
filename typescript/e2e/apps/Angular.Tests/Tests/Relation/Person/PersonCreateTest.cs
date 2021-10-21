@@ -28,36 +28,36 @@ namespace Tests.PersonTests
         [Fact]
         public void Create()
         {
-            var before = new People(this.Session).Extent().ToArray();
+            var before = new People(this.Transaction).Extent().ToArray();
 
             var personCreate = this.people.CreatePerson();
 
             personCreate
-                .Salutation.Select(new Salutations(this.Session).Mr)
+                .Salutation.Select(new Salutations(this.Transaction).Mr)
                 .FirstName.Set("Jos")
                 .MiddleName.Set("de")
                 .LastName.Set("Smos")
                 .Function.Set("CEO")
-                .Gender.Select(new GenderTypes(this.Session).Male)
-                .Locale.Select(this.Session.GetSingleton().AdditionalLocales.FirstOrDefault())
+                .Gender.Select(new GenderTypes(this.Transaction).Male)
+                .Locale.Select(this.Transaction.GetSingleton().AdditionalLocales.FirstOrDefault())
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new People(this.Session).Extent().ToArray();
+            var after = new People(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
             var person = after.Except(before).First();
 
-            Assert.Equal(new Salutations(this.Session).Mr, person.Salutation);
+            Assert.Equal(new Salutations(this.Transaction).Mr, person.Salutation);
             Assert.Equal("Jos", person.FirstName);
             Assert.Equal("de", person.MiddleName);
             Assert.Equal("Smos", person.LastName);
             Assert.Equal("CEO", person.Function);
-            Assert.Equal(new GenderTypes(this.Session).Male, person.Gender);
-            Assert.Equal(this.Session.GetSingleton().AdditionalLocales.FirstOrDefault(), person.Locale);
+            Assert.Equal(new GenderTypes(this.Transaction).Male, person.Gender);
+            Assert.Equal(this.Transaction.GetSingleton().AdditionalLocales.FirstOrDefault(), person.Locale);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Tests.SalesOrderTests
         public SalesOrderCreateTest(Fixture fixture)
             : base(fixture)
         {
-            this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            this.internalOrganisation = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
 
             this.Login();
             this.salesOrderListPage = this.Sidenav.NavigateToSalesOrders();
@@ -37,9 +37,9 @@ namespace Tests.SalesOrderTests
         [Fact]
         public void CreateWithInternalOrganisation()
         {
-            var before = new SalesOrders(this.Session).Extent().ToArray();
+            var before = new SalesOrders(this.Transaction).Extent().ToArray();
 
-            var expected = this.internalOrganisation.CreateInternalSalesOrder(this.Session.Faker());
+            var expected = this.internalOrganisation.CreateInternalSalesOrder(this.Transaction.Faker());
 
             Assert.True(expected.ExistDerivedShipToAddress);
             Assert.True(expected.ExistComment);
@@ -52,7 +52,7 @@ namespace Tests.SalesOrderTests
             Assert.True(expected.ExistDerivedShipFromAddress);
             Assert.True(expected.ExistCustomerReference);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedBillToCustomer = expected.BillToCustomer.DisplayName();
             var expectedBillToContactMechanism = expected.DerivedBillToContactMechanism;
@@ -68,13 +68,13 @@ namespace Tests.SalesOrderTests
                 .BuildForOrganisationInternalDefaults(expected);
 
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             salesOrderCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new SalesOrders(this.Session).Extent().ToArray();
+            var after = new SalesOrders(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -99,9 +99,9 @@ namespace Tests.SalesOrderTests
         [Fact]
         public void CreateWithExternalOrganisation()
         {
-            var before = new SalesOrders(this.Session).Extent().ToArray();
+            var before = new SalesOrders(this.Transaction).Extent().ToArray();
 
-            var expected = this.internalOrganisation.CreateB2BSalesOrder(this.Session.Faker());
+            var expected = this.internalOrganisation.CreateB2BSalesOrder(this.Transaction.Faker());
 
             Assert.True(expected.ExistBillToCustomer);
             Assert.True(expected.ExistDerivedBillToContactMechanism);
@@ -112,7 +112,7 @@ namespace Tests.SalesOrderTests
             Assert.True(expected.ExistDerivedShipFromAddress);
             Assert.True(expected.ExistCustomerReference);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedBillToCustomer = expected.BillToCustomer.DisplayName();
             var expectedBillToContactMechanism = expected.DerivedBillToContactMechanism;
@@ -127,13 +127,13 @@ namespace Tests.SalesOrderTests
                 .CreateSalesOrder()
                 .BuildForOrganisationExternalDefaults(expected);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             salesOrderCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new SalesOrders(this.Session).Extent().ToArray();
+            var after = new SalesOrders(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -158,9 +158,9 @@ namespace Tests.SalesOrderTests
         [Fact]
         public void CreateWithExternalPerson()
         {
-            var before = new SalesOrders(this.Session).Extent().ToArray();
+            var before = new SalesOrders(this.Transaction).Extent().ToArray();
 
-            var expected = this.internalOrganisation.CreateB2CSalesOrder(this.Session.Faker());
+            var expected = this.internalOrganisation.CreateB2CSalesOrder(this.Transaction.Faker());
 
             Assert.True(expected.ExistBillToCustomer);
             Assert.True(expected.ExistDerivedBillToContactMechanism);
@@ -169,7 +169,7 @@ namespace Tests.SalesOrderTests
             Assert.True(expected.ExistDerivedShipFromAddress);
             Assert.True(expected.ExistCustomerReference);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedBillToCustomer = expected.BillToCustomer.DisplayName();
             var expectedBillToContactMechanism = expected.DerivedBillToContactMechanism;
@@ -182,13 +182,13 @@ namespace Tests.SalesOrderTests
                 .CreateSalesOrder()
                 .BuildForPersonExternalDefaults(expected);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             salesOrderCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new SalesOrders(this.Session).Extent().ToArray();
+            var after = new SalesOrders(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 

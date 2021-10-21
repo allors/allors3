@@ -30,9 +30,9 @@ namespace Tests.PartyRelationshipTests
         [Fact]
         public void Create()
         {
-            var before = new PartyRelationships(this.Session).Extent().ToArray();
+            var before = new PartyRelationships(this.Transaction).Extent().ToArray();
 
-            var person = new People(this.Session).Extent().FirstOrDefault();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
 
             this.personListPage.Table.DefaultAction(person);
             var customerRelationshipEdit = new PersonOverviewComponent(this.personListPage.Driver, this.M).PartyrelationshipOverviewPanel.Click().CreateCustomerRelationship();
@@ -43,9 +43,9 @@ namespace Tests.PartyRelationshipTests
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new PartyRelationships(this.Session).Extent().ToArray();
+            var after = new PartyRelationships(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -58,19 +58,19 @@ namespace Tests.PartyRelationshipTests
         [Fact]
         public void Edit()
         {
-            var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            var allors = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
 
-            var person = new People(this.Session).Extent().FirstOrDefault();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
 
-            var editPartyRelationship = new CustomerRelationshipBuilder(this.Session)
+            var editPartyRelationship = new CustomerRelationshipBuilder(this.Transaction)
                 .WithCustomer(person)
                 .WithInternalOrganisation(allors)
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var before = new PartyRelationships(this.Session).Extent().ToArray();
+            var before = new PartyRelationships(this.Transaction).Extent().ToArray();
 
             this.personListPage.Table.DefaultAction(person);
             var personOverview = new PersonOverviewComponent(this.personListPage.Driver, this.M);
@@ -84,9 +84,9 @@ namespace Tests.PartyRelationshipTests
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new PartyRelationships(this.Session).Extent().ToArray();
+            var after = new PartyRelationships(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length);
 

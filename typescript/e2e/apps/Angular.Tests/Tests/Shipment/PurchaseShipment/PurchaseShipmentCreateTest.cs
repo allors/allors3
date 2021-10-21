@@ -25,11 +25,11 @@ namespace Tests.PurchaseShipmentTests
         public PurchaseShipmentCreateTest(Fixture fixture)
             : base(fixture)
         {
-            this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            this.internalOrganisation = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
 
             for (int i = 0; i < 10; i++)
             {
-                this.internalOrganisation.CreateSupplier(this.Session.Faker());
+                this.internalOrganisation.CreateSupplier(this.Transaction.Faker());
             }
 
             this.Login();
@@ -39,11 +39,11 @@ namespace Tests.PurchaseShipmentTests
         [Fact]
         public void CreateFull()
         {
-            var before = new PurchaseShipments(this.Session).Extent().ToArray();
+            var before = new PurchaseShipments(this.Transaction).Extent().ToArray();
 
-            var expected = new PurchaseShipmentBuilder(this.Session).WithDefaults(this.internalOrganisation).Build();
+            var expected = new PurchaseShipmentBuilder(this.Transaction).WithDefaults(this.internalOrganisation).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedShipToPartyPartyName = expected.ShipToParty.DisplayName();
             var expectedShipToAddressDisplayName = expected.ShipToAddress.DisplayName();
@@ -57,13 +57,13 @@ namespace Tests.PurchaseShipmentTests
 
             purchaseShipmentCreate.AssertFull(expected);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             purchaseShipmentCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new PurchaseShipments(this.Session).Extent().ToArray();
+            var after = new PurchaseShipments(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -79,11 +79,11 @@ namespace Tests.PurchaseShipmentTests
         [Fact]
         public void CreateMinimal()
         {
-            var before = new PurchaseShipments(this.Session).Extent().ToArray();
+            var before = new PurchaseShipments(this.Transaction).Extent().ToArray();
 
-            var expected = new PurchaseShipmentBuilder(this.Session).WithDefaults(this.internalOrganisation).Build();
+            var expected = new PurchaseShipmentBuilder(this.Transaction).WithDefaults(this.internalOrganisation).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedShipToPartyPartyName = expected.ShipToParty.DisplayName();
             var expectedShipFromPartyPartyName = expected.ShipFromParty.DisplayName();
@@ -94,13 +94,13 @@ namespace Tests.PurchaseShipmentTests
 
             purchaseShipmentCreate.AssertFull(expected);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             purchaseShipmentCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new PurchaseShipments(this.Session).Extent().ToArray();
+            var after = new PurchaseShipments(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 

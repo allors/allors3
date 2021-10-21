@@ -41,20 +41,20 @@ namespace Tests.OrderAdjustmentTests
         {
             this.quoteListPage = this.Sidenav.NavigateToProductQuotes();
 
-            var quote = new ProductQuotes(this.Session).Extent().FirstOrDefault();
-            quote.AddOrderAdjustment(new DiscountAdjustmentBuilder(this.Session).WithAmountDefaults().Build());
+            var quote = new ProductQuotes(this.Transaction).Extent().FirstOrDefault();
+            quote.AddOrderAdjustment(new DiscountAdjustmentBuilder(this.Transaction).WithAmountDefaults().Build());
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var before = new OrderAdjustments(this.Session).Extent().ToArray();
+            var before = new OrderAdjustments(this.Transaction).Extent().ToArray();
 
-            var expected = new DiscountAdjustmentBuilder(this.Session).WithAmountDefaults().Build();
+            var expected = new DiscountAdjustmentBuilder(this.Transaction).WithAmountDefaults().Build();
 
             var discountAdjustment = quote.OrderAdjustments.First();
             var id = discountAdjustment.Id;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedAmount = expected.Amount;
             var expectedDescription = expected.Description;
@@ -70,15 +70,15 @@ namespace Tests.OrderAdjustmentTests
             adjustmentEdit.Amount.Set(expected.Amount.ToString());
             adjustmentEdit.Description.Set(expected.Description);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             adjustmentEdit.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new OrderAdjustments(this.Session).Extent().ToArray();
+            var after = new OrderAdjustments(this.Transaction).Extent().ToArray();
 
-            var actual = (DiscountAdjustment)this.Session.Instantiate(id);
+            var actual = (DiscountAdjustment)this.Transaction.Instantiate(id);
 
             Assert.Equal(after.Length, before.Length);
 
@@ -91,20 +91,20 @@ namespace Tests.OrderAdjustmentTests
         {
             this.salesOrderListPage = this.Sidenav.NavigateToSalesOrders();
 
-            var salesOrder = new SalesOrders(this.Session).Extent().FirstOrDefault();
-            salesOrder.AddOrderAdjustment(new DiscountAdjustmentBuilder(this.Session).WithAmountDefaults().Build());
+            var salesOrder = new SalesOrders(this.Transaction).Extent().FirstOrDefault();
+            salesOrder.AddOrderAdjustment(new DiscountAdjustmentBuilder(this.Transaction).WithAmountDefaults().Build());
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var before = new OrderAdjustments(this.Session).Extent().ToArray();
+            var before = new OrderAdjustments(this.Transaction).Extent().ToArray();
 
-            var expected = new DiscountAdjustmentBuilder(this.Session).WithAmountDefaults().Build();
+            var expected = new DiscountAdjustmentBuilder(this.Transaction).WithAmountDefaults().Build();
 
             var discountAdjustment = salesOrder.OrderAdjustments.First();
             var id = discountAdjustment.Id;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedAmount = expected.Amount;
             var expectedDescription = expected.Description;
@@ -120,15 +120,15 @@ namespace Tests.OrderAdjustmentTests
             adjustmentEdit.Amount.Set(expected.Amount.ToString());
             adjustmentEdit.Description.Set(expected.Description);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             adjustmentEdit.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new OrderAdjustments(this.Session).Extent().ToArray();
+            var after = new OrderAdjustments(this.Transaction).Extent().ToArray();
 
-            var actual = (DiscountAdjustment)this.Session.Instantiate(id);
+            var actual = (DiscountAdjustment)this.Transaction.Instantiate(id);
 
             Assert.Equal(after.Length, before.Length);
 
@@ -141,20 +141,20 @@ namespace Tests.OrderAdjustmentTests
         {
             this.salesInvoiceListPage = this.Sidenav.NavigateToSalesInvoices();
 
-            var salesInvoice = new SalesInvoices(this.Session).Extent().FirstOrDefault();
-            salesInvoice.AddOrderAdjustment(new DiscountAdjustmentBuilder(this.Session).WithAmountDefaults().Build());
+            var salesInvoice = new SalesInvoices(this.Transaction).Extent().FirstOrDefault();
+            salesInvoice.AddOrderAdjustment(new DiscountAdjustmentBuilder(this.Transaction).WithAmountDefaults().Build());
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var before = new OrderAdjustments(this.Session).Extent().ToArray();
+            var before = new OrderAdjustments(this.Transaction).Extent().ToArray();
 
-            var expected = new DiscountAdjustmentBuilder(this.Session).WithAmountDefaults().Build();
+            var expected = new DiscountAdjustmentBuilder(this.Transaction).WithAmountDefaults().Build();
 
             var discountAdjustment = salesInvoice.OrderAdjustments.First();
             var id = discountAdjustment.Id;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedAmount = expected.Amount;
             var expectedDescription = expected.Description;
@@ -170,15 +170,15 @@ namespace Tests.OrderAdjustmentTests
             adjustmentEdit.Amount.Set(expected.Amount.ToString());
             adjustmentEdit.Description.Set(expected.Description);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             adjustmentEdit.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new OrderAdjustments(this.Session).Extent().ToArray();
+            var after = new OrderAdjustments(this.Transaction).Extent().ToArray();
 
-            var actual = (DiscountAdjustment)this.Session.Instantiate(id);
+            var actual = (DiscountAdjustment)this.Transaction.Instantiate(id);
 
             Assert.Equal(after.Length, before.Length);
 
@@ -191,20 +191,20 @@ namespace Tests.OrderAdjustmentTests
         {
             this.purchaseInvoiceListPage = this.Sidenav.NavigateToPurchaseInvoices();
 
-            var purchaseInvoice = new PurchaseInvoices(this.Session).Extent().FirstOrDefault();
-            purchaseInvoice.AddOrderAdjustment(new DiscountAdjustmentBuilder(this.Session).WithAmountDefaults().Build());
+            var purchaseInvoice = new PurchaseInvoices(this.Transaction).Extent().FirstOrDefault();
+            purchaseInvoice.AddOrderAdjustment(new DiscountAdjustmentBuilder(this.Transaction).WithAmountDefaults().Build());
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var before = new OrderAdjustments(this.Session).Extent().ToArray();
+            var before = new OrderAdjustments(this.Transaction).Extent().ToArray();
 
-            var expected = new DiscountAdjustmentBuilder(this.Session).WithAmountDefaults().Build();
+            var expected = new DiscountAdjustmentBuilder(this.Transaction).WithAmountDefaults().Build();
 
             var discountAdjustment = purchaseInvoice.OrderAdjustments.First();
             var id = discountAdjustment.Id;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedAmount = expected.Amount;
             var expectedDescription = expected.Description;
@@ -220,15 +220,15 @@ namespace Tests.OrderAdjustmentTests
             adjustmentEdit.Amount.Set(expected.Amount.ToString());
             adjustmentEdit.Description.Set(expected.Description);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             adjustmentEdit.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new OrderAdjustments(this.Session).Extent().ToArray();
+            var after = new OrderAdjustments(this.Transaction).Extent().ToArray();
 
-            var actual = (DiscountAdjustment)this.Session.Instantiate(id);
+            var actual = (DiscountAdjustment)this.Transaction.Instantiate(id);
 
             Assert.Equal(after.Length, before.Length);
 

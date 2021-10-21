@@ -29,31 +29,31 @@ namespace Tests.LetterCorrespondenceTests
         [Fact]
         public void Create()
         {
-            var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            var allors = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
             var employee = allors.ActiveEmployees.First();
 
             var organisation = allors.ActiveCustomers.First(v => v.GetType().Name == typeof(Organisation).Name);
 
-            var organisationAddress = new PostalAddressBuilder(this.Session)
+            var organisationAddress = new PostalAddressBuilder(this.Transaction)
                 .WithAddress1("Haverwerf 15")
                 .WithLocality("city")
                 .WithPostalCode("1111")
-                .WithCountry(new Countries(this.Session).FindBy(M.Country.IsoCode, "BE"))
+                .WithCountry(new Countries(this.Transaction).FindBy(M.Country.IsoCode, "BE"))
                 .Build();
 
-            organisation.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Session).WithContactMechanism(organisationAddress).Build());
+            organisation.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(organisationAddress).Build());
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var before = new LetterCorrespondences(this.Session).Extent().ToArray();
+            var before = new LetterCorrespondences(this.Transaction).Extent().ToArray();
 
             this.organisationListPage.Table.DefaultAction(organisation);
             var letterCorrespondenceEdit = new OrganisationOverviewComponent(this.organisationListPage.Driver, this.M).CommunicationeventOverviewPanel.Click().CreateLetterCorrespondence();
 
             letterCorrespondenceEdit
-                .CommunicationEventState.Select(new CommunicationEventStates(this.Session).Completed)
-                .EventPurposes.Toggle(new CommunicationEventPurposes(this.Session).Appointment)
+                .CommunicationEventState.Select(new CommunicationEventStates(this.Transaction).Completed)
+                .EventPurposes.Toggle(new CommunicationEventPurposes(this.Transaction).Appointment)
                 .FromParty.Select(organisation)
                 .ToParty.Select(employee)
                 .FromPostalAddress.Select(organisationAddress)
@@ -66,16 +66,16 @@ namespace Tests.LetterCorrespondenceTests
                             letterCorrespondenceEdit.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new LetterCorrespondences(this.Session).Extent().ToArray();
+            var after = new LetterCorrespondences(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
             var communicationEvent = after.Except(before).First();
 
-            Assert.Equal(new CommunicationEventStates(this.Session).Completed, communicationEvent.CommunicationEventState);
-            Assert.Contains(new CommunicationEventPurposes(this.Session).Appointment, communicationEvent.EventPurposes);
+            Assert.Equal(new CommunicationEventStates(this.Transaction).Completed, communicationEvent.CommunicationEventState);
+            Assert.Contains(new CommunicationEventPurposes(this.Transaction).Appointment, communicationEvent.EventPurposes);
             Assert.Equal(organisationAddress, communicationEvent.PostalAddress);
             Assert.Equal(organisation, communicationEvent.FromParty);
             Assert.Equal(employee, communicationEvent.ToParty);

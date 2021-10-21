@@ -26,8 +26,8 @@ namespace Tests.PartyRelationshipTests
         public SupplierRelationshipEditTest(Fixture fixture)
             : base(fixture)
         {
-            var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
-            var supplier = new OrganisationBuilder(this.Session).WithName("supplier").Build();
+            var allors = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
 
             // Delete all existing for the new one to be in the first page of the list.
             foreach (PartyRelationship partyRelationship in allors.PartyRelationshipsWhereParty)
@@ -35,13 +35,13 @@ namespace Tests.PartyRelationshipTests
                 partyRelationship.Delete();
             }
 
-            this.editPartyRelationship = new SupplierRelationshipBuilder(this.Session)
+            this.editPartyRelationship = new SupplierRelationshipBuilder(this.Transaction)
                 .WithSupplier(supplier)
                 .WithInternalOrganisation(allors)
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             this.Login();
             this.organisations = this.Sidenav.NavigateToOrganisations();
@@ -50,9 +50,9 @@ namespace Tests.PartyRelationshipTests
         [Fact]
         public void Create()
         {
-            var before = new PartyRelationships(this.Session).Extent().ToArray();
+            var before = new PartyRelationships(this.Transaction).Extent().ToArray();
 
-            var extent = new Organisations(this.Session).Extent();
+            var extent = new Organisations(this.Transaction).Extent();
             var internalOrganisation = extent.First(v => v.DisplayName().Equals("Allors BVBA"));
 
             this.organisations.Table.DefaultAction(internalOrganisation);
@@ -64,9 +64,9 @@ namespace Tests.PartyRelationshipTests
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new PartyRelationships(this.Session).Extent().ToArray();
+            var after = new PartyRelationships(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -79,9 +79,9 @@ namespace Tests.PartyRelationshipTests
         [Fact]
         public void Edit()
         {
-            var before = new PartyRelationships(this.Session).Extent().ToArray();
+            var before = new PartyRelationships(this.Transaction).Extent().ToArray();
 
-            var extent = new Organisations(this.Session).Extent();
+            var extent = new Organisations(this.Transaction).Extent();
             var internalOrganisation = extent.First(v => v.DisplayName().Equals("Allors BVBA"));
 
             this.organisations.Table.DefaultAction(internalOrganisation);
@@ -97,9 +97,9 @@ namespace Tests.PartyRelationshipTests
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new PartyRelationships(this.Session).Extent().ToArray();
+            var after = new PartyRelationships(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length);
 

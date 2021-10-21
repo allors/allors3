@@ -30,13 +30,13 @@ namespace Tests.NonUnifiedGood
         [Fact]
         public void Edit()
         {
-            var before = new NonUnifiedGoods(this.Session).Extent().ToArray();
+            var before = new NonUnifiedGoods(this.Transaction).Extent().ToArray();
 
-            var internalOrganisation = new OrganisationBuilder(this.Session).WithInternalOrganisationDefaults().Build();
+            var internalOrganisation = new OrganisationBuilder(this.Transaction).WithInternalOrganisationDefaults().Build();
 
-            var expected = new NonUnifiedGoodBuilder(this.Session).WithNonSerialisedDefaults(internalOrganisation).Build();
+            var expected = new NonUnifiedGoodBuilder(this.Transaction).WithNonSerialisedDefaults(internalOrganisation).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedName = expected.Name;
             var expectedDescription = expected.Description;
@@ -52,13 +52,13 @@ namespace Tests.NonUnifiedGood
                 .Name.Set(expected.Name)
                 .Description.Set(expected.Description);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             goodOverviewDetail.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new NonUnifiedGoods(this.Session).Extent().ToArray();
+            var after = new NonUnifiedGoods(this.Transaction).Extent().ToArray();
 
             var good = after.First(v => v.Id.Equals(id));
 

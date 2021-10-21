@@ -23,7 +23,8 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
   internalOrganisation: InternalOrganisation;
   organisation: Organisation;
   title: string;
-
+  canSave: boolean;
+  
   private subscription: Subscription;
 
   constructor(
@@ -37,6 +38,7 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
   ) {
     super();
 
+    this.canSave = true;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
@@ -90,8 +92,9 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
         this.organisation = loaded.object<Organisation>(m.Organisation);
 
         if (isCreate) {
-          if (this.organisation === undefined) {
-            this.dialogRef.close();
+          if (this.organisation == null) {
+            this.canSave = false;
+            // this.dialogRef.close();
           }
 
           this.title = 'Add Supplier Relationship';
