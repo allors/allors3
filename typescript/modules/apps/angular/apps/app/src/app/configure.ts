@@ -86,8 +86,8 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
   nav(m.SerialisedItem, '/products/serialiseditems', '/products/serialisedItem/:id');
   nav(m.UnifiedGood, '/products/unifiedgoods', '/products/unifiedgood/:id');
 
-  nav(m.PurchaseOrder, '/purchasing/purchaseorders', '/purchasing/purchasingpurchaseorder/:id');
-  nav(m.PurchaseInvoice, '/purchasing/purchaseinvoices', '/purchasing/purchasingpurchaseinvoice/:id');
+  nav(m.PurchaseOrder, '/purchasing/purchaseorders', '/purchasing/purchaseorder/:id');
+  nav(m.PurchaseInvoice, '/purchasing/purchaseinvoices', '/purchasing/purchaseinvoice/:id');
 
   nav(m.Shipment, '/shipment/shipments');
   nav(m.CustomerShipment, '/shipment/shipments', '/shipment/customershipment/:id');
