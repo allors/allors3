@@ -1,11 +1,15 @@
-import { IPullResult, Operations } from '@allors/workspace/domain/system';
-import { MethodType, RoleType } from '@allors/workspace/meta/system';
+import { IObject, IPullResult, Operations } from '@allors/workspace/domain/system';
+import { MethodType, RelationType, RoleType } from '@allors/workspace/meta/system';
 import { DatabaseRecord } from '../../database/database-record';
 import { WorkspaceInitialVersion } from '../../version';
 import { IRecord } from '../../irecord';
 import { RecordBasedOriginState } from './record-based-origin-state';
+import { IRange } from '../../collections/ranges/ranges';
 
 export abstract class DatabaseOriginState extends RecordBasedOriginState {
+
+  protected cachedRoleByRelationType: Map<RelationType, IRange<IObject>>;
+
   private isPushed: boolean;
 
   protected constructor(public databaseRecord: DatabaseRecord) {
@@ -96,6 +100,7 @@ export abstract class DatabaseOriginState extends RecordBasedOriginState {
     }
 
     this.databaseRecord = newRecord;
+    this.cachedRoleByRelationType = null;
   }
 
   onChange() {
