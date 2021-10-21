@@ -45,6 +45,7 @@ export class EmailAddressCreateComponent extends TestScope implements OnInit, On
   public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
