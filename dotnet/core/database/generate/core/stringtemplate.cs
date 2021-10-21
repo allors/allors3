@@ -14,6 +14,7 @@ namespace Allors.Meta.Generation
     using Antlr4.StringTemplate;
     using Antlr4.StringTemplate.Misc;
     using Database.Meta;
+    using Model;
     using Storage;
 
     public class StringTemplate
@@ -28,7 +29,7 @@ namespace Allors.Meta.Generation
         private const string InputKey = "input";
         private const string OutputKey = "output";
         private const string GenerationKey = "generation";
-        private const string InheritanceKey = "inheritance";
+        private const string DomainKey = "domain";
         private const string ObjectTypeKey = "objectType";
         private const string RelationTypeKey = "relationType";
         private const string MethodTypeKey = "methodType";
@@ -66,17 +67,12 @@ namespace Allors.Meta.Generation
 
         public override string ToString() => this.Name;
 
-        internal void Generate(MetaPopulation metaPopulation, string workspaceName, DirectoryInfo outputDirectory, Log log)
+        internal void Generate(MetaModel meta, string workspaceName, DirectoryInfo outputDirectory, Log log)
         {
-            var validation = metaPopulation.Validate();
+            var validation = meta.MetaPopulation.Validate();
             if (validation.ContainsErrors)
             {
                 log.Error(this, "Meta population has validation errors.");
-                foreach (var error in validation.Errors)
-                {
-                    log.Error(this, error.Message);
-                }
-
                 return;
             }
 
@@ -88,7 +84,7 @@ namespace Allors.Meta.Generation
                 };
 
                 var configurationTemplate = templateGroup.GetInstanceOf(TemplateConfiguration);
-                configurationTemplate.Add(MetaKey, metaPopulation);
+                configurationTemplate.Add(MetaKey, meta);
                 if (!string.IsNullOrWhiteSpace(workspaceName))
                 {
                     configurationTemplate.Add(WorkspaceNameKey, workspaceName);
@@ -104,7 +100,7 @@ namespace Allors.Meta.Generation
                     var template = templateGroup.GetInstanceOf(templateName);
                     var output = generation.GetAttribute(OutputKey);
 
-                    template.Add(MetaKey, metaPopulation);
+                    template.Add(MetaKey, meta);
                     if (!string.IsNullOrWhiteSpace(workspaceName))
                     {
                         template.Add(WorkspaceNameKey, workspaceName);
@@ -113,28 +109,25 @@ namespace Allors.Meta.Generation
                     if (generation.HasAttribute(InputKey))
                     {
                         var input = new Guid(generation.GetAttribute(InputKey));
-                        if (metaPopulation.FindById(input) is IObjectType objectType)
-                        {
-                            template.Add(ObjectTypeKey, objectType);
-                        }
-                        else if (metaPopulation.FindById(input) is IRelationType relationType)
-                        {
-                            template.Add(RelationTypeKey, relationType);
-                        }
-                        else if (metaPopulation.FindById(input) is IInheritance inheritance)
-                        {
-                            template.Add(InheritanceKey, inheritance);
-                        }
-                        else if (metaPopulation.FindById(input) is IMethodType methodType)
-                        {
-                            template.Add(MethodTypeKey, methodType);
-                        }
-                        else
-                        {
-                            throw new ArgumentException(input + " was not found");
-                        }
+                        var @object = meta.Map(meta.MetaPopulation.FindById(input));
 
-                        // TODO: Super Domains
+                        switch (@object)
+                        {
+                            case DomainModel domain:
+                                template.Add(DomainKey, domain);
+                                break;
+                            case ObjectTypeModel objectType:
+                                template.Add(ObjectTypeKey, objectType);
+                                break;
+                            case RelationTypeModel relationType:
+                                template.Add(RelationTypeKey, relationType);
+                                break;
+                            case MethodTypeModel methodType:
+                                template.Add(MethodTypeKey, methodType);
+                                break;
+                            default:
+                                throw new ArgumentException(input + " was not found");
+                        }
                     }
 
                     var result = template.Render();

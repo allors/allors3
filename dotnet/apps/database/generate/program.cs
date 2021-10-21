@@ -8,6 +8,7 @@ namespace Allors.Meta.Generation.Storage
     using System;
     using System.IO;
     using Database.Meta;
+    using Model;
 
     class Program
     {
@@ -34,6 +35,7 @@ namespace Allors.Meta.Generation.Storage
             };
 
             var metaPopulation = MetaBuilder.Build();
+            var model = new MetaModel(metaPopulation);
 
             for (var i = 0; i < database.GetLength(0); i++)
             {
@@ -44,7 +46,7 @@ namespace Allors.Meta.Generation.Storage
 
                 RemoveDirectory(output);
 
-                var log = Generate.Execute(metaPopulation, template, output);
+                var log = Generate.Execute(model, template, output);
                 if (log.ErrorOccured)
                 {
                     return 1;
@@ -62,7 +64,7 @@ namespace Allors.Meta.Generation.Storage
 
                 RemoveDirectory(output);
 
-                var log = Generate.Execute(metaPopulation, template, output, workspaceName);
+                var log = Generate.Execute(model, template, output, workspaceName);
                 if (log.ErrorOccured)
                 {
                     return 1;

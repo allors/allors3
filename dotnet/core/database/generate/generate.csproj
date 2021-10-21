@@ -12,8 +12,4 @@
     <ProjectReference Include="..\Meta\Meta.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="core\model\" />
-  </ItemGroup>
-
 </Project>

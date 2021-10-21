@@ -2,7 +2,7 @@ delimiters "$", "$"
 
 TemplateId() ::= <<2FD8EE5D-4976-484F-96F9-9474AE09BFDB>>
 TemplateName() ::= <<Allors Typescript Workspace Meta>>
-TemplateVersion() ::= <<3.0.2>>
+TemplateVersion() ::= <<3.0.3>>
 TemplateAllors() ::= <<1.0>>
 TemplateConfiguration(meta, workspaceName) ::= <<
 $!
@@ -55,11 +55,11 @@ import { ResultBuilder } from './ResultBuilder.g';
 import { PullBuilder } from './PullBuilder.g';
 
 export interface M extends MetaPopulation {
-$meta._.Units:{unit|  $unit._.SingularName$: $unit._.SingularName$;}; separator="\n"$
+$meta.Units:{unit|  $unit.SingularName$: $unit.SingularName$;}; separator="\n"$
 
-$meta._.WorkspaceInterfacesByWorkspaceName.(workspaceName):{interface|  $interface._.SingularName$: $interface._.SingularName$;}; separator="\n"$
+$meta.WorkspaceInterfacesByWorkspaceName.(workspaceName):{interface|  $interface.SingularName$: $interface.SingularName$;}; separator="\n"$
 
-$meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{class|  $class._.SingularName$: $class._.SingularName$;}; separator="\n"$
+$meta.WorkspaceClassesByWorkspaceName.(workspaceName):{class|  $class.SingularName$: $class.SingularName$;}; separator="\n"$
 
   treeBuilder: TreeBuilder;
 
@@ -70,71 +70,71 @@ $meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{class|  $class._.Singul
   pullBuilder: PullBuilder;
 }
 
-$meta._.Units:{unit|$m_unit(unit)$}; separator="\n"$
+$meta.Units:{unit|$m_unit(unit)$}; separator="\n"$
 
-$meta._.Interfaces:{interface|$m_interface(interface)$}; separator="\n"$
+$meta.Interfaces:{interface|$m_interface(interface)$}; separator="\n"$
 
-$meta._.Classes:{class|$m_class(class)$}; separator="\n"$
+$meta.Classes:{class|$m_class(class)$}; separator="\n"$
 
-$meta._.Composites:{composite|$m_associationTypes(composite)$}; separator="\n"$
+$meta.Composites:{composite|$m_associationTypes(composite)$}; separator="\n"$
 
-$meta._.Composites:{composite|$m_roleTypes(composite)$}; separator="\n"$
+$meta.Composites:{composite|$m_roleTypes(composite)$}; separator="\n"$
 >>
 
 m_unit(unit) ::= <<
-export type $unit._.SingularName$ = Unit;
+export type $unit.SingularName$ = Unit;
 >>
 
 m_interface(interface) ::= <<
-export interface $interface._.SingularName$ extends Interface {
+export interface $interface.SingularName$ extends Interface {
 
-$interface._.WorkspaceSubtypesByWorkspaceName.(workspaceName):{subtype|  As$subtype._.SingularName$: $subtype._.SingularName$;}; separator="\n"$
+$interface.WorkspaceSubtypesByWorkspaceName.(workspaceName):{subtype|  As$subtype.SingularName$: $subtype.SingularName$;}; separator="\n"$
 
-$interface._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|  $methodType._.Name$: MethodType;}; separator="\n"$
+$interface.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|  $methodType.Name$: MethodType;}; separator="\n"$
 
-$interface._.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|  $roleType._.Name$: $roleType._.FullName$;}; separator="\n"$
+$interface.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|  $roleType.Name$: $roleType.FullName$;}; separator="\n"$
 
-$interface._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|  $associationType._.Name$: $associationType._.Name$;}; separator="\n"$
+$interface.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|  $associationType.Name$: $associationType.Name$;}; separator="\n"$
 }
 
 >>
 
 m_class(class) ::= <<
-export interface $class._.SingularName$ extends Class {
+export interface $class.SingularName$ extends Class {
 
-$class._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|  $methodType._.Name$: MethodType;}; separator="\n"$
+$class.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|  $methodType.Name$: MethodType;}; separator="\n"$
 
-$class._.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|  $roleType._.Name$: $roleType._.FullName$;}; separator="\n"$
+$class.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|  $roleType.Name$: $roleType.FullName$;}; separator="\n"$
 
-$class._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|  $associationType._.Name$: $associationType._.Name$;}; separator="\n"$
+$class.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|  $associationType.Name$: $associationType.Name$;}; separator="\n"$
 }
 
 >>
 
 m_associationTypes(composite) ::= <<
-$composite._.WorkspaceExclusiveRoleTypesByWorkspaceName.(workspaceName):{roleType|$m_associationType(roleType._.associationType)$}; separator="\n"$
+$composite.WorkspaceExclusiveRoleTypesByWorkspaceName.(workspaceName):{roleType|$m_associationType(roleType.associationType)$}; separator="\n"$
 >>
 
 m_associationType(associationType) ::= <<
-export interface $associationType._.Name$ extends AssociationType
+export interface $associationType.Name$ extends AssociationType
 {
-  ObjectType: $associationType._.ObjectType.SingularName$;
+  ObjectType: $associationType.ObjectType.SingularName$;
 }
 
 >>
 
 m_roleTypes(composite) ::= <<
-$composite._.WorkspaceExclusiveRoleTypesByWorkspaceName.(workspaceName):{roleType|$m_roleType(roleType)$}; separator="\n"$
+$composite.WorkspaceExclusiveRoleTypesByWorkspaceName.(workspaceName):{roleType|$m_roleType(roleType)$}; separator="\n"$
 >>
 
 m_roleType(roleType) ::= <<
-$if(roleType._.ObjectType._.IsUnit)$
+$if(roleType.ObjectType.IsUnit)$
 export type $roleType.FullName$ = RoleType;
 $else$
 export interface $roleType.FullName$ extends RoleType
 {
-$if(roleType._.ObjectType._.IsComposite)$
-  ObjectType: $roleType._.ObjectType._.SingularName$;
+$if(roleType.ObjectType.IsComposite)$
+  ObjectType: $roleType.ObjectType.SingularName$;
 $endif$
 }
 $endif$
@@ -147,9 +147,9 @@ tags(meta, workspaceName) ::= <<
 // tslint:disable:object-literal-sort-keys
 
 export const tags = {
-$meta._.Units:{unit|  $unit._.Name$: '$unit._.tag$',}; separator="\n"$
-$meta._.WorkspaceInterfacesByWorkspaceName.(workspaceName):{composite|  $composite._.Name$: '$composite._.tag$',}; separator="\n"$
-$meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{composite|  $composite._.Name$: '$composite._.tag$',}; separator="\n"$
+$meta.Units:{unit|  $unit.Name$: '$unit.tag$',}; separator="\n"$
+$meta.WorkspaceInterfacesByWorkspaceName.(workspaceName):{composite|  $composite.Name$: '$composite.tag$',}; separator="\n"$
+$meta.WorkspaceClassesByWorkspaceName.(workspaceName):{composite|  $composite.Name$: '$composite.tag$',}; separator="\n"$
 };
 >>
 
@@ -161,23 +161,23 @@ treeBuilder(meta, workspaceName) ::= <<
 import { Node } from '@allors/workspace/domain/system';
 
 export interface TreeBuilder {
-$meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|   $composite._.name$(tree: Tree$composite._.name$): Node[];}; separator="\n\n"$
+$meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|   $composite.name$(tree: Tree$composite.name$): Node[];}; separator="\n\n"$
 }
 
-$meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|$treeComposite(composite)$}; separator="\n\n"$
+$meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|$treeComposite(composite)$}; separator="\n\n"$
 >>
 
 treeComposite(composite) ::= <<
-export interface Tree$composite._.SingularName$$if(composite._.WorkspaceSubtypesByWorkspaceName.(workspaceName))$ extends $endif$$composite._.WorkspaceSubtypesByWorkspaceName.(workspaceName):{subtype|SubTree$subtype$}; separator=", "$ {
-$composite._.WorkspaceCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $role._.Name$?: Tree$role._.ObjectType._.Name$ | Node[];}; separator="\n"$
+export interface Tree$composite.SingularName$$if(composite.WorkspaceSubtypesByWorkspaceName.(workspaceName))$ extends $endif$$composite.WorkspaceSubtypesByWorkspaceName.(workspaceName):{subtype|SubTree$subtype$}; separator=", "$ {
+$composite.WorkspaceCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $role.Name$?: Tree$role.ObjectType.Name$ | Node[];}; separator="\n"$
 
-$composite._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{association|    $association._.Name$?: Tree$association._.ObjectType._.Name$ | Node[];}; separator="\n"$
+$composite.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{association|    $association.Name$?: Tree$association.ObjectType.Name$ | Node[];}; separator="\n"$
 }
 
-export interface SubTree$composite._.SingularName$ {
-$composite._.WorkspaceCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $composite._.Name$_$role._.Name$?: Tree$role._.ObjectType._.Name$ | Node[];}; separator="\n"$
+export interface SubTree$composite.SingularName$ {
+$composite.WorkspaceCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $composite.Name$_$role.Name$?: Tree$role.ObjectType.Name$ | Node[];}; separator="\n"$
 
-$composite._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{association|    $composite._.Name$_$association._.Name$?: Tree$association._.ObjectType._.Name$ | Node[];}; separator="\n"$
+$composite.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{association|    $composite.Name$_$association.Name$?: Tree$association.ObjectType.Name$ | Node[];}; separator="\n"$
 }
 
 >>
@@ -188,32 +188,32 @@ selectBuilder(meta, workspaceName) ::= <<
 // tslint:disable:no-empty-interface
 // tslint:disable:no-consecutive-blank-lines
 import { Select, Node } from '@allors/workspace/domain/system';
-import { $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Tree$composite._.name$}; separator=", "$ } from './TreeBuilder.g';
+import { $meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Tree$composite.name$}; separator=", "$ } from './TreeBuilder.g';
 
 export interface SelectBuilder {
-$meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|   $composite._.name$(select: Select$composite._.name$): Select;}; separator="\n\n"$
+$meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|   $composite.name$(select: Select$composite.name$): Select;}; separator="\n\n"$
 }
 
-$meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|$selectComposite(composite)$}; separator="\n\n"$
+$meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|$selectComposite(composite)$}; separator="\n\n"$
 >>
 
 selectComposite(composite) ::= <<
-export interface Select$composite._.SingularName$ {
-$composite._.WorkspaceCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $role._.Name$?: Select$role._.ObjectType._.Name$;}; separator="\n"$
+export interface Select$composite.SingularName$ {
+$composite.WorkspaceCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $role.Name$?: Select$role.ObjectType.Name$;}; separator="\n"$
 
-$composite._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{association|    $association._.Name$?: Select$association._.ObjectType._.Name$;}; separator="\n"$
+$composite.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{association|    $association.Name$?: Select$association.ObjectType.Name$;}; separator="\n"$
 
-$composite._.WorkspaceSubtypesByWorkspaceName.(workspaceName):{subtype|$selectSubtype(subtype)$}$
+$composite.WorkspaceSubtypesByWorkspaceName.(workspaceName):{subtype|$selectSubtype(subtype)$}$
 
-  include?: Tree$composite._.SingularName$ | Node[];
+  include?: Tree$composite.SingularName$ | Node[];
 }
 >>
 
 selectSubtype(subtype) ::= <<
 
-$subtype._.WorkspaceExclusiveCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $subtype._.Name$_$role._.Name$?: Select$role._.ObjectType._.Name$;}; separator="\n"$
+$subtype.WorkspaceExclusiveCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $subtype.Name$_$role.Name$?: Select$role.ObjectType.Name$;}; separator="\n"$
 
-$subtype._.WorkspaceExclusiveAssociationTypesByWorkspaceName.(workspaceName):{association|    $subtype._.Name$_$association._.Name$?: Select$association._.ObjectType._.Name$;}; separator="\n"$
+$subtype.WorkspaceExclusiveAssociationTypesByWorkspaceName.(workspaceName):{association|    $subtype.Name$_$association.Name$?: Select$association.ObjectType.Name$;}; separator="\n"$
 
 >>
 
@@ -223,22 +223,22 @@ resultBuilder(meta, workspaceName) ::= <<
 // tslint:disable:no-empty-interface
 // tslint:disable:no-consecutive-blank-lines
 import { FlatResult, Result, Node, Select } from '@allors/workspace/domain/system';
-import { $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Select$composite._.name$}; separator=", "$ } from './SelectBuilder.g';
-import { $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Tree$composite._.name$}; separator=", "$ } from './TreeBuilder.g';
+import { $meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Select$composite.name$}; separator=", "$ } from './SelectBuilder.g';
+import { $meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Tree$composite.name$}; separator=", "$ } from './TreeBuilder.g';
 
 export interface ResultBuilder {
-$meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|   $composite._.name$(result: Result$composite._.name$): Result;}; separator="\n\n"$
+$meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|   $composite.name$(result: Result$composite.name$): Result;}; separator="\n\n"$
 }
 
-$meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|$resultComposite(composite)$}; separator="\n\n"$
+$meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|$resultComposite(composite)$}; separator="\n\n"$
 >>
 
 resultComposite(composite) ::= <<
-export interface Result$composite._.SingularName$ extends FlatResult {
+export interface Result$composite.SingularName$ extends FlatResult {
 
-  select?: Select$composite._.SingularName$ | Select;
+  select?: Select$composite.SingularName$ | Select;
 
-  include?: Tree$composite._.SingularName$ | Node[];
+  include?: Tree$composite.SingularName$ | Node[];
 }
 >>
 
@@ -248,24 +248,24 @@ pullBuilder(meta, workspaceName) ::= <<
 // tslint:disable:no-empty-interface
 // tslint:disable:no-consecutive-blank-lines
 import { FlatPull, Pull, Node, Select, Result } from '@allors/workspace/domain/system';
-import { $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Select$composite._.name$}; separator=", "$ } from './SelectBuilder.g';
-import { $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Tree$composite._.name$}; separator=", "$ } from './TreeBuilder.g';
-import { $meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Result$composite._.name$}; separator=", "$ } from './ResultBuilder.g';
+import { $meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Select$composite.name$}; separator=", "$ } from './SelectBuilder.g';
+import { $meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Tree$composite.name$}; separator=", "$ } from './TreeBuilder.g';
+import { $meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|Result$composite.name$}; separator=", "$ } from './ResultBuilder.g';
 
 export interface PullBuilder {
-$meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|   $composite._.name$(pull: Pull$composite._.name$): Pull;}; separator="\n\n"$
+$meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|   $composite.name$(pull: Pull$composite.name$): Pull;}; separator="\n\n"$
 }
 
-$meta._.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|$pullComposite(composite)$}; separator="\n\n"$
+$meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|$pullComposite(composite)$}; separator="\n\n"$
 >>
 
 pullComposite(composite) ::= <<
-export interface Pull$composite._.SingularName$ extends FlatPull {
+export interface Pull$composite.SingularName$ extends FlatPull {
 
-  select?: Select$composite._.SingularName$ | Select;
+  select?: Select$composite.SingularName$ | Select;
 
-  include?: Tree$composite._.SingularName$ | Node[];
+  include?: Tree$composite.SingularName$ | Node[];
 
-  results?: Result$composite._.SingularName$[] | Result[];
+  results?: Result$composite.SingularName$[] | Result[];
 }
 >>
