@@ -23,5 +23,7 @@ namespace Allors.Meta.Generation.Model
         public bool HasSessionOrigin => this.Origin == Origin.Session;
 
         public bool IsDefaultOrigin => this.Origin == DefaultOrigin;
+
+        public override string ToString() => this.MetaObject.ToString();
     }
 }
