@@ -68,6 +68,7 @@ export class OrganisationContactRelationshipEditComponent extends TestScope impl
               pull.OrganisationContactRelationship({
                 objectId: this.data.id,
                 include: {
+                  ContactKinds: x,
                   Organisation: x,
                   Contact: x,
                   Parties: x,

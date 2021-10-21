@@ -71,7 +71,7 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
   nav(m.CommunicationEvent, '/contacts/communicationevents');
 
   nav(m.RequestForQuote, '/sales/requestsforquote', '/sales/requestforquote/:id');
-  nav(m.ProductQuote, '/sales/productquotes', '/sales/productquotes/:id');
+  nav(m.ProductQuote, '/sales/productquotes', '/sales/productquote/:id');
   nav(m.SalesOrder, '/sales/salesorders', '/sales/salesorder/:id');
   nav(m.SalesInvoice, '/sales/salesinvoices', '/sales/salesinvoice/:id');
 

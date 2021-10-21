@@ -20,7 +20,7 @@ interface Row extends TableRow {
   providers: [PanelService],
 })
 export class OrderAdjustmentOverviewPanelComponent extends TestScope {
-  container: any;
+  container: Quote | Order | Invoice;
 
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
@@ -43,11 +43,11 @@ export class OrderAdjustmentOverviewPanelComponent extends TestScope {
   }
 
   get containerRoleType(): any {
-    if (this.container.objectType.name === this.m.ProductQuote.tag || this.container.objectType.name === this.m.Proposal.tag || this.container.objectType.name === this.m.StatementOfWork.tag) {
+    if (this.container.strategy.cls === this.m.ProductQuote || this.container.strategy.cls === this.m.Proposal || this.container.strategy.cls === this.m.StatementOfWork) {
       return this.m.Quote.OrderAdjustments;
-    } else if (this.container.objectType.name === this.m.SalesOrder.tag) {
+    } else if (this.container.strategy.cls === this.m.SalesOrder) {
       return this.m.SalesOrder.OrderAdjustments;
-    } else if (this.container.objectType.name === this.m.SalesInvoice.tag || this.container.objectType.name === this.m.PurchaseInvoice.tag) {
+    } else if (this.container.strategy.cls === this.m.SalesInvoice || this.container.strategy.cls === this.m.PurchaseInvoice) {
       return this.m.Invoice.OrderAdjustments;
     }
   }
