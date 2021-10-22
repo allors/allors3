@@ -133,7 +133,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           const pulls = [
             pull.SerialisedItemAvailability({}),
@@ -307,12 +307,12 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
 
         const salesOrderItems = loaded.collection<SalesOrderItem>(m.SalesOrderItem);
         if (salesOrderItems) {
-          this.salesOrderItems = salesOrderItems.filter((v) => v.SalesOrderWhereSalesOrderItem.SalesOrderState === inProcess && parseFloat(v.QuantityRequestsShipping) > 0);
+          this.salesOrderItems = salesOrderItems?.filter((v) => v.SalesOrderWhereSalesOrderItem.SalesOrderState === inProcess && parseFloat(v.QuantityRequestsShipping) > 0);
         }
 
         const purchaseOrderItems = loaded.collection<PurchaseOrderItem>(m.PurchaseOrderItem);
         if (purchaseOrderItems) {
-          this.purchaseOrderItems = purchaseOrderItems.filter((v) => v.PurchaseOrderWherePurchaseOrderItem.PurchaseOrderState === purchaseOrderinProcess);
+          this.purchaseOrderItems = purchaseOrderItems?.filter((v) => v.PurchaseOrderWherePurchaseOrderItem.PurchaseOrderState === purchaseOrderinProcess);
         }
 
         if (this.isPurchaseShipment) {
@@ -640,7 +640,7 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
 
   private onSave() {
     if (this.selectedSalesOrderItem) {
-      if (this.orderShipment === undefined) {
+      if (this.orderShipment == null) {
         this.orderShipment = this.allors.context.create<OrderShipment>(this.m.OrderShipment);
       }
 
