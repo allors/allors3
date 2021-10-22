@@ -25,7 +25,6 @@ namespace Allors.Database.Meta
         private readonly Class[] classes;
         private Type clrType;
 
-        private ClassProps props;
         private ConcurrentDictionary<IMethodType, Action<object, object>[]> actionsByMethodType;
 
         internal Class(IMetaPopulationBase metaPopulation, Guid id, string tag) : base(metaPopulation, id, tag)
@@ -33,8 +32,6 @@ namespace Allors.Database.Meta
             this.classes = new[] { this };
             metaPopulation.OnClassCreated(this);
         }
-
-        public ClassProps _ => this.props ??= new ClassProps(this);
 
         public IRoleType[] OverriddenRequiredRoleTypes
         {

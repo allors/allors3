@@ -26,8 +26,6 @@ namespace Allors.Database.Meta
         private string[] assignedWorkspaceNames;
         private string[] derivedWorkspaceNames;
 
-        private RelationTypeProps props;
-
         public RelationType(ICompositeBase associationTypeComposite, Guid id, Func<IRelationTypeBase, IAssociationTypeBase> associationTypeFactory, Func<IRelationTypeBase, IRoleTypeBase> roleTypeFactory, string tag = null)
         {
             this.metaPopulation = associationTypeComposite.MetaPopulation;
@@ -42,8 +40,6 @@ namespace Allors.Database.Meta
 
             this.metaPopulation.OnRelationTypeCreated(this);
         }
-
-        public RelationTypeProps _ => this.props ??= new RelationTypeProps(this);
 
         public Guid Id { get; }
 

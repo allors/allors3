@@ -40,8 +40,6 @@ namespace Allors.Database.Meta
         private IClassBase[] derivedDatabaseClasses;
         private IRelationTypeBase[] derivedDatabaseRelationTypes;
 
-        private MetaPopulationProps props;
-
         public MetaPopulation()
         {
             this.isStale = true;
@@ -60,8 +58,6 @@ namespace Allors.Database.Meta
             this.metaObjectById = new Dictionary<Guid, IMetaIdentifiableObjectBase>();
             this.metaObjectByTag = new Dictionary<string, IMetaIdentifiableObjectBase>();
         }
-
-        public MetaPopulationProps _ => this.props ??= new MetaPopulationProps(this);
 
         public MethodCompiler MethodCompiler { get; private set; }
 

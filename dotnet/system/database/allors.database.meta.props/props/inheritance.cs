@@ -16,15 +16,11 @@ namespace Allors.Database.Meta
         private Composite subtype;
         private Interface supertype;
 
-        private InheritanceProps props;
-
         internal Inheritance(MetaPopulation metaPopulation)
         {
             this.metaPopulation = metaPopulation;
             this.metaPopulation.OnInheritanceCreated(this);
         }
-
-        public InheritanceProps _ => this.props ??= new InheritanceProps(this);
 
         ICompositeBase IInheritanceBase.Subtype => this.Subtype;
         IComposite IInheritance.Subtype => this.Subtype;
@@ -76,7 +72,7 @@ namespace Allors.Database.Meta
                 return "unknown inheritance";
             }
         }
-        
+
         public override bool Equals(object other) => this.Subtype.Id.Equals((other as Inheritance)?.Subtype.Id) && this.Supertype.Id.Equals((other as Inheritance)?.Supertype.Id);
 
         public override int GetHashCode() => this.Subtype.Id.GetHashCode() ^ this.Supertype.Id.GetHashCode();
