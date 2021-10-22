@@ -28,8 +28,6 @@ namespace Allors.Database.Meta
         private bool? isRequired;
         private bool? isUnique;
 
-        private RoleTypeProps props;
-
         protected RoleType(IRelationTypeBase relationType)
         {
             this.metaPopulation = relationType.MetaPopulation;
@@ -39,8 +37,6 @@ namespace Allors.Database.Meta
         }
 
         public MetaPopulation M => (MetaPopulation)this.metaPopulation;
-
-        public RoleTypeProps _ => this.props ??= new RoleTypeProps(this);
 
         IMetaPopulationBase IMetaObjectBase.MetaPopulation => this.metaPopulation;
         IMetaPopulation IMetaObject.MetaPopulation => this.metaPopulation;

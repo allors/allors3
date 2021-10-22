@@ -27,13 +27,9 @@ namespace Allors.Database.Meta
 
         private Type clrType;
 
-        private InterfaceProps props;
-
         internal Interface(IMetaPopulationBase metaPopulation, Guid id, string tag) : base(metaPopulation, id, tag) => metaPopulation.OnInterfaceCreated(this);
 
         public MetaPopulation M => (MetaPopulation)this.MetaPopulation;
-
-        public InterfaceProps _ => this.props ??= new InterfaceProps(this);
 
         public override IEnumerable<string> WorkspaceNames
         {

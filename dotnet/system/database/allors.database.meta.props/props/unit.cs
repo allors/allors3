@@ -13,11 +13,7 @@ namespace Allors.Database.Meta
     {
         private Type clrType;
 
-        private UnitProps props;
-
         internal Unit(MetaPopulation metaPopulation, Guid id, string tag) : base(metaPopulation, id, tag) => metaPopulation.OnUnitCreated(this);
-
-        public UnitProps _ => this.props ??= new UnitProps(this);
 
         /// <summary>
         /// Gets a value indicating whether this state is a binary.

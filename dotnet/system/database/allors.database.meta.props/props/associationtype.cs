@@ -26,8 +26,6 @@ namespace Allors.Database.Meta
         private readonly IRelationTypeBase relationType;
         private ICompositeBase objectType;
 
-        private AssociationTypeProps props;
-
         protected AssociationType(IRelationTypeBase relationType)
         {
             this.metaPopulation = relationType.MetaPopulation;
@@ -36,8 +34,6 @@ namespace Allors.Database.Meta
         }
 
         public MetaPopulation M => (MetaPopulation)this.metaPopulation;
-
-        public AssociationTypeProps _ => this.props ??= new AssociationTypeProps(this);
 
         #region IMetaObject & IMetaObjectBase
         IMetaPopulation IMetaObject.MetaPopulation => this.metaPopulation;
