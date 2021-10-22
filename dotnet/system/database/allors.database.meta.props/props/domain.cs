@@ -15,7 +15,7 @@ namespace Allors.Database.Meta
         private readonly IMetaPopulationBase metaPopulation;
 
         private IList<Domain> directSuperdomains;
-        private IList<Domain> derivedSuperdomains;
+        private Domain[] structuralDerivedSuperdomains;
 
         private string name;
 
@@ -50,14 +50,7 @@ namespace Allors.Database.Meta
         IEnumerable<IDomain> IDomain.DirectSuperdomains => this.directSuperdomains;
         public IEnumerable<Domain> DirectSuperdomains => this.directSuperdomains;
 
-        public IEnumerable<IDomainBase> Superdomains
-        {
-            get
-            {
-                this.metaPopulation.Derive();
-                return this.derivedSuperdomains;
-            }
-        }
+        public IEnumerable<IDomainBase> Superdomains => this.structuralDerivedSuperdomains;
 
         IMetaPopulationBase IMetaObjectBase.MetaPopulation => this.metaPopulation;
         IMetaPopulation IMetaObject.MetaPopulation => this.metaPopulation;
@@ -81,13 +74,13 @@ namespace Allors.Database.Meta
 
         public void AddDirectSuperdomain(Domain superdomain)
         {
-            if (superdomain.Equals(this) || superdomain.Superdomains.Contains(this))
-            {
-                throw new Exception("Cycle in domain inheritance");
-            }
+            // TODO: Cyclic check
+            //if (superdomain.Equals(this) || superdomain.Superdomains.Contains(this))
+            //{
+            //    throw new Exception("Cycle in domain inheritance");
+            //}
 
             this.directSuperdomains.Add(superdomain);
-            this.metaPopulation.Stale();
         }
 
         public override bool Equals(object other) => this.Id.Equals((other as Domain)?.Id);
@@ -123,15 +116,15 @@ namespace Allors.Database.Meta
 
         internal void Bind() => this.directSuperdomains = this.directSuperdomains.ToArray();
 
-        internal void DeriveSuperdomains(HashSet<Domain> sharedDomains)
+        internal void StructuralDeriveSuperdomains(HashSet<Domain> sharedDomains)
         {
             sharedDomains.Clear();
             foreach (var directSuperdomain in this.DirectSuperdomains)
             {
-                directSuperdomain.DeriveSuperdomains(this, sharedDomains);
+                directSuperdomain.StructuralDeriveSuperdomains(this, sharedDomains);
             }
 
-            this.derivedSuperdomains = sharedDomains.ToArray();
+            this.structuralDerivedSuperdomains = sharedDomains.ToArray();
         }
 
         /// <summary>
@@ -171,7 +164,7 @@ namespace Allors.Database.Meta
             }
         }
 
-        private void DeriveSuperdomains(Domain subdomain, HashSet<Domain> superdomains)
+        private void StructuralDeriveSuperdomains(Domain subdomain, HashSet<Domain> superdomains)
         {
             if (this.Equals(subdomain))
             {
@@ -185,7 +178,7 @@ namespace Allors.Database.Meta
             {
                 if (!superdomains.Contains(directSuperdomain))
                 {
-                    directSuperdomain.DeriveSuperdomains(subdomain, superdomains);
+                    directSuperdomain.StructuralDeriveSuperdomains(subdomain, superdomains);
                 }
             }
         }

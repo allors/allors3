@@ -32,13 +32,14 @@ namespace Allors.Database.Meta
 
         private bool isStale;
         private bool isDeriving;
+        private bool isStructuralDeriving;
 
-        private ICompositeBase[] derivedComposites;
+        private ICompositeBase[] structuralDerivedComposites;
 
-        private ICompositeBase[] derivedDatabaseComposites;
-        private IInterfaceBase[] derivedDatabaseInterfaces;
-        private IClassBase[] derivedDatabaseClasses;
-        private IRelationTypeBase[] derivedDatabaseRelationTypes;
+        private ICompositeBase[] structuralDerivedDatabaseComposites;
+        private IInterfaceBase[] structuralDerivedDatabaseInterfaces;
+        private IClassBase[] structuralDerivedDatabaseClasses;
+        private IRelationTypeBase[] structuralDerivedDatabaseRelationTypes;
 
         public MetaPopulation()
         {
@@ -92,17 +93,8 @@ namespace Allors.Database.Meta
 
         IEnumerable<IInterface> IMetaPopulation.Interfaces => this.interfaces;
 
-        IEnumerable<IComposite> IMetaPopulation.Composites => this.derivedComposites;
-        public IEnumerable<ICompositeBase> Composites
-        {
-            get
-            {
-                this.Derive();
-                return this.derivedComposites;
-            }
-        }
-
-        public IEnumerable<ICompositeBase> SortedComposites => this.Composites.OrderBy(v => v.Name);
+        IEnumerable<IComposite> IMetaPopulation.Composites => this.Composites;
+        public IEnumerable<ICompositeBase> Composites => this.structuralDerivedComposites;
 
         /// <summary>
         /// Gets a value indicating whether this state is valid.
@@ -126,44 +118,16 @@ namespace Allors.Database.Meta
         public IEnumerable<IUnitBase> Units => this.units;
 
         IEnumerable<IComposite> IMetaPopulation.DatabaseComposites => this.DatabaseComposites;
-        public IEnumerable<ICompositeBase> DatabaseComposites
-        {
-            get
-            {
-                this.Derive();
-                return this.derivedDatabaseComposites;
-            }
-        }
+        public IEnumerable<ICompositeBase> DatabaseComposites => this.structuralDerivedDatabaseComposites;
 
         IEnumerable<IInterface> IMetaPopulation.DatabaseInterfaces => this.DatabaseInterfaces;
-        public IEnumerable<IInterfaceBase> DatabaseInterfaces
-        {
-            get
-            {
-                this.Derive();
-                return this.derivedDatabaseInterfaces;
-            }
-        }
+        public IEnumerable<IInterfaceBase> DatabaseInterfaces => this.structuralDerivedDatabaseInterfaces;
 
         IEnumerable<IClass> IMetaPopulation.DatabaseClasses => this.DatabaseClasses;
-        public IEnumerable<IClassBase> DatabaseClasses
-        {
-            get
-            {
-                this.Derive();
-                return this.derivedDatabaseClasses;
-            }
-        }
+        public IEnumerable<IClassBase> DatabaseClasses => this.structuralDerivedDatabaseClasses;
 
         IEnumerable<IRelationType> IMetaPopulation.DatabaseRelationTypes => this.DatabaseRelationTypes;
-        public IEnumerable<IRelationTypeBase> DatabaseRelationTypes
-        {
-            get
-            {
-                this.Derive();
-                return this.derivedDatabaseRelationTypes;
-            }
-        }
+        public IEnumerable<IRelationTypeBase> DatabaseRelationTypes => this.structuralDerivedDatabaseRelationTypes;
 
         IEnumerable<IMethodType> IMetaPopulation.MethodTypes => this.MethodTypes;
         public IEnumerable<IMethodTypeBase> MethodTypes => this.methodTypes;
@@ -303,16 +267,6 @@ namespace Allors.Database.Meta
 
                 this.IsBound = true;
 
-                this.domains = this.domains.ToArray();
-                this.units = this.units.ToArray();
-                this.interfaces = this.interfaces.ToArray();
-                this.classes = this.classes.ToArray();
-                this.inheritances = this.inheritances.ToArray();
-                this.relationTypes = this.relationTypes.ToArray();
-                this.associationTypes = this.associationTypes.ToArray();
-                this.roleTypes = this.roleTypes.ToArray();
-                this.methodTypes = this.methodTypes.ToArray();
-
                 foreach (var domain in this.domains)
                 {
                     domain.Bind();
@@ -326,7 +280,7 @@ namespace Allors.Database.Meta
                 }
 
                 this.Derive();
-                foreach (var @interface in this.derivedDatabaseInterfaces)
+                foreach (var @interface in this.DatabaseInterfaces)
                 {
                     @interface.Bind(typeByName);
                 }
@@ -350,95 +304,134 @@ namespace Allors.Database.Meta
 
         void IMetaPopulationBase.Derive() => this.Derive();
 
+        public void StructuralDerive()
+        {
+            this.isStructuralDeriving = true;
+
+            try
+            {
+                this.domains = this.domains.ToArray();
+                this.units = this.units.ToArray();
+                this.interfaces = this.interfaces.ToArray();
+                this.classes = this.classes.ToArray();
+                this.inheritances = this.inheritances.ToArray();
+                this.relationTypes = this.relationTypes.ToArray();
+                this.associationTypes = this.associationTypes.ToArray();
+                this.roleTypes = this.roleTypes.ToArray();
+                this.methodTypes = this.methodTypes.ToArray();
+
+                var sharedDomains = new HashSet<Domain>();
+                var sharedComposites = new HashSet<ICompositeBase>();
+                var sharedInterfaces = new HashSet<IInterfaceBase>();
+                var sharedClasses = new HashSet<IClassBase>();
+                var sharedAssociationTypes = new HashSet<IAssociationTypeBase>();
+                var sharedRoleTypes = new HashSet<IRoleTypeBase>();
+                var sharedMethodTypeList = new HashSet<IMethodTypeBase>();
+
+                // Domains
+                foreach (var domain in this.domains)
+                {
+                    domain.StructuralDeriveSuperdomains(sharedDomains);
+                }
+
+                // Unit & IComposite ObjectTypes
+                var compositeTypes = new List<ICompositeBase>(this.interfaces);
+                compositeTypes.AddRange(this.Classes);
+                this.structuralDerivedComposites = compositeTypes.ToArray();
+
+                // Database
+                this.structuralDerivedDatabaseComposites = this.Composites.Where(v => v.Origin == Origin.Database).ToArray();
+                this.structuralDerivedDatabaseInterfaces = this.interfaces.Where(v => v.Origin == Origin.Database).ToArray();
+                this.structuralDerivedDatabaseClasses = this.classes.Where(v => v.Origin == Origin.Database).ToArray();
+                this.structuralDerivedDatabaseRelationTypes = this.relationTypes.Where(v => v.Origin == Origin.Database).ToArray();
+
+                // DirectSupertypes
+                foreach (var type in this.Composites)
+                {
+                    type.StructuralDeriveDirectSupertypes(sharedInterfaces);
+                }
+
+                // DirectSubtypes
+                foreach (var type in this.interfaces)
+                {
+                    type.StructuralDeriveDirectSubtypes(sharedComposites);
+                }
+
+                // Supertypes
+                foreach (var type in this.Composites)
+                {
+                    type.StructuralDeriveSupertypes(sharedInterfaces);
+                }
+
+                // Subtypes
+                foreach (var type in this.interfaces)
+                {
+                    type.StructuralDeriveSubtypes(sharedComposites);
+                }
+
+                // Subclasses
+                foreach (var type in this.interfaces)
+                {
+                    type.StructuralDeriveSubclasses(sharedClasses);
+                }
+
+                // Exclusive Subclass
+                foreach (var type in this.interfaces)
+                {
+                    type.StructuralDeriveExclusiveSubclass();
+                }
+
+                // RoleTypes & AssociationTypes
+                var roleTypesByAssociationTypeObjectType = this.RelationTypes
+                    .GroupBy(v => v.AssociationType.ObjectType)
+                    .ToDictionary(g => g.Key, g => new HashSet<IRoleTypeBase>(g.Select(v => v.RoleType)));
+
+
+                var associationTypesByRoleTypeObjectType = this.RelationTypes
+                    .GroupBy(v => v.RoleType.ObjectType)
+                    .ToDictionary(g => g.Key, g => new HashSet<IAssociationTypeBase>(g.Select(v => v.AssociationType)));
+
+                // RoleTypes
+                foreach (var composite in this.Composites)
+                {
+                    composite.StructuralDeriveRoleTypes(sharedRoleTypes, roleTypesByAssociationTypeObjectType);
+                }
+
+                // AssociationTypes
+                foreach (var composite in this.Composites)
+                {
+                    composite.StructuralDeriveAssociationTypes(sharedAssociationTypes, associationTypesByRoleTypeObjectType);
+                }
+
+                // MethodTypes
+                var methodTypeByClass = this.MethodTypes
+                    .GroupBy(v => v.ObjectType)
+                    .ToDictionary(g => g.Key, g => new HashSet<IMethodTypeBase>(g));
+
+                foreach (var composite in this.Composites)
+                {
+                    composite.StructuralDeriveMethodTypes(sharedMethodTypeList, methodTypeByClass);
+                }
+            }
+            finally
+            {
+                this.isStructuralDeriving = false;
+            }
+        }
+
+
         private void Derive()
         {
+            if (this.isStructuralDeriving)
+            {
+                throw new Exception("Structural Derive is ongoing");
+            }
+
             if (this.isStale && !this.isDeriving)
             {
                 try
                 {
                     this.isDeriving = true;
-
-                    var sharedDomains = new HashSet<Domain>();
-                    var sharedComposites = new HashSet<ICompositeBase>();
-                    var sharedInterfaces = new HashSet<IInterfaceBase>();
-                    var sharedClasses = new HashSet<IClassBase>();
-                    var sharedAssociationTypes = new HashSet<IAssociationTypeBase>();
-                    var sharedRoleTypes = new HashSet<IRoleTypeBase>();
-
-                    // Domains
-                    foreach (var domain in this.domains)
-                    {
-                        domain.DeriveSuperdomains(sharedDomains);
-                    }
-
-                    // Unit & IComposite ObjectTypes
-                    var compositeTypes = new List<ICompositeBase>(this.interfaces);
-                    compositeTypes.AddRange(this.Classes);
-                    this.derivedComposites = compositeTypes.ToArray();
-
-                    // Database
-                    this.derivedDatabaseComposites = this.derivedComposites.Where(v => v.Origin == Origin.Database).ToArray();
-                    this.derivedDatabaseInterfaces = this.interfaces.Where(v => v.Origin == Origin.Database).ToArray();
-                    this.derivedDatabaseClasses = this.classes.Where(v => v.Origin == Origin.Database).ToArray();
-                    this.derivedDatabaseRelationTypes = this.relationTypes.Where(v => v.Origin == Origin.Database).ToArray();
-
-                    // DirectSupertypes
-                    foreach (var type in this.derivedComposites)
-                    {
-                        type.DeriveDirectSupertypes(sharedInterfaces);
-                    }
-
-                    // DirectSubtypes
-                    foreach (var type in this.interfaces)
-                    {
-                        type.DeriveDirectSubtypes(sharedComposites);
-                    }
-
-                    // Supertypes
-                    foreach (var type in this.derivedComposites)
-                    {
-                        type.DeriveSupertypes(sharedInterfaces);
-                    }
-
-                    // Subtypes
-                    foreach (var type in this.interfaces)
-                    {
-                        type.DeriveSubtypes(sharedComposites);
-                    }
-
-                    // Subclasses
-                    foreach (var type in this.interfaces)
-                    {
-                        type.DeriveSubclasses(sharedClasses);
-                    }
-
-                    // Exclusive Subclass
-                    foreach (var type in this.interfaces)
-                    {
-                        type.DeriveExclusiveSubclass();
-                    }
-
-                    // RoleTypes & AssociationTypes
-                    var roleTypesByAssociationTypeObjectType = this.RelationTypes
-                        .GroupBy(v => v.AssociationType.ObjectType)
-                        .ToDictionary(g => g.Key, g => new HashSet<IRoleTypeBase>(g.Select(v => v.RoleType)));
-
-
-                    var associationTypesByRoleTypeObjectType = this.RelationTypes
-                        .GroupBy(v => v.RoleType.ObjectType)
-                        .ToDictionary(g => g.Key, g => new HashSet<IAssociationTypeBase>(g.Select(v => v.AssociationType)));
-
-                    // RoleTypes
-                    foreach (var type in this.derivedComposites)
-                    {
-                        type.DeriveRoleTypes(sharedRoleTypes, roleTypesByAssociationTypeObjectType);
-                    }
-
-                    // AssociationTypes
-                    foreach (var type in this.derivedComposites)
-                    {
-                        type.DeriveAssociationTypes(sharedAssociationTypes, associationTypesByRoleTypeObjectType);
-                    }
 
                     // RoleType
                     foreach (var relationType in this.RelationTypes)
@@ -452,17 +445,7 @@ namespace Allors.Database.Meta
                         relationType.DeriveMultiplicity();
                     }
 
-                    var sharedMethodTypeList = new HashSet<IMethodTypeBase>();
 
-                    // MethodTypes
-                    var methodTypeByClass = this.MethodTypes
-                        .GroupBy(v => v.ObjectType)
-                        .ToDictionary(g => g.Key, g => new HashSet<IMethodTypeBase>(g));
-
-                    foreach (var type in this.derivedComposites)
-                    {
-                        type.DeriveMethodTypes(sharedMethodTypeList, methodTypeByClass);
-                    }
 
                     // Required and Unique RoleTypes
                     foreach (var @class in this.classes)
@@ -496,7 +479,7 @@ namespace Allors.Database.Meta
                     }
 
                     // MetaPopulation
-                    this.derivedDatabaseCompositeByLowercaseName = this.derivedDatabaseComposites.ToDictionary(v => v.Name.ToLowerInvariant());
+                    this.derivedDatabaseCompositeByLowercaseName = this.DatabaseComposites.ToDictionary(v => v.Name.ToLowerInvariant());
                 }
                 finally
                 {

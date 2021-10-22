@@ -27,14 +27,14 @@ namespace Allors.Database.Meta
 
         IEnumerable<IInterface> DirectSupertypes { get; }
 
-        void DeriveDirectSupertypes(HashSet<IInterfaceBase> sharedInterfaces);
+        void StructuralDeriveDirectSupertypes(HashSet<IInterfaceBase> sharedInterfaces);
 
-        void DeriveSupertypes(HashSet<IInterfaceBase> sharedInterfaces);
+        void StructuralDeriveSupertypes(HashSet<IInterfaceBase> sharedInterfaces);
 
-        void DeriveRoleTypes(HashSet<IRoleTypeBase> sharedRoleTypes, Dictionary<ICompositeBase, HashSet<IRoleTypeBase>> roleTypesByAssociationTypeObjectType);
+        void StructuralDeriveRoleTypes(HashSet<IRoleTypeBase> sharedRoleTypes, Dictionary<ICompositeBase, HashSet<IRoleTypeBase>> roleTypesByAssociationTypeObjectType);
 
-        void DeriveAssociationTypes(HashSet<IAssociationTypeBase> sharedAssociationTypes, Dictionary<IObjectTypeBase, HashSet<IAssociationTypeBase>> associationTypesByRoleTypeObjectType);
+        void StructuralDeriveAssociationTypes(HashSet<IAssociationTypeBase> sharedAssociationTypes, Dictionary<IObjectTypeBase, HashSet<IAssociationTypeBase>> associationTypesByRoleTypeObjectType);
 
-        void DeriveMethodTypes(HashSet<IMethodTypeBase> sharedMethodTypeList, Dictionary<ICompositeBase, HashSet<IMethodTypeBase>> methodTypeByClass);
+        void StructuralDeriveMethodTypes(HashSet<IMethodTypeBase> sharedMethodTypeList, Dictionary<ICompositeBase, HashSet<IMethodTypeBase>> methodTypeByClass);
     }
 }
