@@ -38,9 +38,6 @@ namespace Tests.EmailCommunicationTests
             var employeeEmailAddress = employee.PersonalEmailAddress;
             var personEmailAddress = organisation.CurrentContacts.First().PersonalEmailAddress;
 
-            this.Transaction.Derive();
-            this.Transaction.Commit();
-
             var before = new EmailCommunications(this.Transaction).Extent().ToArray();
 
             this.organisationListPage.Table.DefaultAction(organisation);

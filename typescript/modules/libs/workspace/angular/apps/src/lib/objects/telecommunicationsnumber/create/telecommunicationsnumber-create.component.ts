@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Party, PartyContactMechanism, Enumeration, TelecommunicationsNumber } from '@allors/workspace/domain/default';
+import { Party, PartyContactMechanism, Enumeration, TelecommunicationsNumber, ContactMechanismType, ContactMechanismPurpose } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -70,8 +70,8 @@ export class TelecommunicationsNumberCreateComponent extends TestScope implement
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.contactMechanismTypes = loaded.collection<Enumeration>(m.Enumeration);
-        this.contactMechanismPurposes = loaded.collection<Enumeration>(m.Enumeration);
+        this.contactMechanismTypes = loaded.collection<ContactMechanismType>(m.ContactMechanismType);
+        this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
         this.party = loaded.object<Party>(m.Party);
 
         this.contactMechanism = this.allors.context.create<TelecommunicationsNumber>(m.TelecommunicationsNumber);

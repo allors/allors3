@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Organisation, Party, SerialisedItem, WorkEffort, WorkEffortFixedAssetAssignment, Enumeration } from '@allors/workspace/domain/default';
+import { Organisation, Party, SerialisedItem, WorkEffort, WorkEffortFixedAssetAssignment, Enumeration, AssetAssignmentStatus } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -103,7 +103,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
         this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
         this.workEfforts = loaded.collection<WorkEffort>(m.WorkEffort);
         this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
-        this.assetAssignmentStatuses = loaded.collection<Enumeration>(m.Enumeration);
+        this.assetAssignmentStatuses = loaded.collection<AssetAssignmentStatus>(m.AssetAssignmentStatus);
 
         if (this.serialisedItem == null) {
           const b2bCustomer = this.workEffort.Customer as Organisation;

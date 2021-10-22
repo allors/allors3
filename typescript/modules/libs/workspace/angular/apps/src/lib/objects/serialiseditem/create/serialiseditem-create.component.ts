@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Locale, Organisation, Party, Part, InternalOrganisation, Ownership, SerialisedItem, Enumeration, SerialisedItemState } from '@allors/workspace/domain/default';
+import { Locale, Organisation, Party, Part, InternalOrganisation, Ownership, SerialisedItem, Enumeration, SerialisedItemState, SerialisedItemAvailability } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -98,7 +98,7 @@ export class SerialisedItemCreateComponent extends TestScope implements OnInit, 
         this.part = loaded.object<Part>('forPart');
 
         this.serialisedItemStates = loaded.collection<SerialisedItemState>(m.SerialisedItemState);
-        this.serialisedItemAvailabilities = loaded.collection<Enumeration>(m.Enumeration);
+        this.serialisedItemAvailabilities = loaded.collection<SerialisedItemAvailability>(m.SerialisedItemAvailability);
         this.ownerships = loaded.collection<Ownership>(m.Ownership);
         this.locales = this.fetcher.getAdditionalLocales(loaded);
 
