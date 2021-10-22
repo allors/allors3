@@ -127,7 +127,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
 
       const purchaseOrders = loaded.collection<PurchaseOrder>(pullName);
-      this.objects = purchaseOrders.filter((v) => v.OrderedBy === this.internalOrganisation);
+      this.objects = purchaseOrders?.filter((v) => v.OrderedBy === this.internalOrganisation);
       this.objects.sort((a, b) => (a.OrderNumber > b.OrderNumber ? 1 : b.OrderNumber > a.OrderNumber ? -1 : 0));
 
       if (this.objects) {

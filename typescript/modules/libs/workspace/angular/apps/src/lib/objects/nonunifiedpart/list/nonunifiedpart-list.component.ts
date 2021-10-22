@@ -323,20 +323,20 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
 
         const inStockSearch = this.filter.fields.find((v) => v.definition.name === 'In Stock');
         let facilitySearchId = inStockSearch?.value;
-        if (inStockSearch !== undefined) {
-          this.parts = this.parts.filter((v) => {
-            return v.InventoryItemsWherePart.filter((i: NonSerialisedInventoryItem) => i.Facility.id === inStockSearch.value && Number(i.QuantityOnHand) > 0).length > 0;
+        if (inStockSearch != null) {
+          this.parts = this.parts?.filter((v) => {
+            return v.InventoryItemsWherePart?.filter((i: NonSerialisedInventoryItem) => i.Facility.id === inStockSearch.value && Number(i.QuantityOnHand) > 0).length > 0;
           });
         }
 
         const outOStockSearch = this.filter.fields.find((v) => v.definition.name === 'Out Of Stock');
-        if (facilitySearchId === undefined) {
+        if (facilitySearchId == null) {
           facilitySearchId = outOStockSearch?.value;
         }
 
-        if (outOStockSearch !== undefined) {
-          this.parts = this.parts.filter((v) => {
-            return v.InventoryItemsWherePart.filter((i: NonSerialisedInventoryItem) => i.Facility.id === outOStockSearch.value && Number(i.QuantityOnHand) === 0).length > 0;
+        if (outOStockSearch != null) {
+          this.parts = this.parts?.filter((v) => {
+            return v.InventoryItemsWherePart?.filter((i: NonSerialisedInventoryItem) => i.Facility.id === outOStockSearch.value && Number(i.QuantityOnHand) === 0).length > 0;
           });
         }
 
@@ -353,7 +353,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
             qoh: v.QuantityOnHand,
             localQoh: facilitySearchId && (v.InventoryItemsWherePart as NonSerialisedInventoryItem[]).find((i) => i.Facility.id === facilitySearchId).QuantityOnHand,
             categories: partCategories
-              .filter((w) => w.Parts.includes(v))
+              ?.filter((w) => w.Parts.includes(v))
               .map((w) => w.DisplayName)
               .join(', '),
             brand: v.Brand ? v.Brand.Name : '',

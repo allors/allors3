@@ -44,7 +44,7 @@ export class RepeatingSalesInvoiceEditComponent extends TestScope implements OnI
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
           const id = this.data.id;
 
           const pulls = [

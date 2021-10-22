@@ -104,7 +104,7 @@ export class TimeEntryOverviewPanelComponent extends TestScope {
             object: v,
             person: v.Worker && v.Worker.DisplayName,
             from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-            through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
+            through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
             time: v.AmountOfTime,
           } as Row;
         });

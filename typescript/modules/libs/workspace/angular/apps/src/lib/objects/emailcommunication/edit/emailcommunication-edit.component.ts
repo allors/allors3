@@ -75,7 +75,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           let pulls = [
             pull.Organisation({
@@ -214,11 +214,11 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
           contacts.add(this.organisation);
         }
 
-        if (internalOrganisation.ActiveEmployees !== undefined) {
+        if (internalOrganisation.ActiveEmployees != null) {
           internalOrganisation.ActiveEmployees.reduce((c, e) => c.add(e), contacts);
         }
 
-        if (this.organisation && this.organisation.CurrentContacts !== undefined) {
+        if (this.organisation && this.organisation.CurrentContacts != null) {
           this.organisation.CurrentContacts.reduce((c, e) => c.add(e), contacts);
         }
 
@@ -317,7 +317,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
-      this.fromEmails = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress).map((v) => v.ContactMechanism);
+      this.fromEmails = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress).map((v) => v.ContactMechanism);
     });
   }
 
@@ -349,7 +349,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
-      this.toEmails = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress).map((v) => v.ContactMechanism);
+      this.toEmails = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress).map((v) => v.ContactMechanism);
     });
   }
 

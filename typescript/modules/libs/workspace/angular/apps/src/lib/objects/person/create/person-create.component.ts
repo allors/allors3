@@ -156,7 +156,7 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
       employment.Employer = this.internalOrganisation;
     }
 
-    if (this.organisation !== undefined) {
+    if (this.organisation != null) {
       const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
       organisationContactRelationship.Contact = this.person;
       organisationContactRelationship.Organisation = this.organisation;

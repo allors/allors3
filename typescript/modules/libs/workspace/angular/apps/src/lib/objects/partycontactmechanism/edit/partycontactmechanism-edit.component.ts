@@ -49,7 +49,7 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           const pulls = [
             pull.ContactMechanismPurpose({
@@ -133,11 +133,11 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
         const partyContactMechanisms = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
         partyContactMechanisms.forEach((v) => this.ownContactMechanisms.push(v.ContactMechanism));
 
-        if (this.organisationContactMechanisms !== undefined) {
+        if (this.organisationContactMechanisms != null) {
           this.contactMechanisms = this.contactMechanisms.concat(this.organisationContactMechanisms);
         }
 
-        if (this.ownContactMechanisms !== undefined) {
+        if (this.ownContactMechanisms != null) {
           this.contactMechanisms = this.contactMechanisms.concat(this.ownContactMechanisms);
         }
 

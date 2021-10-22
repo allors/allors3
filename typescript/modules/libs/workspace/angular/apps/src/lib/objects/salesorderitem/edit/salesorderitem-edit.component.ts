@@ -133,7 +133,7 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           const pulls = [
             this.fetcher.internalOrganisation,

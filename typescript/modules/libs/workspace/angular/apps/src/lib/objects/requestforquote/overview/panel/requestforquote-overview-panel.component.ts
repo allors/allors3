@@ -120,11 +120,11 @@ export class RequestForQuoteOverviewPanelComponent extends TestScope implements 
       const fromAsset = loaded.collection<RequestForQuote>(assetPullName);
       const fromParty = loaded.collection<RequestForQuote>(customerPullName);
 
-      if (fromAsset !== undefined && fromAsset.length > 0) {
+      if (fromAsset != null && fromAsset.length > 0) {
         this.objects = fromAsset;
       }
 
-      if (fromParty !== undefined && fromParty.length > 0) {
+      if (fromParty != null && fromParty.length > 0) {
         this.objects = fromParty;
       }
 

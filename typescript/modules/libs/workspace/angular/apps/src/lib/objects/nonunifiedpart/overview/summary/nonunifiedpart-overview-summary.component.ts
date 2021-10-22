@@ -94,16 +94,16 @@ export class NonUnifiedPartOverviewSummaryComponent {
       this.serialised = this.part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 
       this.allPricecomponents = loaded.collection<PriceComponent>(priceComponentPullName);
-      this.currentPricecomponents = this.allPricecomponents.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
-      this.inactivePricecomponents = this.allPricecomponents.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate !== null && isBefore(new Date(v.ThroughDate), new Date())));
+      this.currentPricecomponents = this.allPricecomponents?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
+      this.inactivePricecomponents = this.allPricecomponents?.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate != null && isBefore(new Date(v.ThroughDate), new Date())));
 
       this.allSupplierOfferings = loaded.collection<SupplierOffering>(supplierOfferingsPullName);
-      this.currentSupplierOfferings = this.allSupplierOfferings.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
-      this.inactiveSupplierOfferings = this.allSupplierOfferings.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate !== null && isBefore(new Date(v.ThroughDate), new Date())));
+      this.currentSupplierOfferings = this.allSupplierOfferings?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
+      this.inactiveSupplierOfferings = this.allSupplierOfferings?.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate != null && isBefore(new Date(v.ThroughDate), new Date())));
 
       const goodIdentificationTypes = loaded.collection<ProductIdentificationType>(this.m.ProductIdentificationType);
       const partNumberType = goodIdentificationTypes.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
-      this.partnumber = this.part.ProductIdentifications.filter((v) => v.ProductIdentificationType === partNumberType).map((w) => w.Identification);
+      this.partnumber = this.part.ProductIdentifications?.filter((v) => v.ProductIdentificationType === partNumberType).map((w) => w.Identification);
 
       if (this.part.SuppliedBy.length > 0) {
         this.suppliers = this.part.SuppliedBy.map((v) => v.DisplayName).reduce((acc: string, cur: string) => acc + ', ' + cur);

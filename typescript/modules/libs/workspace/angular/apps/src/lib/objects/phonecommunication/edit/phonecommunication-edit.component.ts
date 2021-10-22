@@ -71,7 +71,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           let pulls = [
             pull.Organisation({
@@ -198,11 +198,11 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
           contacts.add(this.organisation);
         }
 
-        if (internalOrganisation.ActiveEmployees !== undefined) {
+        if (internalOrganisation.ActiveEmployees != null) {
           internalOrganisation.ActiveEmployees.reduce((c, e) => c.add(e), contacts);
         }
 
-        if (this.organisation && this.organisation.CurrentContacts !== undefined) {
+        if (this.organisation && this.organisation.CurrentContacts != null) {
           this.organisation.CurrentContacts.reduce((c, e) => c.add(e), contacts);
         }
 
@@ -301,7 +301,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
-      this.fromPhonenumbers = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.TelecommunicationsNumber).map((v) => v.ContactMechanism);
+      this.fromPhonenumbers = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.TelecommunicationsNumber).map((v) => v.ContactMechanism);
     });
   }
 
@@ -333,7 +333,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
-      this.toPhonenumbers = partyContactMechanisms.filter((v) => v.ContactMechanism.strategy.cls === this.m.TelecommunicationsNumber).map((v) => v.ContactMechanism);
+      this.toPhonenumbers = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.TelecommunicationsNumber).map((v) => v.ContactMechanism);
     });
   }
 

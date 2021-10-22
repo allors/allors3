@@ -88,7 +88,7 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
           const { id } = this.data;
 
           const pulls = [

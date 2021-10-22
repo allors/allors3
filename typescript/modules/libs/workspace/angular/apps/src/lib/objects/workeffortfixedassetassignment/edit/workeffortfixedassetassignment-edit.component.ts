@@ -54,7 +54,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           const pulls = [
             pull.WorkEffort({
@@ -105,9 +105,9 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
         this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
         this.assetAssignmentStatuses = loaded.collection<Enumeration>(m.Enumeration);
 
-        if (this.serialisedItem === undefined) {
+        if (this.serialisedItem == null) {
           const b2bCustomer = this.workEffort.Customer as Organisation;
-          this.externalCustomer = b2bCustomer === null || !b2bCustomer.IsInternalOrganisation;
+          this.externalCustomer = b2bCustomer == null || !b2bCustomer.IsInternalOrganisation;
 
           if (this.externalCustomer) {
             this.updateSerialisedItems(this.workEffort.Customer);
@@ -119,11 +119,11 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
 
           this.workEffortFixedAssetAssignment = this.allors.context.create<WorkEffortFixedAssetAssignment>(m.WorkEffortFixedAssetAssignment);
 
-          if (this.serialisedItem !== undefined) {
+          if (this.serialisedItem != null) {
             this.workEffortFixedAssetAssignment.FixedAsset = this.serialisedItem;
           }
 
-          if (this.workEffort !== undefined && this.workEffort.strategy.cls === m.WorkTask) {
+          if (this.workEffort != null && this.workEffort.strategy.cls === m.WorkTask) {
             this.assignment = this.workEffort as WorkEffort;
             this.workEffortFixedAssetAssignment.Assignment = this.assignment;
           }

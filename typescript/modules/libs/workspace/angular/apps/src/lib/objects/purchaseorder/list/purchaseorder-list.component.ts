@@ -170,7 +170,7 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
         const orders = loaded.collection<PurchaseOrder>(m.PurchaseOrder);
         this.table.total = loaded.value('PurchaseOrders_total') as number;
         this.table.data = orders
-          .filter((v) => v.canReadOrderNumber)
+          ?.filter((v) => v.canReadOrderNumber)
           .map((v) => {
             return {
               object: v,

@@ -64,7 +64,7 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           const pulls = [this.fetcher.internalOrganisation, pull.Person({})];
 

@@ -72,7 +72,7 @@ export class TaskAssignmentLinkComponent implements OnInit, OnDestroy {
         const user = loaded.object<Person>(m.Person);
 
         const allTasks = loaded.collection<Task>(m.Task);
-        this.tasks = allTasks.filter((v) => v.Participants.indexOf(user) > -1);
+        this.tasks = allTasks?.filter((v) => v.Participants.indexOf(user) > -1);
       });
   }
 

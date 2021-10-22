@@ -118,7 +118,7 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
             name: v.Name,
             id: v.ProductIdentifications.find((p) => p.ProductIdentificationType.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f').Identification,
             categories: productCategories
-              .filter((w) => w.Products.includes(v))
+              ?.filter((w) => w.Products.includes(v))
               .map((w) => w.DisplayName)
               .join(', '),
             // qoh: v.Part && v.Part.QuantityOnHand

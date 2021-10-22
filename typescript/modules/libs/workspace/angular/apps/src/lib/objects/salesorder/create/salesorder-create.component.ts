@@ -168,7 +168,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
         this.order.TakenBy = this.internalOrganisation;
 
         const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-        this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+        this.shipFromAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
 
         if (this.stores.length === 1) {
           this.order.Store = this.stores[0];
@@ -374,13 +374,13 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
       }
       this.previousShipToCustomer = this.order.ShipToCustomer;
 
-      if (this.order.ShipToCustomer !== null && this.order.BillToCustomer === null) {
+      if (this.order.ShipToCustomer != null && this.order.BillToCustomer == null) {
         this.order.BillToCustomer = this.order.ShipToCustomer;
         this.updateBillToCustomer(this.order.ShipToCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       this.setDerivedInitialRoles();
@@ -435,7 +435,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
       }
       this.previousBillToCustomer = this.order.BillToCustomer;
 
-      if (this.order.BillToCustomer !== null && this.order.ShipToCustomer === null) {
+      if (this.order.BillToCustomer != null && this.order.ShipToCustomer == null) {
         this.order.ShipToCustomer = this.order.BillToCustomer;
         this.updateShipToCustomer(this.order.ShipToCustomer);
       }
@@ -496,7 +496,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
       }
       this.previousBillToEndCustomer = this.order.BillToEndCustomer;
 
-      if (this.order.BillToEndCustomer !== null && this.order.ShipToEndCustomer === null) {
+      if (this.order.BillToEndCustomer != null && this.order.ShipToEndCustomer == null) {
         this.order.ShipToEndCustomer = this.order.BillToEndCustomer;
         this.updateShipToEndCustomer(this.order.ShipToEndCustomer);
       }
@@ -558,13 +558,13 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
 
       this.previousShipToEndCustomer = this.order.ShipToEndCustomer;
 
-      if (this.order.ShipToEndCustomer !== null && this.order.BillToEndCustomer === null) {
+      if (this.order.ShipToEndCustomer != null && this.order.BillToEndCustomer == null) {
         this.order.BillToEndCustomer = this.order.ShipToEndCustomer;
         this.updateBillToEndCustomer(this.order.BillToEndCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipToEndCustomerAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToEndCustomerAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToEndCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       this.setDerivedInitialRoles();

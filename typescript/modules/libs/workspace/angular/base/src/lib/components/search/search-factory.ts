@@ -12,7 +12,7 @@ export class SearchFactory {
 
   public create(context: Context): (search: string, parameters?: { [id: string]: TypeForParameter }) => Observable<IObject[]> {
     return (search: string, parameters?: { [id: string]: TypeForParameter }) => {
-      if (search === undefined || search === null || !search.trim) {
+      if (search == null || !search.trim) {
         return EMPTY;
       }
 

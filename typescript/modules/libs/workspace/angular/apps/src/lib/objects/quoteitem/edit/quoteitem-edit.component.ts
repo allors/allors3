@@ -131,7 +131,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
         switchMap(() => {
-          const create = (this.data as IObject).id === undefined;
+          const create = (this.data as IObject).id == null;
 
           const pulls = [
             this.fetcher.internalOrganisation,
@@ -486,7 +486,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
       this.part = (loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.NonUnifiedGood.Part));
-      this.serialisedItems = this.part.SerialisedItems.filter((v) => v.AvailableForSale === true);
+      this.serialisedItems = this.part.SerialisedItems?.filter((v) => v.AvailableForSale === true);
 
       if (this.quoteItem.Product !== this.previousProduct) {
         this.quoteItem.SerialisedItem = null;

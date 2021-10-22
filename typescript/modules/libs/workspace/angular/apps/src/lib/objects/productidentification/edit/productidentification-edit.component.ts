@@ -44,7 +44,7 @@ export class ProductIdentificationEditComponent extends TestScope implements OnI
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-          const isCreate = (this.data as IObject).id === undefined;
+          const isCreate = (this.data as IObject).id == null;
           const {
             strategy: { cls },
             associationRoleType,

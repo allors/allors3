@@ -137,11 +137,11 @@ export class PartyContactMechanismOverviewPanelComponent extends TestScope imple
 
       this.allPartyContactMechanisms = [];
 
-      if (this.currentPartyContactMechanisms !== undefined) {
+      if (this.currentPartyContactMechanisms != null) {
         this.allPartyContactMechanisms = this.allPartyContactMechanisms.concat(this.currentPartyContactMechanisms);
       }
 
-      if (this.inactivePartyContactMechanisms !== undefined) {
+      if (this.inactivePartyContactMechanisms != null) {
         this.allPartyContactMechanisms = this.allPartyContactMechanisms.concat(this.inactivePartyContactMechanisms);
       }
 

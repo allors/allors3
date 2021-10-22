@@ -53,7 +53,7 @@ export class SupplierOfferingEditComponent extends TestScope implements OnInit, 
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           let pulls = [
             this.fetcher.Settings,

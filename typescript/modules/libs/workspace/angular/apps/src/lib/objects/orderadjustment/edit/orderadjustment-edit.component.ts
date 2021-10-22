@@ -43,7 +43,7 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
         switchMap(() => {
-          const isCreate = (this.data as IObject).id === undefined;
+          const isCreate = (this.data as IObject).id == null;
           const {
             strategy: { cls },
             associationRoleType,

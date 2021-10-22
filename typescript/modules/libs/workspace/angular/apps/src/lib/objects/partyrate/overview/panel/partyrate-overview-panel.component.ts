@@ -118,7 +118,7 @@ export class PartyRateOverviewPanelComponent extends TestScope implements OnInit
         object: v,
         rateType: v.RateType.Name,
         from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-        through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
+        through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
         rate: v.Rate,
         frequency: v.Frequency.Name,
       } as Row;
@@ -128,9 +128,9 @@ export class PartyRateOverviewPanelComponent extends TestScope implements OnInit
   get partyRates(): any {
     switch (this.collection) {
       case 'Current':
-        return this.objects && this.objects.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
+        return this.objects && this.objects?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
       case 'Inactive':
-        return this.objects && this.objects.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date())));
+        return this.objects && this.objects?.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date())));
       case 'All':
       default:
         return this.objects;

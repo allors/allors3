@@ -44,7 +44,7 @@ export class SalesTermEditComponent extends TestScope implements OnInit, OnDestr
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-          const isCreate = (this.data as IObject).id === undefined;
+          const isCreate = (this.data as IObject).id == null;
           const {
             strategy: { cls },
             associationRoleType,
@@ -81,7 +81,7 @@ export class SalesTermEditComponent extends TestScope implements OnInit, OnDestr
         this.container = loaded.object<SalesInvoice>(m.SalesInvoice) || loaded.object<SalesOrder>(m.SalesOrder);
         this.object = loaded.object<SalesTerm>(m.SalesTerm);
         this.termTypes = loaded.collection<TermType>(m.TermType);
-        this.termTypes = this.termTypes.filter((v) => v.strategy.cls.singularName === `${cls.singularName}Type`);
+        this.termTypes = this.termTypes?.filter((v) => v.strategy.cls.singularName === `${cls.singularName}Type`);
 
         if (create) {
           this.title = 'Add Sales Term';

@@ -145,15 +145,15 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
       const fromContact = loaded.collection<WorkEffort>(contactPullName);
       const fromAsset = loaded.collection<WorkEffort>(assetPullName);
 
-      if (fromCustomer !== undefined && fromCustomer.length > 0) {
+      if (fromCustomer != null && fromCustomer.length > 0) {
         this.objects = fromCustomer;
       }
 
-      if (fromContact !== undefined && fromContact.length > 0) {
+      if (fromContact != null && fromContact.length > 0) {
         this.objects = fromContact;
       }
 
-      if (fromAsset !== undefined && fromAsset.length > 0) {
+      if (fromAsset != null && fromAsset.length > 0) {
         this.objects = fromAsset;
       }
 

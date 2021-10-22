@@ -142,11 +142,11 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
       this.fromParty = loaded.collection<WorkEffortPartyAssignment>(partypullName);
       this.fromWorkEffort = loaded.collection<WorkEffortPartyAssignment>(workeffortpullName);
 
-      if (this.fromParty !== undefined && this.fromParty.length > 0) {
+      if (this.fromParty != null && this.fromParty.length > 0) {
         this.objects = this.fromParty;
       }
 
-      if (this.fromWorkEffort !== undefined && this.fromWorkEffort.length > 0) {
+      if (this.fromWorkEffort != null && this.fromWorkEffort.length > 0) {
         this.objects = this.fromWorkEffort;
       }
 
@@ -162,7 +162,7 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
             party: v.Party.DisplayName,
             status: v.Assignment.WorkEffortState ? v.Assignment.WorkEffortState.Name : '',
             from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-            through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
+            through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
           } as Row;
         });
       }

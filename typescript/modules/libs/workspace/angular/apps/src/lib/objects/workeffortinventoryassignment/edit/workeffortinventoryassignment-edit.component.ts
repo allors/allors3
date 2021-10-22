@@ -62,7 +62,7 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           let pulls = [
             pull.InventoryItem({
@@ -119,7 +119,7 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
         const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
 
         const inventoryItems = loaded.collection<InventoryItem>(m.InventoryItem);
-        this.inventoryItems = inventoryItems.filter((v) => internalOrganisation.FacilitiesWhereOwner.includes(v.Facility));
+        this.inventoryItems = inventoryItems?.filter((v) => internalOrganisation.FacilitiesWhereOwner.includes(v.Facility));
 
         if (isCreate) {
           this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);

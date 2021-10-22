@@ -51,7 +51,7 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(([, internalOrganisationId]) => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           let pulls = [
             pull.Organisation({
@@ -104,12 +104,12 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
           this.party = loaded.object<Party>(m.Party);
           this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
 
-          if (this.party !== undefined && this.party.strategy.cls === m.Person) {
+          if (this.party != null && this.party.strategy.cls === m.Person) {
             this.person = this.party as Person;
             this.workEffortPartyAssignment.Party = this.person;
           }
 
-          if (this.workEffort !== undefined && this.workEffort.strategy.cls === m.WorkTask) {
+          if (this.workEffort != null && this.workEffort.strategy.cls === m.WorkTask) {
             this.assignment = this.workEffort as WorkEffort;
             this.workEffortPartyAssignment.Assignment = this.assignment;
           }
@@ -130,7 +130,7 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
         // TODO: Martien
         const employments = loaded.collection<Employment>(m.Organisation.EmploymentsWhereEmployer);
         if (this.workEffort && this.workEffort.ScheduledStart) {
-          this.employees = employments.filter((v) => v.FromDate <= this.workEffort.ScheduledStart && (v.ThroughDate === null || v.ThroughDate >= this.workEffort.ScheduledStart)).map((v) => v.Employee);
+          this.employees = employments?.filter((v) => v.FromDate <= this.workEffort.ScheduledStart && (v.ThroughDate == null || v.ThroughDate >= this.workEffort.ScheduledStart)).map((v) => v.Employee);
         } else {
           this.employees = [this.person];
         }

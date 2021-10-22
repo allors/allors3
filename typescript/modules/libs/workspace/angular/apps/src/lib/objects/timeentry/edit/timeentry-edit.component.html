@@ -26,9 +26,9 @@
 
     <div class="row">
       <a-mat-static class="col-md" [object]="timeEntry" [roleType]="m.TimeEntry.AmountOfTime"></a-mat-static>
-      <a-mat-input class="col-md" [object]="timeEntry" [roleType]="m.TimeEntry.AssignedAmountOfTime" [disabled]="timeEntry.ThroughDate !== null"></a-mat-input>
+      <a-mat-input class="col-md" [object]="timeEntry" [roleType]="m.TimeEntry.AssignedAmountOfTime" [disabled]="timeEntry.ThroughDate != null"></a-mat-input>
       <a-mat-input class="col-md" [object]="timeEntry" [roleType]="m.TimeEntry.BillableAmountOfTime"></a-mat-input>
-      <a-mat-select class="col-md" [object]="timeEntry" [roleType]="m.TimeEntry.TimeFrequency" [options]="frequencies" display="Name" label="Frequency" [disabled]="timeEntry.ThroughDate !== null"></a-mat-select>
+      <a-mat-select class="col-md" [object]="timeEntry" [roleType]="m.TimeEntry.TimeFrequency" [options]="frequencies" display="Name" label="Frequency" [disabled]="timeEntry.ThroughDate != null"></a-mat-select>
     </div>
 
     <div class="row">

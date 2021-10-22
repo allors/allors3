@@ -50,7 +50,7 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           let pulls = [
             pull.PurchaseOrder({
@@ -113,7 +113,7 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
         }
 
         const purchaseOrders = loaded.collection<PurchaseOrder>(m.PurchaseOrder);
-        this.purchaseOrders = purchaseOrders.filter((v) =>
+        this.purchaseOrders = purchaseOrders?.filter((v) =>
           v.PurchaseOrderItems.find((i) => i.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem.length === 0 && !i.Part && i.PurchaseOrderWherePurchaseOrderItem.OrderedBy === this.workEffort.TakenBy)
         );
       });
@@ -142,6 +142,6 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
   }
 
   public purchaseOrderSelected(purchaseOrder: PurchaseOrder): void {
-    this.purchaseOrderItems = purchaseOrder.PurchaseOrderItems.filter((v) => v.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem.length === 0);
+    this.purchaseOrderItems = purchaseOrder.PurchaseOrderItems?.filter((v) => v.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem.length === 0);
   }
 }

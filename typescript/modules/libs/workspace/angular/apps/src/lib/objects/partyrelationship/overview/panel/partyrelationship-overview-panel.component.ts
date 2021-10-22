@@ -133,18 +133,18 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
       this.objects = loaded.collection<PartyRelationship>(pullName);
 
       this.currentPartyRelationships = loaded.collection<PartyRelationship>(active);
-      this.currentPartyRelationships = this.currentPartyRelationships.filter((v) => v.strategy.cls !== this.m.PartyFinancialRelationship);
+      this.currentPartyRelationships = this.currentPartyRelationships?.filter((v) => v.strategy.cls !== this.m.PartyFinancialRelationship);
 
       this.inactivePartyRelationships = loaded.collection<PartyRelationship>(inactive);
-      this.inactivePartyRelationships = this.inactivePartyRelationships.filter((v) => v.strategy.cls !== this.m.PartyFinancialRelationship);
+      this.inactivePartyRelationships = this.inactivePartyRelationships?.filter((v) => v.strategy.cls !== this.m.PartyFinancialRelationship);
 
       this.allPartyRelationships = [];
 
-      if (this.currentPartyRelationships !== undefined) {
+      if (this.currentPartyRelationships != null) {
         this.allPartyRelationships = this.allPartyRelationships.concat(this.currentPartyRelationships);
       }
 
-      if (this.inactivePartyRelationships !== undefined) {
+      if (this.inactivePartyRelationships != null) {
         this.allPartyRelationships = this.allPartyRelationships.concat(this.inactivePartyRelationships);
       }
 
@@ -162,7 +162,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
         type: v.strategy.cls.singularName,
         parties: v.Parties.map((w) => w.DisplayName).join(', '),
         from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-        through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
+        through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
       } as Row;
     });
   }

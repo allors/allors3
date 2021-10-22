@@ -137,7 +137,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
         this.settings = this.fetcher.getSettings(loaded);
 
         const supplierRelationships = loaded.collection<SupplierRelationship>(m.SupplierRelationship);
-        const currentsupplierRelationships = supplierRelationships.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
+        const currentsupplierRelationships = supplierRelationships?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
         this.currentSuppliers = new Set(currentsupplierRelationships.map((v) => v.Supplier).sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0)));
 
         this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
@@ -225,7 +225,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
     this.part.Brand = this.selectedBrand;
     this.part.Model = this.selectedModel;
 
-    if (this.selectedSuppliers !== undefined) {
+    if (this.selectedSuppliers != null) {
       this.selectedSuppliers.forEach((supplier: Organisation) => {
         const supplierOffering = this.allors.context.create<SupplierOffering>(this.m.SupplierOffering);
         supplierOffering.Supplier = supplier;

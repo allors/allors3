@@ -124,7 +124,7 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
         const partNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
 
         const partNumberByPart = parts.reduce((map, object) => {
-          map[object.id] = object.ProductIdentifications.filter((v) => v.ProductIdentificationType === partNumberType).map((w) => w.Identification);
+          map[object.id] = object.ProductIdentifications?.filter((v) => v.ProductIdentificationType === partNumberType).map((w) => w.Identification);
           return map;
         }, {});
 

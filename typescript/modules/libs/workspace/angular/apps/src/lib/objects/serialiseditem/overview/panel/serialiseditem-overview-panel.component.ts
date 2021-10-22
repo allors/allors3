@@ -152,15 +152,15 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
 
         this.objects = [];
 
-        if (ownedSerialisedItems !== undefined) {
+        if (ownedSerialisedItems != null) {
           this.objects = this.objects.concat(ownedSerialisedItems);
         }
 
-        if (rentedSerialisedItems !== undefined) {
+        if (rentedSerialisedItems != null) {
           this.objects = this.objects.concat(rentedSerialisedItems);
         }
 
-        if (partSerialisedItems !== undefined) {
+        if (partSerialisedItems != null) {
           this.objects = this.objects.concat(partSerialisedItems);
         }
 

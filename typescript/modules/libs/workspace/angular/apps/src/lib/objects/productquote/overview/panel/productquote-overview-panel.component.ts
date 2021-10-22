@@ -119,11 +119,11 @@ export class ProductQuoteOverviewPanelComponent extends TestScope implements OnI
       const fromAsset = loaded.collection<ProductQuote>(assetPullName);
       const fromParty = loaded.collection<ProductQuote>(customerPullName);
 
-      if (fromAsset !== undefined && fromAsset.length > 0) {
+      if (fromAsset != null && fromAsset.length > 0) {
         this.objects = fromAsset;
       }
 
-      if (fromParty !== undefined && fromParty.length > 0) {
+      if (fromParty != null && fromParty.length > 0) {
         this.objects = fromParty;
       }
 

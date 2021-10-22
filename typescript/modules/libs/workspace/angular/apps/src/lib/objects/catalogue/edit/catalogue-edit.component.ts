@@ -54,7 +54,7 @@ export class CatalogueEditComponent extends TestScope implements OnInit, OnDestr
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           const pulls = [this.fetcher.categories, this.fetcher.locales, this.fetcher.internalOrganisation, pull.Scope({})];
 

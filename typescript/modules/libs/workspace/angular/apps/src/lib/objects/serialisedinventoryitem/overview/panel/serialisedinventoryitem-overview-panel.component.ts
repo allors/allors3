@@ -143,7 +143,7 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
         const inventoryObjects = loaded.collection<SerialisedInventoryItem>(inventoryPullName) ?? [];
 
         const serialisedItemobjects = loaded.collection<SerialisedInventoryItem>(serialiseditemPullName) ?? [];
-        const serialisedItemobjectsforPart = serialisedItemobjects.filter((v) => v.Part === this.serialisedItem?.PartWhereSerialisedItem);
+        const serialisedItemobjectsforPart = serialisedItemobjects?.filter((v) => v.Part === this.serialisedItem?.PartWhereSerialisedItem);
 
         this.objects = inventoryObjects.concat(serialisedItemobjectsforPart);
 

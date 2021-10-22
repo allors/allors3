@@ -16,15 +16,15 @@ export class MapMap<k1, k2, v> {
   set(key1: k1, key2: k2, value: v | undefined): this {
     let map = this.mapMap.get(key1);
 
-    if (value === undefined) {
-      if (map !== undefined) {
+    if (value == null) {
+      if (map != null) {
         map.delete(key2);
         if (map.size === 0) {
           this.mapMap.delete(key1);
         }
       }
     } else {
-      if (map === undefined) {
+      if (map == null) {
         map = new Map();
         this.mapMap.set(key1, map);
       }

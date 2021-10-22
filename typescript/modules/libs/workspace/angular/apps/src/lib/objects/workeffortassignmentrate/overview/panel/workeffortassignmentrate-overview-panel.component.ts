@@ -139,7 +139,7 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
         object: v,
         // partyAssignment: v.WorkEffortPartyAssignment.DisplayName,
         // from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-        // through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
+        // through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
         rateType: v.RateType.Name,
         rate: v.Rate,
         frequency: v.Frequency.Name,
@@ -150,9 +150,9 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
   get workEffortAssignmentRates(): any {
     switch (this.collection) {
       case 'Current':
-        return this.objects && this.objects.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
+        return this.objects && this.objects?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
       case 'Inactive':
-        return this.objects && this.objects.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date())));
+        return this.objects && this.objects?.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date())));
       case 'All':
       default:
         return this.objects;

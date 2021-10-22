@@ -242,7 +242,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
         const salesInvoices = loaded.collection<SalesInvoice>(m.SalesInvoice);
         this.table.total = loaded.value('SalesInvoices_total') as number;
         this.table.data = salesInvoices
-          .filter((v) => v.canReadInvoiceNumber)
+          ?.filter((v) => v.canReadInvoiceNumber)
           .map((v) => {
             return {
               object: v,

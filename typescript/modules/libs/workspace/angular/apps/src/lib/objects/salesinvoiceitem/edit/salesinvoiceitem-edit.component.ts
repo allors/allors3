@@ -97,7 +97,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
           const { id } = this.data;
 
           const pulls = [
@@ -288,7 +288,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
       const serialisedItems2 = loaded.collection<SerialisedItem>(nonUnifiedGoodPullName);
       const items = serialisedItems1 || serialisedItems2;
 
-      this.serialisedItems = items.filter((v) => v.AvailableForSale === true || v.SerialisedItemAvailability === this.inRent);
+      this.serialisedItems = items?.filter((v) => v.AvailableForSale === true || v.SerialisedItemAvailability === this.inRent);
 
       if (this.invoiceItem.Product !== this.previousProduct) {
         this.invoiceItem.SerialisedItem = null;
