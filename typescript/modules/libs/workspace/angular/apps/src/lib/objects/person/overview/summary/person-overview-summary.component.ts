@@ -86,12 +86,12 @@ export class PersonOverviewSummaryComponent extends TestScope {
 
       this.organisationContactRelationships = loaded.collection<OrganisationContactRelationship>(organisationContactRelationshipsPullName);
 
-      if (this.organisationContactRelationships.length > 0) {
+      if (this.organisationContactRelationships?.length > 0) {
         const organisationContactRelationship = this.organisationContactRelationships[0];
         this.organisation = organisationContactRelationship.Organisation as Organisation;
 
         if (organisationContactRelationship.ContactKinds.length > 0) {
-          this.contactKindsText = organisationContactRelationship.ContactKinds?.map((v: OrganisationContactKind) => v.Description).reduce((acc: string, cur: string) => acc + ', ' + cur);
+          this.contactKindsText = organisationContactRelationship.ContactKinds?.map((v: OrganisationContactKind) => v.Description)?.reduce((acc: string, cur: string) => acc + ', ' + cur);
         }
       }
     };

@@ -106,7 +106,7 @@ export class NonUnifiedPartOverviewSummaryComponent {
       this.partnumber = this.part.ProductIdentifications?.filter((v) => v.ProductIdentificationType === partNumberType)?.map((w) => w.Identification);
 
       if (this.part.SuppliedBy.length > 0) {
-        this.suppliers = this.part.SuppliedBy?.map((v) => v.DisplayName).reduce((acc: string, cur: string) => acc + ', ' + cur);
+        this.suppliers = this.part.SuppliedBy?.map((v) => v.DisplayName)?.reduce((acc: string, cur: string) => acc + ', ' + cur);
       }
     };
   }

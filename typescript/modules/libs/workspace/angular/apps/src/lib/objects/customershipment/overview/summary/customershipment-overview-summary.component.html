@@ -29,9 +29,9 @@
 
   <mat-card-actions>
     <button *ngIf="shipment.canExecuteCancel" mat-button (click)="cancel()">Cancel</button>
-    <button *ngIf="shipment.ShipmentItems.length > 0 && shipment.canExecuteHold" mat-button (click)="hold()">Hold</button>
-    <button *ngIf="shipment.ShipmentItems.length > 0 && shipment.canExecuteContinue" mat-button (click)="continue()">Continue</button>
-    <button *ngIf="shipment.ShipmentItems.length > 0 && shipment.canExecutePick" mat-button (click)="pick()">Pick</button>
-    <button *ngIf="shipment.ShipmentItems.length > 0 && shipment.canExecuteShip" mat-button (click)="ship()">Ship</button>
+    <button *ngIf="shipment.ShipmentItems && shipment.canExecuteHold" mat-button (click)="hold()">Hold</button>
+    <button *ngIf="shipment.ShipmentItems && shipment.canExecuteContinue" mat-button (click)="continue()">Continue</button>
+    <button *ngIf="shipment.ShipmentItems && shipment.canExecutePick" mat-button (click)="pick()">Pick</button>
+    <button *ngIf="shipment.ShipmentItems && shipment.canExecuteShip" mat-button (click)="ship()">Ship</button>
   </mat-card-actions>
 </mat-card>

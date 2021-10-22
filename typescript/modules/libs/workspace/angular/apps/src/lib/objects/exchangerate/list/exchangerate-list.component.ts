@@ -116,7 +116,7 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
         this.allors.context.reset();
 
         const objects = loaded.collection<ExchangeRate>(m.ExchangeRate);
-        this.table.total = loaded.value('ExchangeRates_total') as number;
+        this.table.total = (loaded.value('ExchangeRates_total') ?? 0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,

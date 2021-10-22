@@ -343,7 +343,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
         const partCategories = loaded.collection<PartCategory>(m.NonUnifiedPart.PartCategoriesWherePart);
 
-        this.table.total = loaded.value('NonUnifiedParts_total') as number;
+        this.table.total = (loaded.value('NonUnifiedParts_total') ?? 0) as number;
 
         this.table.data = this.parts?.map((v) => {
           return {

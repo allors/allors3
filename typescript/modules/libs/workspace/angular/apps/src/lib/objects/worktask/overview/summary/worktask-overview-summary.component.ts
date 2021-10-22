@@ -138,8 +138,8 @@ export class WorkTaskOverviewSummaryComponent {
 
       this.assets = loaded.collection<FixedAsset>(fixedAssetPullName);
 
-      const salesInvoices1 = loaded.collection<SalesInvoice>(workEffortBillingPullName);
-      const salesInvoices2 = loaded.collection<SalesInvoice>(serviceEntryPullName);
+      const salesInvoices1 = loaded.collection<SalesInvoice>(workEffortBillingPullName) ?? [];
+      const salesInvoices2 = loaded.collection<SalesInvoice>(serviceEntryPullName) ?? [];
       this.salesInvoices = new Set([...salesInvoices1, ...salesInvoices2]);
     };
   }

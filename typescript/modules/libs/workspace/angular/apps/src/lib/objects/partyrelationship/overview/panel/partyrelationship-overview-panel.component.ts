@@ -149,7 +149,7 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
       }
 
       if (this.objects) {
-        this.table.total = (loaded.value(`${pullName}_total`) ?? this.currentPartyRelationships.length) as number;;
+        this.table.total = (loaded.value(`${pullName}_total`) ?? this.currentPartyRelationships?.length ?? 0) as number;;
         this.refreshTable();
       }
     };

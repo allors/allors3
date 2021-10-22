@@ -24,7 +24,7 @@ export class AllorsMaterialStaticComponent extends RoleField {
         } else {
           const roles: any[] = this.model;
           if (roles && roles.length > 0) {
-            return roles.map((v: any) => v[this.display]).reduce((acc: string, cur: string) => acc + ', ' + cur);
+            return roles.map((v: any) => v[this.display])?.reduce((acc: string, cur: string) => acc + ', ' + cur);
           }
         }
       }

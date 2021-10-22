@@ -144,7 +144,7 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
         this.canCreate = this.internalOrganisation.canExecuteCreateQuote;
 
         const quotes = loaded.collection<Quote>(m.Quote);
-        this.table.total = loaded.value('Quotes_total') as number;
+        this.table.total = (loaded.value('Quotes_total') ?? 0) as number;
         this.table.data = quotes
           ?.filter((v) => v.canReadQuoteNumber)
           ?.map((v) => {

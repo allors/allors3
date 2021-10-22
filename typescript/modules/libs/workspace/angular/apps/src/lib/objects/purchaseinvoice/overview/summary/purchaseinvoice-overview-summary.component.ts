@@ -97,7 +97,7 @@ export class PurchasInvoiceOverviewSummaryComponent {
       this.invoice = loaded.object<PurchaseInvoice>(purchaseInvoicePullName);
       this.orders = loaded.collection<PurchaseOrder>(purchaseOrderPullName);
 
-      this.orderTotalExVat = this.orders.reduce((partialOrderTotal, order) => partialOrderTotal + order.ValidOrderItems.reduce((partialItemTotal, item) => partialItemTotal + parseFloat(item.TotalExVat), 0), 0);
+      this.orderTotalExVat = this.orders?.reduce((partialOrderTotal, order) => partialOrderTotal + order.ValidOrderItems?.reduce((partialItemTotal, item) => partialItemTotal + parseFloat(item.TotalExVat), 0), 0);
 
       this.hasIrpf = Number(this.invoice.TotalIrpf) !== 0;
     };

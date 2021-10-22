@@ -215,11 +215,11 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
         }
 
         if (internalOrganisation.ActiveEmployees != null) {
-          internalOrganisation.ActiveEmployees.reduce((c, e) => c.add(e), contacts);
+          internalOrganisation.ActiveEmployees?.reduce((c, e) => c.add(e), contacts);
         }
 
         if (this.organisation && this.organisation.CurrentContacts != null) {
-          this.organisation.CurrentContacts.reduce((c, e) => c.add(e), contacts);
+          this.organisation.CurrentContacts?.reduce((c, e) => c.add(e), contacts);
         }
 
         if (this.person) {
@@ -227,7 +227,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
         }
 
         if (this.parties) {
-          this.parties.reduce((c, e) => c.add(e), contacts);
+          this.parties?.reduce((c, e) => c.add(e), contacts);
         }
 
         this.contacts.push(...contacts);

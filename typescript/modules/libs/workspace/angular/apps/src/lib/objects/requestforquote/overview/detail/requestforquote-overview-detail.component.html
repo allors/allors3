@@ -12,7 +12,7 @@
   </div>
 </div>
 
-<form *ngIf="panel.isExpanded && request" #form="ngForm" (submit)="save()" novalidate>
+<form *ngIf="panel.isExpanded" #form="ngForm" (submit)="save()" novalidate>
   <mat-card>
     <mat-card-header>
       <mat-card-title>{{ panel.title }}</mat-card-title>

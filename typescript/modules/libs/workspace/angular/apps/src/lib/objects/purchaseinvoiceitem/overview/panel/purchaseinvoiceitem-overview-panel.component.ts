@@ -23,13 +23,13 @@ interface Row extends TableRow {
   providers: [ContextService, PanelService],
 })
 export class PurchaseInvoiceItemOverviewPanelComponent extends TestScope {
+  purchaseInvoiceItems: PurchaseInvoiceItem[];
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
 
   m: M;
 
-  purchaseInvoiceItems: PurchaseInvoiceItem[];
   invoice: PurchaseInvoice;
   table: Table<Row>;
 
@@ -78,7 +78,6 @@ export class PurchaseInvoiceItemOverviewPanelComponent extends TestScope {
       autoFilter: true,
     });
 
-    const pullName = `${panel.name}_${this.m.PurchaseInvoiceItem.tag}`;
     const invoicePullName = `${panel.name}_${this.m.PurchaseInvoice.tag}`;
 
     panel.onPull = (pulls) => {
@@ -90,29 +89,24 @@ export class PurchaseInvoiceItemOverviewPanelComponent extends TestScope {
 
       pulls.push(
         pull.PurchaseInvoice({
-          name: pullName,
+          name: invoicePullName,
           objectId: id,
-          select: {
+          include: {
             PurchaseInvoiceItems: {
-              include: {
                 PurchaseInvoiceItemState: x,
                 Part: x,
                 InvoiceItemType: x,
-              },
             },
-          },
-        }),
-        pull.PurchaseInvoice({
-          name: invoicePullName,
-          objectId: id,
+          }
         })
       );
     };
 
     panel.onPulled = (loaded) => {
-      this.purchaseInvoiceItems = loaded.collection<PurchaseInvoiceItem>(pullName);
       this.invoice = loaded.object<PurchaseInvoice>(invoicePullName);
-      this.table.total = (loaded.value(`${pullName}_total`) ?? this.purchaseInvoiceItems.length) as number;;
+      this.purchaseInvoiceItems = this.invoice?.PurchaseInvoiceItems;
+
+      this.table.total = (this.purchaseInvoiceItems?.length ?? 0) as number;;
       this.table.data = this.purchaseInvoiceItems?.map((v) => {
         return {
           object: v,

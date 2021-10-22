@@ -107,7 +107,7 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
           const shipmentPackage = this.allors.context.create<ShipmentPackage>(m.ShipmentPackage);
           this.customerShipment.addShipmentPackage(shipmentPackage);
 
-          if (this.facilities.length === 1) {
+          if (this.facilities?.length === 1) {
             this.customerShipment.ShipFromFacility = this.facilities[0];
           }
         } else {

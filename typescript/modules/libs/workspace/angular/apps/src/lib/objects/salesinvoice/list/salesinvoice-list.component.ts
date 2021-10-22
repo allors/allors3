@@ -240,7 +240,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
         this.canCreate = this.internalOrganisation.canExecuteCreateSalesInvoice;
 
         const salesInvoices = loaded.collection<SalesInvoice>(m.SalesInvoice);
-        this.table.total = loaded.value('SalesInvoices_total') as number;
+        this.table.total = (loaded.value('SalesInvoices_total') ?? 0) as number;
         this.table.data = salesInvoices
           ?.filter((v) => v.canReadInvoiceNumber)
           ?.map((v) => {

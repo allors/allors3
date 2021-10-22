@@ -78,7 +78,7 @@ export class PersonOverviewComponent extends TestScope implements AfterViewInit,
 
         this.person = loaded.object<Person>(m.Person);
         const employments = loaded.collection<Employment>(m.Person.EmploymentsWhereEmployee);
-        this.employee = employments.length > 0;
+        this.employee = employments?.length > 0;
       });
   }
 

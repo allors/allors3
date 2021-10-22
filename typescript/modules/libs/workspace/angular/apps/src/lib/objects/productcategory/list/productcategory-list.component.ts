@@ -135,7 +135,7 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
         this.allors.context.reset();
 
         const objects = loaded.collection<ProductCategory>(m.ProductCategory);
-        this.table.total = loaded.value('ProductCategories_total') as number;
+        this.table.total = (loaded.value('ProductCategories_total') ?? 0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,

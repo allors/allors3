@@ -114,7 +114,7 @@ export class SerialisedItemCharacteristicListComponent extends TestScope impleme
         this.allors.context.reset();
 
         const objects = loaded.collection<SerialisedItemCharacteristicType>(m.SerialisedItemCharacteristicType);
-        this.table.total = loaded.value('SerialisedItemCharacteristicTypes_total') as number;
+        this.table.total = (loaded.value('SerialisedItemCharacteristicTypes_total') ?? 0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,

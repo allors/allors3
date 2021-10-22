@@ -34,7 +34,7 @@ function resolveRecursive(object: IObject, node: Node, results: Set<IObject>, sk
     if (resolved != null) {
       if (node.nodes?.length > 0) {
         for (const subNode of node.nodes) {
-          resolveRecursive(resolved, subNode, results);
+          resolveRecursive(resolved, subNode, results, skipMissing);
         }
       } else {
         results.add(resolved);
@@ -46,7 +46,7 @@ function resolveRecursive(object: IObject, node: Node, results: Set<IObject>, sk
       if (node.nodes?.length > 0) {
         for (const resolved of resolveds) {
           for (const subNode of node.nodes) {
-            resolveRecursive(resolved, subNode, results);
+            resolveRecursive(resolved, subNode, results, skipMissing);
           }
         }
       } else {
