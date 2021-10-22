@@ -127,18 +127,16 @@ export class ProductQuoteOverviewPanelComponent extends TestScope implements OnI
         this.objects = fromParty;
       }
 
-      if (this.objects) {
-        this.table.total = this.objects?.length ?? 0;
-        this.table.data = this.objects?.map((v) => {
-          return {
-            object: v,
-            number: v.QuoteNumber,
-            customer: v.Receiver.DisplayName,
-            state: v.QuoteState ? v.QuoteState.Name : '',
-            lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
-          } as Row;
-        });
-      }
+      this.table.total = this.objects?.length ?? 0;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          number: v.QuoteNumber,
+          customer: v.Receiver.DisplayName,
+          state: v.QuoteState ? v.QuoteState.Name : '',
+          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+        } as Row;
+      });
     };
   }
 }

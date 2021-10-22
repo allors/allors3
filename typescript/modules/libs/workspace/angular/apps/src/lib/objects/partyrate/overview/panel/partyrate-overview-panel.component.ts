@@ -105,10 +105,8 @@ export class PartyRateOverviewPanelComponent extends TestScope implements OnInit
     this.panel.onPulled = (loaded) => {
       this.objects = loaded.collection<PartyRate>(pullName);
 
-      if (this.objects) {
-        this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;;
-        this.refreshTable();
-      }
+      this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;;
+      this.refreshTable();
     };
   }
 

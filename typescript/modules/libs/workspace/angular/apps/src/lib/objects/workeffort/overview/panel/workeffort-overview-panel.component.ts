@@ -104,18 +104,16 @@ export class WorkEffortOverviewPanelComponent extends TestScope implements OnIni
     this.panel.onPulled = (loaded) => {
       this.objects = loaded.collection<WorkEffort>(pullName);
 
-      if (this.objects) {
-        this.table.total = loaded.value(`${pullName}_total`)as number ?? this.objects?.length ?? 0;
-        this.table.data = this.objects?.map((v) => {
-          return {
-            object: v,
-            id: v.WorkEffortNumber,
-            takenBy: v.TakenBy.DisplayName,
-            name: v.Name,
-            description: v.Description,
-          } as Row;
-        });
-      }
+      this.table.total = loaded.value(`${pullName}_total`)as number ?? this.objects?.length ?? 0;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          id: v.WorkEffortNumber,
+          takenBy: v.TakenBy.DisplayName,
+          name: v.Name,
+          description: v.Description,
+        } as Row;
+      });
     };
   }
 }

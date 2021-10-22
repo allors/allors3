@@ -108,18 +108,16 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope imp
       this.workEffort = loaded.object<WorkEffort>(this.m.WorkEffort);
       this.objects = loaded.collection<WorkEffortPurchaseOrderItemAssignment>(pullName);
 
-      if (this.objects) {
-        this.table.total = this.objects?.length ?? 0;
-        this.table.data = this.objects?.map((v) => {
-          return {
-            object: v,
-            supplier: (v.PurchaseOrder.TakenViaSupplier && v.PurchaseOrder.TakenViaSupplier.DisplayName) || (v.PurchaseOrder.TakenViaSubcontractor && v.PurchaseOrder.TakenViaSubcontractor.DisplayName),
-            description: v.PurchaseOrderItem.Description,
-            orderNumber: v.PurchaseOrder.OrderNumber,
-            quantity: v.Quantity,
-          } as Row;
-        });
-      }
+      this.table.total = this.objects?.length ?? 0;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          supplier: (v.PurchaseOrder.TakenViaSupplier && v.PurchaseOrder.TakenViaSupplier.DisplayName) || (v.PurchaseOrder.TakenViaSubcontractor && v.PurchaseOrder.TakenViaSubcontractor.DisplayName),
+          description: v.PurchaseOrderItem.Description,
+          orderNumber: v.PurchaseOrder.OrderNumber,
+          quantity: v.Quantity,
+        } as Row;
+      });
     };
   }
 }

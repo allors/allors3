@@ -112,10 +112,8 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
       this.objects = loaded.collection<SupplierOffering>(pullName);
       this.currentObjects = this.objects?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
 
-      if (this.objects) {
-        this.table.total = loaded.value(`${pullName}_total`)as number ?? this.objects?.length ?? 0 ;
-        this.refreshTable();
-      }
+      this.table.total = loaded.value(`${pullName}_total`)as number ?? this.objects?.length ?? 0 ;
+      this.refreshTable();
     };
   }
 

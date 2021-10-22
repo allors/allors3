@@ -152,20 +152,18 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
 
       this.objects = this.fromParty || this.fromWorkEffort;
 
-      if (this.objects) {
-        this.table.total = this.objects?.length ?? 0;
-        this.table.data = this.objects?.map((v) => {
-          return {
-            object: v,
-            number: v.Assignment.WorkEffortNumber,
-            name: v.Assignment.Name,
-            party: v.Party.DisplayName,
-            status: v.Assignment.WorkEffortState ? v.Assignment.WorkEffortState.Name : '',
-            from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-            through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
-          } as Row;
-        });
-      }
+      this.table.total = this.objects?.length ?? 0;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          number: v.Assignment.WorkEffortNumber,
+          name: v.Assignment.Name,
+          party: v.Party.DisplayName,
+          status: v.Assignment.WorkEffortState ? v.Assignment.WorkEffortState.Name : '',
+          from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
+          through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
+        } as Row;
+      });
     };
   }
 }

@@ -148,10 +148,8 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
         this.allPartyRelationships = this.allPartyRelationships.concat(this.inactivePartyRelationships);
       }
 
-      if (this.objects) {
-        this.table.total = (loaded.value(`${pullName}_total`) ?? this.currentPartyRelationships?.length ?? 0) as number;;
-        this.refreshTable();
-      }
+      this.table.total = (loaded.value(`${pullName}_total`) ?? this.currentPartyRelationships?.length ?? 0) as number;;
+      this.refreshTable();
     };
   }
 

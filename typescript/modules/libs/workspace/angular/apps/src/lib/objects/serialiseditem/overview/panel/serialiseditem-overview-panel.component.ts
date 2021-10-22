@@ -164,20 +164,18 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
           this.objects = this.objects.concat(partSerialisedItems);
         }
 
-        if (this.objects) {
-          this.table.total = this.objects?.length ?? 0;
-          this.table.data = this.objects?.map((v) => {
-            return {
-              object: v,
-              number: v.ItemNumber,
-              name: v.DisplayName,
-              availability: v.SerialisedItemAvailability ? v.SerialisedItemAvailability.Name : '',
-              onWebsite: v.AvailableForSale ? 'Yes' : 'No',
-              ownership: v.Ownership ? v.Ownership.Name : '',
-              ownedBy: v.OwnedBy ? v.OwnedBy.DisplayName : '',
-            } as Row;
-          });
-        }
+        this.table.total = this.objects?.length ?? 0;
+        this.table.data = this.objects?.map((v) => {
+          return {
+            object: v,
+            number: v.ItemNumber,
+            name: v.DisplayName,
+            availability: v.SerialisedItemAvailability ? v.SerialisedItemAvailability.Name : '',
+            onWebsite: v.AvailableForSale ? 'Yes' : 'No',
+            ownership: v.Ownership ? v.Ownership.Name : '',
+            ownedBy: v.OwnedBy ? v.OwnedBy.DisplayName : '',
+          } as Row;
+        });
       };
     };
   }

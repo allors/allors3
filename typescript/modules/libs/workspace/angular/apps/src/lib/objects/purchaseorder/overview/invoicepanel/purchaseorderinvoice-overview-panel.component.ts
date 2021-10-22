@@ -218,21 +218,19 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
           v.PurchaseInvoicesWherePurchaseOrder.includes(this.purchaseInvoice)
       );
 
-      if (this.objects) {
-        this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;
-        this.table.data = this.objects?.map((v) => {
-          return {
-            object: v,
-            number: v.OrderNumber,
-            description: v.Description,
-            reference: v.CustomerReference,
-            totalExVat: v.TotalExVat.toString(),
-            state: v.PurchaseOrderState.Name,
-            shipmentState: v.PurchaseOrderShipmentState.Name,
-            paymentState: v.PurchaseOrderPaymentState.Name,
-          } as Row;
-        });
-      }
+      this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          number: v.OrderNumber,
+          description: v.Description,
+          reference: v.CustomerReference,
+          totalExVat: v.TotalExVat.toString(),
+          state: v.PurchaseOrderState.Name,
+          shipmentState: v.PurchaseOrderShipmentState.Name,
+          paymentState: v.PurchaseOrderPaymentState.Name,
+        } as Row;
+      });
     };
   }
 

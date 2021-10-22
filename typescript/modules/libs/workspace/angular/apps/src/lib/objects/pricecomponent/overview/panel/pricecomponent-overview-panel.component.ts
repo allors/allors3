@@ -114,10 +114,8 @@ export class PriceComponentOverviewPanelComponent extends TestScope implements O
     this.panel.onPulled = (loaded) => {
       this.objects = loaded.collection<PriceComponent>(pullName);
 
-      if (this.objects) {
-        this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;;
-        this.refreshTable();
-      }
+      this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;;
+      this.refreshTable();
     };
   }
 

@@ -157,20 +157,18 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
         this.objects = fromAsset;
       }
 
-      if (this.objects) {
-        this.table.total = this.objects?.length ?? 0;
-        this.table.data = this.objects?.map((v) => {
-          return {
-            object: v,
-            number: v.WorkEffortNumber,
-            name: v.Name,
-            customer: v.Customer.DisplayName,
-            state: v.WorkEffortState ? v.WorkEffortState.Name : '',
-            cost: v.TotalCost,
-            lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
-          } as Row;
-        });
-      }
+      this.table.total = this.objects?.length ?? 0;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          number: v.WorkEffortNumber,
+          name: v.Name,
+          customer: v.Customer.DisplayName,
+          state: v.WorkEffortState ? v.WorkEffortState.Name : '',
+          cost: v.TotalCost,
+          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+        } as Row;
+      });
     };
   }
 }

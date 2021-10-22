@@ -128,18 +128,16 @@ export class RequestForQuoteOverviewPanelComponent extends TestScope implements 
         this.objects = fromParty;
       }
 
-      if (this.objects) {
-        this.table.total = this.objects?.length ?? 0;
-        this.table.data = this.objects?.map((v) => {
-          return {
-            object: v,
-            number: v.RequestNumber,
-            customer: v.Originator && v.Originator.DisplayName,
-            state: v.RequestState ? v.RequestState.Name : '',
-            lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
-          } as Row;
-        });
-      }
+      this.table.total = this.objects?.length ?? 0;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          number: v.RequestNumber,
+          customer: v.Originator && v.Originator.DisplayName,
+          state: v.RequestState ? v.RequestState.Name : '',
+          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+        } as Row;
+      });
     };
   }
 }
