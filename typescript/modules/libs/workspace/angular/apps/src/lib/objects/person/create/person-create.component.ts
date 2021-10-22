@@ -5,7 +5,7 @@ import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { InternalOrganisation, Locale, Person, Organisation, OrganisationContactRelationship, Currency, Enumeration, CustomerRelationship, Employment, PersonRole, OrganisationContactKind } from '@allors/workspace/domain/default';
+import { InternalOrganisation, Locale, Person, Organisation, OrganisationContactRelationship, Currency, Enumeration, CustomerRelationship, Employment, PersonRole, OrganisationContactKind, GenderType, Salutation } from '@allors/workspace/domain/default';
 import { NavigationService, ObjectData, RefreshService, SaveService, SingletonId, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
@@ -123,8 +123,8 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.currencies = loaded.collection<Currency>(m.Currency);
         this.locales = loaded.collection<Locale>(m.Singleton.Locales) || [];
-        this.genders = loaded.collection<Enumeration>(m.Enumeration);
-        this.salutations = loaded.collection<Enumeration>(m.Enumeration);
+        this.genders = loaded.collection<GenderType>(m.GenderType);
+        this.salutations = loaded.collection<Salutation>(m.Salutation);
         this.roles = loaded.collection<PersonRole>(m.PersonRole);
         this.organisationContactKinds = loaded.collection<OrganisationContactKind>(m.OrganisationContactKind);
 

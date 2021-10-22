@@ -1,7 +1,7 @@
 import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { Locale, Person, Enumeration } from '@allors/workspace/domain/default';
+import { Locale, Person, Enumeration, Salutation, GenderType } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
@@ -47,8 +47,8 @@ export class PersonInlineComponent implements OnInit, OnDestroy {
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
       this.locales = loaded.collection<Locale>(m.Locale);
-      this.genders = loaded.collection<Enumeration>(m.Enumeration);
-      this.salutations = loaded.collection<Enumeration>(m.Enumeration);
+      this.genders = loaded.collection<GenderType>(m.GenderType);
+      this.salutations = loaded.collection<Salutation>(m.Salutation);
 
       this.person = this.allors.context.create<Person>(m.Person);
     });

@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Currency, Enumeration, InternalOrganisation, Locale, Organisation, Person } from '@allors/workspace/domain/default';
+import { Currency, Enumeration, GenderType, InternalOrganisation, Locale, Organisation, Person, Salutation } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService, SingletonId, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
@@ -139,8 +139,8 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.currencies = loaded.collection<Currency>(m.Currency);
         this.locales = loaded.collection<Locale>(m.Singleton.Locales) || [];
-        this.genders = loaded.collection<Enumeration>(m.Enumeration);
-        this.salutations = loaded.collection<Enumeration>(m.Enumeration);
+        this.genders = loaded.collection<GenderType>(m.GenderType);
+        this.salutations = loaded.collection<Salutation>(m.Salutation);
       });
   }
 

@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { ContactMechanism, Enumeration, TelecommunicationsNumber } from '@allors/workspace/domain/default';
+import { ContactMechanism, ContactMechanismType, Enumeration, TelecommunicationsNumber } from '@allors/workspace/domain/default';
 import { RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -60,7 +60,7 @@ export class TelecommunicationsNumberEditComponent extends TestScope implements 
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.contactMechanismTypes = loaded.collection<Enumeration>(m.Enumeration);
+        this.contactMechanismTypes = loaded.collection<ContactMechanismType>(m.ContactMechanismType);
         this.contactMechanism = loaded.object<TelecommunicationsNumber>(m.ContactMechanism);
 
         if (this.contactMechanism.canWriteAreaCode) {

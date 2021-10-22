@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Locale, Organisation, Part, Facility, InternalOrganisation, SerialisedInventoryItem, SerialisedItem, Enumeration } from '@allors/workspace/domain/default';
+import { Locale, Organisation, Part, Facility, InternalOrganisation, SerialisedInventoryItem, SerialisedItem, Enumeration, Ownership, SerialisedItemAvailability, SerialisedItemState } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
@@ -191,9 +191,9 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
 
         this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
         this.locales = this.fetcher.getAdditionalLocales(loaded);
-        this.serialisedItemStates = loaded.collection<Enumeration>(m.Enumeration);
-        this.serialisedItemAvailabilities = loaded.collection<Enumeration>(m.Enumeration);
-        this.ownerships = loaded.collection<Enumeration>(m.Enumeration);
+        this.serialisedItemStates = loaded.collection<SerialisedItemState>(m.SerialisedItemState);
+        this.serialisedItemAvailabilities = loaded.collection<SerialisedItemAvailability>(m.SerialisedItemAvailability);
+        this.ownerships = loaded.collection<Ownership>(m.Ownership);
         this.part = loaded.object<Part>(m.SerialisedItem.PartWhereSerialisedItem);
 
         const serialisedInventoryItems = loaded.collection<SerialisedInventoryItem>(m.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem);
