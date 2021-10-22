@@ -93,7 +93,7 @@ export class WorkEffortAssignmentRateEditComponent extends TestScope implements 
         this.workEffortPartyAssignments = loaded.collection<WorkEffortPartyAssignment>(m.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment);
         this.rateTypes = loaded.collection<RateType>(m.RateType);
         this.timeFrequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
-        const hour = this.timeFrequencies.find((v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5');
+        const hour = this.timeFrequencies?.find((v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5');
 
         if (isCreate) {
           this.title = 'Add Rate';

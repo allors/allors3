@@ -146,17 +146,17 @@ export class PartyContactMechanismOverviewPanelComponent extends TestScope imple
       }
 
       if (this.objects) {
-        this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects.length) as number;;
+        this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;;
         this.refreshTable();
       }
     };
   }
 
   public refreshTable() {
-    this.table.data = this.partyContactMechanisms.map((v) => {
+    this.table.data = this.partyContactMechanisms?.map((v) => {
       return {
         object: v,
-        purpose: v.ContactPurposes.map((w) => w.Name).join(', '),
+        purpose: v.ContactPurposes?.map((w) => w.Name).join(', '),
         contact: v.ContactMechanism.DisplayName,
         lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
       } as Row;

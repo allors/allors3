@@ -111,8 +111,8 @@ export class WorkEffortInventoryAssignmentOverviewPanelComponent extends TestSco
       this.objects = loaded.collection<WorkEffortInventoryAssignment>(pullName);
 
       if (this.objects) {
-        this.table.total = this.objects.length;
-        this.table.data = this.objects.map((v) => {
+        this.table.total = this.objects?.length ?? 0;
+        this.table.data = this.objects?.map((v) => {
           return {
             object: v,
             part: v.InventoryItem.Part.Name,

@@ -187,11 +187,11 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
         this.serialisedItemAvailabilities = loaded.collection<SerialisedItemAvailability>(m.SerialisedItemAvailability);
         this.facilities = this.fetcher.getWarehouses(loaded);
         this.invoiceItemTypes = loaded.collection<InvoiceItemType>(m.InvoiceItemType);
-        this.productItemType = this.invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === '0d07f778-2735-44cb-8354-fb887ada42ad');
-        this.partItemType = this.invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b');
+        this.productItemType = this.invoiceItemTypes?.find((v: InvoiceItemType) => v.UniqueId === '0d07f778-2735-44cb-8354-fb887ada42ad');
+        this.partItemType = this.invoiceItemTypes?.find((v: InvoiceItemType) => v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b');
 
         const serialisedItemAvailabilities = loaded.collection<SerialisedItemAvailability>(m.SerialisedItemAvailability);
-        this.inRent = serialisedItemAvailabilities.find((v: SerialisedItemAvailability) => v.UniqueId === 'ec87f723-2284-4f5c-ba57-fcf328a0b738');
+        this.inRent = serialisedItemAvailabilities?.find((v: SerialisedItemAvailability) => v.UniqueId === 'ec87f723-2284-4f5c-ba57-fcf328a0b738');
 
         if (isCreate) {
           this.title = 'Add sales invoice Item';
@@ -241,7 +241,7 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
 
   public serialisedItemSelected(serialisedItem: IObject): void {
     const unifiedGood = this.invoiceItem.Product as UnifiedGood;
-    this.serialisedItem = unifiedGood.SerialisedItems.find((v) => v === serialisedItem);
+    this.serialisedItem = unifiedGood.SerialisedItems?.find((v) => v === serialisedItem);
     this.invoiceItem.AssignedUnitPrice = this.serialisedItem.ExpectedSalesPrice;
     this.invoiceItem.Quantity = '1';
   }

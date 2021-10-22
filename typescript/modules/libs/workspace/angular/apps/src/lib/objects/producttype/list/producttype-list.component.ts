@@ -110,7 +110,7 @@ export class ProductTypesOverviewComponent extends TestScope implements OnInit, 
 
         const objects = loaded.collection<ProductType>(m.ProductType);
         this.table.total = loaded.value('ProductTypes_total') as number;
-        this.table.data = objects.map((v) => {
+        this.table.data = objects?.map((v) => {
           return {
             object: v,
             name: `${v.Name}`,

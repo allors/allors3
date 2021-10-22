@@ -127,14 +127,14 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
         const productCategories = loaded.collection<ProductCategory>(m.UnifiedGood.ProductCategoriesWhereProduct);
 
         this.table.total = loaded.value('UnifiedGoods_total') as number;
-        this.table.data = goods.map((v) => {
+        this.table.data = goods?.map((v) => {
           return {
             object: v,
             name: v.Name,
             id: v.ProductNumber,
             categories: productCategories
               ?.filter((w) => w.Products.includes(v))
-              .map((w) => w.DisplayName)
+              ?.map((w) => w.DisplayName)
               .join(', '),
             qoh: v.QuantityOnHand,
             photos: v.Photos.length.toString(),

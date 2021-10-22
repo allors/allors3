@@ -205,8 +205,8 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
         this.previousShipToparty = this.customerShipment.ShipToParty;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipToAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
+      const partyContactMechanisms = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
+      this.shipToAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
       this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
@@ -239,7 +239,7 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipFromAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
+      this.shipFromAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
       this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }

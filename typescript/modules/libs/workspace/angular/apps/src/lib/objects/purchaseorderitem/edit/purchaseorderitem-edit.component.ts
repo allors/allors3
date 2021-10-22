@@ -177,10 +177,10 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
         this.facilities = loaded.collection<Facility>(m.Facility);
 
         this.invoiceItemTypes = loaded.collection<InvoiceItemType>(m.InvoiceItemType);
-        this.partItemType = this.invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b');
-        this.productItemType = this.invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === '0d07f778-2735-44cb-8354-fb887ada42ad');
-        this.serviceItemType = this.invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === 'a4d2e6d0-c6c1-46ec-a1cf-3a64822e7a9e');
-        this.timeItemType = this.invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === 'da178f93-234a-41ed-815c-819af8ca4e6f');
+        this.partItemType = this.invoiceItemTypes?.find((v: InvoiceItemType) => v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b');
+        this.productItemType = this.invoiceItemTypes?.find((v: InvoiceItemType) => v.UniqueId === '0d07f778-2735-44cb-8354-fb887ada42ad');
+        this.serviceItemType = this.invoiceItemTypes?.find((v: InvoiceItemType) => v.UniqueId === 'a4d2e6d0-c6c1-46ec-a1cf-3a64822e7a9e');
+        this.timeItemType = this.invoiceItemTypes?.find((v: InvoiceItemType) => v.UniqueId === 'da178f93-234a-41ed-815c-819af8ca4e6f');
 
         this.partsFilter = new SearchFactory({
           objectType: this.m.NonUnifiedPart,
@@ -253,7 +253,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
 
   public serialisedItemSelected(serialisedItem: IObject): void {
     if (serialisedItem) {
-      this.serialisedItem = this.part.SerialisedItems.find((v) => v === serialisedItem);
+      this.serialisedItem = this.part.SerialisedItems?.find((v) => v === serialisedItem);
       this.orderItem.QuantityOrdered = '1';
     }
   }
@@ -352,7 +352,7 @@ export class PurchaseOrderItemEditComponent extends TestScope implements OnInit,
       this.serialised = part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 
       const supplierOfferings = loaded.collection<SupplierOffering>(m.Part.SupplierOfferingsWherePart);
-      this.supplierOffering = supplierOfferings.find((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())) && v.Supplier === this.order.TakenViaSupplier);
+      this.supplierOffering = supplierOfferings?.find((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())) && v.Supplier === this.order.TakenViaSupplier);
 
       this.serialisedItems = loaded.collection<SerialisedItem>(m.Part.SerialisedItems);
 

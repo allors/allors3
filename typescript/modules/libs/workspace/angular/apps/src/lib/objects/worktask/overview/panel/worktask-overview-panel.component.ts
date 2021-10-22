@@ -158,8 +158,8 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
       }
 
       if (this.objects) {
-        this.table.total = this.objects.length;
-        this.table.data = this.objects.map((v) => {
+        this.table.total = this.objects?.length ?? 0;
+        this.table.data = this.objects?.map((v) => {
           return {
             object: v,
             number: v.WorkEffortNumber,

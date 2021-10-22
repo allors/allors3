@@ -107,7 +107,7 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
 
         const objects = loaded.collection<Carrier>(m.Carrier);
         this.table.total = loaded.value('Carriers_total') as number;
-        this.table.data = objects.map((v) => {
+        this.table.data = objects?.map((v) => {
           return {
             object: v,
             name: `${v.Name}`,

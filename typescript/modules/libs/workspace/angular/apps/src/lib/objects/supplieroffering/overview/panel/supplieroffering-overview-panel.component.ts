@@ -113,14 +113,14 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
       this.currentObjects = this.objects?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
 
       if (this.objects) {
-        this.table.total = loaded.value(`${pullName}_total`)as number ?? this.objects.length ;
+        this.table.total = loaded.value(`${pullName}_total`)as number ?? this.objects?.length ?? 0 ;
         this.refreshTable();
       }
     };
   }
 
   public refreshTable() {
-    this.table.data = this.suplierOfferings.map((v) => {
+    this.table.data = this.suplierOfferings?.map((v) => {
       return {
         object: v,
         supplier: v.Supplier.DisplayName,

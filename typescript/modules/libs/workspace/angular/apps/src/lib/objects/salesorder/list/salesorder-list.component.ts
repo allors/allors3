@@ -154,13 +154,13 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
         this.table.total = loaded.value('SalesOrders_total') as number;
         this.table.data = requests
           ?.filter((v) => v.canReadOrderNumber)
-          .map((v) => {
+          ?.map((v) => {
             return {
               object: v,
               number: `${v.OrderNumber}`,
               shipToCustomer: v.ShipToCustomer && v.ShipToCustomer.DisplayName,
               state: `${v.SalesOrderState && v.SalesOrderState.Name}`,
-              invoice: v.SalesInvoicesWhereSalesOrder.map((w) => w.InvoiceNumber).join(', '),
+              invoice: v.SalesInvoicesWhereSalesOrder?.map((w) => w.InvoiceNumber).join(', '),
               customerReference: `${v.Description || ''}`,
               lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
             } as Row;

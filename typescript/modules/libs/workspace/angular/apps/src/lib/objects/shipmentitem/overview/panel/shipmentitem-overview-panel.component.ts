@@ -117,7 +117,7 @@ export class ShipmentItemOverviewPanelComponent extends TestScope {
       this.shipmentItems = loaded.collection<ShipmentItem>(pullName);
       this.shipment = loaded.object<Shipment>(shipmentPullName);
       this.table.total = ((loaded.value(`${pullName}_total`) as number) ?? this.shipmentItems.length) as number;
-      this.table.data = this.shipmentItems.map((v) => {
+      this.table.data = this.shipmentItems?.map((v) => {
         return {
           object: v,
           item: (v.Good && v.Good.Name) || (v.Part && v.Part.Name) || '',

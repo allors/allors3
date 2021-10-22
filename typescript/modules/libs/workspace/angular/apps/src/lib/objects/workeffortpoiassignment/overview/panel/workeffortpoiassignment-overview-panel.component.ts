@@ -109,8 +109,8 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope imp
       this.objects = loaded.collection<WorkEffortPurchaseOrderItemAssignment>(pullName);
 
       if (this.objects) {
-        this.table.total = this.objects.length;
-        this.table.data = this.objects.map((v) => {
+        this.table.total = this.objects?.length ?? 0;
+        this.table.data = this.objects?.map((v) => {
           return {
             object: v,
             supplier: (v.PurchaseOrder.TakenViaSupplier && v.PurchaseOrder.TakenViaSupplier.DisplayName) || (v.PurchaseOrder.TakenViaSubcontractor && v.PurchaseOrder.TakenViaSubcontractor.DisplayName),

@@ -113,7 +113,7 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
 
         this.rateTypes = loaded.collection<RateType>(m.RateType);
         this.frequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
-        const hour = this.frequencies.find((v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5');
+        const hour = this.frequencies?.find((v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5');
 
         if (isCreate) {
           this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
@@ -126,14 +126,14 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
           this.timeEntry.TimeFrequency = hour;
 
           const workEffortPartyAssignments = loaded.collection<WorkEffortPartyAssignment>(workEffortPartyAssignmentPullName);
-          this.workers = Array.from(new Set(workEffortPartyAssignments.map((v) => v.Party)).values());
+          this.workers = Array.from(new Set(workEffortPartyAssignments?.map((v) => v.Party)).values());
         } else {
           this.timeEntry = loaded.object<TimeEntry>(m.TimeEntry);
           this.selectedWorker = this.timeEntry.Worker;
           this.workEffort = this.timeEntry.WorkEffort;
 
           const workEffortPartyAssignments = loaded.collection<WorkEffortPartyAssignment>(m.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment);
-          this.workers = Array.from(new Set(workEffortPartyAssignments.map((v) => v.Party)).values());
+          this.workers = Array.from(new Set(workEffortPartyAssignments?.map((v) => v.Party)).values());
 
           if (this.timeEntry.canWriteAssignedAmountOfTime) {
             this.title = 'Edit Time Entry';

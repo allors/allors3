@@ -137,7 +137,7 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
         this.allors.context.reset();
         const objects = loaded.collection<Shipment>(m.Shipment);
         this.table.total = loaded.value('Shipments_total') as number;
-        this.table.data = objects.map((v) => {
+        this.table.data = objects?.map((v) => {
           return {
             object: v,
             number: `${v.ShipmentNumber}`,

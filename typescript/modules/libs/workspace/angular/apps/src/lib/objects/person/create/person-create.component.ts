@@ -128,8 +128,8 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
         this.roles = loaded.collection<PersonRole>(m.PersonRole);
         this.organisationContactKinds = loaded.collection<OrganisationContactKind>(m.OrganisationContactKind);
 
-        this.customerRole = this.roles.find((v: PersonRole) => v.UniqueId === 'b29444ef-0950-4d6f-ab3e-9c6dc44c050f');
-        this.employeeRole = this.roles.find((v: PersonRole) => v.UniqueId === 'db06a3e1-6146-4c18-a60d-dd10e19f7243');
+        this.customerRole = this.roles?.find((v: PersonRole) => v.UniqueId === 'b29444ef-0950-4d6f-ab3e-9c6dc44c050f');
+        this.employeeRole = this.roles?.find((v: PersonRole) => v.UniqueId === 'db06a3e1-6146-4c18-a60d-dd10e19f7243');
 
         this.person = this.allors.context.create<Person>(m.Person);
         this.person.CollectiveWorkEffortInvoice = false;

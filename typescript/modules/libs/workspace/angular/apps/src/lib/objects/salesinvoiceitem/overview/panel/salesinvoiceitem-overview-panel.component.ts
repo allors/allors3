@@ -111,7 +111,7 @@ export class SalesInvoiceItemOverviewPanelComponent extends TestScope {
       this.salesInvoiceItems = loaded.collection<SalesInvoiceItem>(pullName);
       this.invoice = loaded.object<SalesInvoice>(invoicePullName);
       this.table.total = ((loaded.value(`${pullName}_total`) as number) ?? this.salesInvoiceItems.length) as number;
-      this.table.data = this.salesInvoiceItems.map((v) => {
+      this.table.data = this.salesInvoiceItems?.map((v) => {
         return {
           object: v,
           item: (v.Product && v.Product.Name) || (v.SerialisedItem && v.SerialisedItem.Name) || '',

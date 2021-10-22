@@ -48,7 +48,7 @@ export class FacilityInlineComponent implements OnInit, OnDestroy {
       this.facilities = loaded.collection<Facility>(m.Facility);
 
       this.facilityTypes = loaded.collection<FacilityType>(m.FacilityType);
-      const storageLocation = this.facilityTypes.find((v) => v.UniqueId === 'ff66c1ad-3048-48fd-a7d9-fbf97a090edd');
+      const storageLocation = this.facilityTypes?.find((v) => v.UniqueId === 'ff66c1ad-3048-48fd-a7d9-fbf97a090edd') ;
 
       this.facility = this.allors.context.create<Facility>(m.Facility);
       this.facility.Owner = this.internalOrganisation;

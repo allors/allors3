@@ -148,8 +148,8 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
         this.objects = inventoryObjects.concat(serialisedItemobjectsforPart);
 
         if (this.objects) {
-          this.table.total = (loaded.value(`${this.objects.length}_total`) as number) ?? this.objects.length;
-          this.table.data = this.objects.map((v) => {
+          this.table.total = (loaded.value(`${this.objects?.length ?? 0}_total`) as number) ?? this.objects?.length ?? 0;
+          this.table.data = this.objects?.map((v) => {
             return {
               object: v,
               facility: v.Facility.Name,

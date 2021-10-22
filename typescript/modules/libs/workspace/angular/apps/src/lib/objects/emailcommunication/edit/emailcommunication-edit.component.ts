@@ -317,7 +317,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
-      this.fromEmails = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress).map((v) => v.ContactMechanism);
+      this.fromEmails = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress)?.map((v) => v.ContactMechanism);
     });
   }
 
@@ -349,7 +349,7 @@ export class EmailCommunicationEditComponent extends TestScope implements OnInit
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
-      this.toEmails = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress).map((v) => v.ContactMechanism);
+      this.toEmails = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress)?.map((v) => v.ContactMechanism);
     });
   }
 

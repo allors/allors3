@@ -114,7 +114,7 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
 
         const purchaseOrders = loaded.collection<PurchaseOrder>(m.PurchaseOrder);
         this.purchaseOrders = purchaseOrders?.filter((v) =>
-          v.PurchaseOrderItems.find((i) => i.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem.length === 0 && !i.Part && i.PurchaseOrderWherePurchaseOrderItem.OrderedBy === this.workEffort.TakenBy)
+          v.PurchaseOrderItems?.find((i) => i.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem.length === 0 && !i.Part && i.PurchaseOrderWherePurchaseOrderItem.OrderedBy === this.workEffort.TakenBy)
         );
       });
   }

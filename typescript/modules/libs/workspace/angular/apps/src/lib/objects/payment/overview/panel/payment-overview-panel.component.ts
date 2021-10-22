@@ -118,7 +118,7 @@ export class PaymentOverviewPanelComponent extends TestScope {
       this.payments = loaded.collection<Payment>(pullName);
 
       this.table.total = (loaded.value(`${pullName}_total`) ?? this.payments.length) as number;;
-      this.table.data = this.payments.map((v) => {
+      this.table.data = this.payments?.map((v) => {
         return {
           object: v,
           date: v.EffectiveDate && format(new Date(v.EffectiveDate), 'dd-MM-yyyy'),

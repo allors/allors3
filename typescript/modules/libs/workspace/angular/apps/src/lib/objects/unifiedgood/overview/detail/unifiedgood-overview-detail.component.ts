@@ -242,11 +242,11 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
 
         const supplierRelationships = loaded.collection<SupplierRelationship>(m.SupplierRelationship);
         const currentsupplierRelationships = supplierRelationships?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
-        this.currentSuppliers = new Set(currentsupplierRelationships.map((v) => v.Supplier).sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0)));
+        this.currentSuppliers = new Set(currentsupplierRelationships?.map((v) => v.Supplier).sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0)));
 
-        const goodNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
+        const goodNumberType = this.goodIdentificationTypes?.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
 
-        this.productNumber = this.good.ProductIdentifications.find((v) => v.ProductIdentificationType === goodNumberType);
+        this.productNumber = this.good.ProductIdentifications?.find((v) => v.ProductIdentificationType === goodNumberType);
 
         this.suppliers = this.good.SuppliedBy as Organisation[];
         this.selectedSuppliers = this.suppliers;
@@ -347,7 +347,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
             suppliersToDelete.splice(index, 1);
           }
 
-          const supplierOffering = this.supplierOfferings.find((v) => v.Supplier === supplier && isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
+          const supplierOffering = this.supplierOfferings?.find((v) => v.Supplier === supplier && isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
 
           if (supplierOffering == null) {
             this.supplierOfferings.push(this.newSupplierOffering(supplier));
@@ -359,7 +359,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
 
       if (suppliersToDelete != null) {
         suppliersToDelete.forEach((supplier: Organisation) => {
-          const supplierOffering = this.supplierOfferings.find((v) => v.Supplier === supplier && isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
+          const supplierOffering = this.supplierOfferings?.find((v) => v.Supplier === supplier && isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
 
           if (supplierOffering != null) {
             supplierOffering.ThroughDate = new Date();

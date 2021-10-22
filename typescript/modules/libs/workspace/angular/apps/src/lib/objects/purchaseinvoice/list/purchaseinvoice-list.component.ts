@@ -241,7 +241,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
         this.table.total = loaded.value('PurchaseInvoices_total') as number;
         this.table.data = purchaseInvoices
           ?.filter((v) => v.canReadInvoiceNumber)
-          .map((v) => {
+          ?.map((v) => {
             return {
               object: v,
               number: v.InvoiceNumber,

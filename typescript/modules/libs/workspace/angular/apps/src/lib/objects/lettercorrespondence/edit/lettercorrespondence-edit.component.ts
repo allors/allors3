@@ -315,7 +315,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
-      this.fromPostalAddresses = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.PostalAddress).map((v) => v.ContactMechanism);
+      this.fromPostalAddresses = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.PostalAddress)?.map((v) => v.ContactMechanism);
     });
   }
 
@@ -347,7 +347,7 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
-      this.toPostalAddresses = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.PostalAddress).map((v) => v.ContactMechanism);
+      this.toPostalAddresses = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.PostalAddress)?.map((v) => v.ContactMechanism);
     });
   }
   public addressAdded(partyContactMechanism: PartyContactMechanism): void {

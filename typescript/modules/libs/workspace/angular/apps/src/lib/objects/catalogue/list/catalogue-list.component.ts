@@ -128,7 +128,7 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
 
         const objects = loaded.collection<Catalogue>(m.Catalogue);
         this.table.total = loaded.value('Catalogues_total') as number;
-        this.table.data = objects.map((v) => {
+        this.table.data = objects?.map((v) => {
           return {
             object: v,
             name: `${v.Name}`,

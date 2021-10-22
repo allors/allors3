@@ -127,14 +127,14 @@ export class WorkEffortAssignmentRateOverviewPanelComponent extends TestScope im
       this.objects = loaded.collection<WorkEffortAssignmentRate>(pullName);
 
       if (this.objects) {
-        this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.objects.length;
+        this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.objects?.length ?? 0;
         this.refreshTable();
       }
     };
   }
 
   public refreshTable() {
-    this.table.data = this.workEffortAssignmentRates.map((v) => {
+    this.table.data = this.workEffortAssignmentRates?.map((v) => {
       return {
         object: v,
         // partyAssignment: v.WorkEffortPartyAssignment.DisplayName,

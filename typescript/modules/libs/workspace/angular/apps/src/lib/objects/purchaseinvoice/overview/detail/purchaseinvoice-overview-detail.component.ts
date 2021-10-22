@@ -420,7 +420,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.billedFromContactMechanisms = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.billedFromContactMechanisms = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.billedFromContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
@@ -466,7 +466,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipToCustomerAddresses = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToCustomerAddresses = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
@@ -511,7 +511,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.billToEndCustomerContactMechanisms = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.billToEndCustomerContactMechanisms = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.billToEndCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
@@ -556,7 +556,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipToEndCustomerAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToEndCustomerAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToEndCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }

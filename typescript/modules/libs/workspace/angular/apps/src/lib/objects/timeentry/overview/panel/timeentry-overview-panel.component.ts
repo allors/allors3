@@ -98,8 +98,8 @@ export class TimeEntryOverviewPanelComponent extends TestScope {
       this.objects = loaded.collection<TimeEntry>(m.WorkEffort.ServiceEntriesWhereWorkEffort);
 
       if (this.objects) {
-        this.table.total = this.objects.length;
-        this.table.data = this.objects.map((v) => {
+        this.table.total = this.objects?.length ?? 0;
+        this.table.data = this.objects?.map((v) => {
           return {
             object: v,
             person: v.Worker && v.Worker.DisplayName,

@@ -147,7 +147,7 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
         this.table.total = loaded.value('Quotes_total') as number;
         this.table.data = quotes
           ?.filter((v) => v.canReadQuoteNumber)
-          .map((v) => {
+          ?.map((v) => {
             return {
               object: v,
               number: `${v.QuoteNumber}`,

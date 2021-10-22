@@ -197,7 +197,7 @@ export class SerialisedItemOverviewDetailComponent extends TestScope implements 
         this.part = loaded.object<Part>(m.SerialisedItem.PartWhereSerialisedItem);
 
         const serialisedInventoryItems = loaded.collection<SerialisedInventoryItem>(m.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem);
-        const inventoryItem = serialisedInventoryItems.find((v) => v.Quantity === 1);
+        const inventoryItem = serialisedInventoryItems?.find((v) => v.Quantity === 1);
         if (inventoryItem) {
           this.currentFacility = inventoryItem.Facility;
         }

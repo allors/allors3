@@ -156,11 +156,11 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
   }
 
   public refreshTable() {
-    this.table.data = this.partyRelationships.map((v: PartyRelationship) => {
+    this.table.data = this.partyRelationships?.map((v: PartyRelationship) => {
       return {
         object: v,
         type: v.strategy.cls.singularName,
-        parties: v.Parties.map((w) => w.DisplayName).join(', '),
+        parties: v.Parties?.map((w) => w.DisplayName).join(', '),
         from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
         through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
       } as Row;

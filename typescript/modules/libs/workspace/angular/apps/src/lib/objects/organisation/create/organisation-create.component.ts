@@ -162,9 +162,9 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
         this.industries = loaded.collection<IndustryClassification>(m.IndustryClassification);
         this.legalForms = loaded.collection<LegalForm>(m.LegalForm);
         this.roles = loaded.collection<OrganisationRole>(m.OrganisationRole);
-        this.customerRole = this.roles.find((v: OrganisationRole) => v.UniqueId === '8b5e0cee-4c98-42f1-8f18-3638fba943a0');
-        this.supplierRole = this.roles.find((v: OrganisationRole) => v.UniqueId === '8c6d629b-1e27-4520-aa8c-e8adf93a5095');
-        this.manufacturerRole = this.roles.find((v: OrganisationRole) => v.UniqueId === '32e74bef-2d79-4427-8902-b093afa81661');
+        this.customerRole = this.roles?.find((v: OrganisationRole) => v.UniqueId === '8b5e0cee-4c98-42f1-8f18-3638fba943a0');
+        this.supplierRole = this.roles?.find((v: OrganisationRole) => v.UniqueId === '8c6d629b-1e27-4520-aa8c-e8adf93a5095');
+        this.manufacturerRole = this.roles?.find((v: OrganisationRole) => v.UniqueId === '32e74bef-2d79-4427-8902-b093afa81661');
         this.selectableRoles.push(this.customerRole);
         this.selectableRoles.push(this.supplierRole);
 

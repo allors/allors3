@@ -301,7 +301,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
-      this.fromPhonenumbers = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.TelecommunicationsNumber).map((v) => v.ContactMechanism);
+      this.fromPhonenumbers = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.TelecommunicationsNumber)?.map((v) => v.ContactMechanism);
     });
   }
 
@@ -333,7 +333,7 @@ export class PhoneCommunicationEditComponent extends TestScope implements OnInit
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
-      this.toPhonenumbers = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.TelecommunicationsNumber).map((v) => v.ContactMechanism);
+      this.toPhonenumbers = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.TelecommunicationsNumber)?.map((v) => v.ContactMechanism);
     });
   }
 

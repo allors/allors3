@@ -111,7 +111,7 @@ export class PositionTypesOverviewComponent extends TestScope implements OnInit,
 
         const objects = loaded.collection<PositionType>(m.PositionType);
         this.table.total = loaded.value('PositionTypes_total') as number;
-        this.table.data = objects.map((v) => {
+        this.table.data = objects?.map((v) => {
           return {
             object: v,
             title: v.Title,

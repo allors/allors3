@@ -113,7 +113,7 @@ export class BrandsOverviewComponent extends TestScope implements OnInit, OnDest
 
         const objects = loaded.collection<Brand>(m.Brand);
         this.table.total = loaded.value('Brands_total') as number;
-        this.table.data = objects.map((v) => {
+        this.table.data = objects?.map((v) => {
           return {
             object: v,
             name: `${v.Name}`,

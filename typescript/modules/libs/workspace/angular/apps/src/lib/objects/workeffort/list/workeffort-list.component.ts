@@ -150,7 +150,7 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
         this.table.total = loaded.value('WorkTasks_total') as number;
         this.table.data = workEfforts
           ?.filter((v) => v.canReadWorkEffortNumber)
-          .map((v) => {
+          ?.map((v) => {
             return {
               object: v,
               number: v.WorkEffortNumber,
@@ -159,8 +159,8 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
               state: v.WorkEffortState ? v.WorkEffortState.Name : '',
               customer: v.Customer ? v.Customer.DisplayName : '',
               executedBy: v.ExecutedBy ? v.ExecutedBy.DisplayName : '',
-              equipment: v.WorkEffortFixedAssetAssignmentsWhereAssignment ? v.WorkEffortFixedAssetAssignmentsWhereAssignment.map((w) => w.FixedAsset.DisplayName).join(', ') : '',
-              worker: v.WorkEffortPartyAssignmentsWhereAssignment ? v.WorkEffortPartyAssignmentsWhereAssignment.map((w) => w.Party.DisplayName).join(', ') : '',
+              equipment: v.WorkEffortFixedAssetAssignmentsWhereAssignment ? v.WorkEffortFixedAssetAssignmentsWhereAssignment?.map((w) => w.FixedAsset.DisplayName).join(', ') : '',
+              worker: v.WorkEffortPartyAssignmentsWhereAssignment ? v.WorkEffortPartyAssignmentsWhereAssignment?.map((w) => w.Party.DisplayName).join(', ') : '',
               lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
             } as Row;
           });

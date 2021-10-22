@@ -117,7 +117,7 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
 
         const objects = loaded.collection<ExchangeRate>(m.ExchangeRate);
         this.table.total = loaded.value('ExchangeRates_total') as number;
-        this.table.data = objects.map((v) => {
+        this.table.data = objects?.map((v) => {
           return {
             object: v,
             validFrom: format(new Date(v.ValidFrom), 'dd-MM-yyyy'),

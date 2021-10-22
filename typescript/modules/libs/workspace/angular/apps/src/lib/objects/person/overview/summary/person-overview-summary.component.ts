@@ -91,7 +91,7 @@ export class PersonOverviewSummaryComponent extends TestScope {
         this.organisation = organisationContactRelationship.Organisation as Organisation;
 
         if (organisationContactRelationship.ContactKinds.length > 0) {
-          this.contactKindsText = organisationContactRelationship.ContactKinds.map((v: OrganisationContactKind) => v.Description).reduce((acc: string, cur: string) => acc + ', ' + cur);
+          this.contactKindsText = organisationContactRelationship.ContactKinds?.map((v: OrganisationContactKind) => v.Description).reduce((acc: string, cur: string) => acc + ', ' + cur);
         }
       }
     };

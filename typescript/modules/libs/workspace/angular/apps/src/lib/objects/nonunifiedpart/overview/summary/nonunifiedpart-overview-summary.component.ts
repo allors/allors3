@@ -102,11 +102,11 @@ export class NonUnifiedPartOverviewSummaryComponent {
       this.inactiveSupplierOfferings = this.allSupplierOfferings?.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate != null && isBefore(new Date(v.ThroughDate), new Date())));
 
       const goodIdentificationTypes = loaded.collection<ProductIdentificationType>(this.m.ProductIdentificationType);
-      const partNumberType = goodIdentificationTypes.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
-      this.partnumber = this.part.ProductIdentifications?.filter((v) => v.ProductIdentificationType === partNumberType).map((w) => w.Identification);
+      const partNumberType = goodIdentificationTypes?.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
+      this.partnumber = this.part.ProductIdentifications?.filter((v) => v.ProductIdentificationType === partNumberType)?.map((w) => w.Identification);
 
       if (this.part.SuppliedBy.length > 0) {
-        this.suppliers = this.part.SuppliedBy.map((v) => v.DisplayName).reduce((acc: string, cur: string) => acc + ', ' + cur);
+        this.suppliers = this.part.SuppliedBy?.map((v) => v.DisplayName).reduce((acc: string, cur: string) => acc + ', ' + cur);
       }
     };
   }

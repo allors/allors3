@@ -153,8 +153,8 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
       this.objects = this.fromParty || this.fromWorkEffort;
 
       if (this.objects) {
-        this.table.total = this.objects.length;
-        this.table.data = this.objects.map((v) => {
+        this.table.total = this.objects?.length ?? 0;
+        this.table.data = this.objects?.map((v) => {
           return {
             object: v,
             number: v.Assignment.WorkEffortNumber,

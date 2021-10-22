@@ -350,7 +350,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipToAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       this.setDerivedInitialRoles();
@@ -407,7 +407,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.billToContactMechanisms = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.billToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       this.setDerivedInitialRoles();
@@ -463,7 +463,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.billToEndCustomerContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.billToEndCustomerContactMechanisms = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.billToEndCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       this.setDerivedInitialRoles();
@@ -520,7 +520,7 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipToEndCustomerAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToEndCustomerAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToEndCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       this.setDerivedInitialRoles();

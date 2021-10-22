@@ -261,7 +261,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.contactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.contactMechanisms = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.contacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }

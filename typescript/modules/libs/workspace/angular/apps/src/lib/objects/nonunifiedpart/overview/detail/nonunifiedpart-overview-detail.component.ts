@@ -183,7 +183,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
         this.originalCategories = loaded.collection<PartCategory>('OriginalCategories');
         this.selectedCategories = this.originalCategories;
 
-        this.suppliers = this.part.SuppliedBy.map((w) => w.PartyName).join(', ');
+        this.suppliers = this.part.SuppliedBy?.map((w) => w.PartyName).join(', ');
         this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
         this.productTypes = loaded.collection<ProductType>(m.ProductType);
         this.brands = loaded.collection<Brand>(m.Brand);
@@ -195,11 +195,11 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
         this.settings = this.fetcher.getSettings(loaded);
 
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
-        const partNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
+        const partNumberType = this.goodIdentificationTypes?.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
 
         this.manufacturers = loaded.collection<Organisation>(m.Organisation);
 
-        this.partNumber = this.part.ProductIdentifications.find((v) => v.ProductIdentificationType === partNumberType);
+        this.partNumber = this.part.ProductIdentifications?.find((v) => v.ProductIdentificationType === partNumberType);
 
         this.selectedBrand = this.part.Brand;
         this.selectedModel = this.part.Model;

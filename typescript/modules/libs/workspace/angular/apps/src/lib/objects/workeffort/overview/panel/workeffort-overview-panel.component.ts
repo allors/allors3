@@ -105,8 +105,8 @@ export class WorkEffortOverviewPanelComponent extends TestScope implements OnIni
       this.objects = loaded.collection<WorkEffort>(pullName);
 
       if (this.objects) {
-        this.table.total = loaded.value(`${pullName}_total`)as number ?? this.objects.length;
-        this.table.data = this.objects.map((v) => {
+        this.table.total = loaded.value(`${pullName}_total`)as number ?? this.objects?.length ?? 0;
+        this.table.data = this.objects?.map((v) => {
           return {
             object: v,
             id: v.WorkEffortNumber,

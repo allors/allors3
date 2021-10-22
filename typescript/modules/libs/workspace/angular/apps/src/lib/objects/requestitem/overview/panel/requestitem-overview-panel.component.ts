@@ -122,7 +122,7 @@ export class RequestItemOverviewPanelComponent extends TestScope {
       this.requestItems = loaded.collection<RequestItem>(pullName);
       this.request = loaded.object<RequestForQuote>(this.m.Request);
       this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.requestItems.length;
-      this.table.data = this.requestItems.map((v) => {
+      this.table.data = this.requestItems?.map((v) => {
         return {
           object: v,
           item: (v.Product && v.Product.Name) || (v.SerialisedItem && v.SerialisedItem.Name) || '',
