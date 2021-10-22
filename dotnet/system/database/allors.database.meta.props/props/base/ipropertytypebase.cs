@@ -7,6 +7,5 @@ namespace Allors.Database.Meta
 {
     public partial interface IPropertyTypeBase : IOperandTypeBase, IPropertyType
     {
-        new IObjectTypeBase ObjectType { get; }
     }
 }

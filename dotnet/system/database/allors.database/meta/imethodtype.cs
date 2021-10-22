@@ -13,9 +13,5 @@ namespace Allors.Database.Meta
         string Name { get; }
 
         string FullName { get; }
-
-        string[] WorkspaceNames { get; }
-
-        string[] AssignedWorkspaceNames { get; }
     }
 }

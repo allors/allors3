@@ -42,12 +42,9 @@ namespace Allors.Database.Meta
 
         IMetaPopulationBase IMetaObjectBase.MetaPopulation => this.metaPopulation;
 
-        string IMetaObjectBase.ValidationName => this.ValidationName;
         #endregion
 
         #region IOperandType & IOperandTypeBase
-        string IOperandTypeBase.DisplayName => this.DisplayName;
-
         string[] IOperandType.WorkspaceNames => this.relationType.WorkspaceNames;
 
         string[] IOperandType.AssignedWorkspaceNames => this.relationType.AssignedWorkspaceNames;
@@ -88,8 +85,6 @@ namespace Allors.Database.Meta
 
             return !ofType.IsAssignableFrom(((IObject)association).Strategy.Class) ? null : association;
         }
-
-        IObjectTypeBase IPropertyTypeBase.ObjectType => this.objectType;
 
         #endregion
 

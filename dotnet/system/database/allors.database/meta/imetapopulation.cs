@@ -26,8 +26,6 @@ namespace Allors.Database.Meta
 
         IEnumerable<IMethodType> MethodTypes { get; }
 
-        IEnumerable<IInheritance> Inheritances { get; }
-
         IEnumerable<IComposite> DatabaseComposites { get; }
 
         IEnumerable<IInterface> DatabaseInterfaces { get; }

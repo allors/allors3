@@ -20,6 +20,5 @@ namespace Allors.Database.Meta
         void StructuralDeriveSupertypesRecursively(IObjectTypeBase type, HashSet<IInterfaceBase> superTypes);
 
         void DeriveWorkspaceNames();
-
     }
 }

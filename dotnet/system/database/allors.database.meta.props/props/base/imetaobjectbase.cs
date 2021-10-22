@@ -8,7 +8,5 @@ namespace Allors.Database.Meta
     public partial interface IMetaObjectBase : IMetaObject
     {
         new IMetaPopulationBase MetaPopulation { get; }
-
-        string ValidationName { get; }
     }
 }

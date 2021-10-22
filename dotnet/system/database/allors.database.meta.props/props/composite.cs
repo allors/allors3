@@ -24,8 +24,6 @@ namespace Allors.Database.Meta
 
         protected Composite(IMetaPopulationBase metaPopulation, Guid id, string tag) : base(metaPopulation, id, tag) => this.AssignedOrigin = Origin.Database;
 
-        //public Dictionary<string, bool> Workspace => this.WorkspaceNames.ToDictionary(k => k, v => true);
-
         public override Origin Origin => this.AssignedOrigin;
 
         public Origin AssignedOrigin { get; set; }
@@ -55,7 +53,6 @@ namespace Allors.Database.Meta
 
         public abstract IEnumerable<IClass> DatabaseClasses { get; }
 
-        IEnumerable<IInterface> ICompositeBase.DirectSupertypes => this.DirectSupertypes;
         public IEnumerable<IInterfaceBase> DirectSupertypes => this.structuralDerivedDirectSupertypes;
 
         IEnumerable<IInterface> IComposite.Supertypes => this.Supertypes;
@@ -69,7 +66,6 @@ namespace Allors.Database.Meta
         IEnumerable<IAssociationType> ICompositeBase.AssociationTypes => this.AssociationTypes;
         public IEnumerable<IAssociationTypeBase> AssociationTypes => this.structuralDerivedAssociationTypes;
 
-        IEnumerable<IAssociationType> ICompositeBase.ExclusiveAssociationTypes => this.ExclusiveAssociationTypes;
         public IEnumerable<IAssociationTypeBase> ExclusiveAssociationTypes => this.AssociationTypes.Where(associationType => this.Equals(associationType.RoleType.ObjectType)).ToArray();
 
         IEnumerable<IAssociationType> IComposite.ExclusiveDatabaseAssociationTypes => this.ExclusiveDatabaseAssociationTypes;
@@ -78,21 +74,10 @@ namespace Allors.Database.Meta
         IEnumerable<IRoleType> ICompositeBase.RoleTypes => this.RoleTypes;
         public IEnumerable<IRoleTypeBase> RoleTypes => this.structuralDerivedRoleTypes;
 
-        public IEnumerable<IRoleTypeBase> UnitRoleTypes => this.RoleTypes.Where(roleType => roleType.ObjectType.IsUnit).ToArray();
-
-        public IEnumerable<IRoleTypeBase> UnitDatabaseRoleTypes => this.UnitRoleTypes.Where(v => v.Origin == Origin.Database).ToArray();
-
-        public IEnumerable<IRoleTypeBase> CompositeRoleTypes => this.RoleTypes.Where(roleType => roleType.ObjectType.IsComposite).ToArray();
-
-        public IEnumerable<IRoleTypeBase> CompositeDatabaseRoleTypes => this.CompositeRoleTypes.Where(v => v.Origin == Origin.Database).ToArray();
-
-        IEnumerable<IRoleType> ICompositeBase.ExclusiveRoleTypes => this.ExclusiveRoleTypes;
         public IEnumerable<IRoleTypeBase> ExclusiveRoleTypes => this.RoleTypes.Where(roleType => this.Equals(roleType.AssociationType.ObjectType)).ToArray();
 
         IEnumerable<IRoleType> IComposite.ExclusiveDatabaseRoleTypes => this.ExclusiveDatabaseRoleTypes;
         public IEnumerable<IRoleTypeBase> ExclusiveDatabaseRoleTypes => this.ExclusiveRoleTypes.Where(v => v.Origin == Origin.Database).ToArray();
-
-        public IEnumerable<IRoleTypeBase> SortedExclusiveRoleTypes => this.ExclusiveRoleTypes.OrderBy(v => v.Name);
 
         IEnumerable<IMethodType> IComposite.MethodTypes => this.MethodTypes;
 
@@ -130,7 +115,6 @@ namespace Allors.Database.Meta
         }
 
         IEnumerable<IComposite> IComposite.Subtypes => this.Subtypes;
-        IEnumerable<IComposite> ICompositeBase.Subtypes => this.Subtypes;
         public abstract IEnumerable<ICompositeBase> Subtypes { get; }
 
         public abstract IEnumerable<ICompositeBase> DatabaseSubtypes { get; }
