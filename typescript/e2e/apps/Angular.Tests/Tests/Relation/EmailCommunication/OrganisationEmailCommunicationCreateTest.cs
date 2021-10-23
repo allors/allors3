@@ -43,9 +43,9 @@ namespace Tests.EmailCommunicationTests
             this.organisationListPage.Table.DefaultAction(organisation);
             var organisationOverview = new OrganisationOverviewComponent(this.organisationListPage.Driver, this.M);
             var communicationEventOverview = organisationOverview.CommunicationeventOverviewPanel.Click();
-            var emailCommunicationEdit = communicationEventOverview.CreateEmailCommunication();
+            var emailCommunicationCreate = communicationEventOverview.CreateEmailCommunication();
 
-            emailCommunicationEdit
+            emailCommunicationCreate
                 .CommunicationEventState.Select(new CommunicationEventStates(this.Transaction).Completed)
                 .EventPurposes.Toggle(new CommunicationEventPurposes(this.Transaction).Appointment)
                 .FromParty.Select(employee)

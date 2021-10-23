@@ -95,7 +95,7 @@ namespace Tests.LetterCorrespondenceTests
 
             Assert.Equal(after.Length, before.Length);
 
-            Assert.Equal(new CommunicationEventStates(this.Transaction).InProgress, editCommunicationEvent.CommunicationEventState);
+            Assert.Equal(new CommunicationEventStates(this.Transaction).Completed, editCommunicationEvent.CommunicationEventState);
             Assert.Contains(new CommunicationEventPurposes(this.Transaction).Appointment, editCommunicationEvent.EventPurposes);
             Assert.Equal(person, editCommunicationEvent.FromParty);
             Assert.Equal(employee, editCommunicationEvent.ToParty);
