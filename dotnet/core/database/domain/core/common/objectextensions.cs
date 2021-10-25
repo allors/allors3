@@ -60,7 +60,8 @@ namespace Allors.Database.Domain
 
             foreach (var roleType in @class.UniqueRoleTypes)
             {
-                derivation.Validation.AssertIsUnique(derivation.ChangeSet, @this, roleType);
+                //TODO: Koen
+                //derivation.Validation.AssertIsUnique(derivation.ChangeSet, @this, roleType);
             }
         }
     }
