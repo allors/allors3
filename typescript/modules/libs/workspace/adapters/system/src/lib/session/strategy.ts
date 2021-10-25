@@ -134,7 +134,7 @@ export abstract class Strategy implements IStrategy {
       case Origin.Session:
         return (this.session.sessionOriginState.getCompositeRole(this.object, roleType) as T) ?? null;
       case Origin.Workspace:
-        return (this.WorkspaceOriginState?.getCompositeRole(roleType) as T) ?? null;
+        return (this.WorkspaceOriginState?.getCompositeRole(roleType, skipMissing) as T) ?? null;
       case Origin.Database:
         return this.canRead(roleType) ? (this.DatabaseOriginState?.getCompositeRole(roleType, skipMissing) as T) ?? null : null;
       default:
@@ -147,7 +147,7 @@ export abstract class Strategy implements IStrategy {
       case Origin.Session:
         return (this.session.sessionOriginState.getCompositesRole(this.object, roleType) as T[]) ?? (frozenEmptyArray as T[]);
       case Origin.Workspace:
-        return (this.WorkspaceOriginState?.getCompositesRole(roleType) as T[]) ?? (frozenEmptyArray as T[]);
+        return (this.WorkspaceOriginState?.getCompositesRole(roleType, skipMissing) as T[]) ?? (frozenEmptyArray as T[]);
       case Origin.Database:
         return this.canRead(roleType) ? (this.DatabaseOriginState?.getCompositesRole(roleType, skipMissing) as T[]) ?? (frozenEmptyArray as T[]) : (frozenEmptyArray as T[]);
       default:
