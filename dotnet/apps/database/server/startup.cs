@@ -117,7 +117,7 @@ namespace Allors.Database.Server.Controllers
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.ConfigureExceptionHandler(env, loggerFactory);
+            app.ConfigureExceptionHandler(env);
 
             app.UseResponseCaching();
             app.UseEndpoints(endpoints =>
