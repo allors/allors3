@@ -10,18 +10,17 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
+    using NLog;
     using Protocol.Json.Auth;
     using Security;
     using Services;
 
     public class AuthenticationController : Controller
     {
-        public AuthenticationController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, ILogger<AuthenticationController> logger, IConfiguration config, ITransactionService transactionService)
+        public AuthenticationController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration config, ITransactionService transactionService)
         {
             this.UserManager = userManager;
             this.SignInManager = signInManager;
-            this.Logger = logger;
             this.Configuration = config;
             this.TransactionService = transactionService;
         }
@@ -30,7 +29,7 @@ namespace Allors.Server
 
         public SignInManager<IdentityUser> SignInManager { get; }
 
-        public ILogger Logger { get; }
+        public Logger Logger => LogManager.GetCurrentClassLogger();
 
         public IConfiguration Configuration { get; }
 

@@ -13,14 +13,14 @@ namespace Allors.Database.Protocol.Json
     using Domain;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
+    using NLog;
     using Services;
 
     [ApiController]
     [Route("allors/pull")]
     public class PullController : ControllerBase
     {
-        public PullController(IDatabaseService databaseService, IWorkspaceService workspaceService, IPolicyService policyService, ILogger<PullController> logger)
+        public PullController(IDatabaseService databaseService, IWorkspaceService workspaceService, IPolicyService policyService)
         {
             this.DatabaseService = databaseService;
             this.WorkspaceService = workspaceService;
@@ -31,7 +31,6 @@ namespace Allors.Database.Protocol.Json
             this.ExtentService = scope.Get<IPreparedExtents>();
             this.PreparedSelects = scope.Get<IPreparedSelects>();
             this.TreeCache = scope.Get<ITreeCache>();
-            this.Logger = logger;
         }
 
         private IDatabaseService DatabaseService { get; }
@@ -42,7 +41,7 @@ namespace Allors.Database.Protocol.Json
 
         private IPreparedSelects PreparedSelects { get; }
 
-        private ILogger<PullController> Logger { get; }
+        public Logger Logger => LogManager.GetCurrentClassLogger();
 
         private IPolicyService PolicyService { get; }
 
@@ -63,7 +62,7 @@ namespace Allors.Database.Protocol.Json
                     }
                     catch (Exception e)
                     {
-                        this.Logger.LogError(e, "PullRequest {request}", request);
+                        this.Logger.Error(e, "PullRequest {request}", request);
                         throw;
                     }
                 });
