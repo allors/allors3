@@ -66,6 +66,7 @@ export class ProductCategoryEditComponent extends TestScope implements OnInit, O
               pull.ProductCategory({
                 objectId: this.data.id,
                 include: {
+                  CategoryImage: x,
                   Children: x,
                   LocalisedNames: {
                     Locale: x,
