@@ -343,6 +343,8 @@ namespace Allors.Database.Protocol.Json
                     }
                 }
 
+                newObjects.Remove(null);
+
                 current = newObjects.Except(this.objects).ToArray();
                 this.objects.UnionWith(newObjects);
             }
