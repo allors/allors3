@@ -134,8 +134,8 @@ namespace Allors.Database
         /// Adds a Predicate that evaluates to true if any object of the role of the object under evaluation is in the list.
         /// </summary>
         /// <param name="role"></param>
-        /// <param name="list"></param>
-        ICompositePredicate AddIn(IRoleType role, IEnumerable<int> list);
+        /// <param name="values"></param>
+        ICompositePredicate AddIn(IRoleType role, IEnumerable<object> values);
 
         /// <summary>
         /// Adds a Predicate that evaluates to true if the object under evaluation is an state of the IObjectType.

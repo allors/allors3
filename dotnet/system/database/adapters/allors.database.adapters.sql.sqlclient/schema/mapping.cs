@@ -535,7 +535,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         protected internal Database Database { get; }
 
-        public string GetTableTypeName(IRoleType roleType)
+        public string GetTableTypeNameForRelation(IRoleType roleType)
         {
             var unitTypeTag = ((IUnit)roleType.ObjectType).Tag;
             return unitTypeTag switch
@@ -548,6 +548,23 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 UnitTags.Unique => this.TableTypeNameForUniqueRelation,
                 UnitTags.Binary => this.TableTypeNameForBinaryRelation,
                 UnitTags.Decimal => this.TableTypeNameForDecimalRelationByScaleByPrecision[roleType.Precision.Value][roleType.Scale.Value],
+                _ => throw new ArgumentException($"Unknown Unit ObjectType: {unitTypeTag}")
+            };
+        }
+
+        public string GetTableTypeNameForIn(IRoleType roleType)
+        {
+            var unitTypeTag = ((IUnit)roleType.ObjectType).Tag;
+            return unitTypeTag switch
+            {
+                UnitTags.String => this.TableTypeNameForStringIn,
+                UnitTags.Integer => this.TableTypeNameForIntegerIn,
+                UnitTags.Float => this.TableTypeNameForFloatIn,
+                UnitTags.Boolean => this.TableTypeNameForBooleanIn,
+                UnitTags.DateTime => this.TableTypeNameForDateTimeIn,
+                UnitTags.Unique => this.TableTypeNameForUniqueIn,
+                UnitTags.Binary => this.TableTypeNameForBinaryIn,
+                UnitTags.Decimal => this.TableTypeNameForDecimalInByScaleByPrecision[roleType.Precision.Value][roleType.Scale.Value],
                 _ => throw new ArgumentException($"Unknown Unit ObjectType: {unitTypeTag}")
             };
         }

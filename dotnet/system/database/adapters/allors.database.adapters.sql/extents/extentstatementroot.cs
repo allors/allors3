@@ -80,18 +80,7 @@ namespace Allors.Database.Adapters.Sql
                 var paramName = paramNameByParamValuePair.Value;
                 var paramValue = paramNameByParamValuePair.Key;
 
-                if (paramValue is IEnumerable<int> enumerable)
-                {
-                    this.command.AddInParameter(paramName, enumerable);
-                }
-                else if (paramValue is IObject)
-                {
-                    this.command.AddInParameter(paramName, ((IObject)paramValue).Strategy.ObjectId);
-                }
-                else
-                {
-                    this.command.AddInParameter(paramName, paramValue);
-                }
+                this.command.AddInParameter(paramName, paramValue is IObject @object ? @object.Strategy.ObjectId : paramValue);
             }
 
             return this.command;

@@ -52,10 +52,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     parameter.SqlDbType = SqlDbType.DateTime2;
                 }
 
-                if (value is IEnumerable<int>)
+                if (value is UnitList list)
                 {
                     parameter.SqlDbType = SqlDbType.Structured;
-                    parameter.TypeName = "allors._ti_i";
+                    parameter.TypeName = this.mapping.GetTableTypeNameForIn(list.RoleType);
                 }
 
                 this.command.Parameters.Add(parameter);
@@ -65,16 +65,13 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             {
                 parameter.Value = DBNull.Value;
             }
+            else if (value is UnitList list)
+            {
+                parameter.Value = new UnitListDataRecord(this.mapping, list);
+            }
             else
             {
-                if (parameter.SqlDbType == SqlDbType.Structured)
-                {
-                    parameter.Value = new UnitDataRecord(this.mapping, (IEnumerable<int>)value);
-                }
-                else
-                {
-                    parameter.Value = value;
-                }
+                parameter.Value = value;
             }
         }
 
@@ -92,7 +89,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
         public void ObjectTableParameter(IEnumerable<long> objectIds) => this.GetOrCreateTableParameter(this.mapping.ParamNameForTableType, this.mapping.TableTypeNameForObject).Value = new ObjectDataRecord(this.mapping, objectIds);
 
-        public void UnitTableParameter(IRoleType roleType, IEnumerable<UnitRelation> relations) => this.GetOrCreateTableParameter(this.mapping.ParamNameForTableType, this.mapping.GetTableTypeName(roleType)).Value = new UnitRoleDataRecords(this.mapping, roleType, relations);
+        public void UnitTableParameter(IRoleType roleType, IEnumerable<UnitRelation> relations) => this.GetOrCreateTableParameter(this.mapping.ParamNameForTableType, this.mapping.GetTableTypeNameForRelation(roleType)).Value = new UnitRoleDataRecords(this.mapping, roleType, relations);
 
         public void AddCompositeRoleTableParameter(IEnumerable<CompositeRelation> relations) => this.GetOrCreateTableParameter(this.mapping.ParamNameForTableType, this.mapping.TableTypeNameForCompositeRelation).Value = new CompositeRoleDataRecords(this.mapping, relations);
 

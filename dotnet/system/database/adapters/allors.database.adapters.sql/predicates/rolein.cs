@@ -5,16 +5,15 @@
 
 namespace Allors.Database.Adapters.Sql
 {
-    using System.Collections.Generic;
     using Adapters;
     using Meta;
 
     internal sealed class RoleIn : Predicate
     {
         private readonly IRoleType roleType;
-        private readonly IEnumerable<int> list;
+        private readonly UnitList list;
 
-        internal RoleIn(ExtentFiltered extent, IRoleType roleType, IEnumerable<int> list)
+        internal RoleIn(ExtentFiltered extent, IRoleType roleType, UnitList list)
         {
             extent.CheckRole(roleType);
             PredicateAssertions.ValidateRoleIn(roleType, list);

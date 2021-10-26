@@ -41,26 +41,36 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
         public void AddInParameter(string parameterName, object value)
         {
-            var sqlParameter = this.command.Parameters.Contains(parameterName) ? this.command.Parameters[parameterName] : null;
-            if (sqlParameter == null)
+            var parameter = this.command.Parameters.Contains(parameterName) ? this.command.Parameters[parameterName] : null;
+            if (parameter == null)
             {
-                sqlParameter = this.command.CreateParameter();
-                sqlParameter.ParameterName = parameterName;
+                parameter = this.command.CreateParameter();
+                parameter.ParameterName = parameterName;
                 if (value is DateTime)
                 {
-                    sqlParameter.NpgsqlDbType = NpgsqlDbType.Timestamp;
+                    parameter.NpgsqlDbType = NpgsqlDbType.Timestamp;
                 }
 
-                this.command.Parameters.Add(sqlParameter);
+                if (value is UnitList list)
+                {
+                    var sqlDbType = this.mapping.GetNpgsqlDbType(list.RoleType);
+                    parameter.NpgsqlDbType = NpgsqlDbType.Array | sqlDbType;
+                }
+
+                this.command.Parameters.Add(parameter);
             }
 
             if (value == null || value == DBNull.Value)
             {
-                this.command.Parameters[parameterName].Value = DBNull.Value;
+                parameter.Value = DBNull.Value;
+            }
+            else if (value is UnitList list)
+            {
+                parameter.Value = list.Values.ToArray();
             }
             else
             {
-                this.command.Parameters[parameterName].Value = value;
+                parameter.Value = value;
             }
         }
 
