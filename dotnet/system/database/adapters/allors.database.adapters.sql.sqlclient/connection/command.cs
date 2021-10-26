@@ -52,7 +52,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     parameter.SqlDbType = SqlDbType.DateTime2;
                 }
 
-                if (value is IEnumerable)
+                if (value is IEnumerable<int>)
                 {
                     parameter.SqlDbType = SqlDbType.Structured;
                     parameter.TypeName = "allors._ti_i";

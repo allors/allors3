@@ -5,7 +5,9 @@
 
 namespace Allors.Database.Adapters.Sql
 {
+    using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Text;
 
@@ -82,7 +84,7 @@ namespace Allors.Database.Adapters.Sql
                 {
                     this.command.AddInParameter(paramName, enumerable);
                 }
-                if (paramValue is IObject)
+                else if (paramValue is IObject)
                 {
                     this.command.AddInParameter(paramName, ((IObject)paramValue).Strategy.ObjectId);
                 }

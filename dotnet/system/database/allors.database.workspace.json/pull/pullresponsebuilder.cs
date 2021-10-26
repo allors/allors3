@@ -292,6 +292,8 @@ namespace Allors.Database.Protocol.Json
 
             while (current.Length > 0)
             {
+                var newObjects = new HashSet<IObject>();
+
                 foreach (var grouping in current.GroupBy(v => v.Strategy.Class, v => v))
                 {
                     var @class = grouping.Key;
@@ -317,11 +319,11 @@ namespace Allors.Database.Protocol.Json
                                 {
                                     if (roleType.IsOne)
                                     {
-                                        this.objects.Add(@object.Strategy.GetCompositeRole(roleType));
+                                        newObjects.Add(@object.Strategy.GetCompositeRole(roleType));
                                     }
                                     else
                                     {
-                                        this.objects.UnionWith(@object.Strategy.GetCompositesRole<IObject>(roleType));
+                                        newObjects.UnionWith(@object.Strategy.GetCompositesRole<IObject>(roleType));
                                     }
                                 }
                                 else
@@ -329,11 +331,11 @@ namespace Allors.Database.Protocol.Json
                                     var associationType = (IAssociationType)propertyType;
                                     if (associationType.IsOne)
                                     {
-                                        this.objects.Add(@object.Strategy.GetCompositeAssociation(associationType));
+                                        newObjects.Add(@object.Strategy.GetCompositeAssociation(associationType));
                                     }
                                     else
                                     {
-                                        this.objects.UnionWith(@object.Strategy.GetCompositesAssociation<IObject>(associationType));
+                                        newObjects.UnionWith(@object.Strategy.GetCompositesAssociation<IObject>(associationType));
                                     }
                                 }
                             }
@@ -341,7 +343,8 @@ namespace Allors.Database.Protocol.Json
                     }
                 }
 
-                current = this.objects.Except(current).ToArray();
+                current = newObjects.Except(this.objects).ToArray();
+                this.objects.UnionWith(newObjects);
             }
         }
     }

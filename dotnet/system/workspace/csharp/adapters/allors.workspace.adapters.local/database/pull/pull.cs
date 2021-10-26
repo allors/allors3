@@ -41,12 +41,12 @@ namespace Allors.Workspace.Adapters.Local
                 .Create(this.Workspace.DatabaseConnection.Configuration.Name);
 
             this.dependencies = this.ToDependencies(session.Dependencies);
-            this.DatabaseObjects = new PullDatabaseObjects();
+            this.DatabaseObjects = new HashSet<Database.IObject>();
         }
 
         public IAccessControl AccessControl { get; }
 
-        public PullDatabaseObjects DatabaseObjects { get; }
+        public HashSet<Database.IObject> DatabaseObjects { get; }
 
         private Dictionary<string, ISet<Database.IObject>> DatabaseCollectionsByName { get; } =
             new Dictionary<string, ISet<Database.IObject>>();
@@ -221,7 +221,7 @@ namespace Allors.Workspace.Adapters.Local
                         this.DatabaseCollectionsByName.Add(name, newSet);
                     }
 
-                    this.DatabaseObjects.Add(newCollection);
+                    this.DatabaseObjects.UnionWith(newCollection);
 
                     foreach (var newObject in newCollection)
                     {
@@ -236,7 +236,7 @@ namespace Allors.Workspace.Adapters.Local
                 {
                     var newWorkspaceCollection = new HashSet<Database.IObject>(filteredCollection);
                     this.DatabaseCollectionsByName.Add(name, newWorkspaceCollection);
-                    this.DatabaseObjects.Add(newWorkspaceCollection);
+                    this.DatabaseObjects.UnionWith(newWorkspaceCollection);
                 }
             }
         }
@@ -282,13 +282,11 @@ namespace Allors.Workspace.Adapters.Local
                 return;
             }
 
-            var current = new HashSet<Database.IObject>(this.DatabaseObjects.Objects);
+            var current = this.DatabaseObjects.ToArray();
 
-            while (current.Count > 0)
+            while (current.Length > 0)
             {
-                var objectsByClass = current.GroupBy(v => v.Strategy.Class, v => v);
-
-                foreach (var grouping in objectsByClass)
+                foreach (var grouping in current.GroupBy(v => v.Strategy.Class, v => v))
                 {
                     var @class = grouping.Key;
                     var objects = grouping.ToArray();
@@ -317,7 +315,7 @@ namespace Allors.Workspace.Adapters.Local
                                     }
                                     else
                                     {
-                                        this.DatabaseObjects.Add(objectToAdd.Strategy.GetCompositesRole<Database.IObject>(roleType));
+                                        this.DatabaseObjects.UnionWith(objectToAdd.Strategy.GetCompositesRole<Database.IObject>(roleType));
                                     }
                                 }
                                 else
@@ -329,7 +327,7 @@ namespace Allors.Workspace.Adapters.Local
                                     }
                                     else
                                     {
-                                        this.DatabaseObjects.Add(objectToAdd.Strategy.GetCompositesAssociation<Database.IObject>(associationType));
+                                        this.DatabaseObjects.UnionWith(objectToAdd.Strategy.GetCompositesAssociation<Database.IObject>(associationType));
                                     }
                                 }
                             }
@@ -337,7 +335,7 @@ namespace Allors.Workspace.Adapters.Local
                     }
                 }
 
-                current = new HashSet<Database.IObject>(this.DatabaseObjects.Objects.Except(current));
+                current = this.DatabaseObjects.Except(current).ToArray();
             }
         }
     }
