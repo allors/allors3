@@ -6,7 +6,6 @@
 namespace Allors.Database.Domain
 {
     using System;
-    using Database.Services;
     using Meta;
 
     public static partial class ObjectExtensions
@@ -14,9 +13,9 @@ namespace Allors.Database.Domain
         public static void CoreOnPostBuild(this Object @this, ObjectOnPostBuild method)
         {
             // TODO: Optimize
-            foreach (var roleType in ((Class)@this.Strategy.Class).RoleTypes)
+            foreach (var roleType in ((Class)@this.Strategy.Class).RequiredRoleTypes)
             {
-                if (roleType.IsRequired && roleType.ObjectType is IUnit unit && !@this.Strategy.ExistRole(roleType))
+                if (roleType.ObjectType is IUnit unit && !@this.Strategy.ExistRole(roleType))
                 {
                     switch (unit.Tag)
                     {
@@ -56,12 +55,6 @@ namespace Allors.Database.Domain
             foreach (var roleType in @class.RequiredRoleTypes)
             {
                 derivation.Validation.AssertExists(@this, roleType);
-            }
-
-            foreach (var roleType in @class.UniqueRoleTypes)
-            {
-                //TODO: Koen
-                //derivation.Validation.AssertIsUnique(derivation.ChangeSet, @this, roleType);
             }
         }
     }

@@ -24,6 +24,7 @@ namespace Allors.Workspace.Adapters.Local
     {
         private IDictionary<string, IObject[]> collections;
         private IDictionary<string, IObject> objects;
+        private readonly IDictionary<IClass, ISet<IPropertyType>> dependencies;
 
         public Pull(Session session) : base(session)
         {
@@ -39,8 +40,8 @@ namespace Allors.Workspace.Adapters.Local
             this.AccessControl = this.Transaction.Services.Get<IWorkspaceAclsService>()
                 .Create(this.Workspace.DatabaseConnection.Configuration.Name);
 
-            var dependencies = this.ToDependencies(session.Dependencies);
-            this.DatabaseObjects = new PullDatabaseObjects(dependencies);
+            this.dependencies = this.ToDependencies(session.Dependencies);
+            this.DatabaseObjects = new PullDatabaseObjects();
         }
 
         public IAccessControl AccessControl { get; }
@@ -274,5 +275,70 @@ namespace Allors.Workspace.Adapters.Local
             return classDependencies;
         }
 
+        public void AddDependencies()
+        {
+            if (this.dependencies == null)
+            {
+                return;
+            }
+
+            var current = new HashSet<Database.IObject>(this.DatabaseObjects.Objects);
+
+            while (current.Count > 0)
+            {
+                var objectsByClass = current.GroupBy(v => v.Strategy.Class, v => v);
+
+                foreach (var grouping in objectsByClass)
+                {
+                    var @class = grouping.Key;
+                    var objects = grouping.ToArray();
+
+                    if (this.dependencies.TryGetValue(@class, out var propertyTypes))
+                    {
+                        var builder = new PrefetchPolicyBuilder();
+                        foreach (var propertyType in propertyTypes)
+                        {
+                            builder.WithRule(propertyType);
+                        }
+
+                        var policy = builder.Build();
+
+                        this.Transaction.Prefetch(policy, objects);
+
+                        foreach (var objectToAdd in objects)
+                        {
+                            foreach (var propertyType in propertyTypes)
+                            {
+                                if (propertyType is Database.Meta.IRoleType roleType)
+                                {
+                                    if (roleType.IsOne)
+                                    {
+                                        this.DatabaseObjects.Add(objectToAdd.Strategy.GetCompositeRole(roleType));
+                                    }
+                                    else
+                                    {
+                                        this.DatabaseObjects.Add(objectToAdd.Strategy.GetCompositesRole<Database.IObject>(roleType));
+                                    }
+                                }
+                                else
+                                {
+                                    var associationType = (Database.Meta.IAssociationType)propertyType;
+                                    if (associationType.IsOne)
+                                    {
+                                        this.DatabaseObjects.Add(objectToAdd.Strategy.GetCompositeAssociation(associationType));
+                                    }
+                                    else
+                                    {
+                                        this.DatabaseObjects.Add(objectToAdd.Strategy.GetCompositesAssociation<Database.IObject>(associationType));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                current = new HashSet<Database.IObject>(this.DatabaseObjects.Objects.Except(current));
+            }
+        }
     }
 }
