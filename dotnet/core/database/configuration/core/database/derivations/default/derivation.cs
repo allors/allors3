@@ -209,25 +209,25 @@ namespace Allors.Database.Configuration.Derivations.Default
                 }
             }
 
-            // Unique check
-            foreach (var kvp in this.AccumulatedChangeSet.AssociationsByRoleType)
-            {
-                var roleType = kvp.Key;
-                if (roleType.IsUnique)
-                {
-                    var objects = kvp.Value.Where(v => v.Strategy.ExistRole(roleType)).ToArray();
-                    var values = objects.Select(v => v.Strategy.GetRole(roleType));
+            //// Unique check
+            //foreach (var kvp in this.AccumulatedChangeSet.AssociationsByRoleType)
+            //{
+            //    var roleType = kvp.Key;
+            //    if (roleType.IsUnique)
+            //    {
+            //        var objects = kvp.Value.Where(v => v.Strategy.ExistRole(roleType)).ToArray();
+            //        var values = objects.Select(v => v.Strategy.GetRole(roleType));
 
-                    var extent = this.Transaction.Extent(roleType.AssociationType.ObjectType);
-                    extent.Filter.AddIn(roleType, values);
+            //        var extent = this.Transaction.Extent(roleType.AssociationType.ObjectType);
+            //        extent.Filter.AddIn(roleType, values);
 
-                    var groupBy = extent.GroupBy(v => v.Strategy.GetRole(roleType));
-                    foreach (var duplicate in groupBy.Where(v => v.Count() > 1).SelectMany(v => v))
-                    {
-                        this.Validation.AddError(new DerivationErrorUnique(this.Validation, duplicate, roleType));
-                    }
-                }
-            }
+            //        var groupBy = extent.GroupBy(v => v.Strategy.GetRole(roleType));
+            //        foreach (var duplicate in groupBy.Where(v => v.Count() > 1).SelectMany(v => v))
+            //        {
+            //            this.Validation.AddError(new DerivationErrorUnique(this.Validation, duplicate, roleType));
+            //        }
+            //    }
+            //}
 
             return this.Validation;
         }
