@@ -42,7 +42,7 @@ namespace Allors.Database.Protocol.Json
             this.PreparedSelects = preparedSelects;
             this.PreparedExtents = preparedExtents;
 
-            this.pullResponseObjects = new PullResponseObjects(this.dependencies);
+            this.pullResponseObjects = new PullResponseObjects();
         }
 
         public ITransaction Transaction { get; }
@@ -245,6 +245,10 @@ namespace Allors.Database.Protocol.Json
                 }
             }
 
+            // Add dependencies
+            this.AddDependencies();
+
+            // Serialize
             var grants = new HashSet<IGrant>();
             var revocations = new HashSet<IRevocation>();
 
@@ -275,6 +279,72 @@ namespace Allors.Database.Protocol.Json
             pullResponse.r = revocations.Count > 0 ? revocations.Select(v => new[] { v.Strategy.ObjectId, v.Strategy.ObjectVersion }).ToArray() : null;
 
             return pullResponse;
+        }
+
+        private void AddDependencies()
+        {
+            if (this.dependencies == null)
+            {
+                return;
+            }
+
+            var current = new HashSet<IObject>(this.pullResponseObjects.Objects);
+
+            while (current.Count > 0)
+            {
+                var objectsByClass = current.GroupBy(v => v.Strategy.Class, v => v);
+
+                foreach (var grouping in objectsByClass)
+                {
+                    var @class = grouping.Key;
+                    var objects = grouping.ToArray();
+
+                    if (this.dependencies.TryGetValue(@class, out var propertyTypes))
+                    {
+                        var builder = new PrefetchPolicyBuilder();
+                        foreach (var propertyType in propertyTypes)
+                        {
+                            builder.WithRule(propertyType);
+                        }
+
+                        var policy = builder.Build();
+
+                        this.Transaction.Prefetch(policy, objects);
+
+                        foreach (var objectToAdd in objects)
+                        {
+                            foreach (var propertyType in propertyTypes)
+                            {
+                                if (propertyType is IRoleType roleType)
+                                {
+                                    if (roleType.IsOne)
+                                    {
+                                        this.pullResponseObjects.Add(objectToAdd.Strategy.GetCompositeRole(roleType));
+                                    }
+                                    else
+                                    {
+                                        this.pullResponseObjects.Add(objectToAdd.Strategy.GetCompositesRole<IObject>(roleType));
+                                    }
+                                }
+                                else
+                                {
+                                    var associationType = (IAssociationType)propertyType;
+                                    if (associationType.IsOne)
+                                    {
+                                        this.pullResponseObjects.Add(objectToAdd.Strategy.GetCompositeAssociation(associationType));
+                                    }
+                                    else
+                                    {
+                                        this.pullResponseObjects.Add(objectToAdd.Strategy.GetCompositesAssociation<IObject>(associationType));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                current = new HashSet<IObject>(this.pullResponseObjects.Objects.Except(current));
+            }
         }
     }
 }
