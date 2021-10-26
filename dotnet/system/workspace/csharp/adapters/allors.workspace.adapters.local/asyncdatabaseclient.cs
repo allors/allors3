@@ -26,6 +26,7 @@ namespace Allors.Workspace.Adapters.Local
 
             result.Execute(procedure);
             result.Execute(pull);
+            result.AddDependencies();
 
             ((Session)session).OnPulled(result);
 
