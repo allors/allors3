@@ -147,7 +147,7 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
       .subscribe((loaded) => {
         this.allors.context.reset();
         const workEfforts = loaded.collection<WorkEffort>(m.WorkEffort);
-        this.table.total = (loaded.value('WorkTasks_total')) as number;
+        this.table.total = (loaded.value('WorkEfforts_total')) as number;
         this.table.data = workEfforts
           ?.filter((v) => v.canReadWorkEffortNumber)
           ?.map((v) => {
