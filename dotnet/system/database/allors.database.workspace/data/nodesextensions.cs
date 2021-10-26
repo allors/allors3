@@ -10,7 +10,7 @@ namespace Allors.Database.Data
 
     public static class NodesExtensions
     {
-        public static void Resolve(this Node[] treeNodes, IObject @object, IAccessControl acls, Action<IObject> add)
+        public static void Resolve(this Node[] treeNodes, IObject @object, IAccessControl acls, Func<IObject, bool> add)
         {
             if (@object != null)
             {

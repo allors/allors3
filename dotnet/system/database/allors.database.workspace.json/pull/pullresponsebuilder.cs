@@ -26,7 +26,7 @@ namespace Allors.Database.Protocol.Json
         private readonly Dictionary<string, IObject> objectByName = new Dictionary<string, IObject>();
         private readonly Dictionary<string, object> valueByName = new Dictionary<string, object>();
 
-        private readonly PullResponseObjects pullResponseObjects;
+        private readonly HashSet<IObject> objects;
 
         private List<IValidation> errors;
 
@@ -42,7 +42,7 @@ namespace Allors.Database.Protocol.Json
             this.PreparedSelects = preparedSelects;
             this.PreparedExtents = preparedExtents;
 
-            this.pullResponseObjects = new PullResponseObjects();
+            this.objects = new HashSet<IObject>();
         }
 
         public ITransaction Transaction { get; }
@@ -122,9 +122,9 @@ namespace Allors.Database.Protocol.Json
                     transaction.Prefetch(prefetcher, @object);
                 }
 
-                this.pullResponseObjects.Add(@object);
+                this.objects.Add(@object);
                 this.objectByName[name] = @object;
-                tree?.Resolve(@object, this.AccessControl, this.pullResponseObjects.Add);
+                tree?.Resolve(@object, this.AccessControl, this.objects.Add);
             }
         }
 
@@ -157,11 +157,11 @@ namespace Allors.Database.Protocol.Json
                         this.collectionsByName.Add(name, newSet);
                     }
 
-                    this.pullResponseObjects.Add(newCollection);
+                    this.objects.UnionWith(newCollection);
 
                     foreach (var newObject in newCollection)
                     {
-                        tree.Resolve(newObject, this.AccessControl, this.pullResponseObjects.Add);
+                        tree.Resolve(newObject, this.AccessControl, this.objects.Add);
                     }
                 }
                 else if (existingCollection != null)
@@ -172,7 +172,7 @@ namespace Allors.Database.Protocol.Json
                 {
                     var newWorkspaceCollection = new HashSet<IObject>(filteredCollection);
                     this.collectionsByName.Add(name, newWorkspaceCollection);
-                    this.pullResponseObjects.Add(newWorkspaceCollection);
+                    this.objects.UnionWith(newWorkspaceCollection);
                 }
             }
         }
@@ -254,7 +254,7 @@ namespace Allors.Database.Protocol.Json
 
             pullResponse = new PullResponse
             {
-                p = this.pullResponseObjects.Objects.Select(v =>
+                p = this.objects.Select(v =>
                 {
                     var accessControlList = this.AccessControl[v];
 
@@ -288,16 +288,14 @@ namespace Allors.Database.Protocol.Json
                 return;
             }
 
-            var current = new HashSet<IObject>(this.pullResponseObjects.Objects);
+            var current = this.objects.ToArray();
 
-            while (current.Count > 0)
+            while (current.Length > 0)
             {
-                var objectsByClass = current.GroupBy(v => v.Strategy.Class, v => v);
-
-                foreach (var grouping in objectsByClass)
+                foreach (var grouping in current.GroupBy(v => v.Strategy.Class, v => v))
                 {
                     var @class = grouping.Key;
-                    var objects = grouping.ToArray();
+                    var grouped = grouping.ToArray();
 
                     if (this.dependencies.TryGetValue(@class, out var propertyTypes))
                     {
@@ -309,9 +307,9 @@ namespace Allors.Database.Protocol.Json
 
                         var policy = builder.Build();
 
-                        this.Transaction.Prefetch(policy, objects);
+                        this.Transaction.Prefetch(policy, grouped);
 
-                        foreach (var objectToAdd in objects)
+                        foreach (var @object in grouped)
                         {
                             foreach (var propertyType in propertyTypes)
                             {
@@ -319,11 +317,11 @@ namespace Allors.Database.Protocol.Json
                                 {
                                     if (roleType.IsOne)
                                     {
-                                        this.pullResponseObjects.Add(objectToAdd.Strategy.GetCompositeRole(roleType));
+                                        this.objects.Add(@object.Strategy.GetCompositeRole(roleType));
                                     }
                                     else
                                     {
-                                        this.pullResponseObjects.Add(objectToAdd.Strategy.GetCompositesRole<IObject>(roleType));
+                                        this.objects.UnionWith(@object.Strategy.GetCompositesRole<IObject>(roleType));
                                     }
                                 }
                                 else
@@ -331,11 +329,11 @@ namespace Allors.Database.Protocol.Json
                                     var associationType = (IAssociationType)propertyType;
                                     if (associationType.IsOne)
                                     {
-                                        this.pullResponseObjects.Add(objectToAdd.Strategy.GetCompositeAssociation(associationType));
+                                        this.objects.Add(@object.Strategy.GetCompositeAssociation(associationType));
                                     }
                                     else
                                     {
-                                        this.pullResponseObjects.Add(objectToAdd.Strategy.GetCompositesAssociation<IObject>(associationType));
+                                        this.objects.UnionWith(@object.Strategy.GetCompositesAssociation<IObject>(associationType));
                                     }
                                 }
                             }
@@ -343,7 +341,7 @@ namespace Allors.Database.Protocol.Json
                     }
                 }
 
-                current = new HashSet<IObject>(this.pullResponseObjects.Objects.Except(current));
+                current = this.objects.Except(current).ToArray();
             }
         }
     }

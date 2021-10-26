@@ -11,7 +11,7 @@ namespace Allors.Database.Data
 
     public static class NodeExtensions
     {
-        public static void Resolve(this Node @this, IObject @object, IAccessControl acls, Action<IObject> add)
+        public static void Resolve(this Node @this, IObject @object, IAccessControl acls, Func<IObject, bool> add)
         {
             if (@object != null)
             {
