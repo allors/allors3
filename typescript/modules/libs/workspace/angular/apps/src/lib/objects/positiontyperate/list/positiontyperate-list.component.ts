@@ -125,17 +125,17 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
         this.positionTypes = loaded.collection<PositionType>(m.PositionType);
         const objects = loaded.collection<PositionTypeRate>(m.PositionTypeRate);
 
-        this.table.total = loaded.value('PositionTypeRates_total') as number;
-        this.table.data = objects.map((v) => {
+        this.table.total = (loaded.value('PositionTypeRates_total') ?? 0) as number;
+        this.table.data = objects?.map((v) => {
           return {
             object: v,
             positionType: this.positionTypes
-              .filter((p) => p.PositionTypeRate === v)
-              .map((p) => p.Title)
+              ?.filter((p) => p.PositionTypeRate === v)
+              ?.map((p) => p.Title)
               .join(', '),
             rateType: v.RateType.Name,
             from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-            through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
+            through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
             rate: v.Rate,
             frequency: v.Frequency.Name,
           } as Row;

@@ -16,7 +16,7 @@ export class ObjectServiceCore extends ObjectService {
   }
 
   create(objectType: ObjectType, createData?: ObjectData): Observable<IObject> {
-    const data: ObjectData = Object.assign({ objectType }, createData);
+    const data: ObjectData = Object.assign({ strategy: { cls: objectType } }, createData);
 
     const component = this.createControlByObjectTypeTag[objectType.tag];
     if (component) {

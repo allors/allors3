@@ -25,19 +25,19 @@ namespace Tests.TelecommunicationsNumberTests
         public TelecommunicationsNumberEditTest(Fixture fixture)
             : base(fixture)
         {
-            var person = new People(this.Session).Extent().FirstOrDefault();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
 
-            this.editContactMechanism = new TelecommunicationsNumberBuilder(this.Session)
+            this.editContactMechanism = new TelecommunicationsNumberBuilder(this.Transaction)
                 .WithCountryCode("0032")
                 .WithAreaCode("498")
                 .WithContactNumber("123 456")
                 .Build();
 
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session).WithContactMechanism(this.editContactMechanism).Build();
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(this.editContactMechanism).Build();
             person.AddPartyContactMechanism(partyContactMechanism);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
             this.Login();
             this.people = this.Sidenav.NavigateToPeople();
@@ -46,9 +46,9 @@ namespace Tests.TelecommunicationsNumberTests
         [Fact]
         public void Edit()
         {
-            var person = new People(this.Session).Extent().FirstOrDefault();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new TelecommunicationsNumbers(this.Session).Extent().ToArray();
+            var before = new TelecommunicationsNumbers(this.Transaction).Extent().ToArray();
 
             this.people.Table.DefaultAction(person);
             var personOverview = new PersonOverviewComponent(this.people.Driver, this.M);
@@ -63,21 +63,21 @@ namespace Tests.TelecommunicationsNumberTests
                 .CountryCode.Set("111")
                 .AreaCode.Set("222")
                 .ContactNumber.Set("333")
-                .ContactMechanismType.Select(new ContactMechanismTypes(this.Session).MobilePhone)
+                .ContactMechanismType.Select(new ContactMechanismTypes(this.Transaction).MobilePhone)
                 .Description.Set("description")
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new TelecommunicationsNumbers(this.Session).Extent().ToArray();
+            var after = new TelecommunicationsNumbers(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length);
 
             Assert.Equal("111", this.editContactMechanism.CountryCode);
             Assert.Equal("222", this.editContactMechanism.AreaCode);
             Assert.Equal("333", this.editContactMechanism.ContactNumber);
-            Assert.Equal(new ContactMechanismTypes(this.Session).MobilePhone, this.editContactMechanism.ContactMechanismType);
+            Assert.Equal(new ContactMechanismTypes(this.Transaction).MobilePhone, this.editContactMechanism.ContactMechanismType);
             Assert.Equal("description", this.editContactMechanism.Description);
         }
     }

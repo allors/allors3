@@ -135,13 +135,13 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
         this.allors.context.reset();
 
         const objects = loaded.collection<ProductCategory>(m.ProductCategory);
-        this.table.total = loaded.value('ProductCategories_total') as number;
-        this.table.data = objects.map((v) => {
+        this.table.total = (loaded.value('ProductCategories_total') ?? 0) as number;
+        this.table.data = objects?.map((v) => {
           return {
             object: v,
             name: v.Name,
             primaryParent: v.PrimaryParent && v.PrimaryParent.DisplayName,
-            secondaryParents: v.SecondaryParents.map((w) => w.DisplayName).join(', '),
+            secondaryParents: v.SecondaryParents?.map((w) => w.DisplayName).join(', '),
             scope: v.CatScope.Name,
           } as Row;
         });

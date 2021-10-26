@@ -14,26 +14,18 @@ namespace Allors.Database.Meta
     {
         private string[] derivedWorkspaceNames;
 
-        private HashSet<ICompositeBase> derivedDirectSubtypes;
-
-        private HashSet<ICompositeBase> derivedSubtypes;
-        private HashSet<ICompositeBase> derivedDatabaseSubtypes;
-
-        private HashSet<IClassBase> derivedClasses;
-
-        private HashSet<IClassBase> derivedDatabaseClasses;
-
-        private IClassBase derivedExclusiveClass;
+        private HashSet<ICompositeBase> structuralDerivedDirectSubtypes;
+        private HashSet<ICompositeBase> structuralDerivedSubtypes;
+        private HashSet<ICompositeBase> structuralDerivedDatabaseSubtypes;
+        private HashSet<IClassBase> structuralDerivedClasses;
+        private HashSet<IClassBase> structuralDerivedDatabaseClasses;
+        private IClassBase structuralDerivedExclusiveClass;
 
         private Type clrType;
-
-        private InterfaceProps props;
 
         internal Interface(IMetaPopulationBase metaPopulation, Guid id, string tag) : base(metaPopulation, id, tag) => metaPopulation.OnInterfaceCreated(this);
 
         public MetaPopulation M => (MetaPopulation)this.MetaPopulation;
-
-        public InterfaceProps _ => this.props ??= new InterfaceProps(this);
 
         public override IEnumerable<string> WorkspaceNames
         {
@@ -44,79 +36,30 @@ namespace Allors.Database.Meta
             }
         }
 
-        public bool ExistClasses
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedClasses.Count > 0;
-            }
-        }
+        public bool ExistClasses => this.structuralDerivedClasses.Count > 0;
 
-        public bool ExistSubtypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedSubtypes.Count > 0;
-            }
-        }
+        public bool ExistSubtypes => this.structuralDerivedSubtypes.Count > 0;
 
-        public override bool ExistClass
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedClasses.Count > 0;
-            }
-        }
+        public override bool ExistClass => this.structuralDerivedClasses.Count > 0;
 
         /// <summary>
         /// Gets the subclasses.
         /// </summary>
         /// <value>The subclasses.</value>
-        public override IEnumerable<IClassBase> Classes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedClasses;
-            }
-        }
+        public override IEnumerable<IClassBase> Classes => this.structuralDerivedClasses;
 
         /// <summary>
         /// Gets the sub types.
         /// </summary>
         /// <value>The super types.</value>
         IEnumerable<IComposite> IInterface.Subtypes => this.Subtypes;
-        public override IEnumerable<ICompositeBase> Subtypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedSubtypes;
-            }
-        }
+        public override IEnumerable<ICompositeBase> Subtypes => this.structuralDerivedSubtypes;
 
-        public override IEnumerable<ICompositeBase> DatabaseSubtypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedDatabaseSubtypes;
-            }
-        }
+        public override IEnumerable<ICompositeBase> DatabaseSubtypes => this.structuralDerivedDatabaseSubtypes;
 
         public IEnumerable<Interface> Subinterfaces => this.Subtypes.OfType<Interface>();
 
-        public override IClassBase ExclusiveClass
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedExclusiveClass;
-            }
-        }
+        public override IClassBase ExclusiveClass => this.structuralDerivedExclusiveClass;
 
         public override Type ClrType => this.clrType;
 
@@ -129,11 +72,7 @@ namespace Allors.Database.Meta
         /// <returns>
         /// True if this contains the concrete class.
         /// </returns>
-        public override bool IsAssignableFrom(IComposite objectType)
-        {
-            this.MetaPopulation.Derive();
-            return this.Equals(objectType) || this.derivedSubtypes.Contains(objectType);
-        }
+        public override bool IsAssignableFrom(IComposite objectType) => this.Equals(objectType) || this.structuralDerivedSubtypes.Contains(objectType);
 
         public override void Bind(Dictionary<string, Type> typeByTypeName) => this.clrType = typeByTypeName[this.Name];
 
@@ -148,7 +87,7 @@ namespace Allors.Database.Meta
         /// Derive direct sub type derivations.
         /// </summary>
         /// <param name="directSubtypes">The direct super types.</param>
-        public void DeriveDirectSubtypes(HashSet<ICompositeBase> directSubtypes)
+        public void StructuralDeriveDirectSubtypes(HashSet<ICompositeBase> directSubtypes)
         {
             directSubtypes.Clear();
             foreach (var inheritance in this.MetaPopulation.Inheritances.Where(inheritance => this.Equals(inheritance.Supertype)))
@@ -156,17 +95,17 @@ namespace Allors.Database.Meta
                 directSubtypes.Add(inheritance.Subtype);
             }
 
-            this.derivedDirectSubtypes = new HashSet<ICompositeBase>(directSubtypes);
+            this.structuralDerivedDirectSubtypes = new HashSet<ICompositeBase>(directSubtypes);
         }
 
         /// <summary>
         /// Derive subclasses.
         /// </summary>
         /// <param name="subClasses">The sub classes.</param>
-        public void DeriveSubclasses(HashSet<IClassBase> subClasses)
+        public void StructuralDeriveSubclasses(HashSet<IClassBase> subClasses)
         {
             subClasses.Clear();
-            foreach (var subType in this.derivedSubtypes)
+            foreach (var subType in this.structuralDerivedSubtypes)
             {
                 if (subType is IClass)
                 {
@@ -174,55 +113,48 @@ namespace Allors.Database.Meta
                 }
             }
 
-            this.derivedClasses = new HashSet<IClassBase>(subClasses);
-            this.derivedDatabaseClasses = new HashSet<IClassBase>(subClasses.Where(v => v.Origin == Origin.Database));
+            this.structuralDerivedClasses = new HashSet<IClassBase>(subClasses);
+            this.structuralDerivedDatabaseClasses = new HashSet<IClassBase>(subClasses.Where(v => v.Origin == Origin.Database));
         }
 
         /// <summary>
         /// Derive sub types.
         /// </summary>
         /// <param name="subTypes">The super types.</param>
-        public void DeriveSubtypes(HashSet<ICompositeBase> subTypes)
+        public void StructuralDeriveSubtypes(HashSet<ICompositeBase> subTypes)
         {
             subTypes.Clear();
-            this.DeriveSubtypesRecursively(this, subTypes);
+            this.StructuralDeriveSubtypesRecursively(this, subTypes);
 
-            this.derivedSubtypes = new HashSet<ICompositeBase>(subTypes);
-            this.derivedDatabaseSubtypes = new HashSet<ICompositeBase>(subTypes.Where(v => v.Origin == Origin.Database));
+            this.structuralDerivedSubtypes = new HashSet<ICompositeBase>(subTypes);
+            this.structuralDerivedDatabaseSubtypes = new HashSet<ICompositeBase>(subTypes.Where(v => v.Origin == Origin.Database));
         }
 
         /// <summary>
         /// Derive exclusive sub classes.
         /// </summary>
-        public void DeriveExclusiveSubclass() => this.derivedExclusiveClass = this.derivedClasses.Count == 1 ? this.derivedClasses.First() : null;
+        public void StructuralDeriveExclusiveSubclass() => this.structuralDerivedExclusiveClass = this.structuralDerivedClasses.Count == 1 ? this.structuralDerivedClasses.First() : null;
 
         /// <summary>
         /// Derive super types recursively.
         /// </summary>
         /// <param name="type">The type .</param>
         /// <param name="subTypes">The super types.</param>
-        public void DeriveSubtypesRecursively(IObjectTypeBase type, HashSet<ICompositeBase> subTypes)
+        public void StructuralDeriveSubtypesRecursively(IObjectTypeBase type, HashSet<ICompositeBase> subTypes)
         {
-            foreach (var directSubtype in this.derivedDirectSubtypes)
+            foreach (var directSubtype in this.structuralDerivedDirectSubtypes)
             {
                 if (!Equals(directSubtype, type))
                 {
                     subTypes.Add(directSubtype);
                     if (directSubtype is IInterface)
                     {
-                        ((Interface)directSubtype).DeriveSubtypesRecursively(this, subTypes);
+                        ((Interface)directSubtype).StructuralDeriveSubtypesRecursively(this, subTypes);
                     }
                 }
             }
         }
 
-        public override IEnumerable<IClass> DatabaseClasses
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedDatabaseClasses;
-            }
-        }
+        public override IEnumerable<IClass> DatabaseClasses => this.structuralDerivedDatabaseClasses;
     }
 }

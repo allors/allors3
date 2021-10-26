@@ -119,8 +119,8 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
       .subscribe((loaded) => {
         this.allors.context.reset();
         const taskAssignments = loaded.collection<TaskAssignment>(m.TaskAssignment);
-        this.table.total = loaded.value('TaskAssignments_total') as number;
-        this.table.data = taskAssignments.map((v) => {
+        this.table.total = (loaded.value('TaskAssignments_total') ?? 0) as number;
+        this.table.data = taskAssignments?.map((v) => {
           return {
             object: v,
             title: v.Task.Title,

@@ -106,7 +106,7 @@ export class RepeatingPurchaseInvoiceOverviewPanelComponent extends TestScope {
 
       this.objects = loaded.collection<RepeatingPurchaseInvoice>(pullName);
 
-      this.table.data = this.objects.map((v) => {
+      this.table.data = this.objects?.map((v) => {
         return {
           object: v,
           internalOrganisation: v.InternalOrganisation.PartyName,

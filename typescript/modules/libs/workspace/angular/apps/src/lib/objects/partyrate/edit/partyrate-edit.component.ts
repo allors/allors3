@@ -46,7 +46,7 @@ export class PartyRateEditComponent extends TestScope implements OnInit, OnDestr
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           const pulls = [pull.RateType({ sorting: [{ roleType: this.m.RateType.Name }] }), pull.TimeFrequency({ sorting: [{ roleType: this.m.TimeFrequency.Name }] })];
 
@@ -82,7 +82,7 @@ export class PartyRateEditComponent extends TestScope implements OnInit, OnDestr
         this.party = loaded.object<Party>(m.Party);
         this.rateTypes = loaded.collection<RateType>(m.RateType);
         this.timeFrequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
-        const hour = this.timeFrequencies.find((v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5');
+        const hour = this.timeFrequencies?.find((v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5');
 
         if (isCreate) {
           this.title = 'Add Party Rate';

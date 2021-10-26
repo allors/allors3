@@ -17,8 +17,6 @@ namespace Allors.Database.Meta
 
         private string name;
 
-        private MethodTypeProps props;
-
         public MethodType(ICompositeBase objectType, Guid id, string tag = null)
         {
             this.metaPopulation = objectType.MetaPopulation;
@@ -28,8 +26,6 @@ namespace Allors.Database.Meta
 
             this.metaPopulation.OnMethodTypeCreated(this);
         }
-
-        public MethodTypeProps _ => this.props ??= new MethodTypeProps(this);
 
         IMetaPopulationBase IMetaObjectBase.MetaPopulation => this.metaPopulation;
         IMetaPopulation IMetaObject.MetaPopulation => this.metaPopulation;

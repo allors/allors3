@@ -30,11 +30,11 @@ namespace Tests.OrganisationTests
         [Fact]
         public void CreateFull()
         {
-            var before = new Organisations(this.Session).Extent().ToArray();
+            var before = new Organisations(this.Transaction).Extent().ToArray();
 
-            var expected = new OrganisationBuilder(this.Session).WithDefaults().Build();
+            var expected = new OrganisationBuilder(this.Transaction).WithDefaults().Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedName = expected.Name;
             var expectedTaxNumber = expected.TaxNumber;
@@ -49,13 +49,13 @@ namespace Tests.OrganisationTests
 
             organisationCreate.AssertFull(expected);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             organisationCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Organisations(this.Session).Extent().ToArray();
+            var after = new Organisations(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -72,11 +72,11 @@ namespace Tests.OrganisationTests
         [Fact]
         public void CreateMinimal()
         {
-            var before = new Organisations(this.Session).Extent().ToArray();
+            var before = new Organisations(this.Transaction).Extent().ToArray();
 
-            var expected = new OrganisationBuilder(this.Session).WithDefaults().Build();
+            var expected = new OrganisationBuilder(this.Transaction).WithDefaults().Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedName = expected.Name;
 
@@ -84,13 +84,13 @@ namespace Tests.OrganisationTests
                 .CreateOrganisation()
                 .Build(expected, true);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             organisationCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Organisations(this.Session).Extent().ToArray();
+            var after = new Organisations(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 

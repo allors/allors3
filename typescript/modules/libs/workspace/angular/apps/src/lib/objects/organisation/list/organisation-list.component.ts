@@ -126,8 +126,8 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         const organisations = loaded.collection<Organisation>(m.Organisation);
 
-        this.table.total = loaded.value('Organisations_total') as number;
-        this.table.data = organisations.map((v) => {
+        this.table.total = (loaded.value('Organisations_total') ?? 0) as number;
+        this.table.data = organisations?.map((v) => {
           return {
             object: v,
             name: v.DisplayName,

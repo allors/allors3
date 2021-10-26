@@ -25,7 +25,7 @@ namespace Tests.SalesOrderItemTests
         public SalesOrderItemCreateTest(Fixture fixture)
             : base(fixture)
         {
-            this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            this.internalOrganisation = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
 
             this.Login();
             this.salesOrderListPage = this.Sidenav.NavigateToSalesOrders();
@@ -37,14 +37,14 @@ namespace Tests.SalesOrderItemTests
         [Fact]
         public void CreateWithDefaults()
         {
-            var salesOrder = new SalesOrders(this.Session).Extent().FirstOrDefault();
+            var salesOrder = new SalesOrders(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new SalesOrderItems(this.Session).Extent().ToArray();
+            var before = new SalesOrderItems(this.Transaction).Extent().ToArray();
 
-            var expected = new SalesOrderItemBuilder(this.Session).WithDefaults().Build();
+            var expected = new SalesOrderItemBuilder(this.Transaction).WithDefaults().Build();
             salesOrder.AddSalesOrderItem(expected);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(expected.ExistDescription);
             Assert.True(expected.ExistComment);
@@ -66,13 +66,13 @@ namespace Tests.SalesOrderItemTests
                 .CreateSalesOrderItem()
                 .BuildForDefaults(expected);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             salesOrderItemCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new SalesOrderItems(this.Session).Extent().ToArray();
+            var after = new SalesOrderItems(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -91,14 +91,14 @@ namespace Tests.SalesOrderItemTests
         [Fact]
         public void CreateWithProductItemDefaults()
         {
-            var salesOrder = new SalesOrders(this.Session).Extent().FirstOrDefault();
+            var salesOrder = new SalesOrders(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new SalesOrderItems(this.Session).Extent().ToArray();
+            var before = new SalesOrderItems(this.Transaction).Extent().ToArray();
 
-            var expected = new SalesOrderItemBuilder(this.Session).WithSerialisedProductDefaults().Build();
+            var expected = new SalesOrderItemBuilder(this.Transaction).WithSerialisedProductDefaults().Build();
             salesOrder.AddSalesOrderItem(expected);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(expected.ExistDescription);
             Assert.True(expected.ExistComment);
@@ -126,13 +126,13 @@ namespace Tests.SalesOrderItemTests
                 .CreateSalesOrderItem()
                 .BuildForProductItemDefaults(expected);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             salesOrderItemCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new SalesOrderItems(this.Session).Extent().ToArray();
+            var after = new SalesOrderItems(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -154,14 +154,14 @@ namespace Tests.SalesOrderItemTests
         [Fact]
         public void CreateWithPartItemDefaults()
         {
-            var salesOrder = new SalesOrders(this.Session).Extent().FirstOrDefault();
+            var salesOrder = new SalesOrders(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new SalesOrderItems(this.Session).Extent().ToArray();
+            var before = new SalesOrderItems(this.Transaction).Extent().ToArray();
 
-            var expected = new SalesOrderItemBuilder(this.Session).WithPartItemDefaults().Build();
+            var expected = new SalesOrderItemBuilder(this.Transaction).WithPartItemDefaults().Build();
             salesOrder.AddSalesOrderItem(expected);
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(expected.ExistDescription);
             Assert.True(expected.ExistComment);
@@ -189,13 +189,13 @@ namespace Tests.SalesOrderItemTests
                 .CreateSalesOrderItem()
                 .BuildForProductItemDefaults(expected);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             salesOrderItemCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new SalesOrderItems(this.Session).Extent().ToArray();
+            var after = new SalesOrderItems(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 

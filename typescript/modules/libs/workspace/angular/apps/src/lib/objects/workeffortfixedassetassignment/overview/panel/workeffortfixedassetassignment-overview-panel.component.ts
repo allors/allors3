@@ -121,20 +121,18 @@ export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope impl
       this.workEffort = loaded.object<WorkEffort>(this.m.WorkEffort);
       this.objects = loaded.collection<WorkEffortFixedAssetAssignment>(workeffortpullName);
 
-      if (this.objects) {
-        this.table.total = this.objects.length;
-        this.table.data = this.objects.map((v) => {
-          return {
-            object: v,
-            number: v.Assignment.WorkEffortNumber,
-            name: v.Assignment.Name,
-            status: v.Assignment.WorkEffortState ? v.Assignment.WorkEffortState.Name : '',
-            asset: v.FixedAsset.Name,
-            from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-            through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
-          } as Row;
-        });
-      }
+      this.table.total = this.objects?.length ?? 0;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          number: v.Assignment.WorkEffortNumber,
+          name: v.Assignment.Name,
+          status: v.Assignment.WorkEffortState ? v.Assignment.WorkEffortState.Name : '',
+          asset: v.FixedAsset.Name,
+          from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
+          through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
+        } as Row;
+      });
     };
   }
 }

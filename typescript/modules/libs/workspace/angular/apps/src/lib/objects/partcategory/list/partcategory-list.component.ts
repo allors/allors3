@@ -135,13 +135,13 @@ export class PartCategoryListComponent extends TestScope implements OnInit, OnDe
         this.allors.context.reset();
 
         const objects = loaded.collection<PartCategory>(m.PartCategory);
-        this.table.total = loaded.value('PartCategories_total') as number;
-        this.table.data = objects.map((v) => {
+        this.table.total = (loaded.value('PartCategories_total') ?? 0) as number;
+        this.table.data = objects?.map((v) => {
           return {
             object: v,
             name: v.Name,
             primaryParent: v.PrimaryParent && v.PrimaryParent.DisplayName,
-            secondaryParents: v.SecondaryParents.map((w) => w.DisplayName).join(', '),
+            secondaryParents: v.SecondaryParents?.map((w) => w.DisplayName).join(', '),
           } as Row;
         });
       });

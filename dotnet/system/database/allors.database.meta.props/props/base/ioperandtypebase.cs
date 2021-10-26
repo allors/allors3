@@ -7,6 +7,5 @@ namespace Allors.Database.Meta
 {
     public partial interface IOperandTypeBase : IMetaObjectBase, IOperandType
     {
-        string DisplayName { get; }
     }
 }

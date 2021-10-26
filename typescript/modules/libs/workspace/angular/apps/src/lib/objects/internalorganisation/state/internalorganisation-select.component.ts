@@ -16,7 +16,7 @@ import { M } from '@allors/workspace/meta/default';
 export class SelectInternalOrganisationComponent implements OnInit, OnDestroy {
   m: any;
   public get internalOrganisation() {
-    const internalOrganisation = this.internalOrganisations.find((v) => v.strategy.id === this.internalOrganisationId.value);
+    const internalOrganisation = this.internalOrganisations?.find((v) => v.strategy.id === this.internalOrganisationId.value);
     return internalOrganisation;
   }
 

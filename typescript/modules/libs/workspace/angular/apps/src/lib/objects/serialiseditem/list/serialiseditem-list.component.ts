@@ -126,8 +126,8 @@ export class SerialisedItemListComponent extends TestScope implements OnInit, On
 
         const objects = loaded.collection<SerialisedItem>(m.SerialisedItem);
 
-        this.table.total = loaded.value('SerialisedItems_total') as number;
-        this.table.data = objects.map((v) => {
+        this.table.total = (loaded.value('SerialisedItems_total') ?? 0) as number;
+        this.table.data = objects?.map((v) => {
           return {
             object: v,
             id: v.ItemNumber,

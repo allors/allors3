@@ -143,22 +143,20 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
         const inventoryObjects = loaded.collection<SerialisedInventoryItem>(inventoryPullName) ?? [];
 
         const serialisedItemobjects = loaded.collection<SerialisedInventoryItem>(serialiseditemPullName) ?? [];
-        const serialisedItemobjectsforPart = serialisedItemobjects.filter((v) => v.Part === this.serialisedItem?.PartWhereSerialisedItem);
+        const serialisedItemobjectsforPart = serialisedItemobjects?.filter((v) => v.Part === this.serialisedItem?.PartWhereSerialisedItem);
 
         this.objects = inventoryObjects.concat(serialisedItemobjectsforPart);
 
-        if (this.objects) {
-          this.table.total = (loaded.value(`${this.objects.length}_total`) as number) ?? this.objects.length;
-          this.table.data = this.objects.map((v) => {
-            return {
-              object: v,
-              facility: v.Facility.Name,
-              item: v.SerialisedItem.DisplayName,
-              quantity: v.Quantity,
-              state: v.SerialisedInventoryItemState ? v.SerialisedInventoryItemState.Name : '',
-            } as Row;
-          });
-        }
+        this.table.total = (loaded.value(`${this.objects?.length ?? 0}_total`) as number) ?? this.objects?.length ?? 0;
+        this.table.data = this.objects?.map((v) => {
+          return {
+            object: v,
+            facility: v.Facility.Name,
+            item: v.SerialisedItem.DisplayName,
+            quantity: v.Quantity,
+            state: v.SerialisedInventoryItemState ? v.SerialisedInventoryItemState.Name : '',
+          } as Row;
+        });
       };
     };
   }

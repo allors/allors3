@@ -10,18 +10,17 @@ namespace Allors.Database.Protocol.Json
     using Allors.Services;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
+    using NLog;
 
     [ApiController]
     [Route("allors/sync")]
     public class SyncController : ControllerBase
     {
-        public SyncController(IDatabaseService databaseService, IWorkspaceService workspaceService, IPolicyService policyService, ILogger<SyncController> logger)
+        public SyncController(IDatabaseService databaseService, IWorkspaceService workspaceService, IPolicyService policyService)
         {
             this.DatabaseService = databaseService;
             this.WorkspaceService = workspaceService;
             this.PolicyService = policyService;
-            this.Logger = logger;
         }
 
         private IDatabaseService DatabaseService { get; }
@@ -29,7 +28,7 @@ namespace Allors.Database.Protocol.Json
 
         private IPolicyService PolicyService { get; }
 
-        private ILogger<SyncController> Logger { get; }
+        public Logger Logger => LogManager.GetCurrentClassLogger();
 
         [HttpPost]
         [Authorize]
@@ -46,7 +45,7 @@ namespace Allors.Database.Protocol.Json
                     }
                     catch (Exception e)
                     {
-                        this.Logger.LogError(e, "SyncRequest {request}", syncRequest);
+                        this.Logger.Error(e, "SyncRequest {request}", syncRequest);
                         throw;
                     }
                 });

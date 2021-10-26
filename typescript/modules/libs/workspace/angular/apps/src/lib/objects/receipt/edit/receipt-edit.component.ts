@@ -44,7 +44,7 @@ export class ReceiptEditComponent extends TestScope implements OnInit, OnDestroy
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           const pulls = [];
 

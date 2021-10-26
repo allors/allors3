@@ -41,7 +41,7 @@ export class AllorsMaterialAutocompleteComponent extends RoleField implements On
   public ngOnInit(): void {
     if (this.filter) {
       this.filteredOptions = this.searchControl.valueChanges.pipe(
-        filter((v) => v !== null && v !== undefined && v.trim),
+        filter((v) => v != null && v.trim),
         debounceTime(this.debounceTime),
         distinctUntilChanged(),
         switchMap((search: string) => {
@@ -54,7 +54,7 @@ export class AllorsMaterialAutocompleteComponent extends RoleField implements On
       );
     } else {
       this.filteredOptions = this.searchControl.valueChanges.pipe(
-        filter((v) => v !== null && v !== undefined && v.trim),
+        filter((v) => v != null && v.trim),
         debounceTime(this.debounceTime),
         distinctUntilChanged(),
         map((search: string) => {

@@ -344,13 +344,13 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
 
       this.previousShipToCustomer = this.invoice.ShipToCustomer;
 
-      if (this.invoice.ShipToCustomer !== null && this.invoice.BillToCustomer === null) {
+      if (this.invoice.ShipToCustomer != null && this.invoice.BillToCustomer == null) {
         this.invoice.BillToCustomer = this.invoice.ShipToCustomer;
         this.updateBillToCustomer(this.invoice.ShipToCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       this.setDerivedInitialRoles();
@@ -401,13 +401,13 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
 
       this.previousBillToCustomer = this.invoice.BillToCustomer;
 
-      if (this.invoice.BillToCustomer !== null && this.invoice.ShipToCustomer === null) {
+      if (this.invoice.BillToCustomer != null && this.invoice.ShipToCustomer == null) {
         this.invoice.ShipToCustomer = this.invoice.BillToCustomer;
         this.updateShipToCustomer(this.invoice.ShipToCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.billToContactMechanisms = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.billToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       this.setDerivedInitialRoles();
@@ -457,13 +457,13 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
       }
       this.previousBillToEndCustomer = this.invoice.BillToEndCustomer;
 
-      if (this.invoice.BillToEndCustomer !== null && this.invoice.ShipToEndCustomer === null) {
+      if (this.invoice.BillToEndCustomer != null && this.invoice.ShipToEndCustomer == null) {
         this.invoice.ShipToEndCustomer = this.invoice.BillToEndCustomer;
         this.updateShipToEndCustomer(this.invoice.ShipToEndCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.billToEndCustomerContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.billToEndCustomerContactMechanisms = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.billToEndCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       this.setDerivedInitialRoles();
@@ -514,13 +514,13 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
 
       this.previousShipToEndCustomer = this.invoice.ShipToEndCustomer;
 
-      if (this.invoice.ShipToEndCustomer !== null && this.invoice.BillToEndCustomer === null) {
+      if (this.invoice.ShipToEndCustomer != null && this.invoice.BillToEndCustomer == null) {
         this.invoice.BillToEndCustomer = this.invoice.ShipToEndCustomer;
         this.updateBillToEndCustomer(this.invoice.BillToEndCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipToEndCustomerAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToEndCustomerAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToEndCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       this.setDerivedInitialRoles();

@@ -97,18 +97,16 @@ export class TimeEntryOverviewPanelComponent extends TestScope {
       this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
       this.objects = loaded.collection<TimeEntry>(m.WorkEffort.ServiceEntriesWhereWorkEffort);
 
-      if (this.objects) {
-        this.table.total = this.objects.length;
-        this.table.data = this.objects.map((v) => {
-          return {
-            object: v,
-            person: v.Worker && v.Worker.DisplayName,
-            from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-            through: v.ThroughDate !== null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
-            time: v.AmountOfTime,
-          } as Row;
-        });
-      }
+      this.table.total = this.objects?.length ?? 0;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          person: v.Worker && v.Worker.DisplayName,
+          from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
+          through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
+          time: v.AmountOfTime,
+        } as Row;
+      });
     };
   }
 }

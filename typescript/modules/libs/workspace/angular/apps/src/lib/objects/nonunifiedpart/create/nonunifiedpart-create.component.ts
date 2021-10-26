@@ -137,14 +137,14 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
         this.settings = this.fetcher.getSettings(loaded);
 
         const supplierRelationships = loaded.collection<SupplierRelationship>(m.SupplierRelationship);
-        const currentsupplierRelationships = supplierRelationships.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
-        this.currentSuppliers = new Set(currentsupplierRelationships.map((v) => v.Supplier).sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0)));
+        const currentsupplierRelationships = supplierRelationships?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
+        this.currentSuppliers = new Set(currentsupplierRelationships?.map((v) => v.Supplier).sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0)));
 
         this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
-        const piece = this.unitsOfMeasure.find((v) => v.UniqueId === 'f4bbdb52-3441-4768-92d4-729c6c5d6f1b');
+        const piece = this.unitsOfMeasure?.find((v) => v.UniqueId === 'f4bbdb52-3441-4768-92d4-729c6c5d6f1b');
 
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
-        const partNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
+        const partNumberType = this.goodIdentificationTypes?.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
 
         this.manufacturers = loaded.collection<Organisation>(m.Organisation);
 
@@ -225,7 +225,7 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
     this.part.Brand = this.selectedBrand;
     this.part.Model = this.selectedModel;
 
-    if (this.selectedSuppliers !== undefined) {
+    if (this.selectedSuppliers != null) {
       this.selectedSuppliers.forEach((supplier: Organisation) => {
         const supplierOffering = this.allors.context.create<SupplierOffering>(this.m.SupplierOffering);
         supplierOffering.Supplier = supplier;

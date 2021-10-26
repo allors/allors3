@@ -19,7 +19,6 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
   readonly m: M;
 
   contactMechanism: ElectronicAddress;
-  contactMechanismTypes: Enumeration[];
   title: string;
 
   private subscription: Subscription;
@@ -55,8 +54,6 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
-
-        this.contactMechanismTypes = loaded.collection<Enumeration>(m.Enumeration);
 
         this.contactMechanism = loaded.object<ElectronicAddress>(m.ContactMechanism);
 

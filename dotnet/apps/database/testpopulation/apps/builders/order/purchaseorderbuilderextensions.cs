@@ -6,6 +6,7 @@
 
 namespace Allors.Database.Domain.TestPopulation
 {
+    using System.Globalization;
     using System.Linq;
 
     public static partial class PurchaseOrderBuilderExtensions
@@ -20,12 +21,13 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithDescription(faker.Lorem.Sentence())
                 .WithComment(faker.Lorem.Sentence())
                 .WithInternalComment(faker.Lorem.Sentence())
+                .WithCustomerReference(faker.Random.Words(5))
                 .WithShipToContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault())
                 .WithAssignedShipToAddress(internalOrganisation.ShippingAddress)
                 .WithBillToContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault())
                 .WithAssignedBillToContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
-                .WithTakenViaContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault())
-                .WithAssignedTakenViaContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                .WithTakenViaContactPerson(supplier.CurrentContacts.FirstOrDefault())
+                .WithAssignedTakenViaContactMechanism(supplier.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
                 .WithTakenViaSupplier(supplier)
                 .WithStoredInFacility(faker.Random.ListItem(internalOrganisation.FacilitiesWhereOwner.ToArray()))
                 .WithOrderedBy(internalOrganisation);

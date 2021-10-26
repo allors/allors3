@@ -121,27 +121,25 @@ export class SalesInvoiceOverviewPanelComponent extends TestScope implements OnI
       const fromAsset = loaded.collection<SalesInvoice>(assetPullName);
       const fromParty = loaded.collection<SalesInvoice>(customerPullName);
 
-      if (fromAsset !== undefined && fromAsset.length > 0) {
+      if (fromAsset != null && fromAsset.length > 0) {
         this.objects = fromAsset;
       }
 
-      if (fromParty !== undefined && fromParty.length > 0) {
+      if (fromParty != null && fromParty.length > 0) {
         this.objects = fromParty;
       }
 
-      if (this.objects) {
-        this.table.total = this.objects.length;
-        this.table.data = this.objects.map((v) => {
-          return {
-            object: v,
-            number: v.InvoiceNumber,
-            customer: v.BillToCustomer.DisplayName,
-            totalExVat: v.TotalExVat,
-            state: v.SalesInvoiceState ? v.SalesInvoiceState.Name : '',
-            lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
-          } as Row;
-        });
-      }
+      this.table.total = this.objects?.length ?? 0;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          number: v.InvoiceNumber,
+          customer: v.BillToCustomer.DisplayName,
+          totalExVat: v.TotalExVat,
+          state: v.SalesInvoiceState ? v.SalesInvoiceState.Name : '',
+          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+        } as Row;
+      });
     };
   }
 }

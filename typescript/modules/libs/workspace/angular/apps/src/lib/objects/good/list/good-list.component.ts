@@ -111,15 +111,15 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
         const goods = loaded.collection<Good>(m.Good);
         const productCategories = loaded.collection<ProductCategory>(m.Good.ProductCategoriesWhereProduct);
 
-        this.table.total = loaded.value('NonUnifiedGoods_total') as number;
-        this.table.data = goods.map((v) => {
+        this.table.total = (loaded.value('NonUnifiedGoods_total') ?? 0) as number;
+        this.table.data = goods?.map((v) => {
           return {
             object: v,
             name: v.Name,
-            id: v.ProductIdentifications.find((p) => p.ProductIdentificationType.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f').Identification,
+            id: v.ProductIdentifications?.find((p) => p.ProductIdentificationType.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f').Identification,
             categories: productCategories
-              .filter((w) => w.Products.includes(v))
-              .map((w) => w.DisplayName)
+              ?.filter((w) => w.Products.includes(v))
+              ?.map((w) => w.DisplayName)
               .join(', '),
             // qoh: v.Part && v.Part.QuantityOnHand
             qoh: ((v as NonUnifiedGood).Part && (v as NonUnifiedGood).Part.QuantityOnHand) || (v as UnifiedGood).QuantityOnHand,

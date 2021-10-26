@@ -112,7 +112,7 @@ namespace Allors.Server
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.ConfigureExceptionHandler(env, loggerFactory);
+            app.ConfigureExceptionHandler(env);
 
             app.UseResponseCaching();
             app.UseEndpoints(endpoints =>

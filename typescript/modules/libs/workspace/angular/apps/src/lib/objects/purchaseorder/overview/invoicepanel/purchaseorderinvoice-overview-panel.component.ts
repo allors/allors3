@@ -174,14 +174,17 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
         }),
         pull.OrderItemBilling({
           predicate: {
-            kind: 'And',
-            operands: [
-              {
+            kind: 'ContainedIn',
+            propertyType: m.OrderItemBilling.InvoiceItem,
+            extent: {
+              kind: 'Filter',
+              objectType: m.InvoiceItem,
+              predicate: {
                 kind: 'ContainedIn',
-                propertyType: m.OrderItemBilling.InvoiceItem,
-                extent: { kind: 'Filter', objectType: m.InvoiceItem, predicate: { kind: 'ContainedIn', propertyType: m.InvoiceItem.InvoiceWhereValidInvoiceItem, objectIds: [id] } },
+                propertyType: m.InvoiceItem.InvoiceWhereValidInvoiceItem,
+                objectIds: [id],
               },
-            ],
+            },
           },
         }),
         pull.PurchaseInvoice({
@@ -205,8 +208,8 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
       this.orderItemBillings = loaded.collection<OrderItemBilling>(m.OrderItemBilling);
 
       const invoiceItemTypes = loaded.collection<InvoiceItemType>(m.InvoiceItemType);
-      this.partItem = invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b');
-      this.workItem = invoiceItemTypes.find((v: InvoiceItemType) => v.UniqueId === 'a4d2e6d0-c6c1-46ec-a1cf-3a64822e7a9e');
+      this.partItem = invoiceItemTypes?.find((v: InvoiceItemType) => v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b');
+      this.workItem = invoiceItemTypes?.find((v: InvoiceItemType) => v.UniqueId === 'a4d2e6d0-c6c1-46ec-a1cf-3a64822e7a9e');
 
       const purchaseOrders = loaded.collection<PurchaseOrder>(pullName);
       this.objects = purchaseOrders.filter(
@@ -215,26 +218,23 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
           v.PurchaseInvoicesWherePurchaseOrder.includes(this.purchaseInvoice)
       );
 
-      if (this.objects) {
-        this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects.length) as number;;
-        this.table.data = this.objects.map((v) => {
-          return {
-            object: v,
-            number: v.OrderNumber,
-            description: v.Description,
-            reference: v.CustomerReference,
-            totalExVat: v.TotalExVat.toString(),
-            state: v.PurchaseOrderState.Name,
-            shipmentState: v.PurchaseOrderShipmentState.Name,
-            paymentState: v.PurchaseOrderPaymentState.Name,
-          } as Row;
-        });
-      }
+      this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          number: v.OrderNumber,
+          description: v.Description,
+          reference: v.CustomerReference,
+          totalExVat: v.TotalExVat.toString(),
+          state: v.PurchaseOrderState.Name,
+          shipmentState: v.PurchaseOrderShipmentState.Name,
+          paymentState: v.PurchaseOrderPaymentState.Name,
+        } as Row;
+      });
     };
   }
 
   public addFromPurchaseOrder(panelPurchaseOrder: PurchaseOrder): void {
-
     const purchaseInvoice = this.allors.context.instantiate<PurchaseInvoice>(this.purchaseInvoice.id);
     const purchaseOrder = this.allors.context.instantiate<PurchaseOrder>(panelPurchaseOrder.id);
 
@@ -281,7 +281,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
     const purchaseOrder = context.instantiate<PurchaseOrder>(panelPurchaseOrder.id);
 
     purchaseOrder.ValidOrderItems.forEach((purchaseOrderItem: PurchaseOrderItem) => {
-      const orderItemBilling = this.orderItemBillings.find((v) => v.OrderItem.id === purchaseOrderItem.id);
+      const orderItemBilling = this.orderItemBillings?.find((v) => v.OrderItem.id === purchaseOrderItem.id);
       if (orderItemBilling) {
         context.invoke(orderItemBilling.InvoiceItem.Delete).subscribe(() => {
           context.reset();

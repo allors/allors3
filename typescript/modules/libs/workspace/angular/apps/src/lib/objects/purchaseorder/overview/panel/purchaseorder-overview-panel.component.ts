@@ -127,24 +127,22 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
 
       const purchaseOrders = loaded.collection<PurchaseOrder>(pullName);
-      this.objects = purchaseOrders.filter((v) => v.OrderedBy === this.internalOrganisation);
+      this.objects = purchaseOrders?.filter((v) => v.OrderedBy === this.internalOrganisation);
       this.objects.sort((a, b) => (a.OrderNumber > b.OrderNumber ? 1 : b.OrderNumber > a.OrderNumber ? -1 : 0));
 
-      if (this.objects) {
-        this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.objects.length;
-        this.table.data = this.objects.map((v) => {
-          return {
-            object: v,
-            number: v.OrderNumber,
-            description: v.Description,
-            reference: v.CustomerReference,
-            totalExVat: v.TotalExVat.toString(),
-            state: v.PurchaseOrderState.Name,
-            shipmentState: v.PurchaseOrderShipmentState.Name,
-            paymentState: v.PurchaseOrderPaymentState.Name,
-          } as Row;
-        });
-      }
+      this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.objects?.length ?? 0;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          number: v.OrderNumber,
+          description: v.Description,
+          reference: v.CustomerReference,
+          totalExVat: v.TotalExVat.toString(),
+          state: v.PurchaseOrderState.Name,
+          shipmentState: v.PurchaseOrderShipmentState.Name,
+          paymentState: v.PurchaseOrderPaymentState.Name,
+        } as Row;
+      });
     };
   }
 }

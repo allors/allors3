@@ -15,9 +15,8 @@ namespace Allors.Database.Meta
 
         bool ExistAssignedSingularName { get; }
 
-        new string SingularName { get; set; }
-
         bool ExistAssignedPluralName { get; }
+        new string SingularName { get; set; }
 
         new string PluralName { get; set; }
 

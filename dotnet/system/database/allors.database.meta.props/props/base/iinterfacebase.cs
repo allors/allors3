@@ -9,18 +9,16 @@ namespace Allors.Database.Meta
 
     public partial interface IInterfaceBase : ICompositeBase, IInterface
     {
-        new IEnumerable<ICompositeBase> Subtypes { get; }
+        void StructuralDeriveDirectSubtypes(HashSet<ICompositeBase> sharedCompositeTypes);
 
-        void DeriveDirectSubtypes(HashSet<ICompositeBase> sharedCompositeTypes);
+        void StructuralDeriveSubtypes(HashSet<ICompositeBase> sharedCompositeTypes);
 
-        void DeriveSubtypes(HashSet<ICompositeBase> sharedCompositeTypes);
+        void StructuralDeriveSubclasses(HashSet<IClassBase> sharedClasses);
 
-        void DeriveSubclasses(HashSet<IClassBase> sharedClasses);
+        void StructuralDeriveExclusiveSubclass();
 
-        void DeriveExclusiveSubclass();
+        void StructuralDeriveSupertypesRecursively(IObjectTypeBase type, HashSet<IInterfaceBase> superTypes);
 
         void DeriveWorkspaceNames();
-
-        void DeriveSupertypesRecursively(IObjectTypeBase type, HashSet<IInterfaceBase> superTypes);
     }
 }

@@ -26,8 +26,6 @@ namespace Allors.Database.Meta
         private readonly IRelationTypeBase relationType;
         private ICompositeBase objectType;
 
-        private AssociationTypeProps props;
-
         protected AssociationType(IRelationTypeBase relationType)
         {
             this.metaPopulation = relationType.MetaPopulation;
@@ -37,8 +35,6 @@ namespace Allors.Database.Meta
 
         public MetaPopulation M => (MetaPopulation)this.metaPopulation;
 
-        public AssociationTypeProps _ => this.props ??= new AssociationTypeProps(this);
-
         #region IMetaObject & IMetaObjectBase
         IMetaPopulation IMetaObject.MetaPopulation => this.metaPopulation;
 
@@ -46,12 +42,9 @@ namespace Allors.Database.Meta
 
         IMetaPopulationBase IMetaObjectBase.MetaPopulation => this.metaPopulation;
 
-        string IMetaObjectBase.ValidationName => this.ValidationName;
         #endregion
 
         #region IOperandType & IOperandTypeBase
-        string IOperandTypeBase.DisplayName => this.DisplayName;
-
         string[] IOperandType.WorkspaceNames => this.relationType.WorkspaceNames;
 
         string[] IOperandType.AssignedWorkspaceNames => this.relationType.AssignedWorkspaceNames;
@@ -92,8 +85,6 @@ namespace Allors.Database.Meta
 
             return !ofType.IsAssignableFrom(((IObject)association).Strategy.Class) ? null : association;
         }
-
-        IObjectTypeBase IPropertyTypeBase.ObjectType => this.objectType;
 
         #endregion
 

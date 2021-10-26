@@ -54,7 +54,7 @@ export class SerialisedItemCharacteristicEditComponent extends TestScope impleme
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           const pulls = [
             this.fetcher.locales,

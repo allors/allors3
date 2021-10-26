@@ -29,14 +29,14 @@ namespace Tests.NonUnifiedGood
         [Fact]
         public void Create()
         {
-            var before = new NonUnifiedGoods(this.Session).Extent().ToArray();
+            var before = new NonUnifiedGoods(this.Transaction).Extent().ToArray();
 
-            var internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
-            var expected = new NonUnifiedGoodBuilder(this.Session).WithSerialisedDefaults(internalOrganisation).Build();
+            var internalOrganisation = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
+            var expected = new NonUnifiedGoodBuilder(this.Transaction).WithSerialisedDefaults(internalOrganisation).Build();
 
-            var expectedPart = new NonUnifiedParts(this.Session).Extent().FirstOrDefault();
+            var expectedPart = new NonUnifiedParts(this.Transaction).Extent().FirstOrDefault();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedName = expected.Name;
             var expectedDescription = expected.Description;
@@ -49,13 +49,13 @@ namespace Tests.NonUnifiedGood
                 .Description.Set(expected.Description)
                 .Part.Select(expectedPart.Name);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             nonUnifiedGoodCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new NonUnifiedGoods(this.Session).Extent().ToArray();
+            var after = new NonUnifiedGoods(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 

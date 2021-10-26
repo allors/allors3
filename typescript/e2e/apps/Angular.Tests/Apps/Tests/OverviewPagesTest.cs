@@ -71,7 +71,7 @@ namespace Tests.ApplicationTests
                                 foreach (var @class in classes)
                                 {
                                     factory.Create(@class);
-                                    var dialog = this.Driver.GetDialog();
+                                    var dialog = this.Driver.GetDialog(this.M);
                                     Cancel(dialog);
                                 }
                             }
@@ -106,7 +106,7 @@ namespace Tests.ApplicationTests
 
                             if (action != null)
                             {
-                                var objects = this.Session.Instantiate(table.ObjectIds);
+                                var objects = this.Transaction.Instantiate(table.ObjectIds);
                                 foreach (var @object in objects)
                                 {
                                     table.Action(@object, action);
@@ -144,7 +144,7 @@ namespace Tests.ApplicationTests
 
                     if (action != null)
                     {
-                        var objects = this.Session.Instantiate(table.ObjectIds);
+                        var objects = this.Transaction.Instantiate(table.ObjectIds);
                         foreach (var @object in objects)
                         {
                             listPage = (Component)navigateTo.Invoke(this.Sidenav, null);

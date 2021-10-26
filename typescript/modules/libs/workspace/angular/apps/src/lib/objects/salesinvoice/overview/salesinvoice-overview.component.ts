@@ -114,7 +114,7 @@ export class SalesInvoiceOverviewComponent extends TestScope implements AfterVie
 
         this.invoice = loaded.object<SalesInvoice>(m.SalesInvoice);
         this.repeatingInvoices = loaded.collection<RepeatingSalesInvoice>(m.RepeatingSalesInvoice);
-        if (this.repeatingInvoices.length > 0) {
+        if (this.repeatingInvoices?.length > 0) {
           this.repeatingInvoice = this.repeatingInvoices[0];
         } else {
           this.repeatingInvoice = undefined;

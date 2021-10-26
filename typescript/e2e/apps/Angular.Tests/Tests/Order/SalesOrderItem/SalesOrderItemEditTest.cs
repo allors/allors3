@@ -26,7 +26,7 @@ namespace Tests.SalesOrderItemTests
         public SalesOrderItemEditTest(Fixture fixture)
             : base(fixture)
         {
-            this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            this.internalOrganisation = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
 
             this.Login();
             this.salesOrderListPage = this.Sidenav.NavigateToSalesOrders();
@@ -38,17 +38,17 @@ namespace Tests.SalesOrderItemTests
         [Fact]
         public void EditWithDefaults()
         {
-            var salesOrder = new SalesOrders(this.Session).Extent().FirstOrDefault();
+            var salesOrder = new SalesOrders(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new SalesOrderItems(this.Session).Extent().ToArray();
+            var before = new SalesOrderItems(this.Transaction).Extent().ToArray();
 
-            var disposableSalesOrder = this.internalOrganisation.CreateB2BSalesOrder(this.Session.Faker());
+            var disposableSalesOrder = this.internalOrganisation.CreateB2BSalesOrder(this.Transaction.Faker());
             var expected = disposableSalesOrder.SalesOrderItems.First(v => !(v.InvoiceItemType.IsProductItem || v.InvoiceItemType.IsPartItem));
 
             var salesOrderItem = salesOrder.SalesOrderItems.First(v => !(v.InvoiceItemType.IsProductItem || v.InvoiceItemType.IsPartItem));
             var id = salesOrderItem.Id;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedDescription = expected.Description;
             var expectedComment = expected.Comment;
@@ -72,15 +72,15 @@ namespace Tests.SalesOrderItemTests
             salesOrderItemEdit.InternalComment.Set(expected.InternalComment);
             salesOrderItemEdit.PriceableAssignedUnitPrice_1.Set(expected.AssignedUnitPrice.ToString());
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             salesOrderItemEdit.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new SalesOrderItems(this.Session).Extent().ToArray();
+            var after = new SalesOrderItems(this.Transaction).Extent().ToArray();
 
-            var actual = (SalesOrderItem)this.Session.Instantiate(id);
+            var actual = (SalesOrderItem)this.Transaction.Instantiate(id);
 
             Assert.Equal(after.Length, before.Length);
 
@@ -96,17 +96,17 @@ namespace Tests.SalesOrderItemTests
         [Fact]
         public void EditWithSerialisedProductItemDefaults()
         {
-            var salesOrder = new SalesOrders(this.Session).Extent().FirstOrDefault();
+            var salesOrder = new SalesOrders(this.Transaction).Extent().FirstOrDefault();
 
-            var before = new SalesOrderItems(this.Session).Extent().ToArray();
+            var before = new SalesOrderItems(this.Transaction).Extent().ToArray();
 
-            var disposableSalesOrder = this.internalOrganisation.CreateB2BSalesOrder(this.Session.Faker());
+            var disposableSalesOrder = this.internalOrganisation.CreateB2BSalesOrder(this.Transaction.Faker());
             var expected = disposableSalesOrder.SalesOrderItems.First(v => v.InvoiceItemType.IsProductItem);
 
             var salesOrderItem = salesOrder.SalesOrderItems.First(v => v.InvoiceItemType.IsProductItem);
             var id = salesOrderItem.Id;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedDescription = expected.Description;
             var expectedComment = expected.Comment;
@@ -130,15 +130,15 @@ namespace Tests.SalesOrderItemTests
             salesOrderItemEdit.InternalComment.Set(expected.InternalComment);
             salesOrderItemEdit.PriceableAssignedUnitPrice_2.Set(expected.AssignedUnitPrice.ToString());
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             salesOrderItemEdit.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new SalesOrderItems(this.Session).Extent().ToArray();
+            var after = new SalesOrderItems(this.Transaction).Extent().ToArray();
 
-            var actual = (SalesOrderItem)this.Session.Instantiate(id);
+            var actual = (SalesOrderItem)this.Transaction.Instantiate(id);
 
             Assert.Equal(after.Length, before.Length);
 

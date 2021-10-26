@@ -168,10 +168,10 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
         this.canCreate = this.internalOrganisation.canExecuteCreatePurchaseOrder;
 
         const orders = loaded.collection<PurchaseOrder>(m.PurchaseOrder);
-        this.table.total = loaded.value('PurchaseOrders_total') as number;
+        this.table.total = (loaded.value('PurchaseOrders_total') ?? 0) as number;
         this.table.data = orders
-          .filter((v) => v.canReadOrderNumber)
-          .map((v) => {
+          ?.filter((v) => v.canReadOrderNumber)
+          ?.map((v) => {
             return {
               object: v,
               number: `${v.OrderNumber}`,
@@ -179,7 +179,7 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
               state: `${v.PurchaseOrderState && v.PurchaseOrderState.Name}`,
               shipmentState: `${v.PurchaseOrderShipmentState && v.PurchaseOrderShipmentState.Name}`,
               customerReference: `${v.Description || ''}`,
-              invoice: v.PurchaseInvoicesWherePurchaseOrder.map((w) => w.InvoiceNumber).join(', '),
+              invoice: v.PurchaseInvoicesWherePurchaseOrder?.map((w) => w.InvoiceNumber).join(', '),
               currency: `${v.DerivedCurrency && v.DerivedCurrency.IsoCode}`,
               totalExVat: v.TotalExVat,
               totalIncVat: v.TotalIncVat,

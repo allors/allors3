@@ -7,7 +7,7 @@ namespace Allors.Database.Meta
 {
     public partial interface IInheritanceBase : IMetaObjectBase, IInheritance
     {
-        new IInterfaceBase Supertype { get;  }
+        new IInterfaceBase Supertype { get; }
 
         new ICompositeBase Subtype { get; }
     }

@@ -6,20 +6,14 @@
 namespace Allors.Workspace.Adapters.Local
 {
     using System.Collections.Generic;
-    using Database.Meta;
 
     using IObject = Database.IObject;
 
     public class PullDatabaseObjects
     {
-        private readonly IDictionary<IClass, ISet<IPropertyType>> dependencies;
         private readonly HashSet<IObject> objects;
 
-        public PullDatabaseObjects(IDictionary<IClass, ISet<IPropertyType>> dependencies)
-        {
-            this.dependencies = dependencies;
-            this.objects = new HashSet<IObject>();
-        }
+        public PullDatabaseObjects() => this.objects = new HashSet<IObject>();
 
         public IEnumerable<IObject> Objects => this.objects;
 
@@ -41,35 +35,6 @@ namespace Allors.Workspace.Adapters.Local
             if (!this.objects.Contains(objectToAdd))
             {
                 this.objects.Add(objectToAdd);
-                if (this.dependencies != null && this.dependencies.TryGetValue(objectToAdd.Strategy.Class, out var propertyTypes))
-                {
-                    foreach (var propertyType in propertyTypes)
-                    {
-                        if (propertyType is IRoleType roleType)
-                        {
-                            if (roleType.IsOne)
-                            {
-                                this.Add(objectToAdd.Strategy.GetCompositeRole(roleType));
-                            }
-                            else
-                            {
-                                this.Add(objectToAdd.Strategy.GetCompositesRole<IObject>(roleType));
-                            }
-                        }
-                        else
-                        {
-                            var associationType = (IAssociationType)propertyType;
-                            if (associationType.IsOne)
-                            {
-                                this.Add(objectToAdd.Strategy.GetCompositeAssociation(associationType));
-                            }
-                            else
-                            {
-                                this.Add(objectToAdd.Strategy.GetCompositesAssociation<IObject>(associationType));
-                            }
-                        }
-                    }
-                }
             }
         }
     }

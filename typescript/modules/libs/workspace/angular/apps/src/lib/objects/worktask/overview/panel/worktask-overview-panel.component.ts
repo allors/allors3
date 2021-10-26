@@ -145,32 +145,30 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
       const fromContact = loaded.collection<WorkEffort>(contactPullName);
       const fromAsset = loaded.collection<WorkEffort>(assetPullName);
 
-      if (fromCustomer !== undefined && fromCustomer.length > 0) {
+      if (fromCustomer != null && fromCustomer.length > 0) {
         this.objects = fromCustomer;
       }
 
-      if (fromContact !== undefined && fromContact.length > 0) {
+      if (fromContact != null && fromContact.length > 0) {
         this.objects = fromContact;
       }
 
-      if (fromAsset !== undefined && fromAsset.length > 0) {
+      if (fromAsset != null && fromAsset.length > 0) {
         this.objects = fromAsset;
       }
 
-      if (this.objects) {
-        this.table.total = this.objects.length;
-        this.table.data = this.objects.map((v) => {
-          return {
-            object: v,
-            number: v.WorkEffortNumber,
-            name: v.Name,
-            customer: v.Customer.DisplayName,
-            state: v.WorkEffortState ? v.WorkEffortState.Name : '',
-            cost: v.TotalCost,
-            lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
-          } as Row;
-        });
-      }
+      this.table.total = this.objects?.length ?? 0;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          number: v.WorkEffortNumber,
+          name: v.Name,
+          customer: v.Customer.DisplayName,
+          state: v.WorkEffortState ? v.WorkEffortState.Name : '',
+          cost: v.TotalCost,
+          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+        } as Row;
+      });
     };
   }
 }

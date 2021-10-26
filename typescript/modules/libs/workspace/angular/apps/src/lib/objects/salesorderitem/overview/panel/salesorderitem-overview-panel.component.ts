@@ -134,8 +134,8 @@ export class SalesOrderItemOverviewPanelComponent extends TestScope {
     panel.onPulled = (loaded) => {
       this.salesOrderItems = loaded.collection<SalesOrderItem>(pullName);
       this.order = loaded.object<SalesOrder>(orderPullName);
-      this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.salesOrderItems.length;
-      this.table.data = this.salesOrderItems.map((v) => {
+      this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.salesOrderItems?.length ?? 0;
+      this.table.data = this.salesOrderItems?.map((v) => {
         return {
           object: v,
           item: (v.Product && v.Product.Name) || (v.SerialisedItem && v.SerialisedItem.Name) || '',

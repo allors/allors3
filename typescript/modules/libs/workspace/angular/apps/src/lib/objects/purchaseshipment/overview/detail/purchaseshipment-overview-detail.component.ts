@@ -179,7 +179,7 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
         this.allors.context.reset();
 
         const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-        this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
+        this.shipToAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
         this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
         this.purchaseShipment = loaded.object<PurchaseShipment>(m.PurchaseShipment);

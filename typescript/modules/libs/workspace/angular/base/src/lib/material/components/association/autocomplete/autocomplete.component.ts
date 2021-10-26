@@ -41,7 +41,7 @@ export class AllorsMaterialAssociationAutoCompleteComponent extends AssociationF
   public ngOnInit(): void {
     if (this.filter) {
       this.filteredOptions = this.searchControl.valueChanges.pipe(
-        filter((v) => v !== null && v !== undefined && v.trim),
+        filter((v) => v != null && v.trim),
         debounceTime(this.debounceTime),
         distinctUntilChanged(),
         switchMap((search: string) => {
@@ -54,7 +54,7 @@ export class AllorsMaterialAssociationAutoCompleteComponent extends AssociationF
       );
     } else {
       this.filteredOptions = this.searchControl.valueChanges.pipe(
-        filter((v) => v !== null && v !== undefined && v.trim),
+        filter((v) => v != null && v.trim),
         debounceTime(this.debounceTime),
         distinctUntilChanged(),
         map((search: string) => {

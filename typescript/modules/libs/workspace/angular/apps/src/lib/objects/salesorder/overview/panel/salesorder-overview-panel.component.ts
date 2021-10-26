@@ -119,26 +119,24 @@ export class SalesOrderOverviewPanelComponent extends TestScope implements OnIni
       const fromAsset = loaded.collection<SalesOrder>(assetPullName);
       const fromParty = loaded.collection<SalesOrder>(customerPullName);
 
-      if (fromAsset !== undefined && fromAsset.length > 0) {
+      if (fromAsset != null && fromAsset.length > 0) {
         this.objects = fromAsset;
       }
 
-      if (fromParty !== undefined && fromParty.length > 0) {
+      if (fromParty != null && fromParty.length > 0) {
         this.objects = fromParty;
       }
 
-      if (this.objects) {
-        this.table.total = this.objects.length;
-        this.table.data = this.objects.map((v) => {
-          return {
-            object: v,
-            number: v.OrderNumber,
-            customer: v.BillToCustomer.DisplayName,
-            state: v.SalesOrderState ? v.SalesOrderState.Name : '',
-            lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
-          } as Row;
-        });
-      }
+      this.table.total = this.objects?.length ?? 0;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          number: v.OrderNumber,
+          customer: v.BillToCustomer.DisplayName,
+          state: v.SalesOrderState ? v.SalesOrderState.Name : '',
+          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+        } as Row;
+      });
     };
   }
 }

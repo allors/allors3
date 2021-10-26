@@ -71,7 +71,7 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
   nav(m.CommunicationEvent, '/contacts/communicationevents');
 
   nav(m.RequestForQuote, '/sales/requestsforquote', '/sales/requestforquote/:id');
-  nav(m.ProductQuote, '/sales/productquotes', '/sales/productquotes/:id');
+  nav(m.ProductQuote, '/sales/productquotes', '/sales/productquote/:id');
   nav(m.SalesOrder, '/sales/salesorders', '/sales/salesorder/:id');
   nav(m.SalesInvoice, '/sales/salesinvoices', '/sales/salesinvoice/:id');
 
@@ -86,8 +86,8 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
   nav(m.SerialisedItem, '/products/serialiseditems', '/products/serialisedItem/:id');
   nav(m.UnifiedGood, '/products/unifiedgoods', '/products/unifiedgood/:id');
 
-  nav(m.PurchaseOrder, '/purchasing/purchaseorders', '/purchasing/purchasingpurchaseorder/:id');
-  nav(m.PurchaseInvoice, '/purchasing/purchaseinvoices', '/purchasing/purchasingpurchaseinvoice/:id');
+  nav(m.PurchaseOrder, '/purchasing/purchaseorders', '/purchasing/purchaseorder/:id');
+  nav(m.PurchaseInvoice, '/purchasing/purchaseinvoices', '/purchasing/purchaseinvoice/:id');
 
   nav(m.Shipment, '/shipment/shipments');
   nav(m.CustomerShipment, '/shipment/shipments', '/shipment/customershipment/:id');

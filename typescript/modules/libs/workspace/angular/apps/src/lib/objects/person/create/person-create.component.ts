@@ -5,7 +5,7 @@ import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { InternalOrganisation, Locale, Person, Organisation, OrganisationContactRelationship, Currency, Enumeration, CustomerRelationship, Employment, PersonRole, OrganisationContactKind } from '@allors/workspace/domain/default';
+import { InternalOrganisation, Locale, Person, Organisation, OrganisationContactRelationship, Currency, Enumeration, CustomerRelationship, Employment, PersonRole, OrganisationContactKind, GenderType, Salutation } from '@allors/workspace/domain/default';
 import { NavigationService, ObjectData, RefreshService, SaveService, SingletonId, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
@@ -123,13 +123,13 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.currencies = loaded.collection<Currency>(m.Currency);
         this.locales = loaded.collection<Locale>(m.Singleton.Locales) || [];
-        this.genders = loaded.collection<Enumeration>(m.Enumeration);
-        this.salutations = loaded.collection<Enumeration>(m.Enumeration);
+        this.genders = loaded.collection<GenderType>(m.GenderType);
+        this.salutations = loaded.collection<Salutation>(m.Salutation);
         this.roles = loaded.collection<PersonRole>(m.PersonRole);
         this.organisationContactKinds = loaded.collection<OrganisationContactKind>(m.OrganisationContactKind);
 
-        this.customerRole = this.roles.find((v: PersonRole) => v.UniqueId === 'b29444ef-0950-4d6f-ab3e-9c6dc44c050f');
-        this.employeeRole = this.roles.find((v: PersonRole) => v.UniqueId === 'db06a3e1-6146-4c18-a60d-dd10e19f7243');
+        this.customerRole = this.roles?.find((v: PersonRole) => v.UniqueId === 'b29444ef-0950-4d6f-ab3e-9c6dc44c050f');
+        this.employeeRole = this.roles?.find((v: PersonRole) => v.UniqueId === 'db06a3e1-6146-4c18-a60d-dd10e19f7243');
 
         this.person = this.allors.context.create<Person>(m.Person);
         this.person.CollectiveWorkEffortInvoice = false;
@@ -156,7 +156,7 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
       employment.Employer = this.internalOrganisation;
     }
 
-    if (this.organisation !== undefined) {
+    if (this.organisation != null) {
       const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
       organisationContactRelationship.Contact = this.person;
       organisationContactRelationship.Organisation = this.organisation;

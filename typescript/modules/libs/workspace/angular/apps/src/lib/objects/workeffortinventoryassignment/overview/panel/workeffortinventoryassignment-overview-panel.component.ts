@@ -110,18 +110,16 @@ export class WorkEffortInventoryAssignmentOverviewPanelComponent extends TestSco
       this.workEffort = loaded.object<WorkEffort>(this.m.WorkEffort);
       this.objects = loaded.collection<WorkEffortInventoryAssignment>(pullName);
 
-      if (this.objects) {
-        this.table.total = this.objects.length;
-        this.table.data = this.objects.map((v) => {
-          return {
-            object: v,
-            part: v.InventoryItem.Part.Name,
-            facility: v.InventoryItem.Facility.Name,
-            quantity: v.Quantity,
-            uom: v.InventoryItem.UnitOfMeasure.Name,
-          } as Row;
-        });
-      }
+      this.table.total = this.objects?.length ?? 0;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          part: v.InventoryItem.Part.Name,
+          facility: v.InventoryItem.Facility.Name,
+          quantity: v.Quantity,
+          uom: v.InventoryItem.UnitOfMeasure.Name,
+        } as Row;
+      });
     };
   }
 }

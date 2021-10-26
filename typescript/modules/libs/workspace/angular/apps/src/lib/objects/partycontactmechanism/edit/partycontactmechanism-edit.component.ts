@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { PartyContactMechanism, Party, ContactMechanism, Enumeration } from '@allors/workspace/domain/default';
+import { PartyContactMechanism, Party, ContactMechanism, Enumeration, ContactMechanismPurpose } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -49,7 +49,7 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           const pulls = [
             pull.ContactMechanismPurpose({
@@ -127,17 +127,17 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
         this.contactMechanisms = [];
         this.ownContactMechanisms = [];
 
-        this.contactMechanismPurposes = loaded.collection<Enumeration>(m.Enumeration);
+        this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
         this.organisationContactMechanisms = loaded.collection<ContactMechanism>(m.Person.CurrentOrganisationContactMechanisms);
 
         const partyContactMechanisms = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
         partyContactMechanisms.forEach((v) => this.ownContactMechanisms.push(v.ContactMechanism));
 
-        if (this.organisationContactMechanisms !== undefined) {
+        if (this.organisationContactMechanisms != null) {
           this.contactMechanisms = this.contactMechanisms.concat(this.organisationContactMechanisms);
         }
 
-        if (this.ownContactMechanisms !== undefined) {
+        if (this.ownContactMechanisms != null) {
           this.contactMechanisms = this.contactMechanisms.concat(this.ownContactMechanisms);
         }
 

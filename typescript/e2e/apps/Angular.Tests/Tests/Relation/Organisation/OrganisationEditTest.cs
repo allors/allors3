@@ -29,14 +29,14 @@ namespace Tests.OrganisationTests
         [Fact]
         public void Edit()
         {
-            var customOrganisationClassification = new CustomOrganisationClassificationBuilder(this.Session).WithName("Gold").Build();
-            var industryClassification = new IndustryClassificationBuilder(this.Session).WithName("Retail").Build();
-            var legalForm = new LegalForms(this.Session).FindBy(M.LegalForm.Description, "BE - BVBA / SPRL");
+            var customOrganisationClassification = new CustomOrganisationClassificationBuilder(this.Transaction).WithName("Gold").Build();
+            var industryClassification = new IndustryClassificationBuilder(this.Transaction).WithName("Retail").Build();
+            var legalForm = new LegalForms(this.Transaction).FindBy(M.LegalForm.Description, "BE - BVBA / SPRL");
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var before = new Organisations(this.Session).Extent().ToArray();
+            var before = new Organisations(this.Transaction).Extent().ToArray();
 
             var organisation = before.Last();
             var id = organisation.Id;
@@ -48,7 +48,7 @@ namespace Tests.OrganisationTests
                 .Name.Set("new organisation")
                 .TaxNumber.Set("BE 123 456 789 01")
                 .LegalForm.Select(legalForm)
-                .Locale.Select(this.Session.GetSingleton().AdditionalLocales.FirstOrDefault())
+                .Locale.Select(this.Transaction.GetSingleton().AdditionalLocales.FirstOrDefault())
                 .IndustryClassifications.Toggle(industryClassification)
                 .CustomClassifications.Toggle(customOrganisationClassification)
                 .IsManufacturer.Set(true)
@@ -56,9 +56,9 @@ namespace Tests.OrganisationTests
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Organisations(this.Session).Extent().ToArray();
+            var after = new Organisations(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length);
 

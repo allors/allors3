@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using Allors.Meta.Generation.Model;
+
 namespace Allors.Meta.Generation
 {
     using System;
@@ -22,6 +24,7 @@ namespace Allors.Meta.Generation
             };
 
             var metaPopulation = MetaBuilder.Build();
+            var model = new MetaModel(metaPopulation);
 
             for (var i = 0; i < database.GetLength(0); i++)
             {
@@ -32,7 +35,7 @@ namespace Allors.Meta.Generation
 
                 RemoveDirectory(output);
 
-                var log = Generate.Execute(metaPopulation, template, output);
+                var log = Generate.Execute(model, template, output);
                 if (log.ErrorOccured)
                 {
                     return 1;

@@ -109,8 +109,8 @@ export class ProductTypesOverviewComponent extends TestScope implements OnInit, 
         this.allors.context.reset();
 
         const objects = loaded.collection<ProductType>(m.ProductType);
-        this.table.total = loaded.value('ProductTypes_total') as number;
-        this.table.data = objects.map((v) => {
+        this.table.total = (loaded.value('ProductTypes_total') ?? 0) as number;
+        this.table.data = objects?.map((v) => {
           return {
             object: v,
             name: `${v.Name}`,

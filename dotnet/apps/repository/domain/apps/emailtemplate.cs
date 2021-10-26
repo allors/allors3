@@ -23,7 +23,6 @@ namespace Allors.Repository
         #region Allors
         [Id("21bbeaa8-f4cf-4b09-9fcd-af72a70e6f15")]
         #endregion
-        [Required]
         [Size(-1)]
         [Workspace(Default)]
         public string Description { get; set; }

@@ -120,26 +120,24 @@ export class RequestForQuoteOverviewPanelComponent extends TestScope implements 
       const fromAsset = loaded.collection<RequestForQuote>(assetPullName);
       const fromParty = loaded.collection<RequestForQuote>(customerPullName);
 
-      if (fromAsset !== undefined && fromAsset.length > 0) {
+      if (fromAsset != null && fromAsset.length > 0) {
         this.objects = fromAsset;
       }
 
-      if (fromParty !== undefined && fromParty.length > 0) {
+      if (fromParty != null && fromParty.length > 0) {
         this.objects = fromParty;
       }
 
-      if (this.objects) {
-        this.table.total = this.objects.length;
-        this.table.data = this.objects.map((v) => {
-          return {
-            object: v,
-            number: v.RequestNumber,
-            customer: v.Originator && v.Originator.DisplayName,
-            state: v.RequestState ? v.RequestState.Name : '',
-            lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
-          } as Row;
-        });
-      }
+      this.table.total = this.objects?.length ?? 0;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          number: v.RequestNumber,
+          customer: v.Originator && v.Originator.DisplayName,
+          state: v.RequestState ? v.RequestState.Name : '',
+          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+        } as Row;
+      });
     };
   }
 }

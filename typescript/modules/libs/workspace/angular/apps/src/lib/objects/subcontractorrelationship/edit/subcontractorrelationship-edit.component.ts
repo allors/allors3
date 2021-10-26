@@ -25,6 +25,7 @@ export class SubContractorRelationshipEditComponent extends TestScope implements
   title: string;
 
   private subscription: Subscription;
+  canSave: boolean;
 
   constructor(
     @Self() public allors: ContextService,
@@ -37,6 +38,7 @@ export class SubContractorRelationshipEditComponent extends TestScope implements
   ) {
     super();
 
+    this.canSave = true;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 
@@ -56,7 +58,7 @@ export class SubContractorRelationshipEditComponent extends TestScope implements
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           const pulls = [this.fetcher.internalOrganisation];
 
@@ -91,8 +93,9 @@ export class SubContractorRelationshipEditComponent extends TestScope implements
         this.organisation = loaded.object<Organisation>(m.Organisation);
 
         if (isCreate) {
-          if (this.organisation === undefined) {
-            this.dialogRef.close();
+          if (this.organisation == null) {
+            this.canSave = false;
+            // this.dialogRef.close();
           }
 
           this.title = 'Add SubContractor Relationship';

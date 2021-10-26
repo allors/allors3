@@ -136,7 +136,7 @@ export class SalesOrderOverviewSummaryComponent {
       this.order = loaded.object<SalesOrder>(salesOrderPullName);
       this.orderItems = loaded.collection<SalesOrderItem>(salesOrderPullName);
       this.billingProcesses = loaded.collection<BillingProcess>(billingProcessPullName);
-      this.billingForOrderItems = this.billingProcesses.find((v: BillingProcess) => v.UniqueId === 'ab01ccc2-6480-4fc0-b20e-265afd41fae2');
+      this.billingForOrderItems = this.billingProcesses?.find((v: BillingProcess) => v.UniqueId === 'ab01ccc2-6480-4fc0-b20e-265afd41fae2');
       this.inventoryItemStates = loaded.collection<SerialisedInventoryItemState>(serialisedInventoryItemStatePullName);
 
       this.salesInvoices = loaded.collection<SalesInvoice>(salesInvoicePullName);

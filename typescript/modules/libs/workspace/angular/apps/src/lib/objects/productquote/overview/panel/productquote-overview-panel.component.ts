@@ -119,26 +119,24 @@ export class ProductQuoteOverviewPanelComponent extends TestScope implements OnI
       const fromAsset = loaded.collection<ProductQuote>(assetPullName);
       const fromParty = loaded.collection<ProductQuote>(customerPullName);
 
-      if (fromAsset !== undefined && fromAsset.length > 0) {
+      if (fromAsset != null && fromAsset.length > 0) {
         this.objects = fromAsset;
       }
 
-      if (fromParty !== undefined && fromParty.length > 0) {
+      if (fromParty != null && fromParty.length > 0) {
         this.objects = fromParty;
       }
 
-      if (this.objects) {
-        this.table.total = this.objects.length;
-        this.table.data = this.objects.map((v) => {
-          return {
-            object: v,
-            number: v.QuoteNumber,
-            customer: v.Receiver.DisplayName,
-            state: v.QuoteState ? v.QuoteState.Name : '',
-            lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
-          } as Row;
-        });
-      }
+      this.table.total = this.objects?.length ?? 0;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          number: v.QuoteNumber,
+          customer: v.Receiver.DisplayName,
+          state: v.QuoteState ? v.QuoteState.Name : '',
+          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+        } as Row;
+      });
     };
   }
 }

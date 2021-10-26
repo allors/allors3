@@ -74,7 +74,7 @@ export class CommunicationEventOverviewPanelComponent extends TestScope implemen
         { name: 'type', sort },
         { name: 'description', sort },
         { name: 'involved', sort },
-        { name: 'state', sort },
+        { name: 'status', sort },
         { name: 'purpose', sort },
       ],
       actions: [this.edit, this.delete],
@@ -108,19 +108,17 @@ export class CommunicationEventOverviewPanelComponent extends TestScope implemen
     this.panel.onPulled = (loaded) => {
       this.objects = loaded.collection<CommunicationEvent>(pullName);
 
-      if (this.objects) {
-        this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects.length) as number;
-        this.table.data = this.objects.map((v) => {
-          return {
-            object: v,
-            type: v.strategy.cls.singularName,
-            description: v.Description,
-            involved: v.InvolvedParties.map((w) => w.DisplayName).join(', '),
-            status: v.CommunicationEventState.Name,
-            purpose: v.EventPurposes.map((w) => w.Name).join(', '),
-          } as Row;
-        });
-      }
+      this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;
+      this.table.data = this.objects?.map((v) => {
+        return {
+          object: v,
+          type: v.strategy.cls.singularName,
+          description: v.Description,
+          involved: v.InvolvedParties?.map((w) => w.DisplayName).join(', '),
+          status: v.CommunicationEventState.Name,
+          purpose: v.EventPurposes?.map((w) => w.Name).join(', '),
+        } as Row;
+      });
     };
   }
 }

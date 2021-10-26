@@ -11,19 +11,7 @@ namespace Allors.Database.Meta
     {
         new IEnumerable<IDomainBase> Domains { get; }
 
-        new IEnumerable<IUnitBase> Units { get; }
-
-        new IEnumerable<ICompositeBase> DatabaseComposites { get; }
-
-        new IEnumerable<IInterfaceBase> DatabaseInterfaces { get; }
-
-        new IEnumerable<IClassBase> DatabaseClasses { get; }
-
-        new IEnumerable<IRelationTypeBase> DatabaseRelationTypes { get; }
-
-        new IEnumerable<IMethodTypeBase> MethodTypes { get; }
-
-        new IEnumerable<IInheritanceBase> Inheritances { get; }
+        IEnumerable<IInheritanceBase> Inheritances { get; }
 
         MethodCompiler MethodCompiler { get; }
 

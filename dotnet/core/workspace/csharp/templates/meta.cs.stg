@@ -2,7 +2,7 @@ group AllorsCSharpRepository;
 
 TemplateId() ::= <<7B7D955D-7C87-4198-A40D-4B70CABC7525>>
 TemplateName() ::= <<Allors C# Workspace Meta>>
-TemplateVersion() ::= <<3.0.1>>
+TemplateVersion() ::= <<3.0.2>>
 TemplateAllors() ::= <<1.0>>
 TemplateConfiguration(meta, workspaceName) ::= <<
 $!
@@ -40,13 +40,13 @@ namespace Allors.Workspace.Meta
     public partial interface M : IMetaPopulation
     {
         // Units
-$meta._.Units:{unit|        public $unit._.SingularName$ $unit._.SingularName$ { get; \}}; separator="\n"$
+$meta.Units:{unit|        public $unit.SingularName$ $unit.SingularName$ { get; \}}; separator="\n"$
 
         // Interfaces
-$meta._.WorkspaceInterfacesByWorkspaceName.(workspaceName):{interface|        public $interface._.SingularName$ $interface._.SingularName$ { get; \}}; separator="\n"$
+$meta.WorkspaceInterfacesByWorkspaceName.(workspaceName):{interface|        public $interface.SingularName$ $interface.SingularName$ { get; \}}; separator="\n"$
 
         // Classes
-$meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{class|        public $class._.SingularName$ $class._.SingularName$ { get; \}}; separator="\n"$
+$meta.WorkspaceClassesByWorkspaceName.(workspaceName):{class|        public $class.SingularName$ $class.SingularName$ { get; \}}; separator="\n"$
     }
 }
 >>
@@ -54,32 +54,32 @@ $meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{class|        public $c
 units(meta, workspaceName) ::= <<
 namespace Allors.Workspace.Meta
 {
-$meta._.Units:{unit|$define_unit(unit)$}; separator="\n"$
+$meta.Units:{unit|$define_unit(unit)$}; separator="\n"$
 }
 >>
 
 define_unit(unit) ::= <<
-    public interface $unit._.SingularName$ : IUnit {
+    public interface $unit.SingularName$ : IUnit {
     }
 >>
 
 interfaces(meta, workspaceName) ::= <<
 namespace Allors.Workspace.Meta
 {
-$meta._.Interfaces:{interface|$define_interface(interface)$}; separator="\n"$
+$meta.Interfaces:{interface|$define_interface(interface)$}; separator="\n"$
 }
 >>
 
 define_interface(interface) ::= <<
-    public interface $interface._.SingularName$ : IInterface {
+    public interface $interface.SingularName$ : IInterface {
 
-$interface._.WorkspaceSubtypesByWorkspaceName.(workspaceName):{subtype|        $subtype._.SingularName$ As$subtype._.SingularName$ { get; \}}; separator="\n"$
+$interface.WorkspaceSubtypesByWorkspaceName.(workspaceName):{subtype|        $subtype.SingularName$ As$subtype.SingularName$ { get; \}}; separator="\n"$
 
-$interface._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|        IMethodType $methodType._.Name$ { get; \}}; separator="\n"$
+$interface.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|        IMethodType $methodType.Name$ { get; \}}; separator="\n"$
 
-$interface._.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|        $roleType._.FullName$ $roleType._.Name$ { get; \}}; separator="\n"$
+$interface.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|        $roleType.FullName$ $roleType.Name$ { get; \}}; separator="\n"$
 
-$interface._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|        $associationType._.Name$ $associationType._.Name$ { get; \}}; separator="\n"$
+$interface.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|        $associationType.Name$ $associationType.Name$ { get; \}}; separator="\n"$
     }
 
 >>
@@ -87,18 +87,18 @@ $interface._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associati
 classes(meta, workspaceName) ::= <<
 namespace Allors.Workspace.Meta
 {
-$meta._.Classes:{class|$define_class(class)$}; separator="\n"$
+$meta.Classes:{class|$define_class(class)$}; separator="\n"$
 }
 >>
 
 define_class(class) ::= <<
-    public interface $class._.SingularName$ : IClass {
+    public interface $class.SingularName$ : IClass {
 
-$class._.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|        IMethodType $methodType._.Name$ { get; \}}; separator="\n"$
+$class.WorkspaceMethodTypesByWorkspaceName.(workspaceName):{methodType|        IMethodType $methodType.Name$ { get; \}}; separator="\n"$
 
-$class._.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|        $roleType._.FullName$ $roleType._.Name$ { get; \}}; separator="\n"$
+$class.WorkspaceRoleTypesByWorkspaceName.(workspaceName):{roleType|        $roleType.FullName$ $roleType.Name$ { get; \}}; separator="\n"$
 
-$class._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|        $associationType._.Name$ $associationType._.Name$  { get; \}}; separator="\n"$
+$class.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationType|        $associationType.Name$ $associationType.Name$  { get; \}}; separator="\n"$
     }
 
 >>
@@ -106,18 +106,18 @@ $class._.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{associationTy
 associationTypes(meta, workspaceName) ::= <<
 namespace Allors.Workspace.Meta
 {
-$meta._.Composites:{composite|$define_associationTypes(composite)$}; separator="\n"$
+$meta.Composites:{composite|$define_associationTypes(composite)$}; separator="\n"$
 }
 >>
 
 define_associationTypes(composite) ::= <<
-$composite._.WorkspaceExclusiveRoleTypesByWorkspaceName.(workspaceName):{roleType|$define_associationType(roleType._.associationType)$}; separator="\n"$
+$composite.WorkspaceExclusiveRoleTypesByWorkspaceName.(workspaceName):{roleType|$define_associationType(roleType.associationType)$}; separator="\n"$
 >>
 
 define_associationType(associationType) ::= <<
-    public interface $associationType._.Name$ : IAssociationType
+    public interface $associationType.Name$ : IAssociationType
     {
-        new $associationType._.ObjectType.SingularName$ ObjectType { get; }
+        new $associationType.ObjectType.SingularName$ ObjectType { get; }
     }
 
 >>
@@ -125,19 +125,19 @@ define_associationType(associationType) ::= <<
 roleTypes(meta, workspaceName) ::= <<
 namespace Allors.Workspace.Meta
 {
-$meta._.Composites:{composite|$define_roleTypes(composite)$}; separator="\n"$
+$meta.Composites:{composite|$define_roleTypes(composite)$}; separator="\n"$
 }
 >>
 
 define_roleTypes(composite) ::= <<
-$composite._.WorkspaceExclusiveRoleTypesByWorkspaceName.(workspaceName):{roleType|$define_roleType(roleType)$}; separator="\n"$
+$composite.WorkspaceExclusiveRoleTypesByWorkspaceName.(workspaceName):{roleType|$define_roleType(roleType)$}; separator="\n"$
 >>
 
 define_roleType(roleType) ::= <<
     public interface $roleType.FullName$ : IRoleType
     {
-$if(roleType._.ObjectType._.IsComposite)$
-        new $roleType._.ObjectType._.SingularName$ ObjectType  { get; }
+$if(roleType.ObjectType.IsComposite)$
+        new $roleType.ObjectType.SingularName$ ObjectType  { get; }
 $endif$
     }
 

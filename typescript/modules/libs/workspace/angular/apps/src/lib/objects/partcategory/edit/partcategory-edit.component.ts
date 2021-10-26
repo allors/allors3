@@ -48,7 +48,7 @@ export class PartCategoryEditComponent extends TestScope implements OnInit, OnDe
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           const pulls = [
             this.fetcher.locales,

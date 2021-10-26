@@ -57,7 +57,7 @@ namespace Allors.Database.Domain
 
                     primaryAncestors.Reverse();
                     primaryAncestors.Add(@this);
-                    @this.DisplayName = string.Join("/", primaryAncestors.Select(v => v.Name));
+                    @this.LongName = string.Join("/", primaryAncestors.Select(v => v.Name));
                 }
 
                 @this.Children = @this.ProductCategoriesWherePrimaryParent

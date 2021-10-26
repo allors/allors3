@@ -223,7 +223,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
         this.salesInvoice = loaded.object<SalesInvoice>(salesInvoicePullName);
         this.currencies = loaded.collection<Currency>(this.m.Currency);
         this.billingProcesses = loaded.collection<BillingProcess>(billingProcessPullName);
-        this.billingForOrderItems = this.billingProcesses.find((v: BillingProcess) => v.UniqueId === 'ab01ccc2-6480-4fc0-b20e-265afd41fae2');
+        this.billingForOrderItems = this.billingProcesses?.find((v: BillingProcess) => v.UniqueId === 'ab01ccc2-6480-4fc0-b20e-265afd41fae2');
         this.inventoryItemStates = loaded.collection<SerialisedInventoryItemState>(serialisedInventoryItemStatePullName);
       }
     };
@@ -310,7 +310,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
         this.currencies = loaded.collection<Currency>(this.m.Currency);
 
         const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.Party.CurrentPartyContactMechanisms);
-        this.shipFromAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === this.m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+        this.shipFromAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === this.m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
 
         if (this.order.ShipToCustomer) {
           this.previousShipToCustomer = this.order.ShipToCustomer;
@@ -497,13 +497,13 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
         this.previousShipToCustomer = this.order.ShipToCustomer;
       }
 
-      if (this.order.ShipToCustomer !== null && this.order.BillToCustomer === null) {
+      if (this.order.ShipToCustomer != null && this.order.BillToCustomer == null) {
         this.order.BillToCustomer = this.order.ShipToCustomer;
         this.updateBillToCustomer(this.order.ShipToCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.Party.CurrentPartyContactMechanisms);
-      this.shipToAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToContacts = loaded.collection<Person>(this.m.Party.CurrentContacts);
     });
   }
@@ -548,13 +548,13 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
         this.previousBillToCustomer = this.order.BillToCustomer;
       }
 
-      if (this.order.BillToCustomer !== null && this.order.ShipToCustomer === null) {
+      if (this.order.BillToCustomer != null && this.order.ShipToCustomer == null) {
         this.order.ShipToCustomer = this.order.BillToCustomer;
         this.updateShipToCustomer(this.order.ShipToCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.Party.CurrentPartyContactMechanisms);
-      this.billToContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.billToContactMechanisms = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.billToContacts = loaded.collection<Person>(this.m.Party.CurrentContacts);
     });
   }
@@ -593,13 +593,13 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
         this.previousBillToEndCustomer = this.order.BillToEndCustomer;
       }
 
-      if (this.order.BillToEndCustomer !== null && this.order.ShipToEndCustomer === null) {
+      if (this.order.BillToEndCustomer != null && this.order.ShipToEndCustomer == null) {
         this.order.ShipToEndCustomer = this.order.BillToEndCustomer;
         this.updateShipToEndCustomer(this.order.ShipToEndCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.Party.CurrentPartyContactMechanisms);
-      this.billToEndCustomerContactMechanisms = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.billToEndCustomerContactMechanisms = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.billToEndCustomerContacts = loaded.collection<Person>(this.m.Party.CurrentContacts);
     });
   }
@@ -638,13 +638,13 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
         this.previousShipToEndCustomer = this.order.ShipToEndCustomer;
       }
 
-      if (this.order.ShipToEndCustomer !== null && this.order.BillToEndCustomer === null) {
+      if (this.order.ShipToEndCustomer != null && this.order.BillToEndCustomer == null) {
         this.order.BillToEndCustomer = this.order.ShipToEndCustomer;
         this.updateBillToEndCustomer(this.order.BillToEndCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(this.m.Party.CurrentPartyContactMechanisms);
-      this.shipToEndCustomerAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToEndCustomerAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToEndCustomerContacts = loaded.collection<Person>(this.m.Party.CurrentContacts);
     });
   }

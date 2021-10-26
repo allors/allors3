@@ -31,7 +31,7 @@ namespace Allors.Database.Domain.TestPopulation
             internalOrganisations.Filter.AddEquals(m.Organisation.IsInternalOrganisation, true);
 
             // Filter out the sellerOrganisation
-            var shipToCustomer = internalOrganisations.Except(new List<Organisation> { sellerOrganisation }).FirstOrDefault();
+            var shipToCustomer = internalOrganisations.Except(new List<Organisation> { sellerOrganisation }).FirstOrDefault(v => v.ExistActiveCustomers);
             var billToCustomer = shipToCustomer;
             var endCustomer = faker.Random.ListItem(shipToCustomer.ActiveCustomers.Where(v => v.GetType().Name == "Organisation").ToList());
             var endContact = endCustomer is Person endContactPerson ? endContactPerson : endCustomer.CurrentContacts.FirstOrDefault();

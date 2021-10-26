@@ -46,7 +46,7 @@ export class NonSerialisedInventoryItemEditComponent extends TestScope implement
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           const pulls = [];
 

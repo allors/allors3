@@ -321,40 +321,40 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
 
         this.parts = loaded.collection<NonUnifiedPart>(m.NonUnifiedPart);
 
-        const inStockSearch = this.filter.fields.find((v) => v.definition.name === 'In Stock');
+        const inStockSearch = this.filter.fields?.find((v) => v.definition.name === 'In Stock');
         let facilitySearchId = inStockSearch?.value;
-        if (inStockSearch !== undefined) {
-          this.parts = this.parts.filter((v) => {
-            return v.InventoryItemsWherePart.filter((i: NonSerialisedInventoryItem) => i.Facility.id === inStockSearch.value && Number(i.QuantityOnHand) > 0).length > 0;
+        if (inStockSearch != null) {
+          this.parts = this.parts?.filter((v) => {
+            return v.InventoryItemsWherePart?.filter((i: NonSerialisedInventoryItem) => i.Facility.id === inStockSearch.value && Number(i.QuantityOnHand) > 0).length > 0;
           });
         }
 
-        const outOStockSearch = this.filter.fields.find((v) => v.definition.name === 'Out Of Stock');
-        if (facilitySearchId === undefined) {
+        const outOStockSearch = this.filter.fields?.find((v) => v.definition.name === 'Out Of Stock');
+        if (facilitySearchId == null) {
           facilitySearchId = outOStockSearch?.value;
         }
 
-        if (outOStockSearch !== undefined) {
-          this.parts = this.parts.filter((v) => {
-            return v.InventoryItemsWherePart.filter((i: NonSerialisedInventoryItem) => i.Facility.id === outOStockSearch.value && Number(i.QuantityOnHand) === 0).length > 0;
+        if (outOStockSearch != null) {
+          this.parts = this.parts?.filter((v) => {
+            return v.InventoryItemsWherePart?.filter((i: NonSerialisedInventoryItem) => i.Facility.id === outOStockSearch.value && Number(i.QuantityOnHand) === 0).length > 0;
           });
         }
 
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
         const partCategories = loaded.collection<PartCategory>(m.NonUnifiedPart.PartCategoriesWherePart);
 
-        this.table.total = loaded.value('NonUnifiedParts_total') as number;
+        this.table.total = (loaded.value('NonUnifiedParts_total') ?? 0) as number;
 
-        this.table.data = this.parts.map((v) => {
+        this.table.data = this.parts?.map((v) => {
           return {
             object: v,
             name: v.Name,
             partNo: v.ProductNumber,
             qoh: v.QuantityOnHand,
-            localQoh: facilitySearchId && (v.InventoryItemsWherePart as NonSerialisedInventoryItem[]).find((i) => i.Facility.id === facilitySearchId).QuantityOnHand,
+            localQoh: facilitySearchId && (v.InventoryItemsWherePart as NonSerialisedInventoryItem[])?.find((i) => i.Facility.id === facilitySearchId).QuantityOnHand,
             categories: partCategories
-              .filter((w) => w.Parts.includes(v))
-              .map((w) => w.DisplayName)
+              ?.filter((w) => w.Parts.includes(v))
+              ?.map((w) => w.DisplayName)
               .join(', '),
             brand: v.Brand ? v.Brand.Name : '',
             model: v.Model ? v.Model.Name : '',

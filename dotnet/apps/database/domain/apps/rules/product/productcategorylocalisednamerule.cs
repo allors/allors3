@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
             {
                 var defaultLocale = @this.Strategy.Transaction.GetSingleton().DefaultLocale;
 
-                @this.DisplayName = @this.Name;
+                @this.LongName = @this.Name;
 
                 if (@this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
                 {

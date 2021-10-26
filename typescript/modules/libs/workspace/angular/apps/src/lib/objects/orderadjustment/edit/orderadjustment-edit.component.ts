@@ -43,11 +43,9 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
         switchMap(() => {
-          const isCreate = (this.data as IObject).id === undefined;
-          const {
-            strategy: { cls },
-            associationRoleType,
-          } = this.data;
+          const isCreate = this.data.id == null;
+          const cls = this.data.strategy?.cls;
+          const { associationRoleType } = this.data;
 
           const pulls = [];
 
@@ -77,7 +75,7 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
           this.object = this.allors.context.create<OrderAdjustment>(cls);
           this.container.strategy.addCompositesRole(associationRoleType, this.object);
         } else {
-          this.title = `Edit ${cls.singularName}`;
+          this.title = `Edit ${this.object.strategy.cls.singularName}`;
         }
       });
   }

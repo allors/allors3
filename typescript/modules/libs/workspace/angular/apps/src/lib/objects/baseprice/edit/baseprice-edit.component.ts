@@ -49,7 +49,7 @@ export class BasepriceEditComponent extends TestScope implements OnInit, OnDestr
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           let pulls = [this.fetcher.internalOrganisation];
 

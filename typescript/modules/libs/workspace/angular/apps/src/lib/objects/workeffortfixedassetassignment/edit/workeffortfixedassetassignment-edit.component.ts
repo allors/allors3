@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Organisation, Party, SerialisedItem, WorkEffort, WorkEffortFixedAssetAssignment, Enumeration } from '@allors/workspace/domain/default';
+import { Organisation, Party, SerialisedItem, WorkEffort, WorkEffortFixedAssetAssignment, Enumeration, AssetAssignmentStatus } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -54,7 +54,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
     this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           const pulls = [
             pull.WorkEffort({
@@ -87,6 +87,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
             pulls.push(
               pull.WorkEffort({
                 objectId: this.data.associationId,
+                include: { Customer: x }
               })
             );
           }
@@ -102,11 +103,11 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
         this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
         this.workEfforts = loaded.collection<WorkEffort>(m.WorkEffort);
         this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
-        this.assetAssignmentStatuses = loaded.collection<Enumeration>(m.Enumeration);
+        this.assetAssignmentStatuses = loaded.collection<AssetAssignmentStatus>(m.AssetAssignmentStatus);
 
-        if (this.serialisedItem === undefined) {
+        if (this.serialisedItem == null) {
           const b2bCustomer = this.workEffort.Customer as Organisation;
-          this.externalCustomer = b2bCustomer === null || !b2bCustomer.IsInternalOrganisation;
+          this.externalCustomer = b2bCustomer == null || !b2bCustomer.IsInternalOrganisation;
 
           if (this.externalCustomer) {
             this.updateSerialisedItems(this.workEffort.Customer);
@@ -118,11 +119,11 @@ export class WorkEffortFixedAssetAssignmentEditComponent extends TestScope imple
 
           this.workEffortFixedAssetAssignment = this.allors.context.create<WorkEffortFixedAssetAssignment>(m.WorkEffortFixedAssetAssignment);
 
-          if (this.serialisedItem !== undefined) {
+          if (this.serialisedItem != null) {
             this.workEffortFixedAssetAssignment.FixedAsset = this.serialisedItem;
           }
 
-          if (this.workEffort !== undefined && this.workEffort.strategy.cls === m.WorkTask) {
+          if (this.workEffort != null && this.workEffort.strategy.cls === m.WorkTask) {
             this.assignment = this.workEffort as WorkEffort;
             this.workEffortFixedAssetAssignment.Assignment = this.assignment;
           }

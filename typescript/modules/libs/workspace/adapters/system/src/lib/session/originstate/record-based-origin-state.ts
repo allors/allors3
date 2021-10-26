@@ -16,6 +16,8 @@ export abstract class RecordBasedOriginState {
 
   protected abstract record: IRecord;
 
+  protected abstract cachedRoleByRelationType: Map<RelationType, IRange<IObject>>;
+
   protected previousRecord: IRecord;
 
   changedRoleByRelationType: Map<RelationType, unknown>;
@@ -84,12 +86,8 @@ export abstract class RecordBasedOriginState {
       return frozenEmptyArray as IObject[];
     }
 
-    // TODO: cache objects
-
-    let objects: IObject[];
-
     if (skipMissing) {
-      objects = role
+      return role
         .map((v) => {
           const obj = this.session.getObject(v);
           if (!skipMissing) {
@@ -98,13 +96,20 @@ export abstract class RecordBasedOriginState {
           return obj;
         })
         .filter((v) => v != null);
-    } else {
-      objects = role.map((v) => {
-        const obj = this.session.getObject(v);
-        this.assertStrategy(obj);
-        return obj;
-      });
     }
+
+    if (this.cachedRoleByRelationType != null && this.cachedRoleByRelationType.has(roleType.relationType)) {
+      return this.cachedRoleByRelationType.get(roleType.relationType) as IRange<IObject>;
+    }
+
+    const objects = role.map((v) => {
+      const obj = this.session.getObject(v);
+      this.assertStrategy(obj);
+      return obj;
+    });
+
+    this.cachedRoleByRelationType ??= new Map();
+    this.cachedRoleByRelationType.set(roleType.relationType, objects);
 
     return objects;
   }
@@ -331,8 +336,8 @@ export abstract class RecordBasedOriginState {
     this.onChange();
   }
 
-  private assertStrategy(strategy: IObject) {
-    if (strategy == null) {
+  private assertStrategy(object: IObject) {
+    if (object == null) {
       throw new Error('Object is not present in session.');
     }
   }

@@ -24,7 +24,7 @@ namespace Tests.CustomerShipmentTests
         public CustomerShipmentEditTest(Fixture fixture)
             : base(fixture)
         {
-            this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            this.internalOrganisation = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
 
             this.Login();
             this.shipmentListPage = this.Sidenav.NavigateToShipments();
@@ -33,11 +33,11 @@ namespace Tests.CustomerShipmentTests
         [Fact]
         public void Edit()
         {
-            var before = new CustomerShipments(this.Session).Extent().ToArray();
+            var before = new CustomerShipments(this.Transaction).Extent().ToArray();
 
-            var expected = new CustomerShipmentBuilder(this.Session).WithDefaults(this.internalOrganisation).Build();
+            var expected = new CustomerShipmentBuilder(this.Transaction).WithDefaults(this.internalOrganisation).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedShipToPartyPartyName = expected.ShipToParty?.DisplayName();
             var expectedShipToAddressDisplayName = expected.ShipToAddress?.DisplayName();
@@ -79,14 +79,14 @@ namespace Tests.CustomerShipmentTests
                 shipmentOverviewDetail.ShipToContactPerson.Select(expected.ShipToContactPerson);
             }
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             shipmentOverviewDetail.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new CustomerShipments(this.Session).Extent().ToArray();
-            shipment = (CustomerShipment) this.Session.Instantiate(id);
+            var after = new CustomerShipments(this.Transaction).Extent().ToArray();
+            shipment = (CustomerShipment) this.Transaction.Instantiate(id);
 
             Assert.Equal(after.Length, before.Length);
 

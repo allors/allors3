@@ -10,18 +10,17 @@ namespace Allors.Database.Protocol.Json
     using Allors.Services;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
+    using NLog;
 
     [ApiController]
     [Route("allors/permission")]
     public class PermissionController : ControllerBase
     {
-        public PermissionController(IDatabaseService databaseService, IWorkspaceService workspaceService, IPolicyService policyService, ILogger<PermissionController> logger)
+        public PermissionController(IDatabaseService databaseService, IWorkspaceService workspaceService, IPolicyService policyService)
         {
             this.DatabaseService = databaseService;
             this.WorkspaceService = workspaceService;
             this.PolicyService = policyService;
-            this.Logger = logger;
         }
 
         private IDatabaseService DatabaseService { get; }
@@ -29,7 +28,7 @@ namespace Allors.Database.Protocol.Json
 
         private IPolicyService PolicyService { get; }
 
-        private ILogger<PermissionController> Logger { get; }
+        public Logger Logger => LogManager.GetCurrentClassLogger();
 
         [HttpPost]
         [Authorize]
@@ -46,7 +45,7 @@ namespace Allors.Database.Protocol.Json
                     }
                     catch (Exception e)
                     {
-                        this.Logger.LogError(e, "PermissionRequest {request}", permissionRequest);
+                        this.Logger.Error(e, "PermissionRequest {request}", permissionRequest);
                         throw;
                     }
                 });

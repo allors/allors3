@@ -47,7 +47,7 @@ export class AllorsMaterialChipsComponent extends RoleField implements OnInit, D
   public ngOnInit(): void {
     if (this.filter) {
       this.filteredOptions = combineLatest([this.searchControl.valueChanges, this.focus$]).pipe(
-        filter(([search]) => search !== null && search !== undefined && search.trim),
+        filter(([search]) => search != null && search.trim),
         debounceTime(this.debounceTime),
         distinctUntilChanged(),
         switchMap(([search]) => {
@@ -60,7 +60,7 @@ export class AllorsMaterialChipsComponent extends RoleField implements OnInit, D
       );
     } else {
       this.filteredOptions = this.searchControl.valueChanges.pipe(
-        filter((v) => v !== null && v !== undefined && v.trim),
+        filter((v) => v != null && v.trim),
         debounceTime(this.debounceTime),
         distinctUntilChanged(),
         map((search: string) => {

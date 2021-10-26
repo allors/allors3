@@ -147,10 +147,10 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
       .subscribe((loaded) => {
         this.allors.context.reset();
         const workEfforts = loaded.collection<WorkEffort>(m.WorkEffort);
-        this.table.total = loaded.value('WorkTasks_total') as number;
+        this.table.total = (loaded.value('WorkEfforts_total')) as number;
         this.table.data = workEfforts
-          .filter((v) => v.canReadWorkEffortNumber)
-          .map((v) => {
+          ?.filter((v) => v.canReadWorkEffortNumber)
+          ?.map((v) => {
             return {
               object: v,
               number: v.WorkEffortNumber,
@@ -159,8 +159,8 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
               state: v.WorkEffortState ? v.WorkEffortState.Name : '',
               customer: v.Customer ? v.Customer.DisplayName : '',
               executedBy: v.ExecutedBy ? v.ExecutedBy.DisplayName : '',
-              equipment: v.WorkEffortFixedAssetAssignmentsWhereAssignment ? v.WorkEffortFixedAssetAssignmentsWhereAssignment.map((w) => w.FixedAsset.DisplayName).join(', ') : '',
-              worker: v.WorkEffortPartyAssignmentsWhereAssignment ? v.WorkEffortPartyAssignmentsWhereAssignment.map((w) => w.Party.DisplayName).join(', ') : '',
+              equipment: v.WorkEffortFixedAssetAssignmentsWhereAssignment ? v.WorkEffortFixedAssetAssignmentsWhereAssignment?.map((w) => w.FixedAsset.DisplayName).join(', ') : '',
+              worker: v.WorkEffortPartyAssignmentsWhereAssignment ? v.WorkEffortPartyAssignmentsWhereAssignment?.map((w) => w.Party.DisplayName).join(', ') : '',
               lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
             } as Row;
           });

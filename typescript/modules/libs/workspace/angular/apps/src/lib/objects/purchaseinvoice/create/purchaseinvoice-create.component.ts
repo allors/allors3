@@ -351,7 +351,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.billedFromContactMechanisms = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.billedFromContactMechanisms = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.billedFromContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       const selectedSupplier = loaded.object<Organisation>('selectedSupplier');
@@ -403,7 +403,7 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipToCustomerAddresses = partyContactMechanisms.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToCustomerAddresses = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       const selectedparty = loaded.object<Party>('selectedParty');
@@ -454,13 +454,13 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
         this.previousBillToEndCustomer = this.invoice.BillToEndCustomer;
       }
 
-      if (this.invoice.BillToEndCustomer !== null && this.invoice.ShipToEndCustomer === null) {
+      if (this.invoice.BillToEndCustomer != null && this.invoice.ShipToEndCustomer == null) {
         this.invoice.ShipToEndCustomer = this.invoice.BillToEndCustomer;
         this.updateShipToEndCustomer(this.invoice.ShipToEndCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.billToEndCustomerContactMechanisms = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.billToEndCustomerContactMechanisms = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.billToEndCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       const selectedparty = loaded.object<Party>('selectedParty');
@@ -511,13 +511,13 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
         this.previousShipToEndCustomer = this.invoice.ShipToEndCustomer;
       }
 
-      if (this.invoice.ShipToEndCustomer !== null && this.invoice.BillToEndCustomer === null) {
+      if (this.invoice.ShipToEndCustomer != null && this.invoice.BillToEndCustomer == null) {
         this.invoice.BillToEndCustomer = this.invoice.ShipToEndCustomer;
         this.updateBillToEndCustomer(this.invoice.BillToEndCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipToEndCustomerAddresses = partyContactMechanisms.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress).map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToEndCustomerAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToEndCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       const selectedparty = loaded.object<Party>('selectedParty');

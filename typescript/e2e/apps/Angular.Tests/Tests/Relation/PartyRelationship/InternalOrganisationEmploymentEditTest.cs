@@ -30,8 +30,8 @@ namespace Tests.PartyRelationshipTests
         [Fact]
         public void Create()
         {
-            var employer = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
-            var employee = new PersonBuilder(this.Session).WithLastName("employee").Build();
+            var employer = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
+            var employee = new PersonBuilder(this.Transaction).WithLastName("employee").Build();
 
             // Delete all existing for the new one to be in the first page of the list.
             foreach (PartyRelationship relationship in employer.PartyRelationshipsWhereParty)
@@ -39,10 +39,10 @@ namespace Tests.PartyRelationshipTests
                 relationship.Delete();
             }
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var before = new Employments(this.Session).Extent().ToArray();
+            var before = new Employments(this.Transaction).Extent().ToArray();
 
             this.organisationListPage.Table.DefaultAction(employer);
             var partyRelationshipEdit = new OrganisationOverviewComponent(this.organisationListPage.Driver, this.M).PartyrelationshipOverviewPanel.Click().CreateEmployment();
@@ -54,9 +54,9 @@ namespace Tests.PartyRelationshipTests
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Employments(this.Session).Extent().ToArray();
+            var after = new Employments(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -71,8 +71,8 @@ namespace Tests.PartyRelationshipTests
         [Fact]
         public void Edit()
         {
-            var employer = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
-            var employee = new PersonBuilder(this.Session).WithLastName("employee").Build();
+            var employer = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
+            var employee = new PersonBuilder(this.Transaction).WithLastName("employee").Build();
 
             // Delete all existing for the new one to be in the first page of the list.
             foreach (PartyRelationship partyRelationship in employer.PartyRelationshipsWhereParty)
@@ -80,18 +80,18 @@ namespace Tests.PartyRelationshipTests
                 partyRelationship.Delete();
             }
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var editPartyRelationship = new EmploymentBuilder(this.Session)
+            var editPartyRelationship = new EmploymentBuilder(this.Transaction)
                 .WithEmployee(employee)
                 .WithEmployer(employer)
                 .Build();
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var before = new Employments(this.Session).Extent().ToArray();
+            var before = new Employments(this.Transaction).Extent().ToArray();
 
             this.organisationListPage.Table.DefaultAction(employer);
             var organisationOverview = new OrganisationOverviewComponent(this.organisationListPage.Driver, this.M);
@@ -106,9 +106,9 @@ namespace Tests.PartyRelationshipTests
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new Employments(this.Session).Extent().ToArray();
+            var after = new Employments(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length);
 

@@ -29,7 +29,7 @@ namespace Tests.PersonTests
         [Fact]
         public void Edit()
         {
-            var before = new People(this.Session).Extent().ToArray();
+            var before = new People(this.Transaction).Extent().ToArray();
 
             var person = before.First();
             var id = person.Id;
@@ -38,32 +38,32 @@ namespace Tests.PersonTests
             var personOverview = new PersonOverviewComponent(this.people.Driver, this.M);
             var personOverviewDetail = personOverview.PersonOverviewDetail.Click();
 
-            personOverviewDetail.Salutation.Select(new Salutations(this.Session).Mr)
+            personOverviewDetail.Salutation.Select(new Salutations(this.Transaction).Mr)
                 .FirstName.Set("Jos")
                 .MiddleName.Set("de")
                 .LastName.Set("Smos")
                 .Function.Set("CEO")
-                .Gender.Select(new GenderTypes(this.Session).Male)
-                .Locale.Select(this.Session.GetSingleton().AdditionalLocales.FirstOrDefault())
+                .Gender.Select(new GenderTypes(this.Transaction).Male)
+                .Locale.Select(this.Transaction.GetSingleton().AdditionalLocales.FirstOrDefault())
                 .Comment.Set("unpleasant person")
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new People(this.Session).Extent().ToArray();
+            var after = new People(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length);
 
             person = after.First(v => v.Id.Equals(id));
 
-            Assert.Equal(new Salutations(this.Session).Mr, person.Salutation);
+            Assert.Equal(new Salutations(this.Transaction).Mr, person.Salutation);
             Assert.Equal("Jos", person.FirstName);
             Assert.Equal("de", person.MiddleName);
             Assert.Equal("Smos", person.LastName);
             Assert.Equal("CEO", person.Function);
-            Assert.Equal(new GenderTypes(this.Session).Male, person.Gender);
-            Assert.Equal(this.Session.GetSingleton().AdditionalLocales.FirstOrDefault(), person.Locale);
+            Assert.Equal(new GenderTypes(this.Transaction).Male, person.Gender);
+            Assert.Equal(this.Transaction.GetSingleton().AdditionalLocales.FirstOrDefault(), person.Locale);
             Assert.Equal("unpleasant person", person.Comment);
         }
     }

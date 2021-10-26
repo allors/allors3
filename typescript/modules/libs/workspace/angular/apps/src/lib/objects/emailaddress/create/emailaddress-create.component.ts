@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { WorkTask, PartyContactMechanism, Party, EmailAddress, ElectronicAddress, Enumeration } from '@allors/workspace/domain/default';
+import { WorkTask, PartyContactMechanism, Party, EmailAddress, ElectronicAddress, Enumeration, ContactMechanismPurpose } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -70,7 +70,7 @@ export class EmailAddressCreateComponent extends TestScope implements OnInit, On
         this.allors.context.reset();
 
         this.party = loaded.object<Party>(m.Party);
-        this.contactMechanismPurposes = loaded.collection<Enumeration>(m.Enumeration);
+        this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
 
         this.contactMechanism = this.allors.context.create<EmailAddress>(m.EmailAddress);
 

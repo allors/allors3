@@ -29,25 +29,25 @@ namespace Tests.EmailCommunicationTests
         [Fact]
         public void Create()
         {
-            var person = new People(this.Session).Extent().FirstOrDefault();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
 
-            var allors = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            var allors = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
             var employee = allors.ActiveEmployees.First();
 
             var employeeEmailAddress = employee.PersonalEmailAddress;
             var personEmailAddress = person.PersonalEmailAddress;
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var before = new EmailCommunications(this.Session).Extent().ToArray();
+            var before = new EmailCommunications(this.Transaction).Extent().ToArray();
 
             this.personListPage.Table.DefaultAction(person);
             var emailCommunicationEdit = new PersonOverviewComponent(this.personListPage.Driver, this.M).CommunicationeventOverviewPanel.Click().CreateEmailCommunication();
 
             emailCommunicationEdit
-                .CommunicationEventState.Select(new CommunicationEventStates(this.Session).Completed)
-                .EventPurposes.Toggle(new CommunicationEventPurposes(this.Session).Appointment)
+                .CommunicationEventState.Select(new CommunicationEventStates(this.Transaction).Completed)
+                .EventPurposes.Toggle(new CommunicationEventPurposes(this.Transaction).Appointment)
                 .FromParty.Select(employee)
                 .FromEmail.Select(employeeEmailAddress)
                 .ToParty.Select(person)
@@ -61,16 +61,16 @@ namespace Tests.EmailCommunicationTests
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new EmailCommunications(this.Session).Extent().ToArray();
+            var after = new EmailCommunications(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
             var communicationEvent = after.Except(before).First();
 
-            Assert.Equal(new CommunicationEventStates(this.Session).Completed, communicationEvent.CommunicationEventState);
-            Assert.Contains(new CommunicationEventPurposes(this.Session).Appointment, communicationEvent.EventPurposes);
+            Assert.Equal(new CommunicationEventStates(this.Transaction).Completed, communicationEvent.CommunicationEventState);
+            Assert.Contains(new CommunicationEventPurposes(this.Transaction).Appointment, communicationEvent.EventPurposes);
             Assert.Equal(employee, communicationEvent.FromParty);
             Assert.Equal(employeeEmailAddress, communicationEvent.FromEmail);
             Assert.Equal(person, communicationEvent.ToParty);

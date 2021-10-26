@@ -121,16 +121,16 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
 
         const parts = loaded.collection<Part>(m.Part);
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
-        const partNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
+        const partNumberType = this.goodIdentificationTypes?.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
 
-        const partNumberByPart = parts.reduce((map, object) => {
-          map[object.id] = object.ProductIdentifications.filter((v) => v.ProductIdentificationType === partNumberType).map((w) => w.Identification);
+        const partNumberByPart = parts?.reduce((map, object) => {
+          map[object.id] = object.ProductIdentifications?.filter((v) => v.ProductIdentificationType === partNumberType)?.map((w) => w.Identification);
           return map;
         }, {});
 
-        this.table.total = loaded.value('NonUnifiedParts_total') as number;
+        this.table.total = (loaded.value('NonUnifiedParts_total') ?? 0) as number;
 
-        this.table.data = parts.map((v) => {
+        this.table.data = parts?.map((v) => {
           return {
             object: v,
             name: v.Name,

@@ -48,7 +48,7 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           const pulls = [
             pull.RateType({ sorting: [{ roleType: this.m.RateType.Name }] }),
@@ -81,7 +81,7 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
 
         this.rateTypes = loaded.collection<RateType>(m.RateType);
         this.timeFrequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
-        const hour = this.timeFrequencies.find((v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5');
+        const hour = this.timeFrequencies?.find((v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5');
 
         if (isCreate) {
           this.title = 'Add Position Type Rate';
@@ -98,7 +98,7 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
         }
 
         this.positionTypes = loaded.collection<PositionType>(m.PositionType);
-        this.selectedPositionTypes = this.positionTypes.filter((v) => v.PositionTypeRate === this.positionTypeRate);
+        this.selectedPositionTypes = this.positionTypes?.filter((v) => v.PositionTypeRate === this.positionTypeRate);
         this.originalPositionTypes = this.selectedPositionTypes;
       });
   }
@@ -110,7 +110,7 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
   }
 
   public save(): void {
-    if (this.selectedPositionTypes !== undefined) {
+    if (this.selectedPositionTypes != null) {
       this.selectedPositionTypes.forEach((positionType: PositionType) => {
         positionType.PositionTypeRate = this.positionTypeRate;
 

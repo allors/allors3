@@ -30,19 +30,19 @@ namespace Tests.ElectronicAddressTests
         [Fact]
         public void Edit()
         {
-            var person = new People(this.Session).Extent().FirstOrDefault();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
 
-            var electronicAddress = new EmailAddressBuilder(this.Session)
+            var electronicAddress = new EmailAddressBuilder(this.Transaction)
                 .WithElectronicAddressString("info@acme.com")
                 .Build();
 
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Session).WithContactMechanism(electronicAddress).Build();
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(electronicAddress).Build();
             person.AddPartyContactMechanism(partyContactMechanism);
 
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var before = new EmailAddresses(this.Session).Extent().ToArray();
+            var before = new EmailAddresses(this.Transaction).Extent().ToArray();
 
             this.personListPage.Table.DefaultAction(person);
             var personOverviewComponent = new PersonOverviewComponent(this.personListPage.Driver, this.M);
@@ -57,9 +57,9 @@ namespace Tests.ElectronicAddressTests
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new EmailAddresses(this.Session).Extent().ToArray();
+            var after = new EmailAddresses(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length);
 

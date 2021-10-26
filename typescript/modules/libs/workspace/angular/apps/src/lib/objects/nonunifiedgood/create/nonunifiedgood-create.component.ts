@@ -78,7 +78,7 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
         this.locales = this.fetcher.getAdditionalLocales(loaded);
         this.settings = this.fetcher.getSettings(loaded);
 
-        this.goodNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
+        this.goodNumberType = this.goodIdentificationTypes?.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
 
         this.good = this.allors.context.create<NonUnifiedGood>(m.NonUnifiedGood);
 

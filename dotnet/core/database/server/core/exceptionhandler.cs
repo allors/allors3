@@ -13,12 +13,12 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Diagnostics;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.Extensions.Logging;
+    using NLog;
     using Microsoft.IdentityModel.Tokens;
 
     public static class ExceptionHandler
     {
-        public static IApplicationBuilder ConfigureExceptionHandler(this IApplicationBuilder appBuilder, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public static IApplicationBuilder ConfigureExceptionHandler(this IApplicationBuilder appBuilder, IHostingEnvironment env)
         {
             async Task Middleware(HttpContext context, Func<Task> next)
             {
@@ -27,8 +27,8 @@ namespace Allors.Server
                 {
                     var error = exceptionHandler.Error;
 
-                    var logger = loggerFactory.CreateLogger(error.GetType());
-                    logger.LogError(error, "Unhandled Exception");
+                    var logger = LogManager.GetCurrentClassLogger();
+                    logger.Error(error, "Unhandled Exception");
 
                     context.Response.ContentType = "application/json";
                     context.Response.StatusCode = error is SecurityTokenExpiredException

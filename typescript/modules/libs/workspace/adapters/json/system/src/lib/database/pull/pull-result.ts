@@ -2,7 +2,7 @@ import { IObject, IPullResult, ISession, IWorkspace, IUnit } from '@allors/works
 import { PullResponse } from '@allors/protocol/json/system';
 import { Result } from '../result';
 import { AssociationType, Class, Interface, RoleType } from '@allors/workspace/meta/system';
-import { frozenEmptyArray, frozenEmptyMap } from '@allors/workspace/adapters/system';
+import { frozenEmptyMap } from '@allors/workspace/adapters/system';
 
 export class PullResult extends Result implements IPullResult {
   mergeErrors: IObject[];
@@ -39,15 +39,15 @@ export class PullResult extends Result implements IPullResult {
 
   collection<T extends IObject>(nameOrType: string | Class | Interface | AssociationType | RoleType): T[] {
     if (typeof nameOrType === 'string') {
-      return (this.collections.get(nameOrType.toUpperCase()) as T[]) ?? (frozenEmptyArray as T[]);
+      return (this.collections.get(nameOrType.toUpperCase()) as T[]) ?? null;
     }
 
     switch (nameOrType.kind) {
       case 'AssociationType':
       case 'RoleType':
-        return (this.collections.get((nameOrType.isMany ? nameOrType.pluralName : nameOrType.singularName).toUpperCase()) as T[]) ?? (frozenEmptyArray as T[]);
+        return (this.collections.get((nameOrType.isMany ? nameOrType.pluralName : nameOrType.singularName).toUpperCase()) as T[]) ?? null;
       default:
-        return (this.collections.get(nameOrType.pluralName.toUpperCase()) as T[]) ?? (frozenEmptyArray as T[]);
+        return (this.collections.get(nameOrType.pluralName.toUpperCase()) as T[]) ?? null;
     }
   }
 

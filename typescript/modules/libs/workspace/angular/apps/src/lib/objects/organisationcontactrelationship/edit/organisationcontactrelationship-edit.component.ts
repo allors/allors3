@@ -54,7 +54,7 @@ export class OrganisationContactRelationshipEditComponent extends TestScope impl
     this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id === undefined;
+          const isCreate = this.data.id == null;
 
           const pulls = [
             pull.Organisation({}),
@@ -68,6 +68,7 @@ export class OrganisationContactRelationshipEditComponent extends TestScope impl
               pull.OrganisationContactRelationship({
                 objectId: this.data.id,
                 include: {
+                  ContactKinds: x,
                   Organisation: x,
                   Contact: x,
                   Parties: x,
@@ -95,7 +96,7 @@ export class OrganisationContactRelationshipEditComponent extends TestScope impl
         this.organisations = loaded.collection<Organisation>(m.Organisation);
 
         this.contactKinds = loaded.collection<OrganisationContactKind>(m.OrganisationContactKind);
-        this.generalContact = this.contactKinds.find((v) => v.UniqueId === 'eebe4d65-c452-49c9-a583-c0ffec385e98');
+        this.generalContact = this.contactKinds?.find((v) => v.UniqueId === 'eebe4d65-c452-49c9-a583-c0ffec385e98');
 
         if (isCreate) {
           this.title = 'Add Organisation Contact';

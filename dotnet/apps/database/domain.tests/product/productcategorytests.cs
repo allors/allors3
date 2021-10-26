@@ -120,12 +120,12 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal("1", productCategory1.DisplayName);
-            Assert.Equal("2", productCategory2.DisplayName);
-            Assert.Equal("1/1.1", productCategory11.DisplayName);
-            Assert.Equal("1/1.2", productCategory12.DisplayName);
-            Assert.Equal("1/1.1/1.1.1", productCategory111.DisplayName);
-            Assert.Equal("1/1.2/1.2.1", productCategory121.DisplayName);
+            Assert.Equal("1", productCategory1.LongName);
+            Assert.Equal("2", productCategory2.LongName);
+            Assert.Equal("1/1.1", productCategory11.LongName);
+            Assert.Equal("1/1.2", productCategory12.LongName);
+            Assert.Equal("1/1.1/1.1.1", productCategory111.LongName);
+            Assert.Equal("1/1.2/1.2.1", productCategory121.LongName);
         }
 
         [Fact]
@@ -972,12 +972,12 @@ namespace Allors.Database.Domain.Tests
             var productCategory = new ProductCategoryBuilder(this.Transaction).Build();
             this.Derive();
 
-            Assert.Null(productCategory.DisplayName);
+            Assert.Null(productCategory.LongName);
 
             productCategory.Name = "name";
             this.Derive();
 
-            Assert.Equal("name", productCategory.DisplayName);
+            Assert.Equal("name", productCategory.LongName);
         }
 
         [Fact]
@@ -1052,7 +1052,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Derive();
 
-            Assert.Equal("1/1.1", productCategory11.DisplayName);
+            Assert.Equal("1/1.1", productCategory11.LongName);
         }
 
         [Fact]

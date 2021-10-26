@@ -19,7 +19,7 @@ interface Row extends TableRow {
   providers: [PanelService],
 })
 export class SalesOrderTransferOverviewPanelComponent extends TestScope {
-  container: any;
+  container: SalesOrder | SalesInvoice;
 
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
@@ -132,9 +132,9 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
 
     panel.onPulled = (loaded) => {
       this.container = loaded.object<SalesOrder>(salesOrderPullName) || loaded.object<SalesInvoice>(salesInvoicePullName);
-      this.objects = loaded.collection<SalesTerm>(salesOrderTermsPullName) || loaded.collection<SalesTerm>(salesInvoiceTermsPullName);
-      this.table.total = (loaded.value(`${salesOrderTermsPullName}_total`) as number) ?? (loaded.value(`${salesInvoiceTermsPullName}_total`) as number) ?? this.objects.length;
-      this.table.data = this.objects.map((v) => {
+      this.objects = loaded.collection<SalesTerm>(salesOrderTermsPullName) || loaded.collection<SalesTerm>(salesInvoiceTermsPullName) || [];
+      this.table.total = (loaded.value(`${salesOrderTermsPullName}_total`) as number) ?? (loaded.value(`${salesInvoiceTermsPullName}_total`) as number) ?? this.objects?.length ?? 0;
+      this.table.data = this.objects?.map((v) => {
         return {
           object: v,
           name: v.TermType && v.TermType.Name,

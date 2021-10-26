@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         internal static readonly Guid OnHoldId = new Guid("f625fb7e-893e-4f68-ab7b-2bc29a644e5b");
         internal static readonly Guid CompletedId = new Guid("81F80082-040C-405a-8C01-778868D57C75");
         internal static readonly Guid FinishedId = new Guid("DFE75006-81FD-424a-AF58-2528A657155D");
-        internal static readonly Guid TransferredId = new Guid("37bda4c2-dcc3-4f50-8a67-22da1142c1c8");
+        public static readonly Guid TransferredId = new Guid("37bda4c2-dcc3-4f50-8a67-22da1142c1c8");
         internal static readonly Guid CancelledId = new Guid("8AE3813D-7866-4e1c-AB70-EE695154F8F7");
         internal static readonly Guid RejectedId = new Guid("AE2AB1DC-0E5E-4061-924C-025AB84769C0");
 

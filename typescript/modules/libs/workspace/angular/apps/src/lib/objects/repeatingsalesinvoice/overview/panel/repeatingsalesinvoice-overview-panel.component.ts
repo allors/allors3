@@ -119,11 +119,11 @@ export class RepeatingSalesInvoiceOverviewPanelComponent extends TestScope {
       this.invoice = loaded.object<SalesInvoice>(invoicePullName);
 
       if (this.repeatingInvoice) {
-        this.objects.splice(0, this.objects.length);
+        this.objects.splice(0, this.objects?.length ?? 0);
         this.objects.push(this.repeatingInvoice);
       }
 
-      this.table.data = this.objects.map((v) => {
+      this.table.data = this.objects?.map((v) => {
         return {
           object: v,
           frequency: v.Frequency.Name,

@@ -2,10 +2,11 @@ namespace Allors.Meta.Generation
 {
     using System.IO;
     using Database.Meta;
+    using Model;
 
     public static class Generate
     {
-        public static Log Execute(MetaPopulation metaPopulation, string template, string output, string workspaceName = null)
+        public static Log Execute(MetaModel meta, string template, string output, string workspaceName = null)
         {
             var log = new GenerateLog();
 
@@ -13,7 +14,7 @@ namespace Allors.Meta.Generation
             var stringTemplate = new StringTemplate(templateFileInfo);
             var outputDirectoryInfo = new DirectoryInfo(output);
 
-            stringTemplate.Generate(metaPopulation, workspaceName, outputDirectoryInfo, log);
+            stringTemplate.Generate(meta, workspaceName, outputDirectoryInfo, log);
 
             return log;
         }

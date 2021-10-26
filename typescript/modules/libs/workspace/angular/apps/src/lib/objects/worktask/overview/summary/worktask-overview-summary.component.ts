@@ -36,8 +36,9 @@ export class WorkTaskOverviewSummaryComponent {
     private saveService: SaveService,
     public snackBar: MatSnackBar
   ) {
-    const m = this.workspaceService.workspace.configuration.metaPopulation as M;
-
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    const m = this.m;
+    
     this.print = printService.print();
     this.printForWorker = {
       name: 'printforworker',
@@ -137,8 +138,8 @@ export class WorkTaskOverviewSummaryComponent {
 
       this.assets = loaded.collection<FixedAsset>(fixedAssetPullName);
 
-      const salesInvoices1 = loaded.collection<SalesInvoice>(workEffortBillingPullName);
-      const salesInvoices2 = loaded.collection<SalesInvoice>(serviceEntryPullName);
+      const salesInvoices1 = loaded.collection<SalesInvoice>(workEffortBillingPullName) ?? [];
+      const salesInvoices2 = loaded.collection<SalesInvoice>(serviceEntryPullName) ?? [];
       this.salesInvoices = new Set([...salesInvoices1, ...salesInvoices2]);
     };
   }

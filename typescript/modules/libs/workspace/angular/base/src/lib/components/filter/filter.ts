@@ -28,7 +28,7 @@ export class Filter {
   }
 
   parameters(fields: FilterField[]): any {
-    return fields.reduce((acc, cur) => {
+    return fields?.reduce((acc, cur) => {
       if (cur.definition.predicate.parameter) {
         acc[cur.definition.predicate.parameter] = cur.argument;
       }

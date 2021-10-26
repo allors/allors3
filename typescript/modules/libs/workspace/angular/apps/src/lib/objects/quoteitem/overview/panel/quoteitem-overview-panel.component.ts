@@ -121,8 +121,8 @@ export class QuoteItemOverviewPanelComponent extends TestScope {
     panel.onPulled = (loaded) => {
       this.quoteItems = loaded.collection<QuoteItem>(pullName);
       this.quote = loaded.object<ProductQuote>(quotePullName);
-      this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.quoteItems.length;
-      this.table.data = this.quoteItems.map((v) => {
+      this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.quoteItems?.length ?? 0;
+      this.table.data = this.quoteItems?.map((v) => {
         return {
           object: v,
           itemType: v.InvoiceItemType.Name,

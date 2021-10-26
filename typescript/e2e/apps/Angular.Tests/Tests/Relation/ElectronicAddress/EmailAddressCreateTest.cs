@@ -29,23 +29,23 @@ namespace Tests.ElectronicAddressTests
         [Fact]
         public void Create()
         {
-            var before = new EmailAddresses(this.Session).Extent().ToArray();
+            var before = new EmailAddresses(this.Transaction).Extent().ToArray();
 
-            var person = new People(this.Session).Extent().FirstOrDefault();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
 
             this.personListPage.Table.DefaultAction(person);
             var emailAddressCreate = new PersonOverviewComponent(this.personListPage.Driver, this.M).ContactmechanismOverviewPanel.Click().CreateEmailAddress();
 
             emailAddressCreate
-                .ContactPurposes.Toggle(new ContactMechanismPurposes(this.Session).GeneralPhoneNumber)
+                .ContactPurposes.Toggle(new ContactMechanismPurposes(this.Transaction).GeneralPhoneNumber)
                 .ElectronicAddressString.Set("me@myself.com")
                 .Description.Set("description")
                 .SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new EmailAddresses(this.Session).Extent().ToArray();
+            var after = new EmailAddresses(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 

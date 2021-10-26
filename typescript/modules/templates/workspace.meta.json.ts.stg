@@ -2,7 +2,7 @@ delimiters "$", "$"
 
 TemplateId() ::= <<2FD8EE5D-4976-484F-96F9-9474AE09BFDB>>
 TemplateName() ::= <<Allors Typescript Workspace Meta Json>>
-TemplateVersion() ::= <<3.0.2>>
+TemplateVersion() ::= <<3.0.3>>
 TemplateAllors() ::= <<1.0>>
 TemplateConfiguration(meta, workspaceName) ::= <<
 $!
@@ -42,62 +42,62 @@ export const data: MetaData =
 {
   i:
   [
-$meta._.WorkspaceInterfacesByWorkspaceName.(workspaceName):{objectType|$data_objectType(objectType)$}; separator=",\n"$
+$meta.WorkspaceInterfacesByWorkspaceName.(workspaceName):{objectType|$data_objectType(objectType)$}; separator=",\n"$
   ],
   c:
   [
-$meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{objectType|$data_objectType(objectType)$}; separator=",\n"$
+$meta.WorkspaceClassesByWorkspaceName.(workspaceName):{objectType|$data_objectType(objectType)$}; separator=",\n"$
   ],
   o:
   [
-    [$meta._.WorkspaceWorkspaceOriginTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
-    [$meta._.WorkspaceSessionOriginTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$]
+    [$meta.WorkspaceWorkspaceOriginTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
+    [$meta.WorkspaceSessionOriginTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$]
   ],
   m:
   [
-    [$meta._.WorkspaceOneToOneTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
-    [$meta._.WorkspaceOneToManyTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
-    [$meta._.WorkspaceManyToManyTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$]
+    [$meta.WorkspaceOneToOneTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
+    [$meta.WorkspaceOneToManyTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
+    [$meta.WorkspaceManyToManyTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$]
   ],
-  d: [$meta._.WorkspaceDerivedTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
-  r: [$meta._.WorkspaceRequiredTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
-  u: [$meta._.WorkspaceUniqueTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
+  d: [$meta.WorkspaceDerivedTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
+  r: [$meta.WorkspaceRequiredTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
+  u: [$meta.WorkspaceUniqueTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
   t:
   {
-    $meta._.WorkspaceMediaTagsByMediaTypeNameByWorkspaceName.(workspaceName):{mediaTypeName|'$mediaTypeName$': [$data_mediaType(mediaTypeName)$]}; separator=",\n"$
+    $meta.WorkspaceMediaTagsByMediaTypeNameByWorkspaceName.(workspaceName):{mediaTypeName|'$mediaTypeName$': [$data_mediaType(mediaTypeName)$]}; separator=",\n"$
   },
-  or: [$meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{objectType|$data_overridden_required(objectType)$}; separator=""$],
-  ou: [$meta._.WorkspaceClassesByWorkspaceName.(workspaceName):{objectType|$data_overridden_unique(objectType)$}; separator=""$],
+  or: [$meta.WorkspaceClassesByWorkspaceName.(workspaceName):{objectType|$data_overridden_required(objectType)$}; separator=""$],
+  ou: [$meta.WorkspaceClassesByWorkspaceName.(workspaceName):{objectType|$data_overridden_unique(objectType)$}; separator=""$],
 }
 
 >>
 
 data_objectType(objectType) ::= <<
-    ['$objectType._.Tag$', '$objectType._.SingularName$', $data_supertypes()$, $data_relationTypes()$, $data_methodTypes()$$if(objectType.ExistAssignedPluralName)$, "$objectType._.PluralName$"$endif$]
+    ['$objectType.Tag$', '$objectType.SingularName$', $data_supertypes()$, $data_relationTypes()$, $data_methodTypes()$$if(objectType.ExistAssignedPluralName)$, "$objectType.PluralName$"$endif$]
 >>
 
-data_supertypes() ::= <<[$objectType._.WorkspaceDirectSupertypesByWorkspaceName.(workspaceName):{supertype|'$supertype._.Tag$'}; separator=","$]>>
+data_supertypes() ::= <<[$objectType.WorkspaceDirectSupertypesByWorkspaceName.(workspaceName):{supertype|'$supertype.Tag$'}; separator=","$]>>
 
-data_relationTypes() ::= <<[$objectType._.WorkspaceExclusiveRoleTypesByWorkspaceName.(workspaceName):{roleType|$data_relationType(relationType=roleType._.RelationType, associationType=roleType._.AssociationType, roleType=roleType)$}; separator=","$]>>
+data_relationTypes() ::= <<[$objectType.WorkspaceExclusiveRoleTypesByWorkspaceName.(workspaceName):{roleType|$data_relationType(relationType=roleType.RelationType, associationType=roleType.AssociationType, roleType=roleType)$}; separator=","$]>>
 
-data_relationType(relationType, associationType, roleType) ::= <<['$relationType._.Tag$', '$roleType._.ObjectType._.Tag$'$data_relationType_singularAndPluralName()$]>>
+data_relationType(relationType, associationType, roleType) ::= <<['$relationType.Tag$', '$roleType.ObjectType.Tag$'$data_relationType_singularAndPluralName()$]>>
 
-data_relationType_singularAndPluralName() ::= <<$if(roleType._.ExistAssignedSingularName)$, "$roleType._.singularName$"$data_relationType_pluralName()$$endif$>>
+data_relationType_singularAndPluralName() ::= <<$if(roleType.ExistAssignedSingularName)$, "$roleType.singularName$"$data_relationType_pluralName()$$endif$>>
 
-data_relationType_pluralName() ::= <<$if(roleType._.ExistAssignedPluralName)$, "$roleType._.pluralName$"$endif$>>
+data_relationType_pluralName() ::= <<$if(roleType.ExistAssignedPluralName)$, "$roleType.pluralName$"$endif$>>
 
-data_methodTypes() ::= <<[$objectType._.WorkspaceExclusiveMethodTypesByWorkspaceName.(workspaceName):{methodType|$data_methodType(methodType)$}; separator=","$]>>
+data_methodTypes() ::= <<[$objectType.WorkspaceExclusiveMethodTypesByWorkspaceName.(workspaceName):{methodType|$data_methodType(methodType)$}; separator=","$]>>
 
-data_methodType(methodType) ::= <<['$methodType._.Tag$', "$methodType._.Name$"]>>
+data_methodType(methodType) ::= <<['$methodType.Tag$', "$methodType.Name$"]>>
 
 data_origin(metaObject) ::= <<$if(!metaObject.IsDefaultOrigin)$'$metaObject.Tag$'$endif$>>
 
-data_mediaType(mediaTypeName) ::= <<$meta._.WorkspaceMediaTagsByMediaTypeNameByWorkspaceName.(workspaceName).(mediaTypeName):{tag|'$tag$'}; separator=","$>>
+data_mediaType(mediaTypeName) ::= <<$meta.WorkspaceMediaTagsByMediaTypeNameByWorkspaceName.(workspaceName).(mediaTypeName):{tag|'$tag$'}; separator=","$>>
 
-data_overridden_required(objectType) ::= <<$if(objectType._.WorkspaceOverriddenRequiredByWorkspaceName.(workspaceName))$
-    ['$objectType._.Tag$', [$objectType._.WorkspaceOverriddenRequiredByWorkspaceName.(workspaceName):{roleType|'$roleType._.RelationType._.tag$'}; separator=","$]],
+data_overridden_required(objectType) ::= <<$if(objectType.WorkspaceOverriddenRequiredByWorkspaceName.(workspaceName))$
+    ['$objectType.Tag$', [$objectType.WorkspaceOverriddenRequiredByWorkspaceName.(workspaceName):{roleType|'$roleType.RelationType.tag$'}; separator=","$]],
 $endif$>>
 
-data_overridden_unique(objectType) ::= <<$if(objectType._.WorkspaceOverriddenUniqueByWorkspaceName.(workspaceName))$
-    ['$objectType._.Tag$', [$objectType._.WorkspaceOverriddenUniqueByWorkspaceName.(workspaceName):{roleType|'$roleType._.RelationType._.tag$'}; separator=","$]],
+data_overridden_unique(objectType) ::= <<$if(objectType.WorkspaceOverriddenUniqueByWorkspaceName.(workspaceName))$
+    ['$objectType.Tag$', [$objectType.WorkspaceOverriddenUniqueByWorkspaceName.(workspaceName):{roleType|'$roleType.RelationType.tag$'}; separator=","$]],
 $endif$>>

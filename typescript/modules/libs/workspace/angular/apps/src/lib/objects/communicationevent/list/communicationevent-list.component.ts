@@ -113,14 +113,14 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
       .subscribe((loaded) => {
         this.allors.context.reset();
         const communicationEvents = loaded.collection<CommunicationEvent>(m.CommunicationEvent);
-        this.table.total = loaded.value('CommunicationEvents_total') as number;
-        this.table.data = communicationEvents.map((v) => {
+        this.table.total = (loaded.value('CommunicationEvents_total') ?? 0) as number;
+        this.table.data = communicationEvents?.map((v) => {
           return {
             object: v,
             type: v.strategy.cls.singularName,
             state: v.CommunicationEventState && v.CommunicationEventState.Name,
             subject: v.Subject,
-            involved: v.InvolvedParties.map((w) => w.DisplayName).join(', '),
+            involved: v.InvolvedParties?.map((w) => w.DisplayName).join(', '),
             started: v.ActualStart && format(new Date(v.ActualStart), 'dd-MM-yyyy'),
             ended: v.ActualEnd && format(new Date(v.ActualEnd), 'dd-MM-yyyy'),
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),

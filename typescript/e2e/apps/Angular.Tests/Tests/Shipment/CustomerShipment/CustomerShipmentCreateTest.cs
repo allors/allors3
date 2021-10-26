@@ -24,7 +24,7 @@ namespace Tests.CustomerShipmentTests
         public CustomerShipmentCreateTest(Fixture fixture)
             : base(fixture)
         {
-            this.internalOrganisation = new Organisations(this.Session).FindBy(M.Organisation.Name, "Allors BVBA");
+            this.internalOrganisation = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
 
             this.Login();
             this.shipmentListPage = this.Sidenav.NavigateToShipments();
@@ -33,11 +33,11 @@ namespace Tests.CustomerShipmentTests
         [Fact]
         public void CreateFull()
         {
-            var before = new CustomerShipments(this.Session).Extent().ToArray();
+            var before = new CustomerShipments(this.Transaction).Extent().ToArray();
 
-            var expected = new CustomerShipmentBuilder(this.Session).WithDefaults(this.internalOrganisation).Build();
+            var expected = new CustomerShipmentBuilder(this.Transaction).WithDefaults(this.internalOrganisation).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedShipToPartyPartyName = expected.ShipToParty?.DisplayName();
             var expectedShipToAddressDisplayName = expected.ShipToAddress?.DisplayName();
@@ -57,13 +57,13 @@ namespace Tests.CustomerShipmentTests
 
             customerShipmentCreate.AssertFull(expected);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             customerShipmentCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new CustomerShipments(this.Session).Extent().ToArray();
+            var after = new CustomerShipments(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
@@ -85,11 +85,11 @@ namespace Tests.CustomerShipmentTests
         [Fact]
         public void CreateMinimal()
         {
-            var before = new CustomerShipments(this.Session).Extent().ToArray();
+            var before = new CustomerShipments(this.Transaction).Extent().ToArray();
 
-            var expected = new CustomerShipmentBuilder(this.Session).WithDefaults(this.internalOrganisation).Build();
+            var expected = new CustomerShipmentBuilder(this.Transaction).WithDefaults(this.internalOrganisation).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var expectedShipToPartyPartyName = expected.ShipToParty?.DisplayName();
             var expectedShipToAddressDisplayName = expected.ShipToAddress?.DisplayName();
@@ -102,13 +102,13 @@ namespace Tests.CustomerShipmentTests
 
             customerShipmentCreate.AssertFull(expected);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
             customerShipmentCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var after = new CustomerShipments(this.Session).Extent().ToArray();
+            var after = new CustomerShipments(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 

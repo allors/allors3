@@ -241,12 +241,12 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
         this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
 
         const supplierRelationships = loaded.collection<SupplierRelationship>(m.SupplierRelationship);
-        const currentsupplierRelationships = supplierRelationships.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
-        this.currentSuppliers = new Set(currentsupplierRelationships.map((v) => v.Supplier).sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0)));
+        const currentsupplierRelationships = supplierRelationships?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
+        this.currentSuppliers = new Set(currentsupplierRelationships?.map((v) => v.Supplier).sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0)));
 
-        const goodNumberType = this.goodIdentificationTypes.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
+        const goodNumberType = this.goodIdentificationTypes?.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
 
-        this.productNumber = this.good.ProductIdentifications.find((v) => v.ProductIdentificationType === goodNumberType);
+        this.productNumber = this.good.ProductIdentifications?.find((v) => v.ProductIdentificationType === goodNumberType);
 
         this.suppliers = this.good.SuppliedBy as Organisation[];
         this.selectedSuppliers = this.suppliers;
@@ -337,19 +337,19 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
     this.good.Brand = this.selectedBrand;
     this.good.Model = this.selectedModel;
 
-    if (this.suppliers !== undefined) {
-      const suppliersToDelete = this.suppliers.filter((v) => v);
+    if (this.suppliers != null) {
+      const suppliersToDelete = this.suppliers?.filter((v) => v);
 
-      if (this.selectedSuppliers !== undefined) {
+      if (this.selectedSuppliers != null) {
         this.selectedSuppliers.forEach((supplier: Organisation) => {
           const index = suppliersToDelete.indexOf(supplier);
           if (index > -1) {
             suppliersToDelete.splice(index, 1);
           }
 
-          const supplierOffering = this.supplierOfferings.find((v) => v.Supplier === supplier && isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
+          const supplierOffering = this.supplierOfferings?.find((v) => v.Supplier === supplier && isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
 
-          if (supplierOffering === undefined) {
+          if (supplierOffering == null) {
             this.supplierOfferings.push(this.newSupplierOffering(supplier));
           } else {
             supplierOffering.ThroughDate = null;
@@ -357,11 +357,11 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
         });
       }
 
-      if (suppliersToDelete !== undefined) {
+      if (suppliersToDelete != null) {
         suppliersToDelete.forEach((supplier: Organisation) => {
-          const supplierOffering = this.supplierOfferings.find((v) => v.Supplier === supplier && isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate === null || isAfter(new Date(v.ThroughDate), new Date())));
+          const supplierOffering = this.supplierOfferings?.find((v) => v.Supplier === supplier && isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
 
-          if (supplierOffering !== undefined) {
+          if (supplierOffering != null) {
             supplierOffering.ThroughDate = new Date();
           }
         });
