@@ -9,7 +9,7 @@ namespace Allors.Database.Adapters.Sql
 
     using Meta;
 
-    internal sealed class AssociationContainedInExtent : In
+    internal sealed class AssociationContainedInExtent : ContainedIn
     {
         private readonly IAssociationType association;
         private readonly SqlExtent inExtent;

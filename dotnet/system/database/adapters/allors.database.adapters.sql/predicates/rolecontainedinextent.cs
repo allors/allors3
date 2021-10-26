@@ -9,7 +9,7 @@ namespace Allors.Database.Adapters.Sql
 
     using Meta;
 
-    internal sealed class RoleContainedInExtent : In
+    internal sealed class RoleContainedInExtent : ContainedIn
     {
         private readonly SqlExtent inExtent;
         private readonly IRoleType role;

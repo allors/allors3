@@ -12,7 +12,7 @@ namespace Allors.Database.Adapters.Sql
 
     using Meta;
 
-    internal sealed class NotAssociationContainedInEnumerable : In
+    internal sealed class NotAssociationContainedInEnumerable : ContainedIn
     {
         private readonly IAssociationType association;
         private readonly IEnumerable<IObject> enumerable;

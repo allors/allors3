@@ -20,13 +20,13 @@ namespace Allors.Database.Adapters
 
     public class Units
     {
+        public static Units Dummy = new Units(false);
+
         public byte[] Binary;
         public bool Boolean;
-        public DateTime Date;
         public DateTime DateTime;
         public decimal Decimal;
         public double Float;
-        public static Units Dummy = new Units(false);
         public int Integer;
         public long Long;
         public string String;

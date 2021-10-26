@@ -12,7 +12,7 @@ namespace Allors.Database.Adapters.Sql
 
     using Meta;
 
-    internal sealed class RoleContainedInEnumerable : In
+    internal sealed class RoleContainedInEnumerable : ContainedIn
     {
         private readonly IEnumerable<IObject> enumerable;
         private readonly IRoleType role;

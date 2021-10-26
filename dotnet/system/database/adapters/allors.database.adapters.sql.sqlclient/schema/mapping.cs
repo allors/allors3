@@ -88,6 +88,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         private string TableTypeColumnNameForVersion { get; }
 
         internal string TableTypeNameForCompositeRelation { get; }
+
         internal string TableTypeNameForStringRelation { get; }
         internal string TableTypeNameForIntegerRelation { get; }
         internal string TableTypeNameForFloatRelation { get; }
@@ -97,10 +98,20 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         internal string TableTypeNameForBinaryRelation { get; }
         private string TableTypeNamePrefixForDecimalRelation { get; }
 
+        internal string TableTypeNameForStringIn { get; }
+        internal string TableTypeNameForIntegerIn { get; }
+        internal string TableTypeNameForFloatIn { get; }
+        internal string TableTypeNameForBooleanIn { get; }
+        internal string TableTypeNameForDateTimeIn { get; }
+        internal string TableTypeNameForUniqueIn { get; }
+        internal string TableTypeNameForBinaryIn { get; }
+        private string TableTypeNamePrefixForDecimalIn { get; }
+
         internal string TableTypeColumnNameForAssociation { get; }
         internal string TableTypeColumnNameForRole { get; }
 
         internal Dictionary<int, Dictionary<int, string>> TableTypeNameForDecimalRelationByScaleByPrecision { get; }
+        internal Dictionary<int, Dictionary<int, string>> TableTypeNameForDecimalInByScaleByPrecision { get; }
 
         private string ParamNameForObject { get; }
         private string ParamNameForClass { get; }
@@ -167,6 +178,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.TableTypeNameForObject = $"{database.SchemaName}._t_o";
             this.TableTypeNameForVersionedObject = $"{database.SchemaName}._t_vo";
             this.TableTypeNameForCompositeRelation = $"{database.SchemaName}._t_c";
+
             this.TableTypeNameForStringRelation = $"{database.SchemaName}._t_s";
             this.TableTypeNameForIntegerRelation = $"{database.SchemaName}._t_i";
             this.TableTypeNameForFloatRelation = $"{database.SchemaName}._t_f";
@@ -176,12 +188,22 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             this.TableTypeNameForBinaryRelation = $"{database.SchemaName}._t_bi";
             this.TableTypeNamePrefixForDecimalRelation = $"{database.SchemaName}._t_de";
 
+            this.TableTypeNameForStringIn = $"{database.SchemaName}._ti_s";
+            this.TableTypeNameForIntegerIn = $"{database.SchemaName}._ti_i";
+            this.TableTypeNameForFloatIn = $"{database.SchemaName}._ti_f";
+            this.TableTypeNameForBooleanIn = $"{database.SchemaName}._ti_bo";
+            this.TableTypeNameForDateTimeIn = $"{database.SchemaName}._ti_da";
+            this.TableTypeNameForUniqueIn = $"{database.SchemaName}._ti_u";
+            this.TableTypeNameForBinaryIn = $"{database.SchemaName}._ti_bi";
+            this.TableTypeNamePrefixForDecimalIn = $"{database.SchemaName}._ti_de";
+
             this.TableTypeColumnNameForObject = "_o";
             this.TableTypeColumnNameForVersion = "_c";
             this.TableTypeColumnNameForAssociation = "_a";
             this.TableTypeColumnNameForRole = "_r";
 
             this.TableTypeNameForDecimalRelationByScaleByPrecision = new Dictionary<int, Dictionary<int, string>>();
+            this.TableTypeNameForDecimalInByScaleByPrecision = new Dictionary<int, Dictionary<int, string>>();
             foreach (var relationType in database.MetaPopulation.DatabaseRelationTypes)
             {
                 var roleType = relationType.RoleType;
@@ -190,23 +212,43 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     var precision = roleType.Precision.Value;
                     var scale = roleType.Scale.Value;
 
-                    var tableName = $"{this.TableTypeNamePrefixForDecimalRelation}{precision}_{scale}";
-
-                    if (!this.TableTypeNameForDecimalRelationByScaleByPrecision.TryGetValue(precision, out var decimalRelationTableByScale))
                     {
-                        decimalRelationTableByScale = new Dictionary<int, string>();
-                        this.TableTypeNameForDecimalRelationByScaleByPrecision[precision] = decimalRelationTableByScale;
+                        // Table
+                        var tableName = $"{this.TableTypeNamePrefixForDecimalRelation}{precision}_{scale}";
+
+                        if (!this.TableTypeNameForDecimalRelationByScaleByPrecision.TryGetValue(precision, out var decimalRelationTableByScale))
+                        {
+                            decimalRelationTableByScale = new Dictionary<int, string>();
+                            this.TableTypeNameForDecimalRelationByScaleByPrecision[precision] = decimalRelationTableByScale;
+                        }
+
+                        if (!decimalRelationTableByScale.ContainsKey(scale))
+                        {
+                            decimalRelationTableByScale[scale] = tableName;
+                        }
                     }
 
-                    if (!decimalRelationTableByScale.ContainsKey(scale))
                     {
-                        decimalRelationTableByScale[scale] = tableName;
+                        // In
+                        var tableName = $"{this.TableTypeNamePrefixForDecimalIn}{precision}_{scale}";
+
+                        if (!this.TableTypeNameForDecimalInByScaleByPrecision.TryGetValue(precision, out var decimalInTableByScale))
+                        {
+                            decimalInTableByScale = new Dictionary<int, string>();
+                            this.TableTypeNameForDecimalInByScaleByPrecision[precision] = decimalInTableByScale;
+                        }
+
+                        if (!decimalInTableByScale.ContainsKey(scale))
+                        {
+                            decimalInTableByScale[scale] = tableName;
+                        }
                     }
                 }
             }
 
             this.TableTypeDefinitionByName = new Dictionary<string, string>
              {
+                 // Table
                  {
                      this.TableTypeNameForObject,
                      $"CREATE TYPE {this.TableTypeNameForObject} AS TABLE ({this.TableTypeColumnNameForObject} {SqlTypeForObject})"
@@ -247,6 +289,35 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                      this.TableTypeNameForBinaryRelation,
                      $"CREATE TYPE {this.TableTypeNameForBinaryRelation} AS TABLE ({this.TableTypeColumnNameForAssociation} {SqlTypeForObject}, {this.TableTypeColumnNameForRole} varbinary(max))"
                  },
+                 // In
+                 {
+                     this.TableTypeNameForStringIn,
+                     $"CREATE TYPE {this.TableTypeNameForStringIn} AS TABLE ({this.TableTypeColumnNameForRole} nvarchar(max))"
+                 },
+                 {
+                     this.TableTypeNameForIntegerIn,
+                     $"CREATE TYPE {this.TableTypeNameForIntegerIn} AS TABLE ({this.TableTypeColumnNameForRole} int)"
+                 },
+                 {
+                     this.TableTypeNameForFloatIn,
+                     $"CREATE TYPE {this.TableTypeNameForFloatIn} AS TABLE ({this.TableTypeColumnNameForRole} float)"
+                 },
+                 {
+                     this.TableTypeNameForDateTimeIn,
+                     $"CREATE TYPE {this.TableTypeNameForDateTimeIn} AS TABLE ({this.TableTypeColumnNameForRole} datetime2)"
+                 },
+                 {
+                     this.TableTypeNameForBooleanIn,
+                     $"CREATE TYPE {this.TableTypeNameForBooleanIn} AS TABLE ({this.TableTypeColumnNameForRole} bit)"
+                 },
+                 {
+                     this.TableTypeNameForUniqueIn,
+                     $"CREATE TYPE {this.TableTypeNameForUniqueIn} AS TABLE ({this.TableTypeColumnNameForRole} uniqueidentifier)"
+                 },
+                 {
+                     this.TableTypeNameForBinaryIn,
+                     $"CREATE TYPE {this.TableTypeNameForBinaryIn} AS TABLE ({this.TableTypeColumnNameForRole} varbinary(max))"
+                 },
              };
 
             foreach (var precisionEntry in this.TableTypeNameForDecimalRelationByScaleByPrecision)
@@ -264,6 +335,23 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 ";
 
                     this.TableTypeDefinitionByName.Add(decimalRelationTable, sql);
+                }
+            }
+
+            foreach (var precisionEntry in this.TableTypeNameForDecimalInByScaleByPrecision)
+            {
+                var precision = precisionEntry.Key;
+                foreach (var scaleEntry in precisionEntry.Value)
+                {
+                    var scale = scaleEntry.Key;
+                    var decimalRelationIn = scaleEntry.Value;
+
+                    var sql =
+                        @$"CREATE TYPE {decimalRelationIn} AS TABLE
+({this.TableTypeColumnNameForRole} DECIMAL({precision},{scale}) )
+";
+
+                    this.TableTypeDefinitionByName.Add(decimalRelationIn, sql);
                 }
             }
 

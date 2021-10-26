@@ -198,6 +198,14 @@ namespace Allors.Database.Adapters.Sql
             return this;
         }
 
+        public ICompositePredicate AddIn(IRoleType role, IEnumerable<int> list)
+        {
+            this.CheckUnarity();
+            this.extent.FlushCache();
+            this.filter = new RoleIn(this.extent, role, list);
+            return this;
+        }
+
         public ICompositePredicate AddInstanceof(IComposite type)
         {
             this.CheckUnarity();

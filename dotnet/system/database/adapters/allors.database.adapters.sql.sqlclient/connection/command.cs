@@ -6,6 +6,7 @@
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Data;
     using Microsoft.Data.SqlClient;
@@ -51,16 +52,29 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     parameter.SqlDbType = SqlDbType.DateTime2;
                 }
 
+                if (value is IEnumerable)
+                {
+                    parameter.SqlDbType = SqlDbType.Structured;
+                    parameter.TypeName = "allors._ti_i";
+                }
+
                 this.command.Parameters.Add(parameter);
             }
 
             if (value == null || value == DBNull.Value)
             {
-                this.command.Parameters[parameterName].Value = DBNull.Value;
+                parameter.Value = DBNull.Value;
             }
             else
             {
-                this.command.Parameters[parameterName].Value = value;
+                if (parameter.SqlDbType == SqlDbType.Structured)
+                {
+                    parameter.Value = new UnitDataRecord(this.mapping, (IEnumerable<int>)value);
+                }
+                else
+                {
+                    parameter.Value = value;
+                }
             }
         }
 

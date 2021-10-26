@@ -6,6 +6,7 @@
 namespace Allors.Database.Adapters.Sql
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
 
     using Meta;
@@ -77,6 +78,10 @@ namespace Allors.Database.Adapters.Sql
                 var paramName = paramNameByParamValuePair.Value;
                 var paramValue = paramNameByParamValuePair.Key;
 
+                if (paramValue is IEnumerable<int> enumerable)
+                {
+                    this.command.AddInParameter(paramName, enumerable);
+                }
                 if (paramValue is IObject)
                 {
                     this.command.AddInParameter(paramName, ((IObject)paramValue).Strategy.ObjectId);

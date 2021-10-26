@@ -159,6 +159,13 @@ namespace Allors.Database.Adapters.Memory
             return this;
         }
 
+        public ICompositePredicate AddIn(IRoleType role, IEnumerable<int> list)
+        {
+            this.Filters.Add(new RoleUnitIn(this.extent, role, list));
+            this.extent.Invalidate();
+            return this;
+        }
+
         public ICompositePredicate AddInstanceof(IComposite type)
         {
             this.Filters.Add(new Instanceof(type));

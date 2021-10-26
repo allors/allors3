@@ -10567,6 +10567,268 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
+        public void RoleIntegerIn()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                this.Populate();
+                var m = this.Transaction.Database.Context().M;
+
+                // Class
+                // In [0]
+                var extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddIn(m.C1.C1AllorsInteger, new int[] { 0 });
+
+                Assert.Empty(extent);
+                this.AssertC1(extent, false, false, false, false);
+                this.AssertC2(extent, false, false, false, false);
+                this.AssertC3(extent, false, false, false, false);
+                this.AssertC4(extent, false, false, false, false);
+
+                // In [1]
+                extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddIn(m.C1.C1AllorsInteger, new int[] { 1 });
+
+                Assert.Single(extent);
+                this.AssertC1(extent, false, true, false, false);
+                this.AssertC2(extent, false, false, false, false);
+                this.AssertC3(extent, false, false, false, false);
+                this.AssertC4(extent, false, false, false, false);
+
+                // In 2
+                extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddIn(m.C1.C1AllorsInteger, new int[] { 2 });
+
+                Assert.Equal(2, extent.Count);
+                this.AssertC1(extent, false, false, true, true);
+                this.AssertC2(extent, false, false, false, false);
+                this.AssertC3(extent, false, false, false, false);
+                this.AssertC4(extent, false, false, false, false);
+
+                // In [0,1]
+                extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddIn(m.C1.C1AllorsInteger, new int[] { 0, 1 });
+
+                Assert.Single(extent);
+                this.AssertC1(extent, false, true, false, false);
+                this.AssertC2(extent, false, false, false, false);
+                this.AssertC3(extent, false, false, false, false);
+                this.AssertC4(extent, false, false, false, false);
+
+                // In [1,2]
+                extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddIn(m.C1.C1AllorsInteger, new int[] { 1, 2 });
+
+                Assert.Equal(3, extent.Count);
+                this.AssertC1(extent, false, true, true, true);
+                this.AssertC2(extent, false, false, false, false);
+                this.AssertC3(extent, false, false, false, false);
+                this.AssertC4(extent, false, false, false, false);
+
+                //// Interface
+                //// Equal 0
+                //extent = this.Transaction.Extent(m.I12);
+                //extent.Filter.AddEquals(m.I12.I12AllorsInteger, 0);
+
+                //Assert.Empty(extent);
+                //this.AssertC1(extent, false, false, false, false);
+                //this.AssertC2(extent, false, false, false, false);
+                //this.AssertC3(extent, false, false, false, false);
+                //this.AssertC4(extent, false, false, false, false);
+
+                //// Equal 1
+                //extent = this.Transaction.Extent(m.I12);
+                //extent.Filter.AddEquals(m.I12.I12AllorsInteger, 1);
+
+                //Assert.Equal(2, extent.Count);
+                //this.AssertC1(extent, false, true, false, false);
+                //this.AssertC2(extent, false, true, false, false);
+                //this.AssertC3(extent, false, false, false, false);
+                //this.AssertC4(extent, false, false, false, false);
+
+                //// Equal 2
+                //extent = this.Transaction.Extent(m.I12);
+                //extent.Filter.AddEquals(m.I12.I12AllorsInteger, 2);
+
+                //Assert.Equal(4, extent.Count);
+                //this.AssertC1(extent, false, false, true, true);
+                //this.AssertC2(extent, false, false, true, true);
+                //this.AssertC3(extent, false, false, false, false);
+                //this.AssertC4(extent, false, false, false, false);
+
+                //// Super Interface
+                //// Equal 0
+                //extent = this.Transaction.Extent(m.S1234);
+                //extent.Filter.AddEquals(m.S1234.S1234AllorsInteger, 0);
+
+                //Assert.Empty(extent);
+                //this.AssertC1(extent, false, false, false, false);
+                //this.AssertC2(extent, false, false, false, false);
+                //this.AssertC3(extent, false, false, false, false);
+                //this.AssertC4(extent, false, false, false, false);
+
+                //// Equal 1
+                //extent = this.Transaction.Extent(m.S1234);
+                //extent.Filter.AddEquals(m.S1234.S1234AllorsInteger, 1);
+
+                //Assert.Equal(4, extent.Count);
+                //this.AssertC1(extent, false, true, false, false);
+                //this.AssertC2(extent, false, true, false, false);
+                //this.AssertC3(extent, false, true, false, false);
+                //this.AssertC4(extent, false, true, false, false);
+
+                //// Equal 2
+                //extent = this.Transaction.Extent(m.S1234);
+                //extent.Filter.AddEquals(m.S1234.S1234AllorsInteger, 2);
+
+                //Assert.Equal(8, extent.Count);
+                //this.AssertC1(extent, false, false, true, true);
+                //this.AssertC2(extent, false, false, true, true);
+                //this.AssertC3(extent, false, false, true, true);
+                //this.AssertC4(extent, false, false, true, true);
+
+                //// Class - Wrong RelationType
+                //// Equal 0
+                //extent = this.Transaction.Extent(m.C1);
+
+                //var exception = false;
+                //try
+                //{
+                //    extent.Filter.AddEquals(m.C2.C2AllorsInteger, 0);
+                //}
+                //catch
+                //{
+                //    exception = true;
+                //}
+
+                //Assert.True(exception);
+
+                //// Equal 1
+                //extent = this.Transaction.Extent(m.C1);
+
+                //exception = false;
+                //try
+                //{
+                //    extent.Filter.AddEquals(m.C2.C2AllorsInteger, 1);
+                //}
+                //catch
+                //{
+                //    exception = true;
+                //}
+
+                //Assert.True(exception);
+
+                //// Equal 2
+                //extent = this.Transaction.Extent(m.C1);
+
+                //exception = false;
+                //try
+                //{
+                //    extent.Filter.AddEquals(m.C2.C2AllorsInteger, 2);
+                //}
+                //catch
+                //{
+                //    exception = true;
+                //}
+
+                //Assert.True(exception);
+
+                //// Interface - Wrong RelationType
+                //// Equal 0
+                //extent = this.Transaction.Extent(m.C1);
+
+                //exception = false;
+                //try
+                //{
+                //    extent.Filter.AddEquals(m.I2.I2AllorsInteger, 0);
+                //}
+                //catch
+                //{
+                //    exception = true;
+                //}
+
+                //Assert.True(exception);
+
+                //// Equal 1
+                //extent = this.Transaction.Extent(m.C1);
+
+                //exception = false;
+                //try
+                //{
+                //    extent.Filter.AddEquals(m.I2.I2AllorsInteger, 1);
+                //}
+                //catch
+                //{
+                //    exception = true;
+                //}
+
+                //Assert.True(exception);
+
+                //// Equal 2
+                //extent = this.Transaction.Extent(m.C1);
+
+                //exception = false;
+                //try
+                //{
+                //    extent.Filter.AddEquals(m.I2.I2AllorsInteger, 2);
+                //}
+                //catch
+                //{
+                //    exception = true;
+                //}
+
+                //Assert.True(exception);
+
+                //// Super Interface - Wrong RelationType
+                //// Equal 0
+                //extent = this.Transaction.Extent(m.C1);
+
+                //exception = false;
+                //try
+                //{
+                //    extent.Filter.AddEquals(m.S2.S2AllorsInteger, 0);
+                //}
+                //catch
+                //{
+                //    exception = true;
+                //}
+
+                //Assert.True(exception);
+
+                //// Equal 1
+                //extent = this.Transaction.Extent(m.C1);
+
+                //exception = false;
+                //try
+                //{
+                //    extent.Filter.AddEquals(m.S2.S2AllorsInteger, 1);
+                //}
+                //catch
+                //{
+                //    exception = true;
+                //}
+
+                //Assert.True(exception);
+
+                //// Equal 2
+                //extent = this.Transaction.Extent(m.C1);
+
+                //exception = false;
+                //try
+                //{
+                //    extent.Filter.AddEquals(m.S2.S2AllorsInteger, 2);
+                //}
+                //catch
+                //{
+                //    exception = true;
+                //}
+
+                //Assert.True(exception);
+            }
+        }
+
+        [Fact]
         public void RoleFloatBetweenValue()
         {
             foreach (var init in this.Inits)
@@ -14296,7 +14558,7 @@ namespace Allors.Database.Adapters
                     this.AssertC2(extent, false, false, false, false);
                     this.AssertC3(extent, false, false, false, false);
                     this.AssertC4(extent, false, false, false, false);
-                    
+
                     // ContainedIn Extent over Interface
                     // Empty
                     inExtent = this.Transaction.Extent(m.I12);
@@ -16704,7 +16966,7 @@ namespace Allors.Database.Adapters
                 this.AssertC2(extent, false, false, false, false);
                 this.AssertC3(extent, false, false, false, false);
                 this.AssertC4(extent, false, false, false, false);
-                
+
                 // Different Classes
                 firstExtent = this.Transaction.Extent(m.C1);
                 secondExtent = this.Transaction.Extent(m.C2);
@@ -17054,7 +17316,7 @@ namespace Allors.Database.Adapters
         {
             // TODO:
         }
-        
+
         [Fact]
         public void RoleContainsMany2ManyAndContained()
         {

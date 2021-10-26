@@ -220,6 +220,31 @@ namespace Allors.Database.Adapters
             }
         }
 
+
+        /// <summary>
+        /// Asserts that the <see cref="RoleType"/> and the object are compatible with
+        /// <see cref="ICompositePredicate#AddEquals"/>.
+        /// </summary>
+        /// <param name="role">The role .</param>
+        /// <param name="compareObject">The compare object.</param>
+        public static void ValidateRoleIn(IRoleType role, object compareObject)
+        {
+            if (role.IsMany)
+            {
+                throw new ArgumentException("AddRoleIn() can only be used when the role has multiplicity one.");
+            }
+
+            if (compareObject == null)
+            {
+                throw new ArgumentException("AddRoleIn() requires a non-null list, use AddNot().AddExists() instead.");
+            }
+
+            if (compareObject is IRoleType compareRole && compareRole.ObjectType is IComposite)
+            {
+                throw new ArgumentException("AddRoleEqual() for composites can only be used with objects (not other roles).");
+            }
+        }
+
         /// <summary>
         /// Asserts that the <see cref="RoleType"/> is compatible with
         /// <see cref="ICompositePredicate#Exists"/>.

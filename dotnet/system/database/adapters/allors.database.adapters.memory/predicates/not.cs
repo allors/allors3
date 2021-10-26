@@ -155,6 +155,14 @@ namespace Allors.Database.Adapters.Memory
             return this;
         }
 
+        public ICompositePredicate AddIn(IRoleType role, IEnumerable<int> list)
+        {
+            this.CheckUnarity();
+            this.predicate = new RoleUnitIn(this.extent, role, list);
+            this.extent.Invalidate();
+            return this;
+        }
+
         public ICompositePredicate AddInstanceof(IComposite type)
         {
             this.CheckUnarity();
