@@ -37,7 +37,6 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
 
   private subscription: Subscription;
   private readonly refresh$: BehaviorSubject<Date>;
-  organisations: Organisation[];
   organisationsFilter: SearchFactory;
   subContractorsFilter: SearchFactory;
 
@@ -70,9 +69,6 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
             pull.Locale({
               sorting: [{ roleType: m.Locale.Name }],
             }),
-            pull.Organisation({
-              sorting: [{ roleType: m.Organisation.PartyName }],
-            }),
           ];
 
           this.organisationsFilter = Filters.organisationsFilter(m);
@@ -84,9 +80,8 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.locales = loaded.collection<Locale>(m.Locale);
-        this.organisations = loaded.collection<Organisation>(m.Organisation);
 
         this.workTask = this.allors.context.create<WorkTask>(m.WorkTask);
         this.workTask.TakenBy = this.internalOrganisation as Organisation;
