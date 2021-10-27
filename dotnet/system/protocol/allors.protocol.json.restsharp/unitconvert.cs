@@ -6,6 +6,7 @@
 namespace Allors.Protocol.Json.RestSharp
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
@@ -85,11 +86,12 @@ namespace Allors.Protocol.Json.RestSharp
 
         public long? LongFromJson(object value) => (long?)value;
 
-        public long[] LongArrayFromJson(object value)
+        public long[] LongArrayFromJson(object value) => value switch
         {
-            var enumerable = (IEnumerable<object>)value;
-            return enumerable?.Select(v => (long)v).ToArray();
-        }
+            null => null,
+            IEnumerable _ => ((IEnumerable<object>)value).Select(v => (long)v).ToArray(),
+            _ => new[] { (long)value }
+        };
 
         public string StringFromJson(object value) => (string)value;
     }

@@ -88,7 +88,14 @@ namespace Allors.Protocol.Json.SystemTextJson
             value switch
             {
                 null => null,
-                JsonElement element => element.EnumerateArray().Select(v => v.GetInt64()).ToArray(),
+                long longValue => new[] { longValue },
+                JsonElement element => element.ValueKind switch
+                {
+                    JsonValueKind.Null => null,
+                    JsonValueKind.Undefined => null,
+                    JsonValueKind.Array => element.EnumerateArray().Select(v => v.GetInt64()).ToArray(),
+                    JsonValueKind.Number => new[] { element.GetInt64() },
+                },
                 _ => (long[])value
             };
 
