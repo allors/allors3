@@ -21,7 +21,6 @@ export class LazyRoleType implements RoleType {
   singularName: string;
   isDerived: boolean;
   isRequired: boolean;
-  isUnique: boolean;
   size?: number;
   precision?: number;
   scale?: number;
@@ -41,7 +40,6 @@ export class LazyRoleType implements RoleType {
 
     this.isDerived = lookup.d.has(this.relationType.tag);
     this.isRequired = lookup.r.has(this.relationType.tag);
-    this.isUnique = lookup.u.has(this.relationType.tag);
     this.mediaType = lookup.t.get(this.relationType.tag);
 
     const [, , v0, v1, v2, v3] = data;

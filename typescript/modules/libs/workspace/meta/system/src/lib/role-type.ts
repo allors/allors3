@@ -15,6 +15,5 @@ export interface RoleType extends PropertyType {
   precision?: number;
   scale?: number;
   isRequired: boolean;
-  isUnique: boolean;
   mediaType?: string;
 }

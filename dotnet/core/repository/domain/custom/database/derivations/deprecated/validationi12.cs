@@ -17,7 +17,6 @@ namespace Allors.Repository
         #region Allors
         [Id("0b89b096-a69a-495c-acfe-b24a9b27e320")]
         #endregion
-        [Unique]
         Guid UniqueId { get; set; }
     }
 }

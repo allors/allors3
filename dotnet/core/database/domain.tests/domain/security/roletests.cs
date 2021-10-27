@@ -32,30 +32,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void GivenARoleWhenCreatingARoleWithTheSameNameThenRoleIsInvalid()
-        {
-            new RoleBuilder(this.Transaction)
-                .WithName("Same")
-                .Build();
-
-            new RoleBuilder(this.Transaction)
-                .WithName("Same")
-                .Build();
-
-            var validation = this.Transaction.Derive(false);
-
-            Assert.True(validation.HasErrors);
-            Assert.Equal(2, validation.Errors.Length);
-
-            foreach (var derivationError in validation.Errors)
-            {
-                Assert.Single(derivationError.Relations);
-                Assert.Equal(typeof(DerivationErrorUnique), derivationError.GetType());
-                Assert.Equal(this.M.Role.Name.RelationType, derivationError.Relations[0].RelationType);
-            }
-        }
-
-        [Fact]
         public void GivenNoRolesWhenCreatingARoleWithoutAUniqueIdThenRoleIsValid()
         {
             var role = new RoleBuilder(this.Transaction)

@@ -27,7 +27,6 @@ namespace Allors.Repository
         [Id("d2a32d9f-21cc-4f9d-b0d3-a9b75da66907")]
         #endregion
         [Required]
-        [Unique]
         [Size(256)]
         [Workspace(Default)]
         public string IsoCode { get; set; }
@@ -37,7 +36,6 @@ namespace Allors.Repository
         #endregion
         [Indexed]
         [Required]
-        [Unique]
         [Size(256)]
         [Workspace(Default)]
         public string Name { get; set; }

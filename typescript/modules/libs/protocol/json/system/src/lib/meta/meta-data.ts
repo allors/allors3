@@ -39,11 +39,6 @@ export interface MetaData {
   r?: string[];
 
   /**
-   * IsUniqe
-   */
-  u?: string[];
-
-  /**
    * MediaType
    */
   t?: { [name: string]: string[] };
@@ -52,9 +47,4 @@ export interface MetaData {
    * Overridden Required
    */
   or?: [string, string[]][];
-
-  /**
-   * Overridden Unique
-   */
-  ou?: [string, string[]][];
 }

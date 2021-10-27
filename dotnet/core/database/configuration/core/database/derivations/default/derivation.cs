@@ -209,25 +209,37 @@ namespace Allors.Database.Configuration.Derivations.Default
                 }
             }
 
-            //// Unique check
-            //foreach (var kvp in this.AccumulatedChangeSet.AssociationsByRoleType)
-            //{
-            //    var roleType = kvp.Key;
-            //    if (roleType.IsUnique)
-            //    {
-            //        var objects = kvp.Value.Where(v => v.Strategy.ExistRole(roleType)).ToArray();
-            //        var values = objects.Select(v => v.Strategy.GetRole(roleType));
+            // Required check
+            foreach (var grouping in this.AccumulatedChangeSet.Created
+                .Where(v => !this.AccumulatedChangeSet.Deleted.Contains(v.Strategy))
+                .GroupBy(v => v.Strategy.Class))
+            {
+                var @class = grouping.Key;
+                foreach (var @object in grouping)
+                {
+                    foreach (var roleType in @class.RequiredRoleTypes)
+                    {
+                        this.Validation.AssertExists(@object, roleType);
+                    }
+                }
+            }
 
-            //        var extent = this.Transaction.Extent(roleType.AssociationType.ObjectType);
-            //        extent.Filter.AddIn(roleType, values);
+            foreach (var grouping in this.AccumulatedChangeSet.Associations
+                .Except(this.AccumulatedChangeSet.Created)
+                .Where(v => !this.AccumulatedChangeSet.Deleted.Contains(v.Strategy))
+                .GroupBy(v => v.Strategy.Class))
+            {
+                var @class = grouping.Key;
 
-            //        var groupBy = extent.GroupBy(v => v.Strategy.GetRole(roleType));
-            //        foreach (var duplicate in groupBy.Where(v => v.Count() > 1).SelectMany(v => v))
-            //        {
-            //            this.Validation.AddError(new DerivationErrorUnique(this.Validation, duplicate, roleType));
-            //        }
-            //    }
-            //}
+                // TODO: Prefetch
+                foreach (var @object in grouping)
+                {
+                    foreach (var roleType in @class.RequiredRoleTypes)
+                    {
+                        this.Validation.AssertExists(@object, roleType);
+                    }
+                }
+            }
 
             return this.Validation;
         }

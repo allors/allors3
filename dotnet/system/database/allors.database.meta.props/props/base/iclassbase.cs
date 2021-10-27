@@ -11,8 +11,6 @@ namespace Allors.Database.Meta
     {
         void DeriveRequiredRoleTypes();
 
-        void DeriveUniqueRoleTypes();
-
         void DeriveWorkspaceNames(HashSet<string> workspaceNames);
     }
 }

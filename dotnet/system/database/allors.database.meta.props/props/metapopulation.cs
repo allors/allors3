@@ -444,13 +444,10 @@ namespace Allors.Database.Meta
                         relationType.DeriveMultiplicity();
                     }
 
-
-
-                    // Required and Unique RoleTypes
+                    // Required RoleTypes
                     foreach (var @class in this.classes)
                     {
                         @class.DeriveRequiredRoleTypes();
-                        @class.DeriveUniqueRoleTypes();
                     }
 
                     // WorkspaceNames

@@ -21,14 +21,7 @@ namespace Allors.Repository
         #endregion
 
         [Required]
-        [Unique]
-        public string OverrideRequiredAndUnique { get; set; }
-
-        [Required]
         public string OverrideRequired { get; set; }
-
-        [Unique]
-        public string OverrideUnique { get; set; }
 
         #region inherited methods
         public void OnBuild() { }

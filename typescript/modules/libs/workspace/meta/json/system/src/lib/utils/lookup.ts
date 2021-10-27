@@ -6,10 +6,8 @@ export class Lookup {
   m: Map<string, Multiplicity>;
   d: Set<string>;
   r: Set<string>;
-  u: Set<string>;
   t: Map<string, string>;
   or: Map<string, string[]>;
-  ou: Map<string, string[]>;
 
   constructor(data: MetaData) {
     this.m = new Map();
@@ -26,7 +24,6 @@ export class Lookup {
 
     this.d = new Set(data.d ?? []);
     this.r = new Set(data.r ?? []);
-    this.u = new Set(data.u ?? []);
 
     this.t = new Map();
     if (data.t) {
@@ -37,13 +34,6 @@ export class Lookup {
 
     this.or = new Map();
     if (data.or) {
-      for (const [classTag, roleTypeTags] of data.or) {
-        this.or.set(classTag, roleTypeTags);
-      }
-    }
-
-    this.ou = new Map();
-    if (data.ou) {
       for (const [classTag, roleTypeTags] of data.or) {
         this.or.set(classTag, roleTypeTags);
       }

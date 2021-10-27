@@ -61,13 +61,11 @@ $meta.WorkspaceClassesByWorkspaceName.(workspaceName):{objectType|$data_objectTy
   ],
   d: [$meta.WorkspaceDerivedTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
   r: [$meta.WorkspaceRequiredTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
-  u: [$meta.WorkspaceUniqueTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
   t:
   {
     $meta.WorkspaceMediaTagsByMediaTypeNameByWorkspaceName.(workspaceName):{mediaTypeName|'$mediaTypeName$': [$data_mediaType(mediaTypeName)$]}; separator=",\n"$
   },
   or: [$meta.WorkspaceClassesByWorkspaceName.(workspaceName):{objectType|$data_overridden_required(objectType)$}; separator=""$],
-  ou: [$meta.WorkspaceClassesByWorkspaceName.(workspaceName):{objectType|$data_overridden_unique(objectType)$}; separator=""$],
 }
 
 >>
@@ -96,8 +94,4 @@ data_mediaType(mediaTypeName) ::= <<$meta.WorkspaceMediaTagsByMediaTypeNameByWor
 
 data_overridden_required(objectType) ::= <<$if(objectType.WorkspaceOverriddenRequiredByWorkspaceName.(workspaceName))$
     ['$objectType.Tag$', [$objectType.WorkspaceOverriddenRequiredByWorkspaceName.(workspaceName):{roleType|'$roleType.RelationType.tag$'}; separator=","$]],
-$endif$>>
-
-data_overridden_unique(objectType) ::= <<$if(objectType.WorkspaceOverriddenUniqueByWorkspaceName.(workspaceName))$
-    ['$objectType.Tag$', [$objectType.WorkspaceOverriddenUniqueByWorkspaceName.(workspaceName):{roleType|'$roleType.RelationType.tag$'}; separator=","$]],
 $endif$>>

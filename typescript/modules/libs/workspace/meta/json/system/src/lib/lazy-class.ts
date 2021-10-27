@@ -17,11 +17,7 @@ export class LazyClass extends LazyComposite implements InternalClass {
 
   overriddenRequiredRoleTypes: RoleType[];
 
-  overriddenUniqueRoleTypes: RoleType[];
-
   requiredRoleTypes: Set<RoleType>;
-
-  uniqueRoleTypes: Set<RoleType>;
 
   constructor(metaPopulation: InternalMetaPopulation, data: ObjectTypeData, lookup: Lookup) {
     super(metaPopulation, data, lookup);
@@ -30,10 +26,8 @@ export class LazyClass extends LazyComposite implements InternalClass {
 
   deriveOverridden(lookup: Lookup): void {
     this.overriddenRequiredRoleTypes = lookup.or.has(this.tag) ? [...lookup.or.get(this.tag)].map((v) => (this.metaPopulation.metaObjectByTag.get(v) as RelationType).roleType) : [];
-    this.overriddenUniqueRoleTypes = lookup.ou.has(this.tag) ? [...lookup.or.get(this.tag)].map((v) => (this.metaPopulation.metaObjectByTag.get(v) as RelationType).roleType) : [];
 
     this.requiredRoleTypes = new Set([...this.roleTypes].filter((v) => v.isRequired).concat(this.overriddenRequiredRoleTypes));
-    this.uniqueRoleTypes = new Set([...this.roleTypes].filter((v) => v.isRequired).concat(this.overriddenUniqueRoleTypes));
   }
 
   isAssignableFrom(objectType: InternalComposite): boolean {

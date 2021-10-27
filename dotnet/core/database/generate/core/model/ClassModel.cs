@@ -16,19 +16,11 @@ namespace Allors.Meta.Generation.Model
         // IClass
         public IEnumerable<RoleTypeModel> OverriddenRequiredRoleTypes => this.Class.OverriddenRequiredRoleTypes.Select(this.MetaModel.Map);
 
-        public IEnumerable<RoleTypeModel> OverriddenUniqueRoleTypes => this.Class.OverriddenUniqueRoleTypes.Select(this.MetaModel.Map);
-
         public IEnumerable<RoleTypeModel> RequiredRoleTypes => this.Class.RequiredRoleTypes.Select(this.MetaModel.Map);
-
-        public IEnumerable<RoleTypeModel> UniqueRoleTypes => this.Class.UniqueRoleTypes.Select(this.MetaModel.Map);
 
         // IClass Extra
         public IReadOnlyDictionary<string, IOrderedEnumerable<RoleTypeModel>> WorkspaceOverriddenRequiredByWorkspaceName => this.WorkspaceNames
                     .ToDictionary(v => v,
                         v => this.OverriddenRequiredRoleTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)).OrderBy(w => w.RelationType.Tag));
-
-        public IReadOnlyDictionary<string, IOrderedEnumerable<RoleTypeModel>> WorkspaceOverriddenUniqueByWorkspaceName => this.WorkspaceNames
-                    .ToDictionary(v => v,
-                        v => this.OverriddenUniqueRoleTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)).OrderBy(w => w.RelationType.Tag));
     }
 }

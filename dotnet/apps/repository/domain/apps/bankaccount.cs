@@ -46,14 +46,12 @@ namespace Allors.Repository
         [Id("ac2d58e5-ad74-4afe-b9f0-aeb9dfdcd4b3")]
         #endregion
         [Required]
-        [Unique]
         [Size(256)]
         public string Iban { get; set; }
 
         #region Allors
         [Id("b06a858d-a8ee-41b8-a747-7fd46336ae4f")]
         #endregion
-        [Unique]
         [Size(256)]
         public string Description { get; set; }
 

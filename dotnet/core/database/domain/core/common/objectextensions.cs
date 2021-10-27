@@ -46,16 +46,5 @@ namespace Allors.Database.Domain
                 }
             }
         }
-
-        public static void CoreOnPostDerive(this Object @this, ObjectOnPostDerive method)
-        {
-            var derivation = method.Derivation;
-            var @class = (Class)@this.Strategy.Class;
-
-            foreach (var roleType in @class.RequiredRoleTypes)
-            {
-                derivation.Validation.AssertExists(@this, roleType);
-            }
-        }
-    }
+   }
 }

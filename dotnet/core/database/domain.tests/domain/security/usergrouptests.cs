@@ -33,24 +33,5 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(typeof(DerivationErrorRequired), derivationError.GetType());
             Assert.Equal(this.M.UserGroup.Name.RelationType, derivationError.Relations[0].RelationType);
         }
-
-        [Fact]
-        public void GivenAUserGroupWhenCreatingAUserGroupWithTheSameNameThenUserGroupIsInvalid()
-        {
-            new UserGroupBuilder(this.Transaction).WithName("Same").Build();
-            new UserGroupBuilder(this.Transaction).WithName("Same").Build();
-
-            var validation = this.Transaction.Derive(false);
-
-            Assert.True(validation.HasErrors);
-            Assert.Equal(2, validation.Errors.Length);
-
-            foreach (var derivationError in validation.Errors)
-            {
-                Assert.Single(derivationError.Relations);
-                Assert.Equal(typeof(DerivationErrorUnique), derivationError.GetType());
-                Assert.Equal(this.M.UserGroup.Name.RelationType, derivationError.Relations[0].RelationType);
-            }
-        }
     }
 }

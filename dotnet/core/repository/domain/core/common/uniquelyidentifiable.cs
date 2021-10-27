@@ -23,7 +23,6 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Indexed]
         [Required]
-        [Unique]
         Guid UniqueId { get; set; }
     }
 }

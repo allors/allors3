@@ -39,7 +39,6 @@ namespace Allors.Repository
         #endregion
         [Indexed]
         [Required]
-        [Unique]
         [Size(256)]
         public string Name { get; set; }
 

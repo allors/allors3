@@ -1,42 +1,33 @@
-// <copyright file="Role.cs" company="Allors bvba">
+// <copyright file="Data.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
-// <summary>Defines the Extent type.</summary>
 
 namespace Allors.Repository
 {
-    using System;
-
     using Attributes;
+    using static Workspaces;
 
     #region Allors
-    [Id("af6fe5f4-e5bc-4099-bcd1-97528af6505d")]
+    [Id("CC635728-B7AE-4A07-BBF1-E16AEEC07750")]
     #endregion
-    public partial class Role : UniquelyIdentifiable
+    [Workspace(Default)]
+    public partial class ValiData : Object
     {
         #region inherited properties
         public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
-
-        public Guid UniqueId { get; set; }
-
         #endregion
 
         #region Allors
-        [Id("51e56ae1-72dc-443f-a2a3-f5aa3650f8d2")]
+        [Id("C90E7744-9AFD-46A2-9F6F-3D76D681106A")]
         [Indexed]
         #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        public Permission[] Permissions { get; set; }
-
-        #region Allors
-        [Id("934bcbbe-5286-445c-a1bd-e2fcc786c448")]
-        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
         [Required]
-        [Size(256)]
-        public string Name { get; set; }
+        public Person RequiredPerson { get; set; }
 
         #region inherited methods
 

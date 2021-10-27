@@ -37,7 +37,6 @@ namespace Allors.Repository
         [Id("294a4bdc-f03a-47a2-a649-419e6b9021a3")]
         #endregion
         [Required]
-        [Unique]
         [Size(256)]
         [Workspace(Default)]
         public string IsoCode { get; set; }

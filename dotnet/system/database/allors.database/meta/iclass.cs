@@ -14,10 +14,6 @@ namespace Allors.Database.Meta
 
         IRoleType[] OverriddenRequiredRoleTypes { get; set; }
 
-        IRoleType[] OverriddenUniqueRoleTypes { get; set; }
-
         IRoleType[] RequiredRoleTypes { get; }
-
-        IRoleType[] UniqueRoleTypes { get; }
     }
 }

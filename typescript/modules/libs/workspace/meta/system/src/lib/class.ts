@@ -8,7 +8,5 @@ export interface Class extends Composite {
   readonly kind: 'Class';
   _: ClassExtension;
   overriddenRequiredRoleTypes: RoleType[];
-  overriddenUniqueRoleTypes: RoleType[];
   requiredRoleTypes: Set<RoleType>;
-  uniqueRoleTypes: Set<RoleType>;
 }

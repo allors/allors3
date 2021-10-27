@@ -56,9 +56,7 @@ namespace Allors.Repository
         [Id("b5484c11-52d4-45f7-b25a-bf4c05e2c9a0")]
         #endregion
         [Required]
-        [Unique]
         [Size(256)]
-
         public string CardNumber { get; set; }
 
         #region inherited methods

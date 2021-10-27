@@ -17,10 +17,7 @@ namespace Allors.Database.Meta
         private string[] derivedWorkspaceNames;
 
         private IRoleType[] overriddenRequiredRoleTypes;
-        private IRoleType[] overriddenUniqueRoleTypes;
-
         private IRoleType[] derivedRequiredRoleTypes;
-        private IRoleType[] derivedUniqueRoleTypes;
 
         private readonly Class[] classes;
         private Type clrType;
@@ -45,33 +42,12 @@ namespace Allors.Database.Meta
             }
         }
 
-        public IRoleType[] OverriddenUniqueRoleTypes
-        {
-            get => this.overriddenUniqueRoleTypes ?? Array.Empty<IRoleType>();
-
-            set
-            {
-                this.MetaPopulation.AssertUnlocked();
-                this.overriddenUniqueRoleTypes = value;
-                this.MetaPopulation.Stale();
-            }
-        }
-
         public IRoleType[] RequiredRoleTypes
         {
             get
             {
                 this.MetaPopulation.Derive();
                 return this.derivedRequiredRoleTypes;
-            }
-        }
-
-        public IRoleType[] UniqueRoleTypes
-        {
-            get
-            {
-                this.MetaPopulation.Derive();
-                return this.derivedUniqueRoleTypes;
             }
         }
 
@@ -123,11 +99,6 @@ namespace Allors.Database.Meta
             this.derivedRequiredRoleTypes = this.RoleTypes
                 .Where(v => v.IsRequired)
                 .Union(this.OverriddenRequiredRoleTypes).ToArray();
-
-        public void DeriveUniqueRoleTypes() =>
-            this.derivedUniqueRoleTypes = this.RoleTypes
-                .Where(v => v.IsUnique)
-                .Union(this.OverriddenUniqueRoleTypes).ToArray();
 
         public override bool IsAssignableFrom(IComposite objectType) => this.Equals(objectType);
 
