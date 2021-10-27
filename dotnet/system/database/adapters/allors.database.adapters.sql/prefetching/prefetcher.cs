@@ -194,33 +194,47 @@ namespace Allors.Database.Adapters.Sql
 
             command.AddCompositesRoleTableParameter(references.Select(v => v.ObjectId));
 
+
+            // TODO: Koen
+            var roleValueByAssociationId = new Dictionary<long, object>();
+
             using (var reader = command.ExecuteReader())
             {
-                var cache = this.Database.Cache;
-
                 while (reader.Read())
                 {
                     var associationId = reader.GetInt64(0);
-                    var associationReference = this.Transaction.State.ReferenceByObjectId[associationId];
+                    var roleValue = reader[1];
 
-                    var cachedObject = cache.GetOrCreateCachedObject(associationReference.Class, associationId, associationReference.Version);
+                    roleValueByAssociationId.Add(associationId, roleValue);
+                }
+            }
 
-                    var roleIdValue = reader[1];
+            this.Transaction.Instantiate(roleValueByAssociationId.Keys);
 
-                    if (roleIdValue == null || roleIdValue == DBNull.Value)
+            var cache = this.Database.Cache;
+
+            foreach (var kvp in roleValueByAssociationId)
+            {
+                var associationId = kvp.Key;
+                var associationReference = this.Transaction.State.ReferenceByObjectId[associationId];
+
+                var cachedObject = cache.GetOrCreateCachedObject(associationReference.Class, associationId, associationReference.Version);
+
+                var roleIdValue = kvp.Value;
+
+                if (roleIdValue == null || roleIdValue == DBNull.Value)
+                {
+                    cachedObject.SetValue(roleType, null);
+                }
+                else
+                {
+                    var roleId = (long)roleIdValue;
+                    cachedObject.SetValue(roleType, roleId);
+
+                    nestedObjectIds?.Add(roleId);
+                    if (nestedObjectIds == null)
                     {
-                        cachedObject.SetValue(roleType, null);
-                    }
-                    else
-                    {
-                        var roleId = (long)roleIdValue;
-                        cachedObject.SetValue(roleType, roleId);
-
-                        nestedObjectIds?.Add(roleId);
-                        if (nestedObjectIds == null)
-                        {
-                            leafs.Add(roleId);
-                        }
+                        leafs.Add(roleId);
                     }
                 }
             }
