@@ -1,6 +1,6 @@
 import { InvokeRequest, PullRequest, PullResponse, PushRequest } from '@allors/protocol/json/system';
 import { Session as SystemSession } from '@allors/workspace/adapters/system';
-import { IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, Method, Procedure, Pull } from '@allors/workspace/domain/system';
+import { IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, Method, Procedure, Pull, ResultError } from '@allors/workspace/domain/system';
 import { Class, Origin } from '@allors/workspace/meta/system';
 import { DatabaseConnection } from '../database/database-connection';
 import { DatabaseRecord } from '../database/database-record';
@@ -131,7 +131,7 @@ export class Session extends SystemSession {
     const pushResult = new PushResult(this, pushResponse);
 
     if (pushResult.hasErrors) {
-      return pushResult;
+      throw new ResultError(pushResult);
     }
 
     if (pushResponse.n != null) {
