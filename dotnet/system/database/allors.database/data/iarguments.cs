@@ -13,10 +13,10 @@ namespace Allors.Database.Data
 
         object[] ResolveUnits(string tag, string name);
 
-        long ResolveObject(string name);
+        long? ResolveObject(string name);
 
         long[] ResolveObjects(string name);
 
-        int ResolveMetaObject(string name);
+        string ResolveMetaObject(string name);
     }
 }

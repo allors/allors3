@@ -651,27 +651,53 @@ test('objectEquals', async () => {
 
   const c1c = await fixture.pullC1(session, name_c1C);
 
-  //  Full
-  const pull: Pull = {
-    extent: {
-      kind: 'Filter',
-      objectType: m.C1,
-      predicate: {
-        kind: 'Equals',
-        object: c1c,
+  {
+    const pull: Pull = {
+      extent: {
+        kind: 'Filter',
+        objectType: m.C1,
+        predicate: {
+          kind: 'Equals',
+          object: c1c,
+        },
       },
-    },
-  };
+    };
 
-  const result = await session.pull([pull]);
+    const result = await session.pull([pull]);
 
-  expect(result.collections.size).toBe(1);
-  expect(result.objects.size).toBe(0);
-  expect(result.values.size).toBe(0);
+    expect(result.collections.size).toBe(1);
+    expect(result.objects.size).toBe(0);
+    expect(result.values.size).toBe(0);
 
-  const c1s = result.collection(m.C1);
+    const c1s = result.collection(m.C1);
 
-  expect(c1s).toEqualObjects([name_c1C]);
+    expect(c1s).toEqualObjects([name_c1C]);
+  }
+
+  // TODO:
+  // {
+  //   const pull: Pull = {
+  //     extent: {
+  //       kind: 'Filter',
+  //       objectType: m.C1,
+  //       predicate: {
+  //         kind: 'Equals',
+  //         parameter: 'obj',
+  //       },
+  //     },
+  //     arguments: { obj: c1c },
+  //   };
+
+  //   const result = await session.pull([pull]);
+
+  //   expect(result.collections.size).toBe(1);
+  //   expect(result.objects.size).toBe(0);
+  //   expect(result.values.size).toBe(0);
+
+  //   const c1s = result.collection(m.C1);
+
+  //   expect(c1s).toEqualObjects([name_c1C]);
+  // }
 });
 
 test('extentInterface', async () => {
@@ -700,26 +726,52 @@ test('instanceof', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();
 
-  const pull: Pull = {
-    extent: {
-      kind: 'Filter',
-      objectType: m.I12,
-      predicate: {
-        kind: 'Instanceof',
-        objectType: m.C1,
+  // {
+  //   const pull: Pull = {
+  //     extent: {
+  //       kind: 'Filter',
+  //       objectType: m.I12,
+  //       predicate: {
+  //         kind: 'Instanceof',
+  //         objectType: m.C1,
+  //       },
+  //     },
+  //   };
+
+  //   const result = await session.pull([pull]);
+
+  //   expect(result.collections.size).toBe(1);
+  //   expect(result.objects.size).toBe(0);
+  //   expect(result.values.size).toBe(0);
+
+  //   const i12s = result.collection(m.I12);
+
+  //   expect(i12s).toEqualObjects([name_c1A, name_c1B, name_c1C, name_c1D]);
+  // }
+
+  {
+    const pull: Pull = {
+      extent: {
+        kind: 'Filter',
+        objectType: m.I12,
+        predicate: {
+          kind: 'Instanceof',
+          parameter: 'type',
+        },
       },
-    },
-  };
+      arguments: { type: m.C1 },
+    };
 
-  const result = await session.pull([pull]);
+    const result = await session.pull([pull]);
 
-  expect(result.collections.size).toBe(1);
-  expect(result.objects.size).toBe(0);
-  expect(result.values.size).toBe(0);
+    expect(result.collections.size).toBe(1);
+    expect(result.objects.size).toBe(0);
+    expect(result.values.size).toBe(0);
 
-  const i12s = result.collection(m.I12);
+    const i12s = result.collection(m.I12);
 
-  expect(i12s).toEqualObjects([name_c1A, name_c1B, name_c1C, name_c1D]);
+    expect(i12s).toEqualObjects([name_c1A, name_c1B, name_c1C, name_c1D]);
+  }
 });
 
 test('notEquals', async () => {
@@ -1715,27 +1767,54 @@ test('roleStringEqualsValue', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();
 
-  const pull: Pull = {
-    extent: {
-      kind: 'Filter',
-      objectType: m.C1,
-      predicate: {
-        kind: 'Equals',
-        propertyType: m.C1.C1AllorsString,
-        value: 'ᴀbra',
+  {
+    const pull: Pull = {
+      extent: {
+        kind: 'Filter',
+        objectType: m.C1,
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.C1.C1AllorsString,
+          value: 'ᴀbra',
+        },
       },
-    },
-  };
+    };
 
-  const result = await session.pull([pull]);
+    const result = await session.pull([pull]);
 
-  expect(result.collections.size).toBe(1);
-  expect(result.objects.size).toBe(0);
-  expect(result.values.size).toBe(0);
+    expect(result.collections.size).toBe(1);
+    expect(result.objects.size).toBe(0);
+    expect(result.values.size).toBe(0);
 
-  const c1s = result.collection(m.C1);
+    const c1s = result.collection(m.C1);
 
-  expect(c1s).toEqualObjects([name_c1B]);
+    expect(c1s).toEqualObjects([name_c1B]);
+  }
+
+  {
+    const pull: Pull = {
+      extent: {
+        kind: 'Filter',
+        objectType: m.C1,
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.C1.C1AllorsString,
+          parameter: 'str',
+        },
+      },
+      arguments: { str: 'ᴀbra' },
+    };
+
+    const result = await session.pull([pull]);
+
+    expect(result.collections.size).toBe(1);
+    expect(result.objects.size).toBe(0);
+    expect(result.values.size).toBe(0);
+
+    const c1s = result.collection(m.C1);
+
+    expect(c1s).toEqualObjects([name_c1B]);
+  }
 });
 
 test('roleStringLike', async () => {
@@ -1887,28 +1966,54 @@ test('roleMany2ManyContains', async () => {
 
   const c2c = await fixture.pullC2(session, name_c2C);
 
-  //  Empty
-  const pull: Pull = {
-    extent: {
-      kind: 'Filter',
-      objectType: m.C1,
-      predicate: {
-        kind: 'Contains',
-        propertyType: m.C1.C1C2Many2Manies,
-        object: c2c,
+  // {
+  //   const pull: Pull = {
+  //     extent: {
+  //       kind: 'Filter',
+  //       objectType: m.C1,
+  //       predicate: {
+  //         kind: 'Contains',
+  //         propertyType: m.C1.C1C2Many2Manies,
+  //         object: c2c,
+  //       },
+  //     },
+  //   };
+
+  //   const result = await session.pull([pull]);
+
+  //   expect(result.collections.size).toBe(1);
+  //   expect(result.objects.size).toBe(0);
+  //   expect(result.values.size).toBe(0);
+
+  //   const c1s = result.collection(m.C1);
+
+  //   expect(c1s).toEqualObjects([name_c1C, name_c1D]);
+  // }
+
+  {
+    const pull: Pull = {
+      extent: {
+        kind: 'Filter',
+        objectType: m.C1,
+        predicate: {
+          kind: 'Contains',
+          propertyType: m.C1.C1C2Many2Manies,
+          parameter: 'obj',
+        },
       },
-    },
-  };
+      arguments: { obj: c2c },
+    };
 
-  const result = await session.pull([pull]);
+    const result = await session.pull([pull]);
 
-  expect(result.collections.size).toBe(1);
-  expect(result.objects.size).toBe(0);
-  expect(result.values.size).toBe(0);
+    expect(result.collections.size).toBe(1);
+    expect(result.objects.size).toBe(0);
+    expect(result.values.size).toBe(0);
 
-  const c1s = result.collection(m.C1);
+    const c1s = result.collection(m.C1);
 
-  expect(c1s).toEqualObjects([name_c1C, name_c1D]);
+    expect(c1s).toEqualObjects([name_c1C, name_c1D]);
+  }
 });
 
 test('roleOne2ManyContainedIn', async () => {
@@ -1979,35 +2084,79 @@ test('roleMany2OneContainedIn', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();
 
-  const pull: Pull = {
-    extent: {
-      kind: 'Filter',
-      objectType: m.C1,
-      predicate: {
-        kind: 'ContainedIn',
-        propertyType: m.C1.C1I12Many2One,
-        extent: {
-          kind: 'Filter',
-          objectType: m.I12,
-          predicate: {
-            kind: 'Equals',
-            propertyType: m.I12.I12AllorsString,
-            value: 'ᴀbra',
+  {
+    const pull: Pull = {
+      extent: {
+        kind: 'Filter',
+        objectType: m.C1,
+        predicate: {
+          kind: 'ContainedIn',
+          propertyType: m.C1.C1I12Many2One,
+          extent: {
+            kind: 'Filter',
+            objectType: m.I12,
+            predicate: {
+              kind: 'Equals',
+              propertyType: m.I12.I12AllorsString,
+              value: 'ᴀbra',
+            },
           },
         },
       },
-    },
-  };
+    };
 
-  const result = await session.pull([pull]);
+    const result = await session.pull([pull]);
 
-  expect(result.collections.size).toBe(1);
-  expect(result.objects.size).toBe(0);
-  expect(result.values.size).toBe(0);
+    expect(result.collections.size).toBe(1);
+    expect(result.objects.size).toBe(0);
+    expect(result.values.size).toBe(0);
 
-  const c1s = result.collection(m.C1);
+    const c1s = result.collection(m.C1);
 
-  expect(c1s).toEqualObjects([name_c1B]);
+    expect(c1s).toEqualObjects([name_c1B]);
+  }
+
+  {
+    const objectsPull: Pull = {
+      extent: {
+        kind: 'Filter',
+        objectType: m.I12,
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.I12.I12AllorsString,
+          value: 'ᴀbra',
+        },
+      },
+    };
+
+    const objectsResult = await session.pull([objectsPull]);
+    const objects = objectsResult.collection(m.I12);
+
+    const pull: Pull = {
+      extent: {
+        kind: 'Filter',
+        objectType: m.C1,
+        predicate: {
+          kind: 'ContainedIn',
+          propertyType: m.C1.C1I12Many2One,
+          parameter: 'objects',
+        },
+      },
+      arguments: {
+        objects,
+      },
+    };
+
+    const result = await session.pull([pull]);
+
+    expect(result.collections.size).toBe(1);
+    expect(result.objects.size).toBe(0);
+    expect(result.values.size).toBe(0);
+
+    const c1s = result.collection(m.C1);
+
+    expect(c1s).toEqualObjects([name_c1B]);
+  }
 });
 
 test('roleOne2OneContainedIn', async () => {

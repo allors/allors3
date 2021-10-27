@@ -192,7 +192,7 @@ namespace Allors.Database.Protocol.Json
                         if (roleType.ObjectType.IsUnit)
                         {
                             var unitType = (IUnit)roleType.ObjectType;
-                            var role = this.unitConvert.FromJson(unitType.Tag, pushRequestRole.u);
+                            var role = this.unitConvert.UnitFromJson(unitType.Tag, pushRequestRole.u);
                             obj.Strategy.SetUnitRole(roleType, role);
                         }
                         else if (roleType.IsOne)

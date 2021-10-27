@@ -6,7 +6,9 @@
 namespace Allors.Protocol.Json.RestSharp
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using System.Xml;
 
     public class UnitConvert : IUnitConvert
@@ -26,7 +28,7 @@ namespace Allors.Protocol.Json.RestSharp
                 _ => throw new ArgumentException()
             };
 
-        public object FromJson(string tag, object value) =>
+        public object UnitFromJson(string tag, object value) =>
             value switch
             {
                 null => null,
@@ -80,5 +82,15 @@ namespace Allors.Protocol.Json.RestSharp
                 },
                 _ => value,
             };
+
+        public long? LongFromJson(object value) => (long?)value;
+
+        public long[] LongArrayFromJson(object value)
+        {
+            var enumerable = (IEnumerable<object>)value;
+            return enumerable?.Select(v => (long)v).ToArray();
+        }
+
+        public string StringFromJson(object value) => (string)value;
     }
 }

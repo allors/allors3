@@ -9,6 +9,12 @@ namespace Allors.Protocol.Json
     {
         object ToJson(object value);
 
-        object FromJson(string tag, object value);
+        object UnitFromJson(string tag, object value);
+
+        long? LongFromJson(object v);
+
+        long[] LongArrayFromJson(object v);
+
+        string StringFromJson(object v);
     }
 }
