@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Protocol.Json
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json;
@@ -24,14 +23,14 @@ namespace Allors.Database.Protocol.Json
 
         public bool HasArgument(string name) => this.arguments.ContainsKey(name);
 
-        public object ResolveUnit(string tag, string name) => this.unitConvert.FromJson(tag, this.arguments[name]);
+        public object ResolveUnit(string tag, string name) => this.unitConvert.UnitFromJson(tag, this.arguments[name]);
 
-        public object[] ResolveUnits(string tag, string name) => ((object[])this.arguments[name]).Select(v => this.unitConvert.FromJson(tag, v)).ToArray();
+        public object[] ResolveUnits(string tag, string name) => ((object[])this.arguments[name]).Select(v => this.unitConvert.UnitFromJson(tag, v)).ToArray();
 
-        public long ResolveObject(string name) => Convert.ToInt64(this.arguments[name]);
+        public long? ResolveObject(string name) => this.unitConvert.LongFromJson(this.arguments[name]);
 
-        public long[] ResolveObjects(string name) => ((object[])this.arguments[name]).Select(Convert.ToInt64).ToArray();
+        public long[] ResolveObjects(string name) => this.unitConvert.LongArrayFromJson(this.arguments[name]);
 
-        public int ResolveMetaObject(string name) => Convert.ToInt32(this.arguments[name]);
+        public string ResolveMetaObject(string name) => this.unitConvert.StringFromJson(this.arguments[name]);
     }
 }

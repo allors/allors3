@@ -1,4 +1,4 @@
-import { AssociationType, Dependency, ObjectType, PropertyType, RoleType } from '@allors/workspace/meta/system';
+import { AssociationType, Dependency, MetaObject, ObjectType, PropertyType, RoleType } from '@allors/workspace/meta/system';
 import {
   IUnit,
   TypeForParameter,
@@ -197,6 +197,7 @@ export function predicateToJson(from: DataPredicate): Predicate {
         o: objectTypeToJson(from.objectType),
         a: asAssociationTypeToJson(from.propertyType),
         r: asRoleTypeToJson(from.propertyType),
+        p: from.parameter,
       };
 
     case 'LessThan':
@@ -284,12 +285,32 @@ function nodeToJson(from: DataNode): Node {
   };
 }
 
-function argumentsToJson(from: { [name: string]: TypeForParameter }): { [name: string]: string } {
+function argumentsToJson(from: { [name: string]: TypeForParameter }): { [name: string]: any } {
   if (from == null) {
     return null;
   }
 
-  return undefined;
+  return Object.keys(from).reduce((obj, v) => {
+    const role = from[v];
+    if (Array.isArray(role)) {
+      obj[v] = role.map((w) => serialize(w));
+    } else {
+      obj[v] = serialize(role);
+    }
+    return obj;
+  }, {} as { [name: string]: any });
+}
+
+function serialize(role: TypeForParameter | undefined): any | undefined {
+  if ((role as IObject)?.id) {
+    return (role as IObject).id;
+  }
+
+  if ((role as MetaObject)?.tag) {
+    return (role as MetaObject).tag;
+  }
+
+  return role;
 }
 
 export function extentsToJson(from: DataExtent[]): Extent[] {

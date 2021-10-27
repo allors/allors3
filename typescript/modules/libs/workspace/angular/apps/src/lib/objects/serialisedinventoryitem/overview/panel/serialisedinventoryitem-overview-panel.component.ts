@@ -4,6 +4,9 @@ import { M } from '@allors/workspace/meta/default';
 import { InventoryItem, SerialisedInventoryItem, SerialisedItem } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService, ActionTarget } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
+import { SupplierOffering } from '../../../../../../../../domain/custom/src/lib/generated/SupplierOffering.g';
+import { SupplierOfferingsWherePart } from '../../../../../../../../meta/custom/src/lib/generated/m.g';
+import { Part } from '../../../../../../../../domain/custom/src/lib/generated/Part.g';
 
 interface Row extends TableRow {
   object: InventoryItem;
@@ -109,6 +112,11 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
           select: {
             InventoryItemsWherePart: {
               include: {
+                Part: {
+                  SupplierOfferingsWherePart: {
+                    Supplier: x,
+                  }
+                },
                 SerialisedInventoryItem_SerialisedInventoryItemState: x,
                 Facility: x,
                 UnitOfMeasure: x,
@@ -122,7 +130,11 @@ export class SerialisedInventoryItemComponent extends TestScope implements OnIni
           select: {
             SerialisedInventoryItemsWhereSerialisedItem: {
               include: {
-                Part: x,
+                Part: {
+                  SupplierOfferingsWherePart: {
+                    Supplier: x,
+                  }
+                },
                 SerialisedInventoryItemState: x,
                 Facility: x,
                 UnitOfMeasure: x,

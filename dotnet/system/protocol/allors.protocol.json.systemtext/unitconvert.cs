@@ -6,7 +6,9 @@
 namespace Allors.Protocol.Json.SystemTextJson
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using System.Text.Json;
     using System.Xml;
 
@@ -27,7 +29,7 @@ namespace Allors.Protocol.Json.SystemTextJson
                 _ => throw new ArgumentException()
             };
 
-        public object FromJson(string tag, object value)
+        public object UnitFromJson(string tag, object value)
         {
             switch (value)
             {
@@ -72,5 +74,36 @@ namespace Allors.Protocol.Json.SystemTextJson
                 }
             }
         }
+
+
+        public long? LongFromJson(object value) =>
+            value switch
+            {
+                null => null,
+                JsonElement element => element.GetInt64(),
+                _ => (long?)value
+            };
+
+        public long[] LongArrayFromJson(object value) =>
+            value switch
+            {
+                null => null,
+                long longValue => new[] { longValue },
+                JsonElement element => element.ValueKind switch
+                {
+                    JsonValueKind.Null => null,
+                    JsonValueKind.Undefined => null,
+                    JsonValueKind.Array => element.EnumerateArray().Select(v => v.GetInt64()).ToArray(),
+                    JsonValueKind.Number => new[] { element.GetInt64() },
+                },
+                _ => (long[])value
+            };
+
+        public string StringFromJson(object value) => value switch
+        {
+            null => null,
+            JsonElement element => element.GetString(),
+            _ => (string)value
+        };
     }
 }

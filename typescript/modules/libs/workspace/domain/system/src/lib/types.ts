@@ -1,4 +1,5 @@
-﻿import { IObject } from './iobject';
+﻿import { MetaObject } from '@allors/workspace/meta/system';
+import { IObject } from './iobject';
 
 export type IUnit = string | Date | boolean | number;
 
@@ -6,7 +7,7 @@ export type TypeForRole = IUnit | IObject | IObject[];
 
 export type TypeForAssociation = IObject | IObject[];
 
-export type TypeForParameter = IUnit | IObject | IObject[];
+export type TypeForParameter = IUnit | IObject | IObject[] | MetaObject;
 
 // todo: move to Database
 export function isSessionObject(obj: unknown): obj is IObject {

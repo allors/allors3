@@ -49,7 +49,7 @@ namespace Allors.Workspace.Adapters.Remote
 
                             if (objectType.IsUnit)
                             {
-                                return this.database.UnitConvert.FromJson(objectType.Tag, v.v);
+                                return this.database.UnitConvert.UnitFromJson(objectType.Tag, v.v);
                             }
 
                             if (roleType.IsOne)

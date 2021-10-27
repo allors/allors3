@@ -21,13 +21,5 @@ namespace Allors.Database.Domain
                 method.Revocations = this.Assignment?.Revocations.ToArray();
             }
         }
-
-        public void AppsDelete(DeletableDelete method)
-        {
-            if (!this.Assignment.ExistWorkEffortBillingsWhereWorkEffort)
-            {
-                this.SalesInvoiceItem.Delete();
-            }
-        }
     }
 }

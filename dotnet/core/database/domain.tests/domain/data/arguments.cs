@@ -20,10 +20,10 @@ namespace Allors.Database.Domain.Tests
 
         public object[] ResolveUnits(string tag, string name) => (object[])this.arguments[name];
 
-        public long ResolveObject(string name) => (long)this.arguments[name];
+        public long? ResolveObject(string name) => (long?)this.arguments[name];
 
         public long[] ResolveObjects(string name) => (long[])this.arguments[name];
 
-        public int ResolveMetaObject(string name) => (int)this.arguments[name];
+        public string ResolveMetaObject(string name) => (string)this.arguments[name];
     }
 }

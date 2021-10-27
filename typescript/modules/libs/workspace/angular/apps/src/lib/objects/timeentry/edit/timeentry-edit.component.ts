@@ -66,6 +66,7 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
               pull.TimeEntry({
                 objectId: this.data.id,
                 include: {
+                  WorkEffort: x,
                   TimeFrequency: x,
                   BillingFrequency: x,
                 },

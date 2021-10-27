@@ -193,7 +193,7 @@ export abstract class Session implements ISession {
       return args.map((v) => this.getObject(v)).filter((v) => v != null) as unknown as T[];
     }
 
-    if (args['classes']) {
+    if (args && args['classes']) {
       const all: T[] = [];
 
       for (const cls of (args as Composite).classes) {

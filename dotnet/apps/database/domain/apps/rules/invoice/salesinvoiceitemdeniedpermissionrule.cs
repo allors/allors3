@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             m.SalesInvoiceItem.RolePattern(v => v.TransitionalRevocations),
+            m.WorkTask.RolePattern(v => v.TransitionalRevocations, v => v.WorkEffortSalesInvoiceItemAssignmentsWhereAssignment.WorkEffortSalesInvoiceItemAssignment.SalesInvoiceItem),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

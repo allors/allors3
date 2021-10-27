@@ -5,7 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { timer } from 'rxjs';
 
-import { assert, UnitTags } from '@allors/workspace/meta/system';
+import { assert } from '@allors/workspace/meta/system';
 import { parameterizablePredicateObjectType } from '@allors/workspace/domain/system';
 
 import { Filter } from '../../../../components/filter/filter';
@@ -107,7 +107,7 @@ export class AllorsMaterialFilterFieldDialogComponent implements OnInit {
     const value = this.formGroup.get('value')?.value;
     const value2 = this.formGroup.get('value2')?.value;
 
-    const inValid = value == null || (objectType.isComposite && value.objectType == null);
+    const inValid = value == null || (objectType.isComposite && value.strategy == null);
 
     if (!inValid) {
       if (!value2) {
