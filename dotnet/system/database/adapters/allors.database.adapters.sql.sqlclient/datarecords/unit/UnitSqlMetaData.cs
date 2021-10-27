@@ -12,48 +12,9 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     using Meta;
     using Microsoft.Data.SqlClient.Server;
 
-    internal class UnitRoleDataRecords : IEnumerable<SqlDataRecord>
+    internal class UnitSqlMetaData
     {
-        private readonly Mapping mapping;
-        private readonly IRoleType roleType;
-        private readonly IEnumerable<UnitRelation> relations;
-
-        internal UnitRoleDataRecords(Mapping mapping, IRoleType roleType, IEnumerable<UnitRelation> relations)
-        {
-            this.mapping = mapping;
-            this.roleType = roleType;
-            this.relations = relations;
-        }
-
-        public IEnumerator<SqlDataRecord> GetEnumerator()
-        {
-            var metaData = new[]
-                                {
-                                    new SqlMetaData(this.mapping.TableTypeColumnNameForAssociation, SqlDbType.BigInt),
-                                    this.GetSqlMetaData(this.mapping.TableTypeColumnNameForRole, this.roleType),
-                                };
-            var sqlDataRecord = new SqlDataRecord(metaData);
-
-            foreach (var relation in this.relations)
-            {
-                sqlDataRecord.SetInt64(0, relation.Association);
-
-                if (relation.Role == null)
-                {
-                    sqlDataRecord.SetValue(1, DBNull.Value);
-                }
-                else
-                {
-                    sqlDataRecord.SetValue(1, relation.Role);
-                }
-
-                yield return sqlDataRecord;
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-        private SqlMetaData GetSqlMetaData(string name, IRoleType roleType)
+        internal static SqlMetaData Get(string name, IRoleType roleType)
         {
             var unit = (IUnit)roleType.ObjectType;
             switch (unit.Tag)

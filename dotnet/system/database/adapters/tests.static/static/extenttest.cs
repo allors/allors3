@@ -10578,7 +10578,7 @@ namespace Allors.Database.Adapters
                 // Class
                 // In [0]
                 var extent = this.Transaction.Extent(m.C1);
-                extent.Filter.AddIn(m.C1.C1AllorsInteger, new int[] { 0 });
+                extent.Filter.AddIn(m.C1.C1AllorsInteger, new object[] { 0 });
 
                 Assert.Empty(extent);
                 this.AssertC1(extent, false, false, false, false);
@@ -10588,7 +10588,7 @@ namespace Allors.Database.Adapters
 
                 // In [1]
                 extent = this.Transaction.Extent(m.C1);
-                extent.Filter.AddIn(m.C1.C1AllorsInteger, new int[] { 1 });
+                extent.Filter.AddIn(m.C1.C1AllorsInteger, new object[] { 1 });
 
                 Assert.Single(extent);
                 this.AssertC1(extent, false, true, false, false);
@@ -10598,7 +10598,7 @@ namespace Allors.Database.Adapters
 
                 // In 2
                 extent = this.Transaction.Extent(m.C1);
-                extent.Filter.AddIn(m.C1.C1AllorsInteger, new int[] { 2 });
+                extent.Filter.AddIn(m.C1.C1AllorsInteger, new object[] { 2 });
 
                 Assert.Equal(2, extent.Count);
                 this.AssertC1(extent, false, false, true, true);
@@ -10608,7 +10608,7 @@ namespace Allors.Database.Adapters
 
                 // In [0,1]
                 extent = this.Transaction.Extent(m.C1);
-                extent.Filter.AddIn(m.C1.C1AllorsInteger, new int[] { 0, 1 });
+                extent.Filter.AddIn(m.C1.C1AllorsInteger, new object[] { 0, 1 });
 
                 Assert.Single(extent);
                 this.AssertC1(extent, false, true, false, false);
@@ -10618,7 +10618,7 @@ namespace Allors.Database.Adapters
 
                 // In [1,2]
                 extent = this.Transaction.Extent(m.C1);
-                extent.Filter.AddIn(m.C1.C1AllorsInteger, new int[] { 1, 2 });
+                extent.Filter.AddIn(m.C1.C1AllorsInteger, new object[] { 1, 2 });
 
                 Assert.Equal(3, extent.Count);
                 this.AssertC1(extent, false, true, true, true);

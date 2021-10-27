@@ -5,17 +5,17 @@
 
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Data;
     using Microsoft.Data.SqlClient.Server;
 
-    internal class UnitDataRecord : IEnumerable<SqlDataRecord>
+    internal class UnitListDataRecord : IEnumerable<SqlDataRecord>
     {
         private readonly Mapping mapping;
-        private readonly IEnumerable<int> list;
+        private readonly UnitList list;
 
-        internal UnitDataRecord(Mapping mapping, IEnumerable<int> list)
+        internal UnitListDataRecord(Mapping mapping, UnitList list)
         {
             this.mapping = mapping;
             this.list = list;
@@ -24,12 +24,12 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         public IEnumerator<SqlDataRecord> GetEnumerator()
         {
             var objectArrayElement = this.mapping.TableTypeColumnNameForObject;
-            var metaData = new SqlMetaData(objectArrayElement, SqlDbType.Int);
+            var metaData = UnitSqlMetaData.Get(this.mapping.TableTypeColumnNameForRole, this.list.RoleType);
             var sqlDataRecord = new SqlDataRecord(metaData);
 
-            foreach (var value in this.list)
+            foreach (var value in this.list.Values)
             {
-                sqlDataRecord.SetInt32(0, value);
+                sqlDataRecord.SetValue(0, value ?? DBNull.Value);
                 yield return sqlDataRecord;
             }
         }

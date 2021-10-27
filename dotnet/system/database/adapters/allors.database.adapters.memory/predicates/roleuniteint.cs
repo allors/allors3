@@ -13,16 +13,14 @@ namespace Allors.Database.Adapters.Memory
 
     internal sealed class RoleUnitIn : Predicate
     {
-        private readonly ExtentFiltered extent;
         private readonly IRoleType roleType;
-        private readonly IEnumerable<int> list;
+        private readonly IEnumerable<object> list;
 
-        internal RoleUnitIn(ExtentFiltered extent, IRoleType roleType, IEnumerable<int> list)
+        internal RoleUnitIn(ExtentFiltered extent, IRoleType roleType, IEnumerable<object> list)
         {
             extent.CheckForRoleType(roleType);
             PredicateAssertions.ValidateRoleIn(roleType, list);
 
-            this.extent = extent;
             this.roleType = roleType;
             this.list = list;
         }
@@ -36,7 +34,7 @@ namespace Allors.Database.Adapters.Memory
                 return ThreeValuedLogic.Unknown;
             }
 
-            return this.list.Contains((int)value)
+            return this.list.Contains(value)
                        ? ThreeValuedLogic.True
                        : ThreeValuedLogic.False;
         }
