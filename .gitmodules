@@ -1,0 +1,4 @@
+[submodule "excel"]
+	path = excel
+	url = https://github.com/Allors/excel.git
+	branch = master

@@ -68,7 +68,6 @@ describe('Unit Relation in MetaPopulation', () => {
       m: [['11']],
       d: ['11'],
       r: ['11'],
-      u: ['11'],
       t: { 'application/pdf': ['11'] },
     }) as M;
 

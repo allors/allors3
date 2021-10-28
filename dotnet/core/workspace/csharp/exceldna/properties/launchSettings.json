@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "Excel": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files (x86)\\Microsoft Office\\root\\Office16\\EXCEL.EXE",
+      "commandLineArgs": "ExcelDNA-AddIn.xll"
+    },
+    "Excel64": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.EXE",
+      "commandLineArgs": "ExcelDNA-AddIn64.xll"
+    }
+  }
+}
