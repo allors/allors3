@@ -3,10 +3,13 @@
     <ExternalLibrary Path="ExcelDNA.dll" ExplicitExports="false" LoadFromBytes="true" Pack="true" IncludePdb="false" />
     <Reference Path="Allors.Excel.dll" Pack="true" />
     <Reference Path="Allors.Excel.Interop.dll" Pack="true" />
-    <Reference Path="Allors.Protocol.dll" Pack="true" />
+    <Reference Path="Allors.Protocol.Json.dll" Pack="true" />
+    <Reference Path="Allors.Protocol.Json.RestSharp.dll" Pack="true" />
+    <Reference Path="Allors.Shared.dll" Pack="true" />
     <Reference Path="Allors.Workspace.Adapters.dll" Pack="true" />
     <Reference Path="Allors.Workspace.Adapters.Remote.RestSharp.dll" Pack="true" />
-    <Reference Path="Allors.Workspace.dll" Pack="true" />
+    <Reference Path="Allors.Workspace.Domain.dll" Pack="true" />
+    <Reference Path="Allors.Workspace.Meta.dll" Pack="true" />
     <Reference Path="Excel.dll" Pack="true" />
     <Reference Path="Microsoft.Office.Interop.Excel.dll" Pack="true" />
     <Reference Path="Newtonsoft.Json.dll" Pack="true" />
@@ -15,6 +18,7 @@
     <Reference Path="RestSharp.Serializers.NewtonsoftJson.dll" Pack="true" />
     <Reference Path="Workspace.Domain.dll" Pack="true" />
     <Reference Path="Workspace.Meta.dll" Pack="true" />
+    <Reference Path="Workspace.Meta.Lazy.dll" Pack="true" />
 
     <!--
        The RuntimeVersion attribute above allows two settings:
