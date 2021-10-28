@@ -30,7 +30,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(roleType.name).toBe('Name');
       expect(roleType.origin).toBe(Origin.Database);
       expect(roleType.isRequired).toBeFalsy();
-      expect(roleType.isUnique).toBeFalsy();
       expect(roleType.size).toBeUndefined();
       expect(roleType.scale).toBeUndefined();
       expect(roleType.precision).toBeUndefined();
@@ -86,7 +85,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(roleType.name).toBe('Name');
       expect(roleType.origin).toBe(Origin.Workspace);
       expect(roleType.isRequired).toBeTruthy();
-      expect(roleType.isUnique).toBeTruthy();
       expect(roleType.size).toBeDefined();
       expect(roleType.size).toBe(1024);
       expect(roleType.scale).toBeUndefined();
@@ -138,7 +136,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(roleType.name).toBe('Decimal');
       expect(roleType.origin).toBe(Origin.Database);
       expect(roleType.isRequired).toBeFalsy();
-      expect(roleType.isUnique).toBeFalsy();
       expect(roleType.size).toBeUndefined();
       expect(roleType.scale).toBe(21);
       expect(roleType.precision).toBeUndefined();
@@ -188,7 +185,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(roleType.name).toBe('Decimal');
       expect(roleType.origin).toBe(Origin.Database);
       expect(roleType.isRequired).toBeFalsy();
-      expect(roleType.isUnique).toBeFalsy();
       expect(roleType.size).toBeUndefined();
       expect(roleType.scale).toBe(21);
       expect(roleType.precision).toBe(3);
@@ -238,7 +234,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(roleType.name).toBe('Balance');
       expect(roleType.origin).toBe(Origin.Database);
       expect(roleType.isRequired).toBeFalsy();
-      expect(roleType.isUnique).toBeFalsy();
       expect(roleType.size).toBeUndefined();
       expect(roleType.scale).toBe(25);
       expect(roleType.precision).toBeUndefined();
@@ -288,7 +283,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(roleType.name).toBe('Balance');
       expect(roleType.origin).toBe(Origin.Database);
       expect(roleType.isRequired).toBeFalsy();
-      expect(roleType.isUnique).toBeFalsy();
       expect(roleType.size).toBeUndefined();
       expect(roleType.scale).toBe(25);
       expect(roleType.precision).toBe(2);
@@ -338,7 +332,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(roleType.name).toBe('Balance');
       expect(roleType.origin).toBe(Origin.Database);
       expect(roleType.isRequired).toBeFalsy();
-      expect(roleType.isUnique).toBeFalsy();
       expect(roleType.size).toBeUndefined();
       expect(roleType.scale).toBe(26);
       expect(roleType.precision).toBeUndefined();
@@ -388,7 +381,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(roleType.name).toBe('Balance');
       expect(roleType.origin).toBe(Origin.Database);
       expect(roleType.isRequired).toBeFalsy();
-      expect(roleType.isUnique).toBeFalsy();
       expect(roleType.size).toBeUndefined();
       expect(roleType.scale).toBe(26);
       expect(roleType.precision).toBe(5);
@@ -438,7 +430,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(roleType.name).toBe('String');
       expect(roleType.origin).toBe(Origin.Database);
       expect(roleType.isRequired).toBeFalsy();
-      expect(roleType.isUnique).toBeFalsy();
       expect(roleType.size).toBe(256);
       expect(roleType.scale).toBeUndefined();
       expect(roleType.precision).toBeUndefined();
@@ -488,7 +479,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(roleType.name).toBe('String');
       expect(roleType.origin).toBe(Origin.Database);
       expect(roleType.isRequired).toBeFalsy();
-      expect(roleType.isUnique).toBeFalsy();
       expect(roleType.size).toBe(256);
       expect(roleType.scale).toBeUndefined();
       expect(roleType.precision).toBeUndefined();
@@ -538,7 +528,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(roleType.name).toBe('Text');
       expect(roleType.origin).toBe(Origin.Database);
       expect(roleType.isRequired).toBeFalsy();
-      expect(roleType.isUnique).toBeFalsy();
       expect(roleType.size).toBe(512);
       expect(roleType.scale).toBeUndefined();
       expect(roleType.precision).toBeUndefined();
@@ -588,7 +577,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(roleType.name).toBe('Text');
       expect(roleType.origin).toBe(Origin.Database);
       expect(roleType.isRequired).toBeFalsy();
-      expect(roleType.isUnique).toBeFalsy();
       expect(roleType.size).toBe(512);
       expect(roleType.scale).toBeUndefined();
       expect(roleType.precision).toBeUndefined();
@@ -638,7 +626,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(roleType.name).toBe('Text');
       expect(roleType.origin).toBe(Origin.Database);
       expect(roleType.isRequired).toBeFalsy();
-      expect(roleType.isUnique).toBeFalsy();
       expect(roleType.size).toBe(512);
       expect(roleType.scale).toBeUndefined();
       expect(roleType.precision).toBeUndefined();
@@ -688,7 +675,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(roleType.name).toBe('Text');
       expect(roleType.origin).toBe(Origin.Database);
       expect(roleType.isRequired).toBeFalsy();
-      expect(roleType.isUnique).toBeFalsy();
       expect(roleType.size).toBe(512);
       expect(roleType.scale).toBeUndefined();
       expect(roleType.precision).toBeUndefined();

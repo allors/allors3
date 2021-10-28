@@ -4,9 +4,6 @@ import { M } from '@allors/workspace/meta/default';
 import { InventoryItem, SerialisedInventoryItem, SerialisedItem } from '@allors/workspace/domain/default';
 import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService, ActionTarget } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { SupplierOffering } from '../../../../../../../../domain/custom/src/lib/generated/SupplierOffering.g';
-import { SupplierOfferingsWherePart } from '../../../../../../../../meta/custom/src/lib/generated/m.g';
-import { Part } from '../../../../../../../../domain/custom/src/lib/generated/Part.g';
 
 interface Row extends TableRow {
   object: InventoryItem;
