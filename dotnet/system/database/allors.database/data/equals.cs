@@ -35,7 +35,7 @@ namespace Allors.Database.Data
             {
                 case null:
                 {
-                    var equals = this.Parameter != null ? transaction.GetObject(arguments.ResolveObject(this.Parameter)) : null;
+                    var equals = this.Parameter != null ? transaction.GetObject(arguments.ResolveObject(this.Parameter)) : this.Object;
                     if (equals != null)
                     {
                         compositePredicate.AddEquals(this.Object);

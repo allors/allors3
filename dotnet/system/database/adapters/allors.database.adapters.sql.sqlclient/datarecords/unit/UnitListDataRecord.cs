@@ -10,30 +10,31 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     using System.Collections.Generic;
     using Microsoft.Data.SqlClient.Server;
 
-    internal class UnitListDataRecord : IEnumerable<SqlDataRecord>
-    {
-        private readonly Mapping mapping;
-        private readonly UnitList list;
+    // TODO: Use TVP for IN
+    //internal class UnitListDataRecord : IEnumerable<SqlDataRecord>
+    //{
+    //    private readonly Mapping mapping;
+    //    private readonly UnitList list;
 
-        internal UnitListDataRecord(Mapping mapping, UnitList list)
-        {
-            this.mapping = mapping;
-            this.list = list;
-        }
+    //    internal UnitListDataRecord(Mapping mapping, UnitList list)
+    //    {
+    //        this.mapping = mapping;
+    //        this.list = list;
+    //    }
 
-        public IEnumerator<SqlDataRecord> GetEnumerator()
-        {
-            var objectArrayElement = this.mapping.TableTypeColumnNameForObject;
-            var metaData = UnitSqlMetaData.Get(this.mapping.TableTypeColumnNameForRole, this.list.RoleType);
-            var sqlDataRecord = new SqlDataRecord(metaData);
+    //    public IEnumerator<SqlDataRecord> GetEnumerator()
+    //    {
+    //        var objectArrayElement = this.mapping.TableTypeColumnNameForObject;
+    //        var metaData = UnitSqlMetaData.Get(this.mapping.TableTypeColumnNameForRole, this.list.RoleType);
+    //        var sqlDataRecord = new SqlDataRecord(metaData);
 
-            foreach (var value in this.list.Values)
-            {
-                sqlDataRecord.SetValue(0, value ?? DBNull.Value);
-                yield return sqlDataRecord;
-            }
-        }
+    //        foreach (var value in this.list.Values)
+    //        {
+    //            sqlDataRecord.SetValue(0, value ?? DBNull.Value);
+    //            yield return sqlDataRecord;
+    //        }
+    //    }
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-    }
+    //    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+    //}
 }

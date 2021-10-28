@@ -55,29 +55,5 @@ namespace Allors.Database.Domain.Tests
 
             Assert.False(this.Derive().HasErrors);
         }
-
-        [Fact]
-        public void GivenCreditCard_WhenDeriving_ThenCardNumberMustBeUnique()
-        {
-            new CreditCardBuilder(this.Transaction)
-                .WithCardNumber("4012888888881881")
-                .WithExpirationYear(2016)
-                .WithExpirationMonth(03)
-                .WithNameOnCard("Name")
-                .WithCreditCardCompany(new CreditCardCompanyBuilder(this.Transaction).WithName("Visa").Build())
-                .Build();
-
-            Assert.False(this.Derive().HasErrors);
-
-            new CreditCardBuilder(this.Transaction)
-                .WithCardNumber("4012888888881881")
-                .WithExpirationYear(2016)
-                .WithExpirationMonth(03)
-                .WithNameOnCard("Name")
-                .WithCreditCardCompany(new CreditCardCompanyBuilder(this.Transaction).WithName("Visa").Build())
-                .Build();
-
-            Assert.True(this.Derive().HasErrors);
-        }
     }
 }

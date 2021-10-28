@@ -52,11 +52,12 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                     parameter.SqlDbType = SqlDbType.DateTime2;
                 }
 
-                if (value is UnitList list)
-                {
-                    parameter.SqlDbType = SqlDbType.Structured;
-                    parameter.TypeName = this.mapping.GetTableTypeNameForIn(list.RoleType);
-                }
+                // TODO: Use TVP for IN
+                //if (value is UnitList list)
+                //{
+                //    parameter.SqlDbType = SqlDbType.Structured;
+                //    parameter.TypeName = this.mapping.GetTableTypeNameForIn(list.RoleType);
+                //}
 
                 this.command.Parameters.Add(parameter);
             }
@@ -65,10 +66,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             {
                 parameter.Value = DBNull.Value;
             }
-            else if (value is UnitList list)
-            {
-                parameter.Value = new UnitListDataRecord(this.mapping, list);
-            }
+            //else if (value is UnitList list)
+            //{
+            //    parameter.Value = new UnitListDataRecord(this.mapping, list);
+            //}
             else
             {
                 parameter.Value = value;

@@ -203,19 +203,6 @@ namespace Allors.Database.Adapters.Sql
             return this;
         }
 
-        public ICompositePredicate AddIn(IRoleType role, IEnumerable<object> values)
-        {
-            this.Extent.FlushCache();
-            if (role.ObjectType.IsComposite)
-            {
-                throw new ArgumentException("RoleType is a Composite", nameof(role));
-            }
-
-            var list = new UnitList(role, values);
-            this.Filters.Add(new RoleIn(this.Extent, role, list));
-            return this;
-        }
-
         public ICompositePredicate AddInstanceof(IComposite type)
         {
             this.Extent.FlushCache();

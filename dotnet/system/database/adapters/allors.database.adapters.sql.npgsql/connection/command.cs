@@ -51,11 +51,12 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                     parameter.NpgsqlDbType = NpgsqlDbType.Timestamp;
                 }
 
-                if (value is UnitList list)
-                {
-                    var sqlDbType = this.mapping.GetNpgsqlDbType(list.RoleType);
-                    parameter.NpgsqlDbType = NpgsqlDbType.Array | sqlDbType;
-                }
+                // TODO: Use TVP for IN
+                //if (value is UnitList list)
+                //{
+                //    var sqlDbType = this.mapping.GetNpgsqlDbType(list.RoleType);
+                //    parameter.NpgsqlDbType = NpgsqlDbType.Array | sqlDbType;
+                //}
 
                 this.command.Parameters.Add(parameter);
             }
@@ -64,10 +65,10 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             {
                 parameter.Value = DBNull.Value;
             }
-            else if (value is UnitList list)
-            {
-                parameter.Value = list.Values.ToArray();
-            }
+            //else if (value is UnitList list)
+            //{
+            //    parameter.Value = list.Values.ToArray();
+            //}
             else
             {
                 parameter.Value = value;
