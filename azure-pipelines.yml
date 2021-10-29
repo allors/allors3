@@ -46,6 +46,8 @@ stages:
           target: 'CiDemosTest'
 
     steps:
+    - checkout: self
+      submodules: true
     - powershell: Set-Culture -CultureInfo nl-BE
       displayName: CultureInfo nl-BE
     - task: UseDotNet@2
