@@ -46,7 +46,7 @@ namespace Allors.Database.Domain
             get
             {
                 var rfp = this.SalesInvoiceItemState.Equals(new SalesInvoiceItemStates(this.Strategy.Transaction).ReadyForPosting);
-                var workEffortState = this.WorkEffortSalesInvoiceItemAssignmentWhereSalesInvoiceItem?.Assignment.WorkEffortState;
+                var workEffortState = this.WorkEffortSalesInvoiceItemAssignmentWhereSalesInvoiceItem?.Assignment?.WorkEffortState;
 
                 return rfp && (workEffortState == null || (!workEffortState.IsCompleted && !workEffortState.IsFinished));
             }
