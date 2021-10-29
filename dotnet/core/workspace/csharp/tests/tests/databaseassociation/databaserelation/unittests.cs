@@ -48,7 +48,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
                     session.PullFromWorkspace();
                     return Task.CompletedTask;
                 },
-                async (session) => await this.AsyncDatabaseClient.PushAsync(session),
+                async (session) => await session.PushAsync(),
             };
 
             this.contextFactories = new Func<Context>[]
@@ -80,7 +80,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
 
                         if (!c1.CanWriteC1C1One2One)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         c1.C1AllorsBinary = new byte[] { 1, 2 };
@@ -114,7 +114,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
 
                         if (c1.Strategy.Id > 0)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         Assert.Equal(new byte[] { 1, 2 }, c1.C1AllorsBinary);
@@ -161,7 +161,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
 
                         if (!c1.CanWriteC1C1One2One)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         c1.C1AllorsBinary = null;
@@ -193,7 +193,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
 
                         if (c1.Strategy.Id > 0)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         Assert.False(c1.ExistC1AllorsBinary);
@@ -238,7 +238,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
 
                         if (!c1.CanWriteC1C1One2One)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         c1.C1AllorsBinary = new byte[] { 1, 2 };
@@ -254,7 +254,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
 
                         if (!c1.CanWriteC1C1One2One)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         c1.C1AllorsBinary = null;
@@ -286,7 +286,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
 
                         if (c1.Strategy.Id > 0)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         Assert.False(c1.ExistC1AllorsBinary);
@@ -351,7 +351,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
 
                         if (!c1.CanWriteC1C1One2One)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         c1.RemoveC1AllorsBinary();
@@ -383,7 +383,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
 
                         if (c1.Strategy.Id > 0)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         Assert.False(c1.ExistC1AllorsBinary);
@@ -428,7 +428,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
 
                         if (!c1.CanWriteC1C1One2One)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         c1.C1AllorsBinary = new byte[] { 1, 2 };
@@ -444,7 +444,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
 
                         if (!c1.CanWriteC1C1One2One)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         c1.RemoveC1AllorsBinary();
@@ -476,7 +476,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
 
                         if (c1.Strategy.Id > 0)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         Assert.False(c1.ExistC1AllorsBinary);

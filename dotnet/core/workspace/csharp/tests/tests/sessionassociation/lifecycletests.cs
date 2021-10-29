@@ -47,14 +47,14 @@ namespace Tests.Workspace.SessionAssociation
 
             var objectSession1 = session1.Create<SC1>();
 
-            await this.AsyncDatabaseClient.PushAsync(session1);
+            await session1.PushAsync();
 
             var session2 = this.Workspace.CreateSession();
             bool hasErrors;
 
             try
             {
-                var result = await this.AsyncDatabaseClient.PullAsync(session2, new Pull { Object = objectSession1 });
+                var result = await session2.PullAsync(new Pull { Object = objectSession1 });
                 hasErrors = false;
             }
             catch (ArgumentException)

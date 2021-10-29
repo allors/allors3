@@ -48,7 +48,7 @@ namespace Tests.Workspace.DatabaseAssociation.WorkspaceRelation.WorkspaceRole
                     session.PullFromWorkspace();
                     return Task.CompletedTask;
                 },
-                async (session) => await this.AsyncDatabaseClient.PushAsync(session),
+                async (session) => await session.PushAsync(),
             };
 
             this.workspacePushes = new Action<ISession>[]

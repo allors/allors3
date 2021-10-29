@@ -27,8 +27,6 @@
 }
 
 @code {
-    IAsyncDatabaseClient asyncDatabaseClient;
-
     ISession Session;
 
     M M => ((IWorkspaceServices)this.Workspace.Services).Get<M>();
@@ -44,7 +42,7 @@
             Extent = new Filter(M.Organisation),
         };
 
-        var result = await this.asyncDatabaseClient.PullAsync(this.Session, pull);
+        var result = await this.Session.PullAsync(pull);
 
         this.organisations = result.GetCollection<Organisation>();
     }

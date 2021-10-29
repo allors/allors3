@@ -47,7 +47,7 @@ namespace Tests.Workspace.SessionAssociation.SessionRelation.WorkspaceRole
                     session.PullFromWorkspace();
                     return Task.CompletedTask;
                 },
-                async (session) => await this.AsyncDatabaseClient.PushAsync(session),
+                async (session) => await session.PushAsync(),
             };
 
             var singleSessionContext = new SingleSessionContext(this, "Single shared");

@@ -36,7 +36,7 @@ namespace Tests.Workspace.DatabaseAssociation
 
             try
             {
-                var result = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = c1 });
+                var result = await session.PullAsync(new Pull { Object = c1 });
                 hasErrors = false;
             }
             catch (Exception)
@@ -61,7 +61,7 @@ namespace Tests.Workspace.DatabaseAssociation
 
             try
             {
-                var result = await this.AsyncDatabaseClient.PullAsync(session2, new Pull { Object = c1 });
+                var result = await session2.PullAsync(new Pull { Object = c1 });
                 hasErrors = false;
             }
             catch (Exception)

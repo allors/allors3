@@ -16,20 +16,6 @@ export class SessionOriginState {
     changeSet.addSessionStateChanges(this.propertyByObjectByPropertyType.checkpoint());
   }
 
-  hasChanges(object: IObject): boolean {
-    // TODO:
-    return false;
-  }
-
-  hasChanged(object: IObject, roleType: RoleType) {
-    // TODO:
-    return false;
-  }
-
-  restoreRole(object: IObject, roleType: RoleType) {
-    // TODO:
-  }
-
   public getUnitRole(object: IObject, propertyType: PropertyType): IUnit {
     return this.propertyByObjectByPropertyType.get(object, propertyType) as IUnit;
   }

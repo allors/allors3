@@ -370,6 +370,10 @@ namespace Allors.Workspace.Adapters
             return compositesRole.Contains(forRole);
         }
 
+        public bool HasChanged(IRoleType roleType) => this.ChangedRoleByRelationType?.ContainsKey(roleType.RelationType) ?? false;
+
+        public void RestoreRole(IRoleType roleType) => this.ChangedRoleByRelationType?.Remove(roleType.RelationType);
+
         protected abstract void OnChange();
 
         private void SetChangedRole(IRoleType roleType, object role)

@@ -6,14 +6,14 @@
 
 namespace Allors.Workspace.Derivations
 {
-    using System;
     using System.Collections.Generic;
+    using Meta;
 
     public interface IRule
     {
-        Guid Id { get; }
-
         IEnumerable<IPattern> Patterns { get; }
+
+        IEnumerable<IDependency> Dependencies { get; }
 
         void Derive(ICycle cycle, IEnumerable<IObject> matches);
     }

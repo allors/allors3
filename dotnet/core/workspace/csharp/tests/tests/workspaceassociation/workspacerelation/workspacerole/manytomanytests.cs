@@ -49,7 +49,7 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation.WorkspaceRole
                     session.PullFromWorkspace();
                     return Task.CompletedTask;
                 },
-                async (session) => await this.AsyncDatabaseClient.PushAsync(session),
+                async (session) => await session.PushAsync(),
             };
 
             this.contextFactories = new Func<Context>[]

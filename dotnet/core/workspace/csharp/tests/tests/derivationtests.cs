@@ -9,6 +9,7 @@
 namespace Tests.Workspace
 {
     using System.Linq;
+    using Allors.Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
@@ -31,7 +32,8 @@ namespace Tests.Workspace
             };
 
             var session = this.Workspace.CreateSession();
-            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            session.Activate(this.Workspace.Services.Get<IDerivationService>().Rules);
+            var result = await session.PullAsync(pull);
 
             var people = result.GetCollection<Person>();
 

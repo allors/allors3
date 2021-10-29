@@ -56,14 +56,14 @@ namespace Tests.Workspace.WorkspaceAssociation
             var c1 = session1.Create<WC1>();
             Assert.NotNull(c1);
 
-            await this.AsyncDatabaseClient.PushAsync(session1);
+            await session1.PushAsync();
 
             var session2 = this.Workspace.CreateSession();
             bool hasErrors;
 
             try
             {
-                var result = await this.AsyncDatabaseClient.PullAsync(session2, new Pull { Object = c1 });
+                var result = await session2.PullAsync(new Pull { Object = c1 });
                 hasErrors = false;
             }
             catch (Exception)

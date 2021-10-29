@@ -5,6 +5,7 @@
 
 namespace Allors.Workspace.Configuration.Derivations.Default
 {
+    using System.Collections.Generic;
     using Allors.Workspace.Derivations;
 
     public class DerivationService : IDerivationService
@@ -16,5 +17,7 @@ namespace Allors.Workspace.Configuration.Derivations.Default
         public int MaxCycles { get; set; } = 10;
 
         public IDerivation CreateDerivation(ISession session) => new Derivation(session, this.Engine, this.MaxCycles);
+
+        public IEnumerable<IRule> Rules => this.Engine.Rules;
     }
 }

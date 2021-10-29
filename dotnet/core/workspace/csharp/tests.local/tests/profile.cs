@@ -15,8 +15,6 @@ namespace Tests.Workspace.Local
     using Allors.Ranges;
     using Allors.Workspace;
     using Allors.Workspace.Adapters;
-    using Allors.Workspace.Adapters.Local;
-    using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
     using Allors.Workspace.Meta.Lazy;
     using Configuration = Allors.Workspace.Adapters.Local.Configuration;
@@ -48,8 +46,6 @@ namespace Tests.Workspace.Local
             this.rangesFactory = () => new DefaultStructRanges<long>();
             this.servicesBuilder = () => new WorkspaceServices();
 
-            this.AsyncDatabaseClient = new AsyncDatabaseClient();
-
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Person));
             this.configuration = new Configuration("Default", metaPopulation, objectFactory);
@@ -80,8 +76,6 @@ namespace Tests.Workspace.Local
         public Task InitializeAsync() => Task.CompletedTask;
 
         public Task DisposeAsync() => Task.CompletedTask;
-
-        public IAsyncDatabaseClient AsyncDatabaseClient { get; }
 
         public IWorkspace CreateExclusiveWorkspace()
         {

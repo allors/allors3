@@ -17,7 +17,7 @@ namespace Allors.Workspace
     {
         private readonly IExcelServices excelServices;
 
-        public WorkspaceServices(IExcelServices excelServices) => this.excelServices = excelServices;
+        public WorkspaceServices(IExcelServices excelServices = null) => this.excelServices = excelServices;
 
         public M M { get; private set; }
 

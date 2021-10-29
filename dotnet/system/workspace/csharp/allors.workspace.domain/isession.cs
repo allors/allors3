@@ -7,28 +7,29 @@ namespace Allors.Workspace
 {
     using Meta;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using Data;
+    using Derivations;
 
     public interface ISession
     {
         IWorkspace Workspace { get; }
 
-        ISet<IDependency> Dependencies { get; }
+        bool HasChanges { get; }
 
         ISessionServices Services { get; }
+
+        public void Activate(IEnumerable<IRule> rules);
+
+        public IValidation Derive();
+
+        void Reset();
 
         IWorkspaceResult PullFromWorkspace();
 
         IWorkspaceResult PushToWorkspace();
 
         IChangeSet Checkpoint();
-
-        bool HasDatabaseChanges();
-
-        void DatabaseReset();
-
-        bool HasWorkspaceChanges();
-
-        void WorkspaceReset();
 
         T Create<T>() where T : class, IObject;
 
@@ -57,5 +58,17 @@ namespace Allors.Workspace
 
         IEnumerable<T> Instantiate<T>(IComposite objectType) where T : class, IObject;
         #endregion
+
+        Task<IInvokeResult> InvokeAsync(Method method, InvokeOptions options = null);
+
+        Task<IInvokeResult> InvokeAsync(Method[] methods, InvokeOptions options = null);
+
+        Task<IPullResult> CallAsync(Procedure procedure, params Pull[] pull);
+
+        Task<IPullResult> CallAsync(object args, string name);
+
+        Task<IPullResult> PullAsync(params Pull[] pull);
+
+        Task<IPushResult> PushAsync();
     }
 }

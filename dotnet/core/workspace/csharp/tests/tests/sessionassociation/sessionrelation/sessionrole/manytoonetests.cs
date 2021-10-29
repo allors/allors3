@@ -46,7 +46,7 @@ namespace Tests.Workspace.SessionAssociation.SessionRelation.SessionRole
                     session.PullFromWorkspace();
                     return Task.CompletedTask;
                 },
-                async (session) => await this.AsyncDatabaseClient.PushAsync(session),
+                async (session) => await session.PushAsync(),
             };
 
             var multipleSessionContext = new MultipleSessionContext(this, "Multiple shared");
@@ -74,7 +74,7 @@ namespace Tests.Workspace.SessionAssociation.SessionRelation.SessionRole
                     c1x_1.ShouldNotBeNull(ctx);
                     c1y_2.ShouldNotBeNull(ctx);
 
-                    await this.AsyncDatabaseClient.PushAsync(session1);
+                    await session1.PushAsync();
 
                     c1x_1.SessionSC1Many2One = c1y_2;
 
@@ -105,7 +105,7 @@ namespace Tests.Workspace.SessionAssociation.SessionRelation.SessionRole
                     c1x_1.ShouldNotBeNull(ctx);
                     c1y_2.ShouldNotBeNull(ctx);
 
-                    await this.AsyncDatabaseClient.PushAsync(session1);
+                    await session1.PushAsync();
 
                     c1x_1.SessionSC1Many2One = c1y_2;
                     c1x_1.SessionSC1Many2One.ShouldEqual(c1y_2, ctx);

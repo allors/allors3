@@ -28,7 +28,7 @@ namespace Tests.Workspace
                 Values = new Dictionary<string, string> { { "step", "0" } }
             };
 
-            var result = await this.AsyncDatabaseClient.CallAsync(session, procedure);
+            var result = await session.CallAsync(procedure);
 
             Assert.False(result.HasErrors);
 
@@ -55,7 +55,7 @@ namespace Tests.Workspace
                 Values = new Dictionary<string, string> { { "step", "1" } }
             };
 
-            var result = await this.AsyncDatabaseClient.CallAsync(session, procedure);
+            var result = await session.CallAsync(procedure);
 
             Assert.False(result.HasErrors);
 
@@ -92,7 +92,7 @@ namespace Tests.Workspace
                 Values = new Dictionary<string, string> { { "step", "0" } }
             };
 
-            var result = await this.AsyncDatabaseClient.CallAsync(session, procedure);
+            var result = await session.CallAsync(procedure);
 
             Assert.True(result.HasErrors);
         }

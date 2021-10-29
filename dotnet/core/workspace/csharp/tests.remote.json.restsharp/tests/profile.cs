@@ -61,14 +61,10 @@ namespace Tests.Workspace.Remote
             this.DatabaseConnection = new DatabaseConnection(this.configuration, () => new WorkspaceServices(), this.client, this.idGenerator, this.defaultRanges);
             this.Workspace = this.DatabaseConnection.CreateWorkspace();
 
-            this.AsyncDatabaseClient = new AsyncDatabaseClient(this.DatabaseConnection);
-
             await this.Login("administrator");
         }
 
         public Task DisposeAsync() => Task.CompletedTask;
-
-        public IAsyncDatabaseClient AsyncDatabaseClient { get; private set; }
 
         public IWorkspace CreateExclusiveWorkspace()
         {

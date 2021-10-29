@@ -40,38 +40,13 @@ namespace Tests.Workspace.Database
                 Assert.Single(c1b.C1sWhereC1C1Many2Many);
                 Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
 
-                await this.AsyncDatabaseClient.PushAsync(session);
+                await session.PushAsync();
 
                 Assert.Single(c1a.C1C1Many2Manies);
                 Assert.Single(c1b.C1sWhereC1C1Many2Many);
                 Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
 
-                await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = c1a });
-
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
-            }
-
-            {
-                var session = this.Workspace.CreateSession();
-
-                var c1a = session.Create<C1>();
-                var c1b = session.Create<C1>();
-
-                c1a.AddC1C1Many2Many(c1b);
-
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
-
-                await this.AsyncDatabaseClient.PushAsync(session);
-
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
-
-                await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = c1b });
+                await session.PullAsync(new Pull { Object = c1a });
 
                 Assert.Single(c1a.C1C1Many2Manies);
                 Assert.Single(c1b.C1sWhereC1C1Many2Many);
@@ -90,13 +65,38 @@ namespace Tests.Workspace.Database
                 Assert.Single(c1b.C1sWhereC1C1Many2Many);
                 Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
 
-                await this.AsyncDatabaseClient.PushAsync(session);
+                await session.PushAsync();
 
                 Assert.Single(c1a.C1C1Many2Manies);
                 Assert.Single(c1b.C1sWhereC1C1Many2Many);
                 Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
 
-                await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = c1a }, new Pull { Object = c1b });
+                await session.PullAsync(new Pull { Object = c1b });
+
+                Assert.Single(c1a.C1C1Many2Manies);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+            }
+
+            {
+                var session = this.Workspace.CreateSession();
+
+                var c1a = session.Create<C1>();
+                var c1b = session.Create<C1>();
+
+                c1a.AddC1C1Many2Many(c1b);
+
+                Assert.Single(c1a.C1C1Many2Manies);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+
+                await session.PushAsync();
+
+                Assert.Single(c1a.C1C1Many2Manies);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+
+                await session.PullAsync(new Pull { Object = c1a }, new Pull { Object = c1b });
 
                 Assert.Single(c1a.C1C1Many2Manies);
                 Assert.Single(c1b.C1sWhereC1C1Many2Many);
@@ -110,7 +110,7 @@ namespace Tests.Workspace.Database
 
                 var c1a = session.Create<C1>();
 
-                await this.AsyncDatabaseClient.PushAsync(session);
+                await session.PushAsync();
 
                 var c1b = session.Create<C1>();
 
@@ -120,7 +120,7 @@ namespace Tests.Workspace.Database
                 Assert.Empty(c1a.C1C1Many2Manies);
                 Assert.Empty(c1b.C1sWhereC1C1Many2Many);
 
-                await this.AsyncDatabaseClient.PushAsync(session);
+                await session.PushAsync();
 
                 Assert.Empty(c1a.C1C1Many2Manies);
                 Assert.Empty(c1b.C1sWhereC1C1Many2Many);
@@ -133,8 +133,8 @@ namespace Tests.Workspace.Database
 
                 var c1a = session.Create<C1>();
 
-                await this.AsyncDatabaseClient.PushAsync(session);
-                await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = c1a });
+                await session.PushAsync();
+                await session.PullAsync(new Pull { Object = c1a });
 
                 var c1b = session.Create<C1>();
 
@@ -144,7 +144,7 @@ namespace Tests.Workspace.Database
                 Assert.Single(c1b.C1sWhereC1C1Many2Many);
                 Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
 
-                await this.AsyncDatabaseClient.PushAsync(session);
+                await session.PushAsync();
 
                 Assert.Single(c1a.C1C1Many2Manies);
                 Assert.Single(c1b.C1sWhereC1C1Many2Many);
@@ -158,7 +158,7 @@ namespace Tests.Workspace.Database
 
                 var c1b = session.Create<C1>();
 
-                await this.AsyncDatabaseClient.PushAsync(session);
+                await session.PushAsync();
 
                 var c1a = session.Create<C1>();
 
@@ -168,7 +168,7 @@ namespace Tests.Workspace.Database
                 Assert.Single(c1b.C1sWhereC1C1Many2Many);
                 Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
 
-                await this.AsyncDatabaseClient.PushAsync(session);
+                await session.PushAsync();
 
                 Assert.Single(c1a.C1C1Many2Manies);
                 Assert.Single(c1b.C1sWhereC1C1Many2Many);
@@ -183,7 +183,7 @@ namespace Tests.Workspace.Database
                 var c1a = session.Create<C1>();
                 var c1b = session.Create<C1>();
 
-                await this.AsyncDatabaseClient.PushAsync(session);
+                await session.PushAsync();
 
                 Assert.False(c1a.CanWriteC1C1Many2Manies);
                 c1a.AddC1C1Many2Many(c1b);
@@ -191,7 +191,7 @@ namespace Tests.Workspace.Database
                 Assert.Empty(c1a.C1C1Many2Manies);
                 Assert.Empty(c1b.C1sWhereC1C1Many2Many);
 
-                await this.AsyncDatabaseClient.PushAsync(session);
+                await session.PushAsync();
 
                 Assert.Empty(c1a.C1C1Many2Manies);
                 Assert.Empty(c1b.C1sWhereC1C1Many2Many);
@@ -205,8 +205,8 @@ namespace Tests.Workspace.Database
                 var c1a = session.Create<C1>();
                 var c1b = session.Create<C1>();
 
-                await this.AsyncDatabaseClient.PushAsync(session);
-                await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = c1a }, new Pull { Object = c1b });
+                await session.PushAsync();
+                await session.PullAsync(new Pull { Object = c1a }, new Pull { Object = c1b });
 
                 c1a.AddC1C1Many2Many(c1b);
 
@@ -214,7 +214,7 @@ namespace Tests.Workspace.Database
                 Assert.Single(c1b.C1sWhereC1C1Many2Many);
                 Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
 
-                await this.AsyncDatabaseClient.PushAsync(session);
+                await session.PushAsync();
 
                 Assert.Single(c1a.C1C1Many2Manies);
                 Assert.Single(c1b.C1sWhereC1C1Many2Many);
@@ -231,8 +231,8 @@ namespace Tests.Workspace.Database
                 var c1a_2 = session2.Create<C1>();
                 var c1b_1 = session1.Create<C1>();
 
-                await this.AsyncDatabaseClient.PushAsync(session2);
-                await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1a_2 });
+                await session2.PushAsync();
+                await session1.PullAsync(new Pull { Object = c1a_2 });
 
                 var c1a_1 = session1.Instantiate(c1a_2);
 
@@ -243,7 +243,7 @@ namespace Tests.Workspace.Database
                 Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
                 Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
 
-                await this.AsyncDatabaseClient.PushAsync(session1);
+                await session1.PushAsync();
 
                 Assert.Single(c1a_1.C1C1Many2Manies);
                 Assert.Single(c1b_1.C1sWhereC1C1Many2Many);
@@ -259,8 +259,8 @@ namespace Tests.Workspace.Database
                 var c1a_1 = session1.Create<C1>();
                 var c1b_2 = session2.Create<C1>();
 
-                await this.AsyncDatabaseClient.PushAsync(session2);
-                await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1b_2 });
+                await session2.PushAsync();
+                await session1.PullAsync(new Pull { Object = c1b_2 });
 
                 var c1b_1 = session1.Instantiate(c1b_2);
 
@@ -271,7 +271,7 @@ namespace Tests.Workspace.Database
                 Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
                 Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
 
-                await this.AsyncDatabaseClient.PushAsync(session1);
+                await session1.PushAsync();
 
                 Assert.Single(c1a_1.C1C1Many2Manies);
                 Assert.Single(c1b_1.C1sWhereC1C1Many2Many);
@@ -287,8 +287,8 @@ namespace Tests.Workspace.Database
                 var c1a_2 = session2.Create<C1>();
                 var c1b_2 = session2.Create<C1>();
 
-                await this.AsyncDatabaseClient.PushAsync(session2);
-                await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1a_2 }, new Pull { Object = c1b_2 });
+                await session2.PushAsync();
+                await session1.PullAsync(new Pull { Object = c1a_2 }, new Pull { Object = c1b_2 });
 
                 var c1a_1 = session1.Instantiate(c1a_2);
                 var c1b_1 = session1.Instantiate(c1b_2);
@@ -300,7 +300,7 @@ namespace Tests.Workspace.Database
                 Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
                 Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
 
-                await this.AsyncDatabaseClient.PushAsync(session1);
+                await session1.PushAsync();
 
                 Assert.Single(c1a_1.C1C1Many2Manies);
                 Assert.Single(c1b_1.C1sWhereC1C1Many2Many);

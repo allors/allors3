@@ -11,8 +11,6 @@ namespace Tests.Workspace
 
     public interface IProfile : IAsyncLifetime
     {
-        IAsyncDatabaseClient AsyncDatabaseClient { get; }
-
         IWorkspace CreateExclusiveWorkspace();
 
         IWorkspace CreateWorkspace();

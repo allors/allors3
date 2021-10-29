@@ -5,10 +5,13 @@
 
 namespace Allors.Workspace
 {
-using Workspace.Derivations;
+    using System.Collections.Generic;
+    using Workspace.Derivations;
 
     public interface IDerivationService
     {
         IDerivation CreateDerivation(ISession session);
+
+        IEnumerable<IRule> Rules { get; }
     }
 }

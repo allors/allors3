@@ -49,7 +49,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
                     session.PullFromWorkspace();
                     return Task.CompletedTask;
                 },
-                async (session) => await this.AsyncDatabaseClient.PushAsync(session),
+                async (session) => await session.PushAsync(),
             };
 
             this.contextFactories = new Func<Context>[]
@@ -78,8 +78,8 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
                             var c1x_1 = await ctx.Create<C1>(session1, mode1);
                             var c1y_2 = await ctx.Create<C1>(session2, mode2);
 
-                            await this.AsyncDatabaseClient.PushAsync(session2);
-                            var result = await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1y_2 });
+                            await session2.PushAsync();
+                            var result = await session1.PullAsync(new Pull { Object = c1y_2 });
 
                             var c1y_1 = (C1)result.Objects.Values.First();
 
@@ -87,7 +87,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                             if (!c1x_1.CanWriteC1C1One2One)
                             {
-                                await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1x_1 });
+                                await session1.PullAsync(new Pull { Object = c1x_1 });
                             }
 
                             c1x_1.C1C1One2One = c1y_1;
@@ -122,8 +122,8 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
                             var c1x_1 = await ctx.Create<C1>(session1, mode1);
                             var c1y_2 = await ctx.Create<C1>(session2, mode2);
 
-                            await this.AsyncDatabaseClient.PushAsync(session2);
-                            var result = await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1y_2 });
+                            await session2.PushAsync();
+                            var result = await session1.PullAsync(new Pull { Object = c1y_2 });
 
                             var c1y_1 = (C1)result.Objects.Values.First();
 
@@ -131,7 +131,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                             if (!c1x_1.CanWriteC1C1One2One)
                             {
-                                await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1x_1 });
+                                await session1.PullAsync(new Pull { Object = c1x_1 });
                             }
 
                             c1x_1.C1C1One2One = c1y_1;

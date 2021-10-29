@@ -11,8 +11,6 @@ namespace Tests.Workspace.Remote
     using Allors.Ranges;
     using Allors.Workspace;
     using Allors.Workspace.Adapters;
-    using Allors.Workspace.Adapters.Remote;
-    using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
     using Allors.Workspace.Meta.Lazy;
     using Xunit;
@@ -62,14 +60,10 @@ namespace Tests.Workspace.Remote
             this.DatabaseConnection = new DatabaseConnection(this.configuration, this.servicesBuilder, this.httpClient, this.idGenerator, this.defaultRanges);
             this.Workspace = this.DatabaseConnection.CreateWorkspace();
 
-            this.AsyncDatabaseClient = new AsyncDatabaseClient(this.DatabaseConnection);
-
             await this.Login("administrator");
         }
 
         public Task DisposeAsync() => Task.CompletedTask;
-
-        public IAsyncDatabaseClient AsyncDatabaseClient { get; private set; }
 
         public IWorkspace CreateExclusiveWorkspace()
         {

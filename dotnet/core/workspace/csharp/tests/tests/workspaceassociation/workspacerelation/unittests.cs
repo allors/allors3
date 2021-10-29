@@ -50,7 +50,7 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation
                     session.PullFromWorkspace();
                     return Task.CompletedTask;
                 },
-                async (session) => await this.AsyncDatabaseClient.PushAsync(session),
+                async (session) => await session.PushAsync(),
             };
 
             this.contextFactories = new Func<Context>[]
@@ -119,7 +119,7 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation
 
                         if (c1.Strategy.Id > 0)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         Assert.Equal(new byte[] { 1, 2 }, c1.WorkspaceAllorsBinary);
@@ -193,7 +193,7 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation
 
                         if (c1.Strategy.Id > 0)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         Assert.False(c1.ExistWorkspaceAllorsBinary);
@@ -276,7 +276,7 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation
 
                         if (c1.Strategy.Id > 0)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         Assert.False(c1.ExistWorkspaceAllorsBinary);
@@ -368,7 +368,7 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation
 
                         if (c1.Strategy.Id > 0)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         Assert.False(c1.ExistWorkspaceAllorsBinary);
@@ -451,7 +451,7 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation
 
                         if (c1.Strategy.Id > 0)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         Assert.False(c1.ExistWorkspaceAllorsBinary);

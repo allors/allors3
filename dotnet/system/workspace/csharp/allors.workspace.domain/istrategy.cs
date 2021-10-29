@@ -20,15 +20,13 @@ namespace Allors.Workspace
 
         long Version { get; }
 
+        bool IsNew { get; }
+
+        bool HasChanges { get; }
+
+        void Reset();
+
         IReadOnlyList<IDiff> Diff();
-
-        bool HasDatabaseChanges();
-
-        void DatabaseReset();
-
-        bool HasWorkspaceChanges();
-
-        void WorkspaceReset();
 
         bool CanRead(IRoleType roleType);
 
@@ -37,6 +35,10 @@ namespace Allors.Workspace
         bool CanExecute(IMethodType methodType);
 
         bool ExistRole(IRoleType roleType);
+
+        bool HasChanged(IRoleType roleType);
+
+        void RestoreRole(IRoleType roleType);
 
         object GetRole(IRoleType roleType);
 

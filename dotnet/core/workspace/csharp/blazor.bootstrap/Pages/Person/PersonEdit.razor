@@ -36,8 +36,6 @@
 }
 
 @code {
-    IAsyncDatabaseClient asyncDatabaseClient;
-
     ISession Session;
 
     M M => ((IWorkspaceServices)this.Workspace.Services).Get<M>();
@@ -56,14 +54,14 @@
             ObjectId = !string.IsNullOrEmpty(id) ? long.Parse(id) : null,
         };
 
-        var result = await this.asyncDatabaseClient.PullAsync(this.Session, pull);
+        var result = await this.Session.PullAsync(pull);
 
         this.person = result.GetObject<Person>();
     }
 
     public async System.Threading.Tasks.Task HandleValidSubmit()
     {
-        var response = await this.asyncDatabaseClient.PushAsync(this.Session);
+        var response = await this.Session.PushAsync();
         if (!response.HasErrors)
         {
             this.NavigationManager.NavigateTo("/person/list");

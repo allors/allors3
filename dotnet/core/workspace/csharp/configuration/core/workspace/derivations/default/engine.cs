@@ -23,8 +23,12 @@ namespace Allors.Workspace.Configuration.Derivations.Default
 
         public IDictionary<IPattern, IRule> RuleByPattern { get; }
 
+        public IRule[] Rules { get; }
+
         public Engine(IRule[] rules)
         {
+            this.Rules = rules;
+
             this.ClassesByRule = new Dictionary<IRule, ISet<IClass>>();
             this.PatternsByRoleTypeByClass = new Dictionary<IClass, IDictionary<IRoleType, ISet<IRolePattern>>>();
             this.PatternsByAssociationTypeByClass = new Dictionary<IClass, IDictionary<IAssociationType, ISet<IAssociationPattern>>>();

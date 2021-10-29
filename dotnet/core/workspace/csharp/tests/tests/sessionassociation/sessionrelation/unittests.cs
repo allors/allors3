@@ -168,7 +168,7 @@ namespace Tests.Workspace.SessionAssociation.SessionRelation
 
                         if (c1.Strategy.Id > 0)
                         {
-                            await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1 });
+                            await session1.PullAsync(new Pull { Object = c1 });
                         }
 
                         Assert.False(c1.ExistSessionAllorsBinary);

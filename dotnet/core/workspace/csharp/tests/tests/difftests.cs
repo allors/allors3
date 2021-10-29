@@ -26,14 +26,14 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var result = await session.PullAsync(pull);
             var c1a_1 = result.GetCollection<C1>()[0];
 
             c1a_1.C1AllorsString = "X";
 
-            await this.AsyncDatabaseClient.PushAsync(session);
+            await session.PushAsync();
 
-            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            result = await session.PullAsync(pull);
             var c1a_2 = result.GetCollection<C1>()[0];
 
             c1a_2.C1AllorsString = "Y";
@@ -55,19 +55,19 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var result = await session.PullAsync(pull);
             var c1a_1 = result.GetCollection<C1>()[0];
 
             c1a_1.C1AllorsString = "X";
 
-            await this.AsyncDatabaseClient.PushAsync(session);
+            await session.PushAsync();
 
-            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            result = await session.PullAsync(pull);
             var c1a_2 = result.GetCollection<C1>()[0];
 
             c1a_2.C1AllorsString = "Y";
 
-            c1a_2.Strategy.DatabaseReset();
+            c1a_2.Strategy.Reset();
             var diff = c1a_2.Strategy.Diff();
 
             Assert.Empty(diff);
@@ -81,20 +81,20 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var result = await session.PullAsync(pull);
             var c1a = result.GetCollection<C1>()[0];
 
             c1a.C1AllorsString = "X";
 
-            await this.AsyncDatabaseClient.PushAsync(session);
+            await session.PushAsync();
 
-            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            result = await session.PullAsync(pull);
             var c1b = result.GetCollection<C1>()[0];
 
             c1b.C1AllorsString = "Y";
 
-            c1b.Strategy.DatabaseReset();
-            c1b.Strategy.DatabaseReset();
+            c1b.Strategy.Reset();
+            c1b.Strategy.Reset();
 
             var diff = c1b.Strategy.Diff();
 
@@ -110,15 +110,15 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var result = await session.PullAsync(pull);
             var c1a = result.GetCollection<C1>()[0];
 
             c1a.C1AllorsString = "X";
             c1a.C1AllorsInteger = 1;
 
-            await this.AsyncDatabaseClient.PushAsync(session);
+            await session.PushAsync();
 
-            result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            result = await session.PullAsync(pull);
             var c1b = result.GetCollection<C1>()[0];
 
             c1b.C1AllorsString = "Y";
@@ -148,7 +148,7 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var result = await session.PullAsync(pull);
             var c1a = result.GetCollection<C1>()[0];
 
             c1a.WorkspaceAllorsString = "X";
@@ -175,7 +175,7 @@ namespace Tests.Workspace
             var session = this.Workspace.CreateSession();
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
-            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var result = await session.PullAsync(pull);
             var c1a = result.GetCollection<C1>()[0];
 
             c1a.WorkspaceAllorsString = "X";
@@ -185,7 +185,7 @@ namespace Tests.Workspace
 
             c1a.WorkspaceAllorsString = "Y";
 
-            c1a.Strategy.WorkspaceReset();
+            c1a.Strategy.Reset();
 
             var diffs = c1a.Strategy.Diff();
             Assert.Empty(diffs);

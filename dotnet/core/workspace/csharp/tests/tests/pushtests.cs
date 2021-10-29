@@ -27,7 +27,7 @@ namespace Tests.Workspace
 
             var newObject = session.Create<C1>();
 
-            var result = await this.AsyncDatabaseClient.PushAsync(session);
+            var result = await session.PushAsync();
             Assert.False(result.HasErrors);
 
             foreach (var roleType in this.M.C1.RoleTypes)
@@ -60,10 +60,10 @@ namespace Tests.Workspace
 
             var newObject = session.Create<C1>();
 
-            var result = await this.AsyncDatabaseClient.PushAsync(session);
+            var result = await session.PushAsync();
             Assert.False(result.HasErrors);
 
-            await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = newObject });
+            await session.PullAsync(new Pull { Object = newObject });
 
             foreach (var roleType in this.M.C1.RoleTypes)
             {
@@ -96,10 +96,10 @@ namespace Tests.Workspace
             var newObject = session.Create<C1>();
             newObject.C1AllorsString = "A new object";
 
-            var result = await this.AsyncDatabaseClient.PushAsync(session);
+            var result = await session.PushAsync();
             Assert.False(result.HasErrors);
 
-            await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = newObject });
+            await session.PullAsync(new Pull { Object = newObject });
 
             Assert.Equal("A new object", newObject.C1AllorsString);
         }
@@ -119,15 +119,15 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var result = await session.PullAsync(pull);
             var c1a = result.GetCollection<C1>()[0];
 
             c1a.C1AllorsString = "X";
 
             Assert.Equal("X", c1a.C1AllorsString);
 
-            await this.AsyncDatabaseClient.PushAsync(session);
-            await this.AsyncDatabaseClient.PullAsync(session, pull);
+            await session.PushAsync();
+            await session.PullAsync(pull);
 
             Assert.Equal("X", c1a.C1AllorsString);
         }
@@ -144,7 +144,7 @@ namespace Tests.Workspace
                 Extent = new Filter(this.M.C1)
             };
 
-            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var result = await session.PullAsync(pull);
 
             var c1a = result.GetCollection<C1>().First(v => v.Name.Equals("c1A"));
 
@@ -154,17 +154,17 @@ namespace Tests.Workspace
 
             Assert.Single(changeSet.AssociationsByRoleType);
 
-            await this.AsyncDatabaseClient.PushAsync(session);
+            await session.PushAsync();
 
             var session2 = this.Workspace.CreateSession();
 
-            result = await this.AsyncDatabaseClient.PullAsync(session2, new Pull { Object = c1a });
+            result = await session2.PullAsync(new Pull { Object = c1a });
 
             var c1aSession2 = result.GetObject<C1>();
 
             Assert.Equal("X", c1aSession2.C1AllorsString);
 
-            result = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = c1a });
+            result = await session.PullAsync(new Pull { Object = c1a });
 
             var c1aSession1 = result.GetObject<C1>();
 
@@ -184,7 +184,7 @@ namespace Tests.Workspace
 
             Assert.True(person.Id < 0);
 
-            Assert.False((await this.AsyncDatabaseClient.PushAsync(session)).HasErrors);
+            Assert.False((await session.PushAsync()).HasErrors);
 
             Assert.True(person.Id > 0);
         }
@@ -202,7 +202,7 @@ namespace Tests.Workspace
 
             Assert.Equal(Version.WorkspaceInitial.Value, person.Strategy.Version);
 
-            Assert.False((await this.AsyncDatabaseClient.PushAsync(session)).HasErrors);
+            Assert.False((await session.PushAsync()).HasErrors);
 
             Assert.Equal(Version.WorkspaceInitial.Value, person.Strategy.Version);
         }
@@ -218,14 +218,14 @@ namespace Tests.Workspace
             person.FirstName = "Johny";
             person.LastName = "Doey";
 
-            Assert.False((await this.AsyncDatabaseClient.PushAsync(session)).HasErrors);
+            Assert.False((await session.PushAsync()).HasErrors);
 
             var pull = new Pull
             {
                 Object = person
             };
 
-            Assert.False((await this.AsyncDatabaseClient.PullAsync(session, pull)).HasErrors);
+            Assert.False((await session.PullAsync(pull)).HasErrors);
 
             Assert.Equal("Johny Doey", person.DomainFullName);
         }
@@ -241,10 +241,10 @@ namespace Tests.Workspace
             var c1y = session.Create<C1>();
             c1x.C1C1Many2One = c1y;
 
-            var pushResult = await this.AsyncDatabaseClient.PushAsync(session);
+            var pushResult = await session.PushAsync();
             Assert.False(pushResult.HasErrors);
 
-            pushResult = await this.AsyncDatabaseClient.PushAsync(session);
+            pushResult = await session.PushAsync();
             Assert.False(pushResult.HasErrors);
         }
     }

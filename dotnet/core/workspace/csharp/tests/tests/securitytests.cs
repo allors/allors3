@@ -35,7 +35,7 @@ namespace Tests.Workspace
                 Extent = new Filter(this.M.C1)
             };
 
-            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var result = await session.PullAsync(pull);
 
             var c1s = result.GetCollection<C1>("C1s");
             foreach (var c1 in result.GetCollection<C1>())
@@ -60,7 +60,7 @@ namespace Tests.Workspace
                 Extent = new Filter(this.M.C1)
             };
 
-            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var result = await session.PullAsync(pull);
 
             foreach (var c1 in result.GetCollection<C1>())
             {
@@ -92,7 +92,7 @@ namespace Tests.Workspace
                 Extent = new Filter(this.M.C1)
             };
 
-            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var result = await session.PullAsync(pull);
 
             foreach (var c1 in result.GetCollection<C1>())
             {
@@ -117,7 +117,7 @@ namespace Tests.Workspace
         {
             var session = this.Workspace.CreateSession();
 
-            var result = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Extent = new Filter(this.M.Denied) });
+            var result = await session.PullAsync(new Pull { Extent = new Filter(this.M.Denied) });
 
             foreach (var denied in result.GetCollection<Denied>())
             {

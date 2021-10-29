@@ -78,22 +78,13 @@ namespace Allors.Workspace.Adapters
             return diffs.ToArray();
         }
 
-        public bool HasDatabaseChanges() => this.DatabaseOriginState.HashChanges();
+        public bool HasChanges => this.DatabaseOriginState.HashChanges() || this.WorkspaceOriginState.HashChanges();
 
-        public void DatabaseReset()
+        public void Reset()
         {
             this.WorkspaceOriginState?.Reset();
             this.DatabaseOriginState?.Reset();
         }
-
-        public bool HasWorkspaceChanges() => this.DatabaseOriginState.HashChanges();
-
-        public void WorkspaceReset()
-        {
-            this.WorkspaceOriginState?.Reset();
-            this.DatabaseOriginState?.Reset();
-        }
-
 
         public bool ExistRole(IRoleType roleType)
         {
@@ -108,6 +99,42 @@ namespace Allors.Workspace.Adapters
             }
 
             return this.GetCompositesRole<IObject>(roleType).Any();
+        }
+
+        public bool HasChanged(IRoleType roleType)
+        {
+            switch (roleType.Origin)
+            {
+                case Origin.Session:
+                    return false;
+                case Origin.Workspace:
+                    return this.WorkspaceOriginState?.HasChanged(roleType) ?? false;
+                case Origin.Database:
+                    return this.CanRead(roleType) && (this.DatabaseOriginState?.HasChanged(roleType) ?? false);
+                default:
+                    throw new ArgumentException("Unknown origin");
+            }
+        }
+
+        public void RestoreRole(IRoleType roleType)
+        {
+            switch (roleType.Origin)
+            {
+                case Origin.Session:
+                    return;
+                case Origin.Workspace:
+                    this.WorkspaceOriginState?.RestoreRole(roleType);
+                    return;
+                case Origin.Database:
+                    if (this.CanRead(roleType))
+                    {
+                        this.DatabaseOriginState?.RestoreRole(roleType);
+                    }
+
+                    return;
+                default:
+                    throw new ArgumentException("Unknown origin");
+            }
         }
 
         public object GetRole(IRoleType roleType)

@@ -16,7 +16,6 @@ namespace Application.Sheets
             this.Binder = new Binder(this.Sheet, new Style(Color.DeepSkyBlue, Color.Black));
             this.Binder.ToDomained += this.Binder_ToDomained;
 
-            this.Client = program.Client;
             this.M = program.M;
             this.MessageService = program.Workspace.Services.Get<IMessageService>();
             this.ErrorService = program.Workspace.Services.Get<IErrorService>();
@@ -27,8 +26,6 @@ namespace Application.Sheets
         private async void Binder_ToDomained(object sender, EventArgs e) => await this.Sheet.Flush();
 
         public M M { get; set; }
-
-        public IAsyncDatabaseClient Client { get; set; }
 
         public ISession Session { get; }
 
@@ -47,7 +44,7 @@ namespace Application.Sheets
                 Extent = new Filter(this.M.Person),
             };
 
-            var result = await this.Client.PullAsync(this.Session, pull);
+            var result = await this.Session.PullAsync(pull);
 
             //this.Session.Reset();
 
@@ -96,7 +93,7 @@ namespace Application.Sheets
 
         public async System.Threading.Tasks.Task Save()
         {
-            var response = await this.Client.PushAsync(this.Session);
+            var response = await this.Session.PushAsync();
             if (response.HasErrors)
             {
                 this.ErrorService.Handle(response, this.Session);

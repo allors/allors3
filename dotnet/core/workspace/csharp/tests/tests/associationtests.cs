@@ -44,7 +44,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var result = await session.PullAsync(pull);
 
             var c2s = result.GetCollection<C2>();
 
@@ -84,7 +84,7 @@ namespace Tests.Workspace
                 }
             };
 
-            var result = await this.AsyncDatabaseClient.PullAsync(session, pull);
+            var result = await session.PullAsync(pull);
 
             var c2s = result.GetCollection<C2>();
 

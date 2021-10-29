@@ -27,18 +27,18 @@ namespace Tests.Workspace
 
             var pull = new Pull { Extent = new Filter(this.M.C1) { Predicate = new Equals(this.M.C1.Name) { Value = "c1A" } } };
 
-            var result = await this.AsyncDatabaseClient.PullAsync(session1, pull);
+            var result = await session1.PullAsync(pull);
             var c1a_1 = result.GetCollection<C1>()[0];
 
-            result = await this.AsyncDatabaseClient.PullAsync(session2, pull);
+            result = await session2.PullAsync(pull);
             var c1a_2 = result.GetCollection<C1>()[0];
 
             c1a_1.C1AllorsString = "X";
             c1a_2.C1AllorsString = "Y";
 
-            await this.AsyncDatabaseClient.PushAsync(session2);
+            await session2.PushAsync();
 
-            result = await this.AsyncDatabaseClient.PullAsync(session1, pull);
+            result = await session1.PullAsync(pull);
 
             Assert.True(result.HasErrors);
             Assert.Single(result.MergeErrors);

@@ -21,9 +21,6 @@ export abstract class Strategy implements IStrategy {
 
     this.rangeId = id;
   }
-  delete() {
-    throw new Error('Method not implemented.');
-  }
 
   get version(): number {
     switch (this.cls.origin) {
@@ -59,13 +56,13 @@ export abstract class Strategy implements IStrategy {
   }
 
   get hasChanges(): boolean {
-    return this.session.sessionOriginState.hasChanges(this.object) || this.WorkspaceOriginState?.hasChanges || this.DatabaseOriginState?.hasChanges;
+    return this.WorkspaceOriginState?.hasChanges || this.DatabaseOriginState?.hasChanges;
   }
 
   hasChanged(roleType: RoleType): boolean {
     switch (roleType.origin) {
       case Origin.Session:
-        return this.session.sessionOriginState.hasChanged(this.object, roleType);
+        return false;
       case Origin.Workspace:
         return this.WorkspaceOriginState?.hasChanged(roleType) ?? false;
       case Origin.Database:
@@ -78,7 +75,7 @@ export abstract class Strategy implements IStrategy {
   restoreRole(roleType: RoleType) {
     switch (roleType.origin) {
       case Origin.Session:
-        return this.session.sessionOriginState.restoreRole(this.object, roleType);
+        return;
       case Origin.Workspace:
         return this.WorkspaceOriginState?.restoreRole(roleType);
       case Origin.Database:
@@ -308,7 +305,7 @@ export abstract class Strategy implements IStrategy {
 
   getCompositeAssociation<T extends IObject>(associationType: AssociationType): T {
     if (associationType.origin != Origin.Session) {
-      return (this.session.getCompositeAssociation(this.object, associationType)as T) ?? null;
+      return (this.session.getCompositeAssociation(this.object, associationType) as T) ?? null;
     }
 
     return (this.session.sessionOriginState.getCompositeRole(this.object, associationType) as T) ?? null;
@@ -319,7 +316,7 @@ export abstract class Strategy implements IStrategy {
       return this.session.getCompositesAssociation(this.object, associationType) as T[];
     }
 
-    return this.session.sessionOriginState.getCompositesRole(this.object, associationType) as T[] ?? (frozenEmptyArray as T[]);
+    return (this.session.sessionOriginState.getCompositesRole(this.object, associationType) as T[]) ?? (frozenEmptyArray as T[]);
   }
 
   canRead(roleType: RoleType): boolean {
@@ -437,6 +434,7 @@ export abstract class Strategy implements IStrategy {
   toString() {
     return JSON.stringify(this);
   }
+
   toJSON() {
     return {
       id: this.id,

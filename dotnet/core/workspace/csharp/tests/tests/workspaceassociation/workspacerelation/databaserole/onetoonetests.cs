@@ -50,7 +50,7 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation.DatabaseRole
                     session.PullFromWorkspace();
                     return Task.CompletedTask;
                 },
-                async (session) => await this.AsyncDatabaseClient.PushAsync(session),
+                async (session) => await session.PushAsync(),
             };
 
             this.contextFactories = new Func<Context>[]
@@ -82,8 +82,8 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation.DatabaseRole
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            await this.AsyncDatabaseClient.PushAsync(session2);
-                            var result = await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1y_2 });
+                            await session2.PushAsync();
+                            var result = await session1.PullAsync(new Pull { Object = c1y_2 });
 
                             var c1y_1 = (C1)result.Objects.Values.First();
 
@@ -125,8 +125,8 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation.DatabaseRole
                             c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
                             c1y_2.ShouldNotBeNull(ctx, mode1, mode2);
 
-                            await this.AsyncDatabaseClient.PushAsync(session2);
-                            var result = await this.AsyncDatabaseClient.PullAsync(session1, new Pull { Object = c1y_2 });
+                            await session2.PushAsync();
+                            var result = await session1.PullAsync(new Pull { Object = c1y_2 });
 
                             var c1y_1 = (C1)result.Objects.Values.First();
 

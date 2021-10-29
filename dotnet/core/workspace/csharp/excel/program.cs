@@ -15,10 +15,9 @@ namespace Application
 
     public class Program : IProgram
     {
-        public Program(IWorkspace workspace, IAsyncDatabaseClient client)
+        public Program(IWorkspace workspace)
         {
             this.Workspace = workspace;
-            this.Client = client;
             this.M = this.Workspace.Services.Get<Allors.Workspace.Meta.M>();
 
             this.Roles = new Roles();
@@ -31,8 +30,6 @@ namespace Application
         }
 
         public ILoggerService Logger { get; set; }
-
-        public IAsyncDatabaseClient Client { get; }
 
         public IWorkspace Workspace { get; }
 
@@ -96,7 +93,7 @@ namespace Application
                 },
             };
 
-            var result = await this.Client.PullAsync(session, pulls);
+            var result = await session.PullAsync(pulls);
 
             var person = result.GetObject<Person>();
             var groups = person?.UserGroupsWhereMember;
@@ -151,15 +148,9 @@ namespace Application
         {
             var activeWorksheet = this.ActiveWorksheet;
 
-            if (activeWorksheet != null)
+            if (activeWorksheet != null && this.SheetByWorksheet.TryGetValue(activeWorksheet, out var sheet) && sheet is ISaveable saveable)
             {
-                if (this.SheetByWorksheet.TryGetValue(activeWorksheet, out var sheet))
-                {
-                    if (sheet is ISaveable saveable)
-                    {
-                        await saveable.Save();
-                    }
-                }
+                await saveable.Save();
             }
         }
 
@@ -167,15 +158,9 @@ namespace Application
         {
             var activeWorksheet = this.ActiveWorksheet;
 
-            if (activeWorksheet != null)
+            if (activeWorksheet != null && this.SheetByWorksheet.TryGetValue(activeWorksheet, out var sheet) && sheet is ISaveable saveable)
             {
-                if (this.SheetByWorksheet.TryGetValue(activeWorksheet, out var sheet))
-                {
-                    if (sheet is ISaveable saveable)
-                    {
-                        await saveable.Refresh();
-                    }
-                }
+                await saveable.Refresh();
             }
         }
 

@@ -25,8 +25,6 @@ namespace Tests.Workspace
 
         public string Name { get; }
 
-        public IAsyncDatabaseClient AsyncDatabaseClient => this.Test.AsyncDatabaseClient;
-
         public ISession Session1 { get; protected set; }
 
         public ISession Session2 { get; protected set; }
@@ -61,25 +59,25 @@ namespace Tests.Workspace
                     break;
                 case DatabaseMode.Push:
                     var pushObject = session.Create<T>();
-                    await this.AsyncDatabaseClient.PushAsync(session);
+                    await session.PushAsync();
                     result = pushObject;
                     break;
                 case DatabaseMode.PushAndPull:
                     result = session.Create<T>();
-                    var pushResult = await this.AsyncDatabaseClient.PushAsync(session);
+                    var pushResult = await session.PushAsync();
                     Assert.False(pushResult.HasErrors);
-                    await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = result });
+                    await session.PullAsync(new Pull { Object = result });
                     break;
                 case DatabaseMode.SharedDatabase:
                     var sharedDatabaseObject = this.SharedDatabaseSession.Create<T>();
-                    await this.AsyncDatabaseClient.PushAsync(this.SharedDatabaseSession);
-                    var sharedResult = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = sharedDatabaseObject });
+                    await this.SharedDatabaseSession.PushAsync();
+                    var sharedResult = await session.PullAsync(new Pull { Object = sharedDatabaseObject });
                     result = (T)sharedResult.Objects.Values.First();
                     break;
                 case DatabaseMode.ExclusiveDatabase:
                     var exclusiveDatabaseObject = this.ExclusiveDatabaseSession.Create<T>();
-                    await this.AsyncDatabaseClient.PushAsync(this.ExclusiveDatabaseSession);
-                    var exclusiveResult = await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = exclusiveDatabaseObject });
+                    await this.ExclusiveDatabaseSession.PushAsync();
+                    var exclusiveResult = await session.PullAsync(new Pull { Object = exclusiveDatabaseObject });
                     result = (T)exclusiveResult.Objects.Values.First();
                     break;
                 default:

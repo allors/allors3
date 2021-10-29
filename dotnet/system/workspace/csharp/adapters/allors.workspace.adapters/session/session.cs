@@ -8,12 +8,19 @@ namespace Allors.Workspace.Adapters
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using Collections;
+    using Data;
+    using Derivations;
     using Meta;
 
     public abstract class Session : ISession
     {
         private readonly Dictionary<IClass, ISet<Strategy>> strategiesByClass;
+
+        protected ISet<IDependency> dependencies;
+
+        private ISet<IRule> activeRules;
 
         protected Session(Workspace workspace, ISessionServices sessionServices)
         {
@@ -34,6 +41,8 @@ namespace Allors.Workspace.Adapters
         // TODO: push to concrete classes and implement
         public ISet<IDependency> Dependencies => EmptySet<IDependency>.Instance;
 
+        public bool HasChanges => this.StrategyByWorkspaceId.Any(kvp => kvp.Value.HasChanges);
+
         public ISessionServices Services { get; }
 
         IWorkspace ISession.Workspace => this.Workspace;
@@ -52,6 +61,70 @@ namespace Allors.Workspace.Adapters
         public override string ToString() => $"session: {base.ToString()}";
 
         internal static bool IsNewId(long id) => id < 0;
+
+        public void Activate(IEnumerable<IRule> rules)
+        {
+            if (rules == null)
+            {
+                return;
+            }
+
+
+            if (this.activeRules == null)
+            {
+                this.activeRules = new HashSet<IRule>();
+                this.dependencies = new HashSet<IDependency>();
+            }
+
+
+            foreach (var rule in rules)
+            {
+                this.activeRules.Add(rule);
+                if (rule.Dependencies == null)
+                {
+                    continue;
+                }
+
+                foreach (var dependency in rule.Dependencies)
+                {
+                    this.dependencies.Add(dependency);
+                }
+            }
+        }
+
+        public IValidation Derive()
+        {
+            if (this.activeRules == null)
+            {
+                return new NoActiveRulesValidation();
+            }
+
+            var derivationService = this.Workspace.Services.Get<IDerivationService>();
+            var derivation = derivationService.CreateDerivation(this);
+            return derivation.Execute();
+        }
+
+        public void Reset()
+        {
+            var changeSet = this.Checkpoint();
+
+            var strategies = new HashSet<IStrategy>(changeSet.Created);
+
+            foreach (var roles in changeSet.RolesByAssociationType.Values)
+            {
+                strategies.UnionWith(roles);
+            }
+
+            foreach (var associations in changeSet.AssociationsByRoleType.Values)
+            {
+                strategies.UnionWith(associations);
+            }
+
+            foreach (var strategy in strategies)
+            {
+                strategy.Reset();
+            }
+        }
 
         public abstract T Create<T>(IClass @class) where T : class, IObject;
 
@@ -135,52 +208,6 @@ namespace Allors.Workspace.Adapters
             return changeSet;
         }
 
-        // TODO: Optimize
-        public bool HasDatabaseChanges()
-        {
-            foreach (var kvp in this.StrategyByWorkspaceId)
-            {
-                if (kvp.Value.HasDatabaseChanges())
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        // TODO: Optimize
-        public void DatabaseReset()
-        {
-            foreach (var kvp in this.StrategyByWorkspaceId)
-            {
-                kvp.Value.DatabaseReset();
-            }
-        }
-
-        // TODO: Optimize
-        public bool HasWorkspaceChanges()
-        {
-            foreach (var kvp in this.StrategyByWorkspaceId)
-            {
-                if (kvp.Value.HasWorkspaceChanges())
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        // TODO: Optimize
-        public void WorkspaceReset()
-        {
-            foreach (var kvp in this.StrategyByWorkspaceId)
-            {
-                kvp.Value.WorkspaceReset();
-            }
-        }
-
         #region Instantiate
         public T Instantiate<T>(IObject @object) where T : class, IObject => this.Instantiate<T>(@object.Id);
 
@@ -251,6 +278,7 @@ namespace Allors.Workspace.Adapters
                 }
             }
         }
+
         #endregion
 
         public Strategy GetStrategy(long id)
@@ -338,6 +366,20 @@ namespace Allors.Workspace.Adapters
         }
 
         protected abstract Strategy InstantiateWorkspaceStrategy(long id);
+        public abstract Task<IInvokeResult> InvokeAsync(Method method, InvokeOptions options = null);
+        public abstract Task<IInvokeResult> InvokeAsync(Method[] methods, InvokeOptions options = null);
+        public abstract Task<IPullResult> CallAsync(Procedure procedure, params Pull[] pull);
+        public abstract Task<IPullResult> CallAsync(object args, string name);
+        public abstract Task<IPullResult> PullAsync(params Pull[] pull);
+        public abstract Task<IPushResult> PushAsync();
 
+        public class NoActiveRulesValidation : IValidation
+        {
+            public bool HasErrors => true;
+
+            public IEnumerable<string> Errors => new[] { "No active rules" };
+
+            public void AddError(string error) => throw new NotSupportedException();
+        }
     }
 }

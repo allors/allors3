@@ -26,15 +26,15 @@ namespace Tests.Workspace
 
             var pull = new[] { new Pull { Extent = new Filter(this.M.Organisation) } };
 
-            var organisation = (await this.AsyncDatabaseClient.PullAsync(session, pull)).GetCollection<Organisation>()[0];
+            var organisation = (await session.PullAsync(pull)).GetCollection<Organisation>()[0];
 
             Assert.False(organisation.JustDidIt);
 
-            var invokeResult = await this.AsyncDatabaseClient.InvokeAsync(session, organisation.JustDoIt);
+            var invokeResult = await session.InvokeAsync(organisation.JustDoIt);
 
             Assert.False(invokeResult.HasErrors);
 
-            await this.AsyncDatabaseClient.PullAsync(session, new Pull { Object = organisation });
+            await session.PullAsync(new Pull { Object = organisation });
 
             Assert.True(organisation.JustDidIt);
             Assert.True(organisation.JustDidItDerived);
@@ -49,16 +49,16 @@ namespace Tests.Workspace
 
             var pull = new[] { new Pull { Extent = new Filter(this.M.Organisation) } };
 
-            var organisation1 = (await this.AsyncDatabaseClient.PullAsync(session, pull)).GetCollection<Organisation>()[0];
-            var organisation2 = (await this.AsyncDatabaseClient.PullAsync(session, pull)).GetCollection<Organisation>().Skip(1).First();
+            var organisation1 = (await session.PullAsync(pull)).GetCollection<Organisation>()[0];
+            var organisation2 = (await session.PullAsync(pull)).GetCollection<Organisation>().Skip(1).First();
 
             Assert.False(organisation1.JustDidIt);
 
-            var invokeResult = await this.AsyncDatabaseClient.InvokeAsync(session, new[] { organisation1.JustDoIt, organisation2.JustDoIt });
+            var invokeResult = await session.InvokeAsync(new[] { organisation1.JustDoIt, organisation2.JustDoIt });
 
             Assert.False(invokeResult.HasErrors);
 
-            await this.AsyncDatabaseClient.PullAsync(session, pull);
+            await session.PullAsync(pull);
 
             Assert.True(organisation1.JustDidIt);
             Assert.True(organisation1.JustDidItDerived);
@@ -76,16 +76,16 @@ namespace Tests.Workspace
 
             var pull = new[] { new Pull { Extent = new Filter(this.M.Organisation) } };
 
-            var organisation1 = (await this.AsyncDatabaseClient.PullAsync(session, pull)).GetCollection<Organisation>()[0];
-            var organisation2 = (await this.AsyncDatabaseClient.PullAsync(session, pull)).GetCollection<Organisation>().Skip(1).First();
+            var organisation1 = (await session.PullAsync(pull)).GetCollection<Organisation>()[0];
+            var organisation2 = (await session.PullAsync(pull)).GetCollection<Organisation>().Skip(1).First();
 
             Assert.False(organisation1.JustDidIt);
 
-            var invokeResult = await this.AsyncDatabaseClient.InvokeAsync(session, new[] { organisation1.JustDoIt, organisation2.JustDoIt }, new InvokeOptions { Isolated = true });
+            var invokeResult = await session.InvokeAsync(new[] { organisation1.JustDoIt, organisation2.JustDoIt }, new InvokeOptions { Isolated = true });
 
             Assert.False(invokeResult.HasErrors);
 
-            await this.AsyncDatabaseClient.PullAsync(session, pull);
+            await session.PullAsync(pull);
 
             Assert.True(organisation1.JustDidIt);
             Assert.True(organisation1.JustDidItDerived);

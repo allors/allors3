@@ -46,7 +46,7 @@ namespace Tests.Workspace.SessionAssociation.SessionRelation.SessionRole
                     session.PullFromWorkspace();
                     return Task.CompletedTask;
                 },
-                async (session) => await this.AsyncDatabaseClient.PushAsync(session),
+                async (session) => await session.PushAsync(),
             };
 
             var multipleSessionContext = new MultipleSessionContext(this, "Multiple shared");
@@ -74,7 +74,7 @@ namespace Tests.Workspace.SessionAssociation.SessionRelation.SessionRole
                     c1x_1.ShouldNotBeNull(ctx);
                     c1y_2.ShouldNotBeNull(ctx);
 
-                    await this.AsyncDatabaseClient.PushAsync(session1);
+                    await session1.PushAsync();
 
                     c1x_1.AddSessionSC1One2Many(c1y_2);
 
@@ -106,7 +106,7 @@ namespace Tests.Workspace.SessionAssociation.SessionRelation.SessionRole
                     c1x_1.ShouldNotBeNull(ctx);
                     c1y_2.ShouldNotBeNull(ctx);
 
-                    await this.AsyncDatabaseClient.PushAsync(session1);
+                    await session1.PushAsync();
 
                     c1x_1.AddSessionSC1One2Many(null);
                     Assert.Empty(c1x_1.SessionSC1One2Manies);
@@ -143,7 +143,7 @@ namespace Tests.Workspace.SessionAssociation.SessionRelation.SessionRole
                         c1x_1.ShouldNotBeNull(ctx, mode);
                         c1y_2.ShouldNotBeNull(ctx, mode);
 
-                        await this.AsyncDatabaseClient.PushAsync(session1);
+                        await session1.PushAsync();
 
                         c1x_1.AddSessionSC1One2Many(c1y_2);
                         c1x_1.SessionSC1One2Manies.ShouldContain(c1y_2, ctx, mode);
@@ -180,7 +180,7 @@ namespace Tests.Workspace.SessionAssociation.SessionRelation.SessionRole
                         c1x_1.ShouldNotBeNull(ctx, mode);
                         c1y_2.ShouldNotBeNull(ctx, mode);
 
-                        await this.AsyncDatabaseClient.PushAsync(session1);
+                        await session1.PushAsync();
 
                         c1x_1.AddSessionSC1One2Many(null);
                         Assert.Empty(c1x_1.SessionSC1One2Manies);

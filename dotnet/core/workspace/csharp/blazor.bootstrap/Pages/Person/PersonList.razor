@@ -33,8 +33,6 @@
 }
 
 @code {
-    IAsyncDatabaseClient asyncDatabaseClient;
-
     ISession Session;
 
     M M => ((IWorkspaceServices)this.Workspace.Services).Get<M>();
@@ -50,7 +48,7 @@
             Extent = new Filter(M.Person),
         };
 
-        var result = await this.asyncDatabaseClient.PullAsync(this.Session, pull);
+        var result = await this.Session.PullAsync(pull);
 
         this.people = result.GetCollection<Person>();
     }

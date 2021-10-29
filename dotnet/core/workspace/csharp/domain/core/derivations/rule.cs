@@ -6,24 +6,19 @@
 
 namespace Allors.Workspace.Domain.Derivations
 {
-    using System;
     using System.Collections.Generic;
     using Workspace.Derivations;
     using Meta;
 
     public abstract partial class Rule : IRule
     {
-        protected Rule(M m, Guid id)
-        {
-            this.M = m;
-            this.Id = id;
-        }
+        protected Rule(M m) => this.M = m;
 
         public M M { get; }
 
-        public Guid Id { get; }
-
         public IEnumerable<IPattern> Patterns { get; protected set; }
+
+        public IEnumerable<IDependency> Dependencies { get; protected set; }
 
         public abstract void Derive(ICycle cycle, IEnumerable<IObject> matches);
     }

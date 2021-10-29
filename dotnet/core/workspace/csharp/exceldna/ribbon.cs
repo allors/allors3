@@ -30,8 +30,6 @@ namespace ExcelDNA
 
         public Client Client { get; private set; }
 
-        public AsyncDatabaseClient AsyncDatabaseClient { get; private set; }
-
         public IWorkspace Workspace { get; private set; }
 
         public AddIn AddIn { get; private set; }
@@ -63,9 +61,8 @@ namespace ExcelDNA
                 this.Client = new Client(RestClientFactory);
                 this.DatabaseConnection = new DatabaseConnection(configuration, () => new WorkspaceServices(excelServices), this.Client, idGenerator, defaultRanges);
                 this.Workspace = this.DatabaseConnection.CreateWorkspace();
-                this.AsyncDatabaseClient = new AsyncDatabaseClient(this.DatabaseConnection);
 
-                this.Program = new Program(this.Workspace, this.AsyncDatabaseClient);
+                this.Program = new Program(this.Workspace);
                 this.AddIn = new AddIn((InteropApplication)ExcelDnaUtil.Application, this.Program, this)
                 {
                     //ExistentialAttribute = "AllorsExcel"
