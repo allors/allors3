@@ -19,6 +19,8 @@ export interface IStrategy {
 
   hasChanges: boolean;
 
+  delete(): void;
+
   reset(): void;
 
   diff(): IDiff[];

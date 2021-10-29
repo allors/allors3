@@ -43,6 +43,10 @@ export abstract class Strategy implements IStrategy {
     return (this._object ??= this.session.workspace.database.configuration.objectFactory.create(this));
   }
 
+  delete(): void {
+    // TODO:
+  }
+
   reset(): void {
     this.WorkspaceOriginState?.reset();
     this.DatabaseOriginState?.reset();
