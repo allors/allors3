@@ -33,6 +33,8 @@ namespace Components
 
         public override By Selector { get; }
 
+        public bool Enabled => this.Driver.FindElement(this.Selector).Enabled;
+
         public void Click()
         {
             this.Driver.WaitForAngular();

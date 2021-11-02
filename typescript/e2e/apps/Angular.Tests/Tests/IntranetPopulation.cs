@@ -16,7 +16,6 @@ namespace Tests
     using Allors.Database;
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
-    using Allors.Database.Domain.TestPopulation;
 
     public class IntranetPopulation
     {
