@@ -51,7 +51,7 @@ export class PropertyByObjectByPropertyType {
           }
         });
 
-        if (propertyByObject.size === 0) {
+        if (propertyByObject?.size === 0) {
           this.propertyByObjectByPropertyType.mapMap.delete(propertyType);
         }
       });
