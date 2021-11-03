@@ -58,6 +58,27 @@ namespace Allors.Database.Domain.TestPopulation
             return @this;
         }
 
+        public static SalesInvoiceItemBuilder WithProductItemDefaults(this SalesInvoiceItemBuilder @this, UnifiedGood unifiedGood)
+        {
+            var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
+            var faker = @this.Transaction.Faker();
+            var invoiceItemType = @this.Transaction.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId));
+
+            @this.WithDescription(faker.Lorem.Sentences(2))
+                .WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithInvoiceItemType(invoiceItemType)
+                .WithProduct(unifiedGood)
+                .WithSerialisedItem(unifiedGood.SerialisedItems.FirstOrDefault())
+                .WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()))
+                .WithMessage(faker.Lorem.Sentence())
+                .WithQuantity(1)
+                .WithAssignedUnitPrice(faker.Random.UInt(1, 100));
+
+            return @this;
+        }
+
+
         public static SalesInvoiceItemBuilder WithPartItemDefaults(this SalesInvoiceItemBuilder @this)
         {
             var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
