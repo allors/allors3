@@ -9,6 +9,11 @@ using libs.workspace.angular.apps.src.lib.objects.person.list;
 namespace Tests.PartyContactMachanismTests
 {
     using Allors.Database.Domain;
+    using Allors.Database.Domain.TestPopulation;
+    using Components;
+    using libs.workspace.angular.apps.src.lib.objects.person.overview;
+    using OpenQA.Selenium;
+    using OpenQA.Selenium.Interactions;
     using Xunit;
 
     [Collection("Test collection")]
@@ -22,20 +27,20 @@ namespace Tests.PartyContactMachanismTests
         public PartyContactMechanismEditTest(Fixture fixture)
             : base(fixture)
         {
-            var person = new People(this.Transaction).Extent().FirstOrDefault();
+            //var person = new People(this.Transaction).Extent().FirstOrDefault();
 
-            var postalAddress = new PostalAddressBuilder(this.Transaction)
-                .WithAddress1("Haverwerf 15")
-                .WithLocality("city")
-                .WithPostalCode("1111")
-                .WithCountry(new Countries(this.Transaction).FindBy(M.Country.IsoCode, "BE"))
-                .Build();
+            //var postalAddress = new PostalAddressBuilder(this.Transaction)
+            //    .WithAddress1("Haverwerf 15")
+            //    .WithLocality("city")
+            //    .WithPostalCode("1111")
+            //    .WithCountry(new Countries(this.Transaction).FindBy(M.Country.IsoCode, "BE"))
+            //    .Build();
 
-            this.editPartyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(postalAddress).Build();
-            person.AddPartyContactMechanism(this.editPartyContactMechanism);
+            //this.editPartyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(postalAddress).Build();
+            //person.AddPartyContactMechanism(this.editPartyContactMechanism);
 
-            this.Transaction.Derive();
-            this.Transaction.Commit();
+            //this.Transaction.Derive();
+            //this.Transaction.Commit();
 
             this.Login();
             this.people = this.Sidenav.NavigateToPeople();
@@ -44,58 +49,58 @@ namespace Tests.PartyContactMachanismTests
         [Fact]
         public void Edit()
         {
-            // var country = new Countries(this.Session).FindBy(M.Country.IsoCode, "NL");
+            //var country = new Countries(this.Session).FindBy(M.Country.IsoCode, "NL");
 
-            // var extent = new People(this.Session).Extent();
-            // var person = extent.First(v => v.DisplayName().Equals("John Doe"));
+            var before = new PartyContactMechanisms(this.Transaction).Extent().ToArray();
 
-            // var before = new PostalAddresses(this.Session).Extent().ToArray();
+            var person = new People(this.Transaction).Extent().FirstOrDefault();
+            var contactMechanismPurpose = new ContactMechanismPurposes(this.Transaction).Extent().FirstOrDefault();
+            var contactMechanism = new ContactMechanisms(this.Transaction).Extent().FirstOrDefault(x => x.PeopleWhereCurrentOrganisationContactMechanism.Select(x => x.Id == person.Id).Any());
 
-            // var postalAddress = (PostalAddress)person.PartyContactMechanisms.First(v => v.ContactMechanism.GetType().Name == typeof(PostalAddress).Name).ContactMechanism;
+            var expected = new PartyContactMechanismBuilder(this.Transaction)
+                .WithDefaults(contactMechanismPurpose, contactMechanism)
+                .Build();
 
-            // var personOverview = this.people.Select(person);
 
-            // var page = personOverview.SelectPostalAddress(this.editPartyContactMechanism);
-            // var contactMechanism = (PostalAddress)this.editPartyContactMechanism.ContactMechanism;
+            this.Transaction.Derive();
 
-            // .FromDate.Set(DateTimeFactory.CreateDate(2018, 12, 28);
-            // .ThroughDate.Set(DateTimeFactory.CreateDate(DateTime.Now).AddYears(1);
-            // .ContactPurposes.Toggle(new ContactMechanismPurposes(this.Session).BillingAddress.Name);
-            // .ContactPurposes.Toggle(new ContactMechanismPurposes(this.Session).HeadQuarters.Name);
-            // .Address1.Set("addressline 1";
-            // .Address2.Set("addressline 2";
-            // .Address3.Set("addressline 3";
-            // .Locality.Set("city";
-            // .PostalCode.Set("postalcode";
-            // .Country.Set(country.Name;
-            // .UseAsDefault.Set(true;
-            // .NonSolicitationIndicator.Set(true;
-            // .Description.Set("description";
+            var expectedContactPurpose =  expected.ContactPurposes.ToList();
+            var expectedContactMechanism = expected.ContactMechanism;
+            var expectedFromDate = expected.FromDate;
+            var expectedThroughDate = expected.ThroughDate;
 
-            // .Save.Click();
+            this.people.Table.DefaultAction(person);
+            var personDetails = new PersonOverviewComponent(this.people.Driver, this.M);
+            var PartyrateDetail = personDetails.PartycontactmechanismOverviewPanel.Click().CreatePartyContactMechanism();
 
-            // this.Driver.WaitForAngular();
-            // this.Session.Rollback();
+            PartyrateDetail
+                .FromDate.Set(expectedFromDate)
+                .ThroughDate.Set(expectedThroughDate.Value)
+                .ContactPurposes.Select(expectedContactPurpose.FirstOrDefault());
 
-            // var after = new PostalAddresses(this.Session).Extent().ToArray();
+            Actions builder = new Actions(this.Driver);
+            IAction keydown = builder.SendKeys(Keys.Escape).Build();
+            keydown.Perform();
 
-            // Assert.Equal(after.Length, before.Length);
+            PartyrateDetail
+                .ContactMechanism.Select(expectedContactMechanism);
 
-            ////Assert.Equal(DateTimeFactory.CreateDate(2018, 12, 28).Date, this.editPartyContactMechanism.FromDate.ToUniversalTime().Date);
-            ////Assert.Equal(DateTimeFactory.CreateDate(DateTime.Now).AddYears(1).Date, this.editPartyContactMechanism.ThroughDate.Value.ToUniversalTime().Date);
-            // Assert.Equal(2, this.editPartyContactMechanism.ContactPurposes.Count());
-            // Assert.Contains(new ContactMechanismPurposes(this.Session).BillingAddress, this.editPartyContactMechanism.ContactPurposes);
-            // Assert.Contains(new ContactMechanismPurposes(this.Session).HeadQuarters, this.editPartyContactMechanism.ContactPurposes);
-            // Assert.Equal("addressline 1", contactMechanism.Address1);
-            // Assert.Equal("addressline 2", contactMechanism.Address2);
-            // Assert.Equal("addressline 3", contactMechanism.Address3);
-            // Assert.Equal("addressline 1", contactMechanism.Address1);
-            // Assert.Equal("city", contactMechanism.PostalBoundary.Locality);
-            // Assert.Equal("postalcode", contactMechanism.PostalBoundary.PostalCode);
-            // Assert.Equal(country, contactMechanism.PostalBoundary.Country);
-            // Assert.True(this.editPartyContactMechanism.UseAsDefault);
-            // Assert.True(this.editPartyContactMechanism.NonSolicitationIndicator);
-            // Assert.Equal("description", contactMechanism.Description);
+            this.Transaction.Rollback();
+            PartyrateDetail.SAVE.Click();
+
+            this.Driver.WaitForAngular();
+            this.Transaction.Rollback();
+
+            var after = new PartyContactMechanisms(this.Transaction).Extent().ToArray();
+
+            Assert.Equal(after.Length, before.Length + 1);
+
+            var partyContactMechanism = after.Except(before).First();
+
+            Assert.Equal(expectedFromDate.Date, partyContactMechanism.FromDate.Date);
+            Assert.Equal(expectedThroughDate.Value.Date, partyContactMechanism.ThroughDate.Value.Date);
+            Assert.Equal(expectedContactPurpose.FirstOrDefault(), partyContactMechanism.ContactPurposes.FirstOrDefault());
+            Assert.Equal(expectedContactMechanism, partyContactMechanism.ContactMechanism);
         }
     }
 }
