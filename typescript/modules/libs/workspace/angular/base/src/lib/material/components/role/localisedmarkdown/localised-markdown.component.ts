@@ -10,7 +10,7 @@ import * as EasyMDE from 'easymde';
   selector: 'a-mat-localised-markdown',
   template: `
     <h4>{{ localisedLabel }}</h4>
-    <textarea #easymde></textarea>
+    <textarea #easymde [attr.data-allors-id]="dataAllorsId" [attr.data-allors-roletype]="dataAllorsRoleType"></textarea>
   `,
   encapsulation: ViewEncapsulation.None,
 })
@@ -33,5 +33,7 @@ export class AllorsMaterialLocalisedMarkdownComponent extends LocalisedRoleField
     this.easyMDE.codemirror.on('change', () => {
       this.localisedText = this.easyMDE.value();
     });
+
+    this.elementRef.nativeElement.easyMDE = this.easyMDE;
   }
 }

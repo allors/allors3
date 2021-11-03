@@ -9,7 +9,7 @@ import * as EasyMDE from 'easymde';
   selector: 'a-mat-markdown',
   template: `
     <h4>{{ label }}</h4>
-    <textarea #easymde></textarea>
+    <textarea #easymde [attr.data-allors-id]="dataAllorsId" [attr.data-allors-roletype]="dataAllorsRoleType"></textarea>
   `,
   encapsulation: ViewEncapsulation.None,
 })
@@ -35,5 +35,7 @@ export class AllorsMaterialMarkdownComponent extends RoleField implements AfterV
     this.easyMDE.codemirror.on('change', () => {
       this.model = this.easyMDE.value();
     });
+
+    this.elementRef.nativeElement.easyMDE = this.easyMDE;
   }
 }

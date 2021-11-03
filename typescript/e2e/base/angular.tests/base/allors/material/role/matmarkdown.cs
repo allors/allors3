@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System;
+
 namespace Components
 {
     using System.Diagnostics.CodeAnalysis;
@@ -12,8 +14,10 @@ namespace Components
     public class MatMarkdown : SelectorComponent
     {
         public MatMarkdown(IWebDriver driver, MetaPopulation m, RoleType roleType, params string[] scopes)
-        : base(driver, m) =>
+        : base(driver, m)
+        {
             this.Selector = By.XPath($".//a-mat-markdown{this.ByScopesPredicate(scopes)}//*[@data-allors-roletype='{roleType.RelationType.Tag}']");
+        }
 
         public override By Selector { get; }
 
@@ -28,19 +32,14 @@ namespace Components
 
             set
             {
-                try
-                {
-                    this.Driver.WaitForAngular();
-                    var element = this.Driver.FindElement(this.Selector);
-                    this.ScrollToElement(element);
-                    element.Clear();
-                    element.SendKeys(value);
-                    element.SendKeys(Keys.Tab);
-                }
-                catch
-                {
-                    throw;
-                }
+                this.Driver.WaitForAngular();
+                var element = this.Driver.FindElement(this.Selector);
+
+                var setValue =
+$@"const element = arguments[0];
+element.easyMDE.value('{value}');";
+                var javaScriptExecutor = (IJavaScriptExecutor)this.Driver;
+                javaScriptExecutor.ExecuteScript(setValue, element);
             }
         }
     }

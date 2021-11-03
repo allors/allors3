@@ -28,19 +28,14 @@ namespace Components
 
             set
             {
-                try
-                {
-                    this.Driver.WaitForAngular();
-                    var element = this.Driver.FindElement(this.Selector);
-                    this.ScrollToElement(element);
-                    element.Clear();
-                    element.SendKeys(value);
-                    element.SendKeys(Keys.Tab);
-                }
-                catch
-                {
-                    throw;
-                }
+                this.Driver.WaitForAngular();
+                var element = this.Driver.FindElement(this.Selector);
+ 
+                var setValue =
+$@"const element = arguments[0];
+element.easyMDE.value('{value}');";
+                var javaScriptExecutor = (IJavaScriptExecutor)this.Driver;
+                javaScriptExecutor.ExecuteScript(setValue, element);
             }
         }
     }
