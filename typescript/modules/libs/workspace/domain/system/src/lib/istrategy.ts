@@ -19,6 +19,8 @@ export interface IStrategy {
 
   hasChanges: boolean;
 
+  isDeleted: boolean;
+
   delete(): void;
 
   reset(): void;

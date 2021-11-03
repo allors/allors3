@@ -235,6 +235,8 @@ export abstract class Session implements ISession {
     return null;
   }
 
+  abstract onDelete(strategy: Strategy);
+
   public getObject(id: number): IObject {
     if (id == 0) {
       return null;
@@ -290,6 +292,12 @@ export abstract class Session implements ISession {
     }
 
     strategies.add(object);
+  }
+
+  protected removeObject(object: IObject) {
+    this.objectByWorkspaceId.delete(object.id);
+    const strategies = this.objectsByClass.get(object.strategy.cls);
+    strategies?.delete(object);
   }
 
   onDatabasePushResponseNew(workspaceId: number, databaseId: number) {

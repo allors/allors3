@@ -22,6 +22,10 @@ export abstract class Strategy implements IStrategy {
     this.rangeId = id;
   }
 
+  get isDeleted() {
+    return this.id === 0;
+  }
+
   get version(): number {
     switch (this.cls.origin) {
       case Origin.Session:
@@ -44,7 +48,42 @@ export abstract class Strategy implements IStrategy {
   }
 
   delete(): void {
-    // TODO:
+    if (this.cls.origin === Origin.Database && !this.isNew) {
+      throw new Error('Existing database objects can not be deleted');
+    }
+
+    for (const roleType of this.cls.roleTypes) {
+      if (roleType.objectType.isUnit) {
+        this.setUnitRole(roleType, null);
+      } else if (roleType.isOne) {
+        this.setCompositeRole(roleType, null);
+      } else {
+        this.setCompositesRole(roleType, null);
+      }
+    }
+
+    for (const associationType of this.cls.associationTypes) {
+      const roleType = associationType.roleType;
+      if (associationType.isOne) {
+        const association = this.getCompositeAssociation(associationType);
+        if (roleType.isOne) {
+          association?.strategy.setCompositeRole(roleType, null);
+        } else {
+          association?.strategy.removeCompositesRole(roleType, this.object);
+        }
+      } else {
+        const association = this.getCompositesAssociation(associationType);
+        if (roleType.isOne) {
+          association?.forEach((v) => v.strategy.setCompositeRole(roleType, null));
+        } else {
+          association?.forEach((v) => v.strategy.removeCompositesRole(roleType, this.object));
+        }
+      }
+    }
+
+    this.session.onDelete(this);
+
+    this.id = 0;
   }
 
   reset(): void {

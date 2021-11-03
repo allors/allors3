@@ -12,4 +12,8 @@ export class PushToWorkspaceTracker {
   public onChanged(state: WorkspaceOriginState) {
     (this.changed ??= new Set<WorkspaceOriginState>()).add(state);
   }
+
+  onDelete(object: IObject) {
+    this.created?.delete(object);
+  }
 }

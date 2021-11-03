@@ -15,4 +15,8 @@ export class PushToDatabaseTracker {
       (this.changed ??= new Set<DatabaseOriginState>()).add(state);
     }
   }
+
+  onDelete(object: IObject) {
+    this.created?.delete(object);
+  }
 }

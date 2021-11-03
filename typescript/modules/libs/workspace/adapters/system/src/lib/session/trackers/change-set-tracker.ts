@@ -23,4 +23,8 @@ export class ChangeSetTracker {
   public onWorkspaceChanged(state: WorkspaceOriginState) {
     (this.workspaceOriginStates ??= new Set()).add(state);
   }
+
+  onDelete(object: IObject) {
+    this.created?.delete(object);
+  }
 }

@@ -13,6 +13,7 @@ import { DatabaseOriginState } from './originstate/database-origin-state';
 import { Strategy } from './strategy';
 
 export class Session extends SystemSession {
+  
   database: DatabaseConnection;
 
   constructor(workspace: Workspace) {
@@ -35,6 +36,19 @@ export class Session extends SystemSession {
 
     this.changeSetTracker.onCreated(strategy.object);
     return strategy.object as T;
+  }
+
+  onDelete(strategy: Strategy) {
+    this.removeObject(strategy.object);
+
+    if (strategy.cls.origin != Origin.Session) {
+      this.pushToWorkspaceTracker.onDelete(strategy.object);
+      if (strategy.cls.origin == Origin.Database) {
+        this.pushToDatabaseTracker.onDelete(strategy.object);
+      }
+    }
+
+    this.changeSetTracker.onDelete(strategy.object);
   }
 
   instantiateDatabaseStrategy(id: number): void {
