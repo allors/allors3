@@ -27,6 +27,21 @@ namespace Allors.Database.Domain.TestPopulation
             return @this;
         }
 
+        public static RequestItemBuilder WithDefaults(this RequestItemBuilder @this, Organisation internalOrganisation, UnifiedGood finishedGood)
+        {
+            var faker = @this.Transaction.Faker();
+
+            @this.WithComment(faker.Lorem.Sentence())
+                .WithInternalComment(faker.Lorem.Sentence())
+                .WithMaximumAllowedPrice(faker.Random.UInt())
+                .WithQuantity(1)
+                .WithProduct(finishedGood)
+                .WithRequiredByDate(@this.Transaction.Now().AddDays(7))
+                .WithSerialisedItem(finishedGood.SerialisedItems.FirstOrDefault());
+
+            return @this;
+        }
+
         public static RequestItemBuilder WithNonSerializedDefaults(this RequestItemBuilder @this, Organisation internalOrganisation)
         {
             var faker = @this.Transaction.Faker();

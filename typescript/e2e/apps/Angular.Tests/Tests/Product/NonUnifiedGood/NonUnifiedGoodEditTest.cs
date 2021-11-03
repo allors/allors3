@@ -6,7 +6,7 @@
 using libs.workspace.angular.apps.src.lib.objects.good.list;
 using libs.workspace.angular.apps.src.lib.objects.nonunifiedgood.overview;
 
-namespace Tests.NonUnifiedGood
+namespace Tests.NonUnifiedGoodTests
 {
     using System.Linq;
     using Allors.Database.Domain;

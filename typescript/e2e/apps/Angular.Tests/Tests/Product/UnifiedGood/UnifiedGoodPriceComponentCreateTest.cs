@@ -6,7 +6,7 @@
 using libs.workspace.angular.apps.src.lib.objects.unifiedgood.list;
 using libs.workspace.angular.apps.src.lib.objects.unifiedgood.overview;
 
-namespace Tests.UnifiedGood
+namespace Tests.UnifiedGoodTests
 {
     using System;
     using System.Linq;

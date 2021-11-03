@@ -88,6 +88,16 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
         value = null;
       }
 
+      if (this.roleType.objectType.tag === UnitTags.Integer) {
+        if (value != null && !Number.isInteger(value)) {
+          try {
+            value = Number.parseInt(value);
+          } catch {
+            value = null;
+          }
+        }
+      }
+
       if (this.roleType.objectType.tag === UnitTags.Decimal) {
         value = (value as string)?.replace(',', '.');
       }
