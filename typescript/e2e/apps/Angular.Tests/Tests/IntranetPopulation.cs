@@ -176,7 +176,8 @@ namespace Tests
             var faker = this.Session.Faker();
 
             allors.CreateEmployee("letmein", faker);
-            allors.CreateAdministrator("letmein", faker);
+            var jane = allors.CreateAdministrator("letmein", faker);
+            jane.UserName = "jane@example.com";
             var allorsB2BCustomer = allors.CreateB2BCustomer(this.Session.Faker());
             var allorsB2CCustomer = allors.CreateB2CCustomer(this.Session.Faker());
             allors.CreateSupplier(this.Session.Faker());
