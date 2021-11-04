@@ -18,11 +18,11 @@ namespace Tests.SalesInvoiceTests
 
     [Collection("Test collection")]
     [Trait("Category", "Relation")]
-    public class RepeatingSalesInvoiceCreateTest : Test, IClassFixture<Fixture>
+    public class SalesTermCreateTest : Test, IClassFixture<Fixture>
     {
         private readonly SalesInvoiceListComponent salesInvoiceListPage;
 
-        public RepeatingSalesInvoiceCreateTest(Fixture fixture) : base(fixture)
+        public SalesTermCreateTest(Fixture fixture) : base(fixture)
         {
             this.Login();
             this.salesInvoiceListPage = this.Sidenav.NavigateToSalesInvoices();
@@ -31,41 +31,38 @@ namespace Tests.SalesInvoiceTests
         [Fact]
         public void Create()
         {
-            var before = new RepeatingSalesInvoices(this.Transaction).Extent().ToArray();
+            var before = new SalesTerms(this.Transaction).Extent().ToArray();
 
             var expectedSalesInvoice = new SalesInvoices(this.Transaction).Extent().FirstOrDefault();
-            var expected = new RepeatingSalesInvoiceBuilder(this.Transaction).WithDefaults(expectedSalesInvoice).Build();
+            var expected = new OrderTermBuilder(this.Transaction).WithDefaults().Build();
 
             this.Transaction.Derive();
 
-            var expectedFrequency = expected.Frequency;
-            var expectedDayOfWeek = expected.DayOfWeek;
-            var expectedNextExecutionDate = expected.NextExecutionDate;
+            var expectedTermType = expected.TermType;
+            var expectedTermValue = expected.TermValue;
 
             this.salesInvoiceListPage.Table.DefaultAction(expectedSalesInvoice);
             var salesInvoiceDetails = new SalesInvoiceOverviewComponent(this.salesInvoiceListPage.Driver, this.M);
-            var repeatingSalesInvoiceItemDetail = salesInvoiceDetails.RepeatingsalesinvoiceOverviewPanel.Click().CreateRepeatingSalesInvoice();
+            var salesOrderTermDetail = salesInvoiceDetails.SalestermOverviewPanel.Click().CreateOrderTerm();
 
-            repeatingSalesInvoiceItemDetail
-                .Frequency.Select(expected.Frequency)
-                .DayOfWeek.Select(expected.DayOfWeek)
-                .NextExecutionDate.Set(expected.NextExecutionDate);
+            salesOrderTermDetail
+                .TermType.Select(expected.TermType)
+                .TermValue.Set(expected.TermValue);
 
             this.Transaction.Rollback();
-            repeatingSalesInvoiceItemDetail.SAVE.Click();
+            salesOrderTermDetail.SAVE.Click();
 
             this.Driver.WaitForAngular();
             this.Transaction.Rollback();
 
-            var after = new RepeatingSalesInvoices(this.Transaction).Extent().ToArray();
+            var after = new SalesTerms(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
-            var repeatingSalesInvoice = after.Except(before).First();
+            var salesInvoice = after.Except(before).First();
 
-            Assert.Equal(expectedFrequency, repeatingSalesInvoice.Frequency);
-            Assert.Equal(expectedDayOfWeek, repeatingSalesInvoice.DayOfWeek);
-            Assert.Equal(expectedNextExecutionDate, repeatingSalesInvoice.NextExecutionDate);
+            Assert.Equal(expectedTermType, salesInvoice.TermType);
+            Assert.Equal(expectedTermValue, salesInvoice.TermValue);
         }
     }
 }
