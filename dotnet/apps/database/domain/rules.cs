@@ -389,6 +389,7 @@ namespace Allors.Database.Domain
                 new WorkEffortInventoryAssignmentCostOfGoodsSoldRule(m),
                 new WorkEffortInventoryAssignmentDerivedBillableQuantityRule(m),
                 new WorkEffortInventoryAssignmentUnitSellingPriceRule(m),
+                new WorkEffortInvoiceItemDeniedPermissionRule(m),
                 new WorkEffortPartyAssignmentRule(m),
                 new WorkEffortPurchaseOrderItemAssignmentPurchaseOrderItemRule(m),
                 new WorkEffortPurchaseOrderItemAssignmentRule(m),

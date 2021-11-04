@@ -686,16 +686,15 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Transaction)
+            var workEffortInvoiceItem = new WorkEffortInvoiceItemBuilder(this.Transaction)
                                         .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Time)
-                                        .WithQuantity(1)
                                         .WithDescription("desc")
-                                        .WithAssignedUnitPrice(1)
+                                        .WithAmount(1)
                                         .Build();
 
-            new WorkEffortSalesInvoiceItemAssignmentBuilder(this.Transaction)
+            new WorkEffortInvoiceItemAssignmentBuilder(this.Transaction)
                 .WithAssignment(workOrder)
-                .WithSalesInvoiceItem(salesInvoiceItem)
+                .WithWorkEffortInvoiceItem(workEffortInvoiceItem)
                 .Build();
 
             this.Transaction.Derive();
@@ -709,7 +708,6 @@ namespace Allors.Database.Domain.Tests
             var salesInvoice = customer.SalesInvoicesWhereBillToCustomer.First();
 
             Assert.Single(salesInvoice.InvoiceItems);
-            Assert.NotEqual(salesInvoiceItem, salesInvoice.SalesInvoiceItems.FirstOrDefault());
             Assert.Equal(1, salesInvoice.GrandTotal);
         }
 
@@ -1390,74 +1388,47 @@ namespace Allors.Database.Domain.Tests
         public WorkEffortTotalOtherRevenueRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void ChangedWorkEffortSalesInvoiceItemAssignmentAssignmentDeriveTotalOtherRevenue()
+        public void ChangedWorkEffortInvoiceItemAssignmentAssignmentDeriveTotalOtherRevenue()
         {
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
             this.Derive();
 
-            var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Transaction)
+            var workEffortInvoiceItem = new WorkEffortInvoiceItemBuilder(this.Transaction)
                 .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Time)
-                .WithQuantity(1)
                 .WithDescription("desc")
-                .WithAssignedUnitPrice(1)
+                .WithAmount(1)
                 .Build();
 
-            var workEffortSalesInvoiceItemAssignment = new WorkEffortSalesInvoiceItemAssignmentBuilder(this.Transaction)
-                .WithSalesInvoiceItem(salesInvoiceItem)
+            var workEffortInvoiceItemAssignment = new WorkEffortInvoiceItemAssignmentBuilder(this.Transaction)
+                .WithWorkEffortInvoiceItem(workEffortInvoiceItem)
                 .Build();
             this.Derive();
 
-            workEffortSalesInvoiceItemAssignment.Assignment = workEffort;
+            workEffortInvoiceItemAssignment.Assignment = workEffort;
             this.Derive();
 
             Assert.Equal(1, workEffort.TotalOtherRevenue);
         }
 
         [Fact]
-        public void ChangedWorkEffortSalesInvoiceItemAssignmentSalesInvoiceItemQuantityDeriveTotalOtherRevenue()
+        public void ChangedWorkEffortInvoiceItemAssignmentSalesInvoiceItemAmountDeriveTotalOtherRevenue()
         {
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
             this.Derive();
 
-            var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Transaction)
+            var workEffortInvoiceItem = new WorkEffortInvoiceItemBuilder(this.Transaction)
                 .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Time)
-                .WithQuantity(1)
                 .WithDescription("desc")
-                .WithAssignedUnitPrice(1)
+                .WithAmount(1)
                 .Build();
 
-            new WorkEffortSalesInvoiceItemAssignmentBuilder(this.Transaction)
-                .WithSalesInvoiceItem(salesInvoiceItem)
+            new WorkEffortInvoiceItemAssignmentBuilder(this.Transaction)
+                .WithWorkEffortInvoiceItem(workEffortInvoiceItem)
                 .WithAssignment(workEffort)
                 .Build();
             this.Derive();
 
-            salesInvoiceItem.Quantity = 2;
-            this.Derive();
-
-            Assert.Equal(2, workEffort.TotalOtherRevenue);
-        }
-
-        [Fact]
-        public void ChangedWorkEffortSalesInvoiceItemAssignmentSalesInvoiceItemAssignedUnitPriceDeriveTotalOtherRevenue()
-        {
-            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
-            this.Derive();
-
-            var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Transaction)
-                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Time)
-                .WithQuantity(1)
-                .WithDescription("desc")
-                .WithAssignedUnitPrice(1)
-                .Build();
-
-            new WorkEffortSalesInvoiceItemAssignmentBuilder(this.Transaction)
-                .WithSalesInvoiceItem(salesInvoiceItem)
-                .WithAssignment(workEffort)
-                .Build();
-            this.Derive();
-
-            salesInvoiceItem.AssignedUnitPrice = 3;
+            workEffortInvoiceItem.Amount= 3;
             this.Derive();
 
             Assert.Equal(3, workEffort.TotalOtherRevenue);
@@ -1596,20 +1567,19 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedWorkEffortSalesInvoiceItemAssignmentAssignmentDeriveGrandTotal()
+        public void ChangedWorkEffortInvoiceItemAssignmentAssignmentDeriveGrandTotal()
         {
             var workEffort = new WorkTaskBuilder(this.Transaction).Build();
             this.Derive();
 
-            var salesInvoiceItem = new SalesInvoiceItemBuilder(this.Transaction)
+            var workEffortInvoiceItem = new WorkEffortInvoiceItemBuilder(this.Transaction)
                 .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Time)
-                .WithQuantity(1)
                 .WithDescription("desc")
-                .WithAssignedUnitPrice(1)
+                .WithAmount(1)
                 .Build();
 
-            var salesInvoiceItemAssignment = new WorkEffortSalesInvoiceItemAssignmentBuilder(this.Transaction)
-                .WithSalesInvoiceItem(salesInvoiceItem)
+            var salesInvoiceItemAssignment = new WorkEffortInvoiceItemAssignmentBuilder(this.Transaction)
+                .WithWorkEffortInvoiceItem(workEffortInvoiceItem)
                 .Build();
             this.Derive();
 

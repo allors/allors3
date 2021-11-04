@@ -11,7 +11,7 @@ namespace Allors.Repository
     #region Allors
     [Id("f3f761ef-1081-4376-98d9-20d4730e3d58")]
     #endregion
-    public partial class WorkEffortSalesInvoiceItemAssignment : Deletable, DelegatedAccessObject
+    public partial class WorkEffortInvoiceItemAssignment : Deletable, DelegatedAccessObject
     {
         #region inherited properties
 
@@ -27,7 +27,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace(Default)]
-        public SalesInvoiceItem SalesInvoiceItem { get; set; }
+        public WorkEffortInvoiceItem WorkEffortInvoiceItem { get; set; }
 
         #region Allors
         [Id("b36ea9c8-c20a-4d4a-a90e-0f4dd73e7ca5")]

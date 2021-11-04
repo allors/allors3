@@ -41,16 +41,8 @@ namespace Allors.Database.Domain
             }
         }
 
-        public bool IsDeletable
-        {
-            get
-            {
-                var rfp = this.SalesInvoiceItemState.Equals(new SalesInvoiceItemStates(this.Strategy.Transaction).ReadyForPosting);
-                var workEffortState = this.WorkEffortSalesInvoiceItemAssignmentWhereSalesInvoiceItem?.Assignment?.WorkEffortState;
-
-                return rfp && (workEffortState == null || (!workEffortState.IsCompleted && !workEffortState.IsFinished));
-            }
-        }
+        public bool IsDeletable =>
+            this.SalesInvoiceItemState.Equals(new SalesInvoiceItemStates(this.Strategy.Transaction).ReadyForPosting);
 
         public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
         {
@@ -130,11 +122,6 @@ namespace Allors.Database.Domain
             {
                 billing.ServiceEntry.DerivationTrigger = Guid.NewGuid();
                 billing.Delete();
-            }
-
-            if (this.ExistWorkEffortSalesInvoiceItemAssignmentWhereSalesInvoiceItem)
-            {
-                this.WorkEffortSalesInvoiceItemAssignmentWhereSalesInvoiceItem.Delete();
             }
         }
 

@@ -283,6 +283,9 @@ export { WorkEffortFAAssignmentOverviewPanelComponent } from './lib/objects/work
 export { WorkEffortInventoryAssignmentEditComponent } from './lib/objects/workeffortinventoryassignment/edit/workeffortinventoryassignment-edit.component';
 export { WorkEffortInventoryAssignmentOverviewPanelComponent } from './lib/objects/workeffortinventoryassignment/overview/panel/workeffortinventoryassignment-overview-panel.component';
 
+export { WorkEffortInvoiceItemAssignmentEditComponent } from './lib/objects/workeffortinvoiceassignment/edit/workeffortinvoiceassignment-edit.component';
+export { WorkEffortInvoiceItemAssignmentOverviewPanelComponent } from './lib/objects/workeffortinvoiceassignment/overview/panel/workeffortinvoiceassignment-overview-panel.component';
+
 export { WorkEffortPartyAssignmentEditComponent } from './lib/objects/workeffortpartyassignment/edit/workeffortpartyassignment-edit.component';
 export { WorkEffortPartyAssignmentOverviewPanelComponent } from './lib/objects/workeffortpartyassignment/overview/panel/workeffortpartyassignment-overview-panel.component';
 

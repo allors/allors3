@@ -12,12 +12,12 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class SalesInvoiceItemDeniedPermissionRule : Rule
+    public class WorkEffortInvoiceItemDeniedPermissionRule : Rule
     {
-        public SalesInvoiceItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("c7ede487-9920-4e47-bb72-1b8f27bdd552")) =>
+        public WorkEffortInvoiceItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("8e46be35-c9ba-4a90-a54e-e07f0ee8fae4")) =>
             this.Patterns = new Pattern[]
         {
-            m.SalesInvoiceItem.RolePattern(v => v.TransitionalRevocations),
+            m.WorkTask.RolePattern(v => v.TransitionalRevocations, v => v.WorkEffortInvoiceItemAssignmentsWhereAssignment.WorkEffortInvoiceItemAssignment.WorkEffortInvoiceItem),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -25,11 +25,9 @@ namespace Allors.Database.Domain
             var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
-            foreach (var @this in matches.Cast<SalesInvoiceItem>())
+            foreach (var @this in matches.Cast<WorkEffortInvoiceItem>())
             {
-                @this.Revocations = @this.TransitionalRevocations;
-
-                var revocation = new Revocations(@this.Strategy.Transaction).SalesInvoiceItemDeleteRevocation;
+                var revocation = new Revocations(@this.Strategy.Transaction).WorkEffortInvoiceItemDeleteRevocation;
                 if (@this.IsDeletable)
                 {
                     @this.RemoveRevocation(revocation);
