@@ -330,6 +330,9 @@ namespace Tests
             var salesOrder_3 = allors.CreateInternalSalesOrder(faker);
 
             new SalesInvoiceBuilder(this.Session).WithSalesExternalB2BInvoiceDefaults(allors).Build();
+            //new SalesInvoiceBuilder(this.Session).WithCreditNoteDefaults(allors).Build();
+
+            this.Session.Derive();
 
             new SupplierOfferingBuilder(this.Session)
                 .WithPart(good_1)

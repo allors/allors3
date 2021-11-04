@@ -60,7 +60,7 @@ namespace Tests.CustomerRelationshipTests
 
             var actual = after.Except(before).First();
 
-            Assert.Equal(expectedFromDate, actual.FromDate);
+            Assert.Equal(expectedFromDate.Date, actual.FromDate.Date);
         }
     }
 }
