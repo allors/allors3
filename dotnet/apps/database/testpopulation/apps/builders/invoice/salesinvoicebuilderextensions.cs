@@ -146,7 +146,8 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var faker = @this.Transaction.Faker();
 
-            var customer = faker.Random.ListItem(internalOrganisation.ActiveCustomers.ToArray());
+            var customer = faker.Random.ListItem(internalOrganisation.ActiveCustomers.OfType<Organisation>()
+                .Where(v => v.ExistOrganisationContactRelationshipsWhereOrganisation).ToArray());
 
             var salesInvoiceItem_Default = new SalesInvoiceItemBuilder(@this.Transaction).WithDefaults().Build();
             var salesInvoiceItem_Product = new SalesInvoiceItemBuilder(@this.Transaction).WithProductItemDefaults().Build();
@@ -165,12 +166,12 @@ namespace Allors.Database.Domain.TestPopulation
                 .WithBillToCustomer(customer.CurrentContacts.FirstOrDefault())
                 .WithAssignedBillToContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
                 .WithBillToContactPerson(customer.CurrentContacts.FirstOrDefault())
-                .WithBillToEndCustomer(customer)
-                .WithAssignedBillToEndCustomerContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
-                .WithBillToEndCustomerContactPerson(customer.CurrentContacts.FirstOrDefault())
-                .WithShipToEndCustomer(customer)
-                .WithAssignedShipToEndCustomerAddress(customer.ShippingAddress)
-                .WithShipToEndCustomerContactPerson(customer.CurrentContacts.FirstOrDefault())
+                //.WithBillToEndCustomer(customer)
+                //.WithAssignedBillToEndCustomerContactMechanism(customer.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
+                //.WithBillToEndCustomerContactPerson(customer.CurrentContacts.FirstOrDefault())
+                //.WithShipToEndCustomer(customer)
+                //.WithAssignedShipToEndCustomerAddress(customer.ShippingAddress)
+                //.WithShipToEndCustomerContactPerson(customer.CurrentContacts.FirstOrDefault())
                 .WithShipToCustomer(customer)
                 .WithAssignedShipToAddress(customer.ShippingAddress)
                 .WithShipToContactPerson(customer.CurrentContacts.FirstOrDefault())
@@ -184,7 +185,8 @@ namespace Allors.Database.Domain.TestPopulation
                 .WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaultsForPaymentNetDays().Build())
                 .WithSalesTerm(new IncoTermBuilder(@this.Transaction).WithDefaults().Build())
                 .WithSalesTerm(new InvoiceTermBuilder(@this.Transaction).WithDefaults().Build())
-                .WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build());
+                .WithSalesTerm(new OrderTermBuilder(@this.Transaction).WithDefaults().Build())
+                .WithInvoiceNumber(faker.Random.AlphaNumeric(4));
 
             return @this;
         }
