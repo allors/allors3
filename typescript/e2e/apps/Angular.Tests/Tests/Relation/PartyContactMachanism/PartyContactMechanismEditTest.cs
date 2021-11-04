@@ -27,21 +27,6 @@ namespace Tests.PartyContactMachanismTests
         public PartyContactMechanismEditTest(Fixture fixture)
             : base(fixture)
         {
-            //var person = new People(this.Transaction).Extent().FirstOrDefault();
-
-            //var postalAddress = new PostalAddressBuilder(this.Transaction)
-            //    .WithAddress1("Haverwerf 15")
-            //    .WithLocality("city")
-            //    .WithPostalCode("1111")
-            //    .WithCountry(new Countries(this.Transaction).FindBy(M.Country.IsoCode, "BE"))
-            //    .Build();
-
-            //this.editPartyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(postalAddress).Build();
-            //person.AddPartyContactMechanism(this.editPartyContactMechanism);
-
-            //this.Transaction.Derive();
-            //this.Transaction.Commit();
-
             this.Login();
             this.people = this.Sidenav.NavigateToPeople();
         }
@@ -49,8 +34,6 @@ namespace Tests.PartyContactMachanismTests
         [Fact]
         public void Edit()
         {
-            //var country = new Countries(this.Session).FindBy(M.Country.IsoCode, "NL");
-
             var before = new PartyContactMechanisms(this.Transaction).Extent().ToArray();
 
             var person = new People(this.Transaction).Extent().FirstOrDefault();
