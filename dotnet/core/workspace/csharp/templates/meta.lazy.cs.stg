@@ -79,7 +79,7 @@ $meta.Interfaces:{interface|$define_interface(interface)$}; separator="\n"$
 define_interface(interface) ::= <<
     public class Lazy$interface.SingularName$ : Interface, $interface.SingularName$ {
 
-$interface.WorkspaceSubtypesByWorkspaceName.(workspaceName):{subtype|        public $subtype.SingularName$ As$subtype.SingularName$ { get;  internal set;\}}; separator="\n"$
+$interface.WorkspaceSubtypesByWorkspaceName.(workspaceName):{subtype|        public $subtype.SingularName$ As$subtype.SingularName$ => ((M)this.MetaPopulation).$subtype.SingularName$;}; separator="\n"$
 
 $interface.WorkspaceExclusiveMethodTypesByWorkspaceName.(workspaceName):{methodType|        public IMethodType $methodType.Name$ { get; \} = new MethodType();}; separator="\n"$
 $interface.WorkspaceInheritedMethodTypesByWorkspaceName.(workspaceName):{methodType|        public IMethodType $methodType.Name$ { get; internal set; \}}; separator="\n"$

@@ -402,7 +402,7 @@ namespace Allors.Workspace.Adapters
             }
 
             var role = (IRange<long>)this.Record?.GetRole(roleType);
-            return role == null ? EmptyRange<Strategy>.Instance : this.Ranges.Load(role.Select(v => this.Session.GetStrategy(v)));
+            return role == null ? EmptyRange<Strategy>.Instance : this.Ranges.Load(role.Select(v => this.Session.GetStrategy(v)).Where(v => v != null));
         }
         private bool SameCompositeRole(IRoleType roleType, Strategy role)
         {
