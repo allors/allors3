@@ -16,7 +16,7 @@ import { IObject } from '@allors/workspace/domain/system';
 export class ProductIdentificationEditComponent extends TestScope implements OnInit, OnDestroy {
   public m: M;
 
-  public title = 'Edit IGood Identification';
+  public title = 'Edit Good Identification';
 
   public container: IObject;
   public object: ProductIdentification;
