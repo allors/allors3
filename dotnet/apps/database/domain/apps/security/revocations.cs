@@ -46,6 +46,7 @@ namespace Allors.Database.Domain
         public static readonly Guid SerialisedItemDeleteRevocationId = new Guid("df9751a6-50e5-41d7-bbc1-befaf38b38ec");
         public static readonly Guid StatementOfWorkDeleteRevocationId = new Guid("a6d8c7dc-c849-4850-a37c-696bba468fb5");
         public static readonly Guid UnifiedGoodDeleteRevocationId = new Guid("c742b7f9-2310-4272-ab89-25898a7db3cc");
+        public static readonly Guid WorkEffortInvoiceItemDeleteRevocationId = new Guid("81128223-025b-48fc-806f-caf3201cb595");
         public static readonly Guid WorkTaskCompleteRevocationId = new Guid("0ced8924-4efd-4f40-9055-22804ac51b39");
         public static readonly Guid WorkTaskInvoiceRevocationId = new Guid("9d200651-a109-4462-bf99-8a70c3c4afb3");
         public static readonly Guid WorkTaskReviseRevocationId = new Guid("d7367f95-dfe9-467c-a84f-8fad58374d57");
@@ -122,6 +123,8 @@ namespace Allors.Database.Domain
 
         public Revocation UnifiedGoodDeleteRevocation => this.Cache[UnifiedGoodDeleteRevocationId];
 
+        public Revocation WorkEffortInvoiceItemDeleteRevocation => this.Cache[WorkEffortInvoiceItemDeleteRevocationId];
+
         public Revocation WorkTaskCompleteRevocation => this.Cache[WorkTaskCompleteRevocationId];
 
         public Revocation WorkTaskInvoiceRevocation => this.Cache[WorkTaskInvoiceRevocationId];
@@ -168,6 +171,7 @@ namespace Allors.Database.Domain
             merge(SerialisedItemDeleteRevocationId, _ => { });
             merge(StatementOfWorkDeleteRevocationId, _ => { });
             merge(UnifiedGoodDeleteRevocationId, _ => { });
+            merge(WorkEffortInvoiceItemDeleteRevocationId, _ => { });
             merge(WorkTaskCompleteRevocationId, _ => { });
             merge(WorkTaskInvoiceRevocationId, _ => { });
             merge(WorkTaskReviseRevocationId, _ => { });

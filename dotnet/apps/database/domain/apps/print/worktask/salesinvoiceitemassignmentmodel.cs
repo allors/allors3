@@ -9,12 +9,12 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
 
     public class SalesInvoiceItemAssignmentModel
     {
-        public SalesInvoiceItemAssignmentModel(WorkEffortSalesInvoiceItemAssignment salesInvoiceItemAssignment)
+        public SalesInvoiceItemAssignmentModel(WorkEffortInvoiceItemAssignment workEffortInvoiceItemAssignment)
         {
-            this.Description = salesInvoiceItemAssignment.SalesInvoiceItem.Description;
-            this.Quantity = salesInvoiceItemAssignment.SalesInvoiceItem.Quantity;
-            this.UnitSellingPrice = salesInvoiceItemAssignment.SalesInvoiceItem.AssignedUnitPrice.Value.ToString("N2", new CultureInfo("nl-BE"));
-            this.SellingPrice = Rounder.RoundDecimal(this.Quantity * salesInvoiceItemAssignment.SalesInvoiceItem.AssignedUnitPrice.Value, 2).ToString("N2", new CultureInfo("nl-BE"));
+            this.Description = workEffortInvoiceItemAssignment.WorkEffortInvoiceItem.Description;
+            this.Quantity = 1;
+            this.UnitSellingPrice = workEffortInvoiceItemAssignment.WorkEffortInvoiceItem.Amount.ToString("N2", new CultureInfo("nl-BE"));
+            this.SellingPrice = Rounder.RoundDecimal(this.Quantity * workEffortInvoiceItemAssignment.WorkEffortInvoiceItem.Amount, 2).ToString("N2", new CultureInfo("nl-BE"));
         }
 
         public string Description { get; }

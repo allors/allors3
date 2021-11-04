@@ -16,16 +16,15 @@ namespace Allors.Database.Domain
         public WorkEffortTotalOtherRevenueRule(MetaPopulation m) : base(m, new Guid("32ca5f8e-2b89-4a7a-92c6-51f921c67579")) =>
             this.Patterns = new Pattern[]
             {
-                m.WorkEffortSalesInvoiceItemAssignment.RolePattern(v => v.Assignment, v => v.Assignment),
-                m.SalesInvoiceItem.RolePattern(v => v.AssignedUnitPrice, v => v.WorkEffortSalesInvoiceItemAssignmentWhereSalesInvoiceItem.WorkEffortSalesInvoiceItemAssignment.Assignment),
-                m.SalesInvoiceItem.RolePattern(v => v.Quantity, v => v.WorkEffortSalesInvoiceItemAssignmentWhereSalesInvoiceItem.WorkEffortSalesInvoiceItemAssignment.Assignment),
+                m.WorkEffortInvoiceItemAssignment.RolePattern(v => v.Assignment, v => v.Assignment),
+                m.WorkEffortInvoiceItem.RolePattern(v => v.Amount, v => v.WorkEffortInvoiceItemAssignmentWhereWorkEffortInvoiceItem.WorkEffortInvoiceItemAssignment.Assignment),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<WorkEffort>())
             {
-                @this.TotalOtherRevenue = Rounder.RoundDecimal(@this.WorkEffortSalesInvoiceItemAssignmentsWhereAssignment.Where(v => v.SalesInvoiceItem.AssignedUnitPrice.HasValue).Sum(v => v.SalesInvoiceItem.Quantity * v.SalesInvoiceItem.AssignedUnitPrice.Value), 2);
+                @this.TotalOtherRevenue = Rounder.RoundDecimal(@this.WorkEffortInvoiceItemAssignmentsWhereAssignment.Sum(v => v.WorkEffortInvoiceItem.Amount), 2);
             }
         }
     }

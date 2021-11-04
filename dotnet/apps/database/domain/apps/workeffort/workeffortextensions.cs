@@ -163,15 +163,19 @@ namespace Allors.Database.Domain
                     .Build();
             }
 
-            foreach (var workEffortSalesInvoiceItemAssignment in @this.WorkEffortSalesInvoiceItemAssignmentsWhereAssignment)
+            foreach (var workEffortInvoiceItemAssignment in @this.WorkEffortInvoiceItemAssignmentsWhereAssignment)
             {
-                var clone = workEffortSalesInvoiceItemAssignment.SalesInvoiceItem.Clone();
+                var invoiceItem = new SalesInvoiceItemBuilder(transaction)
+                    .WithInvoiceItemType(workEffortInvoiceItemAssignment.WorkEffortInvoiceItem.InvoiceItemType)
+                    .WithAssignedUnitPrice(workEffortInvoiceItemAssignment.WorkEffortInvoiceItem.Amount)
+                    .WithQuantity(1)
+                    .Build();
 
-                salesInvoice.AddSalesInvoiceItem(clone);
+                salesInvoice.AddSalesInvoiceItem(invoiceItem);
 
                 new WorkEffortBillingBuilder(transaction)
                     .WithWorkEffort(@this)
-                    .WithInvoiceItem(clone)
+                    .WithInvoiceItem(invoiceItem)
                     .Build();
             }
         }
