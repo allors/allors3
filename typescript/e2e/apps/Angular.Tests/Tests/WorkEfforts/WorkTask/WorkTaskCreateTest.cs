@@ -6,7 +6,7 @@
 using libs.workspace.angular.apps.src.lib.objects.customershipment.create;
 using libs.workspace.angular.apps.src.lib.objects.shipment.list;
 
-namespace Tests.WorkEffortInventoryAssignmentTests
+namespace Tests.WorkTaskTests
 {
     using System.Linq;
     using Allors.Database.Domain;
@@ -21,11 +21,11 @@ namespace Tests.WorkEffortInventoryAssignmentTests
 
     [Collection("Test collection")]
     [Trait("Category", "Sales")]
-    public class WorkEffortInventoryAssignmentCreateTest : Test, IClassFixture<Fixture>
+    public class WorkTaskCreateTest : Test, IClassFixture<Fixture>
     {
         private readonly WorkEffortListComponent workEffortListPage;
 
-        public WorkEffortInventoryAssignmentCreateTest(Fixture fixture)
+        public WorkTaskCreateTest(Fixture fixture)
             : base(fixture)
         {
             this.Login();
@@ -35,38 +35,39 @@ namespace Tests.WorkEffortInventoryAssignmentTests
         [Fact]
         public void CreateWithNonSerialisedItem()
         {
-            var before = new WorkEffortInventoryAssignments(this.Transaction).Extent().ToArray();
-            var workEffort = new WorkEfforts(this.Transaction).Extent().First();
+            var before = new WorkTasks(this.Transaction).Extent().ToArray();
             var internalOrganisation = new Organisations(this.Transaction).FindBy(M.Organisation.Name, "Allors BVBA");
 
-            var expected = new WorkEffortInventoryAssignmentBuilder(this.Transaction).WithDefaults(internalOrganisation, workEffort).Build();
+            var expected = new WorkTaskBuilder(this.Transaction).WithScheduledInternalWork(internalOrganisation).Build();
 
             this.Transaction.Derive();
 
-            var expectedQuantity = expected.Quantity;
-            var expectedItem = expected.InventoryItem;
+            var expectedName = expected.Name;
+            var expectedCustomer = expected.Customer;
+            var expectedScheduledStart = expected.ScheduledStart;
 
-            this.workEffortListPage.Table.DefaultAction(workEffort);
-            var workEffortFixedAssestAssignmentComponent = new WorkTaskOverviewComponent(this.workEffortListPage.Driver, this.M).WorkeffortinventoryassignmentOverviewPanel.Click().CreateWorkEffortInventoryAssignment();
-
-            workEffortFixedAssestAssignmentComponent
-                .InventoryItem.Select(expected.InventoryItem)
-                .Quantity.Set(expected.Quantity.ToString());
+            var workTaskCreate = this.workEffortListPage.CreateWorkTask();
+            
+            workTaskCreate
+                .Name.Set(expected.Name)
+                .Customer.Select(expected.Customer.DisplayName())
+                .ScheduledStart.Set(expected.ScheduledStart);
 
             this.Transaction.Rollback();
-            workEffortFixedAssestAssignmentComponent.SAVECLOSE.Click();
+            workTaskCreate.SAVE.Click();
 
             this.Driver.WaitForAngular();
             this.Transaction.Rollback();
 
-            var after = new WorkEffortInventoryAssignments(this.Transaction).Extent().ToArray();
+            var after = new WorkTasks(this.Transaction).Extent().ToArray();
 
             Assert.Equal(after.Length, before.Length + 1);
 
             var actual = after.Except(before).First();
 
-            Assert.Equal(expectedItem, actual.InventoryItem);
-            Assert.Equal(expectedQuantity, actual.Quantity);
+            Assert.Equal(expectedName, actual.Name);
+            Assert.Equal(expectedCustomer, actual.Customer);
+            Assert.Equal(expectedScheduledStart.Date, actual.ScheduledStart.Date);
         }
     }
 }
