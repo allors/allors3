@@ -5,7 +5,7 @@
 
 using System.Linq;
 
-namespace Tests.PartyContactMachanismTests
+namespace Tests.PurchaseInvoiceTests
 {
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;

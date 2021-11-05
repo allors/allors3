@@ -6,7 +6,7 @@
 using System.Linq;
 using libs.workspace.angular.apps.src.lib.objects.person.list;
 
-namespace Tests.PartyContactMachanismTests
+namespace Tests.PartyContactMechanismTests
 {
     using Allors.Database.Domain;
     using Xunit;
