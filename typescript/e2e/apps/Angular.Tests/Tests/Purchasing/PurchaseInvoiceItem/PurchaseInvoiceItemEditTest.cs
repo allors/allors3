@@ -105,5 +105,119 @@ namespace Tests.PurchaseInvoiceItemTests
             Assert.Equal(expectedQuantity, purchaseInvoiceItem.Quantity);
             Assert.Equal(expectedInvoiceItemType, purchaseInvoiceItem.InvoiceItemType);
         }
+
+        [Fact]
+        public void EditWithProduct()
+        {
+            var before = new PurchaseInvoiceItems(this.Transaction).Extent().ToArray();
+
+            var purchaseInvoice = new PurchaseInvoices(this.Transaction).Extent().FirstOrDefault();
+
+            var expected = new PurchaseInvoiceItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
+                .Build();
+
+            this.Transaction.Derive();
+
+            var expectedInvoiceItemType = expected.InvoiceItemType;
+
+
+            this.purchaseInvoices.Table.DefaultAction(purchaseInvoice);
+            var purchaseInvoiceItemDetails = new PurchaseInvoiceOverviewComponent(this.purchaseInvoices.Driver, this.M);
+            var purchaseInvoiceItemDetail = purchaseInvoiceItemDetails.PurchaseinvoiceitemOverviewPanel.Click().CreatePurchaseInvoiceItem();
+
+            purchaseInvoiceItemDetail
+                .InvoiceItemType.Select(expectedInvoiceItemType);
+
+            this.Transaction.Rollback();
+            purchaseInvoiceItemDetail.SAVE.Click();
+
+            this.Driver.WaitForAngular();
+            this.Transaction.Rollback();
+
+            var after = new PurchaseInvoiceItems(this.Transaction).Extent().ToArray();
+
+            Assert.Equal(after.Length, before.Length + 1);
+
+            var purchaseInvoiceItem = after.Except(before).First();
+
+            Assert.Equal(expectedInvoiceItemType, purchaseInvoiceItem.InvoiceItemType);
+        }
+
+        [Fact]
+        public void EditWithService()
+        {
+            var before = new PurchaseInvoiceItems(this.Transaction).Extent().ToArray();
+
+            var purchaseInvoice = new PurchaseInvoices(this.Transaction).Extent().FirstOrDefault();
+
+            var expected = new PurchaseInvoiceItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Service)
+                .Build();
+
+            this.Transaction.Derive();
+
+            var expectedInvoiceItemType = expected.InvoiceItemType;
+
+
+            this.purchaseInvoices.Table.DefaultAction(purchaseInvoice);
+            var purchaseInvoiceItemDetails = new PurchaseInvoiceOverviewComponent(this.purchaseInvoices.Driver, this.M);
+            var purchaseInvoiceItemDetail = purchaseInvoiceItemDetails.PurchaseinvoiceitemOverviewPanel.Click().CreatePurchaseInvoiceItem();
+
+            purchaseInvoiceItemDetail
+                .InvoiceItemType.Select(expectedInvoiceItemType);
+
+            this.Transaction.Rollback();
+            purchaseInvoiceItemDetail.SAVE.Click();
+
+            this.Driver.WaitForAngular();
+            this.Transaction.Rollback();
+
+            var after = new PurchaseInvoiceItems(this.Transaction).Extent().ToArray();
+
+            Assert.Equal(after.Length, before.Length + 1);
+
+            var purchaseInvoiceItem = after.Except(before).First();
+
+            Assert.Equal(expectedInvoiceItemType, purchaseInvoiceItem.InvoiceItemType);
+        }
+
+        [Fact]
+        public void EditWithTime()
+        {
+            var before = new PurchaseInvoiceItems(this.Transaction).Extent().ToArray();
+
+            var purchaseInvoice = new PurchaseInvoices(this.Transaction).Extent().FirstOrDefault();
+
+            var expected = new PurchaseInvoiceItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Time)
+                .Build();
+
+            this.Transaction.Derive();
+
+            var expectedInvoiceItemType = expected.InvoiceItemType;
+
+
+            this.purchaseInvoices.Table.DefaultAction(purchaseInvoice);
+            var purchaseInvoiceItemDetails = new PurchaseInvoiceOverviewComponent(this.purchaseInvoices.Driver, this.M);
+            var purchaseInvoiceItemDetail = purchaseInvoiceItemDetails.PurchaseinvoiceitemOverviewPanel.Click().CreatePurchaseInvoiceItem();
+
+            purchaseInvoiceItemDetail
+                .InvoiceItemType.Select(expectedInvoiceItemType);
+
+            this.Transaction.Rollback();
+            purchaseInvoiceItemDetail.SAVE.Click();
+
+            this.Driver.WaitForAngular();
+            this.Transaction.Rollback();
+
+            var after = new PurchaseInvoiceItems(this.Transaction).Extent().ToArray();
+
+            Assert.Equal(after.Length, before.Length + 1);
+
+            var purchaseInvoiceItem = after.Except(before).First();
+
+            Assert.Equal(expectedInvoiceItemType, purchaseInvoiceItem.InvoiceItemType);
+        }
     }
 }
