@@ -129,16 +129,19 @@ namespace Tests
 
         public virtual void Dispose() => this.DriverManager.Stop();
 
-        public void Login(string userName = null)
+        public Person Login(string userName = null)
         {
+            Person person = null;
             if (string.IsNullOrEmpty(userName))
             {
-                userName = new UserGroups(this.Transaction).Administrators.Members.First().UserName;
+                person = new UserGroups(this.Transaction).Administrators.Members.OfType<Person>().First();
+                userName = person.UserName;
             }
 
             this.Driver.Navigate().GoToUrl(Test.ClientUrl + "/login");
             var login = new LoginComponent(this.Driver, this.M);
             login.Login(userName);
+            return person;
         }
     }
 }

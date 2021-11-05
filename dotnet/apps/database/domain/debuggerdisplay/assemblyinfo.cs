@@ -32,3 +32,4 @@ using static DebuggerDisplayConstants;
 [assembly: DebuggerDisplay(name, Target = typeof(TimeFrequency))]
 [assembly: DebuggerDisplay(name, Target = typeof(UnifiedGood))]
 [assembly: DebuggerDisplay("{WorkEffortNumber ?? Name}" + id, Target = typeof(WorkTask))]
+[assembly: DebuggerDisplay(name, Target = typeof(SerialisedItem))]
