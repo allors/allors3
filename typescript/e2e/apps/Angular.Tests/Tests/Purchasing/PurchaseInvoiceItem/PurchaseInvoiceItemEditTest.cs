@@ -5,7 +5,7 @@
 
 using System.Linq;
 
-namespace Tests.PartyContactMachanismTests
+namespace Tests.PurchaseInvoiceItemTests
 {
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
@@ -35,16 +35,12 @@ namespace Tests.PartyContactMachanismTests
             var purchaseInvoice = new PurchaseInvoices(this.Transaction).Extent().FirstOrDefault();
 
             var expected = new PurchaseInvoiceItemBuilder(this.Transaction)
-                //.WithDerivedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
                 .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductFeatureItem)
-                .WithDefaults()
                 .Build();
 
             this.Transaction.Derive();
 
-            //var expectedDerivedVatRegime = expected.DerivedVatRegime;
             var expectedInvoiceItemType = expected.InvoiceItemType;
-
 
             this.purchaseInvoices.Table.DefaultAction(purchaseInvoice);
             var purchaseInvoiceItemDetails = new PurchaseInvoiceOverviewComponent(this.purchaseInvoices.Driver, this.M);
@@ -65,7 +61,6 @@ namespace Tests.PartyContactMachanismTests
 
             var purchaseInvoiceItem = after.Except(before).First();
 
-            //Assert.Equal(expectedDerivedVatRegime, purchaseInvoiceItem.DerivedVatRegime);
             Assert.Equal(expectedInvoiceItemType, purchaseInvoiceItem.InvoiceItemType);
         }
 

@@ -14,11 +14,11 @@ export class AllorsMaterialSideMenuComponent {
 
   constructor(public router: Router) {}
 
-  public hasChildren(item: SideMenuItem): boolean {
-    if (item.children) {
-      return item.children.length > 0 ?? false;
-    }
+  hasChildren(item: SideMenuItem): boolean {
+    return this.children(item)?.length > 0 ?? false;
+  }
 
-    return false;
+  children(parent: SideMenuItem): SideMenuItem[] {
+    return parent.children?.filter((v) => v.children || v.link);
   }
 }

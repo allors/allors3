@@ -6,7 +6,7 @@
 
 using System.Linq;
 
-namespace Tests.PartyContactMachanismTests
+namespace Tests.ProductTypeTests
 {
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
