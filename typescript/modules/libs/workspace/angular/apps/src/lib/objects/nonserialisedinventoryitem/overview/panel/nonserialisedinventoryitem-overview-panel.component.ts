@@ -121,7 +121,7 @@ export class NonSerialisedInventoryItemComponent extends TestScope implements On
 
       this.panel.onPulled = (loaded) => {
         this.objects = loaded.collection<NonSerialisedInventoryItem>(pullName);
-        // this.objects = this.objects.filter(v => v.QuantityOnHand > 0 || v.QuantityCommittedOut > 0 || v.QuantityExpectedIn > 0 || v.AvailableToPromise > 0);
+        this.objects = this.objects.filter(v => parseFloat(v.QuantityOnHand) > 0 || parseFloat(v.QuantityCommittedOut) > 0 || parseFloat(v.QuantityExpectedIn) > 0 || parseFloat(v.AvailableToPromise) > 0);
 
         this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;
         this.table.data = this.objects?.map((v) => {

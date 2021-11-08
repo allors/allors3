@@ -82,6 +82,7 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
             pull.InventoryItem({
               objectId: this.data.associationId,
               include: {
+                SerialisedInventoryItem_SerialisedItem: x,
                 Facility: x,
                 UnitOfMeasure: x,
                 Lot: x,

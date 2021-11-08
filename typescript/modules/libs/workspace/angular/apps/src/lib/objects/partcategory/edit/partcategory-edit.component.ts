@@ -62,6 +62,7 @@ export class PartCategoryEditComponent extends TestScope implements OnInit, OnDe
               pull.PartCategory({
                 objectId: this.data.id,
                 include: {
+                  CategoryImage: x,
                   Children: x,
                   LocalisedNames: {
                     Locale: x,
