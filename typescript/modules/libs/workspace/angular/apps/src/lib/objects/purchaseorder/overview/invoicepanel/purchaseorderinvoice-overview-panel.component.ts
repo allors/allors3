@@ -212,7 +212,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
       this.workItem = invoiceItemTypes?.find((v: InvoiceItemType) => v.UniqueId === 'a4d2e6d0-c6c1-46ec-a1cf-3a64822e7a9e');
 
       const purchaseOrders = loaded.collection<PurchaseOrder>(pullName);
-      this.objects = purchaseOrders.filter(
+      this.objects = purchaseOrders?.filter(
         (v) =>
           (v.canExecuteInvoice && (this.purchaseInvoice.PurchaseInvoiceState.UniqueId === '102f4080-1d12-4090-9196-f42c094c38ca' || this.purchaseInvoice.PurchaseInvoiceState.UniqueId === '639ba038-d8f3-4672-80b5-c8eb96e3275d')) ||
           v.PurchaseInvoicesWherePurchaseOrder.includes(this.purchaseInvoice)
