@@ -368,13 +368,14 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
 
       const onOtherOrderItem = serialisedItem.SalesOrderItemsWhereSerialisedItem?.find(
         (v) =>
-          (v.SalesOrderItemState === this.provisionalOrderItem ||
+          v.id != this.orderItem.id
+          && (v.SalesOrderItemState === this.provisionalOrderItem ||
             v.SalesOrderItemState === this.readyForPostingOrderItem ||
             v.SalesOrderItemState === this.requestsApprovalOrderItem ||
             v.SalesOrderItemState === this.awaitingAcceptanceOrderItem ||
             v.SalesOrderItemState === this.onHoldOrderItem ||
-            v.SalesOrderItemState === this.inProcessOrderItem) &&
-          (v.SalesOrderWhereSalesOrderItem?.SalesOrderState === this.provisionalOrder ||
+            v.SalesOrderItemState === this.inProcessOrderItem)
+          && (v.SalesOrderWhereSalesOrderItem?.SalesOrderState === this.provisionalOrder ||
             v.SalesOrderWhereSalesOrderItem?.SalesOrderState === this.readyForPostingOrder ||
             v.SalesOrderWhereSalesOrderItem?.SalesOrderState === this.requestsApprovalOrder ||
             v.SalesOrderWhereSalesOrderItem?.SalesOrderState === this.awaitingAcceptanceOrder ||
@@ -513,6 +514,8 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
         this.serialisedItem = null;
         this.previousProduct = this.orderItem.Product;
       }
+
+      this.serialisedItemSelected(this.orderItem.SerialisedItem);
     });
   }
 }
