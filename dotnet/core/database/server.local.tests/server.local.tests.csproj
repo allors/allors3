@@ -13,7 +13,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\system\database\adapters\allors.database.adapters.sql.tracing\Allors.Database.Adapters.Sql.Tracing.csproj" />
     <ProjectReference Include="..\Server\Server.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.osx.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.windows.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

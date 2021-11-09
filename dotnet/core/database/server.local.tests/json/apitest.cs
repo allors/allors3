@@ -12,24 +12,42 @@ namespace Tests
     using Allors.Database;
     using Allors.Database.Adapters.Memory;
     using Allors.Database.Configuration;
+    using Allors.Database.Configuration.Derivations.Default;
     using Allors.Database.Derivations;
     using Allors.Database.Domain;
     using Allors.Database.Meta;
+    using Microsoft.Extensions.Configuration;
     using C1 = Allors.Database.Domain.C1;
+    using Configuration = Allors.Database.Adapters.Sql.Configuration;
+    using Database = Allors.Database.Adapters.Sql.SqlClient.Database;
     using User = Allors.Database.Domain.User;
 
     public class ApiTest : IDisposable
     {
         public ApiTest(Fixture fixture, bool populate = true)
         {
+            var configurationBuilder = new ConfigurationBuilder();
+
+            const string root = "/config/core";
+            configurationBuilder.AddCrossPlatform(".");
+            configurationBuilder.AddCrossPlatform(root);
+            configurationBuilder.AddCrossPlatform(Path.Combine(root, "commands"));
+            configurationBuilder.AddEnvironmentVariables();
+
+            var configuration = configurationBuilder.Build();
+
+            var metaPopulation = new MetaBuilder().Build();
+            var rules = Rules.Create(metaPopulation);
+            var engine = new Engine(rules);
             var database = new Database(
-                new DefaultDatabaseServices(fixture.Engine),
+                new DefaultDatabaseServices(engine),
                 new Configuration
                 {
-                    ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(C1)),
+                    ConnectionString = configuration["ConnectionStrings:DefaultConnection"],
+                    ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
                 });
 
-            this.M = database.Services.Get<MetaPopulation>();
+            this.M = metaPopulation;
 
             this.Setup(database, populate);
         }
@@ -38,7 +56,7 @@ namespace Tests
 
         public virtual Config Config { get; } = new Config { SetupSecurity = true };
 
-        public ITransaction Transaction { get; private set; }
+        public ITransaction Transaction { get; set; }
 
         public ITime Time => this.Transaction.Database.Services.Get<ITime>();
 

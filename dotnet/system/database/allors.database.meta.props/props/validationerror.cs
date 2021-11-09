@@ -9,7 +9,7 @@ namespace Allors.Database.Meta
     /// <summary>
     /// An error that occurred during validation.
     /// </summary>
-    public class ValidationError
+    public class ValidationError : IValidationError
     {
         /// <summary>
         /// Initializes a new state of the <see cref="ValidationError"/> class.

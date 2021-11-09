@@ -13,10 +13,8 @@ namespace Allors.Database.Adapters.Sql
 
     using Meta;
 
-    public sealed class Commands
+    public abstract class Commands
     {
-        private readonly Transaction transaction;
-
         private readonly IConnection connection;
 
         private Dictionary<IClass, ICommand> getUnitRolesByClass;
@@ -41,13 +39,15 @@ namespace Allors.Database.Adapters.Sql
         private ICommand getVersion;
         private ICommand updateVersions;
 
-        internal Commands(Transaction transaction, IConnection connection)
+        protected Commands(Transaction transaction, IConnection connection)
         {
-            this.transaction = transaction;
+            this.Transaction = transaction;
             this.connection = connection;
         }
 
-        private Database Database => this.transaction.Database;
+        public Transaction Transaction { get; }
+
+        private Database Database => this.Transaction.Database;
 
         internal void ResetCommands()
         {
@@ -74,7 +74,7 @@ namespace Allors.Database.Adapters.Sql
             this.updateVersions = null;
         }
 
-        internal void DeleteObject(Strategy strategy)
+        internal virtual void DeleteObject(Strategy strategy)
         {
             this.deleteObjectByClass ??= new Dictionary<IClass, ICommand>();
 
@@ -93,7 +93,7 @@ namespace Allors.Database.Adapters.Sql
             command.ExecuteNonQuery();
         }
 
-        internal void GetUnitRoles(Strategy strategy)
+        internal virtual void GetUnitRoles(Strategy strategy)
         {
             this.getUnitRolesByClass ??= new Dictionary<IClass, ICommand>();
 
@@ -178,7 +178,7 @@ namespace Allors.Database.Adapters.Sql
             }
         }
 
-        internal void SetUnitRole(List<UnitRelation> relations, IClass exclusiveRootClass, IRoleType roleType)
+        internal virtual void SetUnitRole(List<UnitRelation> relations, IClass exclusiveRootClass, IRoleType roleType)
         {
             this.setUnitRoleByRoleTypeByClass ??= new Dictionary<IClass, Dictionary<IRoleType, ICommand>>();
 
@@ -201,7 +201,7 @@ namespace Allors.Database.Adapters.Sql
             command.ExecuteNonQuery();
         }
 
-        internal void SetUnitRoles(Strategy strategy, List<IRoleType> sortedRoleTypes)
+        internal virtual void SetUnitRoles(Strategy strategy, List<IRoleType> sortedRoleTypes)
         {
             this.setUnitRolesByRoleTypeByClass ??= new Dictionary<IClass, Dictionary<IList<IRoleType>, ICommand>>();
 
@@ -259,7 +259,7 @@ namespace Allors.Database.Adapters.Sql
             }
         }
 
-        internal void GetCompositeRole(Strategy strategy, IRoleType roleType)
+        internal virtual void GetCompositeRole(Strategy strategy, IRoleType roleType)
         {
             this.getCompositeRoleByRoleType ??= new Dictionary<IRoleType, ICommand>();
 
@@ -283,13 +283,13 @@ namespace Allors.Database.Adapters.Sql
             }
             else
             {
-                var objectId = this.transaction.State.GetObjectIdForExistingObject(result.ToString());
+                var objectId = this.Transaction.State.GetObjectIdForExistingObject(result.ToString());
                 // TODO: Should add to objectsToLoad
                 strategy.CachedObject.SetValue(roleType, objectId);
             }
         }
 
-        internal void SetCompositeRole(List<CompositeRelation> relations, IRoleType roleType)
+        internal virtual void SetCompositeRole(List<CompositeRelation> relations, IRoleType roleType)
         {
             this.setCompositeRoleByRoleType ??= new Dictionary<IRoleType, ICommand>();
 
@@ -308,7 +308,7 @@ namespace Allors.Database.Adapters.Sql
             command.ExecuteNonQuery();
         }
 
-        internal void GetCompositesRole(Strategy strategy, IRoleType roleType)
+        internal virtual void GetCompositesRole(Strategy strategy, IRoleType roleType)
         {
             this.getCompositesRoleByRoleType ??= new Dictionary<IRoleType, ICommand>();
 
@@ -341,7 +341,7 @@ namespace Allors.Database.Adapters.Sql
             {
                 while (reader.Read())
                 {
-                    var id = this.transaction.State.GetObjectIdForExistingObject(reader[0].ToString());
+                    var id = this.Transaction.State.GetObjectIdForExistingObject(reader[0].ToString());
                     objectIds.Add(id);
                 }
             }
@@ -349,7 +349,7 @@ namespace Allors.Database.Adapters.Sql
             strategy.CachedObject.SetValue(roleType, objectIds.ToArray());
         }
 
-        internal void AddCompositeRole(List<CompositeRelation> relations, IRoleType roleType)
+        internal virtual void AddCompositeRole(List<CompositeRelation> relations, IRoleType roleType)
         {
             this.addCompositeRoleByRoleType ??= new Dictionary<IRoleType, ICommand>();
 
@@ -367,7 +367,7 @@ namespace Allors.Database.Adapters.Sql
             command.ExecuteNonQuery();
         }
 
-        internal void RemoveCompositeRole(List<CompositeRelation> relations, IRoleType roleType)
+        internal virtual void RemoveCompositeRole(List<CompositeRelation> relations, IRoleType roleType)
         {
             this.removeCompositeRoleByRoleType ??= new Dictionary<IRoleType, ICommand>();
 
@@ -385,7 +385,7 @@ namespace Allors.Database.Adapters.Sql
             command.ExecuteNonQuery();
         }
 
-        internal void ClearCompositeAndCompositesRole(IList<long> associations, IRoleType roleType)
+        internal virtual void ClearCompositeAndCompositesRole(IList<long> associations, IRoleType roleType)
         {
             this.clearCompositeAndCompositesRoleByRoleType ??= new Dictionary<IRoleType, ICommand>();
 
@@ -404,7 +404,7 @@ namespace Allors.Database.Adapters.Sql
             command.ExecuteNonQuery();
         }
 
-        internal Reference GetCompositeAssociation(Reference role, IAssociationType associationType)
+        internal virtual Reference GetCompositeAssociation(Reference role, IAssociationType associationType)
         {
             this.getCompositeAssociationByAssociationType ??= new Dictionary<IAssociationType, ICommand>();
 
@@ -426,17 +426,17 @@ namespace Allors.Database.Adapters.Sql
 
             if (result != null && result != DBNull.Value)
             {
-                var id = this.transaction.State.GetObjectIdForExistingObject(result.ToString());
+                var id = this.Transaction.State.GetObjectIdForExistingObject(result.ToString());
 
                 associationObject = associationType.ObjectType.ExistExclusiveDatabaseClass ?
-                                        this.transaction.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, id, this.transaction) :
-                                        this.transaction.State.GetOrCreateReferenceForExistingObject(id, this.transaction);
+                                        this.Transaction.State.GetOrCreateReferenceForExistingObject(associationType.ObjectType.ExclusiveDatabaseClass, id, this.Transaction) :
+                                        this.Transaction.State.GetOrCreateReferenceForExistingObject(id, this.Transaction);
             }
 
             return associationObject;
         }
 
-        internal long[] GetCompositesAssociation(Strategy role, IAssociationType associationType)
+        internal virtual long[] GetCompositesAssociation(Strategy role, IAssociationType associationType)
         {
             this.getCompositesAssociationByAssociationType ??= new Dictionary<IAssociationType, ICommand>();
 
@@ -457,7 +457,7 @@ namespace Allors.Database.Adapters.Sql
             {
                 while (reader.Read())
                 {
-                    var id = this.transaction.State.GetObjectIdForExistingObject(reader[0].ToString());
+                    var id = this.Transaction.State.GetObjectIdForExistingObject(reader[0].ToString());
                     objectIds.Add(id);
                 }
             }
@@ -465,7 +465,7 @@ namespace Allors.Database.Adapters.Sql
             return objectIds.ToArray();
         }
 
-        internal Reference CreateObject(IClass @class)
+        internal virtual Reference CreateObject(IClass @class)
         {
             this.createObjectByClass ??= new Dictionary<IClass, ICommand>();
 
@@ -482,10 +482,10 @@ namespace Allors.Database.Adapters.Sql
 
             var result = command.ExecuteScalar();
             var objectId = long.Parse(result.ToString());
-            return this.transaction.State.CreateReferenceForNewObject(@class, objectId, this.transaction);
+            return this.Transaction.State.CreateReferenceForNewObject(@class, objectId, this.Transaction);
         }
 
-        internal IList<Reference> CreateObjects(IClass @class, int count)
+        internal virtual IList<Reference> CreateObjects(IClass @class, int count)
         {
             this.createObjectsByClass ??= new Dictionary<IClass, ICommand>();
 
@@ -517,14 +517,14 @@ namespace Allors.Database.Adapters.Sql
             foreach (var id in objectIds)
             {
                 var objectId = long.Parse(id.ToString());
-                var strategySql = this.transaction.State.CreateReferenceForNewObject(@class, objectId, this.transaction);
+                var strategySql = this.Transaction.State.CreateReferenceForNewObject(@class, objectId, this.Transaction);
                 strategies.Add(strategySql);
             }
 
             return strategies;
         }
 
-        internal Reference InstantiateObject(long objectId)
+        internal virtual Reference InstantiateObject(long objectId)
         {
             var command = this.instantiateObject;
             if (command == null)
@@ -550,14 +550,14 @@ WHERE {Mapping.ColumnNameForObject}={this.Database.Mapping.ParamInvocationNameFo
                     var version = reader.GetInt64(1);
 
                     var type = (IClass)this.Database.MetaPopulation.FindById(classId);
-                    return this.transaction.State.GetOrCreateReferenceForExistingObject(type, objectId, version, this.transaction);
+                    return this.Transaction.State.GetOrCreateReferenceForExistingObject(type, objectId, version, this.Transaction);
                 }
 
                 return null;
             }
         }
 
-        internal IEnumerable<Reference> InstantiateReferences(IEnumerable<long> objectIds)
+        internal virtual IEnumerable<Reference> InstantiateReferences(IEnumerable<long> objectIds)
         {
             var command = this.instantiateObjects;
             if (command == null)
@@ -582,12 +582,12 @@ WHERE {Mapping.ColumnNameForObject}={this.Database.Mapping.ParamInvocationNameFo
                     var objectId = long.Parse(objectIdString);
                     var type = (IClass)this.Database.ObjectFactory.GetObjectType(classId);
 
-                    yield return this.transaction.State.GetOrCreateReferenceForExistingObject(type, objectId, version, this.transaction);
+                    yield return this.Transaction.State.GetOrCreateReferenceForExistingObject(type, objectId, version, this.Transaction);
                 }
             }
         }
 
-        internal Dictionary<long, long> GetVersions(ISet<Reference> references)
+        internal virtual Dictionary<long, long> GetVersions(ISet<Reference> references)
         {
             var command = this.getVersion;
 
@@ -618,7 +618,7 @@ WHERE {Mapping.ColumnNameForObject}={this.Database.Mapping.ParamInvocationNameFo
             return versionByObjectId;
         }
 
-        internal void UpdateVersion(IEnumerable<long> changed)
+        internal virtual void UpdateVersion(IEnumerable<long> changed)
         {
             var command = this.updateVersions;
             if (command == null)

@@ -14,6 +14,7 @@ namespace Allors.Database.Adapters.Sql
     using Caching;
     using Meta;
     using Ranges;
+    using Tracing;
 
     public abstract class Database : IDatabase
     {
@@ -108,6 +109,8 @@ namespace Allors.Database.Adapters.Sql
         {
             get;
         }
+
+        public ISink Sink { get; set; }
 
         internal IRanges<long> Ranges = new DefaultStructRanges<long>();
 

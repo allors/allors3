@@ -50,13 +50,15 @@ namespace Allors.Database.Meta
         /// Gets a value indicating whether this report contains errors.
         /// </summary>
         /// <value><c>true</c> if this report contains errors; otherwise, <c>false</c>.</value>
-        public bool ContainsErrors => this.Errors.Length > 0;
+        public bool ContainsErrors => this.errors.Count > 0;
+
+        public ValidationError[] Errors => this.errors.ToArray();
 
         /// <summary>
         /// Gets the validation errors.
         /// </summary>
         /// <value>The errors.</value>
-        public ValidationError[] Errors => this.errors.ToArray();
+        IEnumerable<IValidationError> IValidationLog.Errors => this.errors.ToArray();
 
         /// <summary>
         /// Gets the messages.
@@ -94,7 +96,7 @@ namespace Allors.Database.Meta
         /// </returns>
         public bool HasErrors(object source)
         {
-            foreach (var error in this.Errors)
+            foreach (var error in this.errors)
             {
                 if (error.Source.Equals(source))
                 {

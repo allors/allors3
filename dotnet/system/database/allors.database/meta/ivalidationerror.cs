@@ -6,12 +6,7 @@
 
 namespace Allors.Database.Meta
 {
-    using System.Collections.Generic;
-
-    public interface IValidationLog
+    public interface IValidationError
     {
-        bool ContainsErrors { get; }
-
-        IEnumerable<IValidationError> Errors { get; }
     }
 }

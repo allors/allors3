@@ -273,6 +273,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Excel.Headless", "..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Excel.Interop", "..\excel\src\Allors.Excel.Interop\Allors.Excel.Interop.csproj", "{2F9B1A59-9134-4B1A-9BDC-A8A9BADCB662}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Adapters.Sql.Tracing", "system\database\adapters\allors.database.adapters.sql.tracing\Allors.Database.Adapters.Sql.Tracing.csproj", "{00B126E6-D9D4-4963-AFBA-7FD3CFF48C8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -703,6 +705,10 @@ Global
 		{2F9B1A59-9134-4B1A-9BDC-A8A9BADCB662}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F9B1A59-9134-4B1A-9BDC-A8A9BADCB662}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F9B1A59-9134-4B1A-9BDC-A8A9BADCB662}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00B126E6-D9D4-4963-AFBA-7FD3CFF48C8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00B126E6-D9D4-4963-AFBA-7FD3CFF48C8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00B126E6-D9D4-4963-AFBA-7FD3CFF48C8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00B126E6-D9D4-4963-AFBA-7FD3CFF48C8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -837,6 +843,7 @@ Global
 		{57E50852-DB48-47D3-A463-281BAB7F3780} = {879A5BE0-A56A-4432-B72A-F4D083B85D90}
 		{549D0398-D51F-46BC-A776-66ECFEED3DC5} = {879A5BE0-A56A-4432-B72A-F4D083B85D90}
 		{2F9B1A59-9134-4B1A-9BDC-A8A9BADCB662} = {879A5BE0-A56A-4432-B72A-F4D083B85D90}
+		{00B126E6-D9D4-4963-AFBA-7FD3CFF48C8E} = {6F829382-0804-4D82-8679-C69B14230287}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00D78C3D-8536-4549-B1EE-C19BD0C50387}

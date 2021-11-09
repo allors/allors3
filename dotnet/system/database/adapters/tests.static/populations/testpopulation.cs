@@ -11,22 +11,22 @@ namespace Allors.Database.Adapters
     // TODO: One2One (c1->c3 & i12->c3)
     internal sealed class TestPopulation
     {
-        public readonly C1 C1A;
-        public readonly C1 C1B;
-        public readonly C1 C1C;
-        public readonly C1 C1D;
-        public readonly C2 C2A;
-        public readonly C2 C2B;
-        public readonly C2 C2C;
-        public readonly C2 C2D;
-        public readonly C3 C3A;
-        public readonly C3 C3B;
-        public readonly C3 C3C;
-        public readonly C3 C3D;
-        public readonly C4 C4A;
-        public readonly C4 C4B;
-        public readonly C4 C4C;
-        public readonly C4 C4D;
+        public C1 C1A { get; private set; }
+        public C1 C1B { get; private set; }
+        public C1 C1C { get; private set; }
+        public C1 C1D { get; private set; }
+        public C2 C2A { get; private set; }
+        public C2 C2B { get; private set; }
+        public C2 C2C { get; private set; }
+        public C2 C2D { get; private set; }
+        public C3 C3A { get; private set; }
+        public C3 C3B { get; private set; }
+        public C3 C3C { get; private set; }
+        public C3 C3D { get; private set; }
+        public C4 C4A { get; private set; }
+        public C4 C4B { get; private set; }
+        public C4 C4C { get; private set; }
+        public C4 C4D { get; private set; }
 
         public TestPopulation(ITransaction transaction)
         {

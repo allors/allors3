@@ -72,7 +72,12 @@ namespace Allors.Meta.Generation
             var validation = meta.MetaPopulation.Validate();
             if (validation.ContainsErrors)
             {
-                log.Error(this, "Meta population has validation errors.");
+                log.Error(this, "Meta population has validation errors:");
+
+                foreach (var error in validation.Errors)
+                {
+                    log.Error(this, error.ToString());
+                }
                 return;
             }
 

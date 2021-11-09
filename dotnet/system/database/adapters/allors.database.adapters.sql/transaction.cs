@@ -26,8 +26,17 @@ namespace Allors.Database.Adapters.Sql
 
             this.State = new State(this);
 
-            this.Prefetcher = new Prefetcher(this);
-            this.Commands = new Commands(this, connection);
+
+            if (this.Database.Sink != null)
+            {
+                this.Prefetcher = new TraceablePrefetcher(this);
+                this.Commands = new TraceableCommands(this, connection);
+            }
+            else
+            {
+                this.Prefetcher = new UntraceablePrefetcher(this);
+                this.Commands = new UntraceableCommands(this, connection);
+            }
 
             this.Services.OnInit(this);
         }
