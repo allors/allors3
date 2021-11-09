@@ -157,6 +157,7 @@ export class ProductQuoteOverviewDetailComponent extends TestScope implements On
                 Request: x,
                 DerivedVatRegime: x,
                 DerivedIrpfRegime: x,
+                ContactPerson: x
               },
             }),
           ];

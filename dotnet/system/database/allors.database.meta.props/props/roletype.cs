@@ -7,6 +7,8 @@
 namespace Allors.Database.Meta
 {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Linq;
     using Text;
 
@@ -253,7 +255,7 @@ namespace Allors.Database.Meta
                 return ofType.IsAssignableFrom(((IObject)role).Strategy.Class) ? role : null;
             }
 
-            var extent = (Extent)role;
+            var extent = (IEnumerable<IObject>)role;
             return extent.Where(v => ofType.IsAssignableFrom(v.Strategy.Class));
         }
 

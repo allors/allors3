@@ -34,6 +34,7 @@ import { IObject } from '@allors/workspace/domain/system';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
 import { Filters } from '../../../../filters/filters';
+import { Quote } from '../../../../../../../../domain/custom/src/lib/generated/Quote.g';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -267,6 +268,7 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
                 DerivedVatClause: x,
                 DerivedVatRegime: x,
                 DerivedIrpfRegime: x,
+                Quote: x,
               },
             }),
             pull.VatClause({ sorting: [{ roleType: m.VatClause.Name }] }),

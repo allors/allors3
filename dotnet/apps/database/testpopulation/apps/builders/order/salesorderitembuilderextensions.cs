@@ -11,6 +11,8 @@ namespace Allors.Database.Domain.TestPopulation
     using InvoiceItemType = InvoiceItemType;
     using NonUnifiedGood = NonUnifiedGood;
     using SerialisedItemAvailability = SerialisedItemAvailability;
+    using SaleKind = SaleKind;
+    using RentalType = RentalType;
     using UnifiedGood = UnifiedGood;
 
     public static partial class SalesOrderItemBuilderExtensions
@@ -53,9 +55,11 @@ namespace Allors.Database.Domain.TestPopulation
             var serializedProduct = unifiedGoodExtent.First();
 
             @this.WithDescription(faker.Lorem.Sentences(2))
+                .WithInvoiceItemType(invoiceItemType)
+                .WithSaleKind(faker.Random.ListItem(@this.Transaction.Extent<SaleKind>()))
+                .WithRentalType(faker.Random.ListItem(@this.Transaction.Extent<RentalType>()))
                 .WithComment(faker.Lorem.Sentence())
                 .WithInternalComment(faker.Lorem.Sentence())
-                .WithInvoiceItemType(invoiceItemType)
                 .WithProduct(serializedProduct)
                 .WithSerialisedItem(serializedProduct.SerialisedItems.FirstOrDefault())
                 .WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()))

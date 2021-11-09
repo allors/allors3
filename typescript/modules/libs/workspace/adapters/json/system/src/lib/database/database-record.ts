@@ -30,6 +30,10 @@ export class DatabaseRecord extends SystemDatabaseRecord {
       this._roleByRelationType = new Map(
         this.syncResponseRoles.map((v) => {
           const relationType = metaPopulation.metaObjectByTag.get(v.t) as RelationType;
+          if (relationType == null) {
+            throw new Error('RelationType with Tag ' + v.t + ' is not present. Please regenerate your workspace.');
+          }
+
           const roleType = relationType.roleType;
           const objectType = roleType.objectType;
 

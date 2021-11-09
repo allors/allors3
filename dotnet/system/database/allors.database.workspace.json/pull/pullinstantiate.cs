@@ -72,7 +72,39 @@ namespace Allors.Database.Protocol.Json
                                     name ??= propertyType.PluralName;
 
                                     var stepResult = @select.Get(@object, this.acls);
-                                    var objects = stepResult is HashSet<object> set ? set.Cast<IObject>().ToArray() : ((IEnumerable<IObject>)stepResult)?.ToArray() ?? Array.Empty<IObject>();
+
+                                    IObject[] objects;
+                                    if (stepResult is IObject obj)
+                                    {
+                                        objects = new[] { obj };
+                                    }
+                                    else if (stepResult is IEnumerable<IObject> objs)
+                                    {
+                                        objects = objs.ToArray();
+                                    }
+                                    else if (stepResult is IEnumerable<object> outer)
+                                    {
+                                        var set = new HashSet<IObject>();
+                                        foreach (var inner in outer)
+                                        {
+                                            if (inner is IObject innerObject)
+                                            {
+                                                set.Add(innerObject);
+                                            }
+                                            else
+                                            {
+                                                var innerEnumerable = (IEnumerable<IObject>)inner;
+                                                set.UnionWith(innerEnumerable);
+                                            }
+                                        }
+
+                                        objects = set.ToArray();
+                                    }
+                                    else
+                                    {
+                                        objects = Array.Empty<IObject>();
+                                    }
+
 
                                     if (result.Skip.HasValue || result.Take.HasValue)
                                     {

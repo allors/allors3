@@ -21,6 +21,8 @@ namespace Allors.Database.Domain.TestPopulation
                 .WithInternalComment(faker.Lorem.Sentence())
                 .WithEstimatedDeliveryDate(@this.Transaction.Now().AddDays(5))
                 .WithInvoiceItemType(new InvoiceItemTypes(@this.Transaction).ProductItem)
+                .WithSaleKind(faker.Random.ListItem(@this.Transaction.Extent<SaleKind>()))
+                .WithRentalType(faker.Random.ListItem(@this.Transaction.Extent<RentalType>()))
                 .WithProduct(serializedProduct)
                 .WithSerialisedItem(serializedProduct.SerialisedItems.FirstOrDefault())
                 .WithUnitOfMeasure(new UnitsOfMeasure(@this.Transaction).Piece)
