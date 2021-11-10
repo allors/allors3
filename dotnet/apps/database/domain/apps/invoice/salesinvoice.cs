@@ -18,7 +18,8 @@ namespace Allors.Database.Domain
             && !this.ExistSalesOrders
             && !this.ExistPurchaseInvoice
             && !this.ExistRepeatingSalesInvoiceWhereSource
-            && !this.IsRepeatingInvoice;
+            && !this.IsRepeatingInvoice
+            && !this.ExistFinalInvoiceNumber;
 
         // TODO: Cache
         public TransitionalConfiguration[] TransitionalConfigurations => new[] {
@@ -119,11 +120,21 @@ namespace Allors.Database.Domain
 
             if (object.Equals(this.SalesInvoiceType, new SalesInvoiceTypes(this.Strategy.Transaction).CreditNote))
             {
-                this.InvoiceNumber = this.Store.NextCreditNoteNumber(this.InvoiceDate.Year);
+                // After reopen/revise of a credit note, use the number that was issued on initial Send action
+                if (this.ExistFinalInvoiceNumber)
+                {
+                    this.InvoiceNumber = this.FinalInvoiceNumber;
+                }
+                else
+                {
+                    this.InvoiceNumber = this.Store.NextCreditNoteNumber(this.InvoiceDate.Year);
 
-                var fiscalYearStoreSequenceNumbers = this.Store.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
-                var prefix = this.BilledFrom.InvoiceSequence.IsEnforcedSequence ? this.Store.CreditNoteNumberPrefix : fiscalYearStoreSequenceNumbers.CreditNoteNumberPrefix;
-                this.SortableInvoiceNumber = singleton.SortableNumber(prefix, this.InvoiceNumber, year.ToString());
+                    var fiscalYearStoreSequenceNumbers = this.Store.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+                    var prefix = this.BilledFrom.InvoiceSequence.IsEnforcedSequence ? this.Store.CreditNoteNumberPrefix : fiscalYearStoreSequenceNumbers.CreditNoteNumberPrefix;
+                    this.SortableInvoiceNumber = singleton.SortableNumber(prefix, this.InvoiceNumber, year.ToString());
+
+                    this.FinalInvoiceNumber = this.InvoiceNumber;
+                }
             }
 
             this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Transaction).NotPaid;
@@ -266,6 +277,12 @@ namespace Allors.Database.Domain
         public void AppsCancelInvoice(SalesInvoiceCancelInvoice method)
         {
             this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Transaction).Cancelled;
+            method.StopPropagation = true;
+        }
+
+        public void AppsRevise(SalesInvoiceRevise method)
+        {
+            this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Transaction).ReadyForPosting;
             method.StopPropagation = true;
         }
 
