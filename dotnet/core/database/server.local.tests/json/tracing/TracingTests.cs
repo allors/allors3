@@ -45,10 +45,10 @@ namespace Tests
 
             tree.Clear();
 
-            sink.Breaker = v =>
-            {
-                return v.Kind == EventKind.CommandsInstantiateObject;
-            };
+            //sink.Breaker = v =>
+            //{
+            //    return v.Kind == EventKind.CommandsInstantiateObject;
+            //};
 
             var pullRequest = new PullRequest
             {
