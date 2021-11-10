@@ -180,6 +180,13 @@ export class SalesInvoiceOverviewSummaryComponent {
     }, this.saveService.errorHandler);
   }
 
+  public revise(): void {
+    this.panel.manager.context.invoke(this.invoice.Revise).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully Reopened.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
+  }
+
   public copy(): void {
     this.panel.manager.context.invoke(this.invoice.Copy).subscribe(() => {
       this.refreshService.refresh();

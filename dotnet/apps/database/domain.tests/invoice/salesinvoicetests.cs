@@ -3171,6 +3171,39 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, invoice.Revocations);
         }
+
+        [Fact]
+        public void OnChangedCreditNoteSalesInvoiceStateNotPaidDeriveCancelPermissionAllowed()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Transaction).WithCreditNoteDefaults(this.InternalOrganisation).Build();
+            this.Derive();
+
+            invoice.Send();
+            this.Derive();
+
+            Assert.True(invoice.SalesInvoiceState.IsNotPaid);
+            Assert.DoesNotContain(new Revocations(this.Transaction).SalesInvoiceCancelRevocation, invoice.Revocations);
+        }
+
+        [Fact]
+        public void OnChangedCreditNoteSalesInvoiceStatePaidDeriveCancelPermissionNotAllowed()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Transaction).WithCreditNoteDefaults(this.InternalOrganisation).Build();
+            this.Derive();
+
+            invoice.Send();
+            this.Derive();
+
+            new DisbursementBuilder(this.Transaction)
+                .WithAmount(invoice.TotalIncVat)
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction).WithInvoice(invoice).WithAmountApplied(invoice.TotalIncVat).Build())
+                .Build();
+
+            this.Derive();
+
+            Assert.False(invoice.SalesInvoiceState.IsNotPaid);
+            Assert.Contains(new Revocations(this.Transaction).SalesInvoiceCancelRevocation, invoice.Revocations);
+        }
     }
 
     [Trait("Category", "Security")]

@@ -537,6 +537,16 @@ namespace Allors.Repository
         [Workspace(Default)]
         public Locale DerivedLocale { get; set; }
 
+        /// <summary>
+        /// Credit notes can be reopened and revised.
+        /// FinalInvoiceNumber is used to prevent a credit note from being deleted or issued a new number.
+        /// </summary>
+        #region Allors
+        [Id("86704fce-83a9-4ede-88b6-aad4d930c269")]
+        #endregion
+        [Derived]
+        public string FinalInvoiceNumber { get; set; }
+
         #region Allors
         [Id("55A60B80-2052-47E6-BD41-2AF414ABB885")]
         #endregion

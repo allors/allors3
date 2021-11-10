@@ -46,16 +46,19 @@ namespace Allors.Database.Domain
                 }
 
                 var cancelRevocation = new Revocations(@this.Strategy.Transaction).SalesInvoiceCancelRevocation;
+                var reviseRevocation = new Revocations(@this.Strategy.Transaction).SalesInvoiceReviseRevocation;
 
-                if (@this.SalesInvoiceState.IsNotPaid)
+                if (@this.SalesInvoiceType.IsCreditNote)
                 {
-                    if (@this.SalesInvoiceType.IsCreditNote)
+                    if (@this.SalesInvoiceState.IsNotPaid)
                     {
                         @this.RemoveRevocation(cancelRevocation);
+                        @this.RemoveRevocation(reviseRevocation);
                     }
                     else
                     {
                         @this.AddRevocation(cancelRevocation);
+                        @this.AddRevocation(reviseRevocation);
                     }
                 }
             }

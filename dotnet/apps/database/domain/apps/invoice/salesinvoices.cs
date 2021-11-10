@@ -31,10 +31,10 @@ namespace Allors.Database.Domain
             var credit = this.Meta.Credit;
             var setPaid = this.Meta.SetPaid;
             var delete = this.Meta.Delete;
-            var revise = this.Meta.Revise; // not implemented yet
+            var revise = this.Meta.Revise;
 
             config.Deny(this.ObjectType, readyForPosting, reopen, credit, setPaid, revise, writeOff);
-            config.Deny(this.ObjectType, notPaid, send, reopen, revise, delete); //cancelInvoice is allowed for creditnote
+            config.Deny(this.ObjectType, notPaid, send, reopen, delete); //cancelInvoice and revise is allowed for creditnote
             config.Deny(this.ObjectType, partiallyPaid, send, cancelInvoice, reopen, revise, delete);
             config.Deny(this.ObjectType, paid, send, writeOff, cancelInvoice, reopen, setPaid, revise, delete);
             config.Deny(this.ObjectType, writtenOff, send, cancelInvoice, writeOff, credit, setPaid, delete, revise, reopen);
@@ -64,6 +64,11 @@ namespace Allors.Database.Domain
             revocations.SalesInvoiceCancelRevocation.DeniedPermissions = new[]
             {
                 permissions.Get(this.Meta, this.Meta.CancelInvoice),
+            };
+
+            revocations.SalesInvoiceReviseRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Revise),
             };
         }
     }
