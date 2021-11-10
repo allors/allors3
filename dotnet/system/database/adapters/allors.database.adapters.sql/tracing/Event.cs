@@ -7,6 +7,9 @@ namespace Allors.Database.Adapters.Sql.Tracing
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading;
     using Meta;
 
     public sealed class Event
@@ -68,6 +71,8 @@ namespace Allors.Database.Adapters.Sql.Tracing
 
         public DateTime Stopped { get; private set; }
 
+        public TimeSpan Duration => this.Stopped - this.Started;
+
         public IRoleType RoleType { get; set; }
 
         public IRoleType[] RoleTypes { get; set; }
@@ -104,6 +109,42 @@ namespace Allors.Database.Adapters.Sql.Tracing
         {
             this.Stopped = DateTime.Now;
             return this;
+        }
+
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+
+            builder.Append('[');
+
+            if (this.AssociationType != null)
+            {
+                builder.Append(this.AssociationType.Name);
+            }
+
+            if (this.RoleType != null)
+            {
+                builder.Append(this.RoleType.Name);
+            }
+
+            if (this.RoleTypes?.Length > 0)
+            {
+                builder.Append(string.Join(", ", this.RoleTypes.Select(v => v.Name)));
+            }
+
+            builder
+                .Append("] -> ")
+                .Append(this.Kind);
+
+
+            if (this.Duration > new TimeSpan(0, 0, 0, 0, 1))
+            {
+                builder.Append(" (")
+                    .Append(this.Duration.ToString("s\\.fff"))
+                    .Append("s)");
+            }
+
+            return builder.ToString();
         }
     }
 }

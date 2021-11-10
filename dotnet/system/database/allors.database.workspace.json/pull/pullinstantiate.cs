@@ -105,7 +105,6 @@ namespace Allors.Database.Protocol.Json
                                         objects = Array.Empty<IObject>();
                                     }
 
-
                                     if (result.Skip.HasValue || result.Take.HasValue)
                                     {
                                         var paged = result.Skip.HasValue ? objects.Skip(result.Skip.Value) : objects;
