@@ -76,7 +76,7 @@ namespace Tests
         }
 
         [Fact]
-        public void Pull()
+        public void PullInclude()
         {
             this.Populate();
 
@@ -90,11 +90,6 @@ namespace Tests
             var tree = sink.TreeByTransaction[this.Transaction];
 
             tree.Clear();
-
-            //sink.Breaker = v =>
-            //{
-            //    return v.Kind == EventKind.CommandsInstantiateObject;
-            //};
 
             var pullRequest = new PullRequest
             {
@@ -124,6 +119,18 @@ namespace Tests
             pullResponse = api.Pull(pullRequest);
 
             Assert.All(tree.Nodes, v => Assert.True(v.Event.Source == EventSource.Prefetcher));
+            Assert.All(tree.Nodes, v => Assert.Empty(v.Nodes));
+
+            this.Transaction.Rollback();
+            tree.Clear();
+
+            //sink.Breaker = v =>
+            //{
+            //    return v.Kind == EventKind.PrefetcherPrefetchCompositesRoleRelationTable;
+            //};
+
+            pullResponse = api.Pull(pullRequest);
+
             Assert.All(tree.Nodes, v => Assert.Empty(v.Nodes));
         }
 
